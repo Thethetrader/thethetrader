@@ -115,10 +115,10 @@ function ReactionButton({
     scale: 0.95
   }} transition={{
     duration: 0.15
-  }} data-magicpath-id="0" data-magicpath-path="MainContentArea.tsx">
-      <Button variant="ghost" size="sm" className={cn("h-7 px-2 gap-1 text-xs bg-[#36393f]/50 text-white/70 hover:text-white", "hover:bg-[#7289da]/20 focus:ring-2 focus:ring-[#7289da]/50", "border border-white/10 hover:border-[#7289da]/30", "transition-all duration-200")} aria-label={`${label}: ${count} réactions`} data-magicpath-id="1" data-magicpath-path="MainContentArea.tsx">
-        <span className="text-sm" data-magicpath-id="2" data-magicpath-path="MainContentArea.tsx">{emoji}</span>
-        <span className="font-medium" data-magicpath-id="3" data-magicpath-path="MainContentArea.tsx">{count}</span>
+  }}>
+      <Button variant="ghost" size="sm" className={cn("h-7 px-2 gap-1 text-xs bg-[#36393f]/50 text-white/70 hover:text-white", "hover:bg-[#7289da]/20 focus:ring-2 focus:ring-[#7289da]/50", "border border-white/10 hover:border-[#7289da]/30", "transition-all duration-200")} aria-label={`${label}: ${count} réactions`}>
+        <span className="text-sm">{emoji}</span>
+        <span className="font-medium">{count}</span>
       </Button>
     </motion.div>;
 }
@@ -138,40 +138,40 @@ function MessageCard({
   }} transition={{
     duration: 0.3,
     delay: index * 0.1
-  }} className="w-full" data-magicpath-id="4" data-magicpath-path="MainContentArea.tsx">
-      <Card className="bg-[#2f3136] border-white/10 shadow-sm hover:shadow-md transition-shadow duration-200" data-magicpath-id="5" data-magicpath-path="MainContentArea.tsx">
-        <CardContent className="p-4 lg:p-6" data-magicpath-id="6" data-magicpath-path="MainContentArea.tsx">
-          <div className="flex gap-3 lg:gap-4" data-magicpath-id="7" data-magicpath-path="MainContentArea.tsx">
+  }} className="w-full">
+      <Card className="bg-[#2f3136] border-white/10 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <CardContent className="p-4 lg:p-6">
+          <div className="flex gap-3 lg:gap-4">
             {/* Avatar */}
-            <div className="flex-shrink-0" data-magicpath-id="8" data-magicpath-path="MainContentArea.tsx">
-              <Avatar className="h-10 w-10 lg:h-12 lg:w-12" data-magicpath-id="9" data-magicpath-path="MainContentArea.tsx">
-                <AvatarImage src={message.avatar} alt={`Avatar de ${message.username}`} data-magicpath-id="10" data-magicpath-path="MainContentArea.tsx" />
-                <AvatarFallback className="bg-[#7289da] text-white text-sm lg:text-base" data-magicpath-id="11" data-magicpath-path="MainContentArea.tsx">
+            <div className="flex-shrink-0">
+              <Avatar className="h-10 w-10 lg:h-12 lg:w-12">
+                <AvatarImage src={message.avatar} alt={`Avatar de ${message.username}`} />
+                <AvatarFallback className="bg-[#7289da] text-white text-sm lg:text-base">
                   {message.initials}
                 </AvatarFallback>
               </Avatar>
             </div>
 
             {/* Message Content */}
-            <div className="flex-1 min-w-0" data-magicpath-id="12" data-magicpath-path="MainContentArea.tsx">
+            <div className="flex-1 min-w-0">
               {/* Header */}
-              <div className="flex items-baseline justify-between gap-2 mb-2" data-magicpath-id="13" data-magicpath-path="MainContentArea.tsx">
-                <h2 className="font-bold text-white text-sm lg:text-base truncate" data-magicpath-id="14" data-magicpath-path="MainContentArea.tsx">
+              <div className="flex items-baseline justify-between gap-2 mb-2">
+                <h2 className="font-bold text-white text-sm lg:text-base truncate">
                   {message.username}
                 </h2>
-                <time className="text-xs text-white/50 flex-shrink-0" dateTime={new Date().toISOString()} data-magicpath-id="15" data-magicpath-path="MainContentArea.tsx">
+                <time className="text-xs text-white/50 flex-shrink-0" dateTime={new Date().toISOString()}>
                   {message.timestamp}
                 </time>
               </div>
 
               {/* Message Text */}
-              <p className="text-white/90 text-sm lg:text-base leading-relaxed mb-3" data-magicpath-id="16" data-magicpath-path="MainContentArea.tsx">
+              <p className="text-white/90 text-sm lg:text-base leading-relaxed mb-3">
                 {message.content}
               </p>
 
               {/* Reactions */}
-              {message.reactions.length > 0 && <nav className="flex flex-wrap gap-2" aria-label="Réactions au message" data-magicpath-id="17" data-magicpath-path="MainContentArea.tsx">
-                  {message.reactions.map((reaction, reactionIndex) => <ReactionButton key={`${message.id}-${reaction.emoji}`} emoji={reaction.emoji} count={reaction.count} label={reaction.label} data-magicpath-id="18" data-magicpath-path="MainContentArea.tsx" />)}
+              {message.reactions.length > 0 && <nav className="flex flex-wrap gap-2" aria-label="Réactions au message">
+                  {message.reactions.map((reaction, reactionIndex) => <ReactionButton key={`${message.id}-${reaction.emoji}`} emoji={reaction.emoji} count={reaction.count} label={reaction.label} />)}
                 </nav>}
             </div>
           </div>
@@ -182,12 +182,12 @@ function MessageCard({
 export default function MainContentArea({
   className
 }: MainContentAreaProps) {
-  return <main className={cn("flex-1 bg-[#23272a] overflow-hidden", className)} data-magicpath-id="19" data-magicpath-path="MainContentArea.tsx">
-      <ScrollArea className="h-full" data-magicpath-id="20" data-magicpath-path="MainContentArea.tsx">
-        <div className="container max-w-4xl mx-auto px-4 py-6 lg:py-8" data-magicpath-id="21" data-magicpath-path="MainContentArea.tsx">
+  return <main className={cn("flex-1 bg-[#23272a] overflow-hidden", className)}>
+      <ScrollArea className="h-full">
+        <div className="container max-w-4xl mx-auto px-4 py-6 lg:py-8">
           {/* Messages Feed */}
-          <section className="space-y-4 lg:space-y-6" aria-label="Flux des messages de trading" data-magicpath-id="22" data-magicpath-path="MainContentArea.tsx">
-            {mockMessages.map((message, index) => <MessageCard key={message.id} message={message} index={index} data-magicpath-id="23" data-magicpath-path="MainContentArea.tsx" />)}
+          <section className="space-y-4 lg:space-y-6" aria-label="Flux des messages de trading">
+            {mockMessages.map((message, index) => <MessageCard key={message.id} message={message} index={index} />)}
           </section>
 
           {/* Loading State Placeholder */}
@@ -198,8 +198,8 @@ export default function MainContentArea({
         }} transition={{
           duration: 0.3,
           delay: 0.5
-        }} className="flex justify-center py-8" data-magicpath-id="24" data-magicpath-path="MainContentArea.tsx">
-            <p className="text-white/50 text-sm" data-magicpath-id="25" data-magicpath-path="MainContentArea.tsx">
+        }} className="flex justify-center py-8">
+            <p className="text-white/50 text-sm">
               Chargement de plus de messages...
             </p>
           </motion.div>

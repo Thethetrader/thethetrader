@@ -12,20 +12,20 @@ export interface TradingPlatformShellProps {
 export default function TradingPlatformShell({
   className
 }: TradingPlatformShellProps) {
-  return <div className={cn("h-screen w-full bg-[#23272a] text-white overflow-hidden", "flex flex-col md:flex-row", className)} data-magicpath-id="0" data-magicpath-path="TradingPlatformShell.tsx">
+  return <div className={cn("h-screen w-full bg-[#23272a] text-white overflow-hidden", "flex flex-col md:flex-row", className)}>
       {/* Left Sidebar */}
-      <Sidebar data-magicpath-id="1" data-magicpath-path="TradingPlatformShell.tsx" />
+      <Sidebar />
       
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden" data-magicpath-id="2" data-magicpath-path="TradingPlatformShell.tsx">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top Bar */}
-        <TopBar channelName="forex-signaux" winRate={78} data-magicpath-id="3" data-magicpath-path="TradingPlatformShell.tsx" />
+        <TopBar channelName="forex-signaux" winRate={78} />
         
         {/* Main Content */}
-        <MainContentArea data-magicpath-id="4" data-magicpath-path="TradingPlatformShell.tsx" />
+        <MainContentArea />
       </div>
       
       {/* Right Sidebar */}
-      <RightSidebar data-magicpath-id="5" data-magicpath-path="TradingPlatformShell.tsx" />
+      <RightSidebar />
     </div>;
 }

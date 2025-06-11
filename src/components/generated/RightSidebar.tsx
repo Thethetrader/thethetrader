@@ -84,40 +84,40 @@ function ChannelStatsCard() {
     y: 0
   }} transition={{
     duration: 0.3
-  }} data-magicpath-id="0" data-magicpath-path="RightSidebar.tsx">
-      <Card className="bg-[#2f3136] border-white/10 shadow-sm" data-magicpath-id="1" data-magicpath-path="RightSidebar.tsx">
-        <CardHeader className="pb-3" data-magicpath-id="2" data-magicpath-path="RightSidebar.tsx">
-          <CardTitle className="flex items-center gap-2 text-white text-sm font-medium" data-magicpath-id="3" data-magicpath-path="RightSidebar.tsx">
-            <TrendingUp className="h-4 w-4 text-[#7289da]" data-magicpath-id="4" data-magicpath-path="RightSidebar.tsx" />
+  }}>
+      <Card className="bg-[#2f3136] border-white/10 shadow-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-white text-sm font-medium">
+            <TrendingUp className="h-4 w-4 text-[#7289da]" />
             Statistiques du Canal
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4" data-magicpath-id="5" data-magicpath-path="RightSidebar.tsx">
-          <dl className="space-y-3" data-magicpath-id="6" data-magicpath-path="RightSidebar.tsx">
-            <div className="flex justify-between items-center" data-magicpath-id="7" data-magicpath-path="RightSidebar.tsx">
-              <dt className="text-white/70 text-sm" data-magicpath-id="8" data-magicpath-path="RightSidebar.tsx">Taux de réussite</dt>
-              <dd className="text-[#7289da] font-bold text-lg" data-magicpath-id="9" data-magicpath-path="RightSidebar.tsx">
+        <CardContent className="space-y-4">
+          <dl className="space-y-3">
+            <div className="flex justify-between items-center">
+              <dt className="text-white/70 text-sm">Taux de réussite</dt>
+              <dd className="text-[#7289da] font-bold text-lg">
                 {channelStats.winRate}%
               </dd>
             </div>
             
-            <div className="flex justify-between items-center" data-magicpath-id="10" data-magicpath-path="RightSidebar.tsx">
-              <dt className="text-white/70 text-sm" data-magicpath-id="11" data-magicpath-path="RightSidebar.tsx">Trades totaux</dt>
-              <dd className="text-white font-medium" data-magicpath-id="12" data-magicpath-path="RightSidebar.tsx">
+            <div className="flex justify-between items-center">
+              <dt className="text-white/70 text-sm">Trades totaux</dt>
+              <dd className="text-white font-medium">
                 {channelStats.totalTrades}
               </dd>
             </div>
             
-            <div className="flex justify-between items-center" data-magicpath-id="13" data-magicpath-path="RightSidebar.tsx">
-              <dt className="text-white/70 text-sm" data-magicpath-id="14" data-magicpath-path="RightSidebar.tsx">P&L</dt>
-              <dd className={cn("font-bold", getPnLColor(channelStats.pnl))} data-magicpath-id="15" data-magicpath-path="RightSidebar.tsx">
+            <div className="flex justify-between items-center">
+              <dt className="text-white/70 text-sm">P&L</dt>
+              <dd className={cn("font-bold", getPnLColor(channelStats.pnl))}>
                 {formatPnL(channelStats.pnl)}
               </dd>
             </div>
             
-            <div className="flex justify-between items-center" data-magicpath-id="16" data-magicpath-path="RightSidebar.tsx">
-              <dt className="text-white/70 text-sm" data-magicpath-id="17" data-magicpath-path="RightSidebar.tsx">Meilleur jour</dt>
-              <dd className="text-white font-medium text-sm" data-magicpath-id="18" data-magicpath-path="RightSidebar.tsx">
+            <div className="flex justify-between items-center">
+              <dt className="text-white/70 text-sm">Meilleur jour</dt>
+              <dd className="text-white font-medium text-sm">
                 {channelStats.bestDay}
               </dd>
             </div>
@@ -168,18 +168,18 @@ function OnlineUserItem({
     delay: index * 0.05
   }} whileHover={{
     scale: 1.02
-  }} className="transition-transform duration-150" data-magicpath-id="19" data-magicpath-path="RightSidebar.tsx">
-      <div className={cn("flex items-center gap-3 p-2 rounded-lg", "hover:bg-[#36393f]/50 focus-within:bg-[#36393f]/50", "focus-within:ring-2 focus-within:ring-[#7289da]/50", "transition-all duration-200 cursor-pointer")} tabIndex={0} role="button" aria-label={`${user.username} - ${getStatusLabel(user.status)}`} data-magicpath-id="20" data-magicpath-path="RightSidebar.tsx">
-        <div className="relative" data-magicpath-id="21" data-magicpath-path="RightSidebar.tsx">
-          <Avatar className="h-8 w-8" data-magicpath-id="22" data-magicpath-path="RightSidebar.tsx">
-            <AvatarImage src={user.avatar} alt={`Avatar de ${user.username}`} data-magicpath-id="23" data-magicpath-path="RightSidebar.tsx" />
-            <AvatarFallback className="bg-[#7289da] text-white text-xs" data-magicpath-id="24" data-magicpath-path="RightSidebar.tsx">
+  }} className="transition-transform duration-150">
+      <div className={cn("flex items-center gap-3 p-2 rounded-lg", "hover:bg-[#36393f]/50 focus-within:bg-[#36393f]/50", "focus-within:ring-2 focus-within:ring-[#7289da]/50", "transition-all duration-200 cursor-pointer")} tabIndex={0} role="button" aria-label={`${user.username} - ${getStatusLabel(user.status)}`}>
+        <div className="relative">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={user.avatar} alt={`Avatar de ${user.username}`} />
+            <AvatarFallback className="bg-[#7289da] text-white text-xs">
               {user.initials}
             </AvatarFallback>
           </Avatar>
-          <div className={cn("absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-[#2f3136]", getStatusColor(user.status))} aria-label={getStatusLabel(user.status)} data-magicpath-id="25" data-magicpath-path="RightSidebar.tsx" />
+          <div className={cn("absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-[#2f3136]", getStatusColor(user.status))} aria-label={getStatusLabel(user.status)} />
         </div>
-        <span className="text-white/90 text-sm font-medium truncate" data-magicpath-id="26" data-magicpath-path="RightSidebar.tsx">
+        <span className="text-white/90 text-sm font-medium truncate">
           {user.username}
         </span>
       </div>
@@ -195,15 +195,15 @@ function CommunitySection() {
   }} transition={{
     duration: 0.3,
     delay: 0.1
-  }} className="space-y-3" data-magicpath-id="27" data-magicpath-path="RightSidebar.tsx">
-      <h2 className="flex items-center gap-2 text-xs font-semibold text-[#7289da] uppercase tracking-wider px-2" data-magicpath-id="28" data-magicpath-path="RightSidebar.tsx">
-        <Users className="h-3 w-3" data-magicpath-id="29" data-magicpath-path="RightSidebar.tsx" />
+  }} className="space-y-3">
+      <h2 className="flex items-center gap-2 text-xs font-semibold text-[#7289da] uppercase tracking-wider px-2">
+        <Users className="h-3 w-3" />
         Communauté — {onlineUsers.filter(u => u.status === "online").length}
       </h2>
       
-      <ScrollArea className="max-h-64" data-magicpath-id="30" data-magicpath-path="RightSidebar.tsx">
-        <ul className="space-y-1" role="list" data-magicpath-id="31" data-magicpath-path="RightSidebar.tsx">
-          {onlineUsers.map((user, index) => <OnlineUserItem key={user.id} user={user} index={index} data-magicpath-id="32" data-magicpath-path="RightSidebar.tsx" />)}
+      <ScrollArea className="max-h-64">
+        <ul className="space-y-1" role="list">
+          {onlineUsers.map((user, index) => <OnlineUserItem key={user.id} user={user} index={index} />)}
         </ul>
       </ScrollArea>
     </motion.section>;
@@ -222,9 +222,9 @@ function FormationButton() {
     scale: 1.02
   }} whileTap={{
     scale: 0.98
-  }} data-magicpath-id="33" data-magicpath-path="RightSidebar.tsx">
-      <Button className={cn("w-full bg-[#7289da] hover:bg-[#7289da]/90 text-white font-bold", "focus:ring-2 focus:ring-[#7289da]/50 focus:ring-offset-2 focus:ring-offset-[#23272a]", "transition-all duration-200 shadow-sm hover:shadow-md")} size="lg" aria-label="Accéder à la section formation" data-magicpath-id="34" data-magicpath-path="RightSidebar.tsx">
-        <GraduationCap className="h-4 w-4 mr-2" data-magicpath-id="35" data-magicpath-path="RightSidebar.tsx" />
+  }}>
+      <Button className={cn("w-full bg-[#7289da] hover:bg-[#7289da]/90 text-white font-bold", "focus:ring-2 focus:ring-[#7289da]/50 focus:ring-offset-2 focus:ring-offset-[#23272a]", "transition-all duration-200 shadow-sm hover:shadow-md")} size="lg" aria-label="Accéder à la section formation">
+        <GraduationCap className="h-4 w-4 mr-2" />
         Accéder à la formation
       </Button>
     </motion.div>;
@@ -232,22 +232,22 @@ function FormationButton() {
 export default function RightSidebar({
   className
 }: RightSidebarProps) {
-  return <aside className={cn("hidden xl:flex w-72 bg-[#23272a] border-l border-white/10", "flex-col overflow-hidden", className)} data-magicpath-id="36" data-magicpath-path="RightSidebar.tsx">
-      <div className="flex flex-col h-full p-4 space-y-6" data-magicpath-id="37" data-magicpath-path="RightSidebar.tsx">
+  return <aside className={cn("hidden xl:flex w-72 bg-[#23272a] border-l border-white/10", "flex-col overflow-hidden", className)}>
+      <div className="flex flex-col h-full p-4 space-y-6">
         {/* Channel Stats */}
-        <ChannelStatsCard data-magicpath-id="38" data-magicpath-path="RightSidebar.tsx" />
+        <ChannelStatsCard />
         
-        <Separator className="bg-white/10" data-magicpath-id="39" data-magicpath-path="RightSidebar.tsx" />
+        <Separator className="bg-white/10" />
         
         {/* Community Section */}
-        <div className="flex-1 min-h-0" data-magicpath-id="40" data-magicpath-path="RightSidebar.tsx">
-          <CommunitySection data-magicpath-id="41" data-magicpath-path="RightSidebar.tsx" />
+        <div className="flex-1 min-h-0">
+          <CommunitySection />
         </div>
         
-        <Separator className="bg-white/10" data-magicpath-id="42" data-magicpath-path="RightSidebar.tsx" />
+        <Separator className="bg-white/10" />
         
         {/* Formation Button */}
-        <FormationButton data-magicpath-id="43" data-magicpath-path="RightSidebar.tsx" />
+        <FormationButton />
       </div>
     </aside>;
 }
