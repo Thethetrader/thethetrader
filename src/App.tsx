@@ -15,7 +15,7 @@ function App() {
   setTheme(themeSettings.theme);
 
   const generatedComponent = useMemo(() => {
-    // THIS IS WHERE THE TOP LEVEL GENRATED COMPONENT WILL BE RETURNED!
+    // THIS IS WHERE THE TOP LEVEL GENERATED COMPONENT WILL BE RETURNED!
     return <TradingPlatformShell /> // %EXPORT_STATEMENT%
   }, []);
 
