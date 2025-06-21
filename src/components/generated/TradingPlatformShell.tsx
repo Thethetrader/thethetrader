@@ -188,7 +188,7 @@ export default function TradingPlatformShell() {
 
     const message: Message = {
       id: `msg-${Date.now()}`,
-      author: 'Trader Pro',
+                    author: 'TheTheTrader',
       content: newMessage,
       timestamp: new Date().toISOString(),
       channelId: selectedChannel.id,
@@ -328,7 +328,7 @@ export default function TradingPlatformShell() {
               TR
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium">Trader Pro</p>
+                              <p className="text-sm font-medium">TheTheTrader</p>
               <p className="text-xs text-gray-400">En ligne</p>
             </div>
           </div>
@@ -1018,7 +1018,7 @@ export default function TradingPlatformShell() {
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <span className="font-medium">Trader Pro</span>
+                              <span className="font-medium">TheTheTrader</span>
                               <span className="text-xs text-gray-400">
                                 {new Date(signal.timestamp).toLocaleTimeString()}
                               </span>

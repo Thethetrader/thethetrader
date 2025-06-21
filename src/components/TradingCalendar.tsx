@@ -1,335 +1,139 @@
-"use client";
+import React, { useState } from 'react';
 
-import * as React from "react";
-import { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from "lucide-react";
-
-interface Signal {
-  id: string;
-  type: 'BUY' | 'SELL';
-  pair: string;
-  entryPrice: string;
-  takeProfit: string;
-  stopLoss: string;
-  description: string;
-  image?: string;
-  timestamp: Date;
-  status: 'ACTIVE' | 'WIN' | 'LOSS';
-  pnl?: number; // Profit/Loss en pourcentage ou montant
-}
-
-interface TradingCalendarProps {
-  className?: string;
-  signals?: Signal[];
-}
-
-interface DayData {
-  date: Date;
-  signals: Signal[];
-  totalTrades: number;
-  wins: number;
-  losses: number;
-  pnl: number;
-  winRate: number;
-}
-
-const months = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
-];
-
-const days = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
-
-export default function TradingCalendar({ className, signals = [] }: TradingCalendarProps) {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDay, setSelectedDay] = useState<DayData | null>(null);
-
-  // Fonction pour obtenir les données d'un jour spécifique
-  const getDayData = (date: Date): DayData => {
-    const dayStart = new Date(date);
-    dayStart.setHours(0, 0, 0, 0);
-    const dayEnd = new Date(date);
-    dayEnd.setHours(23, 59, 59, 999);
-
-    const daySignals = signals.filter(signal => 
-      signal.timestamp >= dayStart && signal.timestamp <= dayEnd
-    );
-
-    const wins = daySignals.filter(s => s.status === 'WIN').length;
-    const losses = daySignals.filter(s => s.status === 'LOSS').length;
-    const totalTrades = wins + losses; // Only count closed trades
-    const winRate = totalTrades > 0 ? (wins / totalTrades) * 100 : 0;
+const TradingCalendar = () => {
+  // Calendar data exactly matching the image
+  const calendarDays = [
+    // Week 1: J(1) V(2) S(3) D(4)
+    { date: 1, status: 'win' },
+    { date: 2, status: 'win' },
+    { date: 3, status: 'loss' },
+    { date: 4, status: 'win' },
     
-    // Calcul simple du PnL (vous pouvez ajuster selon votre logique)
-    const pnl = daySignals.reduce((acc, signal) => {
-      if (signal.status === 'WIN') return acc + (signal.pnl || 1);
-      if (signal.status === 'LOSS') return acc - (signal.pnl || 1);
-      return acc;
-    }, 0);
+    // Week 2: L(5) M(6) M(7) J(8) V(9) S(10) D(11)
+    { date: 5, status: 'be' },
+    { date: 6, status: 'win' },
+    { date: 7, status: 'win' },
+    { date: 8, status: 'win' },
+    { date: 9, status: 'loss' },
+    { date: 10, status: 'win' },
+    { date: 11, status: 'win' },
+    
+    // Week 3: L(12) M(13) M(14) J(15) V(16) S(17) D(18)
+    { date: 12, status: 'be' },
+    { date: 13, status: 'win' },
+    { date: 14, status: 'win' },
+    { date: 15, status: 'win' },
+    { date: 16, status: 'loss' },
+    { date: 17, status: 'win' },
+    { date: 18, status: 'win' },
+    
+    // Week 4: L(19) M(20) M(21) J(22) V(23) S(24) D(25)
+    { date: 19, status: 'win' },
+    { date: 20, status: 'be' },
+    { date: 21, status: 'win' },
+    { date: 22, status: 'win' },
+    { date: 23, status: 'loss' },
+    { date: 24, status: 'win' },
+    { date: 25, status: 'win' },
+    
+    // Week 5: L(26) M(27) M(28) J(29) V(30) S(31)
+    { date: 26, status: 'win' },
+    { date: 27, status: 'win' },
+    { date: 28, status: 'be' },
+    { date: 29, status: 'win' },
+    { date: 30, status: 'win' },
+    { date: 31, status: 'win' }
+  ];
 
-    return {
-      date,
-      signals: daySignals,
-      totalTrades,
-      wins,
-      losses,
-      pnl,
-      winRate
-    };
-  };
-
-  // Générer les jours du mois
-  const generateCalendarDays = () => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
+  const getDayStyle = (day: { date: number; status: string }) => {
+    const baseStyle = "h-12 rounded flex items-center justify-center text-white font-semibold text-sm cursor-pointer hover:opacity-80 transition-opacity";
     
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const startDate = new Date(firstDay);
-    startDate.setDate(startDate.getDate() - firstDay.getDay());
-    
-    const days = [];
-    const current = new Date(startDate);
-    
-    // 6 semaines (42 jours) pour couvrir tous les cas
-    for (let i = 0; i < 42; i++) {
-      days.push(new Date(current));
-      current.setDate(current.getDate() + 1);
+    switch (day.status) {
+      case 'win':
+        return `${baseStyle} bg-green-500`;
+      case 'be':
+        return `${baseStyle} bg-yellow-500 text-black`;
+      case 'loss':
+        return `${baseStyle} bg-red-500`;
+      default:
+        return `${baseStyle} bg-gray-700`;
     }
-    
-    return days;
-  };
-
-  const calendarDays = generateCalendarDays();
-
-  const goToPreviousMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
-  };
-
-  const goToNextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1));
-  };
-
-  const goToToday = () => {
-    setCurrentDate(new Date());
-  };
-
-  const isToday = (date: Date) => {
-    const today = new Date();
-    return date.toDateString() === today.toDateString();
-  };
-
-  const isCurrentMonth = (date: Date) => {
-    return date.getMonth() === currentDate.getMonth();
-  };
-
-  const getDayColor = (dayData: DayData) => {
-    if (dayData.totalTrades === 0) return 'bg-transparent';
-    
-    if (dayData.winRate >= 70) return 'bg-green-500';
-    if (dayData.winRate >= 50) return 'bg-green-400';
-    if (dayData.winRate >= 30) return 'bg-yellow-500';
-    return 'bg-red-500';
-  };
-
-  const formatPnL = (pnl: number) => {
-    const sign = pnl >= 0 ? '+' : '';
-    return `${sign}${pnl.toFixed(1)}%`;
   };
 
   return (
-    <div className={cn("bg-[#2f3136] rounded-lg p-4 text-white", className)}>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <CalendarIcon className="h-5 w-5" />
-          <h3 className="text-lg font-semibold">Calendrier Trading</h3>
+    <div className="bg-gray-800 rounded-lg p-6 max-w-4xl mx-auto border border-gray-600">
+      {/* Header avec avatar et titre */}
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+          T
         </div>
-        <Button
-          onClick={goToToday}
-          size="sm"
-          className="bg-[#7289da] hover:bg-[#5b6eae] text-white"
-        >
-          Aujourd'hui
-        </Button>
+        <div className="flex-1">
+          <div className="text-white font-semibold">TheTheTrader</div>
+          <div className="text-gray-400 text-sm">00:00:01</div>
+        </div>
       </div>
 
-      {/* Navigation mois */}
-      <div className="flex items-center justify-between mb-4">
-        <Button
-          onClick={goToPreviousMonth}
-          variant="ghost"
-          size="sm"
-          className="text-white hover:bg-white/10"
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-        
-        <h4 className="text-lg font-semibold">
-          {months[currentDate.getMonth()]} {currentDate.getFullYear()}
-        </h4>
-        
-        <Button
-          onClick={goToNextMonth}
-          variant="ghost"
-          size="sm"
-          className="text-white hover:bg-white/10"
-        >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      </div>
-
-      {/* Jours de la semaine */}
-      <div className="grid grid-cols-7 gap-1 mb-2">
-        {days.map(day => (
-          <div key={day} className="text-center text-xs font-medium text-white/70 p-2">
-            {day}
-          </div>
-        ))}
+      {/* Titre principal */}
+      <div className="text-center mb-6">
+        <h2 className="text-2xl font-bold text-purple-400 mb-2">
+          Calendrier des performances trading - Janvier 2025
+        </h2>
       </div>
 
       {/* Calendrier */}
-      <div className="grid grid-cols-7 gap-1 mb-4">
-        {calendarDays.map((date, index) => {
-          const dayData = getDayData(date);
-          const dayColor = getDayColor(dayData);
+      <div className="bg-gray-700 rounded-lg p-4">
+        {/* Header du calendrier */}
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-white font-semibold text-lg">Janvier 2025</h3>
+          <div className="text-gray-300 text-sm">
+            Win Rate: 78.2% • Total: +47.8%
+          </div>
+        </div>
+
+        {/* Jours de la semaine */}
+        <div className="grid grid-cols-7 gap-2 mb-3">
+          {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map(day => (
+            <div key={day} className="text-center text-gray-400 text-sm font-medium py-1">
+              {day}
+            </div>
+          ))}
+        </div>
+
+        {/* Grille du calendrier */}
+        <div className="grid grid-cols-7 gap-2 mb-4">
+          {/* Espaces vides pour commencer le mois (janvier 2025 commence un mercredi) */}
+          <div></div>
+          <div></div>
           
-          return (
-            <button
-              key={index}
-              onClick={() => setSelectedDay(dayData)}
-              className={cn(
-                "relative p-2 text-sm rounded hover:bg-white/10 transition-colors",
-                !isCurrentMonth(date) && "text-white/30",
-                isToday(date) && "ring-2 ring-[#7289da]",
-                dayData.totalTrades > 0 && "font-semibold"
-              )}
+          {/* Les jours du mois */}
+          {calendarDays.map((day) => (
+            <div
+              key={day.date}
+              className={getDayStyle(day)}
             >
-              <div className="relative z-10">
-                {date.getDate()}
-              </div>
-              
-              {/* Indicateur de performance */}
-              {dayData.totalTrades > 0 && (
-                <div className={cn(
-                  "absolute inset-0 rounded opacity-20",
-                  dayColor
-                )} />
-              )}
-              
-              {/* Nombre de trades */}
-              {dayData.totalTrades > 0 && (
-                <div className="absolute top-0 right-0 w-2 h-2 bg-white rounded-full opacity-60" />
-              )}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Légende */}
-      <div className="space-y-2 text-xs text-white/70 mb-4">
-        <div className="flex items-center justify-between">
-          <span>Légende:</span>
+              {day.date}
+            </div>
+          ))}
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-3 bg-green-500 rounded"></div>
-            <span>Win Rate ≥70%</span>
+
+        {/* Légende */}
+        <div className="flex items-center justify-center gap-6 text-sm">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-green-500 rounded"></div>
+            <span className="text-white">Win</span>
           </div>
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-3 bg-yellow-500 rounded"></div>
-            <span>30-69%</span>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-yellow-500 rounded"></div>
+            <span className="text-white">BE</span>
           </div>
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-3 bg-red-500 rounded"></div>
-            <span>&lt;30%</span>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-red-500 rounded"></div>
+            <span className="text-white">Loss</span>
           </div>
         </div>
       </div>
-
-      {/* Détails du jour sélectionné */}
-      {selectedDay && selectedDay.totalTrades > 0 && (
-        <div className="bg-[#36393f] rounded-lg p-3">
-          <h5 className="font-semibold mb-2">
-            {selectedDay.date.toLocaleDateString('fr-FR')}
-          </h5>
-          
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            <div>
-              <span className="text-white/70">Trades:</span>
-              <span className="ml-1 font-semibold">{selectedDay.totalTrades}</span>
-            </div>
-            <div>
-              <span className="text-white/70">Win Rate:</span>
-              <span className="ml-1 font-semibold">{selectedDay.winRate.toFixed(1)}%</span>
-            </div>
-            <div>
-              <span className="text-green-400">Wins:</span>
-              <span className="ml-1 font-semibold">{selectedDay.wins}</span>
-            </div>
-            <div>
-              <span className="text-red-400">Losses:</span>
-              <span className="ml-1 font-semibold">{selectedDay.losses}</span>
-            </div>
-          </div>
-          
-          <div className="mt-2 pt-2 border-t border-white/10">
-            <span className="text-white/70 text-sm">P&L: </span>
-            <span className={cn(
-              "font-semibold",
-              selectedDay.pnl >= 0 ? "text-green-400" : "text-red-400"
-            )}>
-              {formatPnL(selectedDay.pnl)}
-            </span>
-          </div>
-
-          {/* Liste des signaux du jour */}
-          <div className="mt-3 space-y-1">
-            <h6 className="text-xs font-medium text-white/70">Signaux:</h6>
-            {selectedDay.signals.slice(0, 3).map(signal => (
-              <div key={signal.id} className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
-                  <span className={cn(
-                    "w-2 h-2 rounded-full",
-                    signal.status === 'WIN' && "bg-green-400",
-                    signal.status === 'LOSS' && "bg-red-400",
-                    signal.status === 'ACTIVE' && "bg-blue-400"
-                  )} />
-                  <span>{signal.pair}</span>
-                  <span className={cn(
-                    "px-1 rounded text-xs",
-                    signal.type === 'BUY' ? "bg-green-600" : "bg-red-600"
-                  )}>
-                    {signal.type}
-                  </span>
-                </div>
-                <span className={cn(
-                  "font-medium",
-                  signal.status === 'WIN' && "text-green-400",
-                  signal.status === 'LOSS' && "text-red-400",
-                  signal.status === 'ACTIVE' && "text-white/70"
-                )}>
-                  {signal.status}
-                </span>
-              </div>
-            ))}
-            {selectedDay.signals.length > 3 && (
-              <div className="text-xs text-white/50">
-                +{selectedDay.signals.length - 3} autres...
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Message si aucun jour sélectionné */}
-      {!selectedDay && (
-        <div className="bg-[#36393f] rounded-lg p-3 text-center text-white/70 text-sm">
-          Cliquez sur un jour pour voir les détails des trades
-        </div>
-      )}
     </div>
   );
-}
+};
+
+export default TradingCalendar; 
