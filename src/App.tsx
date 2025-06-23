@@ -19,6 +19,12 @@ const App = () => {
   const [visibleMessages, setVisibleMessages] = useState(0);
   const [activeChannel, setActiveChannel] = useState('crypto-signaux');
   const [showCalendar, setShowCalendar] = useState(false);
+  
+  // Précharger l'image pour éviter le clignotement
+  useEffect(() => {
+    const img = new Image();
+    img.src = '/images/tradingview-chart.png';
+  }, []);
 
   const channelData: Record<string, any> = {
     'crypto-signaux': {
@@ -211,23 +217,22 @@ const App = () => {
 
   const currentMessages = channelData[activeChannel]?.messages || [];
 
+  // Animation progressive des messages 
   useEffect(() => {
     let timer: NodeJS.Timeout;
     
-    // Délai initial de 2 secondes avant que l'animation commence
     const initialDelay = setTimeout(() => {
       timer = setInterval(() => {
         setVisibleMessages(prev => {
           if (prev < currentMessages.length) {
             return prev + 1;
           } else {
-            // Recommencer l'animation
             setTimeout(() => setVisibleMessages(0), 1000);
             return prev;
           }
         });
-              }, 400);
-    }, 0);
+      }, 400);
+    }, 100);
 
     return () => {
       clearTimeout(initialDelay);
@@ -235,7 +240,6 @@ const App = () => {
     };
   }, [currentMessages.length]);
 
-  // Reset visible messages when channel changes
   useEffect(() => {
     setVisibleMessages(0);
   }, [activeChannel]);
