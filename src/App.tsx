@@ -592,7 +592,8 @@ const App = () => {
                                   <img 
                                     src="/images/tradingview-chart.png"
                                     alt="TradingView Chart BTCUSD"
-                                    className="max-h-full w-auto object-contain"
+                                    className="max-h-full w-auto object-contain opacity-100"
+                                    style={{ animation: 'none' }}
                                   />
                                 </div>
                                 <div className="text-xs text-gray-400 mt-2 text-center">
