@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import './index.css';
 import TradingPlatformShell from './components/generated/TradingPlatformShell';
 import TradingCalendar from './components/TradingCalendar';
+
+// Deployment timestamp: 2025-01-13 04:15:00
 
 // Types
 interface User {
