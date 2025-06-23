@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './index.css';
 import TradingPlatformShell from './components/generated/TradingPlatformShell';
-import TradingCalendar from './components/TradingCalendar';
 
 // FORCE DEPLOYMENT: 2025-01-13 04:25:00 - FIX OLD CONTENT
 
@@ -18,7 +17,6 @@ const App = () => {
   const [password, setPassword] = useState('');
   const [visibleMessages, setVisibleMessages] = useState(0);
   const [activeChannel, setActiveChannel] = useState('crypto-signaux');
-  const [showCalendar, setShowCalendar] = useState(false);
   
   // Précharger l'image pour éviter le clignotement
   useEffect(() => {
@@ -153,65 +151,6 @@ const App = () => {
           ]
         }
              ]
-     },
-     'calendrier': {
-       title: '#calendrier',
-       messages: [
-         { 
-           id: 1, 
-           user: 'TheTheTrader', 
-           time: '00:00:01', 
-           type: 'calendar', 
-           content: 'Calendrier des performances trading - Janvier 2025', 
-           calendarData: {
-             days: [
-               { date: 1, status: 'win', trades: 3, pnl: '+2.4%' },
-               { date: 2, status: 'win', trades: 2, pnl: '+1.8%' },
-               { date: 3, status: 'loss', trades: 1, pnl: '-0.5%' },
-               { date: 4, status: 'win', trades: 4, pnl: '+3.2%' },
-               { date: 5, status: 'be', trades: 2, pnl: '±0.0%' },
-               { date: 6, status: 'win', trades: 3, pnl: '+2.1%' },
-               { date: 7, status: 'win', trades: 2, pnl: '+1.6%' },
-               { date: 8, status: 'win', trades: 5, pnl: '+4.2%' },
-               { date: 9, status: 'loss', trades: 2, pnl: '-1.1%' },
-               { date: 10, status: 'win', trades: 3, pnl: '+2.8%' },
-               { date: 11, status: 'win', trades: 1, pnl: '+0.9%' },
-               { date: 12, status: 'be', trades: 3, pnl: '±0.1%' },
-               { date: 13, status: 'win', trades: 4, pnl: '+3.5%' },
-               { date: 14, status: 'win', trades: 2, pnl: '+1.7%' },
-               { date: 15, status: 'win', trades: 3, pnl: '+2.3%' },
-               { date: 16, status: 'loss', trades: 1, pnl: '-0.8%' },
-               { date: 17, status: 'win', trades: 4, pnl: '+3.1%' },
-               { date: 18, status: 'win', trades: 2, pnl: '+1.4%' },
-               { date: 19, status: 'win', trades: 3, pnl: '+2.6%' },
-               { date: 20, status: 'be', trades: 2, pnl: '±0.0%' },
-               { date: 21, status: 'win', trades: 5, pnl: '+4.8%' },
-               { date: 22, status: 'win', trades: 3, pnl: '+2.2%' },
-               { date: 23, status: 'loss', trades: 2, pnl: '-1.3%' },
-               { date: 24, status: 'win', trades: 4, pnl: '+3.4%' },
-               { date: 25, status: 'win', trades: 1, pnl: '+0.7%' },
-               { date: 26, status: 'win', trades: 3, pnl: '+2.9%' },
-               { date: 27, status: 'win', trades: 2, pnl: '+1.5%' },
-               { date: 28, status: 'be', trades: 3, pnl: '±0.2%' },
-               { date: 29, status: 'win', trades: 4, pnl: '+3.7%' },
-               { date: 30, status: 'win', trades: 2, pnl: '+1.9%' },
-               { date: 31, status: 'win', trades: 3, pnl: '+2.5%' }
-             ],
-             stats: {
-               totalTrades: 89,
-               winRate: 78.2,
-               totalPnL: '+47.8%',
-               bestDay: '+4.8%',
-               worstDay: '-1.3%'
-             }
-           },
-           reactions: [
-             { emoji: '📊', count: 34 },
-             { emoji: '🔥', count: 28 },
-             { emoji: '💎', count: 19 }
-           ]
-         }
-       ]
      }
    };
 
@@ -259,37 +198,7 @@ const App = () => {
     );
   }
 
-  // Calendar Page
-  if (showCalendar) {
-    return (
-      <div className="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen w-full">
-        {/* Header */}
-        <nav className="flex items-center justify-between p-6 relative z-50">
-          <div className="text-2xl font-bold text-white">
-            TheTheTrader
-          </div>
-          <div className="hidden md:flex space-x-8">
-            <button onClick={() => setShowCalendar(false)} className="text-gray-300 hover:text-white transition-all duration-200">Accueil</button>
-            <button onClick={() => setShowCalendar(true)} className="text-blue-400 hover:text-white transition-all duration-200">Calendrier</button>
-            <a href="#services" className="text-gray-300 hover:text-white transition-all duration-200">Services</a>
-            <a href="#about" className="text-gray-300 hover:text-white transition-all duration-200">À propos</a>
-            <a href="#contact" className="text-gray-300 hover:text-white transition-all duration-200">Contact</a>
-          </div>
-          <button 
-            onClick={() => setShowAuthModal(true)}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90"
-          >
-            Se connecter
-          </button>
-        </nav>
 
-        {/* Calendar Content */}
-        <div className="pt-10 px-6 flex justify-center">
-          <TradingCalendar />
-        </div>
-      </div>
-    );
-  }
 
   // Landing Page
   return (
@@ -299,13 +208,11 @@ const App = () => {
         <div className="text-2xl font-bold text-white">
           TheTheTrader
         </div>
-        <div className="hidden md:flex space-x-8">
-          <button onClick={() => setShowCalendar(false)} className="text-gray-300 hover:text-white transition-all duration-200">Accueil</button>
-          <button onClick={() => setShowCalendar(true)} className="text-gray-300 hover:text-white transition-all duration-200">Calendrier</button>
-          <a href="#services" className="text-gray-300 hover:text-white transition-all duration-200">Services</a>
-          <a href="#about" className="text-gray-300 hover:text-white transition-all duration-200">À propos</a>
-          <a href="#contact" className="text-gray-300 hover:text-white transition-all duration-200">Contact</a>
-        </div>
+                  <div className="hidden md:flex space-x-8">
+            <a href="#services" className="text-gray-300 hover:text-white transition-all duration-200">Services</a>
+            <a href="#about" className="text-gray-300 hover:text-white transition-all duration-200">À propos</a>
+            <a href="#contact" className="text-gray-300 hover:text-white transition-all duration-200">Contact</a>
+          </div>
         <button 
           onClick={() => setShowAuthModal(true)}
           className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90"
@@ -396,18 +303,7 @@ const App = () => {
                       # formation
                     </div>
                   </div>
-                  
-                  <div className="text-gray-400 text-xs font-semibold mb-3 mt-6">CALENDRIER</div>
-                  <div className="space-y-2">
-                    <div 
-                      className={`px-3 py-2 rounded cursor-pointer transition-colors ${
-                        activeChannel === 'calendrier' ? 'text-white bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
-                      }`}
-                      onClick={() => setActiveChannel('calendrier')}
-                    >
-                      # calendrier
-                    </div>
-                  </div>
+
                   
                   <div className="bg-gray-700 p-3 rounded mt-6">
                     <div className="text-white text-sm font-semibold mb-2">Statistiques</div>
