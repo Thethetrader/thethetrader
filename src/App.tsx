@@ -16,7 +16,7 @@ const App = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // Animation supprimée - problème de clignotement
+  const [visibleMessages, setVisibleMessages] = useState(0);
   const [activeChannel, setActiveChannel] = useState('crypto-signaux');
   const [showCalendar, setShowCalendar] = useState(false);
   
@@ -217,7 +217,15 @@ const App = () => {
 
   const currentMessages = channelData[activeChannel]?.messages || [];
 
-  // Animation supprimée pour éviter le clignotement
+  // Animation conversation progressive avec CSS
+  useEffect(() => {
+    setVisibleMessages(0);
+    currentMessages.forEach((_, index) => {
+      setTimeout(() => {
+        setVisibleMessages(index + 1);
+      }, index * 500); // 500ms entre chaque message
+    });
+  }, [currentMessages, activeChannel]);
 
   const handleLogin = () => {
     if (email && password) {
@@ -414,8 +422,12 @@ const App = () => {
                     {currentMessages.map((message: any, index: number) => (
                       <div 
                         key={message.id}
-                        className={`bg-gray-800 rounded-lg ${
+                        className={`bg-gray-800 rounded-lg transition-all duration-500 ${
                           typeof message.content === 'string' ? 'p-3' : 'p-4'
+                        } ${
+                          index < visibleMessages 
+                            ? 'opacity-100 transform translate-y-0' 
+                            : 'opacity-0 transform translate-y-4'
                         }`}
                         style={{
                           borderLeft: message.type === 'signal' ? '4px solid #10b981' : 
