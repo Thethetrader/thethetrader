@@ -50,8 +50,20 @@ const App = () => {
               { emoji: '🚀', count: 15 }
             ]
           }
+        },
+        { 
+          id: 2, 
+          user: 'TheTheTrader', 
+          time: '02:06:33', 
+          type: 'update', 
+          content: 'Signal précédent: Objectif 1 atteint ! 🎯\n\n+1.2% en 3 minutes - félicitations à tous les membres qui ont suivi 🔥', 
+          reactions: [
+            { emoji: '🎉', count: 24 },
+            { emoji: '💰', count: 18 },
+            { emoji: '🚀', count: 12 }
+          ]
         }
-      ],
+      ]
     },
     'forex-signaux': {
       title: '#forex-signaux',
