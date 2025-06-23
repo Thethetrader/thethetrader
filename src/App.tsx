@@ -435,7 +435,7 @@ const App = () => {
                     {currentMessages.slice(0, visibleMessages).map((message: any, index: number) => (
                       <div 
                         key={message.id}
-                        className={`animate-[fadeInUp_0.5s_ease-out] bg-gray-800 rounded-lg ${
+                        className={`bg-gray-800 rounded-lg ${
                           typeof message.content === 'string' ? 'p-3' : 'p-4'
                         }`}
                         style={{
