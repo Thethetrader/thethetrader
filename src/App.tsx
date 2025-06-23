@@ -17,7 +17,7 @@ const App = () => {
   const [activeChannel, setActiveChannel] = useState('crypto-signaux');
   const [showCalendar, setShowCalendar] = useState(false);
 
-  const channelData = {
+  const channelData: Record<string, any> = {
     'crypto-signaux': {
       title: '#crypto-signaux',
       messages: [
@@ -429,7 +429,7 @@ const App = () => {
                 {/* Zone des messages/signaux */}
                 <div className="flex-1 flex flex-col p-4 bg-gray-900">
                   <div className="space-y-4 mb-4 flex-1 overflow-y-auto pr-2">
-                    {currentMessages.slice(0, visibleMessages).map((message, index) => (
+                    {currentMessages.slice(0, visibleMessages).map((message: any, index: number) => (
                       <div 
                         key={message.id}
                         className={`animate-[fadeInUp_0.5s_ease-out] bg-gray-800 rounded-lg ${
@@ -487,7 +487,7 @@ const App = () => {
                                   {/* Espaces vides pour commencer le mois */}
                                   <div></div><div></div><div></div>
                                   
-                                  {message.calendarData?.days.map(day => (
+                                  {message.calendarData?.days.map((day: any) => (
                                     <div
                                       key={day.date}
                                       className={`relative p-2 text-xs rounded text-center cursor-pointer transition-all hover:scale-105 ${
