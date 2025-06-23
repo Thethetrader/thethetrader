@@ -223,7 +223,7 @@ const App = () => {
     currentMessages.forEach((_, index) => {
       setTimeout(() => {
         setVisibleMessages(index + 1);
-      }, index * 500); // 500ms entre chaque message
+      }, index * 200); // 200ms entre chaque message
     });
   }, [currentMessages, activeChannel]);
 
