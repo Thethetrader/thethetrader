@@ -151,7 +151,50 @@ const App = () => {
           ]
         }
              ]
-     }
+     },
+    'calendrier': {
+      title: '📅 calendrier',
+      messages: [
+        { 
+          id: 1, 
+          user: 'TheTheTrader', 
+          time: '08:00:00', 
+          type: 'calendar', 
+          content: '📊 Performance Trading - Janvier 2025',
+          calendarData: {
+            stats: {
+              winRate: '78',
+              totalPnL: '+2,450€',
+              totalTrades: 28,
+              bestDay: '+156€',
+              worstDay: '-89€'
+            },
+            days: [
+              { date: 1, trades: 2, pnl: '+45€', status: 'win' },
+              { date: 2, trades: 1, pnl: '+12€', status: 'win' },
+              { date: 3, trades: 3, pnl: '-23€', status: 'loss' },
+              { date: 4, trades: 0, pnl: '0€', status: 'none' },
+              { date: 5, trades: 0, pnl: '0€', status: 'none' },
+              { date: 6, trades: 2, pnl: '+67€', status: 'win' },
+              { date: 7, trades: 1, pnl: '0€', status: 'be' },
+              { date: 8, trades: 2, pnl: '+89€', status: 'win' },
+              { date: 9, trades: 3, pnl: '+156€', status: 'win' },
+              { date: 10, trades: 1, pnl: '-45€', status: 'loss' },
+              { date: 11, trades: 0, pnl: '0€', status: 'none' },
+              { date: 12, trades: 0, pnl: '0€', status: 'none' },
+              { date: 13, trades: 2, pnl: '+34€', status: 'win' },
+              { date: 14, trades: 1, pnl: '0€', status: 'be' },
+              { date: 15, trades: 2, pnl: '+78€', status: 'win' }
+            ]
+          },
+          reactions: [
+            { emoji: '📈', count: 34 },
+            { emoji: '💰', count: 28 },
+            { emoji: '🔥', count: 19 }
+          ]
+        }
+      ]
+    }
    };
 
   const currentMessages = channelData[activeChannel]?.messages || [];
@@ -221,6 +264,8 @@ const App = () => {
         </button>
       </nav>
 
+
+
       {/* Hero Section */}
       <div className="text-center pt-20 pb-0 px-6">
         <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
@@ -242,6 +287,20 @@ const App = () => {
           <button className="border border-gray-400 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:opacity-80">
             Voir la démo
           </button>
+        </div>
+
+        {/* Barre de défilement - 2x plus grosse sur toute la largeur */}
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 overflow-hidden relative mb-10">
+          <div className="whitespace-nowrap animate-scroll">
+            <span className="text-4xl font-bold mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-4xl font-bold mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-4xl font-bold mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-4xl font-bold mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-4xl font-bold mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-4xl font-bold mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-4xl font-bold mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-4xl font-bold mx-16">EASY SETUP EASY TRADING</span>
+          </div>
         </div>
 
         {/* Aperçu de la plateforme */}
@@ -301,6 +360,18 @@ const App = () => {
                       onClick={() => setActiveChannel('formation')}
                     >
                       # formation
+                    </div>
+                  </div>
+
+                  <div className="text-gray-400 text-xs font-semibold mb-3 mt-6">PERFORMANCE</div>
+                  <div className="space-y-2">
+                    <div 
+                      className={`px-3 py-2 rounded cursor-pointer transition-colors ${
+                        activeChannel === 'calendrier' ? 'text-white bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+                      }`}
+                      onClick={() => setActiveChannel('calendrier')}
+                    >
+                      📅 calendrier
                     </div>
                   </div>
 
@@ -531,6 +602,8 @@ const App = () => {
         </div>
       </div>
 
+
+
       {/* Section Comparaison */}
       <div className="pt-10 pb-20 px-6 max-w-7xl mx-auto">
         <h2 className="text-4xl font-bold text-white text-center mb-16">
@@ -641,66 +714,323 @@ const App = () => {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 py-16 px-6 mt-0">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8">
-            {/* Logo et description */}
-            <div>
-              <h3 className="text-2xl font-bold text-white mb-4">TheTheTrader</h3>
-              <p className="text-gray-400 mb-4">
-                Plateforme de trading simplifiée pour maximiser vos profits avec des signaux en temps réel.
-              </p>
-              <div className="flex space-x-4">
-                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-blue-700 transition-colors">
-                  <span className="text-white text-sm">📧</span>
+      {/* Section Reviews Clients */}
+      <div className="py-20 px-6">
+        <div className="max-w-6xl mx-auto">
+          {/* Témoignages */}
+          <div className="space-y-8 mb-16">
+            {/* Témoignage 1 */}
+            <div className="bg-gray-800/50 rounded-2xl p-8 border border-gray-700 shadow-xl">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-white font-bold">M</span>
                 </div>
-                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-blue-700 transition-colors">
-                  <span className="text-white text-sm">📱</span>
+                <div className="flex-1">
+                  <blockquote className="text-lg text-gray-200 mb-4 italic">
+                    "Setup ultra simple en 2 minutes, signaux clairs sans analyse compliquée. Enfin une plateforme qui me permet de trader sans me prendre la tête avec 1000 indicateurs."
+                  </blockquote>
+                  <div className="flex items-center gap-3">
+                    <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center">
+                      <span className="text-white text-xs">TT</span>
+                    </div>
+                    <span className="text-gray-400 font-medium">— Marc Dubois, Trader Indépendant</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Produit */}
-            <div>
-              <h4 className="text-white font-semibold mb-4">PRODUIT</h4>
-              <div className="space-y-3">
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">Signaux Trading</a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">Analytics</a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">Formation</a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">Prix</a>
+            {/* Témoignage 2 */}
+            <div className="bg-gray-800/30 rounded-2xl p-6 border border-gray-700">
+              <blockquote className="text-lg text-gray-200 mb-4 italic">
+                "J'ai connecté mon courtier en 30 secondes. Pas de configuration complexe, juste des signaux simples à suivre. Mon trading n'a jamais été aussi zen et efficace."
+              </blockquote>
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 bg-green-600 rounded flex items-center justify-center">
+                  <span className="text-white text-xs">€</span>
+                </div>
+                <span className="text-gray-400 font-medium">— Sophie Martin, Analyste Forex</span>
               </div>
             </div>
 
-            {/* Support */}
-            <div>
-              <h4 className="text-white font-semibold mb-4">SUPPORT</h4>
-              <div className="space-y-3">
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">Contact</a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">FAQ</a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">Documentation</a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">Discord Community</a>
-              </div>
-            </div>
-
-            {/* Légal */}
-            <div>
-              <h4 className="text-white font-semibold mb-4">LÉGAL</h4>
-              <div className="space-y-3">
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">Politique de confidentialité</a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">Conditions d'utilisation</a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">Mentions légales</a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">Avertissement risques</a>
+            {/* Témoignage 3 */}
+            <div className="bg-gray-800/30 rounded-2xl p-6 border border-gray-700">
+              <blockquote className="text-lg text-gray-200 mb-4 italic">
+                "Fini les plateformes complexes avec 50 onglets. Ici tout est clair : un signal, une action, un résultat. Le trading redevient simple comme il devrait l'être."
+              </blockquote>
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 bg-purple-600 rounded flex items-center justify-center">
+                  <span className="text-white text-xs">₿</span>
+                </div>
+                <span className="text-gray-400 font-medium">— Alex Bourgeois, Trader Crypto</span>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <div className="text-gray-400 text-sm">
-              © 2025 TheTheTrader. Tous droits réservés.
+          {/* Bouton d'action */}
+          <div className="text-center mb-16">
+            <button 
+              onClick={() => setShowAuthModal(true)}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:opacity-90"
+            >
+              Essai Gratuit
+            </button>
+          </div>
+
+
+        </div>
+      </div>
+
+      {/* Petit bonhomme trader style Discord 3D */}
+      <div className="relative -mb-1">
+        <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+          <div className="relative animate-pulse" style={{animationDuration: '3s'}}>
+            {/* Ombre du bonhomme assis - 1.5x plus grande */}
+            <div className="absolute top-28 left-1/2 transform -translate-x-1/2 w-28 h-4 bg-black/20 rounded-full blur-sm"></div>
+            
+            {/* Corps principal style Discord - 1.5x plus gros */}
+            <div className="relative">
+              {/* Tête 3D - 1.5x plus grosse */}
+              <div className="w-21 h-21 relative mx-auto mb-3">
+                {/* Base de la tête */}
+                <div className="w-21 h-21 bg-gradient-to-br from-purple-300 via-purple-400 to-purple-600 rounded-full relative shadow-lg">
+                  {/* Reflet 3D */}
+                  <div className="absolute top-3 left-4 w-6 h-6 bg-white/30 rounded-full blur-sm"></div>
+                  
+                  {/* Yeux style Discord */}
+                  <div className="absolute top-6 left-1/2 transform -translate-x-1/2 flex gap-3">
+                    <div className="w-3 h-4 bg-white rounded-full relative">
+                      <div className="absolute top-1.5 left-1 w-1.5 h-1.5 bg-black rounded-full animate-ping"></div>
+                    </div>
+                    <div className="w-3 h-4 bg-white rounded-full relative">
+                      <div className="absolute top-1.5 left-1 w-1.5 h-1.5 bg-black rounded-full animate-ping" style={{animationDelay: '0.3s'}}></div>
+                    </div>
+                  </div>
+                  
+                  {/* Bouche souriante */}
+                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-6 h-3 border-b-3 border-white rounded-full"></div>
+                </div>
+              </div>
+              
+              {/* Corps hoodie style Discord - 1.5x plus gros */}
+              <div className="w-24 h-30 bg-gradient-to-br from-blue-400 via-blue-500 to-blue-700 rounded-3xl relative mx-auto shadow-xl">
+                {/* Reflet 3D sur le hoodie */}
+                <div className="absolute top-3 left-3 w-9 h-12 bg-white/20 rounded-2xl blur-sm"></div>
+                
+                {/* Logo de trading sur le hoodie */}
+                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-9 h-9 bg-white/90 rounded-xl flex items-center justify-center">
+                  <span className="text-sm font-bold text-blue-600">📈</span>
+                </div>
+                
+                {/* Cordon du hoodie */}
+                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 flex gap-1.5">
+                  <div className="w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
+                  <div className="w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
+                </div>
+                
+                {/* Bras animés */}
+                <div className="absolute top-6 -left-4 w-12 h-5 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transform rotate-12 animate-pulse shadow-md"></div>
+                <div className="absolute top-6 -right-4 w-12 h-5 bg-gradient-to-l from-blue-500 to-blue-600 rounded-full transform -rotate-12 animate-pulse shadow-md" style={{animationDelay: '0.2s'}}></div>
+                
+                {/* Pocket */}
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-12 h-6 border border-blue-800/30 rounded-xl"></div>
+              </div>
+              
+              {/* Jambes croisées style Discord - position assise */}
+              <div className="relative mt-2">
+                {/* Jambe gauche (arrière) */}
+                <div className="absolute left-2 top-0 w-5 h-10 bg-gradient-to-b from-indigo-400 to-indigo-600 rounded-full shadow-md transform rotate-45 origin-top"></div>
+                {/* Pied gauche */}
+                <div className="absolute left-8 top-8 w-6 h-3 bg-gray-800 rounded-full shadow-sm transform -rotate-12"></div>
+                
+                {/* Jambe droite (devant) - croisée par-dessus */}
+                <div className="absolute right-2 top-1 w-5 h-10 bg-gradient-to-b from-indigo-400 to-indigo-600 rounded-full shadow-md transform -rotate-45 origin-top z-10"></div>
+                {/* Pied droit */}
+                <div className="absolute right-8 top-8 w-6 h-3 bg-gray-800 rounded-full shadow-sm transform rotate-12"></div>
+                
+                {/* Espace pour les jambes croisées */}
+                <div className="h-12 w-full"></div>
+              </div>
             </div>
-            <div className="text-gray-400 text-sm mt-4 md:mt-0">
-              contact@thethetrader.com
+            
+            {/* Écrans d'ordinateur style Discord 3D - ENCORE PLUS GROS (1.5x) */}
+            {/* Écran gauche */}
+            <div className="absolute -left-24 top-1 transform rotate-12 animate-pulse" style={{animationDelay: '0.3s'}}>
+              {/* Support/pied */}
+              <div className="w-24 h-4 bg-gradient-to-r from-gray-700 to-gray-900 rounded-full mx-auto mb-3 shadow-md"></div>
+              
+              {/* Écran principal */}
+              <div className="w-30 h-21 bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl border-4 border-gray-600 shadow-2xl relative">
+                {/* Reflet 3D sur l'écran */}
+                <div className="absolute top-3 left-3 w-9 h-6 bg-white/15 rounded blur-sm"></div>
+                
+                {/* Bordure intérieure brillante */}
+                <div className="absolute inset-2 border border-gray-500/40 rounded-xl"></div>
+                
+                {/* Contenu de l'écran - graphiques trading */}
+                <div className="absolute inset-4 bg-black rounded-xl">
+                  {/* Lignes de trading vertes */}
+                  <div className="w-full h-1.5 bg-green-400 mt-3 rounded animate-pulse"></div>
+                  <div className="w-3/4 h-1.5 bg-red-400 mt-2 rounded animate-pulse" style={{animationDelay: '0.4s'}}></div>
+                  <div className="w-2/3 h-1.5 bg-yellow-400 mt-2 rounded animate-pulse" style={{animationDelay: '0.6s'}}></div>
+                  <div className="w-5/6 h-1.5 bg-orange-400 mt-2 rounded animate-pulse" style={{animationDelay: '0.8s'}}></div>
+                  
+                  {/* Indicateur de profit */}
+                  <div className="absolute bottom-2 right-2 text-green-400 text-base animate-ping">+89%</div>
+                </div>
+                
+                {/* Voyant de fonctionnement */}
+                <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-green-400 rounded-full animate-ping"></div>
+              </div>
+            </div>
+            
+            {/* Écran droite */}
+            <div className="absolute -right-24 top-1 transform -rotate-12 animate-pulse" style={{animationDelay: '0.5s'}}>
+              {/* Support/pied */}
+              <div className="w-24 h-4 bg-gradient-to-l from-gray-700 to-gray-900 rounded-full mx-auto mb-3 shadow-md"></div>
+              
+              {/* Écran principal */}
+              <div className="w-30 h-21 bg-gradient-to-bl from-gray-800 via-gray-900 to-black rounded-2xl border-4 border-gray-600 shadow-2xl relative">
+                {/* Reflet 3D sur l'écran */}
+                <div className="absolute top-3 right-3 w-9 h-6 bg-white/15 rounded blur-sm"></div>
+                
+                {/* Bordure intérieure brillante */}
+                <div className="absolute inset-2 border border-gray-500/40 rounded-xl"></div>
+                
+                {/* Contenu de l'écran - graphiques crypto */}
+                <div className="absolute inset-4 bg-black rounded-xl">
+                  {/* Lignes de crypto bleues */}
+                  <div className="w-full h-1.5 bg-blue-400 mt-3 rounded animate-pulse" style={{animationDelay: '0.2s'}}></div>
+                  <div className="w-4/5 h-1.5 bg-purple-400 mt-2 rounded animate-pulse" style={{animationDelay: '0.7s'}}></div>
+                  <div className="w-3/5 h-1.5 bg-cyan-400 mt-2 rounded animate-pulse" style={{animationDelay: '0.3s'}}></div>
+                  <div className="w-5/6 h-1.5 bg-pink-400 mt-2 rounded animate-pulse" style={{animationDelay: '0.9s'}}></div>
+                  
+                  {/* Indicateur de profit */}
+                  <div className="absolute bottom-2 left-2 text-blue-400 text-base animate-ping" style={{animationDelay: '0.1s'}}>₿ +127%</div>
+                </div>
+                
+                {/* Voyant de fonctionnement */}
+                <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-blue-400 rounded-full animate-ping" style={{animationDelay: '0.2s'}}></div>
+              </div>
+            </div>
+            
+            {/* Particules d'argent volantes style Discord - Plus grosses et lentes */}
+            <div className="absolute -top-8 left-12 text-green-400 text-3xl animate-bounce filter drop-shadow-lg" style={{animationDelay: '1s', animationDuration: '4s'}}>💎</div>
+            <div className="absolute -top-6 -left-10 text-yellow-400 text-3xl animate-bounce filter drop-shadow-lg" style={{animationDelay: '2s', animationDuration: '5s'}}>🚀</div>
+            <div className="absolute top-3 left-14 text-green-400 text-2xl animate-bounce filter drop-shadow-lg" style={{animationDelay: '3s', animationDuration: '4.5s'}}>💰</div>
+            <div className="absolute -top-4 right-8 text-blue-400 text-2xl animate-bounce filter drop-shadow-lg" style={{animationDelay: '1.5s', animationDuration: '3.5s'}}>📈</div>
+            <div className="absolute top-6 -right-6 text-purple-400 text-xl animate-bounce filter drop-shadow-lg" style={{animationDelay: '2.5s', animationDuration: '4s'}}>🎯</div>
+            
+            {/* Étincelles autour - Plus lentes */}
+            <div className="absolute top-0 right-4 w-2 h-2 bg-yellow-300 rounded-full animate-ping" style={{animationDelay: '2s', animationDuration: '3s'}}></div>
+            <div className="absolute top-8 -left-2 w-2 h-2 bg-purple-300 rounded-full animate-ping" style={{animationDelay: '3s', animationDuration: '4s'}}></div>
+            <div className="absolute bottom-4 right-2 w-2 h-2 bg-blue-300 rounded-full animate-ping" style={{animationDelay: '1.5s', animationDuration: '3.5s'}}></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-20 px-6 mt-0">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+            {/* Logo et sélecteur de langue - comme Discord */}
+            <div className="md:col-span-1">
+              {/* Logo TT stylisé */}
+              <div className="w-16 h-16 mb-6">
+                <div className="w-full h-full bg-white rounded-2xl flex items-center justify-center">
+                  <span className="text-purple-900 text-2xl font-bold">TT</span>
+                </div>
+              </div>
+              
+              {/* Sélecteur de langue */}
+              <div className="mb-8">
+                <label className="block text-gray-300 text-sm mb-2">Language</label>
+                <select className="bg-gray-800 text-white border border-gray-600 rounded px-3 py-2 w-full focus:outline-none focus:border-purple-500">
+                  <option>Français</option>
+                  <option>English</option>
+                  <option>Español</option>
+                </select>
+              </div>
+
+              {/* Réseaux sociaux */}
+              <div className="flex space-x-4">
+                <div className="w-6 h-6 text-gray-300 hover:text-white cursor-pointer transition-colors">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/></svg>
+                </div>
+                <div className="w-6 h-6 text-gray-300 hover:text-white cursor-pointer transition-colors">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.74.099.12.112.225.085.347-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.748-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001.012.001z"/></svg>
+                </div>
+                <div className="w-6 h-6 text-gray-300 hover:text-white cursor-pointer transition-colors">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+                </div>
+                <div className="w-6 h-6 text-gray-300 hover:text-white cursor-pointer transition-colors">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </div>
+                <div className="w-6 h-6 text-gray-300 hover:text-white cursor-pointer transition-colors">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Colonnes de liens - style Discord */}
+            {/* Produit */}
+            <div>
+              <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Produit</h4>
+              <div className="space-y-3">
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Signaux</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Analytics</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Formation</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">App Directory</a>
+              </div>
+            </div>
+
+            {/* Company */}
+            <div>
+              <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Company</h4>
+              <div className="space-y-3">
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">About</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Jobs</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Brand</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Newsroom</a>
+              </div>
+            </div>
+
+            {/* Resources */}
+            <div>
+              <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Resources</h4>
+              <div className="space-y-3">
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">College</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Support</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Safety</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Blog</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Feedback</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">StreamKit</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Creators</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Community</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Official 3rd Party Merch</a>
+              </div>
+            </div>
+
+            {/* Policies */}
+            <div>
+              <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Policies</h4>
+              <div className="space-y-3">
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Terms</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Privacy</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Cookie Settings</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Guidelines</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Acknowledgements</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Licenses</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Company Information</a>
+              </div>
+            </div>
+          </div>
+
+          {/* Ligne de séparation et nom du site */}
+          <div className="border-t border-purple-700/50 mt-16 pt-8">
+            <div className="text-center">
+              <h1 className="text-6xl md:text-8xl font-bold text-white tracking-tight">
+                TheTheTrader
+              </h1>
             </div>
           </div>
         </div>
