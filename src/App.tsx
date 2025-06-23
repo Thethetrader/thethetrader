@@ -16,7 +16,7 @@ const App = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [visibleMessages, setVisibleMessages] = useState(0);
+  // Animation supprimée - problème de clignotement
   const [activeChannel, setActiveChannel] = useState('crypto-signaux');
   const [showCalendar, setShowCalendar] = useState(false);
   
@@ -217,33 +217,7 @@ const App = () => {
 
   const currentMessages = channelData[activeChannel]?.messages || [];
 
-  // Animation progressive des messages - UNE SEULE FOIS
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    
-    const initialDelay = setTimeout(() => {
-      timer = setInterval(() => {
-        setVisibleMessages(prev => {
-          if (prev < currentMessages.length) {
-            return prev + 1;
-          } else {
-            // STOP! Plus de boucle infinie
-            clearInterval(timer);
-            return prev;
-          }
-        });
-      }, 400);
-    }, 100);
-
-    return () => {
-      clearTimeout(initialDelay);
-      if (timer) clearInterval(timer);
-    };
-  }, [currentMessages.length]);
-
-  useEffect(() => {
-    setVisibleMessages(0);
-  }, [activeChannel]);
+  // Animation supprimée pour éviter le clignotement
 
   const handleLogin = () => {
     if (email && password) {
@@ -437,7 +411,7 @@ const App = () => {
                 {/* Zone des messages/signaux */}
                 <div className="flex-1 flex flex-col p-4 bg-gray-900">
                   <div className="space-y-4 mb-4 flex-1 overflow-y-auto pr-2">
-                    {currentMessages.slice(0, visibleMessages).map((message: any, index: number) => (
+                    {currentMessages.map((message: any, index: number) => (
                       <div 
                         key={message.id}
                         className={`bg-gray-800 rounded-lg ${
@@ -594,9 +568,11 @@ const App = () => {
                                 </div>
                                 <div className="h-32 rounded border border-gray-600 bg-gray-800 p-4 flex items-center justify-center">
                                   {/* Ta vraie capture TradingView */}
-                                  <div className="bg-blue-500 text-white p-4 rounded">
-                                    IMAGE TEST - PAS DE CLIGNOTEMENT
-                                  </div>
+                                  <img 
+                                    src="/images/tradingview-chart.png"
+                                    alt="TradingView Chart BTCUSD"
+                                    className="max-h-full w-auto object-contain"
+                                  />
                                 </div>
                                 <div className="text-xs text-gray-400 mt-2 text-center">
                                   📈 Analyse technique confirmée • Cassure de résistance
