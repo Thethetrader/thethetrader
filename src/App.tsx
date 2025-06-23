@@ -3,7 +3,7 @@ import './index.css';
 import TradingPlatformShell from './components/generated/TradingPlatformShell';
 import TradingCalendar from './components/TradingCalendar';
 
-// Deployment timestamp: 2025-01-13 04:15:00
+// FORCE DEPLOYMENT: 2025-01-13 04:25:00 - FIX OLD CONTENT
 
 // Types
 interface User {
