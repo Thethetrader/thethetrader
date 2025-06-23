@@ -217,7 +217,7 @@ const App = () => {
 
   const currentMessages = channelData[activeChannel]?.messages || [];
 
-  // Animation progressive des messages 
+  // Animation progressive des messages - UNE SEULE FOIS
   useEffect(() => {
     let timer: NodeJS.Timeout;
     
@@ -227,7 +227,8 @@ const App = () => {
           if (prev < currentMessages.length) {
             return prev + 1;
           } else {
-            setTimeout(() => setVisibleMessages(0), 1000);
+            // STOP! Plus de boucle infinie
+            clearInterval(timer);
             return prev;
           }
         });
