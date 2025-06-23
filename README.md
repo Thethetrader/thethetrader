@@ -105,3 +105,9 @@ export default tseslint.config({
 • **Add user authentication** - Multiple trader profiles and data separation
 • **Implement real-time features** - WebSocket connections for live signal updates
 • **Add trading journal** - Detailed trade notes, screenshots, analysis storage
+
+# TheTheTrader Platform
+
+Plateforme de trading avec signaux en temps réel.
+
+Last update: 2025-01-28
