@@ -594,12 +594,9 @@ const App = () => {
                                 </div>
                                 <div className="h-32 rounded border border-gray-600 bg-gray-800 p-4 flex items-center justify-center">
                                   {/* Ta vraie capture TradingView */}
-                                  <img 
-                                    src="/images/tradingview-chart.png"
-                                    alt="TradingView Chart BTCUSD"
-                                    className="max-h-full w-auto object-contain opacity-100"
-                                    style={{ animation: 'none' }}
-                                  />
+                                  <div className="bg-blue-500 text-white p-4 rounded">
+                                    IMAGE TEST - PAS DE CLIGNOTEMENT
+                                  </div>
                                 </div>
                                 <div className="text-xs text-gray-400 mt-2 text-center">
                                   📈 Analyse technique confirmée • Cassure de résistance
