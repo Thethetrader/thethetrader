@@ -38,19 +38,19 @@ export default function TradingPlatformShell() {
               </h3>
               <div className="space-y-1">
                 <button 
-                  onClick={() => {setSelectedChannel({id: 'crypto-signaux', name: 'crypto-signaux'}); setView('signals')}}
+                  onClick={() => {setSelectedChannel({id: 'crypto-signaux', name: 'crypto-signaux'}); setView('signals');}}
                   className={`w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2 ${selectedChannel.id === 'crypto-signaux' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
                 >
                   # crypto-signaux
                 </button>
                 <button 
-                  onClick={() => {setSelectedChannel({id: 'forex-signaux', name: 'forex-signaux'}); setView('signals')}}
+                  onClick={() => {setSelectedChannel({id: 'forex-signaux', name: 'forex-signaux'}); setView('signals');}}
                   className={`w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2 ${selectedChannel.id === 'forex-signaux' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
                 >
                   # forex-signaux
                 </button>
                 <button 
-                  onClick={() => {setSelectedChannel({id: 'futures-signaux', name: 'futures-signaux'}); setView('signals')}}
+                  onClick={() => {setSelectedChannel({id: 'futures-signaux', name: 'futures-signaux'}); setView('signals');}}
                   className={`w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2 ${selectedChannel.id === 'futures-signaux' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
                 >
                   # futures-signaux
@@ -65,7 +65,7 @@ export default function TradingPlatformShell() {
               </h3>
               <div className="space-y-1">
                 <button 
-                  onClick={() => {setSelectedChannel({id: 'formation', name: 'formation'}); setView('signals')}}
+                  onClick={() => {setSelectedChannel({id: 'formation', name: 'formation'}); setView('signals');}}
                   className={`w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2 ${selectedChannel.id === 'formation' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
                 >
                   # formation
@@ -407,4 +407,4 @@ export default function TradingPlatformShell() {
       </div>
     </div>
   );
-}
+} 
