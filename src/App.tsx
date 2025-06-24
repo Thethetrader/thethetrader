@@ -329,9 +329,9 @@ const App = () => {
                 <div className="w-full sm:w-60 bg-gray-800 p-3 sm:p-4 border-b sm:border-b-0 sm:border-r border-gray-700 sm:h-full overflow-x-auto sm:overflow-x-visible">
                   
                   {/* Mobile: Horizontal tabs - Plus gros et tactiles */}
-                  <div className="sm:hidden flex gap-1 mb-3 overflow-x-auto">
+                  <div className="sm:hidden flex gap-4 mb-4 overflow-x-auto">
                     <div 
-                      className={`px-3 py-2 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-fit ${
+                      className={`px-8 py-5 rounded-xl cursor-pointer transition-colors whitespace-nowrap text-lg font-bold min-w-fit shadow-lg ${
                         activeChannel === 'crypto-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('crypto-signaux')}
@@ -339,7 +339,7 @@ const App = () => {
                       🪙 Crypto
                     </div>
                     <div 
-                      className={`px-3 py-2 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-fit ${
+                      className={`px-8 py-5 rounded-xl cursor-pointer transition-colors whitespace-nowrap text-lg font-bold min-w-fit shadow-lg ${
                         activeChannel === 'forex-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('forex-signaux')}
@@ -347,7 +347,7 @@ const App = () => {
                       💱 Forex
                     </div>
                     <div 
-                      className={`px-3 py-2 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-fit ${
+                      className={`px-8 py-5 rounded-xl cursor-pointer transition-colors whitespace-nowrap text-lg font-bold min-w-fit shadow-lg ${
                         activeChannel === 'futures-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('futures-signaux')}
@@ -355,7 +355,7 @@ const App = () => {
                       📈 Futures
                     </div>
                     <div 
-                      className={`px-3 py-2 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-fit ${
+                      className={`px-8 py-5 rounded-xl cursor-pointer transition-colors whitespace-nowrap text-lg font-bold min-w-fit shadow-lg ${
                         activeChannel === 'formation' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('formation')}
@@ -363,7 +363,7 @@ const App = () => {
                       🎓 Form
                     </div>
                     <div 
-                      className={`px-3 py-2 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-fit ${
+                      className={`px-8 py-5 rounded-xl cursor-pointer transition-colors whitespace-nowrap text-lg font-bold min-w-fit shadow-lg ${
                         activeChannel === 'calendrier' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('calendrier')}
