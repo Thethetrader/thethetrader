@@ -120,7 +120,7 @@ export default function TradingPlatformShell() {
 
         {/* Mobile Navigation Tabs */}
         <div className="md:hidden bg-gray-800 border-b border-gray-600 overflow-x-auto">
-          <div className="flex space-x-2 p-4 min-w-max">
+          <div className="flex space-x-4 p-6 min-w-max">
             {channels.map((channel) => (
               <button
                 key={channel.id}
@@ -132,10 +132,10 @@ export default function TradingPlatformShell() {
                     setView('signals');
                   }
                 }}
-                className={`px-6 py-4 rounded-lg text-base font-medium whitespace-nowrap ${
+                className={`px-8 py-6 rounded-xl text-lg font-bold whitespace-nowrap min-w-[120px] ${
                   (channel.id === 'calendrier' && view === 'calendar') || 
                   (channel.id === selectedChannel.id && view === 'signals')
-                    ? 'bg-blue-600 text-white' 
+                    ? 'bg-blue-600 text-white shadow-lg' 
                     : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }`}
               >
