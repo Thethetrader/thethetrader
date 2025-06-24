@@ -5,11 +5,11 @@ export default function TradingPlatformShell() {
   const [view, setView] = useState<'signals' | 'calendar'>('signals');
 
   const channels = [
+    { id: 'calendrier', name: '📅 Stats', emoji: '📅' },
     { id: 'crypto-signaux', name: '🪙 Crypto', emoji: '🪙' },
     { id: 'forex-signaux', name: '💱 Forex', emoji: '💱' },
     { id: 'futures-signaux', name: '📈 Futures', emoji: '📈' },
-    { id: 'formation', name: '🎓 Formation', emoji: '🎓' },
-    { id: 'calendrier', name: '📅 Stats', emoji: '📅' }
+    { id: 'formation', name: '🎓 Formation', emoji: '🎓' }
   ];
 
   return (
@@ -80,6 +80,27 @@ export default function TradingPlatformShell() {
               <button key={channel.id} onClick={() => { if (channel.id === 'calendrier') { setView('calendar'); } else { setSelectedChannel({id: channel.id, name: channel.id}); setView('signals'); } }} className={`px-4 py-3 rounded-lg text-sm font-medium whitespace-nowrap min-w-fit ${ (channel.id === 'calendrier' && view === 'calendar') || (channel.id === selectedChannel.id && view === 'signals') ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600' }`}>{channel.name}</button>
             ))}
           </div>
+          
+          {/* Fils de discussion sous les boutons */}
+          <div className="px-4 pb-4">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-xs text-gray-400">
+                <span className="text-green-400">●</span>
+                <span># signal-du-jour</span>
+                <span className="text-gray-500">3 nouveaux</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-gray-400">
+                <span className="text-orange-400">●</span>
+                <span># analyse-technique</span>
+                <span className="text-gray-500">1 nouveau</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-gray-400">
+                <span className="text-blue-400">●</span>
+                <span># discussion-générale</span>
+                <span className="text-gray-500">12 nouveaux</span>
+              </div>
+            </div>
+          </div>
         </div>
         
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
@@ -91,7 +112,7 @@ export default function TradingPlatformShell() {
               </div>
             </div>
           ) : (
-            <div className="space-y-4 max-w-4xl mx-auto">
+            <div className="space-y-4 w-full">
               <div className="md:hidden bg-gray-700 rounded-lg p-4 mb-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center">
