@@ -74,7 +74,7 @@ export default function TradingPlatformShell() {
           {view === 'signals' && <button className="bg-blue-600 hover:bg-blue-700 px-3 py-2 md:px-4 rounded text-xs md:text-sm">+ Signal</button>}
         </div>
 
-        <div className="md:hidden bg-gray-800 border-b border-gray-600 overflow-x-auto" style={{backgroundColor: '#ff0000', minHeight: '100px'}}>
+        <div className="md:hidden bg-gray-800 border-b border-gray-600 overflow-x-auto" style={{minHeight: '100px'}}>
           <div className="flex space-x-4 p-8 min-w-max">
             {channels.map((channel) => (
               <button key={channel.id} onClick={() => { if (channel.id === 'calendrier') { setView('calendar'); } else { setSelectedChannel({id: channel.id, name: channel.id}); setView('signals'); } }} className={`px-12 py-8 rounded-xl text-2xl font-black whitespace-nowrap min-w-[150px] border-4 border-white ${ (channel.id === 'calendrier' && view === 'calendar') || (channel.id === selectedChannel.id && view === 'signals') ? 'bg-blue-600 text-white shadow-lg' : 'bg-gray-700 text-gray-300 hover:bg-gray-600' }`}>{channel.name}</button>
