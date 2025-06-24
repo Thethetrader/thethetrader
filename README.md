@@ -111,3 +111,7 @@ export default tseslint.config({
 Plateforme de trading avec signaux en temps réel.
 
 Last update: 2025-01-28
+
+# TheTheTrader
+
+<!-- Rebuild trigger: deployment fix -->
