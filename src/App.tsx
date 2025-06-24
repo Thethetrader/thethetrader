@@ -328,10 +328,10 @@ const App = () => {
                 {/* Sidebar - Mobile: Horizontal scroll, Desktop: Vertical */}
                 <div className="w-full sm:w-60 bg-gray-800 p-3 sm:p-4 border-b sm:border-b-0 sm:border-r border-gray-700 sm:h-full overflow-x-auto sm:overflow-x-visible">
                   
-                  {/* Mobile: Horizontal tabs - Plus gros et tactiles */}
-                  <div className="sm:hidden flex gap-4 mb-4 overflow-x-auto">
+                  {/* Mobile: Horizontal tabs - ÉNORMES et tactiles */}
+                  <div className="sm:hidden flex gap-6 mb-6 overflow-x-auto p-2">
                     <div 
-                      className={`px-8 py-5 rounded-xl cursor-pointer transition-colors whitespace-nowrap text-lg font-bold min-w-fit shadow-lg ${
+                      className={`px-12 py-8 rounded-2xl cursor-pointer transition-colors whitespace-nowrap text-xl font-black min-w-fit shadow-2xl transform hover:scale-105 ${
                         activeChannel === 'crypto-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('crypto-signaux')}
@@ -339,7 +339,7 @@ const App = () => {
                       🪙 Crypto
                     </div>
                     <div 
-                      className={`px-8 py-5 rounded-xl cursor-pointer transition-colors whitespace-nowrap text-lg font-bold min-w-fit shadow-lg ${
+                      className={`px-12 py-8 rounded-2xl cursor-pointer transition-colors whitespace-nowrap text-xl font-black min-w-fit shadow-2xl transform hover:scale-105 ${
                         activeChannel === 'forex-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('forex-signaux')}
@@ -347,7 +347,7 @@ const App = () => {
                       💱 Forex
                     </div>
                     <div 
-                      className={`px-8 py-5 rounded-xl cursor-pointer transition-colors whitespace-nowrap text-lg font-bold min-w-fit shadow-lg ${
+                      className={`px-12 py-8 rounded-2xl cursor-pointer transition-colors whitespace-nowrap text-xl font-black min-w-fit shadow-2xl transform hover:scale-105 ${
                         activeChannel === 'futures-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('futures-signaux')}
@@ -355,7 +355,7 @@ const App = () => {
                       📈 Futures
                     </div>
                     <div 
-                      className={`px-8 py-5 rounded-xl cursor-pointer transition-colors whitespace-nowrap text-lg font-bold min-w-fit shadow-lg ${
+                      className={`px-12 py-8 rounded-2xl cursor-pointer transition-colors whitespace-nowrap text-xl font-black min-w-fit shadow-2xl transform hover:scale-105 ${
                         activeChannel === 'formation' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('formation')}
@@ -363,7 +363,7 @@ const App = () => {
                       🎓 Form
                     </div>
                     <div 
-                      className={`px-8 py-5 rounded-xl cursor-pointer transition-colors whitespace-nowrap text-lg font-bold min-w-fit shadow-lg ${
+                      className={`px-12 py-8 rounded-2xl cursor-pointer transition-colors whitespace-nowrap text-xl font-black min-w-fit shadow-2xl transform hover:scale-105 ${
                         activeChannel === 'calendrier' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('calendrier')}
