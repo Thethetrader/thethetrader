@@ -246,151 +246,202 @@ const App = () => {
   // Landing Page
   return (
     <div className="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen w-full">
-      {/* Header */}
-      <nav className="flex items-center justify-between p-6 relative z-50">
-        <div className="text-2xl font-bold text-white">
+      {/* Header - Mobile Optimized */}
+      <nav className="flex items-center justify-between p-4 sm:p-6 relative z-50">
+        <div className="text-xl sm:text-2xl font-bold text-white">
           TheTheTrader
         </div>
-                  <div className="hidden md:flex space-x-8">
-            <a href="#services" className="text-gray-300 hover:text-white transition-all duration-200">Services</a>
-            <a href="#about" className="text-gray-300 hover:text-white transition-all duration-200">À propos</a>
-            <a href="#contact" className="text-gray-300 hover:text-white transition-all duration-200">Contact</a>
-          </div>
+        <div className="hidden md:flex space-x-8">
+          <a href="#services" className="text-gray-300 hover:text-white transition-all duration-200">Services</a>
+          <a href="#about" className="text-gray-300 hover:text-white transition-all duration-200">À propos</a>
+          <a href="#contact" className="text-gray-300 hover:text-white transition-all duration-200">Contact</a>
+        </div>
         <button 
           onClick={() => setShowAuthModal(true)}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90"
+          className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold hover:opacity-90 text-sm sm:text-base"
         >
-          Se connecter
+          <span className="hidden sm:inline">Se connecter</span>
+          <span className="sm:hidden">Login</span>
         </button>
       </nav>
 
 
 
-      {/* Hero Section */}
-      <div className="text-center pt-20 pb-0 px-6">
-        <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+      {/* Hero Section - Mobile Optimized */}
+      <div className="text-center pt-10 sm:pt-20 pb-0 px-4 sm:px-6">
+        <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight">
           Smart Model,<br />
           <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             Smarter Signal
           </span>
         </h1>
-        <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+        <p className="text-base sm:text-xl text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto px-2">
           Un setup, des signaux expliqués, un journal de performance. Rejoins la communauté et trade en confiance.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-20">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 sm:mb-20 px-4">
           <button 
             onClick={() => setShowAuthModal(true)}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:opacity-90"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:opacity-90 w-full sm:w-auto"
           >
             Commencer maintenant
           </button>
-          <button className="border border-gray-400 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:opacity-80">
+          <button className="border border-gray-400 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:opacity-80 w-full sm:w-auto">
             Voir la démo
           </button>
         </div>
 
-        {/* Barre de défilement - 2x plus grosse sur toute la largeur */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 overflow-hidden relative mb-10">
+        {/* Barre de défilement - Mobile Optimized */}
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 sm:py-6 overflow-hidden relative mb-6 sm:mb-10">
           <div className="whitespace-nowrap animate-scroll">
-            <span className="text-4xl font-bold mx-16">EASY SETUP EASY TRADING</span>
-            <span className="text-4xl font-bold mx-16">EASY SETUP EASY TRADING</span>
-            <span className="text-4xl font-bold mx-16">EASY SETUP EASY TRADING</span>
-            <span className="text-4xl font-bold mx-16">EASY SETUP EASY TRADING</span>
-            <span className="text-4xl font-bold mx-16">EASY SETUP EASY TRADING</span>
-            <span className="text-4xl font-bold mx-16">EASY SETUP EASY TRADING</span>
-            <span className="text-4xl font-bold mx-16">EASY SETUP EASY TRADING</span>
-            <span className="text-4xl font-bold mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
           </div>
         </div>
 
-        {/* Aperçu de la plateforme */}
-        <div className="max-w-7xl mx-auto mb-10">
-          <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-600/50 backdrop-blur-sm">
+        {/* Aperçu de la plateforme - Mobile Optimized */}
+        <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-2 sm:px-4">
+          <div className="bg-gray-800/50 p-2 sm:p-6 rounded-xl border border-gray-600/50 backdrop-blur-sm">
             {/* Mockup de l'interface */}
             <div className="bg-gray-900 rounded-lg overflow-hidden shadow-2xl">
-              {/* Header du salon */}
-              <div className="bg-gray-800 p-4 flex items-center justify-between border-b border-gray-700">
-                <div className="flex items-center gap-3">
-                                      <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">TT</div>
-                  <span className="text-white font-semibold">TheTheTrader</span>
-                  <span className="text-gray-400 text-sm">En ligne</span>
+              {/* Header du salon - Mobile Optimized */}
+              <div className="bg-gray-800 p-2 sm:p-4 flex items-center justify-between border-b border-gray-700 flex-wrap sm:flex-nowrap gap-2">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm">TT</div>
+                  <span className="text-white font-semibold text-sm sm:text-base truncate">TheTheTrader</span>
+                  <span className="text-gray-400 text-xs sm:text-sm hidden sm:inline">En ligne</span>
                 </div>
-                <div className="text-blue-400 font-semibold">{channelData[activeChannel]?.title || '#crypto-signaux'}</div>
-                <div className="bg-blue-600 px-4 py-2 rounded text-white text-sm font-semibold hover:bg-blue-700 transition-colors duration-200 cursor-pointer">+ Nouveau Signal</div>
+                <div className="text-blue-400 font-semibold text-xs sm:text-base text-center flex-1 sm:flex-none">{channelData[activeChannel]?.title || '#crypto-signaux'}</div>
+                <div className="bg-blue-600 px-2 py-1 sm:px-4 sm:py-2 rounded text-white text-xs sm:text-sm font-semibold hover:bg-blue-700 transition-colors duration-200 cursor-pointer">
+                  <span className="hidden sm:inline">+ Nouveau Signal</span>
+                  <span className="sm:hidden">+</span>
+                </div>
               </div>
               
-              {/* Zone principale */}
-              <div className="flex h-[750px]">
-                {/* Sidebar */}
-                <div className="w-60 bg-gray-800 p-4 border-r border-gray-700">
-                  <div className="text-gray-400 text-xs font-semibold mb-3"># SALONS</div>
-                  <div className="space-y-2">
+              {/* Zone principale - Mobile Optimized */}
+              <div className="flex flex-col sm:flex-row h-[400px] sm:h-[750px]">
+                {/* Sidebar - Mobile: Horizontal scroll, Desktop: Vertical */}
+                <div className="w-full sm:w-60 bg-gray-800 p-2 sm:p-4 border-b sm:border-b-0 sm:border-r border-gray-700 sm:h-full overflow-x-auto sm:overflow-x-visible">
+                  
+                  {/* Mobile: Horizontal tabs */}
+                  <div className="sm:hidden flex gap-2 mb-2">
                     <div 
-                      className={`px-3 py-2 rounded cursor-pointer transition-colors ${
+                      className={`px-2 py-1 rounded cursor-pointer transition-colors whitespace-nowrap text-xs ${
                         activeChannel === 'crypto-signaux' ? 'text-white bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
                       }`}
                       onClick={() => setActiveChannel('crypto-signaux')}
                     >
-                      # crypto-signaux
+                      🪙 Crypto
                     </div>
                     <div 
-                      className={`px-3 py-2 rounded cursor-pointer transition-colors ${
+                      className={`px-2 py-1 rounded cursor-pointer transition-colors whitespace-nowrap text-xs ${
                         activeChannel === 'forex-signaux' ? 'text-white bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
                       }`}
                       onClick={() => setActiveChannel('forex-signaux')}
                     >
-                      # forex-signaux
+                      💱 Forex
                     </div>
                     <div 
-                      className={`px-3 py-2 rounded cursor-pointer transition-colors ${
+                      className={`px-2 py-1 rounded cursor-pointer transition-colors whitespace-nowrap text-xs ${
                         activeChannel === 'futures-signaux' ? 'text-white bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
                       }`}
                       onClick={() => setActiveChannel('futures-signaux')}
                     >
-                      # futures-signaux
+                      📈 Futures
                     </div>
-                  </div>
-                  
-                  <div className="text-gray-400 text-xs font-semibold mb-3 mt-6">EDUCATION</div>
-                  <div className="space-y-2">
                     <div 
-                      className={`px-3 py-2 rounded cursor-pointer transition-colors ${
+                      className={`px-2 py-1 rounded cursor-pointer transition-colors whitespace-nowrap text-xs ${
                         activeChannel === 'formation' ? 'text-white bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
                       }`}
                       onClick={() => setActiveChannel('formation')}
                     >
-                      # formation
+                      🎓 Formation
                     </div>
-                  </div>
-
-                  <div className="text-gray-400 text-xs font-semibold mb-3 mt-6">PERFORMANCE</div>
-                  <div className="space-y-2">
                     <div 
-                      className={`px-3 py-2 rounded cursor-pointer transition-colors ${
+                      className={`px-2 py-1 rounded cursor-pointer transition-colors whitespace-nowrap text-xs ${
                         activeChannel === 'calendrier' ? 'text-white bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
                       }`}
                       onClick={() => setActiveChannel('calendrier')}
                     >
-                      📅 calendrier
+                      📅 Stats
                     </div>
                   </div>
 
-                  
-                  <div className="bg-gray-700 p-3 rounded mt-6">
-                    <div className="text-white text-sm font-semibold mb-2">Statistiques</div>
-                    <div className="text-green-400 text-sm">Win Rate: 78%</div>
-                    <div className="text-blue-400 text-sm">Signaux actifs: 3</div>
+                  {/* Desktop: Vertical sidebar */}
+                  <div className="hidden sm:block">
+                    <div className="text-gray-400 text-xs font-semibold mb-3"># SALONS</div>
+                    <div className="space-y-2">
+                      <div 
+                        className={`px-3 py-2 rounded cursor-pointer transition-colors ${
+                          activeChannel === 'crypto-signaux' ? 'text-white bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+                        }`}
+                        onClick={() => setActiveChannel('crypto-signaux')}
+                      >
+                        # crypto-signaux
+                      </div>
+                      <div 
+                        className={`px-3 py-2 rounded cursor-pointer transition-colors ${
+                          activeChannel === 'forex-signaux' ? 'text-white bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+                        }`}
+                        onClick={() => setActiveChannel('forex-signaux')}
+                      >
+                        # forex-signaux
+                      </div>
+                      <div 
+                        className={`px-3 py-2 rounded cursor-pointer transition-colors ${
+                          activeChannel === 'futures-signaux' ? 'text-white bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+                        }`}
+                        onClick={() => setActiveChannel('futures-signaux')}
+                      >
+                        # futures-signaux
+                      </div>
+                    </div>
+                    
+                    <div className="text-gray-400 text-xs font-semibold mb-3 mt-6">EDUCATION</div>
+                    <div className="space-y-2">
+                      <div 
+                        className={`px-3 py-2 rounded cursor-pointer transition-colors ${
+                          activeChannel === 'formation' ? 'text-white bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+                        }`}
+                        onClick={() => setActiveChannel('formation')}
+                      >
+                        # formation
+                      </div>
+                    </div>
+
+                    <div className="text-gray-400 text-xs font-semibold mb-3 mt-6">PERFORMANCE</div>
+                    <div className="space-y-2">
+                      <div 
+                        className={`px-3 py-2 rounded cursor-pointer transition-colors ${
+                          activeChannel === 'calendrier' ? 'text-white bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+                        }`}
+                        onClick={() => setActiveChannel('calendrier')}
+                      >
+                        📅 calendrier
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-700 p-3 rounded mt-6">
+                      <div className="text-white text-sm font-semibold mb-2">Statistiques</div>
+                      <div className="text-green-400 text-sm">Win Rate: 78%</div>
+                      <div className="text-blue-400 text-sm">Signaux actifs: 3</div>
+                    </div>
                   </div>
                 </div>
                 
-                {/* Zone des messages/signaux */}
-                <div className="flex-1 flex flex-col p-4 bg-gray-900">
-                  <div className="space-y-4 mb-4 flex-1 overflow-y-auto pr-2">
+                {/* Zone des messages/signaux - Mobile Optimized */}
+                <div className="flex-1 flex flex-col p-2 sm:p-4 bg-gray-900">
+                  <div className="space-y-2 sm:space-y-4 mb-2 sm:mb-4 flex-1 overflow-y-auto pr-1 sm:pr-2">
                     {currentMessages.map((message: any, index: number) => (
                       <div 
                         key={message.id}
                         className={`bg-gray-800 rounded-lg transition-all duration-500 ${
-                          typeof message.content === 'string' ? 'p-3' : 'p-4'
+                          typeof message.content === 'string' ? 'p-2 sm:p-3' : 'p-2 sm:p-4'
                         } ${
                           index < visibleMessages 
                             ? 'opacity-100 transform translate-y-0' 
@@ -401,16 +452,16 @@ const App = () => {
                                     message.type === 'update' ? '4px solid #3b82f6' : '4px solid #6b7280'
                         }}
                       >
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white ${
+                        <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2 flex-wrap">
+                          <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-xs font-bold text-white ${
                             message.user === 'TheTheTrader' ? 'bg-blue-600' : 'bg-gray-600'
                           }`}>
                             {message.user.charAt(0)}
                           </div>
-                          <span className="text-white font-semibold text-sm">{message.user}</span>
+                          <span className="text-white font-semibold text-xs sm:text-sm truncate">{message.user}</span>
                           <span className="text-gray-400 text-xs">{message.time}</span>
                           {message.status && (
-                            <span className="bg-green-600 px-2 py-1 rounded text-xs text-white">
+                            <span className="bg-green-600 px-1 py-0.5 sm:px-2 sm:py-1 rounded text-xs text-white">
                               {message.status}
                             </span>
                           )}
@@ -604,13 +655,13 @@ const App = () => {
 
 
 
-      {/* Section Comparaison */}
-      <div className="pt-10 pb-20 px-6 max-w-7xl mx-auto">
-        <h2 className="text-4xl font-bold text-white text-center mb-16">
+      {/* Section Comparaison - Mobile Optimized */}
+      <div className="pt-8 sm:pt-10 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto">
+        <h2 className="text-2xl sm:text-4xl font-bold text-white text-center mb-8 sm:mb-16">
           Comparez notre approche <span className="text-blue-400">simplifiée</span>
         </h2>
         
-        <div className="grid md:grid-cols-3 gap-8 relative min-h-[500px]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 relative min-h-[300px] sm:min-h-[500px]">
           {/* Autres Plateformes */}
           <div className="bg-gray-800/50 p-8 rounded-xl border border-gray-700 transition-all duration-300 hover:bg-gray-800/70 hover:border-red-500/50 relative" style={{animation: 'slideInLeft 0.6s ease-out both'}}>
             <h3 className="text-2xl font-bold text-white mb-4">Autres Plateformes</h3>
@@ -714,54 +765,54 @@ const App = () => {
         </div>
       </div>
 
-      {/* Section Reviews Clients */}
-      <div className="py-20 px-6">
+      {/* Section Reviews Clients - Mobile Optimized */}
+      <div className="py-12 sm:py-20 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           {/* Témoignages */}
-          <div className="space-y-8 mb-16">
+          <div className="space-y-6 sm:space-y-8 mb-8 sm:mb-16">
             {/* Témoignage 1 */}
-            <div className="bg-gray-800/50 rounded-2xl p-8 border border-gray-700 shadow-xl">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-white font-bold">M</span>
+            <div className="bg-gray-800/50 rounded-2xl p-4 sm:p-8 border border-gray-700 shadow-xl">
+              <div className="flex items-start gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-white font-bold text-sm sm:text-base">M</span>
                 </div>
-                <div className="flex-1">
-                  <blockquote className="text-lg text-gray-200 mb-4 italic">
+                <div className="flex-1 min-w-0">
+                  <blockquote className="text-sm sm:text-lg text-gray-200 mb-3 sm:mb-4 italic">
                     "Setup ultra simple en 2 minutes, signaux clairs sans analyse compliquée. Enfin une plateforme qui me permet de trader sans me prendre la tête avec 1000 indicateurs."
                   </blockquote>
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 bg-blue-600 rounded flex items-center justify-center flex-shrink-0">
                       <span className="text-white text-xs">TT</span>
                     </div>
-                    <span className="text-gray-400 font-medium">— Marc Dubois, Trader Indépendant</span>
+                    <span className="text-gray-400 font-medium text-sm sm:text-base">— Marc Dubois, Trader Indépendant</span>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Témoignage 2 */}
-            <div className="bg-gray-800/30 rounded-2xl p-6 border border-gray-700">
-              <blockquote className="text-lg text-gray-200 mb-4 italic">
+            <div className="bg-gray-800/30 rounded-2xl p-4 sm:p-6 border border-gray-700">
+              <blockquote className="text-sm sm:text-lg text-gray-200 mb-3 sm:mb-4 italic">
                 "J'ai connecté mon courtier en 30 secondes. Pas de configuration complexe, juste des signaux simples à suivre. Mon trading n'a jamais été aussi zen et efficace."
               </blockquote>
-              <div className="flex items-center gap-3">
-                <div className="w-6 h-6 bg-green-600 rounded flex items-center justify-center">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-green-600 rounded flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-xs">€</span>
                 </div>
-                <span className="text-gray-400 font-medium">— Sophie Martin, Analyste Forex</span>
+                <span className="text-gray-400 font-medium text-sm sm:text-base">— Sophie Martin, Analyste Forex</span>
               </div>
             </div>
 
             {/* Témoignage 3 */}
-            <div className="bg-gray-800/30 rounded-2xl p-6 border border-gray-700">
-              <blockquote className="text-lg text-gray-200 mb-4 italic">
+            <div className="bg-gray-800/30 rounded-2xl p-4 sm:p-6 border border-gray-700">
+              <blockquote className="text-sm sm:text-lg text-gray-200 mb-3 sm:mb-4 italic">
                 "Fini les plateformes complexes avec 50 onglets. Ici tout est clair : un signal, une action, un résultat. Le trading redevient simple comme il devrait l'être."
               </blockquote>
-              <div className="flex items-center gap-3">
-                <div className="w-6 h-6 bg-purple-600 rounded flex items-center justify-center">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-purple-600 rounded flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-xs">₿</span>
                 </div>
-                <span className="text-gray-400 font-medium">— Alex Bourgeois, Trader Crypto</span>
+                <span className="text-gray-400 font-medium text-sm sm:text-base">— Alex Bourgeois, Trader Crypto</span>
               </div>
             </div>
           </div>
@@ -780,11 +831,11 @@ const App = () => {
         </div>
       </div>
 
-      {/* Petit bonhomme trader style Discord 3D */}
+      {/* Petit bonhomme trader style Discord 3D - Mobile Optimized */}
       <div className="relative -mb-1">
-        <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+        <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 scale-50 sm:scale-75 md:scale-100 origin-center">
           <div className="relative animate-pulse" style={{animationDuration: '3s'}}>
-            {/* Ombre du bonhomme assis - 1.5x plus grande */}
+            {/* Ombre du bonhomme assis - responsive */}
             <div className="absolute top-28 left-1/2 transform -translate-x-1/2 w-28 h-4 bg-black/20 rounded-full blur-sm"></div>
             
             {/* Corps principal style Discord - 1.5x plus gros */}
@@ -928,23 +979,23 @@ const App = () => {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-20 px-6 mt-0">
+      {/* Footer - Mobile Optimized */}
+      <footer className="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-12 sm:py-20 px-4 sm:px-6 mt-0">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 sm:gap-8">
             {/* Logo et sélecteur de langue - comme Discord */}
-            <div className="md:col-span-1">
+            <div className="col-span-2 sm:col-span-1 md:col-span-1">
               {/* Logo TT stylisé */}
-              <div className="w-16 h-16 mb-6">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 mb-4 sm:mb-6">
                 <div className="w-full h-full bg-white rounded-2xl flex items-center justify-center">
-                  <span className="text-purple-900 text-2xl font-bold">TT</span>
+                  <span className="text-purple-900 text-xl sm:text-2xl font-bold">TT</span>
                 </div>
               </div>
               
               {/* Sélecteur de langue */}
-              <div className="mb-8">
+              <div className="mb-6 sm:mb-8">
                 <label className="block text-gray-300 text-sm mb-2">Language</label>
-                <select className="bg-gray-800 text-white border border-gray-600 rounded px-3 py-2 w-full focus:outline-none focus:border-purple-500">
+                <select className="bg-gray-800 text-white border border-gray-600 rounded px-2 py-1 sm:px-3 sm:py-2 w-full text-sm focus:outline-none focus:border-purple-500">
                   <option>Français</option>
                   <option>English</option>
                   <option>Español</option>
