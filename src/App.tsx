@@ -329,46 +329,46 @@ const App = () => {
                 <div className="w-full sm:w-60 bg-gray-800 p-3 sm:p-4 border-b sm:border-b-0 sm:border-r border-gray-700 sm:h-full overflow-x-auto sm:overflow-x-visible">
                   
                   {/* Mobile: Horizontal tabs - Section plus haute pour voir tous les salons */}
-                  <div className="sm:hidden flex gap-6 mb-6 overflow-x-auto p-6 min-h-[120px]">
+                  <div className="sm:hidden flex gap-8 mb-8 overflow-x-auto p-8 min-h-[200px] bg-gray-800">
                     <div 
-                      className={`px-12 py-8 rounded-2xl cursor-pointer transition-colors whitespace-nowrap text-xl font-black min-w-fit shadow-2xl transform hover:scale-105 ${
-                        activeChannel === 'crypto-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                      className={`px-20 py-12 rounded-3xl cursor-pointer transition-colors whitespace-nowrap text-4xl font-black min-w-fit shadow-2xl transform hover:scale-105 border-8 border-blue-500 min-w-[250px] ${
+                        activeChannel === 'crypto-signaux' ? 'text-white bg-blue-600' : 'text-white bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('crypto-signaux')}
                     >
-                      🪙 Crypto
+                      🪙 CRYPTO
                     </div>
                     <div 
-                      className={`px-12 py-8 rounded-2xl cursor-pointer transition-colors whitespace-nowrap text-xl font-black min-w-fit shadow-2xl transform hover:scale-105 ${
-                        activeChannel === 'forex-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                      className={`px-20 py-12 rounded-3xl cursor-pointer transition-colors whitespace-nowrap text-4xl font-black min-w-fit shadow-2xl transform hover:scale-105 border-8 border-blue-500 min-w-[250px] ${
+                        activeChannel === 'forex-signaux' ? 'text-white bg-blue-600' : 'text-white bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('forex-signaux')}
                     >
-                      💱 Forex
+                      💱 FOREX
                     </div>
                     <div 
-                      className={`px-12 py-8 rounded-2xl cursor-pointer transition-colors whitespace-nowrap text-xl font-black min-w-fit shadow-2xl transform hover:scale-105 ${
-                        activeChannel === 'futures-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                      className={`px-20 py-12 rounded-3xl cursor-pointer transition-colors whitespace-nowrap text-4xl font-black min-w-fit shadow-2xl transform hover:scale-105 border-8 border-blue-500 min-w-[250px] ${
+                        activeChannel === 'futures-signaux' ? 'text-white bg-blue-600' : 'text-white bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('futures-signaux')}
                     >
-                      📈 Futures
+                      📈 FUTURES
                     </div>
                     <div 
-                      className={`px-12 py-8 rounded-2xl cursor-pointer transition-colors whitespace-nowrap text-xl font-black min-w-fit shadow-2xl transform hover:scale-105 ${
-                        activeChannel === 'formation' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                      className={`px-20 py-12 rounded-3xl cursor-pointer transition-colors whitespace-nowrap text-4xl font-black min-w-fit shadow-2xl transform hover:scale-105 border-8 border-blue-500 min-w-[250px] ${
+                        activeChannel === 'formation' ? 'text-white bg-blue-600' : 'text-white bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('formation')}
                     >
-                      🎓 Form
+                      🎓 FORMATION
                     </div>
                     <div 
-                      className={`px-12 py-8 rounded-2xl cursor-pointer transition-colors whitespace-nowrap text-xl font-black min-w-fit shadow-2xl transform hover:scale-105 ${
-                        activeChannel === 'calendrier' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                      className={`px-20 py-12 rounded-3xl cursor-pointer transition-colors whitespace-nowrap text-4xl font-black min-w-fit shadow-2xl transform hover:scale-105 border-8 border-blue-500 min-w-[250px] ${
+                        activeChannel === 'calendrier' ? 'text-white bg-blue-600' : 'text-white bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('calendrier')}
                     >
-                      📅 Stats
+                      📅 STATS
                     </div>
                   </div>
 
