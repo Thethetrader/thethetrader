@@ -324,47 +324,47 @@ const App = () => {
               </div>
               
               {/* Zone principale - Mobile Optimized */}
-              <div className="flex flex-col sm:flex-row h-[400px] sm:h-[750px]">
+              <div className="flex flex-col sm:flex-row h-[500px] sm:h-[750px]">
                 {/* Sidebar - Mobile: Horizontal scroll, Desktop: Vertical */}
-                <div className="w-full sm:w-60 bg-gray-800 p-2 sm:p-4 border-b sm:border-b-0 sm:border-r border-gray-700 sm:h-full overflow-x-auto sm:overflow-x-visible">
+                <div className="w-full sm:w-60 bg-gray-800 p-3 sm:p-4 border-b sm:border-b-0 sm:border-r border-gray-700 sm:h-full overflow-x-auto sm:overflow-x-visible">
                   
-                  {/* Mobile: Horizontal tabs */}
-                  <div className="sm:hidden flex gap-2 mb-2">
+                  {/* Mobile: Horizontal tabs - Plus gros et tactiles */}
+                  <div className="sm:hidden flex gap-1 mb-3 overflow-x-auto">
                     <div 
-                      className={`px-2 py-1 rounded cursor-pointer transition-colors whitespace-nowrap text-xs ${
-                        activeChannel === 'crypto-signaux' ? 'text-white bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+                      className={`px-3 py-2 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-fit ${
+                        activeChannel === 'crypto-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('crypto-signaux')}
                     >
                       🪙 Crypto
                     </div>
                     <div 
-                      className={`px-2 py-1 rounded cursor-pointer transition-colors whitespace-nowrap text-xs ${
-                        activeChannel === 'forex-signaux' ? 'text-white bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+                      className={`px-3 py-2 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-fit ${
+                        activeChannel === 'forex-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('forex-signaux')}
                     >
                       💱 Forex
                     </div>
                     <div 
-                      className={`px-2 py-1 rounded cursor-pointer transition-colors whitespace-nowrap text-xs ${
-                        activeChannel === 'futures-signaux' ? 'text-white bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+                      className={`px-3 py-2 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-fit ${
+                        activeChannel === 'futures-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('futures-signaux')}
                     >
                       📈 Futures
                     </div>
                     <div 
-                      className={`px-2 py-1 rounded cursor-pointer transition-colors whitespace-nowrap text-xs ${
-                        activeChannel === 'formation' ? 'text-white bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+                      className={`px-3 py-2 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-fit ${
+                        activeChannel === 'formation' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('formation')}
                     >
-                      🎓 Formation
+                      🎓 Form
                     </div>
                     <div 
-                      className={`px-2 py-1 rounded cursor-pointer transition-colors whitespace-nowrap text-xs ${
-                        activeChannel === 'calendrier' ? 'text-white bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+                      className={`px-3 py-2 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-fit ${
+                        activeChannel === 'calendrier' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('calendrier')}
                     >
@@ -432,16 +432,30 @@ const App = () => {
                       <div className="text-blue-400 text-sm">Signaux actifs: 3</div>
                     </div>
                   </div>
+
+                  {/* Mobile: Stats box en bas */}
+                  <div className="sm:hidden bg-gray-700 p-3 rounded-lg mt-3">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <div className="text-green-400 text-sm font-semibold">Win: 78%</div>
+                        <div className="text-blue-400 text-xs">3 actifs</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-white text-xs">Performance</div>
+                        <div className="text-yellow-400 text-sm font-semibold">+2,450€</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 
                 {/* Zone des messages/signaux - Mobile Optimized */}
-                <div className="flex-1 flex flex-col p-2 sm:p-4 bg-gray-900">
-                  <div className="space-y-2 sm:space-y-4 mb-2 sm:mb-4 flex-1 overflow-y-auto pr-1 sm:pr-2">
+                <div className="flex-1 flex flex-col p-3 sm:p-4 bg-gray-900">
+                  <div className="space-y-3 sm:space-y-4 mb-3 sm:mb-4 flex-1 overflow-y-auto pr-2 sm:pr-2">
                     {currentMessages.map((message: any, index: number) => (
                       <div 
                         key={message.id}
                         className={`bg-gray-800 rounded-lg transition-all duration-500 ${
-                          typeof message.content === 'string' ? 'p-2 sm:p-3' : 'p-2 sm:p-4'
+                          typeof message.content === 'string' ? 'p-3 sm:p-3' : 'p-3 sm:p-4'
                         } ${
                           index < visibleMessages 
                             ? 'opacity-100 transform translate-y-0' 
@@ -452,21 +466,21 @@ const App = () => {
                                     message.type === 'update' ? '4px solid #3b82f6' : '4px solid #6b7280'
                         }}
                       >
-                        <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2 flex-wrap">
-                          <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-xs font-bold text-white ${
+                        <div className="flex items-center gap-2 sm:gap-2 mb-2 sm:mb-2 flex-wrap">
+                          <div className={`w-6 h-6 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-xs font-bold text-white ${
                             message.user === 'TheTheTrader' ? 'bg-blue-600' : 'bg-gray-600'
                           }`}>
                             {message.user.charAt(0)}
                           </div>
-                          <span className="text-white font-semibold text-xs sm:text-sm truncate">{message.user}</span>
+                          <span className="text-white font-semibold text-sm sm:text-sm truncate">{message.user}</span>
                           <span className="text-gray-400 text-xs">{message.time}</span>
                           {message.status && (
-                            <span className="bg-green-600 px-1 py-0.5 sm:px-2 sm:py-1 rounded text-xs text-white">
+                            <span className="bg-green-600 px-2 py-1 sm:px-2 sm:py-1 rounded text-xs text-white">
                               {message.status}
                             </span>
                           )}
                         </div>
-                        <div className={`text-sm ${
+                        <div className={`text-sm sm:text-sm ${
                           message.type === 'signal' ? 'text-green-400 font-semibold' :
                           message.type === 'update' ? 'text-blue-400 font-semibold' :
                           message.type === 'calendar' ? 'text-purple-400 font-semibold' :
