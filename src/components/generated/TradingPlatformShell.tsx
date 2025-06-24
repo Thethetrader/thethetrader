@@ -20,8 +20,6 @@ export default function TradingPlatformShell() {
           </div>
         </div>
 
-
-
         {/* Sections */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-4 space-y-4">
@@ -101,134 +99,133 @@ export default function TradingPlatformShell() {
       </div>
 
       {/* Main Content */}
-              <div className="flex-1 flex flex-col">
-          <div className="h-16 bg-gray-700 border-b border-gray-600 flex items-center justify-between px-6">
-            <span className="text-lg font-semibold">
-              {view === 'calendar' ? '📅 Calendrier' : '#crypto-signaux'}
-            </span>
-            {view === 'signals' && (
-              <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm">
-                + Nouveau Signal
-              </button>
-            )}
-          </div>
-          
-          <div className="flex-1 overflow-y-auto p-6">
-            {view === 'calendar' ? (
-              // Vue Calendrier
-              <div className="h-full bg-[#1a1d23] p-8">
-                <div className="max-w-7xl mx-auto h-full">
-                  <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center gap-4">
-                      <button 
-                        onClick={() => setView('signals')}
-                        className="text-gray-400 hover:text-white"
-                      >
-                        ← Retour aux signaux
-                      </button>
-                      <h1 className="text-2xl font-bold">
-                        Trading <span className="text-gray-500">Calendar</span>
-                      </h1>
-                    </div>
+      <div className="flex-1 flex flex-col">
+        <div className="h-16 bg-gray-700 border-b border-gray-600 flex items-center justify-between px-6">
+          <span className="text-lg font-semibold">
+            {view === 'calendar' ? '📅 Calendrier' : '#crypto-signaux'}
+          </span>
+          {view === 'signals' && (
+            <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm">
+              + Nouveau Signal
+            </button>
+          )}
+        </div>
+        
+        <div className="flex-1 overflow-y-auto p-6">
+          {view === 'calendar' ? (
+            // Vue Calendrier
+            <div className="h-full bg-[#1a1d23] p-8">
+              <div className="max-w-7xl mx-auto h-full">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-4">
+                    <button 
+                      onClick={() => setView('signals')}
+                      className="text-gray-400 hover:text-white"
+                    >
+                      ← Retour aux signaux
+                    </button>
+                    <h1 className="text-2xl font-bold">
+                      Trading <span className="text-gray-500">Calendar</span>
+                    </h1>
                   </div>
+                </div>
 
-                  <div className="flex gap-8 h-full">
-                    <div className="flex-1">
-                      <div className="grid grid-cols-7 gap-4 mb-4">
-                        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                          <div key={day} className="text-center text-gray-400 font-medium py-2">
-                            {day}
-                          </div>
-                        ))}
-                      </div>
-
-                      <div className="grid grid-cols-7 gap-4">
-                        {Array.from({ length: 35 }, (_, i) => {
-                          const day = i - 6;
-                          const isCurrentMonth = day > 0 && day <= 30;
-                          const isToday = day === 12 && isCurrentMonth;
-                          
-                          // Performance simulée
-                          const hasPerformance = day === 10 || day === 12 || day === 15 || day === 18;
-                          let bgColor = 'bg-[#2a2d35]';
-                          
-                          if (hasPerformance && isCurrentMonth) {
-                            if (day === 10 || day === 15) bgColor = 'bg-green-500';
-                            else if (day === 12) bgColor = 'bg-yellow-500';
-                            else bgColor = 'bg-red-500';
-                          }
-                          
-                          let borderColor = 'border-transparent';
-                          if (isToday) {
-                            borderColor = 'border-blue-400';
-                          }
-
-                          return (
-                            <div
-                              key={i}
-                              className={`aspect-square rounded-lg ${bgColor} ${borderColor} border-2 p-3 cursor-pointer hover:opacity-80 transition-all flex flex-col ${
-                                !isCurrentMonth ? 'opacity-30' : ''
-                              }`}
-                            >
-                              <div className="text-white font-medium text-lg">
-                                {isCurrentMonth ? day : ''}
-                              </div>
-                              {hasPerformance && isCurrentMonth && (
-                                <div className="mt-auto">
-                                  <div className="text-white text-xs opacity-90">
-                                    {day === 10 ? '85% followed' : 
-                                     day === 12 ? '65% followed' : 
-                                     day === 15 ? '92% followed' : '45% followed'}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      <div className="flex items-center justify-center gap-6 mt-8">
-                        <div className="flex items-center gap-2">
-                          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                          <span className="text-gray-400 text-sm">Excellent</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <span className="text-gray-400 text-sm">Correct</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                          <span className="text-gray-400 text-sm">Difficile</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="w-64 space-y-4">
-                      <div className="text-right">
-                        <div className="flex items-center justify-end gap-2 text-gray-400 text-sm mb-4">
-                          <span className="w-2 h-2 bg-gray-500 rounded-full"></span>
-                          <span>Weekly</span>
-                        </div>
-                      </div>
-
-                      {[
-                        { trades: 3, ratio: '2/3', wl: '2/1' },
-                        { trades: 4, ratio: '3/4', wl: '1/1' },
-                        { trades: 0, ratio: '0/0', wl: '0/0' },
-                        { trades: 0, ratio: '0/0', wl: '0/0' }
-                      ].map((week, index) => (
-                        <div key={index} className={`rounded-lg p-4 ${week.trades > 0 ? 'bg-[#4a5568]' : 'bg-[#2a2d35]'}`}>
-                          <div className="text-white font-medium mb-1">{week.trades} trades</div>
-                          <div className="text-gray-400 text-sm mb-2">⚪ {week.ratio}</div>
-                          <div className="text-gray-400 text-sm">W/L: {week.wl}</div>
+                <div className="flex gap-8 h-full">
+                  <div className="flex-1">
+                    <div className="grid grid-cols-7 gap-4 mb-4">
+                      {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                        <div key={day} className="text-center text-gray-400 font-medium py-2">
+                          {day}
                         </div>
                       ))}
                     </div>
+
+                    <div className="grid grid-cols-7 gap-4">
+                      {Array.from({ length: 35 }, (_, i) => {
+                        const day = i - 6;
+                        const isCurrentMonth = day > 0 && day <= 30;
+                        const isToday = day === 12 && isCurrentMonth;
+                        
+                        const hasPerformance = day === 10 || day === 12 || day === 15 || day === 18;
+                        let bgColor = 'bg-[#2a2d35]';
+                        
+                        if (hasPerformance && isCurrentMonth) {
+                          if (day === 10 || day === 15) bgColor = 'bg-green-500';
+                          else if (day === 12) bgColor = 'bg-yellow-500';
+                          else bgColor = 'bg-red-500';
+                        }
+                        
+                        let borderColor = 'border-transparent';
+                        if (isToday) {
+                          borderColor = 'border-blue-400';
+                        }
+
+                        return (
+                          <div
+                            key={i}
+                            className={`aspect-square rounded-lg ${bgColor} ${borderColor} border-2 p-3 cursor-pointer hover:opacity-80 transition-all flex flex-col ${
+                              !isCurrentMonth ? 'opacity-30' : ''
+                            }`}
+                          >
+                            <div className="text-white font-medium text-lg">
+                              {isCurrentMonth ? day : ''}
+                            </div>
+                            {hasPerformance && isCurrentMonth && (
+                              <div className="mt-auto">
+                                <div className="text-white text-xs opacity-90">
+                                  {day === 10 ? '85% followed' : 
+                                   day === 12 ? '65% followed' : 
+                                   day === 15 ? '92% followed' : '45% followed'}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex items-center justify-center gap-6 mt-8">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                        <span className="text-gray-400 text-sm">Excellent</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                        <span className="text-gray-400 text-sm">Correct</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                        <span className="text-gray-400 text-sm">Difficile</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="w-64 space-y-4">
+                    <div className="text-right">
+                      <div className="flex items-center justify-end gap-2 text-gray-400 text-sm mb-4">
+                        <span className="w-2 h-2 bg-gray-500 rounded-full"></span>
+                        <span>Weekly</span>
+                      </div>
+                    </div>
+
+                    {[
+                      { trades: 3, ratio: '2/3', wl: '2/1' },
+                      { trades: 4, ratio: '3/4', wl: '1/1' },
+                      { trades: 0, ratio: '0/0', wl: '0/0' },
+                      { trades: 0, ratio: '0/0', wl: '0/0' }
+                    ].map((week, index) => (
+                      <div key={index} className={`rounded-lg p-4 ${week.trades > 0 ? 'bg-[#4a5568]' : 'bg-[#2a2d35]'}`}>
+                        <div className="text-white font-medium mb-1">{week.trades} trades</div>
+                        <div className="text-gray-400 text-sm mb-2">⚪ {week.ratio}</div>
+                        <div className="text-gray-400 text-sm">W/L: {week.wl}</div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
-            ) : (
-              // Vue Signaux
+            </div>
+          ) : (
+            // Vue Signaux
             <div className="space-y-4 max-w-4xl mx-auto">
               {/* Signal Example */}
               <div className="bg-gray-700 rounded-lg p-4">
@@ -346,12 +343,12 @@ export default function TradingPlatformShell() {
                       🚀 12
                     </button>
                   </div>
-                                 </div>
-               </div>
-               </div>
-             )}
-           </div>
-         </div>
-       </div>
-     );
-   }
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
