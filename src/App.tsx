@@ -229,10 +229,10 @@ const App = () => {
         {/* Ton salon complet */}
         <TradingPlatformShell />
         
-        {/* Petit logo déconnexion en bas à gauche */}
+        {/* Petit logo déconnexion en haut à droite */}
         <button 
           onClick={handleLogout}
-          className="fixed bottom-4 left-4 bg-red-600 text-white p-2 rounded-full hover:bg-red-700 transition-all duration-200 shadow-lg z-50"
+          className="fixed top-4 right-4 md:bg-red-600 bg-gray-800 text-white p-2 rounded-full md:hover:bg-red-700 hover:bg-gray-700 transition-all duration-200 shadow-lg z-50"
           title="Retour accueil"
         >
           🏠
@@ -310,28 +310,30 @@ const App = () => {
             {/* Mockup de l'interface */}
             <div className="bg-gray-900 rounded-lg overflow-hidden shadow-2xl">
               {/* Header du salon - Mobile Optimized */}
-              <div className="bg-gray-800 p-2 sm:p-4 flex items-center justify-between border-b border-gray-700 flex-wrap sm:flex-nowrap gap-2">
-                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm">TT</div>
-                  <span className="text-white font-semibold text-sm sm:text-base truncate">TheTheTrader</span>
-                  <span className="text-gray-400 text-xs sm:text-sm hidden sm:inline">En ligne</span>
+              <div className="bg-gray-800 p-3 sm:p-4 flex items-center justify-between border-b border-gray-700">
+                <div className="flex items-center gap-3 sm:gap-3 min-w-0">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm">TT</div>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                    <span className="text-white font-semibold text-sm sm:text-base">TheTheTrader</span>
+                    <span className="text-gray-400 text-xs sm:text-sm hidden sm:inline">En ligne</span>
+                  </div>
                 </div>
-                <div className="text-blue-400 font-semibold text-xs sm:text-base text-center flex-1 sm:flex-none">{channelData[activeChannel]?.title || '#crypto-signaux'}</div>
-                <div className="bg-blue-600 px-2 py-1 sm:px-4 sm:py-2 rounded text-white text-xs sm:text-sm font-semibold hover:bg-blue-700 transition-colors duration-200 cursor-pointer">
+                <div className="text-blue-400 font-semibold text-sm sm:text-base text-center">{channelData[activeChannel]?.title || '#crypto-signaux'}</div>
+                <div className="bg-blue-600 px-3 py-2 sm:px-4 sm:py-2 rounded text-white text-xs sm:text-sm font-semibold hover:bg-blue-700 transition-colors duration-200 cursor-pointer">
                   <span className="hidden sm:inline">+ Nouveau Signal</span>
                   <span className="sm:hidden">+</span>
                 </div>
               </div>
               
               {/* Zone principale - Mobile Optimized */}
-              <div className="flex flex-col sm:flex-row h-[500px] sm:h-[750px]">
+              <div className="flex flex-col sm:flex-row h-[1050px] sm:h-[750px]">
                 {/* Sidebar - Mobile: Horizontal scroll, Desktop: Vertical */}
                 <div className="w-full sm:w-60 bg-gray-800 p-3 sm:p-4 border-b sm:border-b-0 sm:border-r border-gray-700 sm:h-full overflow-x-auto sm:overflow-x-visible">
                   
                   {/* Mobile: Horizontal tabs - Section plus haute pour voir tous les salons */}
-                  <div className="sm:hidden flex gap-2 mb-4 overflow-x-auto p-4">
+                  <div className="sm:hidden flex gap-3 mb-4 overflow-x-auto pl-2 pr-4 pt-4 pb-6">
                     <div 
-                      className={`px-3 py-2 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium ${
+                      className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[100px] ${
                         activeChannel === 'crypto-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('crypto-signaux')}
@@ -339,7 +341,7 @@ const App = () => {
                       🪙 Crypto
                     </div>
                     <div 
-                      className={`px-3 py-2 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium ${
+                      className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[90px] ${
                         activeChannel === 'forex-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('forex-signaux')}
@@ -347,7 +349,7 @@ const App = () => {
                       💱 Forex
                     </div>
                     <div 
-                      className={`px-3 py-2 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium ${
+                      className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[100px] ${
                         activeChannel === 'futures-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('futures-signaux')}
@@ -355,7 +357,7 @@ const App = () => {
                       📈 Futures
                     </div>
                     <div 
-                      className={`px-3 py-2 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium ${
+                      className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[110px] ${
                         activeChannel === 'formation' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('formation')}
@@ -363,7 +365,7 @@ const App = () => {
                       🎓 Formation
                     </div>
                     <div 
-                      className={`px-3 py-2 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium ${
+                      className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[90px] ${
                         activeChannel === 'calendrier' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                       }`}
                       onClick={() => setActiveChannel('calendrier')}
