@@ -674,9 +674,10 @@ const App = () => {
           Comparez notre approche <span className="text-blue-400">simplifiée</span>
         </h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 relative min-h-[300px] sm:min-h-[500px]">
+        {/* Mobile: Scroll horizontal, Desktop: Grid */}
+        <div className="flex overflow-x-auto md:grid md:grid-cols-3 gap-6 sm:gap-8 relative min-h-[300px] sm:min-h-[500px] pb-4">
           {/* Autres Plateformes */}
-          <div className="bg-gray-800/50 p-8 rounded-xl border border-gray-700 transition-all duration-300 hover:bg-gray-800/70 hover:border-red-500/50 relative" style={{animation: 'slideInLeft 0.6s ease-out both'}}>
+          <div className="bg-gray-800/50 p-8 rounded-xl border border-gray-700 transition-all duration-300 hover:bg-gray-800/70 hover:border-red-500/50 relative min-w-[280px] md:min-w-0 flex-shrink-0 shadow-2xl shadow-red-500/20 hover:shadow-red-500/40" style={{animation: 'slideInLeft 0.6s ease-out both'}}>
             <h3 className="text-2xl font-bold text-white mb-4">Autres Plateformes</h3>
             <p className="text-red-400 text-xl font-bold mb-6">≈ € cher et complexe</p>
             <div className="space-y-4">
@@ -704,7 +705,7 @@ const App = () => {
           </div>
 
           {/* TheTheTrader - Recommandé */}
-          <div className="bg-gradient-to-br from-blue-600/20 to-purple-600/20 p-8 rounded-xl border-2 border-blue-500 relative shadow-2xl shadow-blue-500/30 hover:shadow-blue-500 transition-shadow duration-300" style={{animation: 'slideInUp 0.6s ease-out 0.2s both'}}>
+          <div className="bg-gradient-to-br from-blue-600/20 to-purple-600/20 p-8 rounded-xl border-2 border-blue-500 relative shadow-2xl shadow-blue-500/30 hover:shadow-blue-500 transition-shadow duration-300 min-w-[280px] md:min-w-0 flex-shrink-0" style={{animation: 'slideInUp 0.6s ease-out 0.2s both'}}>
             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
               <span className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-bold">RECOMMANDÉ</span>
             </div>
@@ -749,7 +750,7 @@ const App = () => {
           </div>
 
           {/* Trading Manuel */}
-          <div className="bg-gray-800/50 p-8 rounded-xl border border-gray-700 transition-all duration-300 hover:bg-gray-800/70 hover:border-yellow-500/50 relative" style={{animation: 'slideInRight 0.6s ease-out 0.4s both'}}>
+          <div className="bg-gray-800/50 p-8 rounded-xl border border-gray-700 transition-all duration-300 hover:bg-gray-800/70 hover:border-yellow-500/50 relative min-w-[280px] md:min-w-0 flex-shrink-0 shadow-2xl shadow-yellow-500/20 hover:shadow-yellow-500/40" style={{animation: 'slideInRight 0.6s ease-out 0.4s both'}}>
             <h3 className="text-2xl font-bold text-white mb-4">Trading Manuel</h3>
             <p className="text-gray-400 text-xl font-bold mb-6">Gratuit mais limité</p>
             <div className="space-y-4">
@@ -786,7 +787,7 @@ const App = () => {
             {/* Témoignage 1 */}
             <div className="bg-gray-800/50 rounded-2xl p-4 sm:p-8 border border-gray-700 shadow-xl">
               <div className="flex items-start gap-3 sm:gap-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="hidden sm:flex w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full items-center justify-center flex-shrink-0">
                   <span className="text-white font-bold text-sm sm:text-base">M</span>
                 </div>
                 <div className="flex-1 min-w-0">
@@ -1017,7 +1018,7 @@ const App = () => {
               {/* Réseaux sociaux */}
               <div className="flex space-x-4">
                 <div className="w-6 h-6 text-gray-300 hover:text-white cursor-pointer transition-colors">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.798-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/></svg>
                 </div>
                 <div className="w-6 h-6 text-gray-300 hover:text-white cursor-pointer transition-colors">
                   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
