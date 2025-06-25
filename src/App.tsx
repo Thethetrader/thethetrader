@@ -675,7 +675,7 @@ const App = () => {
         </h2>
         
         {/* Mobile: Scroll horizontal, Desktop: Grid */}
-        <div className="flex overflow-x-auto md:grid md:grid-cols-3 gap-6 sm:gap-8 relative min-h-[300px] sm:min-h-[500px] pb-4">
+        <div className="flex overflow-x-auto md:grid md:grid-cols-3 gap-6 sm:gap-8 relative min-h-[300px] sm:min-h-[500px] pb-4 pt-8">
           {/* Autres Plateformes */}
           <div className="bg-gray-800/50 p-8 rounded-xl border border-gray-700 transition-all duration-300 hover:bg-gray-800/70 hover:border-red-500/50 relative min-w-[280px] md:min-w-0 flex-shrink-0 shadow-2xl shadow-red-500/20 hover:shadow-red-500/40" style={{animation: 'slideInLeft 0.6s ease-out both'}}>
             <h3 className="text-2xl font-bold text-white mb-4">Autres Plateformes</h3>
