@@ -995,8 +995,8 @@ const App = () => {
       {/* Footer - Mobile Optimized */}
       <footer className="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-12 sm:py-20 px-4 sm:px-6 mt-0">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 sm:gap-8">
-            {/* Logo et sélecteur de langue - comme Discord */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 sm:gap-8">
+            {/* Logo et sélecteur de langue */}
             <div className="col-span-2 sm:col-span-1 md:col-span-1">
               {/* Logo TT stylisé */}
               <div className="w-12 h-12 sm:w-16 sm:h-16 mb-4 sm:mb-6">
@@ -1011,7 +1011,6 @@ const App = () => {
                 <select className="bg-gray-800 text-white border border-gray-600 rounded px-2 py-1 sm:px-3 sm:py-2 w-full text-sm focus:outline-none focus:border-purple-500">
                   <option>Français</option>
                   <option>English</option>
-                  <option>Español</option>
                 </select>
               </div>
 
@@ -1021,70 +1020,46 @@ const App = () => {
                   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/></svg>
                 </div>
                 <div className="w-6 h-6 text-gray-300 hover:text-white cursor-pointer transition-colors">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.74.099.12.112.225.085.347-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.748-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001.012.001z"/></svg>
-                </div>
-                <div className="w-6 h-6 text-gray-300 hover:text-white cursor-pointer transition-colors">
                   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
                 </div>
                 <div className="w-6 h-6 text-gray-300 hover:text-white cursor-pointer transition-colors">
                   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                 </div>
-                <div className="w-6 h-6 text-gray-300 hover:text-white cursor-pointer transition-colors">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
-                </div>
               </div>
             </div>
 
-            {/* Colonnes de liens - style Discord */}
-            {/* Produit */}
+            {/* Trading */}
             <div>
-              <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Produit</h4>
+              <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Trading</h4>
               <div className="space-y-3">
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Signaux</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Signaux Crypto</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Signaux Forex</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Futures</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Calendrier</a>
                 <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Analytics</a>
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Formation</a>
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">App Directory</a>
               </div>
             </div>
 
-            {/* Company */}
+            {/* Formation */}
             <div>
-              <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Company</h4>
+              <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Formation</h4>
               <div className="space-y-3">
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">About</a>
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Jobs</a>
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Brand</a>
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Newsroom</a>
-              </div>
-            </div>
-
-            {/* Resources */}
-            <div>
-              <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Resources</h4>
-              <div className="space-y-3">
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">College</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Cours Débutant</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Stratégies Avancées</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Gestion des Risques</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Analyse Technique</a>
                 <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Support</a>
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Safety</a>
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Blog</a>
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Feedback</a>
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">StreamKit</a>
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Creators</a>
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Community</a>
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Official 3rd Party Merch</a>
               </div>
             </div>
 
-            {/* Policies */}
+            {/* Légal */}
             <div>
-              <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Policies</h4>
+              <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Légal</h4>
               <div className="space-y-3">
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Terms</a>
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Privacy</a>
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Cookie Settings</a>
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Guidelines</a>
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Acknowledgements</a>
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Licenses</a>
-                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Company Information</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Conditions d'utilisation</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Politique de confidentialité</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Mentions légales</a>
+                <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Avertissement sur les risques</a>
               </div>
             </div>
           </div>
@@ -1095,6 +1070,7 @@ const App = () => {
               <h1 className="text-6xl md:text-8xl font-bold text-white tracking-tight">
                 TheTheTrader
               </h1>
+              <p className="text-gray-400 text-sm mt-4">© 2025 TheTheTrader. Trading avec simplicité.</p>
             </div>
           </div>
         </div>
