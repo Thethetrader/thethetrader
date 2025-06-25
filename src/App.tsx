@@ -285,22 +285,19 @@ const App = () => {
           >
             Commencer maintenant
           </button>
-          <button className="border border-gray-400 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:opacity-80 w-full sm:w-auto">
-            Voir la démo
-          </button>
         </div>
 
-        {/* Barre de défilement - Mobile Optimized */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 sm:py-6 overflow-hidden relative mb-6 sm:mb-10">
+        {/* Barre de défilement - Full Width */}
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 sm:py-6 overflow-hidden relative mb-6 sm:mb-10 w-screen -mx-4 sm:-mx-6">
           <div className="whitespace-nowrap animate-scroll">
-            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
-            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
-            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
-            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
-            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
-            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
-            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
-            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
           </div>
         </div>
 
@@ -326,7 +323,7 @@ const App = () => {
               </div>
               
               {/* Zone principale - Mobile Optimized */}
-              <div className="flex flex-col sm:flex-row h-[1050px] sm:h-[750px]">
+              <div className="flex flex-col sm:flex-row h-[750px] sm:h-[750px]">
                 {/* Sidebar - Mobile: Horizontal scroll, Desktop: Vertical */}
                 <div className="w-full sm:w-60 bg-gray-800 p-3 sm:p-4 border-b sm:border-b-0 sm:border-r border-gray-700 sm:h-full overflow-x-auto sm:overflow-x-visible">
                   
@@ -451,8 +448,8 @@ const App = () => {
                 </div>
                 
                 {/* Zone des messages/signaux - Mobile Optimized */}
-                <div className="flex-1 flex flex-col p-3 sm:p-4 bg-gray-900">
-                  <div className="space-y-3 sm:space-y-4 mb-3 sm:mb-4 flex-1 overflow-y-auto pr-2 sm:pr-2">
+                <div className="sm:flex-1 flex flex-col p-3 sm:p-4 bg-gray-900">
+                  <div className="space-y-3 sm:space-y-4 mb-3 sm:mb-4 sm:flex-1 overflow-y-auto pr-2 sm:pr-2">
                     {currentMessages.map((message: any, index: number) => (
                       <div 
                         key={message.id}
