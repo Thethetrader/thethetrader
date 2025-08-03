@@ -49,7 +49,7 @@ export default function TradingPlatformShell() {
   const handleMobileChannelSelect = (channelId: string) => {
     if (channelId === 'calendrier') {
       setView('calendar');
-      } else {
+    } else {
       setSelectedChannel({id: channelId, name: channelId});
       setView('signals');
     }
@@ -107,10 +107,10 @@ export default function TradingPlatformShell() {
           const handleFileUpload = (file: File) => {
           const isImage = file.type.startsWith('image/');
           const isVideo = file.type.startsWith('video/');
-        const newMessage = {
-          id: Date.now().toString(),
+          const newMessage = {
+            id: Date.now().toString(),
             text: isImage ? `[Image] ${file.name}` : isVideo ? `[Vidéo] ${file.name}` : `[Fichier] ${file.name}`,
-          user: 'TheTheTrader',
+            user: 'TheTheTrader',
             timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
             file: (isImage || isVideo) ? file : null
           };
@@ -238,9 +238,9 @@ export default function TradingPlatformShell() {
   const getMobileChannelsList = () => (
     <div className="h-full bg-gray-900 text-white">
       {/* Header avec titre */}
-        <div className="bg-gray-800 p-4 border-b border-gray-600">
+      <div className="bg-gray-800 p-4 border-b border-gray-600">
         <h1 className="text-lg font-semibold text-white text-center">TheTheTRADER</h1>
-            </div>
+      </div>
 
       {/* Search bar supprimée sur mobile */}
 
@@ -344,13 +344,13 @@ export default function TradingPlatformShell() {
         <div className="p-4 border-t border-gray-700">
           <div className="bg-gray-800 rounded-lg p-4">
             <h3 className="text-sm font-semibold mb-3 text-gray-300">Performance</h3>
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-400">Win Rate:</span>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Win Rate:</span>
                 <span className="text-green-400 font-medium">78%</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-400">Signaux actifs:</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Signaux actifs:</span>
                 <span className="text-blue-400 font-medium">3</span>
               </div>
               <div className="flex justify-between text-sm">
@@ -370,7 +370,7 @@ export default function TradingPlatformShell() {
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-gray-600 pb-4 gap-4 md:gap-0">
         <div className="hidden md:block">
           <h1 className="text-2xl font-bold text-white">Trading Calendar</h1>
-          <p className="text-sm text-gray-400 mt-1">Track your daily trading performance and signals</p>
+          <p className="text-sm text-gray-400 mt-1">Track your daily trading performance</p>
         </div>
         
         <div className="flex items-center gap-4">
@@ -432,26 +432,26 @@ export default function TradingPlatformShell() {
               
               if (day > 31) return <div key={i}></div>;
               
-                const dayData = tradingDays[day];
-                
+              const dayData = tradingDays[day];
+              
               return (
                 <div key={i} className={`
-                    border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 cursor-pointer transition-all hover:shadow-md
-                    ${dayData ? dayData.color : 'bg-gray-700 border-gray-600 text-gray-400'}
-                    ${isToday ? 'ring-2 ring-blue-400' : ''}
-                  `}>
-                    <div className="flex flex-col h-full justify-between">
-                      <div className="text-xs md:text-sm font-semibold">{day}</div>
-                      {dayData && (
-                        <div className="text-xs font-bold text-center hidden md:block">
-                          {dayData.pnl}
-                        </div>
-                      )}
+                  border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 cursor-pointer transition-all hover:shadow-md
+                  ${dayData ? dayData.color : 'bg-gray-700 border-gray-600 text-gray-400'}
+                  ${isToday ? 'ring-2 ring-blue-400' : ''}
+                `}>
+                  <div className="flex flex-col h-full justify-between">
+                    <div className="text-xs md:text-sm font-semibold">{day}</div>
+                    {dayData && (
+                      <div className="text-xs font-bold text-center hidden md:block">
+                        {dayData.pnl}
+                                </div>
+        )}
 
 
-                    </div>
-                  </div>
-                );
+      </div>
+    </div>
+  );
 })}
           </div>
 
@@ -478,23 +478,23 @@ export default function TradingPlatformShell() {
 
         {/* Panneau des statistiques */}
         <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6">
-          <h3 className="text-lg font-bold text-white mb-6">Monthly Summary</h3>
+          <h3 className="text-lg font-bold text-white mb-6">Statistiques Signaux</h3>
           
           {/* Métriques principales */}
           <div className="space-y-4 mb-8">
-            <div className="bg-gray-700 rounded-lg p-4 border border-gray-600">
-              <div className="text-sm text-gray-400 mb-1">Total P&L</div>
-              <div className="text-2xl font-bold text-green-300">+$15,480</div>
+            <div className="bg-blue-600/20 border-blue-500/30 rounded-lg p-4 border">
+              <div className="text-sm text-blue-300 mb-1">Total Signaux</div>
+              <div className="text-2xl font-bold text-blue-200">{signals.length}</div>
             </div>
             
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
-                <div className="text-xs text-gray-400 mb-1">Win Rate</div>
-                <div className="text-lg font-bold text-blue-400">73.8%</div>
+                              <div className="text-xs text-gray-400 mb-1">Aujourd'hui</div>
+              <div className="text-lg font-bold text-blue-400">{signals.filter(s => new Date(s.timestamp).getDate() === new Date().getDate()).length}</div>
               </div>
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
-                <div className="text-xs text-gray-400 mb-1">Total Trades</div>
-                <div className="text-lg font-bold text-white">89</div>
+                              <div className="text-xs text-gray-400 mb-1">Ce mois</div>
+              <div className="text-lg font-bold text-white">{signals.filter(s => new Date(s.timestamp).getMonth() === new Date().getMonth()).length}</div>
               </div>
             </div>
             
@@ -539,7 +539,7 @@ export default function TradingPlatformShell() {
         </div>
       </div>
     </div>
-    );
+  );
 
   return (
     <div className="h-screen w-full bg-gray-900 text-white overflow-hidden flex">
@@ -602,7 +602,7 @@ export default function TradingPlatformShell() {
         </div>
       </div>
 
-      {/* Main Content */}
+                      {/* Main Content */}
         <div className="flex-1 flex flex-col">
           {/* Top Bar - Mobile - Supprimée pour avoir la même interface que desktop */}
 
@@ -615,8 +615,8 @@ export default function TradingPlatformShell() {
               mobileView === 'channels' ? 'translate-x-0' : '-translate-x-full'
             }`}>
               {getMobileChannelsList()}
-        </div>
-
+            </div>
+            
             {/* Contenu du salon */}
             <div className={`absolute inset-0 transition-transform duration-300 ease-in-out ${
               mobileView === 'content' ? 'translate-x-0' : 'translate-x-full'
@@ -625,53 +625,53 @@ export default function TradingPlatformShell() {
                   
                   {/* Top Bar avec bouton retour - Mobile */}
                   <div className="h-16 bg-gray-700 border-b border-gray-600 flex items-center justify-between px-4">
-              <div className="flex items-center gap-3">
-                <button 
+                    <div className="flex items-center gap-3">
+                      <button 
                         onClick={handleBackToChannels}
-                  className="p-2 hover:bg-gray-600 rounded-lg"
-                >
-                  <span className="text-white text-lg">←</span>
-                </button>
+                        className="p-2 hover:bg-gray-600 rounded-lg"
+                      >
+                        <span className="text-white text-lg">←</span>
+                      </button>
                       <span className="text-lg font-semibold">{view === 'calendar' ? '📅 Calendrier' : `#${selectedChannel.name}`}</span>
-              </div>
+                    </div>
                                           {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) && <button onClick={handleCreateSignal} className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm">+ Signal</button>}
-        </div>
+                  </div>
 
                   {/* Content du salon */}
-        <div className="flex-1 overflow-y-auto">
-                {view === 'calendar' ? (
-                  getTradingCalendar()
-                ) : (
-                  <div className="p-4 space-y-4 w-full">
+                <div className="flex-1 overflow-y-auto">
+                  {view === 'calendar' ? (
+                    getTradingCalendar()
+                  ) : (
+                    <div className="p-4 space-y-4 w-full">
 
 
-                    {/* Messages de discussion */}
+                      {/* Messages de discussion */}
                       {['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) ? (
                         <div className="flex flex-col h-full pb-20">
                           <div className="flex-1 text-center py-8">
                             <div className="text-gray-400 text-sm">Aucun message pour le moment</div>
-                        </div>
+                          </div>
                         </div>
                       ) : (
                         <div className="space-y-4">
                           {/* Afficher les signaux créés */}
                           {signals.length === 0 ? (
-                        <div className="text-center py-8">
+                            <div className="text-center py-8">
                               <div className="text-gray-400 text-sm">Aucun signal pour le moment</div>
                               <div className="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
-                        </div>
-                      ) : (
-                        signals.map((signal) => (
-                          <div key={signal.id} className="flex items-start gap-3">
-                            <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="font-semibold text-white">TheTheTrader</span>
+                            </div>
+                          ) : (
+                            signals.map((signal) => (
+                              <div key={signal.id} className="flex items-start gap-3">
+                                <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <span className="font-semibold text-white">TheTheTrader</span>
                                     <span className="text-xs text-gray-400">{signal.timestamp}</span>
-                              </div>
+                                  </div>
 
                                   <div className="bg-transparent rounded-lg p-4">
-                                <div className="space-y-2">
+                                    <div className="space-y-2">
                                       <div className="bg-gray-600 rounded-lg p-3 inline-block">
                                         <div className="flex items-center gap-2">
                                           <span className={signal.type === 'BUY' ? 'text-green-400' : 'text-red-400'}>
@@ -681,38 +681,38 @@ export default function TradingPlatformShell() {
                                             Signal {signal.type} {signal.symbol}
                                           </span>
                                         </div>
-                                  </div>
-                                  
+                                      </div>
+                                      
                                       <div className="bg-gray-600 rounded-lg p-3 inline-block">
                                         <div className="space-y-1 text-sm">
                                           {signal.entry !== 'N/A' && (
                                             <div className="flex items-center gap-2">
                                               <span className="text-blue-400">🔹</span>
                                               <span className="text-white">Entrée : {signal.entry}</span>
-                                    </div>
-                                  )}
+                                            </div>
+                                          )}
                                           {signal.takeProfit !== 'N/A' && (
                                             <div className="flex items-center gap-2">
                                               <span className="text-blue-400">🔹</span>
                                               <span className="text-white">Take Profit : {signal.takeProfit}</span>
-                                    </div>
-                                  )}
+                                            </div>
+                                          )}
                                           {signal.stopLoss !== 'N/A' && (
                                             <div className="flex items-center gap-2">
                                               <span className="text-blue-400">🔹</span>
                                               <span className="text-white">Stop Loss : {signal.stopLoss}</span>
-                                </div>
+                                            </div>
                                           )}
                                           {signal.description && (
-                                <div className="flex items-center gap-2">
+                                            <div className="flex items-center gap-2">
                                               <span className="text-yellow-400">📝</span>
                                               <span className="text-white">{signal.description}</span>
                                             </div>
                                           )}
                                         </div>
                                       </div>
+                                    </div>
                                   </div>
-                                </div>
 
                                   {signal.image && (
                                     <div className="mt-2">
@@ -721,24 +721,24 @@ export default function TradingPlatformShell() {
                                         alt="Signal screenshot"
                                         className="max-w-2xl rounded-lg border border-gray-600"
                                       />
-                                </div>
+                                    </div>
                                   )}
 
                                   <div className="flex items-center gap-2 flex-wrap mt-2">
                                     <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">🔥 0</button>
                                     <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">💎 0</button>
                                     <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">🚀 0</button>
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          </div>
-                        ))
+                            ))
+                          )}
+                        </div>
                       )}
-                  </div>
-                )}
-              </div>
-            )}
+                    </div>
+                  )}
                 </div>
-          </div>
+              </div>
               
             </div>
           </div>
@@ -755,7 +755,7 @@ export default function TradingPlatformShell() {
                 {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) && (
                   <div className="flex justify-end mb-4">
                     <button onClick={handleCreateSignal} className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm">+ Signal</button>
-                      </div>
+                  </div>
                 )}
 
 
@@ -766,7 +766,7 @@ export default function TradingPlatformShell() {
                                                 {(messages[selectedChannel.id] || []).length === 0 ? (
                         <div className="text-center py-8">
                           <div className="text-gray-400 text-sm">Aucun message pour le moment</div>
-                      </div>
+                        </div>
                       ) : (
                         <div className="space-y-3">
                           {(messages[selectedChannel.id] || []).map((msg) => (
@@ -787,8 +787,8 @@ export default function TradingPlatformShell() {
                                       alt={msg.file.name}
                                       className="max-w-2xl rounded-lg border border-gray-600"
                                     />
-                    </div>
-                  )}
+                                  </div>
+                                )}
                                 {msg.file && msg.file.type.startsWith('video/') && (
                                   <div className="mt-2">
                                     <video 
@@ -796,16 +796,16 @@ export default function TradingPlatformShell() {
                                       controls
                                       className="max-w-2xl rounded-lg border border-gray-600"
                                     />
-                </div>
+                                  </div>
                                 )}
-                    </div>
-                      </div>
+                              </div>
+                            </div>
                           ))}
                         </div>
                       )}
                     </div>
-                    </div>
-                  ) : (
+                  </div>
+                ) : (
                   <div className="space-y-4">
                     {/* Afficher les signaux créés - Desktop */}
                     {signals.length === 0 ? (
@@ -816,15 +816,15 @@ export default function TradingPlatformShell() {
                     ) : (
                       signals.map((signal) => (
                         <div key={signal.id} className="flex items-start gap-3">
-                        <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="font-semibold text-white">TheTheTrader</span>
+                          <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="font-semibold text-white">TheTheTrader</span>
                               <span className="text-xs text-gray-400">{signal.timestamp}</span>
-                          </div>
+                            </div>
 
                             <div className="bg-transparent rounded-lg p-4">
-                            <div className="space-y-2">
+                              <div className="space-y-2">
                                 <div className="bg-gray-600 rounded-lg p-3 inline-block">
                                   <div className="flex items-center gap-2">
                                     <span className={signal.type === 'BUY' ? 'text-green-400' : 'text-red-400'}>
@@ -834,16 +834,16 @@ export default function TradingPlatformShell() {
                                       Signal {signal.type} {signal.symbol}
                                     </span>
                                   </div>
-                              </div>
-                              
+                                </div>
+                                
                                 <div className="bg-gray-600 rounded-lg p-3 inline-block">
                                   <div className="space-y-1 text-sm">
                                   {signal.entry !== 'N/A' && (
                                     <div className="flex items-center gap-2">
                                       <span className="text-blue-400">🔹</span>
                                       <span className="text-white">Entrée : {signal.entry}</span>
-                                </div>
-                              )}
+                                    </div>
+                                  )}
                                   {signal.takeProfit !== 'N/A' && (
                                     <div className="flex items-center gap-2">
                                       <span className="text-blue-400">🔹</span>
@@ -872,15 +872,15 @@ export default function TradingPlatformShell() {
                                   src={URL.createObjectURL(signal.image)} 
                                   alt="Signal screenshot"
                                   className="max-w-2xl rounded-lg border border-gray-600"
-                                  />
-                                </div>
-                              )}
-                              
+                                />
+                              </div>
+                            )}
+
                             <div className="flex items-center gap-2 flex-wrap mt-2">
                               <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">🔥 0</button>
                               <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">💎 0</button>
                               <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">🚀 0</button>
-                                </div>
+                            </div>
                           </div>
                         </div>
                       ))
@@ -888,10 +888,10 @@ export default function TradingPlatformShell() {
                   </div>
                 )}
               </div>
-                              )}
-                            </div>
-                          </div>
-
+            )}
+          </div>
+        </div>
+        
         {/* Barre de saisie Discord style - Desktop et Mobile */}
         {['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) && (
           <div className={`fixed bottom-0 left-0 right-0 md:left-64 border-t border-gray-600 bg-gray-800 z-50 transition-transform duration-300 ease-in-out ${
@@ -912,28 +912,28 @@ export default function TradingPlatformShell() {
               
               {/* Boutons à droite */}
               <div className="flex items-center gap-1">
-                                  <button
+                <button 
                   onClick={() => setShowGifPicker(!showGifPicker)}
                   className="text-gray-400 hover:text-white p-1.5 rounded-full hover:bg-gray-700"
                 >
                   <span className="text-xs bg-gray-600 px-1 rounded">GIF</span>
-                                  </button>
-                                  <button
+                </button>
+                <button 
                   onClick={() => setShowFileUpload(!showFileUpload)}
                   className="text-gray-400 hover:text-white p-1.5 rounded-full hover:bg-gray-700"
                 >
                   <span className="text-sm">📎</span>
-                                  </button>
-                                  <button
+                </button>
+                <button 
                   onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                   className="text-gray-400 hover:text-white p-1.5 rounded-full hover:bg-gray-700"
                 >
                   <span className="text-sm">😊</span>
-                                  </button>
-                                </div>
-                              </div>
-                                </div>
-                              )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Modal de création de signal */}
         {showSignalModal && (
@@ -947,7 +947,7 @@ export default function TradingPlatformShell() {
                 >
                   ✕
                 </button>
-                            </div>
+              </div>
               
               <div className="space-y-4">
                 {/* Zone de collage TradingView */}
@@ -972,7 +972,7 @@ export default function TradingPlatformShell() {
                     }}
                   />
                   <p className="text-xs text-gray-400 mt-1">Format: Symbole Prix_entrée Take_profit Stop_loss</p>
-                        </div>
+                </div>
 
                 {/* Type de signal */}
                 <div>
@@ -990,7 +990,7 @@ export default function TradingPlatformShell() {
                     >
                       📉 SELL
                     </button>
-                      </div>
+                  </div>
                 </div>
 
                 {/* Symbol */}
@@ -1003,7 +1003,7 @@ export default function TradingPlatformShell() {
                     placeholder="BTCUSD, EURUSD, etc."
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
-              </div>
+                </div>
 
                 {/* Timeframe */}
                 <div>
@@ -1015,7 +1015,7 @@ export default function TradingPlatformShell() {
                     placeholder="1 min, 5 min, 1H, etc."
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
-          </div>
+                </div>
 
                 {/* Entry */}
                 <div>
@@ -1027,7 +1027,7 @@ export default function TradingPlatformShell() {
                     placeholder="103474.00 USD"
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
-        </div>
+                </div>
 
                 {/* Take Profit */}
                 <div>
@@ -1039,7 +1039,7 @@ export default function TradingPlatformShell() {
                     placeholder="104626.00 USD"
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
-      </div>
+                </div>
 
                 {/* Stop Loss */}
                 <div>
@@ -1056,20 +1056,20 @@ export default function TradingPlatformShell() {
                 {/* Description */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
-              <textarea
+                  <textarea
                     value={signalData.description}
                     onChange={(e) => setSignalData({...signalData, description: e.target.value})}
                     placeholder="Notes supplémentaires..."
                     rows={3}
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
-              />
-            </div>
-            
+                  />
+                </div>
+
                 {/* Image */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">Capture d'écran</label>
-                <input
-                  type="file"
+                  <input
+                    type="file"
                     accept="image/*"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
@@ -1078,23 +1078,23 @@ export default function TradingPlatformShell() {
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
                   />
                 </div>
-              
+
                 {/* Boutons */}
                 <div className="flex gap-3 pt-4">
-              <button
+                  <button
                     onClick={() => setShowSignalModal(false)}
                     className="flex-1 bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
-              >
+                  >
                     Annuler
-              </button>
-              <button
+                  </button>
+                  <button
                     onClick={handleSignalSubmit}
                     className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white"
-              >
+                  >
                     Créer le signal
-              </button>
-            </div>
-        </div>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -1104,7 +1104,7 @@ export default function TradingPlatformShell() {
           <div className="fixed bottom-16 right-4 bg-gray-800 border border-gray-600 rounded-lg p-3 z-50">
             <div className="grid grid-cols-6 gap-2">
               {['😊', '😂', '❤️', '👍', '🎉', '🔥', '💯', '😎', '🤔', '😢', '😡', '🤯'].map((emoji) => (
-                <button 
+                <button
                   key={emoji}
                   onClick={() => handleEmojiClick(emoji)}
                   className="text-2xl hover:bg-gray-700 rounded p-1"
@@ -1112,15 +1112,15 @@ export default function TradingPlatformShell() {
                   {emoji}
                 </button>
               ))}
-              </div>
-              </div>
+            </div>
+          </div>
         )}
 
         {/* Sélecteur de GIF */}
         {showGifPicker && (
           <div className="fixed bottom-16 right-4 bg-gray-800 border border-gray-600 rounded-lg p-3 z-50 w-64">
             <div className="text-white text-sm mb-2">GIFs populaires</div>
-                <div className="space-y-2">
+            <div className="space-y-2">
               {['https://giphy.com/gif/example1', 'https://giphy.com/gif/example2', 'https://giphy.com/gif/example3'].map((gif, index) => (
                 <button
                   key={index}
@@ -1129,16 +1129,16 @@ export default function TradingPlatformShell() {
                 >
                   GIF {index + 1}
                 </button>
-                  ))}
-                </div>
-              </div>
+              ))}
+            </div>
+          </div>
         )}
 
         {/* Upload de fichier */}
         {showFileUpload && (
           <div className="fixed bottom-16 right-4 bg-gray-800 border border-gray-600 rounded-lg p-3 z-50 w-64">
             <div className="text-white text-sm mb-2">Ajouter un fichier</div>
-                    <input
+            <input
               type="file"
               onChange={(e) => {
                 const file = e.target.files?.[0];
@@ -1146,8 +1146,8 @@ export default function TradingPlatformShell() {
               }}
               className="w-full bg-gray-700 hover:bg-gray-600 rounded p-2 text-white text-sm"
             />
-        </div>
-      )}
+          </div>
+        )}
       </div>
     </div>
   );
