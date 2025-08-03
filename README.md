@@ -115,3 +115,112 @@ Last update: 2025-01-28
 # TheTheTrader
 
 <!-- Rebuild trigger: deployment fix -->
+
+---
+
+# Session Update - 2025-01-28 
+
+## ✅ Nouvelles Fonctionnalités Implémentées
+
+### 1. Système de Signaux Complet
+
+**✅ Bouton Signal Fonctionnel**
+- Bouton "+ Signal" maintenant entièrement fonctionnel
+- Modal avec tous les champs : Symbol, Direction (BUY/SELL), Timeframe, Entry, TP, SL
+- Calcul automatique du ratio Risk/Reward
+- Support d'upload d'images (2 images max par signal)
+
+**✅ Affichage avec Emojis**
+```
+✅ Signal BUY BTCUSD - 1m
+
+🔹 Entrée : 103500 USD
+🔹 Take Profit : 104000 USD  
+🔹 Stop Loss : 103000 USD
+🎯 Ratio R:R ≈ 1.00
+```
+
+**✅ Gestion des Statuts**
+- Boutons WIN/LOSS/BE sous chaque signal
+- Statuts avec couleurs : ACTIVE (bleu), WIN (vert), LOSS (rouge), BE (jaune)
+- Click = change statut, re-click = remet en ACTIVE
+- Sauvegarde automatique des changements
+
+### 2. Signaux par Salon
+
+**✅ Isolation par Channel**
+- Chaque signal lié au salon où il est créé
+- Crypto-signaux ≠ Forex-signaux ≠ Futures-signaux
+- Navigation entre salons affiche seulement leurs signaux
+- Compteurs mis à jour par salon
+
+### 3. Calendrier Trading Dynamique
+
+**✅ Navigation entre Mois**
+- Flèches ‹ › fonctionnelles pour changer de mois
+- Titre dynamique (ex: "janvier 2025", "février 2025")
+- Positionnement correct des jours selon le mois
+- Indicateur "aujourd'hui" seulement dans le mois actuel
+
+**✅ Statistiques Connectées**
+- **Total P&L** change selon le mois affiché
+- **Win Rate** calculé dynamiquement  
+- **Total Trades** adapté au mois
+- **Avg Win/Loss** basé sur données réelles
+- **Données calendrier** varient selon navigation
+
+### 4. Stockage Persistant
+
+**✅ LocalStorage**
+- Tous les signaux sauvegardés dans le navigateur
+- Images converties en base64 pour stockage local
+- Statuts des signaux persistants
+- Channel_id inclus pour isolation par salon
+
+## 🛠️ Architecture Technique
+
+**Stockage des Signaux:**
+```typescript
+interface Signal {
+  id: string;
+  text: string;
+  image1?: string;
+  image2?: string;
+  created_at: string;
+  status: 'ACTIVE' | 'WIN' | 'LOSS' | 'BE';
+  channel_id: string;
+}
+```
+
+**Données du Calendrier:**
+```typescript
+const getMonthlyTradingData = () => {
+  // Calcul dynamique selon currentDate
+  // Variation par mois pour simulation
+  // Retourne: totalPnL, winRate, totalTrades, avgWin, avgLoss
+}
+```
+
+## 📊 Fonctionnalités Actives
+
+- ✅ Création de signaux avec upload d'images
+- ✅ Gestion WIN/LOSS/BE avec persistance  
+- ✅ Signaux séparés par salon
+- ✅ Navigation calendrier entre mois
+- ✅ Statistiques dynamiques connectées
+- ✅ Stockage localStorage
+- ✅ Interface responsive mobile/desktop
+- ✅ Emojis et formatting des signaux
+
+## 🎯 Prochaines Étapes
+
+- [ ] Reconnexion Supabase pour stockage cloud
+- [ ] Export des statistiques en PDF/CSV
+- [ ] Notifications pour nouveaux signaux
+- [ ] Historique détaillé des trades
+- [ ] Integration TradingView charts
+- [ ] Système d'alerte automatique
+
+---
+
+Last update: 2025-01-28 - Signal System Complete

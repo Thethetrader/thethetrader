@@ -1,0 +1,438 @@
+import React, { useState, useEffect } from 'react';
+import './index.css';
+import TradingPlatformShell from './components/generated/TradingPlatformShell';
+
+// FORCE DEPLOYMENT: 2025-01-13 04:25:00 - FIX OLD CONTENT
+
+// Types
+interface User {
+  id: string;
+  email: string;
+}
+
+const App = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [visibleMessages, setVisibleMessages] = useState(0);
+  const [activeChannel, setActiveChannel] = useState('crypto-signaux');
+  
+  // Précharger l'image pour éviter le clignotement
+  useEffect(() => {
+    const img = new Image();
+    img.src = '/images/tradingview-chart.png';
+  }, []);
+
+  const channelData: Record<string, any> = {
+    'crypto-signaux': {
+      title: '#crypto-signaux',
+      messages: [
+        { 
+          id: 1, 
+          user: 'TheTheTrader', 
+          time: '02:03:22', 
+          type: 'signal', 
+          status: 'ACTIVE',
+          content: {
+            title: '🟢 Signal BUY BTCUSD Futures – 1 min',
+            details: [
+              { icon: '🔹', label: 'Entrée', value: '103474.00 USD' },
+              { icon: '🔹', label: 'Stop Loss', value: '102862.00 USD' },
+              { icon: '🔹', label: 'Take Profit', value: '104626.00 USD' },
+              { icon: '🎯', label: 'Ratio R:R', value: '≈ 1.88' }
+            ],
+            reactions: [
+              { emoji: '🔥', count: 12 },
+              { emoji: '💎', count: 8 },
+              { emoji: '🚀', count: 15 }
+            ]
+          }
+        },
+        { 
+          id: 2, 
+          user: 'TheTheTrader', 
+          time: '02:06:33', 
+          type: 'update', 
+          content: 'Signal précédent: Objectif 1 atteint ! 🎯\n\n+1.2% en 3 minutes - félicitations à tous les membres qui ont suivi 🔥', 
+          reactions: [
+            { emoji: '🎉', count: 24 },
+            { emoji: '💰', count: 18 },
+            { emoji: '🚀', count: 12 }
+          ]
+        }
+      ]
+    },
+    'forex-signaux': {
+      title: '#forex-signaux',
+      messages: [
+        { 
+          id: 1, 
+          user: 'TheTheTrader', 
+          time: '01:45:12', 
+          type: 'signal', 
+          status: 'ACTIVE',
+          content: {
+            title: '🟢 Signal BUY EURUSD – 15 min',
+            details: [
+              { icon: '🔹', label: 'Entrée', value: '1.0845 EUR' },
+              { icon: '🔹', label: 'Stop Loss', value: '1.0820 EUR' },
+              { icon: '🔹', label: 'Take Profit', value: '1.0895 EUR' },
+              { icon: '🎯', label: 'Ratio R:R', value: '≈ 2.00' }
+            ],
+            reactions: [
+              { emoji: '💶', count: 15 },
+              { emoji: '🚀', count: 9 }
+            ]
+          }
+        },
+        { 
+          id: 2, 
+          user: 'TheTheTrader', 
+          time: '01:52:30', 
+          type: 'update', 
+          content: '✅ Signal GBPUSD fermé en profit +45 pips\n📈 Excellent momentum sur les paires EUR today', 
+          reactions: [
+            { emoji: '💸', count: 21 },
+            { emoji: '🎯', count: 12 }
+          ]
+        }
+      ]
+    },
+    'futures-signaux': {
+      title: '#futures-signaux',
+      messages: [
+        { 
+          id: 1, 
+          user: 'TheTheTrader', 
+          time: '01:30:45', 
+          type: 'signal', 
+          status: 'ACTIVE',
+          content: {
+            title: '🟡 Signal BUY GOLD Futures – 1H',
+            details: [
+              { icon: '🔹', label: 'Entrée', value: '2045.50 USD' },
+              { icon: '🔹', label: 'Stop Loss', value: '2038.20 USD' },
+              { icon: '🔹', label: 'Take Profit', value: '2058.80 USD' },
+              { icon: '🎯', label: 'Ratio R:R', value: '≈ 1.85' }
+            ],
+            reactions: [
+              { emoji: '🥇', count: 18 },
+              { emoji: '📈', count: 11 }
+            ]
+          }
+        },
+        { 
+          id: 2, 
+          user: 'TheTheTrader', 
+          time: '01:42:12', 
+          type: 'update', 
+          content: '🚀 GOLD en mouvement ! Target atteint +$8.30 par contrat\n⚡ Surveillance SP500 pour prochaine entrée', 
+          reactions: [
+            { emoji: '💰', count: 22 },
+            { emoji: '⚡', count: 14 }
+          ]
+        }
+      ]
+    },              { icon: '🔹', label: 'Stop Loss', value: '2038.20 USD' },
+              { icon: '🔹', label: 'Take Profit', value: '2058.80 USD' },
+              { icon: '🎯', label: 'Ratio R:R', value: '≈ 1.85' }
+            ],
+            reactions: [
+              { emoji: '🥇', count: 18 },
+              { emoji: '📈', count: 11 }
+            ]
+          }
+        },
+        { 
+          id: 2, 
+          user: 'TheTheTrader', 
+          time: '01:42:12', 
+          type: 'update', 
+          content: '🚀 GOLD en mouvement ! Target atteint +$8.30 par contrat\n⚡ Surveillance SP500 pour prochaine entrée', 
+          reactions: [
+            { emoji: '💰', count: 22 },
+            { emoji: '⚡', count: 14 }
+          ]
+        }
+      ]
+    },
+    'formation': {
+      title: '#formation',
+      messages: [
+        { 
+          id: 1, 
+          user: 'TheTheTrader', 
+          time: '09:00:00', 
+          type: 'message', 
+          content: '📚 Cours du jour: Les bases du Money Management\n\n🎯 Règle #1: Ne jamais risquer plus de 2% par trade\n💰 Règle #2: Toujours définir votre SL avant d\'entrer', 
+          reactions: [
+            { emoji: '📖', count: 45 },
+            { emoji: '💡', count: 32 },
+            { emoji: '🎓', count: 28 }
+          ]
+        },
+        { 
+          id: 2, 
+          user: 'TheTheTrader', 
+          time: '09:15:30', 
+          type: 'message', 
+          content: '📊 Exercice pratique: Calculez votre position size\n\nCompte: 10,000€\nRisque max: 2%\nDistance SL: 50 pips\n\nQuelle lot size utilisez-vous? 🤔', 
+          reactions: [
+            { emoji: '🧮', count: 23 },
+            { emoji: '🤔', count: 15 }
+          ]
+        }
+             ]
+     },
+    'calendrier': {
+      title: '📅 calendrier',
+      messages: [
+        { 
+          id: 1, 
+          user: 'TheTheTrader', 
+          time: '08:00:00', 
+          type: 'calendar', 
+          content: '📊 Performance Trading - Janvier 2025',
+          calendarData: {
+            stats: {
+              winRate: '78',
+              totalPnL: '+2,450€',
+              totalTrades: 28,
+              bestDay: '+156€',
+              worstDay: '-89€'
+            },
+            days: [
+              { date: 1, trades: 2, pnl: '+45€', status: 'win' },
+              { date: 2, trades: 1, pnl: '+12€', status: 'win' },
+              { date: 3, trades: 3, pnl: '-23€', status: 'loss' },
+              { date: 4, trades: 0, pnl: '0€', status: 'none' },
+              { date: 5, trades: 0, pnl: '0€', status: 'none' },
+              { date: 6, trades: 2, pnl: '+67€', status: 'win' },
+              { date: 7, trades: 1, pnl: '0€', status: 'be' },
+              { date: 8, trades: 2, pnl: '+89€', status: 'win' },
+              { date: 9, trades: 3, pnl: '+156€', status: 'win' },
+              { date: 10, trades: 1, pnl: '-45€', status: 'loss' },
+              { date: 11, trades: 0, pnl: '0€', status: 'none' },
+              { date: 12, trades: 0, pnl: '0€', status: 'none' },
+              { date: 13, trades: 2, pnl: '+34€', status: 'win' },
+              { date: 14, trades: 1, pnl: '0€', status: 'be' },
+              { date: 15, trades: 2, pnl: '+78€', status: 'win' }
+            ]
+          },
+          reactions: [
+            { emoji: '📈', count: 34 },
+            { emoji: '💰', count: 28 },
+            { emoji: '🔥', count: 19 }
+          ]
+        },
+        { 
+          id: 2, 
+          user: 'TheTheTrader', 
+          time: '08:15:22', 
+          type: 'message', 
+          content: '📊 Récap semaine dernière:\n\n✅ 12 trades gagnants\n❌ 3 trades perdants\n�� ROI: +18.5%\n\nContinuons sur cette lancée ! ��', 
+          reactions: [
+            { emoji: '🎯', count: 29 },
+            { emoji: '💪', count: 15 }
+          ]
+        }
+      ]
+    }            ]
+          },
+          reactions: [
+            { emoji: '📈', count: 34 },
+            { emoji: '💰', count: 28 },
+            { emoji: '🔥', count: 19 }
+          ]
+        }
+      ]
+    }
+   };
+
+  const currentMessages = channelData[activeChannel]?.messages || [];
+
+  // Animation conversation progressive avec CSS
+  useEffect(() => {
+    setVisibleMessages(0);
+    currentMessages.forEach((_, index) => {
+      setTimeout(() => {
+        setVisibleMessages(index + 1);
+      }, index * (window.innerWidth < 640 ? 100 : 200)); // 100ms sur mobile, 200ms sur desktop
+    });
+  }, [currentMessages, activeChannel]);
+
+  const handleLogin = () => {
+    if (email && password) {
+      setUser({ id: '1', email });
+      setShowAuthModal(false);
+    }
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    setEmail('');
+    setPassword('');
+  };
+
+  // Si utilisateur connecté, afficher ton salon complet
+  if (user) {
+    return (
+      <div className="relative">
+        {/* Ton salon complet */}
+        <TradingPlatformShell />
+        
+        {/* Petit logo déconnexion en haut à droite */}
+        <button 
+          onClick={handleLogout}
+          className="fixed top-4 right-4 md:bg-red-600 bg-gray-800 text-white p-2 rounded-full md:hover:bg-red-700 hover:bg-gray-700 transition-all duration-200 shadow-lg z-50"
+          title="Retour accueil"
+        >
+          🏠
+        </button>
+      </div>
+    );
+  }
+
+
+
+  // Landing Page
+  return (
+    <div className="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen w-full">
+      {/* Header - Mobile Optimized */}
+      <nav className="flex items-center justify-between p-4 sm:p-6 relative z-50">
+        <div className="text-xl sm:text-2xl font-bold text-white">
+          TheTheTrader
+        </div>
+        <div className="hidden md:flex space-x-8">
+          <a href="#services" className="text-gray-300 hover:text-white transition-all duration-200">Services</a>
+          <a href="#about" className="text-gray-300 hover:text-white transition-all duration-200">À propos</a>
+          <a href="#contact" className="text-gray-300 hover:text-white transition-all duration-200">Contact</a>
+        </div>
+        <button 
+          onClick={() => setShowAuthModal(true)}
+          className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold hover:opacity-90 text-sm sm:text-base"
+        >
+          <span className="hidden sm:inline">Se connecter</span>
+          <span className="sm:hidden">Login</span>
+        </button>
+      </nav>
+
+
+
+      {/* Hero Section - Mobile Optimized */}
+      <div className="text-center pt-10 sm:pt-20 pb-0 px-4 sm:px-6">
+        <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight">
+          Smart Model,<br />
+          <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            Smarter Signal
+          </span>
+        </h1>
+        <p className="text-base sm:text-xl text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto px-2">
+          Un setup, des signaux expliqués, un journal de performance. Rejoins la communauté et trade en confiance.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 sm:mb-20 px-4">
+          <button 
+            onClick={() => setShowAuthModal(true)}
+            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:opacity-90 w-full sm:w-auto"
+          >
+            Commencer maintenant
+          </button>
+        </div>
+
+        {/* Barre de défilement - Full Width */}
+        <div className="w-screen bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 sm:py-6 overflow-hidden relative mb-6 sm:mb-10 -mx-4 sm:-mx-6">
+          <div className="whitespace-nowrap animate-scroll">
+            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+            <span className="text-lg sm:text-4xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+          </div>
+        </div>
+
+        {/* Aperçu de la plateforme - Mobile Optimized */}
+        <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-2 sm:px-4">
+          <div className="bg-gray-800/50 p-2 sm:p-6 rounded-xl border border-gray-600/50 backdrop-blur-sm">
+            {/* Mockup de l'interface */}
+            <div className="bg-gray-900 rounded-lg overflow-hidden shadow-2xl">
+              {/* Header du salon - Mobile Optimized */}
+              <div className="bg-gray-800 p-3 sm:p-4 flex items-center justify-between border-b border-gray-700">
+                <div className="flex items-center gap-3 sm:gap-3 min-w-0">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm">TT</div>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                    <span className="text-white font-semibold text-sm sm:text-base">TheTheTrader</span>
+                    <span className="text-gray-400 text-xs sm:text-sm hidden sm:inline">En ligne</span>
+                  </div>
+                </div>
+                <div className="text-blue-400 font-semibold text-sm sm:text-base text-center">{channelData[activeChannel]?.title || '#crypto-signaux'}</div>
+                <div className="bg-blue-600 px-3 py-2 sm:px-4 sm:py-2 rounded text-white text-xs sm:text-sm font-semibold hover:bg-blue-700 transition-colors duration-200 cursor-pointer">
+                  <span className="hidden sm:inline">+ Nouveau Signal</span>
+                  <span className="sm:hidden">+</span>
+                </div>
+              </div>
+              
+              {/* Zone principale - Mobile Optimized */}
+              <div className="flex flex-col sm:flex-row h-[1050px] sm:h-[750px]">
+                {/* Sidebar - Mobile: Horizontal scroll, Desktop: Vertical */}
+                <div className="w-full sm:w-60 bg-gray-800 p-2 sm:p-4 border-b sm:border-b-0 sm:border-r border-gray-700 sm:h-full overflow-x-auto sm:overflow-x-visible">
+                  
+                  {/* Mobile: Horizontal tabs - Section plus haute pour voir tous les salons */}
+                  <div className="sm:hidden flex gap-3 mb-3 overflow-x-auto pl-2 pr-4 pt-2 pb-3">
+                    <div 
+                      className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[100px] ${
+                        activeChannel === 'crypto-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                      }`}
+                      onClick={() => setActiveChannel('crypto-signaux')}
+                    >
+                      🪙 Crypto
+                    </div>
+                    <div 
+                      className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[90px] ${
+                        activeChannel === 'forex-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                      }`}
+                      onClick={() => setActiveChannel('forex-signaux')}
+                    >
+                      💱 Forex
+                    </div>
+                    <div 
+                      className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[100px] ${
+    'futures-signaux': {
+      title: '#futures-signaux',
+      messages: [
+        { 
+          id: 1, 
+          user: 'TheTheTrader', 
+          time: '01:30:45', 
+          type: 'signal', 
+          status: 'ACTIVE',
+          content: {
+            title: '🟡 Signal BUY GOLD Futures – 1H',
+            details: [
+              { icon: '🔹', label: 'Entrée', value: '2045.50 USD' },
+              { icon: '🔹', label: 'Stop Loss', value: '2038.20 USD' },
+              { icon: '🔹', label: 'Take Profit', value: '2058.80 USD' },
+              { icon: '🎯', label: 'Ratio R:R', value: '≈ 1.85' }
+            ],
+            reactions: [
+              { emoji: '🥇', count: 18 },
+              { emoji: '📈', count: 11 }
+            ]
+          }
+        },
+        { 
+          id: 2, 
+          user: 'TheTheTrader', 
+          time: '01:42:12', 
+          type: 'update', 
+          content: '🚀 GOLD en mouvement ! Target atteint +$8.30 par contrat\n⚡ Surveillance SP500 pour prochaine entrée', 
+          reactions: [
+            { emoji: '💰', count: 22 },
+            { emoji: '⚡', count: 14 }
+          ]
+        }
+      ]
+    },
