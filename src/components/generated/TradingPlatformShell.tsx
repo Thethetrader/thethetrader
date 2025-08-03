@@ -85,6 +85,7 @@ export default function TradingPlatformShell() {
     }
   }, []);
   const [chatMessage, setChatMessage] = useState('');
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   const [chatMessages, setChatMessages] = useState<{[channelId: string]: Array<{
     id: string;
     text: string;
@@ -268,6 +269,21 @@ export default function TradingPlatformShell() {
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleLogout = () => {
+    // Ici tu peux ajouter la logique de déconnexion
+    // Par exemple: localStorage.clear(), redirection, etc.
+    alert('Déconnexion...');
+    // window.location.href = '/login';
+  };
+
+  const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      const imageUrl = URL.createObjectURL(file);
+      setProfileImage(imageUrl);
+    }
   };
 
   const handleSignalStatus = (signalId: string, newStatus: 'WIN' | 'LOSS' | 'BE' | 'ACTIVE') => {
@@ -746,12 +762,23 @@ export default function TradingPlatformShell() {
       <div className="hidden md:flex w-56 bg-gray-800 flex-col">
         <div className="p-4 border-b border-gray-700">
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center">
-              TT
-            </div>
+            <label className="cursor-pointer">
+              <input
+                type="file"
+                onChange={handleProfileImageChange}
+                className="hidden"
+                accept="image/*"
+              />
+              <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
+                {profileImage ? (
+                  <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  'TT'
+                )}
+              </div>
+            </label>
             <div className="flex-1">
               <p className="text-sm font-medium">TheTheTrader</p>
-              <p className="text-xs text-gray-400">En ligne</p>
             </div>
           </div>
         </div>
@@ -813,17 +840,28 @@ export default function TradingPlatformShell() {
           {mobileView === 'channels' ? (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm">
-                  TT
-                </div>
+                <label className="cursor-pointer">
+                  <input
+                    type="file"
+                    onChange={handleProfileImageChange}
+                    className="hidden"
+                    accept="image/*"
+                  />
+                  <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
+                    {profileImage ? (
+                      <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+                    ) : (
+                      'TT'
+                    )}
+                  </div>
+                </label>
                 <div>
                   <p className="text-sm font-medium">TheTheTrader</p>
-                  <p className="text-xs text-gray-400">En ligne</p>
                 </div>
               </div>
-              <button className="text-gray-400 hover:text-white">
+              <button onClick={handleLogout} className="text-gray-400 hover:text-white">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
               </button>
             </div>
@@ -867,6 +905,7 @@ export default function TradingPlatformShell() {
                         setSelectedChannel({id: channel.id, name: channel.name});
                         setView('signals');
                         setMobileView('content');
+                        scrollToTop();
                       }}
                       className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
@@ -892,6 +931,7 @@ export default function TradingPlatformShell() {
                         setSelectedChannel({id: channel.id, name: channel.name});
                         setView('signals');
                         setMobileView('content');
+                        scrollToTop();
                       }}
                       className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
@@ -917,6 +957,7 @@ export default function TradingPlatformShell() {
                         setSelectedChannel({id: channel.id, name: channel.name});
                         setView('signals');
                         setMobileView('content');
+                        scrollToTop();
                       }}
                       className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
@@ -934,6 +975,7 @@ export default function TradingPlatformShell() {
                     onClick={() => {
                       setView('calendar');
                       setMobileView('content');
+                      scrollToTop();
                     }}
                     className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                   >
