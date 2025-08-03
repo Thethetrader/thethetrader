@@ -25,6 +25,16 @@ export default function TradingPlatformShell() {
     status: 'ACTIVE' | 'WIN' | 'LOSS' | 'BE';
     pnl?: string;
   }>>([]);
+
+  // Initialiser les signaux existants avec le statut ACTIVE
+  useEffect(() => {
+    setSignals(prevSignals => 
+      prevSignals.map(signal => ({
+        ...signal,
+        status: signal.status || 'ACTIVE'
+      }))
+    );
+  }, []);
   const [chatMessage, setChatMessage] = useState('');
   const [chatMessages, setChatMessages] = useState<{[channelId: string]: Array<{
     id: string;
@@ -706,7 +716,7 @@ export default function TradingPlatformShell() {
               <div className="p-4 md:p-6 space-y-4 w-full h-full overflow-y-auto" style={{ paddingTop: '80px', paddingBottom: '100px' }}>
 
                 {/* Affichage des signaux */}
-                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) ? (
+                {view === 'signals' ? (
                   <div className="space-y-4">
                     {signals.length === 0 ? (
                       <div className="text-center py-8">
