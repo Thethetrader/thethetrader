@@ -466,7 +466,7 @@ export default function TradingPlatformShell() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Mobile Navigation - Fixed */}
-        <div className="md:hidden bg-gray-800 border-b border-gray-700 p-4 fixed top-0 left-0 right-0 z-20" style={{ height: '80px' }}>
+        <div className="md:hidden bg-gray-800 border-b border-gray-700 p-3 fixed top-0 left-0 right-0 z-20" style={{ height: '60px' }}>
           {mobileView === 'channels' ? (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -506,14 +506,14 @@ export default function TradingPlatformShell() {
         </div>
 
         {/* Mobile Content Container with Slide Animation */}
-        <div className="md:hidden relative flex-1 overflow-hidden" style={{ paddingTop: '80px' }}>
+        <div className="md:hidden relative flex-1 overflow-hidden" style={{ paddingTop: '60px' }}>
           {/* Channels List - Slides from left */}
           <div 
             className={`absolute inset-0 bg-gray-800 transform transition-transform duration-300 ease-in-out ${
               mobileView === 'channels' ? 'translate-x-0' : '-translate-x-full'
             }`}
           >
-                        <div className="p-4 space-y-6 h-full overflow-y-auto" style={{ paddingTop: '100px' }}>
+                        <div className="p-4 space-y-6 h-full overflow-y-auto" style={{ paddingTop: '20px' }}>
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">ÉDUCATION</h3>
                 <div className="space-y-2">
