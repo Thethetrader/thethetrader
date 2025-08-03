@@ -23,8 +23,35 @@ export default function TradingPlatformShell() {
     image: File | null;
     timestamp: string;
     status: 'ACTIVE' | 'WIN' | 'LOSS' | 'BE';
+    channel_id: string;
     pnl?: string;
-  }>>([]);
+  }>>([{
+    id: 'test-1',
+    type: 'BUY',
+    symbol: 'BTC',
+    timeframe: '1 min',
+    entry: '45000',
+    takeProfit: '46000',
+    stopLoss: '44000',
+    description: 'Signal de test avec boutons WIN/LOSS/BE',
+    image: null,
+    timestamp: '22:30',
+    status: 'ACTIVE',
+    channel_id: 'crypto'
+  }, {
+    id: 'test-2',
+    type: 'SELL',
+    symbol: 'ETH',
+    timeframe: '5 min',
+    entry: '2800',
+    takeProfit: '2750',
+    stopLoss: '2850',
+    description: 'Signal ETH avec boutons visibles',
+    image: null,
+    timestamp: '22:35',
+    status: 'ACTIVE',
+    channel_id: 'forex'
+  }]);
 
   // Initialiser les signaux existants avec le statut ACTIVE
   useEffect(() => {
@@ -34,6 +61,25 @@ export default function TradingPlatformShell() {
         status: signal.status || 'ACTIVE'
       }))
     );
+    
+    // Ajouter un signal de test si aucun signal n'existe
+    if (signals.length === 0) {
+      const testSignal = {
+        id: 'test-1',
+        type: 'BUY',
+        symbol: 'BTC',
+        timeframe: '1 min',
+        entry: '45000',
+        takeProfit: '46000',
+        stopLoss: '44000',
+        description: 'Signal de test',
+        image: null,
+        timestamp: '22:30',
+        status: 'ACTIVE' as const,
+        channel_id: 'crypto'
+      };
+      setSignals([testSignal]);
+    }
   }, []);
   const [chatMessage, setChatMessage] = useState('');
   const [chatMessages, setChatMessages] = useState<{[channelId: string]: Array<{
@@ -83,13 +129,127 @@ export default function TradingPlatformShell() {
     return months[date.getMonth()];
   };
 
+  // Fonctions pour calculer les statistiques réelles
+  const parsePnL = (pnlString: string): number => {
+    if (!pnlString) return 0;
+    const cleanStr = pnlString.replace(/[^\d.-]/g, '');
+    return parseFloat(cleanStr) || 0;
+  };
+
+  const calculateTotalPnL = (): number => {
+    return signals
+      .filter(s => s.pnl && s.status !== 'ACTIVE')
+      .reduce((total, signal) => total + parsePnL(signal.pnl), 0);
+  };
+
+  const calculateWinRate = (): number => {
+    const closedSignals = signals.filter(s => s.status !== 'ACTIVE');
+    if (closedSignals.length === 0) return 0;
+    const wins = closedSignals.filter(s => s.status === 'WIN').length;
+    return Math.round((wins / closedSignals.length) * 100);
+  };
+
+  const calculateAvgWin = (): number => {
+    const winSignals = signals.filter(s => s.status === 'WIN' && s.pnl);
+    if (winSignals.length === 0) return 0;
+    const totalWinPnL = winSignals.reduce((total, signal) => total + parsePnL(signal.pnl), 0);
+    return Math.round(totalWinPnL / winSignals.length);
+  };
+
+  const calculateAvgLoss = (): number => {
+    const lossSignals = signals.filter(s => s.status === 'LOSS' && s.pnl);
+    if (lossSignals.length === 0) return 0;
+    const totalLossPnL = lossSignals.reduce((total, signal) => total + Math.abs(parsePnL(signal.pnl)), 0);
+    return Math.round(totalLossPnL / lossSignals.length);
+  };
+
+  const getTodaySignals = () => {
+    const today = new Date();
+    return signals.filter(s => {
+      const signalDate = new Date(s.timestamp);
+      return signalDate.getDate() === today.getDate() &&
+             signalDate.getMonth() === today.getMonth() &&
+             signalDate.getFullYear() === today.getFullYear();
+    });
+  };
+
+  const getThisMonthSignals = () => {
+    const today = new Date();
+    return signals.filter(s => {
+      const signalDate = new Date(s.timestamp);
+      return signalDate.getMonth() === today.getMonth() &&
+             signalDate.getFullYear() === today.getFullYear();
+    });
+  };
+
+  const calculateRiskReward = (entry: string, takeProfit: string, stopLoss: string): string => {
+    const entryNum = parseFloat(entry);
+    const tpNum = parseFloat(takeProfit);
+    const slNum = parseFloat(stopLoss);
+    
+    if (isNaN(entryNum) || isNaN(tpNum) || isNaN(slNum)) return 'N/A';
+    
+    const risk = Math.abs(entryNum - slNum);
+    const reward = Math.abs(tpNum - entryNum);
+    
+    if (risk === 0) return 'N/A';
+    
+    return (reward / risk).toFixed(2);
+  };
+
+  const getWeeklyBreakdown = () => {
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+    
+    // Créer 4 semaines du mois en cours
+    const weeks = [];
+    for (let weekNum = 1; weekNum <= 4; weekNum++) {
+      const weekStart = new Date(currentYear, currentMonth, (weekNum - 1) * 7 + 1);
+      const weekEnd = new Date(currentYear, currentMonth, weekNum * 7);
+      
+      const weekSignals = signals.filter(s => {
+        const signalDate = new Date(s.timestamp);
+        return signalDate >= weekStart && 
+               signalDate <= weekEnd &&
+               signalDate.getMonth() === currentMonth &&
+               signalDate.getFullYear() === currentYear;
+      });
+      
+      const closedSignals = weekSignals.filter(s => s.status !== 'ACTIVE');
+      const weekPnL = closedSignals.reduce((total, signal) => total + parsePnL(signal.pnl || '0'), 0);
+      const wins = closedSignals.filter(s => s.status === 'WIN').length;
+      const losses = closedSignals.filter(s => s.status === 'LOSS').length;
+      
+      // Vérifier si c'est la semaine actuelle
+      const todayWeek = Math.ceil(today.getDate() / 7);
+      const isCurrentWeek = weekNum === todayWeek;
+      
+      weeks.push({
+        week: `Week ${weekNum}`,
+        trades: weekSignals.length,
+        pnl: weekPnL,
+        wins,
+        losses,
+        isCurrentWeek
+      });
+    }
+    
+    return weeks;
+  };
+
   // Fonctions pour gérer les statuts des signaux
-  const handleSignalStatus = (signalId: string, newStatus: 'WIN' | 'LOSS' | 'BE') => {
+  const handleSignalStatus = (signalId: string, newStatus: 'WIN' | 'LOSS' | 'BE' | 'ACTIVE') => {
     const signal = signals.find(s => s.id === signalId);
     if (!signal) return;
 
     if (signal.status === newStatus) {
       // Si on clique sur le même statut, on remet en ACTIVE
+      setSignals(prev => prev.map(s => 
+        s.id === signalId ? { ...s, status: 'ACTIVE', pnl: undefined } : s
+      ));
+    } else if (newStatus === 'ACTIVE') {
+      // Si on veut remettre en ACTIVE directement
       setSignals(prev => prev.map(s => 
         s.id === signalId ? { ...s, status: 'ACTIVE', pnl: undefined } : s
       ));
@@ -147,11 +307,12 @@ export default function TradingPlatformShell() {
       description: signalData.description || '',
       image: signalData.image,
       timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-      status: 'ACTIVE' as const
+      status: 'ACTIVE' as const,
+      channel_id: selectedChannel.id
     };
 
-    // Ajouter le signal à la liste
-    setSignals(prevSignals => [newSignal, ...prevSignals]);
+    // Ajouter le signal à la liste (en bas)
+    setSignals(prevSignals => [...prevSignals, newSignal]);
     console.log('Nouveau signal:', newSignal);
     
     // Reset form et fermer modal
@@ -443,30 +604,51 @@ export default function TradingPlatformShell() {
           
           {/* Métriques principales */}
           <div className="space-y-4 mb-8">
+            {/* P&L Total */}
+            <div className={`border rounded-lg p-4 border ${
+              calculateTotalPnL() >= 0 
+                ? 'bg-green-600/20 border-green-500/30' 
+                : 'bg-red-600/20 border-red-500/30'
+            }`}>
+              <div className={`text-sm mb-1 ${
+                calculateTotalPnL() >= 0 ? 'text-green-300' : 'text-red-300'
+              }`}>P&L Total</div>
+              <div className={`text-2xl font-bold ${
+                calculateTotalPnL() >= 0 ? 'text-green-200' : 'text-red-200'
+              }`}>
+                {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
+              </div>
+            </div>
+
+            {/* Win Rate */}
             <div className="bg-blue-600/20 border-blue-500/30 rounded-lg p-4 border">
-              <div className="text-sm text-blue-300 mb-1">Total Signaux</div>
-              <div className="text-2xl font-bold text-blue-200">{signals.length}</div>
+              <div className="text-sm text-blue-300 mb-1">Win Rate</div>
+              <div className="text-2xl font-bold text-blue-200">{calculateWinRate()}%</div>
             </div>
             
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Aujourd'hui</div>
-                <div className="text-lg font-bold text-blue-400">{signals.filter(s => new Date(s.timestamp).getDate() === new Date().getDate()).length}</div>
+                <div className="text-lg font-bold text-blue-400">{getTodaySignals().length}</div>
               </div>
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Ce mois</div>
-                <div className="text-lg font-bold text-white">{signals.filter(s => new Date(s.timestamp).getMonth() === new Date().getMonth()).length}</div>
+                <div className="text-lg font-bold text-white">{getThisMonthSignals().length}</div>
               </div>
             </div>
             
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Avg Win</div>
-                <div className="text-lg font-bold text-gray-400">-</div>
+                <div className="text-lg font-bold text-green-400">
+                  {calculateAvgWin() > 0 ? `+$${calculateAvgWin()}` : '-'}
+                </div>
               </div>
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Avg Loss</div>
-                <div className="text-lg font-bold text-gray-400">-</div>
+                <div className="text-lg font-bold text-red-400">
+                  {calculateAvgLoss() > 0 ? `-$${calculateAvgLoss()}` : '-'}
+                </div>
               </div>
             </div>
           </div>
@@ -474,11 +656,51 @@ export default function TradingPlatformShell() {
           {/* Résumé hebdomadaire */}
           <div>
             <h4 className="text-sm font-semibold text-gray-300 mb-4">Weekly Breakdown</h4>
-            <div className="space-y-3">
-              <div className="text-center text-gray-400 py-8">
-                <div className="text-sm">Aucune donnée disponible</div>
-                <div className="text-xs mt-1">Les données apparaîtront ici</div>
-              </div>
+            <div className="space-y-2">
+              {getWeeklyBreakdown().map((weekData, index) => (
+                <div key={index} className={`flex items-center justify-between p-3 rounded-lg border ${
+                  weekData.isCurrentWeek 
+                    ? 'bg-blue-600/20 border-blue-500/30' 
+                    : 'bg-gray-700/50 border-gray-600'
+                }`}>
+                  <div className="flex items-center gap-3">
+                    <div className={`text-sm font-medium ${
+                      weekData.isCurrentWeek ? 'text-blue-300' : 'text-gray-300'
+                    }`}>
+                      {weekData.week}
+                    </div>
+                    <div className="text-xs text-gray-400">
+                      {weekData.trades} trade{weekData.trades !== 1 ? 's' : ''}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {(weekData.wins > 0 || weekData.losses > 0) ? (
+                      <div className="flex items-center gap-1">
+                        {weekData.wins > 0 && (
+                          <div className="text-sm bg-green-500 text-white px-3 py-1 rounded-lg font-bold shadow-lg">
+                            {weekData.wins}W
+                          </div>
+                        )}
+                        {weekData.losses > 0 && (
+                          <div className="text-sm bg-red-500 text-white px-3 py-1 rounded-lg font-bold shadow-lg">
+                            {weekData.losses}L
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-sm text-gray-500 px-3 py-1">
+                        -
+                      </div>
+                    )}
+                    <div className={`text-xs ${
+                      weekData.pnl > 0 ? 'text-green-400' : 
+                      weekData.pnl < 0 ? 'text-red-400' : 'text-gray-500'
+                    }`}>
+                      {weekData.pnl !== 0 ? `${weekData.pnl > 0 ? '+' : ''}$${weekData.pnl}` : ''}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -535,11 +757,17 @@ export default function TradingPlatformShell() {
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Win Rate:</span>
-                <span className="text-gray-400">-</span>
+                <span className="text-blue-400">{calculateWinRate()}%</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Signaux actifs:</span>
-                <span className="text-gray-400">0</span>
+                <span className="text-yellow-400">{signals.filter(s => s.status === 'ACTIVE').length}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">P&L Total:</span>
+                <span className={calculateTotalPnL() >= 0 ? 'text-green-400' : 'text-red-400'}>
+                  {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
+                </span>
               </div>
             </div>
           </div>
@@ -549,7 +777,7 @@ export default function TradingPlatformShell() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Mobile Navigation - Fixed */}
-        <div className="md:hidden bg-gray-800 border-b border-gray-700 p-3 fixed top-0 left-0 right-0 z-20" style={{ height: '60px' }}>
+        <div className="md:hidden bg-gray-800 border-b border-gray-700 p-3 fixed top-0 left-0 right-0 z-30" style={{ height: '60px' }}>
           {mobileView === 'channels' ? (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -592,7 +820,7 @@ export default function TradingPlatformShell() {
         <div className="md:hidden relative flex-1 overflow-hidden" style={{ paddingTop: '60px' }}>
           {/* Channels List - Slides from left */}
           <div 
-            className={`absolute inset-0 bg-gray-800 transform transition-transform duration-300 ease-in-out ${
+            className={`absolute inset-0 bg-gray-800 transform transition-transform duration-300 ease-in-out z-10 ${
               mobileView === 'channels' ? 'translate-x-0' : '-translate-x-full'
             }`}
           >
@@ -693,11 +921,17 @@ export default function TradingPlatformShell() {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Win Rate:</span>
-                    <span className="text-gray-400">-</span>
+                    <span className="text-blue-400">{calculateWinRate()}%</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Signaux actifs:</span>
-                    <span className="text-gray-400">0</span>
+                    <span className="text-yellow-400">{signals.filter(s => s.status === 'ACTIVE').length}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">P&L Total:</span>
+                    <span className={calculateTotalPnL() >= 0 ? 'text-green-400' : 'text-red-400'}>
+                      {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -706,7 +940,7 @@ export default function TradingPlatformShell() {
 
           {/* Content Area - Slides from right */}
           <div 
-            className={`absolute inset-0 transform transition-transform duration-300 ease-in-out ${
+            className={`absolute inset-0 bg-gray-900 transform transition-transform duration-300 ease-in-out z-10 ${
               mobileView === 'content' ? 'translate-x-0' : 'translate-x-full'
             }`}
           >
@@ -715,16 +949,18 @@ export default function TradingPlatformShell() {
             ) : (
               <div className="p-4 md:p-6 space-y-4 w-full h-full overflow-y-auto" style={{ paddingTop: '80px', paddingBottom: '100px' }}>
 
+
+
                 {/* Affichage des signaux */}
-                {view === 'signals' ? (
+                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
-                    {signals.length === 0 ? (
+                    {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                       <div className="text-center py-8">
                         <div className="text-gray-400 text-sm">Aucun signal pour le moment</div>
                         <div className="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
                       </div>
                     ) : (
-                      signals.map((signal) => (
+                      signals.filter(signal => signal.channel_id === selectedChannel.id).map((signal) => (
                         <div key={signal.id} className="flex items-start gap-3">
                           <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
                           <div className="flex-1">
@@ -733,47 +969,47 @@ export default function TradingPlatformShell() {
                               <span className="text-xs text-gray-400">{signal.timestamp}</span>
                             </div>
 
-                            <div className="bg-transparent rounded-lg p-4">
-                              <div className="space-y-2">
-                                <div className="bg-gray-600 rounded-lg p-3 inline-block">
-                                  <div className="flex items-center gap-2">
-                                    <span className={signal.type === 'BUY' ? 'text-green-400' : 'text-red-400'}>
-                                      {signal.type === 'BUY' ? '📈' : '📉'}
-                                    </span>
-                                    <span className="font-semibold text-white text-base">
-                                      Signal {signal.type} {signal.symbol}
-                                    </span>
-                                  </div>
+                            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                              <div className="space-y-3">
+                                {/* Header avec titre et indicateur */}
+                                <div className="flex items-center gap-2">
+                                  <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-500' : 'bg-gray-500'}`}></div>
+                                  <h3 className="font-bold text-white text-lg">
+                                    Signal {signal.type} {signal.symbol} {selectedChannel.id === 'futur' ? 'Futures' : ''} – {signal.timeframe}
+                                  </h3>
                                 </div>
                                 
-                                <div className="bg-gray-600 rounded-lg p-3 inline-block">
-                                  <div className="space-y-1 text-sm">
-                                    {signal.entry !== 'N/A' && (
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-blue-400">🔹</span>
-                                        <span className="text-white">Entrée : {signal.entry}</span>
-                                      </div>
-                                    )}
-                                    {signal.takeProfit !== 'N/A' && (
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-blue-400">🔹</span>
-                                        <span className="text-white">Take Profit : {signal.takeProfit}</span>
-                                      </div>
-                                    )}
-                                    {signal.stopLoss !== 'N/A' && (
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-blue-400">🔹</span>
-                                        <span className="text-white">Stop Loss : {signal.stopLoss}</span>
-                                      </div>
-                                    )}
-                                    {signal.description && (
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-yellow-400">📝</span>
-                                        <span className="text-white">{signal.description}</span>
-                                      </div>
-                                    )}
-                                  </div>
+                                {/* Détails du signal */}
+                                <div className="space-y-2">
+                                  {signal.entry !== 'N/A' && (
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-blue-400 text-sm">🔹</span>
+                                      <span className="text-white">Entrée : {signal.entry} USD</span>
+                                    </div>
+                                  )}
+                                  {signal.stopLoss !== 'N/A' && (
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-blue-400 text-sm">🔹</span>
+                                      <span className="text-white">Stop Loss : {signal.stopLoss} USD</span>
+                                    </div>
+                                  )}
+                                  {signal.takeProfit !== 'N/A' && (
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-blue-400 text-sm">🔹</span>
+                                      <span className="text-white">Take Profit : {signal.takeProfit} USD</span>
+                                    </div>
+                                  )}
                                 </div>
+                                
+                                {/* Ratio R:R */}
+                                {signal.entry !== 'N/A' && signal.takeProfit !== 'N/A' && signal.stopLoss !== 'N/A' && (
+                                  <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
+                                    <span className="text-red-400 text-sm">🎯</span>
+                                    <span className="text-white text-sm">
+                                      Ratio R:R : ≈ {calculateRiskReward(signal.entry, signal.takeProfit, signal.stopLoss)}
+                                    </span>
+                                  </div>
+                                )}
                               </div>
                             </div>
 
@@ -788,55 +1024,43 @@ export default function TradingPlatformShell() {
                             )}
 
                             <div className="flex items-center gap-2 flex-wrap mt-2">
-                              <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">🔥 0</button>
-                              <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">💎 0</button>
-                              <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">🚀 0</button>
-                            </div>
-
-                            {/* Boutons de statut WIN/LOSS/BE */}
-                            <div className="flex items-center gap-2 mt-3">
                               <button 
-                                onClick={() => handleSignalStatus(signal.id, 'WIN')}
-                                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+                                onClick={() => handleSignalStatus(signal.id, signal.status === 'WIN' ? 'ACTIVE' : 'WIN')}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
                                   signal.status === 'WIN' 
-                                    ? 'bg-green-600 text-white' 
-                                    : 'bg-gray-600 hover:bg-green-600 hover:text-white text-gray-300'
+                                    ? 'bg-green-500 text-white shadow-lg shadow-green-500/20' 
+                                    : 'bg-gray-600 hover:bg-green-500 text-gray-300 hover:text-white'
                                 }`}
                               >
                                 ✅ WIN
                               </button>
                               <button 
-                                onClick={() => handleSignalStatus(signal.id, 'LOSS')}
-                                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+                                onClick={() => handleSignalStatus(signal.id, signal.status === 'LOSS' ? 'ACTIVE' : 'LOSS')}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
                                   signal.status === 'LOSS' 
-                                    ? 'bg-red-600 text-white' 
-                                    : 'bg-gray-600 hover:bg-red-600 hover:text-white text-gray-300'
+                                    ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' 
+                                    : 'bg-gray-600 hover:bg-red-500 text-gray-300 hover:text-white'
                                 }`}
                               >
                                 ❌ LOSS
                               </button>
                               <button 
-                                onClick={() => handleSignalStatus(signal.id, 'BE')}
-                                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+                                onClick={() => handleSignalStatus(signal.id, signal.status === 'BE' ? 'ACTIVE' : 'BE')}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
                                   signal.status === 'BE' 
-                                    ? 'bg-blue-600 text-white' 
-                                    : 'bg-gray-600 hover:bg-blue-600 hover:text-white text-gray-300'
+                                    ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
+                                    : 'bg-gray-600 hover:bg-blue-500 text-gray-300 hover:text-white'
                                 }`}
                               >
                                 ⚖️ BE
                               </button>
                             </div>
 
-                            {/* Affichage du P&L si disponible */}
-                            {signal.pnl && (
-                              <div className="mt-2">
-                                <span className={`text-sm font-bold ${
-                                  signal.pnl.startsWith('+') ? 'text-green-400' : 'text-red-400'
-                                }`}>
-                                  P&L: {signal.pnl}
-                                </span>
-                              </div>
-                            )}
+
+
+
+
+
                           </div>
                         </div>
                       ))
@@ -944,13 +1168,13 @@ export default function TradingPlatformShell() {
               {/* Affichage des signaux */}
               {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) ? (
                 <div className="space-y-4">
-                  {signals.length === 0 ? (
+                  {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                     <div className="text-center py-8">
                       <div className="text-gray-400 text-sm">Aucun signal pour le moment</div>
                       <div className="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
                     </div>
                   ) : (
-                    signals.map((signal) => (
+                    signals.filter(signal => signal.channel_id === selectedChannel.id).map((signal) => (
                       <div key={signal.id} className="flex items-start gap-3">
                         <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
                         <div className="flex-1">
@@ -959,47 +1183,47 @@ export default function TradingPlatformShell() {
                             <span className="text-xs text-gray-400">{signal.timestamp}</span>
                           </div>
 
-                          <div className="bg-transparent rounded-lg p-4">
-                            <div className="space-y-2">
-                              <div className="bg-gray-600 rounded-lg p-3 inline-block">
-                                <div className="flex items-center gap-2">
-                                  <span className={signal.type === 'BUY' ? 'text-green-400' : 'text-red-400'}>
-                                    {signal.type === 'BUY' ? '📈' : '📉'}
-                                  </span>
-                                  <span className="font-semibold text-white text-base">
-                                    Signal {signal.type} {signal.symbol}
-                                  </span>
-                                </div>
+                          <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                            <div className="space-y-3">
+                              {/* Header avec titre et indicateur */}
+                              <div className="flex items-center gap-2">
+                                <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-500' : 'bg-gray-500'}`}></div>
+                                <h3 className="font-bold text-white text-lg">
+                                  Signal {signal.type} {signal.symbol} {selectedChannel.id === 'futur' ? 'Futures' : ''} – {signal.timeframe}
+                                </h3>
                               </div>
                               
-                              <div className="bg-gray-600 rounded-lg p-3 inline-block">
-                                <div className="space-y-1 text-sm">
-                                  {signal.entry !== 'N/A' && (
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-blue-400">🔹</span>
-                                      <span className="text-white">Entrée : {signal.entry}</span>
-                                    </div>
-                                  )}
-                                  {signal.takeProfit !== 'N/A' && (
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-blue-400">🔹</span>
-                                      <span className="text-white">Take Profit : {signal.takeProfit}</span>
-                                    </div>
-                                  )}
-                                  {signal.stopLoss !== 'N/A' && (
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-blue-400">🔹</span>
-                                      <span className="text-white">Stop Loss : {signal.stopLoss}</span>
-                                    </div>
-                                  )}
-                                  {signal.description && (
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-yellow-400">📝</span>
-                                      <span className="text-white">{signal.description}</span>
-                                    </div>
-                                  )}
-                                </div>
+                              {/* Détails du signal */}
+                              <div className="space-y-2">
+                                {signal.entry !== 'N/A' && (
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-blue-400 text-sm">🔹</span>
+                                    <span className="text-white">Entrée : {signal.entry} USD</span>
+                                  </div>
+                                )}
+                                {signal.stopLoss !== 'N/A' && (
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-blue-400 text-sm">🔹</span>
+                                    <span className="text-white">Stop Loss : {signal.stopLoss} USD</span>
+                                  </div>
+                                )}
+                                {signal.takeProfit !== 'N/A' && (
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-blue-400 text-sm">🔹</span>
+                                    <span className="text-white">Take Profit : {signal.takeProfit} USD</span>
+                                  </div>
+                                )}
                               </div>
+                              
+                              {/* Ratio R:R */}
+                              {signal.entry !== 'N/A' && signal.takeProfit !== 'N/A' && signal.stopLoss !== 'N/A' && (
+                                <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
+                                  <span className="text-red-400 text-sm">🎯</span>
+                                  <span className="text-white text-sm">
+                                    Ratio R:R : ≈ {calculateRiskReward(signal.entry, signal.takeProfit, signal.stopLoss)}
+                                  </span>
+                                </div>
+                              )}
                             </div>
                           </div>
 
@@ -1014,9 +1238,36 @@ export default function TradingPlatformShell() {
                           )}
 
                           <div className="flex items-center gap-2 flex-wrap mt-2">
-                            <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">🔥 0</button>
-                            <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">💎 0</button>
-                            <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">🚀 0</button>
+                            <button 
+                              onClick={() => handleSignalStatus(signal.id, signal.status === 'WIN' ? 'ACTIVE' : 'WIN')}
+                              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                                signal.status === 'WIN' 
+                                  ? 'bg-green-500 text-white shadow-lg shadow-green-500/20' 
+                                  : 'bg-gray-600 hover:bg-green-500 text-gray-300 hover:text-white'
+                              }`}
+                            >
+                              ✅ WIN
+                            </button>
+                            <button 
+                              onClick={() => handleSignalStatus(signal.id, signal.status === 'LOSS' ? 'ACTIVE' : 'LOSS')}
+                              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                                signal.status === 'LOSS' 
+                                  ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' 
+                                  : 'bg-gray-600 hover:bg-red-500 text-gray-300 hover:text-white'
+                              }`}
+                            >
+                              ❌ LOSS
+                            </button>
+                            <button 
+                              onClick={() => handleSignalStatus(signal.id, signal.status === 'BE' ? 'ACTIVE' : 'BE')}
+                              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                                signal.status === 'BE' 
+                                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
+                                  : 'bg-gray-600 hover:bg-blue-500 text-gray-300 hover:text-white'
+                              }`}
+                            >
+                              ⚖️ BE
+                            </button>
                           </div>
                         </div>
                       </div>

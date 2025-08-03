@@ -514,6 +514,11 @@ const App = () => {
                                         </button>
                                       ))}
                                     </div>
+
+
+                                    
+
+
                                   </div>
                                 ) : (
                                   <div className="text-gray-300 whitespace-pre-line">{message.content}</div>
