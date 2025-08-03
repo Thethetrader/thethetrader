@@ -86,6 +86,10 @@ export default function TradingPlatformShell() {
   }, []);
   const [chatMessage, setChatMessage] = useState('');
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [isLiveStreaming, setIsLiveStreaming] = useState(false);
+  const [streamTitle, setStreamTitle] = useState('');
+  const [streamDescription, setStreamDescription] = useState('');
+  const [viewerCount, setViewerCount] = useState(0);
   const [chatMessages, setChatMessages] = useState<{[channelId: string]: Array<{
     id: string;
     text: string;
@@ -268,7 +272,13 @@ export default function TradingPlatformShell() {
   };
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Pour les salons de chat, scroller dans le conteneur de messages
+    if (messagesContainerRef.current && ['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id)) {
+      messagesContainerRef.current.scrollTop = 0;
+    } else {
+      // Pour les autres vues, scroller la page
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const handleLogout = () => {
@@ -283,6 +293,62 @@ export default function TradingPlatformShell() {
     if (file && file.type.startsWith('image/')) {
       const imageUrl = URL.createObjectURL(file);
       setProfileImage(imageUrl);
+    }
+  };
+
+  const handleStartStream = () => {
+    if (!streamTitle.trim()) {
+      alert('Veuillez entrer un titre pour votre stream');
+      return;
+    }
+    setIsLiveStreaming(true);
+    setViewerCount(Math.floor(Math.random() * 50) + 10); // Simuler des viewers
+  };
+
+  const handleStopStream = () => {
+    setIsLiveStreaming(false);
+    setViewerCount(0);
+  };
+
+  const handleShareScreen = () => {
+    if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+      navigator.mediaDevices.getDisplayMedia({ video: true })
+        .then(stream => {
+          console.log('Stream obtenu:', stream);
+          
+          // Créer un élément vidéo simple
+          const video = document.createElement('video');
+          video.className = 'w-full h-full object-contain';
+          video.autoplay = true;
+          video.muted = true;
+          video.playsInline = true;
+          video.srcObject = stream;
+          
+          // Trouver tous les conteneurs noirs et remplacer leur contenu
+          const containers = document.querySelectorAll('.bg-black.flex.items-center.justify-center');
+          console.log('Conteneurs trouvés:', containers.length);
+          
+          containers.forEach((container, index) => {
+            console.log(`Remplacer conteneur ${index}`);
+            container.innerHTML = '';
+            container.appendChild(video.cloneNode(true));
+          });
+          
+          // Lancer la lecture
+          video.play().then(() => {
+            console.log('Vidéo en cours de lecture');
+            setIsLiveStreaming(true);
+            setViewerCount(15);
+          }).catch(err => {
+            console.error('Erreur lecture vidéo:', err);
+          });
+        })
+        .catch(err => {
+          console.error('Erreur partage d\'écran:', err);
+          alert('Erreur lors du partage d\'écran: ' + err.message);
+        });
+    } else {
+      alert('Partage d\'écran non supporté sur ce navigateur');
     }
   };
 
@@ -879,7 +945,7 @@ export default function TradingPlatformShell() {
                    channels.find(c => c.id === selectedChannel.id)?.fullName || selectedChannel.name}
                 </span>
               </button>
-              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) && (
+              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream'].includes(selectedChannel.id) && (
                 <button onClick={handleCreateSignal} className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm">+ Signal</button>
               )}
             </div>
@@ -1021,12 +1087,12 @@ export default function TradingPlatformShell() {
             {view === 'calendar' ? (
               getTradingCalendar()
             ) : (
-              <div className="p-4 md:p-6 space-y-4 w-full h-full overflow-y-auto" style={{ paddingTop: '80px', paddingBottom: '100px' }}>
+              <div className="p-4 md:p-6 space-y-4 w-full h-full overflow-y-auto" style={{ paddingBottom: '100px' }}>
 
 
 
                 {/* Affichage des signaux */}
-                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) ? (
+                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream'].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
                     {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                       <div className="text-center py-8">
@@ -1140,16 +1206,160 @@ export default function TradingPlatformShell() {
                       ))
                     )}
                   </div>
-                                ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) ? (
+                                ) : selectedChannel.id === 'livestream' ? (
+                  <div className="flex flex-col h-full">
+                    {/* Interface Livestream */}
+                    <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
+                      {/* Zone de stream */}
+                      <div className="flex-1 bg-gray-900 rounded-lg overflow-hidden">
+                        {!isLiveStreaming ? (
+                          <div className="h-full flex flex-col items-center justify-center p-8">
+                            <div className="text-center space-y-4">
+                              <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto">
+                                <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M8 5v14l11-7z"/>
+                                </svg>
+                              </div>
+                              <h2 className="text-xl font-bold text-white">Aucun stream en cours</h2>
+                              <p className="text-gray-400">Commencez votre session de trading en direct</p>
+                              
+                              {/* Formulaire de démarrage */}
+                              <div className="space-y-3 max-w-md mx-auto">
+                                <input
+                                  type="text"
+                                  placeholder="Titre du stream (ex: Session TradingView - EURUSD)"
+                                  value={streamTitle}
+                                  onChange={(e) => setStreamTitle(e.target.value)}
+                                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                                />
+                                <textarea
+                                  placeholder="Description (optionnel)"
+                                  value={streamDescription}
+                                  onChange={(e) => setStreamDescription(e.target.value)}
+                                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                                  rows={2}
+                                />
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={handleStartStream}
+                                    className="flex-1 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-white font-medium"
+                                  >
+                                    🎥 Démarrer Stream
+                                  </button>
+                                  <button
+                                    onClick={handleShareScreen}
+                                    className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white"
+                                  >
+                                    📺 Partager Écran
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="h-full flex flex-col">
+                            {/* Header du stream */}
+                            <div className="bg-gray-800 p-4 border-b border-gray-700">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <h3 className="text-lg font-bold text-white">{streamTitle}</h3>
+                                  <p className="text-sm text-gray-400">{streamDescription}</p>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                  <div className="flex items-center gap-2 text-red-400">
+                                    <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+                                    <span className="text-sm font-medium">EN DIRECT</span>
+                                  </div>
+                                  <div className="flex items-center gap-1 text-gray-400">
+                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                    </svg>
+                                    <span className="text-sm">{viewerCount} spectateurs</span>
+                                  </div>
+                                  <button
+                                    onClick={handleStopStream}
+                                    className="bg-gray-600 hover:bg-gray-500 px-3 py-1 rounded text-sm text-white"
+                                  >
+                                    Arrêter
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Zone de vidéo */}
+                            <div className="flex-1 bg-black flex items-center justify-center">
+                              <div className="text-center text-gray-400">
+                                <div className="w-16 h-16 bg-gray-800 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+                                  </svg>
+                                </div>
+                                <p className="text-sm">Stream en cours...</p>
+                                <p className="text-xs mt-1">Partagez votre écran TradingView</p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Chat live */}
+                      <div className="w-full lg:w-80 bg-gray-800 rounded-lg flex flex-col">
+                        <div className="p-4 border-b border-gray-700">
+                          <h3 className="font-semibold text-white">💬 Chat Live</h3>
+                          <p className="text-xs text-gray-400">{viewerCount} spectateurs en ligne</p>
+                        </div>
+                        
+                        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                          {(chatMessages['livestream'] || []).length === 0 ? (
+                            <div className="text-center py-8">
+                              <div className="text-gray-400 text-sm">Aucun message</div>
+                              <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
+                            </div>
+                          ) : (
+                            (chatMessages['livestream'] || []).map((message) => (
+                              <div key={message.id} className="flex items-start gap-2">
+                                <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs">T</div>
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className="font-medium text-white text-sm">{message.author}</span>
+                                    <span className="text-xs text-gray-400">{message.timestamp}</span>
+                                  </div>
+                                  <div className="bg-gray-700 rounded-lg p-2">
+                                    <p className="text-white text-sm">{message.text}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                        
+                        {/* Barre de message pour le chat live */}
+                        <div className="p-4 border-t border-gray-700">
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="text"
+                              value={chatMessage}
+                              onChange={(e) => setChatMessage(e.target.value)}
+                              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                              placeholder="Commenter le stream..."
+                              className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
+                            />
+                            <button
+                              onClick={handleSendMessage}
+                              className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-white text-sm"
+                            >
+                              Envoyer
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) ? (
                   <div className="flex flex-col h-full">
                     {/* Messages de chat */}
-                    <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-20">
-                      {(chatMessages[selectedChannel.id] || []).length === 0 ? (
-                        <div className="text-center py-8">
-                          <div className="text-gray-400 text-sm">Aucun message pour le moment</div>
-                          <div className="text-gray-500 text-xs mt-1">Commencez la conversation !</div>
-                        </div>
-                      ) : (
+                    <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
+                      {(chatMessages[selectedChannel.id] || []).length > 0 && (
                         (chatMessages[selectedChannel.id] || []).map((message) => (
                           <div key={message.id} className="flex items-start gap-3">
                             <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
@@ -1215,6 +1425,155 @@ export default function TradingPlatformShell() {
                       </div>
                     </div>
                   </div>
+                ) : selectedChannel.id === 'livestream' ? (
+                  <div className="flex flex-col h-full">
+                    {/* Interface Livestream Desktop */}
+                    <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
+                      {/* Zone de stream */}
+                      <div className="flex-1 bg-gray-900 rounded-lg overflow-hidden">
+                        {!isLiveStreaming ? (
+                          <div className="h-full flex flex-col items-center justify-center p-8">
+                            <div className="text-center space-y-4">
+                              <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto">
+                                <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M8 5v14l11-7z"/>
+                                </svg>
+                              </div>
+                              <h2 className="text-xl font-bold text-white">Aucun stream en cours</h2>
+                              <p className="text-gray-400">Commencez votre session de trading en direct</p>
+                              
+                              {/* Formulaire de démarrage */}
+                              <div className="space-y-3 max-w-md mx-auto">
+                                <input
+                                  type="text"
+                                  placeholder="Titre du stream (ex: Session TradingView - EURUSD)"
+                                  value={streamTitle}
+                                  onChange={(e) => setStreamTitle(e.target.value)}
+                                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                                />
+                                <textarea
+                                  placeholder="Description (optionnel)"
+                                  value={streamDescription}
+                                  onChange={(e) => setStreamDescription(e.target.value)}
+                                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                                  rows={2}
+                                />
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={handleStartStream}
+                                    className="flex-1 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-white font-medium"
+                                  >
+                                    🎥 Démarrer Stream
+                                  </button>
+                                  <button
+                                    onClick={handleShareScreen}
+                                    className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white"
+                                  >
+                                    📺 Partager Écran
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="h-full flex flex-col">
+                            {/* Header du stream */}
+                            <div className="bg-gray-800 p-4 border-b border-gray-700">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <h3 className="text-lg font-bold text-white">{streamTitle}</h3>
+                                  <p className="text-sm text-gray-400">{streamDescription}</p>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                  <div className="flex items-center gap-2 text-red-400">
+                                    <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+                                    <span className="text-sm font-medium">EN DIRECT</span>
+                                  </div>
+                                  <div className="flex items-center gap-1 text-gray-400">
+                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                    </svg>
+                                    <span className="text-sm">{viewerCount} spectateurs</span>
+                                  </div>
+                                  <button
+                                    onClick={handleStopStream}
+                                    className="bg-gray-600 hover:bg-gray-500 px-3 py-1 rounded text-sm text-white"
+                                  >
+                                    Arrêter
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Zone de vidéo */}
+                            <div className="flex-1 bg-black flex items-center justify-center">
+                              <div className="text-center text-gray-400">
+                                <div className="w-16 h-16 bg-gray-800 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+                                  </svg>
+                                </div>
+                                <p className="text-sm">Stream en cours...</p>
+                                <p className="text-xs mt-1">Partagez votre écran TradingView</p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Chat live */}
+                      <div className="w-full lg:w-80 bg-gray-800 rounded-lg flex flex-col">
+                        <div className="p-4 border-b border-gray-700">
+                          <h3 className="font-semibold text-white">💬 Chat Live</h3>
+                          <p className="text-xs text-gray-400">{viewerCount} spectateurs en ligne</p>
+                        </div>
+                        
+                        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                          {(chatMessages['livestream'] || []).length === 0 ? (
+                            <div className="text-center py-8">
+                              <div className="text-gray-400 text-sm">Aucun message</div>
+                              <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
+                            </div>
+                          ) : (
+                            (chatMessages['livestream'] || []).map((message) => (
+                              <div key={message.id} className="flex items-start gap-2">
+                                <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs">T</div>
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className="font-medium text-white text-sm">{message.author}</span>
+                                    <span className="text-xs text-gray-400">{message.timestamp}</span>
+                                  </div>
+                                  <div className="bg-gray-700 rounded-lg p-2">
+                                    <p className="text-white text-sm">{message.text}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                        
+                        {/* Barre de message pour le chat live */}
+                        <div className="p-4 border-t border-gray-700">
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="text"
+                              value={chatMessage}
+                              onChange={(e) => setChatMessage(e.target.value)}
+                              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                              placeholder="Commenter le stream..."
+                              className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
+                            />
+                            <button
+                              onClick={handleSendMessage}
+                              className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-white text-sm"
+                            >
+                              Envoyer
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 ) : (
                   <div className="text-center py-8">
                     <div className="text-gray-400 text-sm">Bienvenue sur TheTheTrader</div>
@@ -1231,16 +1590,16 @@ export default function TradingPlatformShell() {
           {view === 'calendar' ? (
             getTradingCalendar()
           ) : (
-            <div className="p-4 md:p-6 space-y-4 w-full">
+            <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '20px' }}>
               {/* Bouton + Signal pour les canaux de signaux */}
-              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) && (
+              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream'].includes(selectedChannel.id) && (
                 <div className="flex justify-end mb-4">
                   <button onClick={handleCreateSignal} className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm">+ Signal</button>
                 </div>
               )}
 
               {/* Affichage des signaux */}
-              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) ? (
+              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream'].includes(selectedChannel.id) ? (
                 <div className="space-y-4">
                   {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                     <div className="text-center py-8">
@@ -1376,16 +1735,160 @@ export default function TradingPlatformShell() {
                     ))
                   )}
                 </div>
+              ) : selectedChannel.id === 'livestream' ? (
+                <div className="flex flex-col h-full">
+                  {/* Interface Livestream Desktop */}
+                  <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
+                    {/* Zone de stream */}
+                    <div className="flex-1 bg-gray-900 rounded-lg overflow-hidden">
+                      {!isLiveStreaming ? (
+                        <div className="h-full flex flex-col items-center justify-center p-8">
+                          <div className="text-center space-y-4">
+                            <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto">
+                              <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z"/>
+                              </svg>
+                            </div>
+                            <h2 className="text-xl font-bold text-white">Aucun stream en cours</h2>
+                            <p className="text-gray-400">Commencez votre session de trading en direct</p>
+                            
+                            {/* Formulaire de démarrage */}
+                            <div className="space-y-3 max-w-md mx-auto">
+                              <input
+                                type="text"
+                                placeholder="Titre du stream (ex: Session TradingView - EURUSD)"
+                                value={streamTitle}
+                                onChange={(e) => setStreamTitle(e.target.value)}
+                                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                              />
+                              <textarea
+                                placeholder="Description (optionnel)"
+                                value={streamDescription}
+                                onChange={(e) => setStreamDescription(e.target.value)}
+                                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                                rows={2}
+                              />
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={handleStartStream}
+                                  className="flex-1 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-white font-medium"
+                                >
+                                  🎥 Démarrer Stream
+                                </button>
+                                <button
+                                  onClick={handleShareScreen}
+                                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white"
+                                >
+                                  📺 Partager Écran
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="h-full flex flex-col">
+                          {/* Header du stream */}
+                          <div className="bg-gray-800 p-4 border-b border-gray-700">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <h3 className="text-lg font-bold text-white">{streamTitle}</h3>
+                                <p className="text-sm text-gray-400">{streamDescription}</p>
+                              </div>
+                              <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-2 text-red-400">
+                                  <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+                                  <span className="text-sm font-medium">EN DIRECT</span>
+                                </div>
+                                <div className="flex items-center gap-1 text-gray-400">
+                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                  </svg>
+                                  <span className="text-sm">{viewerCount} spectateurs</span>
+                                </div>
+                                <button
+                                  onClick={handleStopStream}
+                                  className="bg-gray-600 hover:bg-gray-500 px-3 py-1 rounded text-sm text-white"
+                                >
+                                  Arrêter
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Zone de vidéo */}
+                          <div className="flex-1 bg-black flex items-center justify-center">
+                            <div className="text-center text-gray-400">
+                              <div className="w-16 h-16 bg-gray-800 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+                                </svg>
+                              </div>
+                              <p className="text-sm">Stream en cours...</p>
+                              <p className="text-xs mt-1">Partagez votre écran TradingView</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Chat live */}
+                    <div className="w-full lg:w-80 bg-gray-800 rounded-lg flex flex-col">
+                      <div className="p-4 border-b border-gray-700">
+                        <h3 className="font-semibold text-white">💬 Chat Live</h3>
+                        <p className="text-xs text-gray-400">{viewerCount} spectateurs en ligne</p>
+                      </div>
+                      
+                      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                        {(chatMessages['livestream'] || []).length === 0 ? (
+                          <div className="text-center py-8">
+                            <div className="text-gray-400 text-sm">Aucun message</div>
+                            <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
+                          </div>
+                        ) : (
+                          (chatMessages['livestream'] || []).map((message) => (
+                            <div key={message.id} className="flex items-start gap-2">
+                              <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs">T</div>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="font-medium text-white text-sm">{message.author}</span>
+                                  <span className="text-xs text-gray-400">{message.timestamp}</span>
+                                </div>
+                                <div className="bg-gray-700 rounded-lg p-2">
+                                  <p className="text-white text-sm">{message.text}</p>
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                      
+                      {/* Barre de message pour le chat live */}
+                      <div className="p-4 border-t border-gray-700">
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={chatMessage}
+                            onChange={(e) => setChatMessage(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                            placeholder="Commenter le stream..."
+                            className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
+                          />
+                          <button
+                            onClick={handleSendMessage}
+                            className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-white text-sm"
+                          >
+                            Envoyer
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) ? (
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}
-                  <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-20">
-                    {(chatMessages[selectedChannel.id] || []).length === 0 ? (
-                      <div className="text-center py-8">
-                        <div className="text-gray-400 text-sm">Aucun message pour le moment</div>
-                        <div className="text-gray-500 text-xs mt-1">Commencez la conversation !</div>
-                      </div>
-                    ) : (
+                  <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
+                    {(chatMessages[selectedChannel.id] || []).length > 0 && (
                       (chatMessages[selectedChannel.id] || []).map((message) => (
                         <div key={message.id} className="flex items-start gap-3">
                           <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
