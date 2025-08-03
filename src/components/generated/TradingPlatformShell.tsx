@@ -22,6 +22,8 @@ export default function TradingPlatformShell() {
     description: string;
     image: File | null;
     timestamp: string;
+    status: 'ACTIVE' | 'WIN' | 'LOSS' | 'BE';
+    pnl?: string;
   }>>([]);
   const [chatMessage, setChatMessage] = useState('');
   const [chatMessages, setChatMessages] = useState<{[channelId: string]: Array<{
@@ -41,9 +43,56 @@ export default function TradingPlatformShell() {
     description: '',
     image: null as File | null
   });
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+
+  // Fonctions pour la navigation du calendrier
+  const goToPreviousMonth = () => {
+    setCurrentDate(prev => {
+      const newDate = new Date(prev);
+      newDate.setMonth(prev.getMonth() - 1);
+      return newDate;
+    });
+  };
+
+  const goToNextMonth = () => {
+    setCurrentDate(prev => {
+      const newDate = new Date(prev);
+      newDate.setMonth(prev.getMonth() + 1);
+      return newDate;
+    });
+  };
+
+  const getMonthName = (date: Date) => {
+    const months = [
+      'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+      'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'
+    ];
+    return months[date.getMonth()];
+  };
+
+  // Fonctions pour gérer les statuts des signaux
+  const handleSignalStatus = (signalId: string, newStatus: 'WIN' | 'LOSS' | 'BE') => {
+    const signal = signals.find(s => s.id === signalId);
+    if (!signal) return;
+
+    if (signal.status === newStatus) {
+      // Si on clique sur le même statut, on remet en ACTIVE
+      setSignals(prev => prev.map(s => 
+        s.id === signalId ? { ...s, status: 'ACTIVE', pnl: undefined } : s
+      ));
+    } else {
+      // Sinon on demande le P&L
+      const pnl = prompt(`Entrez le P&L final pour ce signal (ex: +$150 ou -$50):`);
+      if (pnl !== null) {
+        setSignals(prev => prev.map(s => 
+          s.id === signalId ? { ...s, status: newStatus, pnl } : s
+        ));
+      }
+    }
+  };
 
   // Scroll automatique vers le bas quand de nouveaux messages arrivent ou quand on change de canal
   useEffect(() => {
@@ -87,7 +136,8 @@ export default function TradingPlatformShell() {
       stopLoss: signalData.stopLoss || 'N/A',
       description: signalData.description || '',
       image: signalData.image,
-      timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+      timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+      status: 'ACTIVE' as const
     };
 
     // Ajouter le signal à la liste
@@ -229,7 +279,7 @@ export default function TradingPlatformShell() {
   };
 
   const getTradingCalendar = () => (
-    <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto">
+    <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-gray-600 pb-4 gap-4 md:gap-0">
         <div className="hidden md:block">
@@ -238,15 +288,22 @@ export default function TradingPlatformShell() {
         </div>
         
         <div className="flex items-center gap-4">
-          <div className="flex bg-gray-700 rounded-lg overflow-hidden border border-gray-600">
-            <button className="px-4 py-2 bg-blue-600 text-white text-sm font-medium">P&L</button>
-            <button className="px-4 py-2 bg-gray-700 text-gray-300 text-sm hover:bg-gray-600">Win Rate</button>
-          </div>
-          
           <div className="flex items-center gap-3 text-white">
-            <button className="p-2 hover:bg-gray-700 rounded-lg text-lg font-bold">‹</button>
-            <span className="px-4 text-lg font-semibold min-w-[120px] text-center">January 2025</span>
-            <button className="p-2 hover:bg-gray-700 rounded-lg text-lg font-bold">›</button>
+            <button 
+              onClick={goToPreviousMonth}
+              className="p-2 hover:bg-gray-700 rounded-lg text-lg font-bold"
+            >
+              ‹
+            </button>
+            <span className="px-4 text-lg font-semibold min-w-[120px] text-center">
+              {getMonthName(currentDate)} {currentDate.getFullYear()}
+            </span>
+            <button 
+              onClick={goToNextMonth}
+              className="p-2 hover:bg-gray-700 rounded-lg text-lg font-bold"
+            >
+              ›
+            </button>
           </div>
         </div>
       </div>
@@ -265,71 +322,103 @@ export default function TradingPlatformShell() {
 
           {/* Grille du calendrier */}
           <div className="grid grid-cols-7 gap-1 md:gap-2">
-            {Array.from({ length: 35 }, (_, i) => {
-              const day = i + 1;
-              const isToday = day === 15;
+            {(() => {
+              const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+              const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+              const daysInMonth = lastDayOfMonth.getDate();
+              const firstDayWeekday = firstDayOfMonth.getDay(); // 0 = dimanche, 1 = lundi, etc.
               
-              // Données de trading simulées
-              const tradingDays = {
-                2: { pnl: '+$1,240', color: 'bg-green-500/60 border-green-400/50 text-white' },
-                3: { pnl: '-$320', color: 'bg-red-500/60 border-red-400/50 text-white' },
-                6: { pnl: '+$890', color: 'bg-green-500/60 border-green-400/50 text-white' },
-                7: { pnl: '+$2,150', color: 'bg-green-500/60 border-green-400/50 text-white' },
-                8: { pnl: '-$540', color: 'bg-red-500/60 border-red-400/50 text-white' },
-                9: { pnl: '+$670', color: 'bg-green-500/60 border-green-400/50 text-white' },
-                10: { pnl: '+$1,180', color: 'bg-green-500/60 border-green-400/50 text-white' },
-                13: { pnl: '-$230', color: 'bg-red-500/60 border-red-400/50 text-white' },
-                14: { pnl: '+$1,920', color: 'bg-green-500/60 border-green-400/50 text-white' },
-                15: { pnl: '+$840', color: 'bg-green-500/60 border-green-400/50 text-white' },
-                16: { pnl: '+$450', color: 'bg-green-500/60 border-green-400/50 text-white' },
-                17: { pnl: '-$710', color: 'bg-red-500/60 border-red-400/50 text-white' },
-                20: { pnl: '+$1,650', color: 'bg-green-500/60 border-green-400/50 text-white' },
-                21: { pnl: '+$380', color: 'bg-green-500/60 border-green-400/50 text-white' },
-                22: { pnl: '-$190', color: 'bg-red-500/60 border-red-400/50 text-white' },
-                23: { pnl: '+$2,100', color: 'bg-green-500/60 border-green-400/50 text-white' },
-                24: { pnl: '+$920', color: 'bg-green-500/60 border-green-400/50 text-white' },
-                27: { pnl: '+$560', color: 'bg-green-500/60 border-green-400/50 text-white' },
-                28: { pnl: '-$430', color: 'bg-red-500/60 border-red-400/50 text-white' },
-                29: { pnl: '+$1,340', color: 'bg-green-500/60 border-green-400/50 text-white' },
-                30: { pnl: '+$780', color: 'bg-green-500/60 border-green-400/50 text-white' }
-              };
+              // Ajuster pour que lundi soit 0
+              const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
               
-              if (day > 31) return <div key={i}></div>;
+              const totalCells = Math.ceil((adjustedFirstDay + daysInMonth) / 7) * 7;
               
-              const dayData = tradingDays[day];
+              return Array.from({ length: totalCells }, (_, i) => {
+                const dayNumber = i - adjustedFirstDay + 1;
+                const today = new Date();
+                const isToday = dayNumber === today.getDate() && 
+                               currentDate.getMonth() === today.getMonth() && 
+                               currentDate.getFullYear() === today.getFullYear();
+                
+                // Celles vides au début
+                if (dayNumber < 1) {
+                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700"></div>;
+                }
+                
+                // Celles vides à la fin
+                if (dayNumber > daysInMonth) {
+                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700"></div>;
+                }
               
-              return (
-                <div key={i} className={`
-                    border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 cursor-pointer transition-all hover:shadow-md
-                    ${dayData ? dayData.color : 'bg-gray-700 border-gray-600 text-gray-400'}
-                    ${isToday ? 'ring-2 ring-blue-400' : ''}
-                  `}>
-                  <div className="flex flex-col h-full justify-between">
-                    <div className="text-xs md:text-sm font-semibold">{day}</div>
-                    {dayData && (
-                      <div className="text-xs font-bold text-center hidden md:block">
-                        {dayData.pnl}
-                      </div>
-                    )}
+                              // Vérifier s'il y a des signaux pour ce jour
+                const daySignals = signals.filter(signal => {
+                  const signalDate = new Date();
+                  // Pour l'instant, on utilise la date actuelle car les signaux n'ont pas de date spécifique
+                  return signalDate.getDate() === dayNumber && 
+                         signalDate.getMonth() === currentDate.getMonth() && 
+                         signalDate.getFullYear() === currentDate.getFullYear();
+                });
+
+                // Déterminer la couleur selon les signaux
+                let bgColor = 'bg-gray-700 border-gray-600 text-gray-400'; // No trade par défaut
+                let signalCount = 0;
+
+                if (daySignals.length > 0) {
+                  signalCount = daySignals.length;
+                  
+                  // Déterminer la couleur selon les statuts des signaux
+                  const hasWin = daySignals.some(s => s.status === 'WIN');
+                  const hasLoss = daySignals.some(s => s.status === 'LOSS');
+                  const hasBE = daySignals.some(s => s.status === 'BE');
+                  
+                  if (hasWin && !hasLoss) {
+                    bgColor = 'bg-green-500/60 border-green-400/50 text-white'; // WIN
+                  } else if (hasLoss && !hasWin) {
+                    bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // LOSS
+                  } else if (hasBE || (hasWin && hasLoss)) {
+                    bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // BE ou mixte
+                  } else {
+                    bgColor = 'bg-yellow-500/60 border-yellow-400/50 text-white'; // ACTIVE
+                  }
+                }
+
+                return (
+                  <div key={i} className={`
+                      border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 cursor-pointer transition-all hover:shadow-md
+                      ${bgColor}
+                      ${isToday ? 'ring-2 ring-blue-400' : ''}
+                    `}>
+                    <div className="flex flex-col h-full justify-between">
+                      <div className="text-xs md:text-sm font-semibold">{dayNumber}</div>
+                      {signalCount > 0 && (
+                        <div className="text-xs font-bold text-center hidden md:block">
+                          {signalCount} signal{signalCount > 1 ? 's' : ''}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              });
+            })()}
+            </div>
 
           {/* Légende */}
           <div className="flex items-center justify-center gap-6 mt-8 pt-6 border-t border-gray-600">
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 bg-green-500/60 border border-green-400/50 rounded"></div>
-              <span className="text-sm text-gray-300">Profitable Day</span>
+              <span className="text-sm text-gray-300">WIN</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 bg-red-500/60 border border-red-400/50 rounded"></div>
-              <span className="text-sm text-gray-300">Loss Day</span>
+              <span className="text-sm text-gray-300">LOSS</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-blue-500/60 border border-blue-400/50 rounded"></div>
+              <span className="text-sm text-gray-300">BREAK EVEN</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 bg-gray-700 border border-gray-600 rounded"></div>
-              <span className="text-sm text-gray-300">No Trading</span>
+              <span className="text-sm text-gray-300">NO TRADE</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 border-2 border-blue-400 rounded"></div>
@@ -363,11 +452,11 @@ export default function TradingPlatformShell() {
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Avg Win</div>
-                <div className="text-lg font-bold text-green-300">+$1,205</div>
+                <div className="text-lg font-bold text-gray-400">-</div>
               </div>
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Avg Loss</div>
-                <div className="text-lg font-bold text-red-300">-$445</div>
+                <div className="text-lg font-bold text-gray-400">-</div>
               </div>
             </div>
           </div>
@@ -376,26 +465,10 @@ export default function TradingPlatformShell() {
           <div>
             <h4 className="text-sm font-semibold text-gray-300 mb-4">Weekly Breakdown</h4>
             <div className="space-y-3">
-              {[
-                { week: 'Week 1', pnl: '+$2,340', trades: '12 trades', winRate: '75%' },
-                { week: 'Week 2', pnl: '+$4,180', trades: '18 trades', winRate: '78%' },
-                { week: 'Week 3', pnl: '+$3,920', trades: '22 trades', winRate: '68%' },
-                { week: 'Week 4', pnl: '+$5,040', trades: '25 trades', winRate: '76%' },
-                { week: 'Week 5', pnl: 'Current week', trades: '12 trades', winRate: '83%' }
-              ].map((week, index) => (
-                <div key={index} className="bg-gray-700 rounded-lg p-3 border border-gray-600">
-                  <div className="flex justify-between items-center mb-1">
-                    <div className="text-sm font-medium text-white">{week.week}</div>
-                    <div className={`text-sm font-bold ${week.pnl.startsWith('+') ? 'text-green-300' : 'text-gray-400'}`}>
-                      {week.pnl}
-                    </div>
-                  </div>
-                  <div className="flex justify-between text-xs text-gray-400">
-                    <span>{week.trades}</span>
-                    <span>{week.winRate} win rate</span>
-                  </div>
-                </div>
-              ))}
+              <div className="text-center text-gray-400 py-8">
+                <div className="text-sm">Aucune donnée disponible</div>
+                <div className="text-xs mt-1">Les données apparaîtront ici</div>
+              </div>
             </div>
           </div>
         </div>
@@ -452,11 +525,11 @@ export default function TradingPlatformShell() {
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Win Rate:</span>
-                <span className="text-green-400">78%</span>
+                <span className="text-gray-400">-</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Signaux actifs:</span>
-                <span className="text-blue-400">3</span>
+                <span className="text-gray-400">0</span>
               </div>
             </div>
           </div>
@@ -610,11 +683,11 @@ export default function TradingPlatformShell() {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Win Rate:</span>
-                    <span className="text-green-400">78%</span>
+                    <span className="text-gray-400">-</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Signaux actifs:</span>
-                    <span className="text-blue-400">3</span>
+                    <span className="text-gray-400">0</span>
                   </div>
                 </div>
               </div>
@@ -630,7 +703,7 @@ export default function TradingPlatformShell() {
             {view === 'calendar' ? (
               getTradingCalendar()
             ) : (
-              <div className="p-4 md:p-6 space-y-4 w-full h-full overflow-y-auto">
+              <div className="p-4 md:p-6 space-y-4 w-full h-full overflow-y-auto" style={{ paddingTop: '80px', paddingBottom: '100px' }}>
 
                 {/* Affichage des signaux */}
                 {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) ? (
@@ -709,6 +782,51 @@ export default function TradingPlatformShell() {
                               <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">💎 0</button>
                               <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">🚀 0</button>
                             </div>
+
+                            {/* Boutons de statut WIN/LOSS/BE */}
+                            <div className="flex items-center gap-2 mt-3">
+                              <button 
+                                onClick={() => handleSignalStatus(signal.id, 'WIN')}
+                                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+                                  signal.status === 'WIN' 
+                                    ? 'bg-green-600 text-white' 
+                                    : 'bg-gray-600 hover:bg-green-600 hover:text-white text-gray-300'
+                                }`}
+                              >
+                                ✅ WIN
+                              </button>
+                              <button 
+                                onClick={() => handleSignalStatus(signal.id, 'LOSS')}
+                                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+                                  signal.status === 'LOSS' 
+                                    ? 'bg-red-600 text-white' 
+                                    : 'bg-gray-600 hover:bg-red-600 hover:text-white text-gray-300'
+                                }`}
+                              >
+                                ❌ LOSS
+                              </button>
+                              <button 
+                                onClick={() => handleSignalStatus(signal.id, 'BE')}
+                                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+                                  signal.status === 'BE' 
+                                    ? 'bg-blue-600 text-white' 
+                                    : 'bg-gray-600 hover:bg-blue-600 hover:text-white text-gray-300'
+                                }`}
+                              >
+                                ⚖️ BE
+                              </button>
+                            </div>
+
+                            {/* Affichage du P&L si disponible */}
+                            {signal.pnl && (
+                              <div className="mt-2">
+                                <span className={`text-sm font-bold ${
+                                  signal.pnl.startsWith('+') ? 'text-green-400' : 'text-red-400'
+                                }`}>
+                                  P&L: {signal.pnl}
+                                </span>
+                              </div>
+                            )}
                           </div>
                         </div>
                       ))
