@@ -404,7 +404,7 @@ export default function TradingPlatformShell() {
   );
 
   return (
-    <div className="h-screen w-full bg-gray-900 text-white overflow-hidden flex">
+    <div className="h-screen w-full bg-gray-900 text-white overflow-hidden flex" style={{ paddingTop: '0px' }}>
       {/* Desktop Sidebar */}
       <div className="hidden md:flex w-56 bg-gray-800 flex-col">
         <div className="p-4 border-b border-gray-700">
@@ -465,8 +465,8 @@ export default function TradingPlatformShell() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Mobile Navigation */}
-        <div className="md:hidden bg-gray-800 border-b border-gray-700 p-4">
+        {/* Mobile Navigation - Fixed */}
+        <div className="md:hidden bg-gray-800 border-b border-gray-700 p-4 fixed top-0 left-0 right-0 z-20" style={{ height: '80px' }}>
           {mobileView === 'channels' ? (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -506,39 +506,14 @@ export default function TradingPlatformShell() {
         </div>
 
         {/* Mobile Content Container with Slide Animation */}
-        <div className="md:hidden relative flex-1 overflow-hidden">
+        <div className="md:hidden relative flex-1 overflow-hidden" style={{ paddingTop: '80px' }}>
           {/* Channels List - Slides from left */}
           <div 
             className={`absolute inset-0 bg-gray-800 transform transition-transform duration-300 ease-in-out ${
               mobileView === 'channels' ? 'translate-x-0' : '-translate-x-full'
             }`}
           >
-            <div className="p-4 space-y-6 h-full overflow-y-auto">
-              <div>
-                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">ÉDUCATION</h3>
-                <div className="space-y-2">
-                  {channels.filter(c => ['fondamentaux', 'letsgooo-model'].includes(c.id)).map(channel => (
-                    <button
-                      key={channel.id}
-                      onClick={() => {
-                        setSelectedChannel({id: channel.id, name: channel.name});
-                        setView('signals');
-                        setMobileView('content');
-                      }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="text-lg">{channel.emoji}</span>
-                        <div>
-                          <p className="font-medium text-white">{channel.fullName}</p>
-                          <p className="text-sm text-gray-400">Contenu éducatif</p>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
+            <div className="p-4 space-y-6 h-full overflow-y-auto" style={{ paddingTop: '20px' }}>
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">SIGNAUX</h3>
                 <div className="space-y-2">
@@ -602,6 +577,31 @@ export default function TradingPlatformShell() {
                       </div>
                     </div>
                   </button>
+                  </div>
+                </div>
+
+              <div>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">ÉDUCATION</h3>
+                <div className="space-y-2">
+                  {channels.filter(c => ['fondamentaux', 'letsgooo-model'].includes(c.id)).map(channel => (
+                    <button
+                      key={channel.id}
+                      onClick={() => {
+                        setSelectedChannel({id: channel.id, name: channel.name});
+                        setView('signals');
+                        setMobileView('content');
+                      }}
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">{channel.emoji}</span>
+                        <div>
+                          <p className="font-medium text-white">{channel.fullName}</p>
+                          <p className="text-sm text-gray-400">Contenu éducatif</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
                 </div>
               </div>
 
@@ -759,7 +759,7 @@ export default function TradingPlatformShell() {
                     </div>
                     
                     {/* Barre de message */}
-                    <div className="border-t border-gray-700 p-4 fixed bottom-0 left-0 right-0 bg-gray-800 z-10 md:left-64">
+                    <div className="border-t border-gray-700 p-4 fixed bottom-0 left-0 right-0 bg-gray-800 z-30 md:left-64">
                       <div className="flex items-center gap-2">
                         <input
                           type="text"
@@ -908,12 +908,12 @@ export default function TradingPlatformShell() {
                       (chatMessages[selectedChannel.id] || []).map((message) => (
                         <div key={message.id} className="flex items-start gap-3">
                           <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
-                                                      <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="font-semibold text-white">{message.author}</span>
-                                <span className="text-xs text-gray-400">{message.timestamp}</span>
-                              </div>
-                                                          <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="font-semibold text-white">{message.author}</span>
+                              <span className="text-xs text-gray-400">{message.timestamp}</span>
+                            </div>
+                            <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200">
                                 <p className="text-white">{message.text}</p>
                                 {message.attachment && (
                                   <div className="mt-2">
