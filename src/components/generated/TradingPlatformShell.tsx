@@ -513,7 +513,7 @@ export default function TradingPlatformShell() {
               mobileView === 'channels' ? 'translate-x-0' : '-translate-x-full'
             }`}
           >
-                        <div className="p-4 space-y-6 h-full overflow-y-auto" style={{ paddingTop: '20px' }}>
+                        <div className="p-4 space-y-6 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">ÉDUCATION</h3>
                 <div className="space-y-2">
