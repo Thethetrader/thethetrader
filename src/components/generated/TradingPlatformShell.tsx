@@ -13,7 +13,6 @@ export default function TradingPlatformShell() {
   const [pasteArea, setPasteArea] = useState('');
   const [signals, setSignals] = useState<Array<{
     id: string;
-    channelId: string;
     type: string;
     symbol: string;
     timeframe: string;
@@ -36,11 +35,11 @@ export default function TradingPlatformShell() {
   });
 
   const channels = [
-    { id: 'fondamentaux', name: 'fondamentaux', emoji: '📚', fullName: 'Fondamentaux' },
-    { id: 'letsgooo-model', name: 'letsgooo-model', emoji: '🚀', fullName: 'Letsgooo model' },
     { id: 'crypto', name: 'crypto', emoji: '🪙', fullName: 'Crypto' },
     { id: 'futur', name: 'futur', emoji: '📈', fullName: 'Futur' },
     { id: 'forex', name: 'forex', emoji: '💱', fullName: 'Forex' },
+    { id: 'fondamentaux', name: 'fondamentaux', emoji: '📚', fullName: 'Fondamentaux' },
+    { id: 'letsgooo-model', name: 'letsgooo-model', emoji: '🚀', fullName: 'Letsgooo model' },
     { id: 'livestream', name: 'livestream', emoji: '📺', fullName: 'Livestream' },
     { id: 'general-chat', name: 'general-chat', emoji: '💬', fullName: 'Général chat' },
     { id: 'profit-loss', name: 'profit-loss', emoji: '💰', fullName: 'Profit loss' },
@@ -90,38 +89,38 @@ export default function TradingPlatformShell() {
     setShowEmojiPicker(false);
   };
 
-  const handleGifSelect = (gifUrl: string) => {
-    const newMessage = {
-      id: Date.now().toString(),
-      text: `[GIF] ${gifUrl}`,
-      user: 'TheTheTrader',
-      timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-    };
-    const channelMessages = messages[selectedChannel.id] || [];
-    setMessages({
-      ...messages,
-      [selectedChannel.id]: [...channelMessages, newMessage]
-    });
-    setShowGifPicker(false);
-  };
+          const handleGifSelect = (gifUrl: string) => {
+          const newMessage = {
+            id: Date.now().toString(),
+            text: `[GIF] ${gifUrl}`,
+            user: 'TheTheTrader',
+            timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+          };
+          const channelMessages = messages[selectedChannel.id] || [];
+          setMessages({
+            ...messages,
+            [selectedChannel.id]: [...channelMessages, newMessage]
+          });
+          setShowGifPicker(false);
+        };
 
-  const handleFileUpload = (file: File) => {
-    const isImage = file.type.startsWith('image/');
-    const isVideo = file.type.startsWith('video/');
+          const handleFileUpload = (file: File) => {
+          const isImage = file.type.startsWith('image/');
+          const isVideo = file.type.startsWith('video/');
         const newMessage = {
           id: Date.now().toString(),
-      text: isImage ? `[Image] ${file.name}` : isVideo ? `[Vidéo] ${file.name}` : `[Fichier] ${file.name}`,
+            text: isImage ? `[Image] ${file.name}` : isVideo ? `[Vidéo] ${file.name}` : `[Fichier] ${file.name}`,
           user: 'TheTheTrader',
-      timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-      file: (isImage || isVideo) ? file : null
-    };
-    const channelMessages = messages[selectedChannel.id] || [];
-    setMessages({
-      ...messages,
-      [selectedChannel.id]: [...channelMessages, newMessage]
-    });
-    setShowFileUpload(false);
-  };
+            timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+            file: (isImage || isVideo) ? file : null
+          };
+          const channelMessages = messages[selectedChannel.id] || [];
+          setMessages({
+            ...messages,
+            [selectedChannel.id]: [...channelMessages, newMessage]
+          });
+          setShowFileUpload(false);
+        };
 
   const handleCreateSignal = () => {
     setShowSignalModal(true);
@@ -136,7 +135,6 @@ export default function TradingPlatformShell() {
 
     const newSignal = {
       id: Date.now().toString(),
-      channelId: selectedChannel.id, // Ajouter l'ID du salon
       type: signalData.type,
       symbol: signalData.symbol || 'N/A',
       timeframe: signalData.timeframe || '1 min',
@@ -239,71 +237,75 @@ export default function TradingPlatformShell() {
 
   const getMobileChannelsList = () => (
     <div className="h-full bg-gray-900 text-white">
-      
+      {/* Header avec titre */}
+        <div className="bg-gray-800 p-4 border-b border-gray-600">
+        <h1 className="text-lg font-semibold text-white text-center">TheTheTRADER</h1>
+            </div>
 
-      
+      {/* Search bar supprimée sur mobile */}
 
       {/* Channels list */}
       <div className="flex-1 overflow-y-auto">
-         {/* Éducation section - EN PREMIER */}
+        {/* Éducation section - EN PREMIER */}
         <div className="p-4">
           <div className="flex items-center gap-2 mb-4">
-             <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">Éducation</span>
+            <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">Éducation</span>
           </div>
           
           <div className="space-y-1">
+
             <button
               onClick={() => handleMobileChannelSelect('fondamentaux')}
               className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-700 transition-colors"
             >
               <span className="text-xl">📚</span>
-               <span className="text-gray-300 font-medium">Fondamentaux</span>
+              <span className="text-gray-300 font-medium">Fondamentaux</span>
             </button>
             <button
-               onClick={() => handleMobileChannelSelect('letsgooo-model')}
+              onClick={() => handleMobileChannelSelect('letsgooo-model')}
               className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-700 transition-colors"
             >
               <span className="text-xl">🚀</span>
-               <span className="text-gray-300 font-medium">Letsgooo-model</span>
+              <span className="text-gray-300 font-medium">Letsgooo-model</span>
             </button>
           </div>
         </div>
 
         {/* Signaux section */}
-         <div className="p-4">
+        <div className="p-4">
           <div className="flex items-center gap-2 mb-4">
             <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">Signaux</span>
           </div>
           
           <div className="space-y-1">
             <button
-               onClick={() => handleMobileChannelSelect('crypto')}
+              onClick={() => handleMobileChannelSelect('crypto')}
               className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-700 transition-colors"
             >
-               <span className="text-xl">🪙</span>
-               <span className="text-gray-300 font-medium">Crypto</span>
+              <span className="text-xl">🪙</span>
+              <span className="text-gray-300 font-medium">Crypto</span>
             </button>
             <button
-               onClick={() => handleMobileChannelSelect('futur')}
+              onClick={() => handleMobileChannelSelect('futur')}
               className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-700 transition-colors"
             >
-               <span className="text-xl">📈</span>
-               <span className="text-gray-300 font-medium">Futur</span>
+              <span className="text-xl">📈</span>
+              <span className="text-gray-300 font-medium">Futur</span>
             </button>
             <button
               onClick={() => handleMobileChannelSelect('forex')}
               className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-700 transition-colors"
             >
               <span className="text-xl">💱</span>
-               <span className="text-gray-300 font-medium">Forex</span>
+              <span className="text-gray-300 font-medium">Forex</span>
             </button>
           </div>
         </div>
 
-         {/* Trading hub section */}
-         <div className="p-4">
+        {/* Trading hub section */}
+        <div className="p-4">
           <div className="flex items-center gap-2 mb-4">
-             <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">Trading hub</span>
+            <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">Trading hub</span>
           </div>
           
           <div className="space-y-1">
@@ -312,33 +314,33 @@ export default function TradingPlatformShell() {
               className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-700 transition-colors"
             >
               <span className="text-xl">📺</span>
-               <span className="text-gray-300 font-medium">Livestream</span>
+              <span className="text-gray-300 font-medium">Livestream</span>
             </button>
             <button
               onClick={() => handleMobileChannelSelect('general-chat')}
               className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-700 transition-colors"
             >
               <span className="text-xl">💬</span>
-               <span className="text-gray-300 font-medium">General-chat</span>
+              <span className="text-gray-300 font-medium">General-chat</span>
             </button>
             <button
               onClick={() => handleMobileChannelSelect('profit-loss')}
               className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-700 transition-colors"
             >
               <span className="text-xl">💰</span>
-               <span className="text-gray-300 font-medium">Profit-loss</span>
-             </button>
-             <button
-               onClick={() => handleMobileChannelSelect('calendrier')}
-               className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-700 transition-colors"
-             >
-               <span className="text-xl">📅</span>
-               <span className="text-gray-300 font-medium">Calendrier</span>
+              <span className="text-gray-300 font-medium">Profit-loss</span>
+            </button>
+            <button
+              onClick={() => handleMobileChannelSelect('calendrier')}
+              className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              <span className="text-xl">📅</span>
+              <span className="text-gray-300 font-medium">Calendrier</span>
             </button>
           </div>
         </div>
 
-        {/* Performance section */}
+        {/* Statistiques en bas */}
         <div className="p-4 border-t border-gray-700">
           <div className="bg-gray-800 rounded-lg p-4">
             <h3 className="text-sm font-semibold mb-3 text-gray-300">Performance</h3>
@@ -368,7 +370,7 @@ export default function TradingPlatformShell() {
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-gray-600 pb-4 gap-4 md:gap-0">
         <div className="hidden md:block">
           <h1 className="text-2xl font-bold text-white">Trading Calendar</h1>
-          <p className="text-sm text-gray-400 mt-1">Track your daily trading performance</p>
+          <p className="text-sm text-gray-400 mt-1">Track your daily trading performance and signals</p>
         </div>
         
         <div className="flex items-center gap-4">
@@ -446,59 +448,11 @@ export default function TradingPlatformShell() {
                         </div>
                       )}
 
-         {/* Sélecteur d'emoji */}
-         {showEmojiPicker && (
-           <div className="fixed bottom-16 right-4 bg-gray-800 border border-gray-600 rounded-lg p-3 z-50">
-             <div className="grid grid-cols-6 gap-2">
-               {['😊', '😂', '❤️', '👍', '🎉', '🔥', '💯', '😎', '🤔', '😢', '😡', '🤯'].map((emoji) => (
-                 <button 
-                   key={emoji}
-                   onClick={() => handleEmojiClick(emoji)}
-                   className="text-2xl hover:bg-gray-700 rounded p-1"
-                 >
-                   {emoji}
-                 </button>
-               ))}
+
                     </div>
                   </div>
-         )}
-
-         {/* Sélecteur de GIF */}
-         {showGifPicker && (
-           <div className="fixed bottom-16 right-4 bg-gray-800 border border-gray-600 rounded-lg p-3 z-50 w-64">
-             <div className="text-white text-sm mb-2">GIFs populaires</div>
-             <div className="space-y-2">
-               {['https://giphy.com/gif/example1', 'https://giphy.com/gif/example2', 'https://giphy.com/gif/example3'].map((gif, index) => (
-                 <button
-                   key={index}
-                   onClick={() => handleGifSelect(gif)}
-                   className="w-full bg-gray-700 hover:bg-gray-600 rounded p-2 text-white text-sm text-left"
-                 >
-                   GIF {index + 1}
-                 </button>
-               ))}
-             </div>
-           </div>
-         )}
-
-         {/* Upload de fichier */}
-         {showFileUpload && (
-           <div className="fixed bottom-16 right-4 bg-gray-800 border border-gray-600 rounded-lg p-3 z-50 w-64">
-             <div className="text-white text-sm mb-2">Ajouter un fichier</div>
-             <input
-               type="file"
-               onChange={(e) => {
-                 const file = e.target.files?.[0];
-                 if (file) handleFileUpload(file);
-               }}
-               className="w-full bg-gray-700 hover:bg-gray-600 rounded p-2 text-white text-sm"
-             />
-           </div>
-         )}
-       </div>
-     </div>
-   );
- })}
+                );
+})}
           </div>
 
           {/* Légende */}
@@ -607,8 +561,9 @@ export default function TradingPlatformShell() {
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">ÉDUCATION</h3>
             <div className="space-y-1">
-              <button onClick={() => {setSelectedChannel({id: 'fondamentaux', name: 'fondamentaux'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'fondamentaux' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📚 Fondamentaux</button>
-              <button onClick={() => {setSelectedChannel({id: 'letsgooo-model', name: 'letsgooo-model'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'letsgooo-model' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>🚀 Letsgooo-model</button>
+
+                              <button onClick={() => {setSelectedChannel({id: 'fondamentaux', name: 'fondamentaux'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'fondamentaux' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📚 Fondamentaux</button>
+                              <button onClick={() => {setSelectedChannel({id: 'letsgooo-model', name: 'letsgooo-model'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'letsgooo-model' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>🚀 Letsgooo-model</button>
             </div>
           </div>
 
@@ -616,8 +571,8 @@ export default function TradingPlatformShell() {
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">SIGNAUX</h3>
             <div className="space-y-1">
               <button onClick={() => {setSelectedChannel({id: 'crypto', name: 'crypto'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'crypto' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>🪙 Crypto</button>
-              <button onClick={() => {setSelectedChannel({id: 'futur', name: 'futur'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'futur' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📈 Futur</button>
-              <button onClick={() => {setSelectedChannel({id: 'forex', name: 'forex'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'forex' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💱 Forex</button>
+                              <button onClick={() => {setSelectedChannel({id: 'futur', name: 'futur'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'futur' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📈 Futur</button>
+                              <button onClick={() => {setSelectedChannel({id: 'forex', name: 'forex'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'forex' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💱 Forex</button>
             </div>
           </div>
 
@@ -625,9 +580,9 @@ export default function TradingPlatformShell() {
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">TRADING HUB</h3>
             <div className="space-y-1">
               <button onClick={() => {setSelectedChannel({id: 'livestream', name: 'livestream'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
-              <button onClick={() => {setSelectedChannel({id: 'general-chat', name: 'general-chat'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 General-chat</button>
-              <button onClick={() => {setSelectedChannel({id: 'profit-loss', name: 'profit-loss'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
-              <button onClick={() => setView('calendar')} className={`w-full text-left px-3 py-2 rounded text-sm ${view === 'calendar' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Calendrier</button>
+                              <button onClick={() => {setSelectedChannel({id: 'general-chat', name: 'general-chat'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 General-chat</button>
+                              <button onClick={() => {setSelectedChannel({id: 'profit-loss', name: 'profit-loss'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
+                              <button onClick={() => setView('calendar')} className={`w-full text-left px-3 py-2 rounded text-sm ${view === 'calendar' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Calendrier</button>
             </div>
           </div>
 
@@ -648,186 +603,131 @@ export default function TradingPlatformShell() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Top Bar - Desktop */}
-        <div className="hidden md:flex h-16 bg-gray-700 border-b border-gray-600 items-center justify-between px-6">
-          <span className="text-lg font-semibold">{view === 'calendar' ? '📅 Calendrier' : `#${selectedChannel.name}`}</span>
-                     {['crypto', 'futur', 'forex'].includes(selectedChannel.id) && <button onClick={handleCreateSignal} className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm">+ Signal</button>}
+        <div className="flex-1 flex flex-col">
+          {/* Top Bar - Mobile - Supprimée pour avoir la même interface que desktop */}
+
+          {/* Content Area */}
+          <div className="flex-1 overflow-y-auto">
+          {/* Mobile: Navigation style Discord avec animations */}
+          <div className="md:hidden h-full relative">
+            {/* Liste des channels */}
+            <div className={`absolute inset-0 transition-transform duration-300 ease-in-out overflow-y-auto ${
+              mobileView === 'channels' ? 'translate-x-0' : '-translate-x-full'
+            }`}>
+              {getMobileChannelsList()}
         </div>
 
-        {/* Top Bar - Mobile */}
-        <div className="md:hidden h-16 bg-gray-700 border-b border-gray-600 flex items-center justify-between px-4">
-          {mobileView === 'content' ? (
-            <>
+            {/* Contenu du salon */}
+            <div className={`absolute inset-0 transition-transform duration-300 ease-in-out ${
+              mobileView === 'content' ? 'translate-x-0' : 'translate-x-full'
+            }`}>
+                                              <div className="h-full flex flex-col">
+                  
+                  {/* Top Bar avec bouton retour - Mobile */}
+                  <div className="h-16 bg-gray-700 border-b border-gray-600 flex items-center justify-between px-4">
               <div className="flex items-center gap-3">
                 <button 
-                  onClick={() => setMobileView('channels')}
+                        onClick={handleBackToChannels}
                   className="p-2 hover:bg-gray-600 rounded-lg"
                 >
                   <span className="text-white text-lg">←</span>
                 </button>
-                <span className="text-lg font-semibold">{view === 'calendar' ? '📅 calendrier' : `#${selectedChannel.name}`}</span>
+                      <span className="text-lg font-semibold">{view === 'calendar' ? '📅 Calendrier' : `#${selectedChannel.name}`}</span>
               </div>
-                             {['crypto', 'futur', 'forex'].includes(selectedChannel.id) && (
-                 <button onClick={handleCreateSignal} className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm">+ Signal</button>
-               )}
-            </>
-          ) : (
-            <span className="text-lg font-semibold">TheTheTrader</span>
-          )}
+                                          {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) && <button onClick={handleCreateSignal} className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm">+ Signal</button>}
         </div>
 
-        {/* Content Area */}
+                  {/* Content du salon */}
         <div className="flex-1 overflow-y-auto">
-           {/* Mobile: Navigation style Discord avec animations */}
-           <div className="md:hidden h-full relative">
-             {/* Liste des channels */}
-             <div className={`absolute inset-0 transition-transform duration-300 ease-in-out overflow-y-auto ${
-               mobileView === 'channels' ? 'translate-x-0' : '-translate-x-full'
-             }`}>
-               {getMobileChannelsList()}
-             </div>
-
-             {/* Contenu du salon */}
-             <div className={`absolute inset-0 transition-transform duration-300 ease-in-out ${
-               mobileView === 'content' ? 'translate-x-0' : 'translate-x-full'
-             }`}>
-               <div className="h-full flex flex-col">
                 {view === 'calendar' ? (
                   getTradingCalendar()
                 ) : (
                   <div className="p-4 space-y-4 w-full">
 
-                                     {/* Messages de discussion */}
-                 {['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) ? (
-                   <div className="flex flex-col h-full pb-20">
-                     <div className="flex-1 overflow-y-auto p-4">
-                       {(messages[selectedChannel.id] || []).length === 0 ? (
-                         <div className="text-center py-8">
-                           <div className="text-gray-400 text-sm">Aucun message pour le moment</div>
-                          </div>
-                       ) : (
-                         <div className="space-y-3">
-                           {(messages[selectedChannel.id] || []).map((msg) => (
-                             <div key={msg.id} className="flex items-start gap-3">
-                               <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm text-white">
-                                 {msg.user.charAt(0)}
-                          </div>
-                               <div className="flex-1">
-                                 <div className="flex items-center gap-2 mb-1">
-                                   <span className="font-semibold text-white text-sm">{msg.user}</span>
-                                   <span className="text-xs text-gray-400">{msg.timestamp}</span>
-                                 </div>
-                                 <div className="text-white text-sm">{msg.text}</div>
-                                 
-                                 {/* Boutons de réaction pour tous les salons de chat */}
-                                 <div className="flex items-center gap-1 mt-2">
-                                   <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">👍 0</button>
-                                   <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">❤️ 0</button>
-                                   <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">🔥 0</button>
-                                   <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">💯 0</button>
-                                 </div>
-                                 {msg.file && msg.file.type.startsWith('image/') && (
-                                   <div className="mt-2">
-                                     <img 
-                                       src={URL.createObjectURL(msg.file)} 
-                                       alt={msg.file.name}
-                                       className="max-w-2xl rounded-lg border border-gray-600"
-                                     />
+
+                    {/* Messages de discussion */}
+                      {['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) ? (
+                        <div className="flex flex-col h-full pb-20">
+                          <div className="flex-1 text-center py-8">
+                            <div className="text-gray-400 text-sm">Aucun message pour le moment</div>
                         </div>
-                      )}
-                                 {msg.file && msg.file.type.startsWith('video/') && (
-                                   <div className="mt-2">
-                                     <video 
-                                       src={URL.createObjectURL(msg.file)} 
-                                       controls
-                                       className="max-w-2xl rounded-lg border border-gray-600"
-                                     />
-                    </div>
-                                 )}
-                        </div>
-                          </div>
-                           ))}
-                         </div>
-                       )}
-                     </div>
                         </div>
                       ) : (
-                   <div className="space-y-4 overflow-y-auto h-full pb-20">
-                     {/* Afficher les signaux créés */}
-                     {signals.filter(signal => signal.channelId === selectedChannel.id).length === 0 ? (
-                       <div className="text-center py-8">
-                         <div className="text-gray-400 text-sm">Aucun signal pour le moment</div>
-                         <div className="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
-                       </div>
-                     ) : (
-                       signals.filter(signal => signal.channelId === selectedChannel.id).map((signal) => (
+                        <div className="space-y-4">
+                          {/* Afficher les signaux créés */}
+                          {signals.length === 0 ? (
+                        <div className="text-center py-8">
+                              <div className="text-gray-400 text-sm">Aucun signal pour le moment</div>
+                              <div className="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
+                        </div>
+                      ) : (
+                        signals.map((signal) => (
                           <div key={signal.id} className="flex items-start gap-3">
                             <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-2">
                                 <span className="font-semibold text-white">TheTheTrader</span>
-                               <span className="text-xs text-gray-400">{signal.timestamp}</span>
+                                    <span className="text-xs text-gray-400">{signal.timestamp}</span>
                               </div>
 
-                             <div className="bg-transparent rounded-lg p-4">
+                                  <div className="bg-transparent rounded-lg p-4">
                                 <div className="space-y-2">
-                                 <div className="bg-gray-600 rounded-lg p-3 inline-block">
-                                   <div className="flex items-center gap-2">
-                                     <span className={signal.type === 'BUY' ? 'text-green-400' : 'text-red-400'}>
-                                       {signal.type === 'BUY' ? '📈' : '📉'}
-                                     </span>
-                                     <span className="font-semibold text-white text-base">
-                                       Signal {signal.type} {signal.symbol}
-                                     </span>
-                                   </div>
+                                      <div className="bg-gray-600 rounded-lg p-3 inline-block">
+                                        <div className="flex items-center gap-2">
+                                          <span className={signal.type === 'BUY' ? 'text-green-400' : 'text-red-400'}>
+                                            {signal.type === 'BUY' ? '📈' : '📉'}
+                                          </span>
+                                          <span className="font-semibold text-white text-base">
+                                            Signal {signal.type} {signal.symbol}
+                                          </span>
+                                        </div>
                                   </div>
                                   
-                                 <div className="bg-gray-600 rounded-lg p-3 inline-block">
-                                   <div className="space-y-1 text-sm">
-                                     {signal.entry !== 'N/A' && (
-                                       <div className="flex items-center gap-2">
-                                         <span className="text-blue-400">🔹</span>
-                                         <span className="text-white">Entrée : {signal.entry}</span>
+                                      <div className="bg-gray-600 rounded-lg p-3 inline-block">
+                                        <div className="space-y-1 text-sm">
+                                          {signal.entry !== 'N/A' && (
+                                            <div className="flex items-center gap-2">
+                                              <span className="text-blue-400">🔹</span>
+                                              <span className="text-white">Entrée : {signal.entry}</span>
                                     </div>
                                   )}
-                                     {signal.takeProfit !== 'N/A' && (
-                                       <div className="flex items-center gap-2">
-                                         <span className="text-blue-400">🔹</span>
-                                         <span className="text-white">Take Profit : {signal.takeProfit}</span>
+                                          {signal.takeProfit !== 'N/A' && (
+                                            <div className="flex items-center gap-2">
+                                              <span className="text-blue-400">🔹</span>
+                                              <span className="text-white">Take Profit : {signal.takeProfit}</span>
                                     </div>
                                   )}
-                                     {signal.stopLoss !== 'N/A' && (
-                                       <div className="flex items-center gap-2">
-                                         <span className="text-blue-400">🔹</span>
-                                         <span className="text-white">Stop Loss : {signal.stopLoss}</span>
+                                          {signal.stopLoss !== 'N/A' && (
+                                            <div className="flex items-center gap-2">
+                                              <span className="text-blue-400">🔹</span>
+                                              <span className="text-white">Stop Loss : {signal.stopLoss}</span>
                                 </div>
-                                     )}
-                                     {signal.description && (
+                                          )}
+                                          {signal.description && (
                                 <div className="flex items-center gap-2">
-                                         <span className="text-yellow-400">📝</span>
-                                         <span className="text-white">{signal.description}</span>
-                                       </div>
-                                     )}
-                                   </div>
-                                 </div>
+                                              <span className="text-yellow-400">📝</span>
+                                              <span className="text-white">{signal.description}</span>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
                                   </div>
                                 </div>
 
-                             {signal.image && (
-                               <div className="mt-2">
-                                 <img 
-                                   src={URL.createObjectURL(signal.image)} 
-                                   alt="Signal screenshot"
-                                   className="max-w-2xl rounded-lg border border-gray-600"
-                                 />
+                                  {signal.image && (
+                                    <div className="mt-2">
+                                      <img 
+                                        src={URL.createObjectURL(signal.image)} 
+                                        alt="Signal screenshot"
+                                        className="max-w-2xl rounded-lg border border-gray-600"
+                                      />
                                 </div>
-                             )}
+                                  )}
 
-                             <div className="flex items-center gap-2 flex-wrap mt-2">
-                               <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">🔥 0</button>
-                               <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">💎 0</button>
-                               <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">🚀 0</button>
+                                  <div className="flex items-center gap-2 flex-wrap mt-2">
+                                    <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">🔥 0</button>
+                                    <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">💎 0</button>
+                                    <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">🚀 0</button>
                               </div>
                             </div>
                           </div>
@@ -837,9 +737,13 @@ export default function TradingPlatformShell() {
                 )}
               </div>
             )}
-               </div>
-             </div>
+                </div>
           </div>
+              
+            </div>
+          </div>
+          
+
 
           {/* Desktop: Show content directly */}
           <div className="hidden md:block h-full">
@@ -847,141 +751,146 @@ export default function TradingPlatformShell() {
               getTradingCalendar()
             ) : (
               <div className="p-4 md:p-6 space-y-4 w-full">
+                {/* Bouton + Signal pour desktop */}
+                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) && (
+                  <div className="flex justify-end mb-4">
+                    <button onClick={handleCreateSignal} className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm">+ Signal</button>
+                      </div>
+                )}
 
 
-                                 {/* Messages de discussion */}
-                 {['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) ? (
-                   <div className="flex flex-col h-full">
-                     <div className="flex-1 overflow-y-auto p-4">
-                       {(messages[selectedChannel.id] || []).length === 0 ? (
-                         <div className="text-center py-8">
-                           <div className="text-gray-400 text-sm">Aucun message pour le moment</div>
+                {/* Messages de discussion */}
+                {['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) ? (
+                  <div className="flex flex-col h-full">
+                    <div className="flex-1 overflow-y-auto p-4">
+                                                {(messages[selectedChannel.id] || []).length === 0 ? (
+                        <div className="text-center py-8">
+                          <div className="text-gray-400 text-sm">Aucun message pour le moment</div>
                       </div>
-                       ) : (
-                         <div className="space-y-3">
-                           {(messages[selectedChannel.id] || []).map((msg) => (
-                             <div key={msg.id} className="flex items-start gap-3">
-                               <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm text-white">
-                                 {msg.user.charAt(0)}
-                      </div>
-                               <div className="flex-1">
-                                 <div className="flex items-center gap-2 mb-1">
-                                   <span className="font-semibold text-white text-sm">{msg.user}</span>
-                                   <span className="text-xs text-gray-400">{msg.timestamp}</span>
-                                 </div>
-                                 <div className="text-white text-sm">{msg.text}</div>
-                                 {msg.file && msg.file.type.startsWith('image/') && (
-                                   <div className="mt-2">
-                                     <img 
-                                       src={URL.createObjectURL(msg.file)} 
-                                       alt={msg.file.name}
-                                       className="max-w-2xl rounded-lg border border-gray-600"
-                                     />
+                      ) : (
+                        <div className="space-y-3">
+                          {(messages[selectedChannel.id] || []).map((msg) => (
+                            <div key={msg.id} className="flex items-start gap-3">
+                              <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm text-white">
+                                {msg.user.charAt(0)}
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="font-semibold text-white text-sm">{msg.user}</span>
+                                  <span className="text-xs text-gray-400">{msg.timestamp}</span>
+                                </div>
+                                <div className="text-white text-sm">{msg.text}</div>
+                                {msg.file && msg.file.type.startsWith('image/') && (
+                                  <div className="mt-2">
+                                    <img 
+                                      src={URL.createObjectURL(msg.file)} 
+                                      alt={msg.file.name}
+                                      className="max-w-2xl rounded-lg border border-gray-600"
+                                    />
                     </div>
                   )}
-                                 {msg.file && msg.file.type.startsWith('video/') && (
-                                   <div className="mt-2">
-                                     <video 
-                                       src={URL.createObjectURL(msg.file)} 
-                                       controls
-                                       className="max-w-2xl rounded-lg border border-gray-600"
-                                     />
+                                {msg.file && msg.file.type.startsWith('video/') && (
+                                  <div className="mt-2">
+                                    <video 
+                                      src={URL.createObjectURL(msg.file)} 
+                                      controls
+                                      className="max-w-2xl rounded-lg border border-gray-600"
+                                    />
                 </div>
-                                 )}
+                                )}
                     </div>
                       </div>
-                           ))}
-                         </div>
-                       )}
-                     </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                     </div>
                   ) : (
-                   <div className="space-y-4 overflow-y-auto h-full">
-                     {/* Afficher les signaux créés - Desktop */}
-                     {signals.filter(signal => signal.channelId === selectedChannel.id).length === 0 ? (
-                       <div className="text-center py-8">
-                         <div className="text-gray-400 text-sm">Aucun signal pour le moment</div>
-                         <div className="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
-                       </div>
-                     ) : (
-                       signals.filter(signal => signal.channelId === selectedChannel.id).map((signal) => (
-                         <div key={signal.id} className="flex items-start gap-3">
+                  <div className="space-y-4">
+                    {/* Afficher les signaux créés - Desktop */}
+                    {signals.length === 0 ? (
+                      <div className="text-center py-8">
+                        <div className="text-gray-400 text-sm">Aucun signal pour le moment</div>
+                        <div className="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
+                      </div>
+                    ) : (
+                      signals.map((signal) => (
+                        <div key={signal.id} className="flex items-start gap-3">
                         <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
                             <span className="font-semibold text-white">TheTheTrader</span>
-                               <span className="text-xs text-gray-400">{signal.timestamp}</span>
+                              <span className="text-xs text-gray-400">{signal.timestamp}</span>
                           </div>
 
-                             <div className="bg-transparent rounded-lg p-4">
+                            <div className="bg-transparent rounded-lg p-4">
                             <div className="space-y-2">
-                                 <div className="bg-gray-600 rounded-lg p-3 inline-block">
-                                   <div className="flex items-center gap-2">
-                                     <span className={signal.type === 'BUY' ? 'text-green-400' : 'text-red-400'}>
-                                       {signal.type === 'BUY' ? '📈' : '📉'}
-                                     </span>
-                                     <span className="font-semibold text-white text-base">
-                                       Signal {signal.type} {signal.symbol}
-                                     </span>
-                              </div>
-                                </div>
-                                 
-                                 <div className="bg-gray-600 rounded-lg p-3 inline-block">
-                                   <div className="space-y-1 text-sm">
-                                     {signal.entry !== 'N/A' && (
-                                       <div className="flex items-center gap-2">
-                                         <span className="text-blue-400">🔹</span>
-                                         <span className="text-white">Entrée : {signal.entry}</span>
-                                </div>
-                              )}
-                                     {signal.takeProfit !== 'N/A' && (
-                                       <div className="flex items-center gap-2">
-                                         <span className="text-blue-400">🔹</span>
-                                         <span className="text-white">Take Profit : {signal.takeProfit}</span>
-                                </div>
-                              )}
-                                     {signal.stopLoss !== 'N/A' && (
-                                       <div className="flex items-center gap-2">
-                                         <span className="text-blue-400">🔹</span>
-                                         <span className="text-white">Stop Loss : {signal.stopLoss}</span>
-                            </div>
-                                     )}
-                                     {signal.description && (
-                              <div className="flex items-center gap-2">
-                                         <span className="text-yellow-400">📝</span>
-                                         <span className="text-white">{signal.description}</span>
-                                </div>
-                                     )}
-                              </div>
+                                <div className="bg-gray-600 rounded-lg p-3 inline-block">
+                                  <div className="flex items-center gap-2">
+                                    <span className={signal.type === 'BUY' ? 'text-green-400' : 'text-red-400'}>
+                                      {signal.type === 'BUY' ? '📈' : '📉'}
+                                    </span>
+                                    <span className="font-semibold text-white text-base">
+                                      Signal {signal.type} {signal.symbol}
+                                    </span>
                                   </div>
+                              </div>
+                              
+                                <div className="bg-gray-600 rounded-lg p-3 inline-block">
+                                  <div className="space-y-1 text-sm">
+                                  {signal.entry !== 'N/A' && (
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-blue-400">🔹</span>
+                                      <span className="text-white">Entrée : {signal.entry}</span>
                                 </div>
+                              )}
+                                  {signal.takeProfit !== 'N/A' && (
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-blue-400">🔹</span>
+                                      <span className="text-white">Take Profit : {signal.takeProfit}</span>
+                                    </div>
+                                  )}
+                                  {signal.stopLoss !== 'N/A' && (
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-blue-400">🔹</span>
+                                      <span className="text-white">Stop Loss : {signal.stopLoss}</span>
+                                    </div>
+                                  )}
+                                  {signal.description && (
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-yellow-400">📝</span>
+                                      <span className="text-white">{signal.description}</span>
+                                    </div>
+                                  )}
                                 </div>
-
-                             {signal.image && (
-                               <div className="mt-2">
-                                 <img 
-                                   src={URL.createObjectURL(signal.image)} 
-                                   alt="Signal screenshot"
-                                   className="max-w-2xl rounded-lg border border-gray-600"
-                                 />
+                              </div>
                             </div>
-                          )}
 
-                             <div className="flex items-center gap-2 flex-wrap mt-2">
-                               <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">🔥 0</button>
-                               <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">💎 0</button>
-                               <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">🚀 0</button>
-                             </div>
+                            {signal.image && (
+                              <div className="mt-2">
+                                <img 
+                                  src={URL.createObjectURL(signal.image)} 
+                                  alt="Signal screenshot"
+                                  className="max-w-2xl rounded-lg border border-gray-600"
+                                  />
+                                </div>
+                              )}
+                              
+                            <div className="flex items-center gap-2 flex-wrap mt-2">
+                              <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">🔥 0</button>
+                              <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">💎 0</button>
+                              <button className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-full text-sm flex items-center gap-1">🚀 0</button>
+                                </div>
+                          </div>
                         </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-                 )}
+                      ))
+                    )}
+                  </div>
+                )}
               </div>
-            )}
-        </div>
-      </div>
+                              )}
+                            </div>
+                          </div>
 
         {/* Barre de saisie Discord style - Desktop et Mobile */}
         {['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) && (
@@ -989,55 +898,47 @@ export default function TradingPlatformShell() {
             mobileView === 'content' ? 'translate-y-0' : 'translate-y-full md:translate-y-0'
           }`}>
             <div className="flex items-center gap-2 p-2">
-              {/* Zone de saisie - Admin seulement pour fondamentaux et letsgooo-model */}
+              {/* Zone de saisie */}
               <div className="flex-1 relative">
-                {['fondamentaux', 'letsgooo-model'].includes(selectedChannel.id) ? (
-                  <div className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-1.5 text-gray-400 text-sm flex items-center">
-                    <span>🔒 Seul l'admin peut écrire dans ce salon</span>
-            </div>
-                ) : (
-                <input
-                    type="text" 
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder={`Envoyer un message dans #${selectedChannel.name}`}
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-1.5 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
-                  />
-                )}
-                </div>
+                <input 
+                  type="text" 
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder={`Envoyer un message dans #${selectedChannel.name}`}
+                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-1.5 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
+                />
+              </div>
               
-              {/* Boutons à droite - Admin seulement pour fondamentaux et letsgooo-model */}
-              {!['fondamentaux', 'letsgooo-model'].includes(selectedChannel.id) && (
-                <div className="flex items-center gap-1">
-              <button
-                    onClick={() => setShowGifPicker(!showGifPicker)}
-                    className="text-gray-400 hover:text-white p-1.5 rounded-full hover:bg-gray-700"
-              >
-                    <span className="text-xs bg-gray-600 px-1 rounded">GIF</span>
-              </button>
-              <button
-                    onClick={() => setShowFileUpload(!showFileUpload)}
-                    className="text-gray-400 hover:text-white p-1.5 rounded-full hover:bg-gray-700"
-                  >
-                    <span className="text-sm">📎</span>
-                  </button>
-                  <button
-                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                    className="text-gray-400 hover:text-white p-1.5 rounded-full hover:bg-gray-700"
-                  >
-                    <span className="text-sm">😊</span>
-              </button>
-            </div>
-          )}
-        </div>
-          </div>
-        )}
+              {/* Boutons à droite */}
+              <div className="flex items-center gap-1">
+                                  <button
+                  onClick={() => setShowGifPicker(!showGifPicker)}
+                  className="text-gray-400 hover:text-white p-1.5 rounded-full hover:bg-gray-700"
+                >
+                  <span className="text-xs bg-gray-600 px-1 rounded">GIF</span>
+                                  </button>
+                                  <button
+                  onClick={() => setShowFileUpload(!showFileUpload)}
+                  className="text-gray-400 hover:text-white p-1.5 rounded-full hover:bg-gray-700"
+                >
+                  <span className="text-sm">📎</span>
+                                  </button>
+                                  <button
+                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                  className="text-gray-400 hover:text-white p-1.5 rounded-full hover:bg-gray-700"
+                >
+                  <span className="text-sm">😊</span>
+                                  </button>
+                                </div>
+                              </div>
+                                </div>
+                              )}
 
         {/* Modal de création de signal */}
         {showSignalModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-semibold text-white">Créer un signal</h2>
                 <button 
@@ -1046,13 +947,13 @@ export default function TradingPlatformShell() {
                 >
                   ✕
                 </button>
-              </div>
-
+                            </div>
+              
               <div className="space-y-4">
                 {/* Zone de collage TradingView */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">📋 Coller données TradingView</label>
-              <textarea
+                  <textarea
                     placeholder="Collez vos données ici : NQ1! 22950 23004 22896"
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                     rows={2}
@@ -1071,25 +972,25 @@ export default function TradingPlatformShell() {
                     }}
                   />
                   <p className="text-xs text-gray-400 mt-1">Format: Symbole Prix_entrée Take_profit Stop_loss</p>
-            </div>
+                        </div>
 
                 {/* Type de signal */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">Type</label>
                   <div className="flex gap-2">
-              <button
+                    <button
                       onClick={() => setSignalData({...signalData, type: 'BUY'})}
                       className={`px-3 py-2 rounded text-sm ${signalData.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-300'}`}
-              >
+                    >
                       📈 BUY
-              </button>
-              <button
+                    </button>
+                    <button
                       onClick={() => setSignalData({...signalData, type: 'SELL'})}
                       className={`px-3 py-2 rounded text-sm ${signalData.type === 'SELL' ? 'bg-red-600 text-white' : 'bg-gray-600 text-gray-300'}`}
-              >
+                    >
                       📉 SELL
-              </button>
-                    </div>
+                    </button>
+                      </div>
                 </div>
 
                 {/* Symbol */}
@@ -1114,8 +1015,8 @@ export default function TradingPlatformShell() {
                     placeholder="1 min, 5 min, 1H, etc."
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
-                </div>
-                
+          </div>
+
                 {/* Entry */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">Prix d'entrée</label>
@@ -1126,7 +1027,7 @@ export default function TradingPlatformShell() {
                     placeholder="103474.00 USD"
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
-                    </div>
+        </div>
 
                 {/* Take Profit */}
                 <div>
@@ -1138,7 +1039,7 @@ export default function TradingPlatformShell() {
                     placeholder="104626.00 USD"
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
-                        </div>
+      </div>
 
                 {/* Stop Loss */}
                 <div>
@@ -1150,25 +1051,25 @@ export default function TradingPlatformShell() {
                     placeholder="102862.00 USD"
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
-                      </div>
-                
+                </div>
+
                 {/* Description */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
-                  <textarea
+              <textarea
                     value={signalData.description}
                     onChange={(e) => setSignalData({...signalData, description: e.target.value})}
                     placeholder="Notes supplémentaires..."
                     rows={3}
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
-                  />
-                </div>
-
+              />
+            </div>
+            
                 {/* Image */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">Capture d'écran</label>
-                    <input
-                    type="file"
+                <input
+                  type="file"
                     accept="image/*"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
@@ -1177,24 +1078,74 @@ export default function TradingPlatformShell() {
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
                   />
                 </div>
-               
+              
                 {/* Boutons */}
                 <div className="flex gap-3 pt-4">
-                    <button
+              <button
                     onClick={() => setShowSignalModal(false)}
                     className="flex-1 bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
-                  >
+              >
                     Annuler
-                  </button>
-                  <button
+              </button>
+              <button
                     onClick={handleSignalSubmit}
                     className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white"
-                  >
+              >
                     Créer le signal
-                    </button>
-              </div>
+              </button>
+            </div>
+        </div>
             </div>
           </div>
+        )}
+
+        {/* Sélecteur d'emoji */}
+        {showEmojiPicker && (
+          <div className="fixed bottom-16 right-4 bg-gray-800 border border-gray-600 rounded-lg p-3 z-50">
+            <div className="grid grid-cols-6 gap-2">
+              {['😊', '😂', '❤️', '👍', '🎉', '🔥', '💯', '😎', '🤔', '😢', '😡', '🤯'].map((emoji) => (
+                <button 
+                  key={emoji}
+                  onClick={() => handleEmojiClick(emoji)}
+                  className="text-2xl hover:bg-gray-700 rounded p-1"
+                >
+                  {emoji}
+                </button>
+              ))}
+              </div>
+              </div>
+        )}
+
+        {/* Sélecteur de GIF */}
+        {showGifPicker && (
+          <div className="fixed bottom-16 right-4 bg-gray-800 border border-gray-600 rounded-lg p-3 z-50 w-64">
+            <div className="text-white text-sm mb-2">GIFs populaires</div>
+                <div className="space-y-2">
+              {['https://giphy.com/gif/example1', 'https://giphy.com/gif/example2', 'https://giphy.com/gif/example3'].map((gif, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleGifSelect(gif)}
+                  className="w-full bg-gray-700 hover:bg-gray-600 rounded p-2 text-white text-sm text-left"
+                >
+                  GIF {index + 1}
+                </button>
+                  ))}
+                </div>
+              </div>
+        )}
+
+        {/* Upload de fichier */}
+        {showFileUpload && (
+          <div className="fixed bottom-16 right-4 bg-gray-800 border border-gray-600 rounded-lg p-3 z-50 w-64">
+            <div className="text-white text-sm mb-2">Ajouter un fichier</div>
+                    <input
+              type="file"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleFileUpload(file);
+              }}
+              className="w-full bg-gray-700 hover:bg-gray-600 rounded p-2 text-white text-sm"
+            />
         </div>
       )}
       </div>
