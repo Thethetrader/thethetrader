@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 
 export default function TradingPlatformShell() {
   const [selectedChannel, setSelectedChannel] = useState({ id: 'crypto', name: 'crypto' });
@@ -24,13 +24,13 @@ export default function TradingPlatformShell() {
     timestamp: string;
   }>>([]);
   const [chatMessage, setChatMessage] = useState('');
-  const [chatMessages, setChatMessages] = useState<{[channelId: string]: Array<{
+  const [chatMessages, setChatMessages] = useState<Array<{
     id: string;
     text: string;
     timestamp: string;
     author: string;
     attachment?: File;
-  }>}>({});
+  }>>([]);
   const [signalData, setSignalData] = useState({
     type: 'BUY',
     symbol: '',
@@ -41,18 +41,6 @@ export default function TradingPlatformShell() {
     description: '',
     image: null as File | null
   });
-
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const messagesContainerRef = useRef<HTMLDivElement>(null);
-
-  // Scroll automatique vers le bas quand de nouveaux messages arrivent ou quand on change de canal
-  useEffect(() => {
-    setTimeout(() => {
-      if (messagesContainerRef.current) {
-        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-      }
-    }, 100);
-  }, [chatMessages, selectedChannel.id]);
 
   const channels = [
     { id: 'crypto', name: 'crypto', emoji: '🪙', fullName: 'Crypto' },
@@ -118,18 +106,8 @@ export default function TradingPlatformShell() {
         timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         author: 'TheTheTrader'
       };
-      setChatMessages(prev => ({
-        ...prev,
-        [selectedChannel.id]: [...(prev[selectedChannel.id] || []), newMessage]
-      }));
+      setChatMessages(prev => [newMessage, ...prev]);
       setChatMessage('');
-      
-      // Scroll automatique après envoi
-      setTimeout(() => {
-        if (messagesContainerRef.current) {
-          messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-        }
-      }, 50);
     }
   };
 
@@ -138,24 +116,14 @@ export default function TradingPlatformShell() {
                   if (file) {
                     const newMessage = {
                       id: Date.now().toString(),
-                      text: '',
+                      text: `📎 ${file.name}`,
                       timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
                       author: 'TheTheTrader',
                       attachment: file
                     };
-                    setChatMessages(prev => ({
-                      ...prev,
-                      [selectedChannel.id]: [...(prev[selectedChannel.id] || []), newMessage]
-                    }));
+                    setChatMessages(prev => [newMessage, ...prev]);
                     // Reset the input
                     event.target.value = '';
-                    
-                    // Scroll automatique après upload
-                    setTimeout(() => {
-                      if (messagesContainerRef.current) {
-                        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-                      }
-                    }, 50);
                   }
                 };
 
@@ -421,19 +389,19 @@ export default function TradingPlatformShell() {
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           <div>
-            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">ÉDUCATION</h3>
-            <div className="space-y-1">
-              <button onClick={() => {setSelectedChannel({id: 'fondamentaux', name: 'fondamentaux'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'fondamentaux' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📚 Fondamentaux</button>
-              <button onClick={() => {setSelectedChannel({id: 'letsgooo-model', name: 'letsgooo-model'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'letsgooo-model' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>🚀 Letsgooo-model</button>
-            </div>
-          </div>
-
-          <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">SIGNAUX</h3>
             <div className="space-y-1">
               <button onClick={() => {setSelectedChannel({id: 'crypto', name: 'crypto'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'crypto' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>🪙 Crypto</button>
               <button onClick={() => {setSelectedChannel({id: 'futur', name: 'futur'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'futur' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📈 Futur</button>
               <button onClick={() => {setSelectedChannel({id: 'forex', name: 'forex'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'forex' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💱 Forex</button>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">ÉDUCATION</h3>
+            <div className="space-y-1">
+              <button onClick={() => {setSelectedChannel({id: 'fondamentaux', name: 'fondamentaux'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'fondamentaux' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📚 Fondamentaux</button>
+              <button onClick={() => {setSelectedChannel({id: 'letsgooo-model', name: 'letsgooo-model'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'letsgooo-model' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>🚀 Letsgooo-model</button>
             </div>
           </div>
 
@@ -515,31 +483,6 @@ export default function TradingPlatformShell() {
           >
             <div className="p-4 space-y-6 h-full overflow-y-auto">
               <div>
-                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">ÉDUCATION</h3>
-                <div className="space-y-2">
-                  {channels.filter(c => ['fondamentaux', 'letsgooo-model'].includes(c.id)).map(channel => (
-                    <button
-                      key={channel.id}
-                      onClick={() => {
-                        setSelectedChannel({id: channel.id, name: channel.name});
-                        setView('signals');
-                        setMobileView('content');
-                      }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="text-lg">{channel.emoji}</span>
-                        <div>
-                          <p className="font-medium text-white">{channel.fullName}</p>
-                          <p className="text-sm text-gray-400">Contenu éducatif</p>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">SIGNAUX</h3>
                 <div className="space-y-2">
                   {channels.filter(c => ['crypto', 'futur', 'forex'].includes(c.id)).map(channel => (
@@ -557,6 +500,31 @@ export default function TradingPlatformShell() {
                         <div>
                           <p className="font-medium text-white">{channel.fullName}</p>
                           <p className="text-sm text-gray-400">Canal de signaux</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">ÉDUCATION</h3>
+                <div className="space-y-2">
+                  {channels.filter(c => ['fondamentaux', 'letsgooo-model'].includes(c.id)).map(channel => (
+                    <button
+                      key={channel.id}
+                      onClick={() => {
+                        setSelectedChannel({id: channel.id, name: channel.name});
+                        setView('signals');
+                        setMobileView('content');
+                      }}
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">{channel.emoji}</span>
+                        <div>
+                          <p className="font-medium text-white">{channel.fullName}</p>
+                          <p className="text-sm text-gray-400">Contenu éducatif</p>
                         </div>
                       </div>
                     </button>
@@ -717,14 +685,14 @@ export default function TradingPlatformShell() {
                                 ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) ? (
                   <div className="flex flex-col h-full">
                     {/* Messages de chat */}
-                    <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 pb-20">
-                      {(chatMessages[selectedChannel.id] || []).length === 0 ? (
+                    <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-20">
+                      {chatMessages.length === 0 ? (
                         <div className="text-center py-8">
                           <div className="text-gray-400 text-sm">Aucun message pour le moment</div>
                           <div className="text-gray-500 text-xs mt-1">Commencez la conversation !</div>
                         </div>
                       ) : (
-                        (chatMessages[selectedChannel.id] || []).map((message) => (
+                        chatMessages.map((message) => (
                           <div key={message.id} className="flex items-start gap-3">
                             <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
                             <div className="flex-1">
@@ -732,21 +700,20 @@ export default function TradingPlatformShell() {
                                 <span className="font-semibold text-white">{message.author}</span>
                                 <span className="text-xs text-gray-400">{message.timestamp}</span>
                               </div>
-                              <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200">
+                              <div className="bg-gray-700 rounded-lg p-3">
                                 <p className="text-white">{message.text}</p>
                                 {message.attachment && (
                                   <div className="mt-2">
-                                    {message.attachment.type.startsWith('image/') ? (
+                                    <div className="flex items-center gap-2 text-blue-400">
+                                      <span>📎</span>
+                                      <span className="text-sm">{message.attachment.name}</span>
+                                    </div>
+                                    {message.attachment.type.startsWith('image/') && (
                                       <img 
                                         src={URL.createObjectURL(message.attachment)} 
                                         alt="Attachment"
                                         className="mt-2 max-w-full rounded-lg border border-gray-600"
                                       />
-                                    ) : (
-                                      <div className="flex items-center gap-2 text-blue-400">
-                                        <span>📎</span>
-                                        <span className="text-sm">Pièce jointe</span>
-                                      </div>
                                     )}
                                   </div>
                                 )}
@@ -755,11 +722,10 @@ export default function TradingPlatformShell() {
                           </div>
                         ))
                       )}
-                      <div ref={messagesEndRef} />
                     </div>
                     
                     {/* Barre de message */}
-                    <div className="border-t border-gray-700 p-4 fixed bottom-0 left-0 right-0 bg-gray-800 z-10 md:left-64">
+                    <div className="border-t border-gray-700 p-4 fixed bottom-0 left-64 right-0 bg-gray-800 z-10">
                       <div className="flex items-center gap-2">
                         <input
                           type="text"
@@ -898,36 +864,35 @@ export default function TradingPlatformShell() {
               ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) ? (
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}
-                  <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 pb-20">
-                    {(chatMessages[selectedChannel.id] || []).length === 0 ? (
+                  <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-20">
+                    {chatMessages.length === 0 ? (
                       <div className="text-center py-8">
                         <div className="text-gray-400 text-sm">Aucun message pour le moment</div>
                         <div className="text-gray-500 text-xs mt-1">Commencez la conversation !</div>
                       </div>
                     ) : (
-                      (chatMessages[selectedChannel.id] || []).map((message) => (
+                      chatMessages.map((message) => (
                         <div key={message.id} className="flex items-start gap-3">
                           <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
-                                                      <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="font-semibold text-white">{message.author}</span>
-                                <span className="text-xs text-gray-400">{message.timestamp}</span>
-                              </div>
-                                                          <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="font-semibold text-white">{message.author}</span>
+                              <span className="text-xs text-gray-400">{message.timestamp}</span>
+                            </div>
+                                                          <div className="bg-gray-700 rounded-lg p-3">
                                 <p className="text-white">{message.text}</p>
                                 {message.attachment && (
                                   <div className="mt-2">
-                                    {message.attachment.type.startsWith('image/') ? (
+                                    <div className="flex items-center gap-2 text-blue-400">
+                                      <span>📎</span>
+                                      <span className="text-sm">{message.attachment.name}</span>
+                                    </div>
+                                    {message.attachment.type.startsWith('image/') && (
                                       <img 
                                         src={URL.createObjectURL(message.attachment)} 
                                         alt="Attachment"
                                         className="mt-2 max-w-full rounded-lg border border-gray-600"
                                       />
-                                    ) : (
-                                      <div className="flex items-center gap-2 text-blue-400">
-                                        <span>📎</span>
-                                        <span className="text-sm">Pièce jointe</span>
-                                      </div>
                                     )}
                                   </div>
                                 )}
@@ -936,11 +901,10 @@ export default function TradingPlatformShell() {
                         </div>
                       ))
                     )}
-                    <div ref={messagesEndRef} />
                   </div>
                   
                   {/* Barre de message */}
-                  <div className="border-t border-gray-700 p-4 fixed bottom-0 left-0 right-0 bg-gray-800 z-10 md:left-64">
+                  <div className="border-t border-gray-700 p-4 fixed bottom-0 left-64 right-0 bg-gray-800 z-10">
                     <div className="flex items-center gap-2">
                       <input
                         type="text"
