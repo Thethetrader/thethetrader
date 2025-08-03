@@ -513,7 +513,32 @@ export default function TradingPlatformShell() {
               mobileView === 'channels' ? 'translate-x-0' : '-translate-x-full'
             }`}
           >
-            <div className="p-4 space-y-6 h-full overflow-y-auto" style={{ paddingTop: '20px' }}>
+                        <div className="p-4 space-y-6 h-full overflow-y-auto" style={{ paddingTop: '100px' }}>
+              <div>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">ÉDUCATION</h3>
+                <div className="space-y-2">
+                  {channels.filter(c => ['fondamentaux', 'letsgooo-model'].includes(c.id)).map(channel => (
+                    <button
+                      key={channel.id}
+                      onClick={() => {
+                        setSelectedChannel({id: channel.id, name: channel.name});
+                        setView('signals');
+                        setMobileView('content');
+                      }}
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">{channel.emoji}</span>
+                        <div>
+                          <p className="font-medium text-white">{channel.fullName}</p>
+                          <p className="text-sm text-gray-400">Contenu éducatif</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">SIGNAUX</h3>
                 <div className="space-y-2">
@@ -577,31 +602,6 @@ export default function TradingPlatformShell() {
                       </div>
                     </div>
                   </button>
-                  </div>
-                </div>
-
-              <div>
-                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">ÉDUCATION</h3>
-                <div className="space-y-2">
-                  {channels.filter(c => ['fondamentaux', 'letsgooo-model'].includes(c.id)).map(channel => (
-                    <button
-                      key={channel.id}
-                      onClick={() => {
-                        setSelectedChannel({id: channel.id, name: channel.name});
-                        setView('signals');
-                        setMobileView('content');
-                      }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="text-lg">{channel.emoji}</span>
-                        <div>
-                          <p className="font-medium text-white">{channel.fullName}</p>
-                          <p className="text-sm text-gray-400">Contenu éducatif</p>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
                 </div>
               </div>
 
