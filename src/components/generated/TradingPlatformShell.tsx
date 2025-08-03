@@ -282,10 +282,10 @@ export default function TradingPlatformShell() {
   };
 
   const handleLogout = () => {
-    // Ici tu peux ajouter la logique de déconnexion
-    // Par exemple: localStorage.clear(), redirection, etc.
-    alert('Déconnexion...');
-    // window.location.href = '/login';
+    // Nettoyer le localStorage
+    localStorage.clear();
+    // Rediriger vers la landing page
+    window.location.href = '/';
   };
 
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -324,24 +324,48 @@ export default function TradingPlatformShell() {
           video.playsInline = true;
           video.srcObject = stream;
           
-          // Trouver tous les conteneurs noirs et remplacer leur contenu
-          const containers = document.querySelectorAll('.bg-black.flex.items-center.justify-center');
-          console.log('Conteneurs trouvés:', containers.length);
+          // Trouver spécifiquement les conteneurs de livestream
+          const livestreamContainers = document.querySelectorAll('.bg-gray-900 .bg-black.flex.items-center.justify-center');
+          console.log('Conteneurs livestream trouvés:', livestreamContainers.length);
           
-          containers.forEach((container, index) => {
-            console.log(`Remplacer conteneur ${index}`);
-            container.innerHTML = '';
-            container.appendChild(video.cloneNode(true));
-          });
+          if (livestreamContainers.length === 0) {
+            // Fallback: chercher tous les conteneurs noirs
+            const allContainers = document.querySelectorAll('.bg-black.flex.items-center.justify-center');
+            console.log('Tous les conteneurs trouvés:', allContainers.length);
+            
+            allContainers.forEach((container, index) => {
+              console.log(`Remplacer conteneur ${index}`);
+              container.innerHTML = '';
+              const videoClone = video.cloneNode(true) as HTMLVideoElement;
+              container.appendChild(videoClone);
+              
+              // Lancer la lecture pour chaque clone
+              videoClone.play().then(() => {
+                console.log(`Vidéo ${index} en cours de lecture`);
+              }).catch(err => {
+                console.error(`Erreur lecture vidéo ${index}:`, err);
+              });
+            });
+          } else {
+            // Utiliser les conteneurs de livestream spécifiques
+            livestreamContainers.forEach((container, index) => {
+              console.log(`Remplacer conteneur livestream ${index}`);
+              container.innerHTML = '';
+              const videoClone = video.cloneNode(true) as HTMLVideoElement;
+              container.appendChild(videoClone);
+              
+              // Lancer la lecture pour chaque clone
+              videoClone.play().then(() => {
+                console.log(`Vidéo livestream ${index} en cours de lecture`);
+              }).catch(err => {
+                console.error(`Erreur lecture vidéo livestream ${index}:`, err);
+              });
+            });
+          }
           
-          // Lancer la lecture
-          video.play().then(() => {
-            console.log('Vidéo en cours de lecture');
-            setIsLiveStreaming(true);
-            setViewerCount(15);
-          }).catch(err => {
-            console.error('Erreur lecture vidéo:', err);
-          });
+          // Mettre à jour l'état
+          setIsLiveStreaming(true);
+          setViewerCount(15);
         })
         .catch(err => {
           console.error('Erreur partage d\'écran:', err);
