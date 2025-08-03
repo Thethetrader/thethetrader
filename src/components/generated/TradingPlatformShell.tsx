@@ -24,6 +24,7 @@ export default function TradingPlatformShell() {
     timestamp: string;
     status: 'ACTIVE' | 'WIN' | 'LOSS' | 'BE';
     channel_id: string;
+    reactions?: string[];
     pnl?: string;
   }>>([{
     id: 'test-1',
@@ -50,7 +51,8 @@ export default function TradingPlatformShell() {
     image: null,
     timestamp: '22:35',
     status: 'ACTIVE',
-    channel_id: 'forex'
+    channel_id: 'forex',
+    reactions: []
   }]);
 
   // Initialiser les signaux existants avec le statut ACTIVE
@@ -76,7 +78,8 @@ export default function TradingPlatformShell() {
         image: null,
         timestamp: '22:30',
         status: 'ACTIVE' as const,
-        channel_id: 'crypto'
+        channel_id: 'crypto',
+        reactions: []
       };
       setSignals([testSignal]);
     }
@@ -239,6 +242,34 @@ export default function TradingPlatformShell() {
   };
 
   // Fonctions pour gérer les statuts des signaux
+  const handleReaction = (signalId: string, emoji: string) => {
+    setSignals(prev => prev.map(signal => {
+      if (signal.id === signalId) {
+        const currentReactions = signal.reactions || [];
+        const hasReaction = currentReactions.includes(emoji);
+        
+        if (hasReaction) {
+          // Retirer la réaction
+          return {
+            ...signal,
+            reactions: currentReactions.filter(r => r !== emoji)
+          };
+        } else {
+          // Ajouter la réaction
+          return {
+            ...signal,
+            reactions: [...currentReactions, emoji]
+          };
+        }
+      }
+      return signal;
+    }));
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleSignalStatus = (signalId: string, newStatus: 'WIN' | 'LOSS' | 'BE' | 'ACTIVE') => {
     const signal = signals.find(s => s.id === signalId);
     if (!signal) return;
@@ -308,7 +339,8 @@ export default function TradingPlatformShell() {
       image: signalData.image,
       timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
       status: 'ACTIVE' as const,
-      channel_id: selectedChannel.id
+      channel_id: selectedChannel.id,
+      reactions: []
     };
 
     // Ajouter le signal à la liste (en bas)
@@ -728,27 +760,27 @@ export default function TradingPlatformShell() {
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">ÉDUCATION</h3>
             <div className="space-y-1">
-              <button onClick={() => {setSelectedChannel({id: 'fondamentaux', name: 'fondamentaux'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'fondamentaux' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📚 Fondamentaux</button>
-              <button onClick={() => {setSelectedChannel({id: 'letsgooo-model', name: 'letsgooo-model'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'letsgooo-model' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>🚀 Letsgooo-model</button>
+              <button onClick={() => {setSelectedChannel({id: 'fondamentaux', name: 'fondamentaux'}); setView('signals'); scrollToTop();}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'fondamentaux' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📚 Fondamentaux</button>
+              <button onClick={() => {setSelectedChannel({id: 'letsgooo-model', name: 'letsgooo-model'}); setView('signals'); scrollToTop();}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'letsgooo-model' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>🚀 Letsgooo-model</button>
             </div>
           </div>
 
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">SIGNAUX</h3>
             <div className="space-y-1">
-              <button onClick={() => {setSelectedChannel({id: 'crypto', name: 'crypto'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'crypto' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>🪙 Crypto</button>
-              <button onClick={() => {setSelectedChannel({id: 'futur', name: 'futur'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'futur' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📈 Futur</button>
-              <button onClick={() => {setSelectedChannel({id: 'forex', name: 'forex'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'forex' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💱 Forex</button>
+              <button onClick={() => {setSelectedChannel({id: 'crypto', name: 'crypto'}); setView('signals'); scrollToTop();}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'crypto' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>🪙 Crypto</button>
+              <button onClick={() => {setSelectedChannel({id: 'futur', name: 'futur'}); setView('signals'); scrollToTop();}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'futur' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📈 Futur</button>
+              <button onClick={() => {setSelectedChannel({id: 'forex', name: 'forex'}); setView('signals'); scrollToTop();}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'forex' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💱 Forex</button>
             </div>
           </div>
 
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">TRADING HUB</h3>
             <div className="space-y-1">
-              <button onClick={() => {setSelectedChannel({id: 'livestream', name: 'livestream'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
-              <button onClick={() => {setSelectedChannel({id: 'general-chat', name: 'general-chat'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 General-chat</button>
-              <button onClick={() => {setSelectedChannel({id: 'profit-loss', name: 'profit-loss'}); setView('signals');}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
-              <button onClick={() => setView('calendar')} className={`w-full text-left px-3 py-2 rounded text-sm ${view === 'calendar' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Calendrier</button>
+              <button onClick={() => {setSelectedChannel({id: 'livestream', name: 'livestream'}); setView('signals'); scrollToTop();}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
+              <button onClick={() => {setSelectedChannel({id: 'general-chat', name: 'general-chat'}); setView('signals'); scrollToTop();}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 General-chat</button>
+              <button onClick={() => {setSelectedChannel({id: 'profit-loss', name: 'profit-loss'}); setView('signals'); scrollToTop();}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
+              <button onClick={() => {setView('calendar'); scrollToTop();}} className={`w-full text-left px-3 py-2 rounded text-sm ${view === 'calendar' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Calendrier</button>
             </div>
           </div>
 
@@ -969,7 +1001,7 @@ export default function TradingPlatformShell() {
                               <span className="text-xs text-gray-400">{signal.timestamp}</span>
                             </div>
 
-                            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 max-w-2xl md:max-w-2xl max-w-full">
                               <div className="space-y-3">
                                 {/* Header avec titre et indicateur */}
                                 <div className="flex items-center gap-2">
@@ -1018,7 +1050,7 @@ export default function TradingPlatformShell() {
                                 <img 
                                   src={URL.createObjectURL(signal.image)} 
                                   alt="Signal screenshot"
-                                  className="max-w-2xl rounded-lg border border-gray-600"
+                                  className="max-w-full md:max-w-2xl rounded-lg border border-gray-600"
                                 />
                               </div>
                             )}
@@ -1069,7 +1101,7 @@ export default function TradingPlatformShell() {
                                 ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) ? (
                   <div className="flex flex-col h-full">
                     {/* Messages de chat */}
-                    <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 pb-20">
+                    <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-20">
                       {(chatMessages[selectedChannel.id] || []).length === 0 ? (
                         <div className="text-center py-8">
                           <div className="text-gray-400 text-sm">Aucun message pour le moment</div>
@@ -1084,7 +1116,7 @@ export default function TradingPlatformShell() {
                                 <span className="font-semibold text-white">{message.author}</span>
                                 <span className="text-xs text-gray-400">{message.timestamp}</span>
                               </div>
-                              <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200">
+                              <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
                                 <p className="text-white">{message.text}</p>
                                 {message.attachment && (
                                   <div className="mt-2">
@@ -1183,7 +1215,7 @@ export default function TradingPlatformShell() {
                             <span className="text-xs text-gray-400">{signal.timestamp}</span>
                           </div>
 
-                          <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                          <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 max-w-full md:max-w-2xl">
                             <div className="space-y-3">
                               {/* Header avec titre et indicateur */}
                               <div className="flex items-center gap-2">
@@ -1232,7 +1264,7 @@ export default function TradingPlatformShell() {
                               <img 
                                 src={URL.createObjectURL(signal.image)} 
                                 alt="Signal screenshot"
-                                className="max-w-2xl rounded-lg border border-gray-600"
+                                className="max-w-full md:max-w-2xl rounded-lg border border-gray-600"
                               />
                             </div>
                           )}
@@ -1269,6 +1301,34 @@ export default function TradingPlatformShell() {
                               ⚖️ BE
                             </button>
                           </div>
+
+                          {/* Réactions emoji */}
+                          <div className="flex items-center gap-2 mt-3">
+                            <button 
+                              onClick={() => handleReaction(signal.id, '🔥')}
+                              className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
+                            >
+                              🔥 {signal.reactions?.filter(r => r === '🔥').length || 0}
+                            </button>
+                            <button 
+                              onClick={() => handleReaction(signal.id, '💎')}
+                              className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
+                            >
+                              💎 {signal.reactions?.filter(r => r === '💎').length || 0}
+                            </button>
+                            <button 
+                              onClick={() => handleReaction(signal.id, '🚀')}
+                              className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
+                            >
+                              🚀 {signal.reactions?.filter(r => r === '🚀').length || 0}
+                            </button>
+                            <button 
+                              onClick={() => handleReaction(signal.id, '👏')}
+                              className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
+                            >
+                              👏 {signal.reactions?.filter(r => r === '👏').length || 0}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))
@@ -1277,7 +1337,7 @@ export default function TradingPlatformShell() {
               ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) ? (
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}
-                  <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 pb-20">
+                  <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-20">
                     {(chatMessages[selectedChannel.id] || []).length === 0 ? (
                       <div className="text-center py-8">
                         <div className="text-gray-400 text-sm">Aucun message pour le moment</div>
@@ -1292,7 +1352,7 @@ export default function TradingPlatformShell() {
                               <span className="font-semibold text-white">{message.author}</span>
                               <span className="text-xs text-gray-400">{message.timestamp}</span>
                             </div>
-                            <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200">
+                            <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
                                 <p className="text-white">{message.text}</p>
                                 {message.attachment && (
                                   <div className="mt-2">
@@ -1319,7 +1379,7 @@ export default function TradingPlatformShell() {
                   </div>
                   
                   {/* Barre de message */}
-                  <div className="border-t border-gray-700 p-4 fixed bottom-0 left-0 right-0 bg-gray-800 z-10 md:left-64">
+                  <div className="border-t border-gray-700 p-4 fixed bottom-0 left-0 right-0 bg-gray-800 z-10 md:left-64 md:right-0">
                     <div className="flex items-center gap-2">
                       <input
                         type="text"
