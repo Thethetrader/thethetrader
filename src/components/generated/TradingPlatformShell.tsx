@@ -1792,17 +1792,20 @@ export default function TradingPlatformShell() {
                   </div>
                 )}
                 
+                {/* Header pour le calendrier normal */}
+                {view === 'calendar' && selectedChannel.id !== 'trading-journal' && (
+                  <div className="flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
+                    <div>
+                      <h1 className="text-2xl font-bold text-white">Calendrier des Signaux</h1>
+                      <p className="text-sm text-gray-400 mt-1">Suivi des performances des signaux</p>
+                    </div>
+                  </div>
+                )}
+                
                 {getTradingCalendar()}
                 
-                {/* Affichage des trades pour la date sélectionnée */}
-                {(() => {
-                  console.log('Vérification affichage trades:', {
-                    channel: selectedChannel.id,
-                    selectedDate: selectedDate,
-                    shouldShow: selectedChannel.id === 'trading-journal' && selectedDate
-                  });
-                  return selectedChannel.id === 'trading-journal' && selectedDate;
-                })() && (
+                {/* Affichage des trades pour la date sélectionnée - SEULEMENT pour Trading Journal */}
+                {selectedChannel.id === 'trading-journal' && selectedDate && (
                   <div className="mt-8 border-t border-gray-600 pt-6">
                     <h3 className="text-lg font-bold text-white mb-4">
                       Trades du {selectedDate.toLocaleDateString('fr-FR')}
