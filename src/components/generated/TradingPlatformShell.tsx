@@ -1366,7 +1366,7 @@ export default function TradingPlatformShell() {
         {/* Panneau des statistiques */}
         <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6">
           <h3 className="text-lg font-bold text-white mb-6">
-            {selectedChannel.id === 'trading-journal' ? 'Statistiques Trades' : 'Statistiques Signaux'}
+            {selectedChannel.id === 'trading-journal' ? 'Statistiques Trades' : 'Statistiques Calendrier Signaux'}
           </h3>
           
           {/* Métriques principales */}
