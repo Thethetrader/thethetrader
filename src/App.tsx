@@ -637,9 +637,9 @@ const App = () => {
           
           {/* Hero Section - Centré */}
           <div className="text-center flex-1 flex flex-col justify-center">
-            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight">
-              Le trading<br />
-              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight hover:scale-105 transition-transform duration-300 cursor-pointer group">
+              <span className="group-hover:text-blue-300 transition-colors duration-300">Le trading</span><br />
+              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent group-hover:from-blue-300 group-hover:to-purple-300 transition-all duration-300">
                 pour les nuls
               </span>
             </h1>
@@ -674,9 +674,9 @@ const App = () => {
         <>
           {/* Hero Section - Mobile Optimized */}
           <div className="text-center pt-10 sm:pt-20 pb-0 px-4 sm:px-6">
-            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight">
-              Le trading<br />
-              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight hover:scale-105 transition-transform duration-300 cursor-pointer group">
+              <span className="group-hover:text-blue-300 transition-colors duration-300">Le trading</span><br />
+              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent group-hover:from-blue-300 group-hover:to-purple-300 transition-all duration-300">
                 pour les nuls
               </span>
             </h1>
