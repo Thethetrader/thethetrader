@@ -1792,12 +1792,7 @@ export default function TradingPlatformShell() {
                   </div>
                 )}
                 
-                {/* Année 2025 pour mobile */}
-                {selectedChannel.id === 'trading-journal' && (
-                  <div className="md:hidden text-center mb-4">
-                    <h2 className="text-xl font-bold text-white">2025</h2>
-                  </div>
-                )}
+
                 
                 {/* Header pour le calendrier normal */}
                 {view === 'calendar' && selectedChannel.id !== 'trading-journal' && (
