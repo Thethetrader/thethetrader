@@ -10,6 +10,8 @@ export default function TradingPlatformShell() {
   const [showGifPicker, setShowGifPicker] = useState(false);
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [showSignalModal, setShowSignalModal] = useState(false);
+  const [showTradesModal, setShowTradesModal] = useState(false);
+  const [selectedTradesDate, setSelectedTradesDate] = useState<Date | null>(null);
   const [pasteArea, setPasteArea] = useState('');
   const [signals, setSignals] = useState<Array<{
     id: string;
@@ -105,10 +107,8 @@ export default function TradingPlatformShell() {
     return saved ? new Date(saved) : null;
   });
   
-  // Log pour déboguer selectedDate
+  // Sauvegarder selectedDate dans localStorage
   useEffect(() => {
-    console.log('selectedDate a changé:', selectedDate);
-    // Sauvegarder selectedDate dans localStorage
     if (selectedDate) {
       localStorage.setItem('selectedDate', selectedDate.toISOString());
     } else {
@@ -116,29 +116,16 @@ export default function TradingPlatformShell() {
     }
   }, [selectedDate]);
   
-  // Log pour déboguer selectedChannel
-  useEffect(() => {
-    console.log('selectedChannel a changé:', selectedChannel);
-  }, [selectedChannel]);
-  
-  // Log pour déboguer les re-renders
-  console.log('TradingPlatformShell re-render - selectedDate:', selectedDate);
-  
   // Fonction pour changer de canal et réinitialiser selectedDate si nécessaire
   const handleChannelChange = (channelId: string, channelName: string) => {
-    console.log('handleChannelChange appelé:', { channelId, channelName, currentChannel: selectedChannel.id });
-    
     // Réinitialiser selectedDate si on quitte le Trading Journal
     if (selectedChannel.id === 'trading-journal' && channelId !== 'trading-journal') {
-      console.log('Réinitialisation selectedDate car on quitte Trading Journal');
       setSelectedDate(null);
     }
     
     setSelectedChannel({id: channelId, name: channelName});
     setView('signals');
     scrollToTop();
-    
-    console.log('Nouveau canal défini:', channelId);
   };
   const [personalTrades, setPersonalTrades] = useState<Array<{
     id: string;
@@ -177,7 +164,6 @@ export default function TradingPlatformShell() {
         image2: null,
         timestamp: new Date().toLocaleTimeString('fr-FR')
       };
-      console.log('Trade de test créé pour aujourd\'hui:', testTrade);
       return [testTrade];
     }
     
@@ -1025,10 +1011,7 @@ export default function TradingPlatformShell() {
 
   const getTradesForDate = (date: Date) => {
     const dateStr = date.toISOString().split('T')[0];
-    console.log('Recherche trades pour date:', dateStr);
-    console.log('Trades disponibles:', personalTrades);
     const filteredTrades = personalTrades.filter(trade => trade.date === dateStr);
-    console.log('Trades trouvés:', filteredTrades);
     return filteredTrades;
   };
 
@@ -1125,11 +1108,8 @@ export default function TradingPlatformShell() {
                 };
 
   const parseSignalData = (text: string) => {
-    console.log('Parsing du texte:', text);
-    
     // Chercher tous les nombres
     const numbers = text.match(/\d+(?:\.\d+)?/g);
-    console.log('Nombres trouvés:', numbers);
     
     // Chercher le symbole - patterns plus spécifiques
     let symbol = '';
@@ -1152,8 +1132,6 @@ export default function TradingPlatformShell() {
       }
     }
     
-    console.log('Symbole trouvé:', symbol);
-    
     // Déterminer le type basé sur le texte
     let type = 'BUY';
     if (text.toUpperCase().includes('SELL') || text.toUpperCase().includes('SHORT')) {
@@ -1161,7 +1139,6 @@ export default function TradingPlatformShell() {
     } else if (text.toUpperCase().includes('BUY') || text.toUpperCase().includes('LONG')) {
       type = 'BUY';
     }
-    console.log('Type détecté:', type);
     
     // Si on a au moins 1 nombre, on peut commencer à remplir
     if (numbers && numbers.length >= 1) {
@@ -1173,7 +1150,7 @@ export default function TradingPlatformShell() {
         type: type
       };
       
-      console.log('Données finales:', newData);
+
       
       setSignalData(prev => ({
         ...prev,
@@ -1341,20 +1318,21 @@ export default function TradingPlatformShell() {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      console.log('Jour cliqué - Canal actuel:', selectedChannel.id);
                       
                       if (selectedChannel.id === 'trading-journal') {
                         try {
                           const clickedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNumber);
-                          console.log('Jour cliqué:', clickedDate);
-                          console.log('Date formatée:', clickedDate.toISOString().split('T')[0]);
                           setSelectedDate(clickedDate);
-                          console.log('selectedDate mis à jour');
+                          
+                          // Ouvrir le popup des trades si il y en a
+                          const tradesForDate = getTradesForDate(clickedDate);
+                          if (tradesForDate.length > 0) {
+                            setSelectedTradesDate(clickedDate);
+                            setShowTradesModal(true);
+                          }
                         } catch (error) {
                           console.error('Erreur lors du clic:', error);
                         }
-                      } else {
-                        console.log('Pas dans le trading journal');
                       }
                     }}
                     className={`
@@ -3222,6 +3200,99 @@ export default function TradingPlatformShell() {
                     Ajouter le trade
                   </button>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal des Trades */}
+      {showTradesModal && selectedTradesDate && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-white">
+                  Trades du {selectedTradesDate.toLocaleDateString('fr-FR', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </h2>
+                <button
+                  onClick={() => setShowTradesModal(false)}
+                  className="text-gray-400 hover:text-white text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {getTradesForDate(selectedTradesDate).map((trade) => (
+                  <div key={trade.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <span className={`px-2 py-1 rounded text-xs font-bold ${
+                          trade.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+                        }`}>
+                          {trade.type}
+                        </span>
+                        <span className="text-lg font-bold text-white">{trade.symbol}</span>
+                      </div>
+                      <span className={`text-lg font-bold ${
+                        parseFloat(trade.pnl) >= 0 ? 'text-green-400' : 'text-red-400'
+                      }`}>
+                        {parseFloat(trade.pnl) >= 0 ? '+' : ''}{trade.pnl}$
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 mb-3">
+                      <div>
+                        <span className="text-sm text-gray-400">Entry:</span>
+                        <span className="text-white ml-2">{trade.entry}</span>
+                      </div>
+                      <div>
+                        <span className="text-sm text-gray-400">Exit:</span>
+                        <span className="text-white ml-2">{trade.exit}</span>
+                      </div>
+                      <div>
+                        <span className="text-sm text-gray-400">Stop Loss:</span>
+                        <span className="text-white ml-2">{trade.stopLoss}</span>
+                      </div>
+                      <div>
+                        <span className="text-sm text-gray-400">Status:</span>
+                        <span className={`ml-2 px-2 py-1 rounded text-xs ${
+                          trade.status === 'WIN' ? 'bg-green-600 text-white' :
+                          trade.status === 'LOSS' ? 'bg-red-600 text-white' :
+                          'bg-blue-600 text-white'
+                        }`}>
+                          {trade.status}
+                        </span>
+                      </div>
+                    </div>
+
+                    {trade.notes && (
+                      <div className="mb-3">
+                        <span className="text-sm text-gray-400">Notes:</span>
+                        <p className="text-white mt-1">{trade.notes}</p>
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between text-sm text-gray-400">
+                      <span>Ajouté le {trade.timestamp}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-gray-600">
+                <button
+                  onClick={() => setShowTradesModal(false)}
+                  className="w-full bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
+                >
+                  Fermer
+                </button>
               </div>
             </div>
           </div>
