@@ -691,8 +691,8 @@ export default function TradingPlatformShell() {
       reactions: []
     };
 
-    // Ajouter le signal à la liste (en bas)
-    setSignals(prevSignals => [...prevSignals, newSignal]);
+    // Ajouter le signal à la liste (en premier)
+    setSignals(prevSignals => [newSignal, ...prevSignals]);
     console.log('Nouveau signal:', newSignal);
     
     // Reset form et fermer modal
