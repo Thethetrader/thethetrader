@@ -144,9 +144,10 @@ export default function TradingPlatformShell() {
     image2: File | null;
     timestamp: string;
   }>>(() => {
-    // Récupérer personalTrades depuis localStorage
-    const saved = localStorage.getItem('personalTrades');
-    const existingTrades = saved ? JSON.parse(saved) : [];
+    // Forcer le localStorage à être vide pour éviter les bugs
+    // const saved = localStorage.getItem('personalTrades');
+    // const existingTrades = saved ? JSON.parse(saved) : [];
+    const existingTrades: any[] = [];
     
     // Supprimer toutes les données de test pour éviter les bugs
     // const testTradeExists = existingTrades.some((trade: any) => trade.date === '2024-08-04');
@@ -185,10 +186,10 @@ export default function TradingPlatformShell() {
     image2: null as File | null
   });
   
-  // Sauvegarder personalTrades dans localStorage
-  useEffect(() => {
-    localStorage.setItem('personalTrades', JSON.stringify(personalTrades));
-  }, [personalTrades]);
+  // Désactiver la sauvegarde pour éviter les bugs
+  // useEffect(() => {
+  //   localStorage.setItem('personalTrades', JSON.stringify(personalTrades));
+  // }, [personalTrades]);
 
   // Debug: Afficher les trades au chargement
   useEffect(() => {
