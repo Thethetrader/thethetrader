@@ -1025,7 +1025,10 @@ export default function TradingPlatformShell() {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     const dateStr = `${year}-${month}-${day}`;
+    console.log('Recherche trades pour date:', dateStr);
+    console.log('Tous les trades:', personalTrades);
     const filteredTrades = personalTrades.filter(trade => trade.date === dateStr);
+    console.log('Trades filtrés:', filteredTrades);
     return filteredTrades;
   };
 
@@ -1359,6 +1362,7 @@ export default function TradingPlatformShell() {
                         
                         // Ouvrir le popup des trades si il y en a
                         const tradesForDate = getTradesForDate(clickedDate);
+                        console.log('Clic sur jour:', dayNumber, 'Trades trouvés:', tradesForDate.length);
                         if (tradesForDate.length > 0) {
                           setSelectedTradesDate(clickedDate);
                           setShowTradesModal(true);
