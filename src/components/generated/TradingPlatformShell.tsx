@@ -1320,6 +1320,24 @@ export default function TradingPlatformShell() {
                       </div>
                     </div>
                   </button>
+                  
+                  <button
+                    onClick={() => {
+                      setSelectedChannel({id: 'trading-journal', name: 'trading-journal'});
+                      setView('signals');
+                      setMobileView('content');
+                      scrollToTop();
+                    }}
+                    className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg">📊</span>
+                      <div>
+                        <p className="font-medium text-white">Trading Journal</p>
+                        <p className="text-sm text-gray-400">Journal de trading</p>
+                      </div>
+                    </div>
+                  </button>
                 </div>
               </div>
 
