@@ -1266,11 +1266,14 @@ export default function TradingPlatformShell() {
                   <div 
                     key={i} 
                     onClick={() => {
+                      console.log('Jour cliqué - Canal actuel:', selectedChannel.id);
                       if (selectedChannel.id === 'trading-journal') {
                         const clickedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNumber);
                         console.log('Jour cliqué:', clickedDate);
                         console.log('Date formatée:', clickedDate.toISOString().split('T')[0]);
                         setSelectedDate(clickedDate);
+                      } else {
+                        console.log('Pas dans le trading journal');
                       }
                     }}
                     className={`
@@ -1751,7 +1754,14 @@ export default function TradingPlatformShell() {
                 {getTradingCalendar()}
                 
                 {/* Affichage des trades pour la date sélectionnée */}
-                {selectedChannel.id === 'trading-journal' && selectedDate && (
+                {(() => {
+                  console.log('Vérification affichage trades:', {
+                    channel: selectedChannel.id,
+                    selectedDate: selectedDate,
+                    shouldShow: selectedChannel.id === 'trading-journal' && selectedDate
+                  });
+                  return selectedChannel.id === 'trading-journal' && selectedDate;
+                })() && (
                   <div className="mt-8 border-t border-gray-600 pt-6">
                     <h3 className="text-lg font-bold text-white mb-4">
                       Trades du {selectedDate.toLocaleDateString('fr-FR')}
