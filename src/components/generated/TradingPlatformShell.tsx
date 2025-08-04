@@ -1338,13 +1338,21 @@ export default function TradingPlatformShell() {
                 return (
                   <div 
                     key={i} 
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
                       console.log('Jour cliqué - Canal actuel:', selectedChannel.id);
+                      
                       if (selectedChannel.id === 'trading-journal') {
-                        const clickedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNumber);
-                        console.log('Jour cliqué:', clickedDate);
-                        console.log('Date formatée:', clickedDate.toISOString().split('T')[0]);
-                        setSelectedDate(clickedDate);
+                        try {
+                          const clickedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNumber);
+                          console.log('Jour cliqué:', clickedDate);
+                          console.log('Date formatée:', clickedDate.toISOString().split('T')[0]);
+                          setSelectedDate(clickedDate);
+                          console.log('selectedDate mis à jour');
+                        } catch (error) {
+                          console.error('Erreur lors du clic:', error);
+                        }
                       } else {
                         console.log('Pas dans le trading journal');
                       }
