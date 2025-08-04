@@ -18,7 +18,12 @@ const App = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const [activeChannel, setActiveChannel] = useState('crypto-signaux');
+  const [activeChannel, setActiveChannel] = useState('fondamentaux');
+  const [animatedNumbers, setAnimatedNumbers] = useState({
+    beginners: 0,
+    analyses: 0,
+    generated: 0
+  });
   
   // Hook pour les notifications
   const { permission, requestPermission, sendTestNotification } = useNotifications();
@@ -54,9 +59,130 @@ const App = () => {
     img.src = '/images/tradingview-chart.png';
   }, []);
 
+  // Animation des chiffres
+  useEffect(() => {
+    const targets = {
+      beginners: 1000,
+      analyses: 300,
+      generated: 50000
+    };
+
+    const duration = 2000; // 2 secondes
+    const steps = 60;
+    const stepDuration = duration / steps;
+
+    const animate = () => {
+      let currentStep = 0;
+      
+      const interval = setInterval(() => {
+        currentStep++;
+        const progress = currentStep / steps;
+        
+        setAnimatedNumbers({
+          beginners: Math.floor(targets.beginners * progress),
+          analyses: Math.floor(targets.analyses * progress),
+          generated: Math.floor(targets.generated * progress)
+        });
+
+        if (currentStep >= steps) {
+          clearInterval(interval);
+          // S'assurer que les valeurs finales sont exactes
+          setAnimatedNumbers(targets);
+        }
+      }, stepDuration);
+    };
+
+    // Démarrer l'animation après un délai
+    const timer = setTimeout(animate, 500);
+    
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
+
   const channelData: Record<string, any> = {
-    'crypto-signaux': {
-      title: '#crypto-signaux',
+    'fondamentaux': {
+      title: '#fondamentaux',
+      messages: [
+        { 
+          id: 1, 
+          user: 'TheTheTrader', 
+          time: '09:15:30', 
+          type: 'formation', 
+          content: {
+            title: '📚 Module 1: Les bases du trading',
+            image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&h=250&fit=crop',
+            description: 'Introduction complète aux marchés financiers',
+            duration: '45 min',
+            progress: '100%',
+            topics: ['Types de marchés', 'Ordres de base', 'Gestion du risque']
+          }
+        },
+        { 
+          id: 2, 
+          user: 'TheTheTrader', 
+          time: '10:30:45', 
+          type: 'formation', 
+          content: {
+            title: '📊 Module 2: Analyse technique',
+            image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=250&fit=crop',
+            description: 'Maîtrisez les indicateurs techniques',
+            duration: '1h20',
+            progress: '75%',
+            topics: ['Support/Résistance', 'Indicateurs', 'Patterns']
+          }
+        },
+        { 
+          id: 3, 
+          user: 'TheTheTrader', 
+          time: '11:45:20', 
+          type: 'formation', 
+          content: {
+            title: '🎯 Module 3: Psychologie du trader',
+            image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=250&fit=crop',
+            description: 'Développez votre mindset de trader',
+            duration: '55 min',
+            progress: '60%',
+            topics: ['Gestion émotionnelle', 'Discipline', 'Patience']
+          }
+        }
+      ]
+    },
+    'letsgooo-model': {
+      title: '#letsgooo-model',
+      messages: [
+        { 
+          id: 1, 
+          user: 'TheTheTrader', 
+          time: '14:20:15', 
+          type: 'formation', 
+          content: {
+            title: '🚀 Stratégie Letsgooo - Partie 1',
+            image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&h=250&fit=crop',
+            description: 'Découvrez notre stratégie exclusive',
+            duration: '1h30',
+            progress: '100%',
+            topics: ['Setup d\'entrée', 'Timing parfait', 'Gestion']
+          }
+        },
+        { 
+          id: 2, 
+          user: 'TheTheTrader', 
+          time: '15:45:30', 
+          type: 'formation', 
+          content: {
+            title: '⚡ Letsgooo - Applications pratiques',
+            image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=250&fit=crop',
+            description: 'Exemples concrets en temps réel',
+            duration: '2h15',
+            progress: '80%',
+            topics: ['Cas d\'étude', 'Backtesting', 'Optimisation']
+          }
+        }
+      ]
+    },
+    'crypto': {
+      title: '#crypto',
       messages: [
         { 
           id: 1, 
@@ -114,8 +240,8 @@ const App = () => {
         }
       ]
     },
-    'forex-signaux': {
-      title: '#forex-signaux',
+    'forex': {
+      title: '#forex',
       messages: [
         { 
           id: 1, 
@@ -171,8 +297,8 @@ const App = () => {
         }
       ]
     },
-    'futures-signaux': {
-      title: '#futures-signaux',
+    'futur': {
+      title: '#futur',
       messages: [
         { 
           id: 1, 
@@ -296,6 +422,131 @@ const App = () => {
             { emoji: '📈', count: 34 },
             { emoji: '💰', count: 28 },
             { emoji: '🔥', count: 19 }
+          ]
+        }
+      ]
+    },
+    'livestream': {
+      title: '#livestream',
+      messages: [
+        { 
+          id: 1, 
+          user: 'TheTheTrader', 
+          time: '14:30:00', 
+          type: 'message', 
+          content: '📺 Live Trading en cours !\n\n🎯 Session: Analyse technique en direct\n⏰ Durée: 2h\n👥 Participants: 156\n\n💬 Posez vos questions dans le chat !', 
+          reactions: [
+            { emoji: '📺', count: 45 },
+            { emoji: '🎯', count: 32 }
+          ]
+        },
+        { 
+          id: 2, 
+          user: 'TheTheTrader', 
+          time: '14:45:30', 
+          type: 'message', 
+          content: '📊 Signal en direct: BUY BTCUSD\n\n🔹 Entrée: 103,200\n🔹 Stop: 102,800\n🔹 Target: 103,800\n\n🎯 Suivez en direct !', 
+          reactions: [
+            { emoji: '🔥', count: 28 },
+            { emoji: '🚀', count: 19 }
+          ]
+        }
+      ]
+    },
+    'general-chat': {
+      title: '#general-chat',
+      messages: [
+        { 
+          id: 1, 
+          user: 'Trader_Pro', 
+          time: '13:20:15', 
+          type: 'message', 
+          content: 'Salut tout le monde ! 👋\n\nQuelqu\'un a des questions sur le module de formation ?', 
+          reactions: [
+            { emoji: '👋', count: 8 },
+            { emoji: '💬', count: 5 }
+          ]
+        },
+        { 
+          id: 2, 
+          user: 'Crypto_Lover', 
+          time: '13:25:42', 
+          type: 'message', 
+          content: 'Oui ! J\'ai un doute sur la gestion du risque...\n\nComment calculer la taille de position ?', 
+          reactions: [
+            { emoji: '🤔', count: 3 },
+            { emoji: '📚', count: 7 }
+          ]
+        },
+        { 
+          id: 3, 
+          user: 'TheTheTrader', 
+          time: '13:30:00', 
+          type: 'message', 
+          content: 'Excellente question ! 📚\n\nRègle simple: Risque max 1-2% par trade\n\nExemple: Compte 10k€ → Risque max 100-200€\n\nJe prépare un guide détaillé !', 
+          reactions: [
+            { emoji: '📚', count: 15 },
+            { emoji: '💡', count: 12 }
+          ]
+        }
+      ]
+    },
+    'profit-loss': {
+      title: '#profit-loss',
+      messages: [
+        { 
+          id: 1, 
+          user: 'Crypto_Trader_23', 
+          time: '08:00:00', 
+          type: 'message', 
+          content: '📊 Mes résultats de la semaine:\n\n💰 P&L Total: +$847\n📈 Win Rate: 85.7%\n🎯 Meilleur trade: +$156 (BTC)\n📉 Pire trade: -$45 (ETH)\n\n🔥 Première semaine positive !', 
+          reactions: [
+            { emoji: '💰', count: 25 },
+            { emoji: '🔥', count: 18 }
+          ]
+        },
+        { 
+          id: 2, 
+          user: 'Forex_Master', 
+          time: '09:15:30', 
+          type: 'message', 
+          content: '📈 Mes stats détaillées:\n\n• Trades gagnants: 12/15\n• Trades perdants: 3/15\n• Ratio moyen: 1.8:1\n• Drawdown max: 2.1%\n\n🎯 Objectif: Maintenir >80% win rate', 
+          reactions: [
+            { emoji: '📈', count: 22 },
+            { emoji: '🎯', count: 15 }
+          ]
+        },
+        { 
+          id: 3, 
+          user: 'Futures_Pro', 
+          time: '10:30:45', 
+          type: 'message', 
+          content: '💎 Résultats exceptionnels cette semaine:\n\n💰 P&L: +$2,156\n📈 Win Rate: 92.3%\n🎯 15 trades gagnants sur 16\n📉 Seulement 1 trade perdant\n\n🚀 La stratégie Letsgooo fonctionne parfaitement !', 
+          reactions: [
+            { emoji: '💎', count: 38 },
+            { emoji: '🚀', count: 29 }
+          ]
+        },
+        { 
+          id: 4, 
+          user: 'Beginner_Trader', 
+          time: '11:45:20', 
+          type: 'message', 
+          content: '📚 Mes premiers résultats:\n\n💰 P&L: +$89\n📈 Win Rate: 75%\n🎯 3 trades gagnants sur 4\n📉 1 trade perdant: -$23\n\n💡 Merci pour la formation, ça marche !', 
+          reactions: [
+            { emoji: '📚', count: 12 },
+            { emoji: '💡', count: 8 }
+          ]
+        },
+        { 
+          id: 5, 
+          user: 'Scalping_King', 
+          time: '12:20:15', 
+          type: 'message', 
+          content: '⚡ Session de scalping réussie:\n\n💰 P&L: +$456\n📈 Win Rate: 88.9%\n🎯 8 trades gagnants sur 9\n⏱️ Session de 2h\n\n🔥 Le scalping avec les signaux crypto est incroyable !', 
+          reactions: [
+            { emoji: '⚡', count: 31 },
+            { emoji: '🔥', count: 24 }
           ]
         }
       ]
@@ -455,7 +706,189 @@ const App = () => {
               </div>
             </div>
 
+            {/* Nos Services - Mobile Optimized */}
+            <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-8 sm:mb-12">
+                Nos Services
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+                {/* Service 1 */}
+                <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm hover:bg-gray-800/70 transition-all duration-300">
+                  <div className="text-4xl mb-4">📊</div>
+                  <h3 className="text-xl font-bold text-white mb-3">Signaux de Trading</h3>
+                  <p className="text-gray-300 text-sm sm:text-base">
+                    Recevez des signaux de trading précis avec des points d'entrée, de sortie et de stop-loss clairement définis.
+                  </p>
+                </div>
 
+                {/* Service 2 */}
+                <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm hover:bg-gray-800/70 transition-all duration-300">
+                  <div className="text-4xl mb-4">📚</div>
+                  <h3 className="text-xl font-bold text-white mb-3">Formation Complète</h3>
+                  <p className="text-gray-300 text-sm sm:text-base">
+                    Apprenez les bases du trading avec nos cours structurés et nos stratégies éprouvées.
+                  </p>
+                </div>
+
+                {/* Service 3 */}
+                <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm hover:bg-gray-800/70 transition-all duration-300">
+                  <div className="text-4xl mb-4">📈</div>
+                  <h3 className="text-xl font-bold text-white mb-3">Suivi Performance</h3>
+                  <p className="text-gray-300 text-sm sm:text-base">
+                    Suivez vos performances avec notre calendrier de trading et nos analyses détaillées.
+                  </p>
+                </div>
+
+                {/* Service 4 - Live Trading */}
+                <div className="bg-gradient-to-br from-red-600/20 to-orange-600/20 p-6 sm:p-8 rounded-xl border border-red-500/50 backdrop-blur-sm hover:from-red-600/30 hover:to-orange-600/30 transition-all duration-300">
+                  <div className="text-4xl mb-4">🎥</div>
+                  <h3 className="text-xl font-bold text-white mb-3">Live Trading</h3>
+                  <p className="text-gray-300 text-sm sm:text-base">
+                    Regardez nos sessions de trading en direct 3 fois par semaine et apprenez en temps réel.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* À propos - Mobile Optimized */}
+            <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
+              <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm">
+                <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-6 sm:mb-8">
+                  À propos de TheTheTrader
+                </h2>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                  <div>
+                    <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
+                      Trader depuis 3 ans, j'ai développé une approche simple, rapide et efficace. J'ai compris qu'on a tendance à trop compliquer le marché, alors qu'en réalité, il suffit de le simplifier pour mieux le maîtriser. Mon setup va à l'essentiel : lecture claire, exécution rapide, résultats concrets.
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-6xl mb-4">🚀</div>
+                    <p className="text-gray-300 text-sm sm:text-base">
+                      Plus de 1000+ membres actifs
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Chiffres clés - Mobile Optimized */}
+            <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-8 sm:mb-12">
+                Chiffres clés
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+                {/* Carte 1 */}
+                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50">
+                  <div className="text-4xl text-purple-600 mb-4">👤↗️</div>
+                  <div className="text-3xl font-bold text-purple-600 mb-2">+{animatedNumbers.beginners.toLocaleString()}</div>
+                  <div className="text-white text-sm sm:text-base font-medium">Débutants déjà formés</div>
+                </div>
+
+                {/* Carte 2 */}
+                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50">
+                  <div className="text-4xl text-purple-600 mb-4">📊</div>
+                  <div className="text-3xl font-bold text-purple-600 mb-2">+{animatedNumbers.analyses.toLocaleString()}</div>
+                  <div className="text-white text-sm sm:text-base font-medium">Analyses envoyées chaque mois</div>
+                </div>
+
+                {/* Carte 3 */}
+                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50">
+                  <div className="text-4xl text-purple-600 mb-4">💰</div>
+                  <div className="text-3xl font-bold text-purple-600 mb-2">+{animatedNumbers.generated.toLocaleString()}€</div>
+                  <div className="text-white text-sm sm:text-base font-medium">Générés par les membres</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Plans de prix - Mobile Optimized */}
+            <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-8 sm:mb-12">
+                Choisissez votre plan
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 max-w-6xl mx-auto">
+                {/* Plan Starter */}
+                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 p-8 sm:p-12 rounded-xl border border-purple-500/50 backdrop-blur-sm hover:from-purple-600/30 hover:to-blue-600/30 transition-all duration-300 min-h-[600px]">
+                  <div className="text-center">
+                    <h3 className="text-2xl font-bold text-white mb-3">Starter</h3>
+                    <div className="text-4xl font-bold text-blue-400 mb-6">15€<span className="text-sm text-gray-400">/mois</span></div>
+                    <div className="text-green-400 text-sm mb-4">🎯 Parfait pour débuter</div>
+                                          <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
+                        <li className="flex items-center gap-2">
+                          <span className="text-green-400">✓</span>
+                          <span>Tous les signaux (Crypto, Forex, Futures)</span>
+                        </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-green-400">✓</span>
+                        <span>Formation complète (10h de vidéos)</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-green-400">✓</span>
+                        <span>Accès au chat communautaire</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-green-400">✓</span>
+                        <span>Calendrier de performance</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-red-400">✗</span>
+                        <span>Live Trading</span>
+                      </li>
+                      
+                      <li className="flex items-center gap-2">
+                        <span className="text-red-400">✗</span>
+                        <span>Support prioritaire</span>
+                      </li>
+                    </ul>
+                    <button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-4 px-6 rounded-lg font-semibold text-lg transition-colors">
+                      Commencer maintenant
+                    </button>
+                  </div>
+                </div>
+
+                {/* Plan Pro */}
+                <div className="bg-gradient-to-br from-blue-600/20 to-purple-600/20 p-8 sm:p-12 rounded-xl border border-blue-500/50 backdrop-blur-sm hover:from-blue-600/30 hover:to-purple-600/30 transition-all duration-300 relative min-h-[600px]">
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                    RECOMMANDÉ
+                  </div>
+                  <div className="text-center">
+                    <h3 className="text-2xl font-bold text-white mb-3">Pro</h3>
+                    <div className="text-4xl font-bold text-blue-400 mb-6">25€<span className="text-sm text-gray-400">/mois</span></div>
+                    <div className="text-green-400 text-sm mb-4">🚀 Pour trader comme un pro</div>
+                                          <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
+                        <li className="flex items-center gap-2">
+                          <span className="text-green-400">✓</span>
+                          <span>Tous les signaux (Crypto, Forex, Futures)</span>
+                        </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-green-400">✓</span>
+                        <span>Formation complète + stratégies avancées</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-green-400">✓</span>
+                        <span>Live Trading en direct (3x/semaine)</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-green-400">✓</span>
+                        <span>Calendrier avancé avec analytics</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-green-400">✓</span>
+                        <span>Support prioritaire 24/7</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-green-400">✓</span>
+                        <span>Signaux exclusifs VIP</span>
+                      </li>
+
+                    </ul>
+                    <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 px-6 rounded-lg font-semibold text-lg transition-colors">
+                      Devenir Pro
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {/* Aperçu de la plateforme - Mobile Optimized */}
             <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-2 sm:px-4">
@@ -484,35 +917,67 @@ const App = () => {
                       <div className="sm:hidden flex gap-3 mb-4 overflow-x-auto pl-2 pr-4 pt-4 pb-6">
                         <div 
                           className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[100px] ${
-                            activeChannel === 'crypto-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                            activeChannel === 'fondamentaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                           }`}
-                          onClick={() => setActiveChannel('crypto-signaux')}
+                          onClick={() => setActiveChannel('fondamentaux')}
+                        >
+                          📚 Fondamentaux
+                        </div>
+                        <div 
+                          className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[100px] ${
+                            activeChannel === 'letsgooo-model' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                          }`}
+                          onClick={() => setActiveChannel('letsgooo-model')}
+                        >
+                          🚀 Letsgooo-model
+                        </div>
+                        <div 
+                          className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[90px] ${
+                            activeChannel === 'crypto' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                          }`}
+                          onClick={() => setActiveChannel('crypto')}
                         >
                           🪙 Crypto
                         </div>
                         <div 
                           className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[90px] ${
-                            activeChannel === 'forex-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                            activeChannel === 'futur' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                           }`}
-                          onClick={() => setActiveChannel('forex-signaux')}
+                          onClick={() => setActiveChannel('futur')}
+                        >
+                          📈 Futur
+                        </div>
+                        <div 
+                          className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[90px] ${
+                            activeChannel === 'forex' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                          }`}
+                          onClick={() => setActiveChannel('forex')}
                         >
                           💱 Forex
                         </div>
                         <div 
                           className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[100px] ${
-                            activeChannel === 'futures-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                            activeChannel === 'livestream' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                           }`}
-                          onClick={() => setActiveChannel('futures-signaux')}
+                          onClick={() => setActiveChannel('livestream')}
                         >
-                          📈 Futures
+                          📺 Livestream
                         </div>
                         <div 
                           className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[100px] ${
-                            activeChannel === 'education' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                            activeChannel === 'general-chat' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                           }`}
-                          onClick={() => setActiveChannel('education')}
+                          onClick={() => setActiveChannel('general-chat')}
                         >
-                          📚 Education
+                          💬 General-chat
+                        </div>
+                        <div 
+                          className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[100px] ${
+                            activeChannel === 'profit-loss' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                          }`}
+                          onClick={() => setActiveChannel('profit-loss')}
+                        >
+                          💰 Profit-loss
                         </div>
                         <div 
                           className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[100px] ${
@@ -526,45 +991,97 @@ const App = () => {
 
                       {/* Desktop: Vertical sidebar */}
                       <div className="hidden sm:block space-y-2">
-                        <div 
-                          className={`px-4 py-3 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
-                            activeChannel === 'crypto-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
-                          }`}
-                          onClick={() => setActiveChannel('crypto-signaux')}
-                        >
-                          🪙 Crypto Signaux
+                        {/* ÉDUCATION */}
+                        <div className="mb-4">
+                          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-4">ÉDUCATION</h3>
+                          <div className="space-y-1">
+                            <div 
+                              className={`px-4 py-3 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
+                                activeChannel === 'fondamentaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                              }`}
+                              onClick={() => setActiveChannel('fondamentaux')}
+                            >
+                              📚 Fondamentaux
+                            </div>
+                            <div 
+                              className={`px-4 py-3 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
+                                activeChannel === 'letsgooo-model' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                              }`}
+                              onClick={() => setActiveChannel('letsgooo-model')}
+                            >
+                              🚀 Letsgooo-model
+                            </div>
+                          </div>
                         </div>
-                        <div 
-                          className={`px-4 py-3 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
-                            activeChannel === 'forex-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
-                          }`}
-                          onClick={() => setActiveChannel('forex-signaux')}
-                        >
-                          💱 Forex Signaux
+
+                        {/* SIGNAUX */}
+                        <div className="mb-4">
+                          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-4">SIGNAUX</h3>
+                          <div className="space-y-1">
+                            <div 
+                              className={`px-4 py-3 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
+                                activeChannel === 'crypto' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                              }`}
+                              onClick={() => setActiveChannel('crypto')}
+                            >
+                              🪙 Crypto
+                            </div>
+                            <div 
+                              className={`px-4 py-3 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
+                                activeChannel === 'futur' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                              }`}
+                              onClick={() => setActiveChannel('futur')}
+                            >
+                              📈 Futur
+                            </div>
+                            <div 
+                              className={`px-4 py-3 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
+                                activeChannel === 'forex' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                              }`}
+                              onClick={() => setActiveChannel('forex')}
+                            >
+                              💱 Forex
+                            </div>
+                          </div>
                         </div>
-                        <div 
-                          className={`px-4 py-3 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
-                            activeChannel === 'futures-signaux' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
-                          }`}
-                          onClick={() => setActiveChannel('futures-signaux')}
-                        >
-                          📈 Futures Signaux
-                        </div>
-                        <div 
-                          className={`px-4 py-3 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
-                            activeChannel === 'education' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
-                          }`}
-                          onClick={() => setActiveChannel('education')}
-                        >
-                          📚 Education
-                        </div>
-                        <div 
-                          className={`px-4 py-3 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
-                            activeChannel === 'calendar' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
-                          }`}
-                          onClick={() => setActiveChannel('calendar')}
-                        >
-                          📅 Calendrier
+
+                        {/* TRADING HUB */}
+                        <div className="mb-4">
+                          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-4">TRADING HUB</h3>
+                          <div className="space-y-1">
+                            <div 
+                              className={`px-4 py-3 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
+                                activeChannel === 'livestream' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                              }`}
+                              onClick={() => setActiveChannel('livestream')}
+                            >
+                              📺 Livestream
+                            </div>
+                            <div 
+                              className={`px-4 py-3 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
+                                activeChannel === 'general-chat' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                              }`}
+                              onClick={() => setActiveChannel('general-chat')}
+                            >
+                              💬 General-chat
+                            </div>
+                            <div 
+                              className={`px-4 py-3 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
+                                activeChannel === 'profit-loss' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                              }`}
+                              onClick={() => setActiveChannel('profit-loss')}
+                            >
+                              💰 Profit-loss
+                            </div>
+                            <div 
+                              className={`px-4 py-3 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
+                                activeChannel === 'calendar' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                              }`}
+                              onClick={() => setActiveChannel('calendar')}
+                            >
+                              📅 Calendrier
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -604,6 +1121,49 @@ const App = () => {
                                     
 
 
+                                  </div>
+                                ) : message.type === 'formation' ? (
+                                  <div className="bg-gray-700 rounded-lg p-6">
+                                    <div className="flex flex-col lg:flex-row gap-6">
+                                      {/* Image de formation */}
+                                      <div className="lg:w-1/3">
+                                        <img 
+                                          src={message.content.image} 
+                                          alt={message.content.title}
+                                          className="w-full h-48 lg:h-64 object-cover rounded-lg shadow-lg"
+                                        />
+                                      </div>
+                                      
+                                      {/* Contenu de formation */}
+                                      <div className="lg:w-2/3">
+                                        <h3 className="text-xl font-bold text-white mb-3">{message.content.title}</h3>
+                                        <p className="text-gray-300 mb-4">{message.content.description}</p>
+                                        
+                                        {/* Métadonnées */}
+                                        <div className="flex items-center gap-4 mb-4 text-sm">
+                                          <span className="text-blue-400">⏱️ {message.content.duration}</span>
+                                          <span className="text-green-400">📊 {message.content.progress}</span>
+                                        </div>
+                                        
+                                        {/* Topics */}
+                                        <div className="mb-4">
+                                          <h4 className="text-white font-semibold mb-2">Contenu:</h4>
+                                          <ul className="space-y-1">
+                                            {message.content.topics.map((topic: string, idx: number) => (
+                                              <li key={idx} className="flex items-center gap-2 text-gray-300">
+                                                <span className="text-blue-400">•</span>
+                                                <span>{topic}</span>
+                                              </li>
+                                            ))}
+                                          </ul>
+                                        </div>
+                                        
+                                        {/* Bouton d'action */}
+                                        <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200">
+                                          Commencer la formation
+                                        </button>
+                                      </div>
+                                    </div>
                                   </div>
                                 ) : message.type === 'calendar' ? (
                                   <div className="bg-gray-700 rounded-lg p-6">
