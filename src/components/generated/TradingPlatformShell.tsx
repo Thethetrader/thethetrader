@@ -1141,6 +1141,7 @@ export default function TradingPlatformShell() {
               <button onClick={() => {setSelectedChannel({id: 'general-chat', name: 'general-chat'}); setView('signals'); scrollToTop();}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 General-chat</button>
               <button onClick={() => {setSelectedChannel({id: 'profit-loss', name: 'profit-loss'}); setView('signals'); scrollToTop();}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
               <button onClick={() => {setView('calendar'); scrollToTop();}} className={`w-full text-left px-3 py-2 rounded text-sm ${view === 'calendar' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Calendrier</button>
+              <button onClick={() => {setSelectedChannel({id: 'trading-journal', name: 'trading-journal'}); setView('signals'); scrollToTop();}} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Trading Journal</button>
             </div>
           </div>
 
