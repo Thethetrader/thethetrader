@@ -1314,50 +1314,34 @@ const App = () => {
           {!isPWA && (
             <footer className="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-12 sm:py-20 px-4 sm:px-6 mt-0">
               <div className="max-w-7xl mx-auto">
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 sm:gap-8">
-                  {/* TheTheTrader */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
+                  {/* Légal - Éléments essentiels */}
                   <div>
-                    <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">TheTheTrader</h4>
+                    <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Informations Légales</h4>
                     <div className="space-y-3">
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">À propos</a>
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Équipe</a>
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Carrières</a>
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Blog</a>
-                    </div>
-                  </div>
-
-                  {/* Trading */}
-                  <div>
-                    <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Trading</h4>
-                    <div className="space-y-3">
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Signaux Crypto</a>
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Signaux Forex</a>
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Futures</a>
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Calendrier</a>
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Analytics</a>
-                    </div>
-                  </div>
-
-                  {/* Formation */}
-                  <div>
-                    <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Formation</h4>
-                    <div className="space-y-3">
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Cours Débutant</a>
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Stratégies Avancées</a>
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Gestion des Risques</a>
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Analyse Technique</a>
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Support</a>
-                    </div>
-                  </div>
-
-                  {/* Légal */}
-                  <div>
-                    <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Légal</h4>
-                    <div className="space-y-3">
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Conditions d'utilisation</a>
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Politique de confidentialité</a>
                       <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Mentions légales</a>
+                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Politique de confidentialité</a>
+                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Conditions d'utilisation</a>
+                    </div>
+                  </div>
+
+                  {/* Risques et Conformité */}
+                  <div>
+                    <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Conformité</h4>
+                    <div className="space-y-3">
                       <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Avertissement sur les risques</a>
+                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Conflits d'intérêts</a>
+                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Cookies et traceurs</a>
+                    </div>
+                  </div>
+
+                  {/* Contact et Support */}
+                  <div>
+                    <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Contact</h4>
+                    <div className="space-y-3">
+                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Support client</a>
+                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Signalement d'incident</a>
+                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Nous contacter</a>
                     </div>
                   </div>
                 </div>
