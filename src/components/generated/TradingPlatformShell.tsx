@@ -116,18 +116,29 @@ export default function TradingPlatformShell() {
     }
   }, [selectedDate]);
   
+  // Log pour déboguer selectedChannel
+  useEffect(() => {
+    console.log('selectedChannel a changé:', selectedChannel);
+  }, [selectedChannel]);
+  
   // Log pour déboguer les re-renders
   console.log('TradingPlatformShell re-render - selectedDate:', selectedDate);
   
   // Fonction pour changer de canal et réinitialiser selectedDate si nécessaire
   const handleChannelChange = (channelId: string, channelName: string) => {
+    console.log('handleChannelChange appelé:', { channelId, channelName, currentChannel: selectedChannel.id });
+    
     // Réinitialiser selectedDate si on quitte le Trading Journal
     if (selectedChannel.id === 'trading-journal' && channelId !== 'trading-journal') {
+      console.log('Réinitialisation selectedDate car on quitte Trading Journal');
       setSelectedDate(null);
     }
+    
     setSelectedChannel({id: channelId, name: channelName});
     setView('signals');
     scrollToTop();
+    
+    console.log('Nouveau canal défini:', channelId);
   };
   const [personalTrades, setPersonalTrades] = useState<Array<{
     id: string;
