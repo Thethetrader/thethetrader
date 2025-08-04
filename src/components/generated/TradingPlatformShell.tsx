@@ -157,7 +157,31 @@ export default function TradingPlatformShell() {
   }>>(() => {
     // Récupérer personalTrades depuis localStorage
     const saved = localStorage.getItem('personalTrades');
-    return saved ? JSON.parse(saved) : [];
+    const existingTrades = saved ? JSON.parse(saved) : [];
+    
+    // Ajouter un trade de test pour aujourd'hui si aucun trade n'existe
+    if (existingTrades.length === 0) {
+      const today = new Date().toISOString().split('T')[0];
+      const testTrade = {
+        id: 'test-' + Date.now(),
+        date: today,
+        symbol: 'EURUSD',
+        type: 'BUY' as 'BUY',
+        entry: '1.0850',
+        exit: '1.0920',
+        stopLoss: '1.0800',
+        pnl: '150',
+        status: 'WIN' as 'WIN',
+        notes: 'Trade de test automatique',
+        image1: null,
+        image2: null,
+        timestamp: new Date().toLocaleTimeString('fr-FR')
+      };
+      console.log('Trade de test créé pour aujourd\'hui:', testTrade);
+      return [testTrade];
+    }
+    
+    return existingTrades;
   });
 
   const [tradeData, setTradeData] = useState({
