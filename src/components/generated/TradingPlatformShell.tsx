@@ -755,55 +755,119 @@ export default function TradingPlatformShell() {
     console.log('Pasted HTML:', pastedHtml);
     console.log('Pasted Text:', pastedText);
     
-    let extracted: {
-      symbol?: string;
-      type?: string;
-      entry?: string;
-      exit?: string;
-      stopLoss?: string;
-      rr?: string;
-    } = {};
+    // Store extracted data
+    const extracted: Record<string, any> = {};
+    let found = false;
     
-    // Extraction depuis HTML TradingView
-    if (pastedHtml.includes('tradingview')) {
-      const symbolMatch = pastedHtml.match(/symbol["\s]*:["\s]*"([^"]+)"/);
-      const typeMatch = pastedHtml.match(/side["\s]*:["\s]*"([^"]+)"/);
-      const entryMatch = pastedHtml.match(/entry["\s]*:["\s]*([0-9.]+)/);
-      const exitMatch = pastedHtml.match(/exit["\s]*:["\s]*([0-9.]+)/);
-      const stopMatch = pastedHtml.match(/stop["\s]*:["\s]*([0-9.]+)/);
-      const rrMatch = pastedHtml.match(/rr["\s]*:["\s]*([0-9.]+)/);
-      
-      extracted = {
-        symbol: symbolMatch?.[1] || '',
-        type: typeMatch?.[1] || '',
-        entry: entryMatch?.[1] || '',
-        exit: exitMatch?.[1] || '',
-        stopLoss: stopMatch?.[1] || '',
-        rr: rrMatch?.[1] || ''
-      };
+    // Check if we have TradingView data
+    if (pastedHtml.includes('data-tradingview-clip')) {
+      try {
+        // Extract the TradingView JSON data
+        const regex = /data-tradingview-clip="([^"]+)"/;
+        const match = pastedHtml.match(regex);
+        
+        if (match && match[1]) {
+          // Replace HTML entities in the JSON string
+          const jsonString = match[1].replace(/&(?:quot|#34);/g, '"');
+          const data = JSON.parse(jsonString);
+          
+          console.log('TradingView data:', data);
+          
+          // Extract source and points - similar to Google Apps Script
+          const source = data.sources?.[0]?.source;
+          const points = source?.points;
+          const state = source?.state;
+          const stopLevel = state?.stopLevel;
+          const profitLevel = state?.profitLevel;
+          
+          if (points && points.length >= 2) {
+            found = true;
+            
+            // Get ticker symbol and clean it
+            let symbolFull = state?.symbol || "";
+            let ticker = symbolFull.split(":")[1] || symbolFull;
+            // Clean common futures symbols
+            if (ticker.startsWith("NQ1")) ticker = "NQ";
+            else if (ticker.startsWith("ES1")) ticker = "ES";
+            else if (ticker.startsWith("MNQ")) ticker = "MNQ";
+            
+            extracted.symbol = ticker;
+            
+            // Determine trade type from the tool
+            const type = source?.type;
+            if (type === "LineToolRiskRewardLong" || /long/i.test(type)) {
+              extracted.tradeType = 'buy';
+            } else if (type === "LineToolRiskRewardShort" || /short/i.test(type)) {
+              extracted.tradeType = 'sell';
+            }
+            
+            // Extract price information
+            const entryPrice = points[0]?.price;
+            if (entryPrice !== undefined) {
+              extracted.entryPrice = entryPrice.toString();
+            }
+            
+            // For exit price, use the last point
+            if (points.length > 1) {
+              const exitPrice = points[points.length - 1]?.price;
+              if (exitPrice !== undefined) {
+                extracted.exitPrice = exitPrice.toString();
+              }
+            }
+            
+            // Calculate Risk:Reward ratio if available
+            if (stopLevel !== undefined && profitLevel !== undefined) {
+              const rrRatio = Math.round((profitLevel / stopLevel) * 100) / 100;
+              extracted.rr = rrRatio.toString();
+              
+              // Calculate Stop Loss based on entry price and stopLevel
+              if (entryPrice !== undefined) {
+                let slPrice;
+                if (extracted.tradeType === 'buy') {
+                  // For Long trades
+                  const stopDistance = stopLevel / 4;
+                  slPrice = entryPrice - stopDistance;
+                } else {
+                  // For Short trades
+                  const stopDistance = stopLevel / 4;
+                  slPrice = entryPrice + stopDistance;
+                }
+                extracted.stopLoss = slPrice.toString();
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error parsing TradingView data:', error);
+      }
     }
     
-    // Extraction depuis texte brut
-    if (Object.keys(extracted).length === 0) {
+    // Fallback to text parsing if no TradingView data found
+    if (!found) {
       const symbolMatch = pastedText.match(/([A-Z]{3,6})/);
       const typeMatch = pastedText.match(/(BUY|SELL|LONG|SHORT)/i);
       const numbers = pastedText.match(/\d+(?:\.\d+)?/g);
       
-      extracted = {
-        symbol: symbolMatch?.[1] || '',
-        type: typeMatch?.[1] || '',
-        entry: numbers?.[0] || '',
-        exit: numbers?.[1] || '',
-        stopLoss: numbers?.[2] || ''
-      };
+      if (symbolMatch) extracted.symbol = symbolMatch[1];
+      if (typeMatch) extracted.tradeType = typeMatch[1].toLowerCase();
+      if (numbers && numbers.length >= 1) extracted.entryPrice = numbers[0];
+      if (numbers && numbers.length >= 2) extracted.exitPrice = numbers[1];
+      if (numbers && numbers.length >= 3) extracted.stopLoss = numbers[2];
     }
     
     // Mise à jour du formulaire
     if (extracted.symbol) setTradeData(prev => ({ ...prev, symbol: extracted.symbol }));
-    if (extracted.type) setTradeData(prev => ({ ...prev, type: extracted.type.toUpperCase() === 'BUY' || extracted.type.toUpperCase() === 'LONG' ? 'BUY' : 'SELL' }));
-    if (extracted.entry) setTradeData(prev => ({ ...prev, entry: extracted.entry }));
-    if (extracted.exit) setTradeData(prev => ({ ...prev, exit: extracted.exit }));
+    if (extracted.tradeType) setTradeData(prev => ({ ...prev, type: extracted.tradeType === 'buy' || extracted.tradeType === 'long' ? 'BUY' : 'SELL' }));
+    if (extracted.entryPrice) setTradeData(prev => ({ ...prev, entry: extracted.entryPrice }));
+    if (extracted.exitPrice) setTradeData(prev => ({ ...prev, exit: extracted.exitPrice }));
     if (extracted.stopLoss) setTradeData(prev => ({ ...prev, stopLoss: extracted.stopLoss }));
+    
+    // Show success message
+    if (found || Object.keys(extracted).length > 0) {
+      alert(`✅ Données importées !\nSymbole: ${extracted.symbol}\nEntrée: ${extracted.entryPrice}\nSortie: ${extracted.exitPrice}\nStop Loss: ${extracted.stopLoss}`);
+    } else {
+      alert('❌ Aucune donnée détectée. Essayez de coller depuis TradingView (Risk/Reward tool)');
+    }
   };
 
   const getTradesForDate = (date: Date) => {
