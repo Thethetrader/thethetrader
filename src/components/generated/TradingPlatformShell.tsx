@@ -1787,9 +1787,7 @@ export default function TradingPlatformShell() {
                   </div>
                 )}
                 
-
-                
-                {/* Header pour le calendrier normal */}
+                  {/* Header pour le calendrier normal */}
                 {view === 'calendar' && selectedChannel.id !== 'trading-journal' && (
                   <div className="flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
                     <div>
