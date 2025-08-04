@@ -779,24 +779,24 @@ const App = () => {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
                 {/* Carte 1 */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50">
-                  <div className="text-4xl text-purple-600 mb-4">⚡</div>
-                  <div className="text-xl font-bold text-white mb-2">Simplicité</div>
-                  <div className="text-gray-300 text-sm sm:text-base">Approche simple et efficace. Pas de jargon compliqué, juste des résultats concrets.</div>
+                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-400 transition-all duration-300 transform cursor-pointer group">
+                  <div className="text-4xl text-purple-600 mb-4 group-hover:scale-110 transition-transform duration-300">⚡</div>
+                  <div className="text-xl font-bold text-white mb-2 group-hover:text-purple-400 transition-colors duration-300">Simplicité</div>
+                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Approche simple et efficace. Pas de jargon compliqué, juste des résultats concrets.</div>
                 </div>
 
                 {/* Carte 2 */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50">
-                  <div className="text-4xl text-purple-600 mb-4">🎯</div>
-                  <div className="text-xl font-bold text-white mb-2">Résultats</div>
-                  <div className="text-gray-300 text-sm sm:text-base">Signaux précis et formation qui transforme les débutants en traders confirmés.</div>
+                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25 hover:border-blue-400 transition-all duration-300 transform cursor-pointer group">
+                  <div className="text-4xl text-purple-600 mb-4 group-hover:scale-110 transition-transform duration-300">🎯</div>
+                  <div className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors duration-300">Résultats</div>
+                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Signaux précis et formation qui transforme les débutants en traders confirmés.</div>
                 </div>
 
                 {/* Carte 3 */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50">
-                  <div className="text-4xl text-purple-600 mb-4">🤝</div>
-                  <div className="text-xl font-bold text-white mb-2">Communauté</div>
-                  <div className="text-gray-300 text-sm sm:text-base">Rejoignez une communauté active de traders qui partagent et s'entraident.</div>
+                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 hover:border-green-400 transition-all duration-300 transform cursor-pointer group">
+                  <div className="text-4xl text-purple-600 mb-4 group-hover:scale-110 transition-transform duration-300">🤝</div>
+                  <div className="text-xl font-bold text-white mb-2 group-hover:text-green-400 transition-colors duration-300">Communauté</div>
+                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Rejoignez une communauté active de traders qui partagent et s'entraident.</div>
                 </div>
               </div>
             </div>
