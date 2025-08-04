@@ -11,7 +11,9 @@ export default function TradingPlatformShell() {
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [showSignalModal, setShowSignalModal] = useState(false);
   const [showTradesModal, setShowTradesModal] = useState(false);
+  const [showSignalsModal, setShowSignalsModal] = useState(false);
   const [selectedTradesDate, setSelectedTradesDate] = useState<Date | null>(null);
+  const [selectedSignalsDate, setSelectedSignalsDate] = useState<Date | null>(null);
   const [pasteArea, setPasteArea] = useState('');
   const [signals, setSignals] = useState<Array<{
     id: string;
@@ -146,27 +148,7 @@ export default function TradingPlatformShell() {
     const saved = localStorage.getItem('personalTrades');
     const existingTrades = saved ? JSON.parse(saved) : [];
     
-    // Ajouter un trade de test pour aujourd'hui si aucun trade n'existe
-    if (existingTrades.length === 0) {
-      const today = new Date().toISOString().split('T')[0];
-      const testTrade = {
-        id: 'test-' + Date.now(),
-        date: today,
-        symbol: 'EURUSD',
-        type: 'BUY' as 'BUY',
-        entry: '1.0850',
-        exit: '1.0920',
-        stopLoss: '1.0800',
-        pnl: '150',
-        status: 'WIN' as 'WIN',
-        notes: 'Trade de test automatique',
-        image1: null,
-        image2: null,
-        timestamp: new Date().toLocaleTimeString('fr-FR')
-      };
-      return [testTrade];
-    }
-    
+    // Pas de trade de test automatique
     return existingTrades;
   });
 
@@ -851,9 +833,17 @@ export default function TradingPlatformShell() {
       return;
     }
 
+    // Utiliser la date locale pour éviter le décalage UTC
+    const getDateString = (date: Date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     const newTrade = {
       id: Date.now().toString(),
-      date: selectedDate ? selectedDate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+      date: selectedDate ? getDateString(selectedDate) : getDateString(new Date()),
       symbol: tradeData.symbol,
       type: tradeData.type,
       entry: tradeData.entry,
@@ -1010,9 +1000,32 @@ export default function TradingPlatformShell() {
   };
 
   const getTradesForDate = (date: Date) => {
-    const dateStr = date.toISOString().split('T')[0];
+    // Utiliser la date locale au lieu de UTC pour éviter le décalage
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const dateStr = `${year}-${month}-${day}`;
     const filteredTrades = personalTrades.filter(trade => trade.date === dateStr);
     return filteredTrades;
+  };
+
+  const getSignalsForDate = (date: Date) => {
+    // Pour les signaux, on utilise une logique simple basée sur le jour actuel
+    // car les signaux n'ont pas de date stockée, seulement un timestamp
+    const today = new Date();
+    const clickedDay = date.getDate();
+    const clickedMonth = date.getMonth();
+    const clickedYear = date.getFullYear();
+    
+    // Si c'est aujourd'hui, retourner tous les signaux
+    if (clickedDay === today.getDate() && 
+        clickedMonth === today.getMonth() && 
+        clickedYear === today.getFullYear()) {
+      return signals;
+    }
+    
+    // Sinon, retourner un tableau vide (pas de signaux pour les autres jours)
+    return [];
   };
 
   const handleSignalSubmit = () => {
@@ -1319,9 +1332,10 @@ export default function TradingPlatformShell() {
                       e.preventDefault();
                       e.stopPropagation();
                       
+                      const clickedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNumber);
+                      
                       if (selectedChannel.id === 'trading-journal') {
                         try {
-                          const clickedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNumber);
                           setSelectedDate(clickedDate);
                           
                           // Ouvrir le popup des trades si il y en a
@@ -1332,6 +1346,13 @@ export default function TradingPlatformShell() {
                           }
                         } catch (error) {
                           console.error('Erreur lors du clic:', error);
+                        }
+                      } else {
+                        // Ouvrir le popup des signaux si il y en a
+                        const signalsForDate = getSignalsForDate(clickedDate);
+                        if (signalsForDate.length > 0) {
+                          setSelectedSignalsDate(clickedDate);
+                          setShowSignalsModal(true);
                         }
                       }
                     }}
@@ -3240,11 +3261,23 @@ export default function TradingPlatformShell() {
                         </span>
                         <span className="text-lg font-bold text-white">{trade.symbol}</span>
                       </div>
-                      <span className={`text-lg font-bold ${
-                        parseFloat(trade.pnl) >= 0 ? 'text-green-400' : 'text-red-400'
-                      }`}>
-                        {parseFloat(trade.pnl) >= 0 ? '+' : ''}{trade.pnl}$
-                      </span>
+                      <div className="flex items-center gap-3">
+                        <span className={`text-lg font-bold ${
+                          parseFloat(trade.pnl) >= 0 ? 'text-green-400' : 'text-red-400'
+                        }`}>
+                          {parseFloat(trade.pnl) >= 0 ? '+' : ''}{trade.pnl}$
+                        </span>
+                        <button
+                          onClick={() => {
+                            setPersonalTrades(prev => prev.filter(t => t.id !== trade.id));
+                            setShowTradesModal(false);
+                          }}
+                          className="text-red-400 hover:text-red-300 text-xl font-bold"
+                          title="Supprimer ce trade"
+                        >
+                          ×
+                        </button>
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 mb-3">
@@ -3279,6 +3312,33 @@ export default function TradingPlatformShell() {
                       </div>
                     )}
 
+                    {/* Images */}
+                    {(trade.image1 || trade.image2) && (
+                      <div className="mb-3">
+                        <span className="text-sm text-gray-400">Images:</span>
+                        <div className="flex gap-2 mt-2">
+                          {trade.image1 && (
+                            <div className="relative">
+                              <img 
+                                src={trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1} 
+                                alt="Trade image 1" 
+                                className="w-20 h-20 object-cover rounded border border-gray-600"
+                              />
+                            </div>
+                          )}
+                          {trade.image2 && (
+                            <div className="relative">
+                              <img 
+                                src={trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2} 
+                                alt="Trade image 2" 
+                                className="w-20 h-20 object-cover rounded border border-gray-600"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
                     <div className="flex items-center justify-between text-sm text-gray-400">
                       <span>Ajouté le {trade.timestamp}</span>
                     </div>
@@ -3289,6 +3349,97 @@ export default function TradingPlatformShell() {
               <div className="mt-6 pt-4 border-t border-gray-600">
                 <button
                   onClick={() => setShowTradesModal(false)}
+                  className="w-full bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
+                >
+                  Fermer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal des Signaux */}
+      {showSignalsModal && selectedSignalsDate && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-white">
+                  Signaux du {selectedSignalsDate.toLocaleDateString('fr-FR', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </h2>
+                <button
+                  onClick={() => setShowSignalsModal(false)}
+                  className="text-gray-400 hover:text-white text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {getSignalsForDate(selectedSignalsDate).map((signal) => (
+                  <div key={signal.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <span className={`px-2 py-1 rounded text-xs font-bold ${
+                          signal.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+                        }`}>
+                          {signal.type}
+                        </span>
+                        <span className="text-lg font-bold text-white">{signal.symbol}</span>
+                        <span className="text-sm text-gray-400">{signal.timeframe}</span>
+                      </div>
+                      <span className={`px-2 py-1 rounded text-xs ${
+                        signal.status === 'WIN' ? 'bg-green-600 text-white' :
+                        signal.status === 'LOSS' ? 'bg-red-600 text-white' :
+                        signal.status === 'BE' ? 'bg-blue-600 text-white' :
+                        'bg-yellow-600 text-white'
+                      }`}>
+                        {signal.status}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 mb-3">
+                      <div>
+                        <span className="text-sm text-gray-400">Entry:</span>
+                        <span className="text-white ml-2">{signal.entry}</span>
+                      </div>
+                      <div>
+                        <span className="text-sm text-gray-400">Take Profit:</span>
+                        <span className="text-white ml-2">{signal.takeProfit}</span>
+                      </div>
+                      <div>
+                        <span className="text-sm text-gray-400">Stop Loss:</span>
+                        <span className="text-white ml-2">{signal.stopLoss}</span>
+                      </div>
+                      <div>
+                        <span className="text-sm text-gray-400">Channel:</span>
+                        <span className="text-white ml-2">{signal.channel_id}</span>
+                      </div>
+                    </div>
+
+                    {signal.description && (
+                      <div className="mb-3">
+                        <span className="text-sm text-gray-400">Description:</span>
+                        <p className="text-white mt-1">{signal.description}</p>
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between text-sm text-gray-400">
+                      <span>Créé le {signal.timestamp}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-gray-600">
+                <button
+                  onClick={() => setShowSignalsModal(false)}
                   className="w-full bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
                 >
                   Fermer
