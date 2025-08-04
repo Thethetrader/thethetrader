@@ -1644,10 +1644,8 @@ export default function TradingPlatformShell() {
                     <button
                       key={channel.id}
                       onClick={() => {
-                        setSelectedChannel({id: channel.id, name: channel.name});
-                        setView('signals');
+                        handleChannelChange(channel.id, channel.name);
                         setMobileView('content');
-                        scrollToTop();
                       }}
                       className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
@@ -1670,10 +1668,8 @@ export default function TradingPlatformShell() {
                     <button
                       key={channel.id}
                       onClick={() => {
-                        setSelectedChannel({id: channel.id, name: channel.name});
-                        setView('signals');
+                        handleChannelChange(channel.id, channel.name);
                         setMobileView('content');
-                        scrollToTop();
                       }}
                       className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
@@ -1696,10 +1692,8 @@ export default function TradingPlatformShell() {
                     <button
                       key={channel.id}
                       onClick={() => {
-                        setSelectedChannel({id: channel.id, name: channel.name});
-                        setView('signals');
+                        handleChannelChange(channel.id, channel.name);
                         setMobileView('content');
-                        scrollToTop();
                       }}
                       className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
@@ -1715,6 +1709,10 @@ export default function TradingPlatformShell() {
                   
                   <button
                     onClick={() => {
+                      // Réinitialiser selectedDate si on quitte le Trading Journal
+                      if (selectedChannel.id === 'trading-journal') {
+                        setSelectedDate(null);
+                      }
                       setView('calendar');
                       setMobileView('content');
                       scrollToTop();
@@ -1732,10 +1730,8 @@ export default function TradingPlatformShell() {
                   
                   <button
                     onClick={() => {
-                      setSelectedChannel({id: 'trading-journal', name: 'trading-journal'});
-                      setView('signals');
+                      handleChannelChange('trading-journal', 'trading-journal');
                       setMobileView('content');
-                      scrollToTop();
                     }}
                     className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                   >
