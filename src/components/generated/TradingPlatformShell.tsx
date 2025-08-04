@@ -661,7 +661,8 @@ export default function TradingPlatformShell() {
     { id: 'livestream', name: 'livestream', emoji: '📺', fullName: 'Livestream' },
     { id: 'general-chat', name: 'general-chat', emoji: '💬', fullName: 'Général chat' },
     { id: 'profit-loss', name: 'profit-loss', emoji: '💰', fullName: 'Profit loss' },
-    { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Calendrier' }
+    { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Calendrier' },
+    { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Trading Journal' }
   ];
 
   const handleCreateSignal = () => {
@@ -1350,7 +1351,7 @@ export default function TradingPlatformShell() {
               mobileView === 'content' ? 'translate-x-0' : 'translate-x-full'
             }`}
           >
-            {view === 'calendar' ? (
+            {(view === 'calendar' || selectedChannel.id === 'trading-journal') ? (
               getTradingCalendar()
             ) : (
               <div className="p-4 md:p-6 space-y-4 w-full h-full overflow-y-auto" style={{ paddingBottom: '100px' }}>
@@ -1853,7 +1854,7 @@ export default function TradingPlatformShell() {
 
         {/* Desktop Content Area */}
         <div className="hidden md:block flex-1 overflow-y-auto">
-          {view === 'calendar' ? (
+          {(view === 'calendar' || selectedChannel.id === 'trading-journal') ? (
             getTradingCalendar()
           ) : (
             <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '20px' }}>
