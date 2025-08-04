@@ -1025,16 +1025,33 @@ export default function TradingPlatformShell() {
   };
 
   const getTradesForDate = (date: Date) => {
-    // Utiliser la date locale au lieu de UTC pour éviter le décalage
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const dateStr = `${year}-${month}-${day}`;
-    console.log('Recherche trades pour date:', dateStr);
-    console.log('Tous les trades:', personalTrades);
-    const filteredTrades = personalTrades.filter(trade => trade.date === dateStr);
-    console.log('Trades filtrés:', filteredTrades);
-    return filteredTrades;
+    try {
+      // Utiliser la date locale au lieu de UTC pour éviter le décalage
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const dateStr = `${year}-${month}-${day}`;
+      console.log('Recherche trades pour date:', dateStr);
+      console.log('Tous les trades:', personalTrades);
+      
+      if (!Array.isArray(personalTrades)) {
+        console.error('personalTrades n\'est pas un tableau:', personalTrades);
+        return [];
+      }
+      
+      const filteredTrades = personalTrades.filter(trade => {
+        if (!trade || !trade.date) {
+          console.log('Trade invalide:', trade);
+          return false;
+        }
+        return trade.date === dateStr;
+      });
+      console.log('Trades filtrés:', filteredTrades);
+      return filteredTrades;
+    } catch (error) {
+      console.error('Erreur dans getTradesForDate:', error);
+      return [];
+    }
   };
 
   const getSignalsForDate = (date: Date) => {
@@ -1357,28 +1374,33 @@ export default function TradingPlatformShell() {
                   <div 
                     key={i} 
                     onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      
-                      const clickedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNumber);
-                      
-                      if (selectedChannel.id === 'trading-journal') {
-                        setSelectedDate(clickedDate);
+                      try {
+                        e.preventDefault();
+                        e.stopPropagation();
                         
-                        // Ouvrir le popup des trades si il y en a
-                        const tradesForDate = getTradesForDate(clickedDate);
-                        console.log('Clic sur jour:', dayNumber, 'Trades trouvés:', tradesForDate.length);
-                        if (tradesForDate.length > 0) {
-                          setSelectedTradesDate(clickedDate);
-                          setShowTradesModal(true);
+                        const clickedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNumber);
+                        
+                        if (selectedChannel.id === 'trading-journal') {
+                          setSelectedDate(clickedDate);
+                          
+                          // Ouvrir le popup des trades si il y en a
+                          const tradesForDate = getTradesForDate(clickedDate);
+                          console.log('Clic sur jour:', dayNumber, 'Trades trouvés:', tradesForDate.length);
+                          if (tradesForDate.length > 0) {
+                            setSelectedTradesDate(clickedDate);
+                            setShowTradesModal(true);
+                          }
+                        } else {
+                          // Ouvrir le popup des signaux si il y en a
+                          const signalsForDate = getSignalsForDate(clickedDate);
+                          if (signalsForDate.length > 0) {
+                            setSelectedSignalsDate(clickedDate);
+                            setShowSignalsModal(true);
+                          }
                         }
-                      } else {
-                        // Ouvrir le popup des signaux si il y en a
-                        const signalsForDate = getSignalsForDate(clickedDate);
-                        if (signalsForDate.length > 0) {
-                          setSelectedSignalsDate(clickedDate);
-                          setShowSignalsModal(true);
-                        }
+                      } catch (error) {
+                        console.error('Erreur lors du clic sur le jour:', error);
+                        alert('Erreur lors du clic sur le jour. Vérifiez la console.');
                       }
                     }}
                     className={`
