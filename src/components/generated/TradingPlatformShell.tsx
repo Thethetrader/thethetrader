@@ -100,6 +100,14 @@ export default function TradingPlatformShell() {
   // États pour le journal de trading personnalisé
   const [showTradeModal, setShowTradeModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  
+  // Log pour déboguer selectedDate
+  useEffect(() => {
+    console.log('selectedDate a changé:', selectedDate);
+  }, [selectedDate]);
+  
+  // Log pour déboguer les re-renders
+  console.log('TradingPlatformShell re-render - selectedDate:', selectedDate);
   const [personalTrades, setPersonalTrades] = useState<Array<{
     id: string;
     date: string;
