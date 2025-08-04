@@ -2249,26 +2249,57 @@ export default function TradingPlatformShell() {
               <div className="space-y-4">
                 {/* Zone de collage TradingView */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">📋 Coller données TradingView</label>
-                  <textarea
-                    placeholder="Collez vos données ici : NQ1! 22950 23004 22896"
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-                    rows={2}
-                    value={pasteArea}
-                    onChange={(e) => {
-                      const text = e.target.value;
-                      setPasteArea(text);
-                      
-                      // Si le texte contient des données, parser
-                      if (text.length > 10) {
-                        if (parseSignalData(text)) {
-                          // Vider après succès
-                          setTimeout(() => setPasteArea(''), 500);
-                        }
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="block text-sm font-medium text-gray-300">📋 Coller données TradingView</label>
+                    <button
+                      onClick={() => setDebugMode(!debugMode)}
+                      className={`text-xs px-2 py-1 rounded ${debugMode ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300'}`}
+                    >
+                      {debugMode ? '🔧 Debug ON' : '🔧 Debug OFF'}
+                    </button>
+                  </div>
+                  <div
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 min-h-[80px] flex items-center justify-center cursor-pointer"
+                    onPaste={handleTradingViewPaste}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const text = e.dataTransfer.getData('text');
+                      if (text) {
+                        // Simuler un événement de collage
+                        const fakeEvent = {
+                          preventDefault: () => {},
+                          clipboardData: {
+                            getData: (type: string) => {
+                              if (type === 'text/html') return '';
+                              if (type === 'text') return text;
+                              return '';
+                            }
+                          }
+                        } as React.ClipboardEvent<HTMLDivElement>;
+                        handleTradingViewPaste(fakeEvent);
                       }
                     }}
-                  />
-                  <p className="text-xs text-gray-400 mt-1">Format: Symbole Prix_entrée Take_profit Stop_loss</p>
+                    onDragOver={(e) => e.preventDefault()}
+                  >
+                    {isPasteActive ? (
+                      <div className="text-blue-400">🔄 Traitement en cours...</div>
+                    ) : (
+                      <div className="text-center">
+                        <div className="text-gray-400 mb-1">📋 Cliquez ici et collez (Ctrl+V)</div>
+                        <div className="text-xs text-gray-500">ou glissez-déposez du texte</div>
+                      </div>
+                    )}
+                  </div>
+                  {error && (
+                    <p className="text-xs text-red-400 mt-1">{error}</p>
+                  )}
+                  {debugMode && pasteDebug && (
+                    <div className="text-xs text-gray-400 mt-1 bg-gray-900 p-2 rounded">
+                      <div className="font-semibold">Debug:</div>
+                      <pre className="whitespace-pre-wrap text-xs">{pasteDebug}</pre>
+                    </div>
+                  )}
+                  <p className="text-xs text-gray-400 mt-1">Collez directement depuis TradingView (Risk/Reward tool)</p>
                 </div>
 
                 {/* Type de signal */}
