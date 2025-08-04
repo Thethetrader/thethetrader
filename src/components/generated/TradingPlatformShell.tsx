@@ -1813,7 +1813,15 @@ export default function TradingPlatformShell() {
                 {getTradingCalendar()}
                 
                 {/* Affichage des trades pour la date sélectionnée - SEULEMENT pour Trading Journal */}
-                {selectedChannel.id === 'trading-journal' && selectedDate && (
+                {(() => {
+                  console.log('Vérification affichage trades:', {
+                    channel: selectedChannel.id,
+                    selectedDate: selectedDate,
+                    shouldShow: selectedChannel.id === 'trading-journal' && selectedDate,
+                    tradesCount: selectedDate ? getTradesForDate(selectedDate).length : 0
+                  });
+                  return selectedChannel.id === 'trading-journal' && selectedDate;
+                })() && (
                   <div className="mt-8 border-t border-gray-600 pt-6">
                     <h3 className="text-lg font-bold text-white mb-4">
                       Trades du {selectedDate.toLocaleDateString('fr-FR')}
