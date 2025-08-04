@@ -1386,10 +1386,13 @@ export default function TradingPlatformShell() {
                           // Ouvrir le popup des trades si il y en a
                           const tradesForDate = getTradesForDate(clickedDate);
                           console.log('Clic sur jour:', dayNumber, 'Trades trouvés:', tradesForDate.length);
-                          if (tradesForDate.length > 0) {
-                            setSelectedTradesDate(clickedDate);
-                            setShowTradesModal(true);
-                          }
+                                                  if (tradesForDate.length > 0) {
+                          console.log('Trades trouvés, ouverture modal...');
+                          setSelectedTradesDate(clickedDate);
+                          // Temporairement désactivé pour éviter le crash
+                          // setShowTradesModal(true);
+                          alert(`Trades trouvés pour le ${dayNumber} août: ${tradesForDate.length} trade(s)`);
+                        }
                         } else {
                           // Ouvrir le popup des signaux si il y en a
                           const signalsForDate = getSignalsForDate(clickedDate);
