@@ -952,7 +952,11 @@ export default function TradingPlatformShell() {
 
   const getTradesForDate = (date: Date) => {
     const dateStr = date.toISOString().split('T')[0];
-    return personalTrades.filter(trade => trade.date === dateStr);
+    console.log('Recherche trades pour date:', dateStr);
+    console.log('Trades disponibles:', personalTrades);
+    const filteredTrades = personalTrades.filter(trade => trade.date === dateStr);
+    console.log('Trades trouvés:', filteredTrades);
+    return filteredTrades;
   };
 
   const handleSignalSubmit = () => {
@@ -1263,7 +1267,10 @@ export default function TradingPlatformShell() {
                     key={i} 
                     onClick={() => {
                       if (selectedChannel.id === 'trading-journal') {
-                        setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNumber));
+                        const clickedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNumber);
+                        console.log('Jour cliqué:', clickedDate);
+                        console.log('Date formatée:', clickedDate.toISOString().split('T')[0]);
+                        setSelectedDate(clickedDate);
                       }
                     }}
                     className={`
