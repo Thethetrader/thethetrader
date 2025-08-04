@@ -148,26 +148,26 @@ export default function TradingPlatformShell() {
     const saved = localStorage.getItem('personalTrades');
     const existingTrades = saved ? JSON.parse(saved) : [];
     
-    // Ajouter un trade de test pour le 4 août si pas déjà présent
-    const testTradeExists = existingTrades.some((trade: any) => trade.date === '2024-08-04');
-    if (!testTradeExists) {
-      const testTrade = {
-        id: 'test-4-aout',
-        date: '2024-08-04',
-        symbol: 'BTCUSD',
-        type: 'BUY' as const,
-        entry: '45000',
-        exit: '46000',
-        stopLoss: '44000',
-        pnl: '1000',
-        status: 'WIN' as const,
-        notes: 'Trade de test pour le 4 août',
-        image1: null,
-        image2: null,
-        timestamp: '2024-08-04T10:30:00'
-      };
-      existingTrades.push(testTrade);
-    }
+    // Supprimer toutes les données de test pour éviter les bugs
+    // const testTradeExists = existingTrades.some((trade: any) => trade.date === '2024-08-04');
+    // if (!testTradeExists) {
+    //   const testTrade = {
+    //     id: 'test-4-aout',
+    //     date: '2024-08-04',
+    //     symbol: 'BTCUSD',
+    //     type: 'BUY' as const,
+    //     entry: '45000',
+    //     exit: '46000',
+    //     stopLoss: '44000',
+    //     pnl: '1000',
+    //     status: 'WIN' as const,
+    //     notes: 'Trade de test pour le 4 août',
+    //     image1: null,
+    //     image2: null,
+    //     timestamp: '2024-08-04T10:30:00'
+    //   };
+    //   existingTrades.push(testTrade);
+    // }
     
     return existingTrades;
   });
@@ -1386,13 +1386,13 @@ export default function TradingPlatformShell() {
                           // Ouvrir le popup des trades si il y en a
                           const tradesForDate = getTradesForDate(clickedDate);
                           console.log('Clic sur jour:', dayNumber, 'Trades trouvés:', tradesForDate.length);
-                                                  if (tradesForDate.length > 0) {
-                          console.log('Trades trouvés, ouverture modal...');
-                          setSelectedTradesDate(clickedDate);
-                          // Temporairement désactivé pour éviter le crash
-                          // setShowTradesModal(true);
-                          alert(`Trades trouvés pour le ${dayNumber} août: ${tradesForDate.length} trade(s)`);
-                        }
+                                                  // Désactivé temporairement pour éviter les bugs
+                        // if (tradesForDate.length > 0) {
+                        //   console.log('Trades trouvés, ouverture modal...');
+                        //   setSelectedTradesDate(clickedDate);
+                        //   setShowTradesModal(true);
+                        // }
+                        console.log('Clic sur jour:', dayNumber, 'Trades trouvés:', tradesForDate.length);
                         } else {
                           // Ouvrir le popup des signaux si il y en a
                           const signalsForDate = getSignalsForDate(clickedDate);
