@@ -190,6 +190,11 @@ export default function TradingPlatformShell() {
     localStorage.setItem('personalTrades', JSON.stringify(personalTrades));
   }, [personalTrades]);
 
+  // Debug: Afficher les trades au chargement
+  useEffect(() => {
+    console.log('Trades chargés:', personalTrades);
+  }, [personalTrades]);
+
   const [signalData, setSignalData] = useState({
     type: 'BUY',
     symbol: '',
