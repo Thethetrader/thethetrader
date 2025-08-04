@@ -999,6 +999,14 @@ export default function TradingPlatformShell() {
               ›
             </button>
           </div>
+          {selectedChannel.id === 'trading-journal' && (
+            <button 
+              onClick={handleAddTrade}
+              className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
+            >
+              + Ajouter Trade
+            </button>
+          )}
         </div>
       </div>
 
