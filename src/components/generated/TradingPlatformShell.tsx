@@ -99,11 +99,21 @@ export default function TradingPlatformShell() {
   }>}>({});
   // États pour le journal de trading personnalisé
   const [showTradeModal, setShowTradeModal] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(() => {
+    // Récupérer selectedDate depuis localStorage
+    const saved = localStorage.getItem('selectedDate');
+    return saved ? new Date(saved) : null;
+  });
   
   // Log pour déboguer selectedDate
   useEffect(() => {
     console.log('selectedDate a changé:', selectedDate);
+    // Sauvegarder selectedDate dans localStorage
+    if (selectedDate) {
+      localStorage.setItem('selectedDate', selectedDate.toISOString());
+    } else {
+      localStorage.removeItem('selectedDate');
+    }
   }, [selectedDate]);
   
   // Log pour déboguer les re-renders
@@ -122,7 +132,11 @@ export default function TradingPlatformShell() {
     image1: File | null;
     image2: File | null;
     timestamp: string;
-  }>>([]);
+  }>>(() => {
+    // Récupérer personalTrades depuis localStorage
+    const saved = localStorage.getItem('personalTrades');
+    return saved ? JSON.parse(saved) : [];
+  });
 
   const [tradeData, setTradeData] = useState({
     symbol: '',
@@ -136,6 +150,11 @@ export default function TradingPlatformShell() {
     image1: null as File | null,
     image2: null as File | null
   });
+  
+  // Sauvegarder personalTrades dans localStorage
+  useEffect(() => {
+    localStorage.setItem('personalTrades', JSON.stringify(personalTrades));
+  }, [personalTrades]);
 
   const [signalData, setSignalData] = useState({
     type: 'BUY',
