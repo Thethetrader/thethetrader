@@ -1618,12 +1618,7 @@ export default function TradingPlatformShell() {
                    channels.find(c => c.id === selectedChannel.id)?.fullName || selectedChannel.name}
                 </span>
               </button>
-              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream'].includes(selectedChannel.id) && (
-                <button onClick={handleCreateSignal} className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm">+ Signal</button>
-              )}
-              {selectedChannel.id === 'trading-journal' && (
-                <button onClick={handleAddTrade} className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm">+ Ajouter Trade</button>
-              )}
+
             </div>
           )}
         </div>
