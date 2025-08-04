@@ -97,6 +97,38 @@ export default function TradingPlatformShell() {
     author: string;
     attachment?: File;
   }>}>({});
+  // États pour le journal de trading personnalisé
+  const [showTradeModal, setShowTradeModal] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [personalTrades, setPersonalTrades] = useState<Array<{
+    id: string;
+    date: string;
+    symbol: string;
+    type: 'BUY' | 'SELL';
+    entry: string;
+    exit: string;
+    stopLoss: string;
+    pnl: string;
+    status: 'WIN' | 'LOSS' | 'BE';
+    notes: string;
+    image1: File | null;
+    image2: File | null;
+    timestamp: string;
+  }>>([]);
+
+  const [tradeData, setTradeData] = useState({
+    symbol: '',
+    type: 'BUY' as 'BUY' | 'SELL',
+    entry: '',
+    exit: '',
+    stopLoss: '',
+    pnl: '',
+    status: 'WIN' as 'WIN' | 'LOSS' | 'BE',
+    notes: '',
+    image1: null as File | null,
+    image2: null as File | null
+  });
+
   const [signalData, setSignalData] = useState({
     type: 'BUY',
     symbol: '',
@@ -669,6 +701,116 @@ export default function TradingPlatformShell() {
     setShowSignalModal(true);
   };
 
+  // Fonctions pour le journal de trading personnalisé
+  const handleAddTrade = () => {
+    setShowTradeModal(true);
+  };
+
+  const handleTradeSubmit = () => {
+    if (!tradeData.symbol || !tradeData.entry || !tradeData.exit || !tradeData.pnl) {
+      alert('Veuillez remplir les champs obligatoires (Symbol, Entry, Exit, PnL)');
+      return;
+    }
+
+    const newTrade = {
+      id: Date.now().toString(),
+      date: selectedDate ? selectedDate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+      symbol: tradeData.symbol,
+      type: tradeData.type,
+      entry: tradeData.entry,
+      exit: tradeData.exit,
+      stopLoss: tradeData.stopLoss,
+      pnl: tradeData.pnl,
+      status: tradeData.status,
+      notes: tradeData.notes,
+      image1: tradeData.image1,
+      image2: tradeData.image2,
+      timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+    };
+
+    setPersonalTrades(prev => [newTrade, ...prev]);
+    
+    // Reset form
+    setTradeData({
+      symbol: '',
+      type: 'BUY',
+      entry: '',
+      exit: '',
+      stopLoss: '',
+      pnl: '',
+      status: 'WIN',
+      notes: '',
+      image1: null,
+      image2: null
+    });
+    setShowTradeModal(false);
+    alert('Trade ajouté avec succès !');
+  };
+
+  const handleTradingViewPasteTrade = (e: React.ClipboardEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const pastedHtml = e.clipboardData.getData('text/html') || '';
+    const pastedText = e.clipboardData.getData('text') || '';
+    
+    console.log('Pasted HTML:', pastedHtml);
+    console.log('Pasted Text:', pastedText);
+    
+    let extracted: {
+      symbol?: string;
+      type?: string;
+      entry?: string;
+      exit?: string;
+      stopLoss?: string;
+      rr?: string;
+    } = {};
+    
+    // Extraction depuis HTML TradingView
+    if (pastedHtml.includes('tradingview')) {
+      const symbolMatch = pastedHtml.match(/symbol["\s]*:["\s]*"([^"]+)"/);
+      const typeMatch = pastedHtml.match(/side["\s]*:["\s]*"([^"]+)"/);
+      const entryMatch = pastedHtml.match(/entry["\s]*:["\s]*([0-9.]+)/);
+      const exitMatch = pastedHtml.match(/exit["\s]*:["\s]*([0-9.]+)/);
+      const stopMatch = pastedHtml.match(/stop["\s]*:["\s]*([0-9.]+)/);
+      const rrMatch = pastedHtml.match(/rr["\s]*:["\s]*([0-9.]+)/);
+      
+      extracted = {
+        symbol: symbolMatch?.[1] || '',
+        type: typeMatch?.[1] || '',
+        entry: entryMatch?.[1] || '',
+        exit: exitMatch?.[1] || '',
+        stopLoss: stopMatch?.[1] || '',
+        rr: rrMatch?.[1] || ''
+      };
+    }
+    
+    // Extraction depuis texte brut
+    if (Object.keys(extracted).length === 0) {
+      const symbolMatch = pastedText.match(/([A-Z]{3,6})/);
+      const typeMatch = pastedText.match(/(BUY|SELL|LONG|SHORT)/i);
+      const numbers = pastedText.match(/\d+(?:\.\d+)?/g);
+      
+      extracted = {
+        symbol: symbolMatch?.[1] || '',
+        type: typeMatch?.[1] || '',
+        entry: numbers?.[0] || '',
+        exit: numbers?.[1] || '',
+        stopLoss: numbers?.[2] || ''
+      };
+    }
+    
+    // Mise à jour du formulaire
+    if (extracted.symbol) setTradeData(prev => ({ ...prev, symbol: extracted.symbol }));
+    if (extracted.type) setTradeData(prev => ({ ...prev, type: extracted.type.toUpperCase() === 'BUY' || extracted.type.toUpperCase() === 'LONG' ? 'BUY' : 'SELL' }));
+    if (extracted.entry) setTradeData(prev => ({ ...prev, entry: extracted.entry }));
+    if (extracted.exit) setTradeData(prev => ({ ...prev, exit: extracted.exit }));
+    if (extracted.stopLoss) setTradeData(prev => ({ ...prev, stopLoss: extracted.stopLoss }));
+  };
+
+  const getTradesForDate = (date: Date) => {
+    const dateStr = date.toISOString().split('T')[0];
+    return personalTrades.filter(trade => trade.date === dateStr);
+  };
+
   const handleSignalSubmit = () => {
     // Validation minimale - juste besoin d'au moins un champ rempli
     if (!signalData.symbol && !signalData.entry && !signalData.takeProfit && !signalData.stopLoss && !signalData.description) {
@@ -935,10 +1077,22 @@ export default function TradingPlatformShell() {
                 }
 
                 return (
-                  <div key={i} className={`
+                  <div 
+                    key={i} 
+                    onClick={() => {
+                      if (selectedChannel.id === 'trading-journal') {
+                        setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNumber));
+                      }
+                    }}
+                    className={`
                       border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 cursor-pointer transition-all hover:shadow-md
                       ${bgColor}
                       ${isToday ? 'ring-2 ring-blue-400' : ''}
+                      ${selectedChannel.id === 'trading-journal' && selectedDate && 
+                        selectedDate.getDate() === dayNumber && 
+                        selectedDate.getMonth() === currentDate.getMonth() && 
+                        selectedDate.getFullYear() === currentDate.getFullYear() 
+                        ? 'ring-2 ring-purple-400' : ''}
                     `}>
                     <div className="flex flex-col h-full justify-between">
                       <div className="text-xs md:text-sm font-semibold">{dayNumber}</div>
@@ -1371,7 +1525,112 @@ export default function TradingPlatformShell() {
             }`}
           >
             {(view === 'calendar' || selectedChannel.id === 'trading-journal') ? (
-              getTradingCalendar()
+              <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
+                {/* Header avec bouton Ajouter Trade pour Trading Journal */}
+                {selectedChannel.id === 'trading-journal' && (
+                  <div className="flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
+                    <div>
+                      <h1 className="text-2xl font-bold text-white">Mon Journal de Trading</h1>
+                      <p className="text-sm text-gray-400 mt-1">Suivez vos trades personnels</p>
+                    </div>
+                    <button 
+                      onClick={handleAddTrade}
+                      className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
+                    >
+                      + Ajouter Trade
+                    </button>
+                  </div>
+                )}
+                
+                {getTradingCalendar()}
+                
+                {/* Affichage des trades pour la date sélectionnée */}
+                {selectedChannel.id === 'trading-journal' && selectedDate && (
+                  <div className="mt-8 border-t border-gray-600 pt-6">
+                    <h3 className="text-lg font-bold text-white mb-4">
+                      Trades du {selectedDate.toLocaleDateString('fr-FR')}
+                    </h3>
+                    {getTradesForDate(selectedDate).length === 0 ? (
+                      <div className="text-center py-8 text-gray-400">
+                        Aucun trade pour cette date
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {getTradesForDate(selectedDate).map((trade) => (
+                          <div key={trade.id} className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-3">
+                                <span className={`px-3 py-1 rounded-lg text-sm font-medium ${
+                                  trade.status === 'WIN' ? 'bg-green-500 text-white' :
+                                  trade.status === 'LOSS' ? 'bg-red-500 text-white' :
+                                  'bg-blue-500 text-white'
+                                }`}>
+                                  {trade.status}
+                                </span>
+                                <span className="text-white font-semibold">{trade.symbol}</span>
+                                <span className="text-gray-400">{trade.type}</span>
+                              </div>
+                              <span className={`text-lg font-bold ${
+                                parseFloat(trade.pnl) >= 0 ? 'text-green-400' : 'text-red-400'
+                              }`}>
+                                {parseFloat(trade.pnl) >= 0 ? '+' : ''}{trade.pnl}$
+                              </span>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                              <div>
+                                <span className="text-gray-400">Entry:</span>
+                                <span className="text-white ml-2">{trade.entry}</span>
+                              </div>
+                              <div>
+                                <span className="text-gray-400">Exit:</span>
+                                <span className="text-white ml-2">{trade.exit}</span>
+                              </div>
+                              <div>
+                                <span className="text-gray-400">Stop Loss:</span>
+                                <span className="text-white ml-2">{trade.stopLoss || 'N/A'}</span>
+                              </div>
+                              <div>
+                                <span className="text-gray-400">Time:</span>
+                                <span className="text-white ml-2">{trade.timestamp}</span>
+                              </div>
+                            </div>
+                            
+                            {trade.notes && (
+                              <div className="mt-3 pt-3 border-t border-gray-600">
+                                <span className="text-gray-400 text-sm">Notes:</span>
+                                <p className="text-white text-sm mt-1">{trade.notes}</p>
+                              </div>
+                            )}
+                            
+                            {(trade.image1 || trade.image2) && (
+                              <div className="mt-3 pt-3 border-t border-gray-600">
+                                <span className="text-gray-400 text-sm">Images:</span>
+                                <div className="flex gap-2 mt-2">
+                                  {trade.image1 && (
+                                    <img 
+                                      src={URL.createObjectURL(trade.image1)} 
+                                      alt="Trade screenshot 1"
+                                      className="w-20 h-20 object-cover rounded border border-gray-600"
+                                    />
+                                  )}
+                                  {trade.image2 && (
+                                    <img 
+                                      src={URL.createObjectURL(trade.image2)} 
+                                      alt="Trade screenshot 2"
+                                      className="w-20 h-20 object-cover rounded border border-gray-600"
+                                    />
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             ) : (
               <div className="p-4 md:p-6 space-y-4 w-full h-full overflow-y-auto" style={{ paddingBottom: '100px' }}>
 
@@ -2440,6 +2699,219 @@ export default function TradingPlatformShell() {
                     className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white"
                   >
                     Créer le signal
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal pour ajouter un trade */}
+      {showTradeModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold text-white">Ajouter un trade</h2>
+                <button 
+                  onClick={() => setShowTradeModal(false)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  ✕
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                {/* Zone de collage TradingView */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">📋 Coller données TradingView</label>
+                  <div
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 min-h-[80px] flex items-center justify-center cursor-pointer"
+                    onPaste={handleTradingViewPasteTrade}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const text = e.dataTransfer.getData('text');
+                      if (text) {
+                        const fakeEvent = {
+                          preventDefault: () => {},
+                          clipboardData: {
+                            getData: (type: string) => {
+                              if (type === 'text/html') return '';
+                              if (type === 'text') return text;
+                              return '';
+                            }
+                          }
+                        } as React.ClipboardEvent<HTMLDivElement>;
+                        handleTradingViewPasteTrade(fakeEvent);
+                      }
+                    }}
+                    onDragOver={(e) => e.preventDefault()}
+                  >
+                    <div className="text-center">
+                      <div className="text-gray-400 mb-1">📋 Cliquez ici et collez (Ctrl+V)</div>
+                      <div className="text-xs text-gray-500">ou glissez-déposez du texte</div>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">Collez directement depuis TradingView</p>
+                </div>
+
+                {/* Type de trade */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Type</label>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setTradeData({...tradeData, type: 'BUY'})}
+                      className={`px-3 py-2 rounded text-sm ${tradeData.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-300'}`}
+                    >
+                      📈 BUY
+                    </button>
+                    <button
+                      onClick={() => setTradeData({...tradeData, type: 'SELL'})}
+                      className={`px-3 py-2 rounded text-sm ${tradeData.type === 'SELL' ? 'bg-red-600 text-white' : 'bg-gray-600 text-gray-300'}`}
+                    >
+                      📉 SELL
+                    </button>
+                  </div>
+                </div>
+
+                {/* Symbol */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Symbole *</label>
+                  <input
+                    type="text"
+                    value={tradeData.symbol}
+                    onChange={(e) => setTradeData({...tradeData, symbol: e.target.value})}
+                    placeholder="BTC, ETH, NQ1!, etc."
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
+                  />
+                </div>
+
+                {/* Entry */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Prix d'entrée *</label>
+                  <input
+                    type="text"
+                    value={tradeData.entry}
+                    onChange={(e) => setTradeData({...tradeData, entry: e.target.value})}
+                    placeholder="45000"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
+                  />
+                </div>
+
+                {/* Exit */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Prix de sortie *</label>
+                  <input
+                    type="text"
+                    value={tradeData.exit}
+                    onChange={(e) => setTradeData({...tradeData, exit: e.target.value})}
+                    placeholder="46000"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
+                  />
+                </div>
+
+                {/* Stop Loss */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Stop Loss</label>
+                  <input
+                    type="text"
+                    value={tradeData.stopLoss}
+                    onChange={(e) => setTradeData({...tradeData, stopLoss: e.target.value})}
+                    placeholder="44000"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
+                  />
+                </div>
+
+                {/* PnL */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">P&L *</label>
+                  <input
+                    type="text"
+                    value={tradeData.pnl}
+                    onChange={(e) => setTradeData({...tradeData, pnl: e.target.value})}
+                    placeholder="+500 ou -200"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
+                  />
+                </div>
+
+                {/* Status */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Résultat</label>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setTradeData({...tradeData, status: 'WIN'})}
+                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'WIN' ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-300'}`}
+                    >
+                      ✅ WIN
+                    </button>
+                    <button
+                      onClick={() => setTradeData({...tradeData, status: 'LOSS'})}
+                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'LOSS' ? 'bg-red-600 text-white' : 'bg-gray-600 text-gray-300'}`}
+                    >
+                      ❌ LOSS
+                    </button>
+                    <button
+                      onClick={() => setTradeData({...tradeData, status: 'BE'})}
+                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'BE' ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300'}`}
+                    >
+                      ⚖️ BE
+                    </button>
+                  </div>
+                </div>
+
+                {/* Notes */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Notes</label>
+                  <textarea
+                    value={tradeData.notes}
+                    onChange={(e) => setTradeData({...tradeData, notes: e.target.value})}
+                    placeholder="Notes sur le trade..."
+                    rows={3}
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
+                  />
+                </div>
+                
+                {/* Images */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Image 1</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) setTradeData({...tradeData, image1: file});
+                    }}
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Image 2</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) setTradeData({...tradeData, image2: file});
+                    }}
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
+                  />
+                </div>
+               
+                {/* Boutons */}
+                <div className="flex gap-3 pt-4">
+                  <button
+                    onClick={() => setShowTradeModal(false)}
+                    className="flex-1 bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    onClick={handleTradeSubmit}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white"
+                  >
+                    Ajouter le trade
                   </button>
                 </div>
               </div>
