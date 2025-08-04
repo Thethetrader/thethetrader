@@ -839,6 +839,10 @@ const App = () => {
                         <span className="text-red-400">✗</span>
                         <span>Support prioritaire</span>
                       </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-red-400">✗</span>
+                        <span>Journal de trading personnalisé</span>
+                      </li>
                     </ul>
                     <button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-4 px-6 rounded-lg font-semibold text-lg transition-colors">
                       Commencer maintenant
