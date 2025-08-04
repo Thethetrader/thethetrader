@@ -1776,9 +1776,9 @@ export default function TradingPlatformShell() {
           >
             {(view === 'calendar' || selectedChannel.id === 'trading-journal') ? (
               <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
-                {/* Header avec bouton Ajouter Trade pour Trading Journal */}
+                {/* Header avec bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
                 {selectedChannel.id === 'trading-journal' && (
-                  <div className="flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
+                  <div className="hidden md:flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
                     <div>
                       <h1 className="text-2xl font-bold text-white">Mon Journal de Trading</h1>
                       <p className="text-sm text-gray-400 mt-1">Suivez vos trades personnels</p>
@@ -1789,6 +1789,13 @@ export default function TradingPlatformShell() {
                     >
                       + Ajouter Trade
                     </button>
+                  </div>
+                )}
+                
+                {/* Année 2025 pour mobile */}
+                {selectedChannel.id === 'trading-journal' && (
+                  <div className="md:hidden text-center mb-4">
+                    <h2 className="text-xl font-bold text-white">2025</h2>
                   </div>
                 )}
                 
