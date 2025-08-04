@@ -1554,6 +1554,8 @@ export default function TradingPlatformShell() {
                 if (selectedChannel.id === 'trading-journal') {
                   setSelectedDate(null);
                 }
+                // Réinitialiser selectedChannel pour le calendrier
+                setSelectedChannel({id: 'calendar', name: 'calendar'});
                 setView('calendar');
                 scrollToTop();
               }} className={`w-full text-left px-3 py-2 rounded text-sm ${view === 'calendar' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Calendrier</button>
