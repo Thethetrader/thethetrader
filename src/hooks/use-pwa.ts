@@ -10,12 +10,17 @@ export const usePWA = () => {
       const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
       
       // Vérifier si l'app est ouverte depuis l'écran d'accueil (iOS)
-      const isFromHomeScreen = (window.navigator as any).standalone === true;
+      const isFromHomeScreen = (window.navigator as any).standalone === true || false;
       
       // Vérifier si l'app est en mode fullscreen
       const isFullscreen = document.fullscreenElement !== null;
       
-      setIsPWA(isStandalone || isFromHomeScreen || isFullscreen);
+      // Fallback pour Safari - éviter les erreurs
+      try {
+        setIsPWA(isStandalone || isFromHomeScreen || isFullscreen);
+      } catch (error) {
+        setIsPWA(false);
+      }
     };
 
     checkPWA();

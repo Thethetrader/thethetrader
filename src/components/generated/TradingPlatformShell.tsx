@@ -148,7 +148,27 @@ export default function TradingPlatformShell() {
     const saved = localStorage.getItem('personalTrades');
     const existingTrades = saved ? JSON.parse(saved) : [];
     
-    // Pas de trade de test automatique
+    // Ajouter un trade de test pour le 4 août si pas déjà présent
+    const testTradeExists = existingTrades.some((trade: any) => trade.date === '2024-08-04');
+    if (!testTradeExists) {
+      const testTrade = {
+        id: 'test-4-aout',
+        date: '2024-08-04',
+        symbol: 'BTCUSD',
+        type: 'BUY' as const,
+        entry: '45000',
+        exit: '46000',
+        stopLoss: '44000',
+        pnl: '1000',
+        status: 'WIN' as const,
+        notes: 'Trade de test pour le 4 août',
+        image1: null,
+        image2: null,
+        timestamp: '2024-08-04T10:30:00'
+      };
+      existingTrades.push(testTrade);
+    }
+    
     return existingTrades;
   });
 
@@ -1335,17 +1355,13 @@ export default function TradingPlatformShell() {
                       const clickedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNumber);
                       
                       if (selectedChannel.id === 'trading-journal') {
-                        try {
-                          setSelectedDate(clickedDate);
-                          
-                          // Ouvrir le popup des trades si il y en a
-                          const tradesForDate = getTradesForDate(clickedDate);
-                          if (tradesForDate.length > 0) {
-                            setSelectedTradesDate(clickedDate);
-                            setShowTradesModal(true);
-                          }
-                        } catch (error) {
-                          console.error('Erreur lors du clic:', error);
+                        setSelectedDate(clickedDate);
+                        
+                        // Ouvrir le popup des trades si il y en a
+                        const tradesForDate = getTradesForDate(clickedDate);
+                        if (tradesForDate.length > 0) {
+                          setSelectedTradesDate(clickedDate);
+                          setShowTradesModal(true);
                         }
                       } else {
                         // Ouvrir le popup des signaux si il y en a
@@ -3228,7 +3244,7 @@ export default function TradingPlatformShell() {
       )}
 
       {/* Modal des Trades */}
-      {showTradesModal && selectedTradesDate && (
+      {showTradesModal && selectedTradesDate && getTradesForDate(selectedTradesDate).length > 0 && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-gray-800 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
             <div className="p-6">
@@ -3263,9 +3279,9 @@ export default function TradingPlatformShell() {
                       </div>
                       <div className="flex items-center gap-3">
                         <span className={`text-lg font-bold ${
-                          parseFloat(trade.pnl) >= 0 ? 'text-green-400' : 'text-red-400'
+                          (trade.pnl && parseFloat(trade.pnl) >= 0) ? 'text-green-400' : 'text-red-400'
                         }`}>
-                          {parseFloat(trade.pnl) >= 0 ? '+' : ''}{trade.pnl}$
+                          {(trade.pnl && parseFloat(trade.pnl) >= 0) ? '+' : ''}{trade.pnl || '0'}$
                         </span>
                         <button
                           onClick={() => {

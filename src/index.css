@@ -21,6 +21,9 @@ body {
   font-family: var(--font-geist-sans);
   background: hsl(var(--background));
   color: hsl(var(--foreground));
+  /* Fallback pour Safari */
+  background: #0f172a;
+  color: #f8fafc;
 }
 
 html {
@@ -93,4 +96,25 @@ html {
 
 .animate-scroll {
   animation: scroll 25s linear infinite;
+}
+
+/* Fallbacks pour Safari - désactiver les transitions problématiques */
+@supports (-webkit-appearance: none) {
+  /* Safari-specific fixes */
+  .transition-all {
+    transition: none !important;
+  }
+  
+  .hover\:shadow-md:hover {
+    box-shadow: none !important;
+  }
+  
+  .hover\:shadow-lg:hover {
+    box-shadow: none !important;
+  }
+  
+  /* Désactiver les effets de zoom sur Safari */
+  .hover\:scale-105:hover {
+    transform: none !important;
+  }
 }

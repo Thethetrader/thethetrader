@@ -17,8 +17,170 @@ const App = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [activeChannel, setActiveChannel] = useState('crypto');
+  
+  // Données des signaux pour chaque salon mobile (identiques à l'app)
+  const [mobileSignalsData, setMobileSignalsData] = useState({
+    'fondamentaux': [
+      {
+        type: 'ANALYSE',
+        symbol: 'USD/EUR',
+        entry: 'Analyse fondamentale',
+        takeProfit: 'Fed meeting cette semaine',
+        stopLoss: 'Impact sur USD',
+        rr: 'Long terme',
+        status: 'ACTIVE',
+        pnl: ''
+      }
+    ],
+    'letsgooo-model': [
+      {
+        type: 'MODEL',
+        symbol: 'STRATÉGIE',
+        entry: 'Modèle de trading',
+        takeProfit: 'Configuration validée',
+        stopLoss: 'Setup optimal',
+        rr: 'Pro',
+        status: 'WIN',
+        pnl: '+$850'
+      }
+    ],
+    crypto: [
+      {
+        type: 'BUY',
+        symbol: 'BTC',
+        entry: '45000',
+        takeProfit: '46000',
+        stopLoss: '44000',
+        rr: '1.00',
+        status: 'ACTIVE',
+        pnl: ''
+      },
+      {
+        type: 'SELL',
+        symbol: 'ETH',
+        entry: '2800',
+        takeProfit: '2750',
+        stopLoss: '2850',
+        rr: '1.00',
+        status: 'WIN',
+        pnl: '+$250'
+      }
+    ],
+    futur: [
+      {
+        type: 'BUY',
+        symbol: 'NQ100',
+        entry: '16,500',
+        takeProfit: '16,700',
+        stopLoss: '16,300',
+        rr: '1.00',
+        status: 'ACTIVE',
+        pnl: ''
+      }
+    ],
+    forex: [
+      {
+        type: 'SELL',
+        symbol: 'GBPUSD',
+        entry: '1.2650',
+        takeProfit: '1.2600',
+        stopLoss: '1.2700',
+        rr: '1.00',
+        status: 'ACTIVE',
+        pnl: ''
+      },
+      {
+        type: 'BUY',
+        symbol: 'EURUSD',
+        entry: '1.0850',
+        takeProfit: '1.0900',
+        stopLoss: '1.0800',
+        rr: '1.00',
+        status: 'LOSS',
+        pnl: '-$150'
+      }
+    ],
+    livestream: [
+      {
+        type: 'LIVE',
+        symbol: '🔴 LIVE',
+        entry: 'En direct maintenant',
+        takeProfit: 'Stream trading actif',
+        stopLoss: 'Chat en temps réel',
+        rr: '---',
+        status: 'ACTIVE',
+        pnl: ''
+      }
+    ],
+    'general-chat': [
+      {
+        type: 'MESSAGE',
+        symbol: '💬 CHAT',
+        entry: 'Discussion générale',
+        takeProfit: 'Échanges communauté',
+        stopLoss: 'Questions/réponses',
+        rr: '---',
+        status: 'ACTIVE',
+        pnl: ''
+      }
+    ],
+    'profit-loss': [
+      {
+        type: 'WIN',
+        symbol: 'P&L',
+        entry: '+$1,250',
+        takeProfit: 'Win Rate: 75%',
+        stopLoss: 'Trades: 12',
+        rr: '2.5',
+        status: 'WIN',
+        pnl: '+$1,250'
+      }
+    ],
+    'calendar': [
+      {
+        type: 'EVENT',
+        symbol: '📅 CALENDRIER',
+        entry: 'Événements du jour',
+        takeProfit: '14h30 - Fed Speech',
+        stopLoss: '16h00 - NFP Data',
+        rr: 'Éco',
+        status: 'ACTIVE',
+        pnl: ''
+      }
+    ],
+    'trading-journal': [
+      {
+        type: 'TRADE',
+        symbol: '📊 MES TRADES',
+        entry: 'BTCUSD - Long',
+        takeProfit: 'Entrée: 44500',
+        stopLoss: 'Sortie: 46000',
+        rr: '1.5',
+        status: 'WIN',
+        pnl: '+$450'
+      }
+    ]
+  });
 
-  const [activeChannel, setActiveChannel] = useState('fondamentaux');
+  // Fonction pour mettre à jour le statut des signaux
+  const updateMobileSignalStatus = (channel: string, signalIndex: number, newStatus: string) => {
+    setMobileSignalsData(prev => ({
+      ...prev,
+      [channel]: prev[channel].map((signal, index) => {
+        if (index === signalIndex) {
+          let pnl = '';
+          if (newStatus === 'WIN') pnl = '+$' + (Math.random() * 500 + 100).toFixed(0);
+          if (newStatus === 'LOSS') pnl = '-$' + (Math.random() * 300 + 50).toFixed(0);
+          if (newStatus === 'BE') pnl = '$0';
+          
+          return { ...signal, status: newStatus, pnl };
+        }
+        return signal;
+      })
+    }));
+  };
+
   const [animatedNumbers, setAnimatedNumbers] = useState({
     beginners: 0,
     analyses: 0,
@@ -801,6 +963,193 @@ const App = () => {
               </div>
             </div>
 
+            {/* Interface Mobile après Connexion */}
+            <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-8 sm:mb-12">
+                Une interface ludique
+              </h2>
+              <div className="flex justify-center">
+                <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm max-w-lg w-full">
+                  {/* Mockup Mobile */}
+                  <div className="bg-gray-900 rounded-lg p-4 mx-auto min-h-fit" style={{width: '100%', maxWidth: '350px'}}>
+                    {/* Header Mobile */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-sm text-white">TT</div>
+                        <span className="text-white font-bold text-sm">TheTheTrader</span>
+                      </div>
+                      <button className="text-gray-400 text-lg">☰</button>
+                    </div>
+
+                    {/* Navigation Mobile */}
+                    <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+                      <div 
+                        className={`px-3 py-2 text-sm rounded-lg whitespace-nowrap cursor-pointer ${
+                          activeChannel === 'fondamentaux' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:text-white hover:bg-gray-600'
+                        }`}
+                        onClick={() => setActiveChannel('fondamentaux')}
+                      >
+                        📚 Fondamentaux
+                      </div>
+                      <div 
+                        className={`px-3 py-2 text-sm rounded-lg whitespace-nowrap cursor-pointer ${
+                          activeChannel === 'letsgooo-model' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:text-white hover:bg-gray-600'
+                        }`}
+                        onClick={() => setActiveChannel('letsgooo-model')}
+                      >
+                        🚀 Letsgooo-model
+                      </div>
+                      <div 
+                        className={`px-3 py-2 text-sm rounded-lg whitespace-nowrap cursor-pointer ${
+                          activeChannel === 'crypto' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:text-white hover:bg-gray-600'
+                        }`}
+                        onClick={() => setActiveChannel('crypto')}
+                      >
+                        🪙 Crypto
+                      </div>
+                      <div 
+                        className={`px-3 py-2 text-sm rounded-lg whitespace-nowrap cursor-pointer ${
+                          activeChannel === 'futur' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:text-white hover:bg-gray-600'
+                        }`}
+                        onClick={() => setActiveChannel('futur')}
+                      >
+                        📈 Futur
+                      </div>
+                      <div 
+                        className={`px-3 py-2 text-sm rounded-lg whitespace-nowrap cursor-pointer ${
+                          activeChannel === 'forex' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:text-white hover:bg-gray-600'
+                        }`}
+                        onClick={() => setActiveChannel('forex')}
+                      >
+                        💱 Forex
+                      </div>
+                      <div 
+                        className={`px-3 py-2 text-sm rounded-lg whitespace-nowrap cursor-pointer ${
+                          activeChannel === 'livestream' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:text-white hover:bg-gray-600'
+                        }`}
+                        onClick={() => setActiveChannel('livestream')}
+                      >
+                        📺 Livestream
+                      </div>
+                      <div 
+                        className={`px-3 py-2 text-sm rounded-lg whitespace-nowrap cursor-pointer ${
+                          activeChannel === 'general-chat' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:text-white hover:bg-gray-600'
+                        }`}
+                        onClick={() => setActiveChannel('general-chat')}
+                      >
+                        💬 General-chat
+                      </div>
+                      <div 
+                        className={`px-3 py-2 text-sm rounded-lg whitespace-nowrap cursor-pointer ${
+                          activeChannel === 'profit-loss' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:text-white hover:bg-gray-600'
+                        }`}
+                        onClick={() => setActiveChannel('profit-loss')}
+                      >
+                        💰 Profit-loss
+                      </div>
+                      <div 
+                        className={`px-3 py-2 text-sm rounded-lg whitespace-nowrap cursor-pointer ${
+                          activeChannel === 'calendar' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:text-white hover:bg-gray-600'
+                        }`}
+                        onClick={() => setActiveChannel('calendar')}
+                      >
+                        📅 Calendrier
+                      </div>
+                      <div 
+                        className={`px-3 py-2 text-sm rounded-lg whitespace-nowrap cursor-pointer ${
+                          activeChannel === 'trading-journal' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:text-white hover:bg-gray-600'
+                        }`}
+                        onClick={() => setActiveChannel('trading-journal')}
+                      >
+                        📊 Trading Journal
+                      </div>
+                    </div>
+
+                    {/* Signaux pour le salon actif */}
+                    {mobileSignalsData[activeChannel].map((signal, index) => (
+                      <div key={index} className="bg-gray-700 rounded-lg p-3 mb-3">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <span className={`px-3 py-2 text-white text-sm font-bold rounded ${
+                              signal.type === 'BUY' ? 'bg-green-600' : 'bg-red-600'
+                            }`}>
+                              {signal.type}
+                            </span>
+                            <span className="text-white font-bold text-lg">{signal.symbol}</span>
+                          </div>
+                          <span className={`text-sm font-bold ${
+                            signal.status === 'WIN' ? 'text-green-400' : 
+                            signal.status === 'LOSS' ? 'text-red-400' : 
+                            signal.status === 'BE' ? 'text-blue-400' : 'text-gray-400'
+                          }`}>
+                            {signal.status === 'ACTIVE' ? 'En cours' : signal.pnl}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3 text-sm text-gray-300 mb-3">
+                          <div>Entry: {signal.entry}</div>
+                          <div>TP: {signal.takeProfit}</div>
+                          <div>SL: {signal.stopLoss}</div>
+                          <div>R:R: {signal.rr}</div>
+                        </div>
+                        {signal.status === 'ACTIVE' && (
+                          <div className="flex gap-2">
+                            <button 
+                              className="px-4 py-2 bg-green-600 text-white text-sm font-bold rounded hover:bg-green-700 flex-1"
+                              onClick={() => updateMobileSignalStatus(activeChannel, index, 'WIN')}
+                            >
+                              WIN
+                            </button>
+                            <button 
+                              className="px-4 py-2 bg-red-600 text-white text-sm font-bold rounded hover:bg-red-700 flex-1"
+                              onClick={() => updateMobileSignalStatus(activeChannel, index, 'LOSS')}
+                            >
+                              LOSS
+                            </button>
+                            <button 
+                              className="px-4 py-2 bg-blue-600 text-white text-sm font-bold rounded hover:bg-blue-700 flex-1"
+                              onClick={() => updateMobileSignalStatus(activeChannel, index, 'BE')}
+                            >
+                              BE
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+
+                    {/* Calendar Example */}
+                    <div className="bg-gray-700 rounded-lg p-3 mb-3">
+                      <div className="text-white font-bold text-sm mb-2">📅 Trading Calendar</div>
+                      <div className="grid grid-cols-7 gap-1 text-xs">
+                        {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map(day => (
+                          <div key={day} className="text-gray-400 text-center font-semibold">{day}</div>
+                        ))}
+                        {Array.from({length: 21}, (_, i) => (
+                          <div key={i} className={`h-6 rounded text-center text-xs flex items-center justify-center font-semibold ${
+                            i === 3 ? 'bg-green-600 text-white' : 'text-gray-300 hover:bg-gray-600'
+                          }`}>
+                            {i + 1}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Stats Example */}
+                    <div className="bg-gray-700 rounded-lg p-3">
+                      <div className="text-white font-bold text-sm mb-2">📊 Statistiques</div>
+                      <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div className="text-green-400 font-semibold">P&L: +$1,250</div>
+                        <div className="text-blue-400 font-semibold">Win Rate: 75%</div>
+                        <div className="text-gray-300 font-semibold">Trades: 12</div>
+                        <div className="text-gray-300 font-semibold">Avg Win: +$150</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+
+                </div>
+              </div>
+            </div>
+
             {/* Plans de prix - Mobile Optimized */}
             <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
               <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-8 sm:mb-12">
@@ -898,8 +1247,8 @@ const App = () => {
               </div>
             </div>
 
-            {/* Aperçu de la plateforme - Mobile Optimized */}
-            <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-2 sm:px-4">
+            {/* Aperçu de la plateforme - Mobile Optimized - SUPPRIMÉ */}
+            <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-2 sm:px-4" style={{display: 'none'}}>
               <div className="bg-gray-800/50 p-2 sm:p-6 rounded-xl border border-gray-600/50 backdrop-blur-sm">
                 {/* Mockup de l'interface */}
                 <div className="bg-gray-900 rounded-lg overflow-hidden shadow-2xl">
@@ -1315,6 +1664,8 @@ const App = () => {
               </div>
             </div>
           </div>
+
+
 
 
 
