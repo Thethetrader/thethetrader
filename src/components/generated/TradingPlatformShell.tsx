@@ -1770,7 +1770,7 @@ export default function TradingPlatformShell() {
             }`}
           >
             {(view === 'calendar' || selectedChannel.id === 'trading-journal') ? (
-              <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto" style={{ paddingTop: view === 'calendar' ? '0px' : '80px' }}>
+              <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto" style={{ paddingTop: '0px' }}>
                 {/* Header avec bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
                 {selectedChannel.id === 'trading-journal' && (
                   <div className="hidden md:flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
