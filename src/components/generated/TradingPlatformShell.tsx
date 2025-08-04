@@ -107,10 +107,252 @@ export default function TradingPlatformShell() {
     description: '',
     image: null as File | null
   });
+  
+  // États pour le copier-coller TradingView
+  const [debugMode, setDebugMode] = useState(false);
+  const [pasteDebug, setPasteDebug] = useState('');
+  const [isPasteActive, setIsPasteActive] = useState(false);
+  const [error, setError] = useState('');
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+
+  // Fonction utilitaire pour créer une note d'ajout
+  const createNoteAddition = (extracted: Record<string, any>) => {
+    const parts = [];
+    if (extracted.symbol) parts.push(`Symbol: ${extracted.symbol}`);
+    if (extracted.tradeType) parts.push(`Type: ${extracted.tradeType.toUpperCase()}`);
+    if (extracted.entryPrice) parts.push(`Entry: ${extracted.entryPrice}`);
+    if (extracted.exitPrice) parts.push(`Exit: ${extracted.exitPrice}`);
+    if (extracted.stopLoss) parts.push(`SL: ${extracted.stopLoss}`);
+    if (extracted.rr) parts.push(`R:R: ${extracted.rr}`);
+    if (extracted.session) parts.push(`Session: ${extracted.session}`);
+    if (extracted.tradeDuration) parts.push(`Duration: ${extracted.tradeDuration}`);
+    
+    return `[Auto-extracted] ${parts.join(' | ')}`;
+  };
+
+  // Fonction utilitaire pour mettre à jour les données du formulaire
+  const updateFormData = (updates: Partial<typeof signalData>) => {
+    setSignalData(prev => ({ ...prev, ...updates }));
+  };
+
+  // FIXED: Completely rewritten TradingView paste handler to match Google Apps Script logic
+  const handleTradingViewPaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const pastedHtml = e.clipboardData.getData('text/html') || '';
+    const pastedText = e.clipboardData.getData('text') || '';
+    
+    // Debug info
+    if (debugMode) {
+      setPasteDebug(`HTML: ${pastedHtml.slice(0, 300)}...\nText: ${pastedText.slice(0, 300)}...`);
+    }
+    
+    // Store extracted data
+    const extracted: Record<string, any> = {};
+    let found = false;
+    
+    // Check if we have TradingView data
+    if (pastedHtml.includes('data-tradingview-clip')) {
+      try {
+        // Extract the TradingView JSON data
+        const regex = /data-tradingview-clip="([^"]+)"/;
+        const match = pastedHtml.match(regex);
+        
+        if (match && match[1]) {
+          // Replace HTML entities in the JSON string
+          const jsonString = match[1].replace(/&(?:quot|#34);/g, '"');
+          const data = JSON.parse(jsonString);
+          
+          if (debugMode) {
+            setPasteDebug(JSON.stringify(data, null, 2));
+          }
+          
+          // Extract source and points - similar to Google Apps Script
+          const source = data.sources?.[0]?.source;
+          const points = source?.points;
+          const state = source?.state;
+          const stopLevel = state?.stopLevel;
+          const profitLevel = state?.profitLevel;
+          
+          if (points && points.length >= 2) {
+            found = true;
+            
+            // Get ticker symbol and clean it
+            let symbolFull = state?.symbol || "";
+            let ticker = symbolFull.split(":")[1] || symbolFull;
+            // Clean common futures symbols
+            if (ticker.startsWith("NQ1")) ticker = "NQ";
+            else if (ticker.startsWith("ES1")) ticker = "ES";
+            else if (ticker.startsWith("MNQ")) ticker = "MNQ";
+            
+            extracted.symbol = ticker;
+            
+            // Determine trade type from the tool
+            const type = source?.type;
+            if (type === "LineToolRiskRewardLong" || /long/i.test(type)) {
+              extracted.tradeType = 'buy';
+              extracted.outcome = 'WIN'; // Default to WIN
+            } else if (type === "LineToolRiskRewardShort" || /short/i.test(type)) {
+              extracted.tradeType = 'sell';
+              extracted.outcome = 'WIN'; // Default to WIN
+            }
+            
+            // Extract price information
+            const entryPrice = points[0]?.price;
+            if (entryPrice !== undefined) {
+              extracted.entryPrice = entryPrice.toString();
+            }
+            
+            // For exit price, use the last point
+            if (points.length > 1) {
+              const exitPrice = points[points.length - 1]?.price;
+              if (exitPrice !== undefined) {
+                extracted.exitPrice = exitPrice.toString();
+              }
+            }
+            
+            // Calculate Risk:Reward ratio if available
+            if (stopLevel !== undefined && profitLevel !== undefined) {
+              const rrRatio = Math.round((profitLevel / stopLevel) * 100) / 100;
+              extracted.rr = rrRatio.toString();
+              
+              // Calculate Stop Loss based on entry price and stopLevel
+              if (entryPrice !== undefined) {
+                let slPrice;
+                if (extracted.tradeType === 'buy') {
+                  // For Long trades
+                  const stopDistance = stopLevel / 4; // Similar to Google Script
+                  slPrice = entryPrice - stopDistance;
+                } else {
+                  // For Short trades
+                  const stopDistance = stopLevel / 4;
+                  slPrice = entryPrice + stopDistance;
+                }
+                extracted.stopLoss = slPrice.toString();
+              }
+            }
+            
+            // Extract timestamps for entry/exit if available
+            if (points[0]?.time_t) {
+              const entryTimestamp = points[0].time_t;
+              const entryDate = new Date(entryTimestamp * 1000);
+              
+              // Format entry time for the form
+              const entryTimeStr = entryDate.toTimeString().split(' ')[0].slice(0, 5);
+              extracted.entryTime = entryTimeStr;
+              
+              // If we have exit timestamp
+              if (points.length > 1 && points[1]?.time_t) {
+                const exitTimestamp = points[1].time_t;
+                const exitDate = new Date(exitTimestamp * 1000);
+                const exitTimeStr = exitDate.toTimeString().split(' ')[0].slice(0, 5);
+                extracted.exitTime = exitTimeStr;
+                
+                // Calculate trade duration
+                const durationMs = (exitTimestamp - entryTimestamp) * 1000;
+                const durationMin = Math.round(durationMs / 60000);
+                
+                if (durationMin < 60) {
+                  extracted.tradeDuration = `${durationMin}m`;
+                } else {
+                  const hours = Math.floor(durationMin / 60);
+                  const mins = durationMin % 60;
+                  extracted.tradeDuration = `${hours}h ${mins}m`;
+                }
+              }
+            }
+            
+            // Try to determine session based on entry time
+            if (points[0]?.time_t) {
+              const entryDate = new Date(points[0].time_t * 1000);
+              let entryHour = entryDate.getUTCHours() - 4; // EST offset
+              if (entryHour < 0) entryHour += 24;
+              
+              let session = "";
+              if (entryHour >= 0 && entryHour < 3) session = "Asian Session";
+              else if (entryHour >= 3 && entryHour < 8) session = "London";
+              else if (entryHour >= 8 && entryHour < 12) session = "London/NY Overlap";
+              else if (entryHour >= 12 && entryHour < 17) session = "New York PM";
+              
+              if (session) {
+                extracted.session = session;
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Error parsing TradingView data:", err);
+        if (debugMode) {
+          setPasteDebug(`Error parsing: ${err instanceof Error 
+            ? err.message 
+            : (typeof err === 'symbol' ? err.toString() : String(err))}`);
+        }
+      }
+    }
+    
+    // Fallback to plain-text parsing if we didn't find structured data
+    if (!found) {
+      if (/long/i.test(pastedText)) {
+        extracted.tradeType = 'buy';
+        extracted.outcome = 'WIN';
+        found = true;
+      } else if (/short/i.test(pastedText)) {
+        extracted.tradeType = 'sell';
+        extracted.outcome = 'WIN';
+        found = true;
+      }
+      
+      // Try to extract symbol
+      const sym = pastedText.match(/\b([A-Z]{1,6}\d*(?:USD|BTC|ETH|EUR)?)\b/);
+      if (sym) {
+        extracted.symbol = sym[1];
+        found = true;
+      }
+      
+      // Try to extract numbers as prices
+      const nums = pastedText.match(/\b\d+(\.\d+)?\b/g) || [];
+      if (nums.length >= 2) {
+        extracted.entryPrice = nums[0];
+        extracted.exitPrice = nums[1];
+        if (nums.length >= 3) {
+          extracted.rr = nums[2];
+        }
+        found = true;
+      }
+    }
+    
+    // Apply extracted data to the form
+    if (found) {
+      // First update the basic fields
+      updateFormData({
+        type: extracted.tradeType === 'buy' ? 'BUY' : 'SELL',
+        symbol: extracted.symbol || signalData.symbol,
+        entry: extracted.entryPrice || signalData.entry,
+        takeProfit: extracted.exitPrice || signalData.takeProfit,
+        stopLoss: extracted.stopLoss || signalData.stopLoss,
+      });
+      
+      // Add extracted info to description
+      if (Object.keys(extracted).length > 0) {
+        const noteAddition = createNoteAddition(extracted);
+        updateFormData({
+          description: signalData.description ? `${signalData.description}\n\n${noteAddition}` : noteAddition
+        });
+      }
+      
+      setError('');
+    } else {
+      // If nothing parsed, just dump the raw text into description
+      updateFormData({
+        description: `Pasted text:\n${pastedText}\n\n${signalData.description || ''}`
+      });
+      setError('Could not extract structured trade data; added raw text to description.');
+    }
+    
+    setIsPasteActive(false);
+  };
 
   // Fonctions pour la navigation du calendrier
   const goToPreviousMonth = () => {
