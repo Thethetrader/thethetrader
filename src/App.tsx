@@ -772,31 +772,31 @@ const App = () => {
               </div>
             </div>
 
-            {/* Chiffres clés - Mobile Optimized */}
+            {/* Avantages clés - Mobile Optimized */}
             <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
               <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-8 sm:mb-12">
-                Chiffres clés
+                Pourquoi choisir TheTheTrader ?
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
                 {/* Carte 1 */}
                 <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50">
-                  <div className="text-4xl text-purple-600 mb-4">👤↗️</div>
-                  <div className="text-3xl font-bold text-purple-600 mb-2">+{animatedNumbers.beginners.toLocaleString()}</div>
-                  <div className="text-white text-sm sm:text-base font-medium">Débutants déjà formés</div>
+                  <div className="text-4xl text-purple-600 mb-4">⚡</div>
+                  <div className="text-xl font-bold text-white mb-2">Simplicité</div>
+                  <div className="text-gray-300 text-sm sm:text-base">Approche simple et efficace. Pas de jargon compliqué, juste des résultats concrets.</div>
                 </div>
 
                 {/* Carte 2 */}
                 <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50">
-                  <div className="text-4xl text-purple-600 mb-4">📊</div>
-                  <div className="text-3xl font-bold text-purple-600 mb-2">+{animatedNumbers.analyses.toLocaleString()}</div>
-                  <div className="text-white text-sm sm:text-base font-medium">Analyses envoyées chaque mois</div>
+                  <div className="text-4xl text-purple-600 mb-4">🎯</div>
+                  <div className="text-xl font-bold text-white mb-2">Résultats</div>
+                  <div className="text-gray-300 text-sm sm:text-base">Signaux précis et formation qui transforme les débutants en traders confirmés.</div>
                 </div>
 
                 {/* Carte 3 */}
                 <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50">
-                  <div className="text-4xl text-purple-600 mb-4">💰</div>
-                  <div className="text-3xl font-bold text-purple-600 mb-2">+{animatedNumbers.generated.toLocaleString()}€</div>
-                  <div className="text-white text-sm sm:text-base font-medium">Générés par les membres</div>
+                  <div className="text-4xl text-purple-600 mb-4">🤝</div>
+                  <div className="text-xl font-bold text-white mb-2">Communauté</div>
+                  <div className="text-gray-300 text-sm sm:text-base">Rejoignez une communauté active de traders qui partagent et s'entraident.</div>
                 </div>
               </div>
             </div>
