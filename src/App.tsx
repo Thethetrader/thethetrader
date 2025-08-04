@@ -17,7 +17,7 @@ const App = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [visibleMessages, setVisibleMessages] = useState(0);
+
   const [activeChannel, setActiveChannel] = useState('crypto-signaux');
   
   // Hook pour les notifications
@@ -90,6 +90,27 @@ const App = () => {
             { emoji: '💰', count: 18 },
             { emoji: '🚀', count: 12 }
           ]
+        },
+        { 
+          id: 3, 
+          user: 'TheTheTrader', 
+          time: '02:15:45', 
+          type: 'signal', 
+          status: 'ACTIVE',
+          content: {
+            title: '🔴 Signal SELL ETHUSD Futures – 5 min',
+            details: [
+              { icon: '🔹', label: 'Entrée', value: '2845.50 USD' },
+              { icon: '🔹', label: 'Stop Loss', value: '2875.20 USD' },
+              { icon: '🔹', label: 'Take Profit', value: '2815.80 USD' },
+              { icon: '🎯', label: 'Ratio R:R', value: '≈ 1.65' }
+            ],
+            reactions: [
+              { emoji: '⚡', count: 9 },
+              { emoji: '📉', count: 6 },
+              { emoji: '💎', count: 11 }
+            ]
+          }
         }
       ]
     },
@@ -126,6 +147,27 @@ const App = () => {
             { emoji: '💸', count: 21 },
             { emoji: '🎯', count: 12 }
           ]
+        },
+        { 
+          id: 3, 
+          user: 'TheTheTrader', 
+          time: '02:10:15', 
+          type: 'signal', 
+          status: 'ACTIVE',
+          content: {
+            title: '🔴 Signal SELL USDJPY – 30 min',
+            details: [
+              { icon: '🔹', label: 'Entrée', value: '148.25 JPY' },
+              { icon: '🔹', label: 'Stop Loss', value: '148.85 JPY' },
+              { icon: '🔹', label: 'Take Profit', value: '147.45 JPY' },
+              { icon: '🎯', label: 'Ratio R:R', value: '≈ 1.75' }
+            ],
+            reactions: [
+              { emoji: '🇯🇵', count: 8 },
+              { emoji: '📉', count: 12 },
+              { emoji: '💎', count: 6 }
+            ]
+          }
         }
       ]
     },
@@ -151,11 +193,32 @@ const App = () => {
               { emoji: '📈', count: 11 }
             ]
           }
+        },
+        { 
+          id: 2, 
+          user: 'TheTheTrader', 
+          time: '02:05:20', 
+          type: 'signal', 
+          status: 'ACTIVE',
+          content: {
+            title: '🟢 Signal BUY SP500 Futures – 4H',
+            details: [
+              { icon: '🔹', label: 'Entrée', value: '4850.25 USD' },
+              { icon: '🔹', label: 'Stop Loss', value: '4835.80 USD' },
+              { icon: '🔹', label: 'Take Profit', value: '4880.50 USD' },
+              { icon: '🎯', label: 'Ratio R:R', value: '≈ 2.10' }
+            ],
+            reactions: [
+              { emoji: '📊', count: 14 },
+              { emoji: '🚀', count: 9 },
+              { emoji: '💎', count: 7 }
+            ]
+          }
         }
       ]
     },
-    'formation': {
-      title: '#formation',
+    'education': {
+      title: '#education',
       messages: [
         { 
           id: 1, 
@@ -179,11 +242,23 @@ const App = () => {
             { emoji: '🧮', count: 23 },
             { emoji: '🤔', count: 15 }
           ]
+        },
+        { 
+          id: 3, 
+          user: 'TheTheTrader', 
+          time: '10:30:00', 
+          type: 'message', 
+          content: '📈 Analyse technique: Les 3 niveaux clés\n\n🔹 Support: Zone où le prix rebondit\n🔹 Résistance: Zone où le prix recule\n🔹 Breakout: Rupture d\'un niveau\n\nQuel niveau surveillez-vous aujourd\'hui? 📊', 
+          reactions: [
+            { emoji: '📊', count: 31 },
+            { emoji: '🎯', count: 18 },
+            { emoji: '💡', count: 12 }
+          ]
         }
              ]
      },
-    'calendrier': {
-      title: '📅 calendrier',
+    'calendar': {
+      title: '📅 Calendrier',
       messages: [
         { 
           id: 1, 
@@ -229,15 +304,7 @@ const App = () => {
 
   const currentMessages = channelData[activeChannel]?.messages || [];
 
-  // Animation conversation progressive avec CSS
-  useEffect(() => {
-    setVisibleMessages(0);
-    currentMessages.forEach((_, index) => {
-      setTimeout(() => {
-        setVisibleMessages(index + 1);
-      }, index * 200); // 200ms entre chaque message
-    });
-  }, [currentMessages, activeChannel]);
+
 
   const handleLogin = () => {
     if (email && password) {
@@ -388,6 +455,8 @@ const App = () => {
               </div>
             </div>
 
+
+
             {/* Aperçu de la plateforme - Mobile Optimized */}
             <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-2 sm:px-4">
               <div className="bg-gray-800/50 p-2 sm:p-6 rounded-xl border border-gray-600/50 backdrop-blur-sm">
@@ -445,6 +514,14 @@ const App = () => {
                         >
                           📚 Education
                         </div>
+                        <div 
+                          className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[100px] ${
+                            activeChannel === 'calendar' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                          }`}
+                          onClick={() => setActiveChannel('calendar')}
+                        >
+                          📅 Calendrier
+                        </div>
                       </div>
 
                       {/* Desktop: Vertical sidebar */}
@@ -481,6 +558,14 @@ const App = () => {
                         >
                           📚 Education
                         </div>
+                        <div 
+                          className={`px-4 py-3 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
+                            activeChannel === 'calendar' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                          }`}
+                          onClick={() => setActiveChannel('calendar')}
+                        >
+                          📅 Calendrier
+                        </div>
                       </div>
                     </div>
 
@@ -488,7 +573,7 @@ const App = () => {
                     <div className="flex-1 bg-gray-900 flex flex-col">
                       {/* Zone de messages */}
                       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                        {channelData[activeChannel]?.messages?.slice(0, visibleMessages).map((message: any, index: number) => (
+                        {channelData[activeChannel]?.messages?.map((message: any, index: number) => (
                           <div key={index} className="bg-gray-800 rounded-lg p-4">
                             <div className="flex items-start gap-3">
                               <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm">TT</div>
@@ -519,6 +604,111 @@ const App = () => {
                                     
 
 
+                                  </div>
+                                ) : message.type === 'calendar' ? (
+                                  <div className="bg-gray-700 rounded-lg p-6">
+                                    <div className="text-white font-semibold mb-6 text-lg">{message.content}</div>
+                                    
+                                    <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+                                      {/* Calendrier principal */}
+                                      <div className="flex-1">
+                                        {/* Jours de la semaine */}
+                                        <div className="grid grid-cols-7 gap-1 md:gap-2 mb-4">
+                                          {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
+                                            <div key={day} className="text-center text-gray-400 font-semibold py-3 text-sm uppercase tracking-wide">
+                                              {day.substring(0, 3)}
+                                            </div>
+                                          ))}
+                                        </div>
+
+                                        {/* Grille du calendrier */}
+                                        <div className="grid grid-cols-7 gap-1 md:gap-2">
+                                          {message.calendarData.days.map((day: any, idx: number) => (
+                                            <div 
+                                              key={idx} 
+                                              className={`border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 cursor-pointer transition-all hover:shadow-md ${
+                                                day.status === 'win' ? 'bg-green-500/60 border-green-400/50 text-white' :
+                                                day.status === 'loss' ? 'bg-red-500/60 border-red-400/50 text-white' :
+                                                day.status === 'be' ? 'bg-blue-500/60 border-blue-400/50 text-white' :
+                                                'bg-gray-700 border-gray-600 text-gray-400'
+                                              }`}
+                                            >
+                                              <div className="flex flex-col h-full justify-between">
+                                                <div className="text-xs md:text-sm font-semibold">{day.date}</div>
+                                                {day.trades > 0 && (
+                                                  <div className="text-xs font-bold text-center hidden md:block">
+                                                    {day.trades} signal{day.trades > 1 ? 's' : ''}
+                                                  </div>
+                                                )}
+                                                <div className="text-xs font-bold">{day.pnl}</div>
+                                              </div>
+                                            </div>
+                                          ))}
+                                        </div>
+
+                                        {/* Légende */}
+                                        <div className="flex items-center justify-center gap-6 mt-8 pt-6 border-t border-gray-600">
+                                          <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 bg-green-500/60 border border-green-400/50 rounded"></div>
+                                            <span className="text-sm text-gray-300">WIN</span>
+                                          </div>
+                                          <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 bg-red-500/60 border border-red-400/50 rounded"></div>
+                                            <span className="text-sm text-gray-300">LOSS</span>
+                                          </div>
+                                          <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 bg-blue-500/60 border border-blue-400/50 rounded"></div>
+                                            <span className="text-sm text-gray-300">BREAK EVEN</span>
+                                          </div>
+                                          <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 bg-gray-700 border border-gray-600 rounded"></div>
+                                            <span className="text-sm text-gray-300">NO TRADE</span>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      {/* Panneau des statistiques */}
+                                      <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6">
+                                        <h3 className="text-lg font-bold text-white mb-6">Statistiques Signaux</h3>
+                                        
+                                        {/* Métriques principales */}
+                                        <div className="space-y-4 mb-8">
+                                          {/* P&L Total */}
+                                          <div className="bg-green-600/20 border-green-500/30 border rounded-lg p-4">
+                                            <div className="text-sm text-green-300 mb-1">P&L Total</div>
+                                            <div className="text-2xl font-bold text-green-200">{message.calendarData.stats.totalPnL}</div>
+                                          </div>
+
+                                          {/* Win Rate */}
+                                          <div className="bg-blue-600/20 border-blue-500/30 rounded-lg p-4 border">
+                                            <div className="text-sm text-blue-300 mb-1">Win Rate</div>
+                                            <div className="text-2xl font-bold text-blue-200">{message.calendarData.stats.winRate}%</div>
+                                          </div>
+                                          
+                                          <div className="grid grid-cols-2 gap-3">
+                                            <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
+                                              <div className="text-xs text-gray-400 mb-1">Aujourd'hui</div>
+                                              <div className="text-lg font-bold text-blue-400">3</div>
+                                            </div>
+                                            <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
+                                              <div className="text-xs text-gray-400 mb-1">Ce mois</div>
+                                              <div className="text-lg font-bold text-white">{message.calendarData.stats.totalTrades}</div>
+                                            </div>
+                                          </div>
+                                          
+                                          <div className="grid grid-cols-2 gap-3">
+                                            <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
+                                              <div className="text-xs text-gray-400 mb-1">Avg Win</div>
+                                              <div className="text-lg font-bold text-green-400">+$89</div>
+                                            </div>
+                                            <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
+                                              <div className="text-xs text-gray-400 mb-1">Avg Loss</div>
+                                              <div className="text-lg font-bold text-red-400">-$34</div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
                                   </div>
                                 ) : (
                                   <div className="text-gray-300 whitespace-pre-line">{message.content}</div>
@@ -558,104 +748,7 @@ const App = () => {
             </div>
           </div>
 
-          {/* Section Services */}
-          <section id="services" className="py-16 sm:py-24 px-4 sm:px-6">
-            <div className="max-w-7xl mx-auto">
-              <div className="text-center mb-12 sm:mb-16">
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
-                  Nos Services
-                </h2>
-                <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto">
-                  Une approche complète du trading avec des signaux précis et une formation adaptée
-                </p>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                {/* Service 1 */}
-                <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm hover:bg-gray-800/70 transition-all duration-300">
-                  <div className="text-4xl mb-4">📊</div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">Signaux en Temps Réel</h3>
-                  <p className="text-gray-300 text-sm sm:text-base">
-                    Recevez des signaux de trading précis avec des points d'entrée, de sortie et de stop-loss clairement définis.
-                  </p>
-                </div>
-
-                {/* Service 2 */}
-                <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm hover:bg-gray-800/70 transition-all duration-300">
-                  <div className="text-4xl mb-4">📚</div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">Formation Complète</h3>
-                  <p className="text-gray-300 text-sm sm:text-base">
-                    Apprenez les bases et les stratégies avancées du trading avec nos cours structurés et nos ressources éducatives.
-                  </p>
-                </div>
-
-                {/* Service 3 */}
-                <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm hover:bg-gray-800/70 transition-all duration-300">
-                  <div className="text-4xl mb-4">📈</div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">Suivi de Performance</h3>
-                  <p className="text-gray-300 text-sm sm:text-base">
-                    Suivez vos performances avec notre calendrier de trading et nos analyses détaillées de chaque signal.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Section À propos */}
-          <section id="about" className="py-16 sm:py-24 px-4 sm:px-6 bg-gray-800/30">
-            <div className="max-w-7xl mx-auto">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 sm:gap-16 items-center">
-                <div>
-                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6">
-                    À propos de TheTheTrader
-                  </h2>
-                  <p className="text-lg sm:text-xl text-gray-300 mb-6">
-                    TheTheTrader est une plateforme de trading innovante qui combine intelligence artificielle et expertise humaine pour fournir des signaux de trading de haute qualité.
-                  </p>
-                  <p className="text-lg sm:text-xl text-gray-300 mb-8">
-                    Notre mission est de démocratiser le trading en offrant des outils accessibles et une formation de qualité pour tous les niveaux d'expérience.
-                  </p>
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="text-center">
-                      <div className="text-3xl sm:text-4xl font-bold text-blue-400 mb-2">95%</div>
-                      <div className="text-gray-300 text-sm sm:text-base">Taux de réussite</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl sm:text-4xl font-bold text-purple-400 mb-2">10k+</div>
-                      <div className="text-gray-300 text-sm sm:text-base">Traders actifs</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="relative">
-                  <div className="bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-2xl p-8 backdrop-blur-sm border border-gray-600/50">
-                    <div className="text-6xl sm:text-8xl mb-4">🚀</div>
-                    <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4">Rejoignez la Révolution</h3>
-                    <p className="text-gray-300 text-lg">
-                      Faites partie d'une communauté de traders passionnés et accédez à des signaux de qualité professionnelle.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Section Contact */}
-          <section id="contact" className="py-16 sm:py-24 px-4 sm:px-6">
-            <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6">
-                Prêt à Commencer ?
-              </h2>
-              <p className="text-lg sm:text-xl text-gray-300 mb-8">
-                Rejoignez TheTheTrader aujourd'hui et transformez votre approche du trading
-              </p>
-              <button 
-                onClick={() => setShowAuthModal(true)}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 sm:px-12 py-4 sm:py-5 rounded-lg text-lg sm:text-xl font-semibold hover:opacity-90 transition-all duration-200"
-              >
-                Commencer Maintenant
-              </button>
-            </div>
-          </section>
 
           {/* Footer - Mobile Optimized - Masqué en PWA */}
           {!isPWA && (
