@@ -1044,35 +1044,65 @@ export default function TradingPlatformShell() {
                   return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700"></div>;
                 }
               
-                              // Vérifier s'il y a des signaux pour ce jour
-                const daySignals = signals.filter(signal => {
-                  const signalDate = new Date();
-                  // Pour l'instant, on utilise la date actuelle car les signaux n'ont pas de date spécifique
-                  return signalDate.getDate() === dayNumber && 
-                         signalDate.getMonth() === currentDate.getMonth() && 
-                         signalDate.getFullYear() === currentDate.getFullYear();
-                });
+                              // Vérifier s'il y a des trades personnels ou des signaux pour ce jour
+                const dayTrades = selectedChannel.id === 'trading-journal' ? 
+                  personalTrades.filter(trade => {
+                    const tradeDate = new Date(trade.date);
+                    return tradeDate.getDate() === dayNumber && 
+                           tradeDate.getMonth() === currentDate.getMonth() && 
+                           tradeDate.getFullYear() === currentDate.getFullYear();
+                  }) : [];
 
-                // Déterminer la couleur selon les signaux
+                const daySignals = selectedChannel.id !== 'trading-journal' ? 
+                  signals.filter(signal => {
+                    const signalDate = new Date();
+                    // Pour l'instant, on utilise la date actuelle car les signaux n'ont pas de date spécifique
+                    return signalDate.getDate() === dayNumber && 
+                           signalDate.getMonth() === currentDate.getMonth() && 
+                           signalDate.getFullYear() === currentDate.getFullYear();
+                  }) : [];
+
+                // Déterminer la couleur selon les trades ou signaux
                 let bgColor = 'bg-gray-700 border-gray-600 text-gray-400'; // No trade par défaut
-                let signalCount = 0;
+                let tradeCount = 0;
 
-                if (daySignals.length > 0) {
-                  signalCount = daySignals.length;
-                  
-                  // Déterminer la couleur selon les statuts des signaux
-                  const hasWin = daySignals.some(s => s.status === 'WIN');
-                  const hasLoss = daySignals.some(s => s.status === 'LOSS');
-                  const hasBE = daySignals.some(s => s.status === 'BE');
-                  
-                  if (hasWin && !hasLoss) {
-                    bgColor = 'bg-green-500/60 border-green-400/50 text-white'; // WIN
-                  } else if (hasLoss && !hasWin) {
-                    bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // LOSS
-                  } else if (hasBE || (hasWin && hasLoss)) {
-                    bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // BE ou mixte
-                  } else {
-                    bgColor = 'bg-yellow-500/60 border-yellow-400/50 text-white'; // ACTIVE
+                if (selectedChannel.id === 'trading-journal') {
+                  // Logique pour les trades personnels
+                  if (dayTrades.length > 0) {
+                    tradeCount = dayTrades.length;
+                    
+                    // Déterminer la couleur selon les statuts des trades
+                    const hasWin = dayTrades.some(t => t.status === 'WIN');
+                    const hasLoss = dayTrades.some(t => t.status === 'LOSS');
+                    const hasBE = dayTrades.some(t => t.status === 'BE');
+                    
+                    if (hasWin && !hasLoss) {
+                      bgColor = 'bg-green-500/60 border-green-400/50 text-white'; // WIN
+                    } else if (hasLoss && !hasWin) {
+                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // LOSS
+                    } else if (hasBE || (hasWin && hasLoss)) {
+                      bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // BE ou mixte
+                    }
+                  }
+                } else {
+                  // Logique pour les signaux (calendrier normal)
+                  if (daySignals.length > 0) {
+                    tradeCount = daySignals.length;
+                    
+                    // Déterminer la couleur selon les statuts des signaux
+                    const hasWin = daySignals.some(s => s.status === 'WIN');
+                    const hasLoss = daySignals.some(s => s.status === 'LOSS');
+                    const hasBE = daySignals.some(s => s.status === 'BE');
+                    
+                    if (hasWin && !hasLoss) {
+                      bgColor = 'bg-green-500/60 border-green-400/50 text-white'; // WIN
+                    } else if (hasLoss && !hasWin) {
+                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // LOSS
+                    } else if (hasBE || (hasWin && hasLoss)) {
+                      bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // BE ou mixte
+                    } else {
+                      bgColor = 'bg-yellow-500/60 border-yellow-400/50 text-white'; // ACTIVE
+                    }
                   }
                 }
 
@@ -1096,9 +1126,9 @@ export default function TradingPlatformShell() {
                     `}>
                     <div className="flex flex-col h-full justify-between">
                       <div className="text-xs md:text-sm font-semibold">{dayNumber}</div>
-                      {signalCount > 0 && (
+                      {tradeCount > 0 && (
                         <div className="text-xs font-bold text-center hidden md:block">
-                          {signalCount} signal{signalCount > 1 ? 's' : ''}
+                          {tradeCount} {selectedChannel.id === 'trading-journal' ? 'trade' : 'signal'}{tradeCount > 1 ? 's' : ''}
                         </div>
                       )}
                     </div>
