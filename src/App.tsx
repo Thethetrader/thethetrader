@@ -1765,32 +1765,32 @@ const App = () => {
                               {/* P&L Total - Grande carte verte */}
                               <div className="bg-green-600/20 border border-green-500/30 rounded-xl p-6 mb-4">
                                 <div className="text-green-300 text-sm mb-2">P&L Total</div>
-                                <div className="text-4xl font-bold text-white">+$0</div>
+                                <div className="text-4xl font-bold text-white">+$3,285</div>
                               </div>
 
                               {/* Win Rate - Grande carte bleue */}
                               <div className="bg-blue-600/20 border border-blue-500/30 rounded-xl p-6 mb-6">
                                 <div className="text-blue-300 text-sm mb-2">Win Rate</div>
-                                <div className="text-4xl font-bold text-white">0%</div>
+                                <div className="text-4xl font-bold text-white">74%</div>
                               </div>
 
                               {/* Grid 2x2 - Statistiques détaillées */}
                               <div className="grid grid-cols-2 gap-4 mb-6">
                                 <div className="bg-gray-700/50 rounded-lg p-4">
                                   <div className="text-gray-400 text-sm mb-2">Aujourd'hui</div>
-                                  <div className="text-2xl font-bold text-blue-400">0</div>
+                                  <div className="text-2xl font-bold text-blue-400">2</div>
                                 </div>
                                 <div className="bg-gray-700/50 rounded-lg p-4">
                                   <div className="text-gray-400 text-sm mb-2">Ce mois</div>
-                                  <div className="text-2xl font-bold text-white">0</div>
+                                  <div className="text-2xl font-bold text-white">23</div>
                                 </div>
                                 <div className="bg-gray-700/50 rounded-lg p-4">
                                   <div className="text-gray-400 text-sm mb-2">Avg Win</div>
-                                  <div className="text-2xl font-bold text-green-400">-</div>
+                                  <div className="text-2xl font-bold text-green-400">+$195</div>
                                 </div>
                                 <div className="bg-gray-700/50 rounded-lg p-4">
                                   <div className="text-gray-400 text-sm mb-2">Avg Loss</div>
-                                  <div className="text-2xl font-bold text-red-400">-</div>
+                                  <div className="text-2xl font-bold text-red-400">-$85</div>
                                 </div>
                               </div>
 
@@ -1798,33 +1798,33 @@ const App = () => {
                               <div>
                                 <h4 className="text-lg font-bold text-white mb-4">Weekly Breakdown</h4>
                                 <div className="space-y-3">
-                                  <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-4 flex justify-between items-center">
+                                  <div className="bg-green-600/20 border border-green-500/30 rounded-lg p-4 flex justify-between items-center">
                                     <div>
                                       <div className="text-white font-medium">Week 1</div>
-                                      <div className="text-gray-400 text-sm">0 trades</div>
+                                      <div className="text-gray-400 text-sm">6 trades</div>
                                     </div>
-                                    <div className="text-gray-500 text-xl">-</div>
+                                    <div className="text-green-400 text-xl font-bold">+$840</div>
                                   </div>
-                                  <div className="bg-gray-700/30 rounded-lg p-4 flex justify-between items-center">
+                                  <div className="bg-green-600/20 border border-green-500/30 rounded-lg p-4 flex justify-between items-center">
                                     <div>
                                       <div className="text-white font-medium">Week 2</div>
-                                      <div className="text-gray-400 text-sm">0 trades</div>
+                                      <div className="text-gray-400 text-sm">5 trades</div>
                                     </div>
-                                    <div className="text-gray-500 text-xl">-</div>
+                                    <div className="text-green-400 text-xl font-bold">+$1,120</div>
                                   </div>
-                                  <div className="bg-gray-700/30 rounded-lg p-4 flex justify-between items-center">
+                                  <div className="bg-red-600/20 border border-red-500/30 rounded-lg p-4 flex justify-between items-center">
                                     <div>
                                       <div className="text-white font-medium">Week 3</div>
-                                      <div className="text-gray-400 text-sm">0 trades</div>
+                                      <div className="text-gray-400 text-sm">7 trades</div>
                                     </div>
-                                    <div className="text-gray-500 text-xl">-</div>
+                                    <div className="text-red-400 text-xl font-bold">-$275</div>
                                   </div>
-                                  <div className="bg-gray-700/30 rounded-lg p-4 flex justify-between items-center">
+                                  <div className="bg-green-600/20 border border-green-500/30 rounded-lg p-4 flex justify-between items-center">
                                     <div>
                                       <div className="text-white font-medium">Week 4</div>
-                                      <div className="text-gray-400 text-sm">0 trades</div>
+                                      <div className="text-gray-400 text-sm">5 trades</div>
                                     </div>
-                                    <div className="text-gray-500 text-xl">-</div>
+                                    <div className="text-green-400 text-xl font-bold">+$1,600</div>
                                   </div>
                                 </div>
                               </div>
