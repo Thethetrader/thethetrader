@@ -1776,21 +1776,74 @@ const App = () => {
                               </div>
                             </div>
                             
-                            {/* Statistiques Trading Journal - Code original */}
-                            <div className="bg-gray-700 rounded-lg p-4">
-                              <h4 className="text-sm font-medium mb-3">Statistiques</h4>
-                              <div className="space-y-2">
-                                <div className="flex justify-between text-sm">
-                                  <span className="text-gray-400">Win Rate:</span>
-                                  <span className="text-blue-400">75%</span>
+                            {/* Statistiques Trading Journal - Format exact */}
+                            <div className="bg-gray-800 rounded-lg p-6">
+                              <h3 className="text-xl font-bold text-white mb-6">Statistiques Trades</h3>
+                              
+                              {/* P&L Total - Grande carte verte */}
+                              <div className="bg-green-600/20 border border-green-500/30 rounded-xl p-6 mb-4">
+                                <div className="text-green-300 text-sm mb-2">P&L Total</div>
+                                <div className="text-4xl font-bold text-white">+$0</div>
+                              </div>
+
+                              {/* Win Rate - Grande carte bleue */}
+                              <div className="bg-blue-600/20 border border-blue-500/30 rounded-xl p-6 mb-6">
+                                <div className="text-blue-300 text-sm mb-2">Win Rate</div>
+                                <div className="text-4xl font-bold text-white">0%</div>
+                              </div>
+
+                              {/* Grid 2x2 - Statistiques détaillées */}
+                              <div className="grid grid-cols-2 gap-4 mb-6">
+                                <div className="bg-gray-700/50 rounded-lg p-4">
+                                  <div className="text-gray-400 text-sm mb-2">Aujourd'hui</div>
+                                  <div className="text-2xl font-bold text-blue-400">0</div>
                                 </div>
-                                <div className="flex justify-between text-sm">
-                                  <span className="text-gray-400">Signaux actifs:</span>
-                                  <span className="text-yellow-400">3</span>
+                                <div className="bg-gray-700/50 rounded-lg p-4">
+                                  <div className="text-gray-400 text-sm mb-2">Ce mois</div>
+                                  <div className="text-2xl font-bold text-white">0</div>
                                 </div>
-                                <div className="flex justify-between text-sm">
-                                  <span className="text-gray-400">P&L Total:</span>
-                                  <span className="text-green-400">+$2,480</span>
+                                <div className="bg-gray-700/50 rounded-lg p-4">
+                                  <div className="text-gray-400 text-sm mb-2">Avg Win</div>
+                                  <div className="text-2xl font-bold text-green-400">-</div>
+                                </div>
+                                <div className="bg-gray-700/50 rounded-lg p-4">
+                                  <div className="text-gray-400 text-sm mb-2">Avg Loss</div>
+                                  <div className="text-2xl font-bold text-red-400">-</div>
+                                </div>
+                              </div>
+
+                              {/* Weekly Breakdown */}
+                              <div>
+                                <h4 className="text-lg font-bold text-white mb-4">Weekly Breakdown</h4>
+                                <div className="space-y-3">
+                                  <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-4 flex justify-between items-center">
+                                    <div>
+                                      <div className="text-white font-medium">Week 1</div>
+                                      <div className="text-gray-400 text-sm">0 trades</div>
+                                    </div>
+                                    <div className="text-gray-500 text-xl">-</div>
+                                  </div>
+                                  <div className="bg-gray-700/30 rounded-lg p-4 flex justify-between items-center">
+                                    <div>
+                                      <div className="text-white font-medium">Week 2</div>
+                                      <div className="text-gray-400 text-sm">0 trades</div>
+                                    </div>
+                                    <div className="text-gray-500 text-xl">-</div>
+                                  </div>
+                                  <div className="bg-gray-700/30 rounded-lg p-4 flex justify-between items-center">
+                                    <div>
+                                      <div className="text-white font-medium">Week 3</div>
+                                      <div className="text-gray-400 text-sm">0 trades</div>
+                                    </div>
+                                    <div className="text-gray-500 text-xl">-</div>
+                                  </div>
+                                  <div className="bg-gray-700/30 rounded-lg p-4 flex justify-between items-center">
+                                    <div>
+                                      <div className="text-white font-medium">Week 4</div>
+                                      <div className="text-gray-400 text-sm">0 trades</div>
+                                    </div>
+                                    <div className="text-gray-500 text-xl">-</div>
+                                  </div>
                                 </div>
                               </div>
                             </div>
