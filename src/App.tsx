@@ -23,144 +23,56 @@ const App = () => {
   const [mobileSignalsData, setMobileSignalsData] = useState({
     'fondamentaux': [
       {
-        type: 'ANALYSE',
-        symbol: 'USD/EUR',
-        entry: 'Analyse fondamentale',
-        takeProfit: 'Fed meeting cette semaine',
-        stopLoss: 'Impact sur USD',
-        rr: 'Long terme',
+        type: 'FORMATION',
+        symbol: 'ANALYSE',
+        entry: 'Module 1: Bases du trading',
+        takeProfit: 'Support/Résistance',
+        stopLoss: 'Théorie + pratique',
+        rr: 'Éducation',
+        status: 'ACTIVE',
+        pnl: ''
+      },
+      {
+        type: 'FORMATION',
+        symbol: 'STRATÉGIE',
+        entry: 'Module 2: Stratégies avancées',
+        takeProfit: 'Risk Management',
+        stopLoss: 'Psychologie trading',
+        rr: 'Formation',
         status: 'ACTIVE',
         pnl: ''
       }
     ],
     'letsgooo-model': [
       {
-        type: 'MODEL',
-        symbol: 'STRATÉGIE',
-        entry: 'Modèle de trading',
-        takeProfit: 'Configuration validée',
-        stopLoss: 'Setup optimal',
+        type: 'MODÈLE',
+        symbol: 'SETUP',
+        entry: 'Configuration modèle pro',
+        takeProfit: 'Validation setup',
+        stopLoss: 'Optimisation paramètres',
         rr: 'Pro',
         status: 'WIN',
         pnl: '+$850'
-      }
-    ],
-    crypto: [
-      {
-        type: 'BUY',
-        symbol: 'BTC',
-        entry: '45000',
-        takeProfit: '46000',
-        stopLoss: '44000',
-        rr: '1.00',
-        status: 'ACTIVE',
-        pnl: ''
       },
       {
-        type: 'SELL',
-        symbol: 'ETH',
-        entry: '2800',
-        takeProfit: '2750',
-        stopLoss: '2850',
-        rr: '1.00',
-        status: 'WIN',
-        pnl: '+$250'
-      }
-    ],
-    futur: [
-      {
-        type: 'BUY',
-        symbol: 'NQ100',
-        entry: '16,500',
-        takeProfit: '16,700',
-        stopLoss: '16,300',
-        rr: '1.00',
+        type: 'MODÈLE',
+        symbol: 'BACKTEST',
+        entry: 'Résultats backtest',
+        takeProfit: 'Performance validée',
+        stopLoss: 'Analyse historique',
+        rr: 'Modèle',
         status: 'ACTIVE',
         pnl: ''
       }
     ],
-    forex: [
-      {
-        type: 'SELL',
-        symbol: 'GBPUSD',
-        entry: '1.2650',
-        takeProfit: '1.2600',
-        stopLoss: '1.2700',
-        rr: '1.00',
-        status: 'ACTIVE',
-        pnl: ''
-      },
-      {
-        type: 'BUY',
-        symbol: 'EURUSD',
-        entry: '1.0850',
-        takeProfit: '1.0900',
-        stopLoss: '1.0800',
-        rr: '1.00',
-        status: 'LOSS',
-        pnl: '-$150'
-      }
-    ],
-    livestream: [
-      {
-        type: 'LIVE',
-        symbol: '🔴 LIVE',
-        entry: 'En direct maintenant',
-        takeProfit: 'Stream trading actif',
-        stopLoss: 'Chat en temps réel',
-        rr: '---',
-        status: 'ACTIVE',
-        pnl: ''
-      }
-    ],
-    'general-chat': [
-      {
-        type: 'MESSAGE',
-        symbol: '💬 CHAT',
-        entry: 'Discussion générale',
-        takeProfit: 'Échanges communauté',
-        stopLoss: 'Questions/réponses',
-        rr: '---',
-        status: 'ACTIVE',
-        pnl: ''
-      }
-    ],
-    'profit-loss': [
-      {
-        type: 'WIN',
-        symbol: 'P&L',
-        entry: '+$1,250',
-        takeProfit: 'Win Rate: 75%',
-        stopLoss: 'Trades: 12',
-        rr: '2.5',
-        status: 'WIN',
-        pnl: '+$1,250'
-      }
-    ],
-    'calendar': [
-      {
-        type: 'EVENT',
-        symbol: '📅 CALENDRIER',
-        entry: 'Événements du jour',
-        takeProfit: '14h30 - Fed Speech',
-        stopLoss: '16h00 - NFP Data',
-        rr: 'Éco',
-        status: 'ACTIVE',
-        pnl: ''
-      }
-    ],
-    'trading-journal': [
-      {
-        type: 'TRADE',
-        symbol: '📊 MES TRADES',
-        entry: 'BTCUSD - Long',
-        takeProfit: 'Entrée: 44500',
-        stopLoss: 'Sortie: 46000',
-        rr: '1.5',
-        status: 'WIN',
-        pnl: '+$450'
-      }
-    ]
+    crypto: [],
+    futur: [],
+    forex: [],
+    livestream: [],
+    'general-chat': [],
+    'profit-loss': [],
+    'calendar': [],
+    'trading-journal': []
   });
 
   // Fonction pour mettre à jour le statut des signaux
@@ -966,12 +878,12 @@ const App = () => {
             {/* Interface Mobile après Connexion */}
             <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
               <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-8 sm:mb-12">
-                Une interface ludique
+                Aperçu de la plateforme
               </h2>
               <div className="flex justify-center">
-                <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm max-w-lg w-full">
-                  {/* Mockup Mobile */}
-                  <div className="bg-gray-900 rounded-lg p-4 mx-auto min-h-fit" style={{width: '100%', maxWidth: '350px'}}>
+                <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm w-full max-w-6xl">
+                  {/* Mockup Desktop Interface */}
+                  <div className="bg-gray-900 rounded-lg p-4 mx-auto" style={{width: '100%', height: '600px'}}>
                     {/* Header Mobile */}
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
@@ -1116,33 +1028,7 @@ const App = () => {
                       </div>
                     ))}
 
-                    {/* Calendar Example */}
-                    <div className="bg-gray-700 rounded-lg p-3 mb-3">
-                      <div className="text-white font-bold text-sm mb-2">📅 Trading Calendar</div>
-                      <div className="grid grid-cols-7 gap-1 text-xs">
-                        {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map(day => (
-                          <div key={day} className="text-gray-400 text-center font-semibold">{day}</div>
-                        ))}
-                        {Array.from({length: 21}, (_, i) => (
-                          <div key={i} className={`h-6 rounded text-center text-xs flex items-center justify-center font-semibold ${
-                            i === 3 ? 'bg-green-600 text-white' : 'text-gray-300 hover:bg-gray-600'
-                          }`}>
-                            {i + 1}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
 
-                    {/* Stats Example */}
-                    <div className="bg-gray-700 rounded-lg p-3">
-                      <div className="text-white font-bold text-sm mb-2">📊 Statistiques</div>
-                      <div className="grid grid-cols-2 gap-3 text-sm">
-                        <div className="text-green-400 font-semibold">P&L: +$1,250</div>
-                        <div className="text-blue-400 font-semibold">Win Rate: 75%</div>
-                        <div className="text-gray-300 font-semibold">Trades: 12</div>
-                        <div className="text-gray-300 font-semibold">Avg Win: +$150</div>
-                      </div>
-                    </div>
                   </div>
                   
 
