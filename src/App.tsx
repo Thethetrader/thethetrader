@@ -1708,31 +1708,6 @@ const App = () => {
                                 </div>
                               </div>
                             </div>
-                            
-                            {/* Événements du jour */}
-                            <div className="bg-gray-700 rounded-lg p-4">
-                              <h4 className="text-white font-medium mb-3">Événements économiques - 4 Déc</h4>
-                              <div className="space-y-2">
-                                <div className="flex items-center gap-3 text-sm">
-                                  <span className="bg-red-600 text-white px-2 py-1 rounded text-xs">HIGH</span>
-                                  <span className="text-white">14:30</span>
-                                  <span className="text-gray-300">NFP USD</span>
-                                  <span className="text-green-400">+250K</span>
-                                </div>
-                                <div className="flex items-center gap-3 text-sm">
-                                  <span className="bg-yellow-600 text-white px-2 py-1 rounded text-xs">MED</span>
-                                  <span className="text-white">16:00</span>
-                                  <span className="text-gray-300">ISM Services</span>
-                                  <span className="text-yellow-400">52.1</span>
-                                </div>
-                                <div className="flex items-center gap-3 text-sm">
-                                  <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">LOW</span>
-                                  <span className="text-white">18:00</span>
-                                  <span className="text-gray-300">Fed Speech</span>
-                                  <span className="text-blue-400">Hawkish</span>
-                                </div>
-                              </div>
-                            </div>
                           </div>
                         )}
 
