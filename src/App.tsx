@@ -886,7 +886,7 @@ const App = () => {
               
               {/* Version Mobile - Liste des salons */}
               <div className="bg-gray-800/50 rounded-xl border border-gray-600/50 backdrop-blur-sm p-4">
-                <div className="bg-gray-900 rounded-lg overflow-hidden relative" style={{height: '500px'}}>
+                <div className="bg-gray-900 rounded-lg overflow-hidden relative" style={{height: '700px'}}>
                   {/* Header mobile avec profil */}
                   <div className="bg-slate-700 p-3 border-b border-gray-600">
                     <div className="flex items-center justify-between">
@@ -920,7 +920,7 @@ const App = () => {
                   </div>
                   
                   {/* Liste des salons - Slide out vers la gauche */}
-                  <div className={`absolute inset-0 top-12 p-4 space-y-4 overflow-y-auto bg-gray-900 transition-transform duration-300 ${showMobileChannel ? '-translate-x-full' : 'translate-x-0'}`} style={{height: '440px'}}>
+                  <div className={`absolute inset-0 top-12 p-4 space-y-4 overflow-y-auto bg-gray-900 transition-transform duration-300 ${showMobileChannel ? '-translate-x-full' : 'translate-x-0'}`} style={{height: '640px'}}>
                     
                     {/* Section Education */}
                     <div>
