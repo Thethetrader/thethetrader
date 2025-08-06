@@ -901,8 +901,18 @@ const App = () => {
                         <div>
                           <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">ÉDUCATION</h3>
                           <div className="space-y-1">
-                            <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📚 Fondamentaux</button>
-                            <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">🚀 Letsgooo-model</button>
+                                                            <button 
+                                  className={`w-full text-left px-3 py-2 rounded text-sm ${previewChannel === 'fondamentaux' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
+                                  onClick={() => setPreviewChannel('fondamentaux')}
+                                >
+                                  📚 Fondamentaux
+                                </button>
+                                <button 
+                                  className={`w-full text-left px-3 py-2 rounded text-sm ${previewChannel === 'letsgooo-model' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
+                                  onClick={() => setPreviewChannel('letsgooo-model')}
+                                >
+                                  🚀 Letsgooo-model
+                                </button>
                           </div>
                         </div>
 
@@ -980,6 +990,8 @@ const App = () => {
                             {previewChannel === 'crypto' ? '# crypto' : 
                              previewChannel === 'futur' ? '# futur' : 
                              previewChannel === 'forex' ? '# forex' : 
+                             previewChannel === 'fondamentaux' ? '📚 Fondamentaux' : 
+                             previewChannel === 'letsgooo-model' ? '🚀 Letsgooo-model' : 
                              previewChannel === 'calendar' ? '📅 Calendrier' : 
                              previewChannel === 'trading-journal' ? '📊 Trading Journal' : '# crypto'}
                           </h2>
@@ -1194,6 +1206,140 @@ const App = () => {
                               </div>
                               <p className="text-gray-300 text-sm">
                                 💱 Session forex active ! EUR/USD en profit, on surveille GBP/JPY de près.
+                              </p>
+                            </div>
+                          </>
+                        )}
+
+                        {/* Vue Fondamentaux - Cours de base */}
+                        {previewChannel === 'fondamentaux' && (
+                          <>
+                            {/* Cours 1 - Bases du trading */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center gap-3">
+                                  <span className="bg-blue-600 text-white px-3 py-1 rounded text-sm font-bold">COURS</span>
+                                  <span className="text-white font-bold text-lg">Les bases du trading</span>
+                                  <span className="text-gray-400 text-sm">Débutant</span>
+                                </div>
+                                <span className="text-blue-400 font-bold">45 min</span>
+                              </div>
+                              <div className="text-gray-400 text-sm mb-4">
+                                Apprenez les concepts fondamentaux du trading : marchés financiers, analyse technique et gestion des risques. Ce cours couvre les bases essentielles pour débuter.
+                              </div>
+                              <div className="grid grid-cols-3 gap-4 text-sm text-gray-300 mb-3">
+                                <div>📊 Analyse technique</div>
+                                <div>💰 Gestion du capital</div>
+                                <div>🎯 Stratégies de base</div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-400 text-xs">👥 1,247 étudiants</span>
+                                <span className="text-gray-400 text-xs">⭐ 4.8/5</span>
+                                <span className="text-gray-400 text-xs">📝 12 modules</span>
+                              </div>
+                            </div>
+
+                            {/* Cours 2 - Psychologie */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center gap-3">
+                                  <span className="bg-purple-600 text-white px-3 py-1 rounded text-sm font-bold">COURS</span>
+                                  <span className="text-white font-bold text-lg">Psychologie du trader</span>
+                                  <span className="text-gray-400 text-sm">Intermédiaire</span>
+                                </div>
+                                <span className="text-purple-400 font-bold">32 min</span>
+                              </div>
+                              <div className="text-gray-400 text-sm mb-4">
+                                Maîtrisez vos émotions et développez la mentalité gagnante. Gestion du stress, discipline et contrôle de soi sont les clés du succès.
+                              </div>
+                              <div className="grid grid-cols-3 gap-4 text-sm text-gray-300 mb-3">
+                                <div>🧠 Mindset</div>
+                                <div>😌 Gestion stress</div>
+                                <div>🎯 Discipline</div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-400 text-xs">👥 892 étudiants</span>
+                                <span className="text-gray-400 text-xs">⭐ 4.9/5</span>
+                                <span className="text-gray-400 text-xs">📝 8 modules</span>
+                              </div>
+                            </div>
+
+                            {/* Message de chat */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white">TT</div>
+                                <span className="text-white font-medium text-sm">TheTheTrader</span>
+                                <span className="text-gray-400 text-xs">19:00</span>
+                              </div>
+                              <p className="text-gray-300 text-sm">
+                                📚 N'oubliez pas que la formation est la base de tout ! Commencez par les fondamentaux avant de trader.
+                              </p>
+                            </div>
+                          </>
+                        )}
+
+                        {/* Vue Letsgooo-model - Cours avancés */}
+                        {previewChannel === 'letsgooo-model' && (
+                          <>
+                            {/* Cours 1 - Stratégie avancée */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center gap-3">
+                                  <span className="bg-orange-600 text-white px-3 py-1 rounded text-sm font-bold">PREMIUM</span>
+                                  <span className="text-white font-bold text-lg">Stratégie Letsgooo</span>
+                                  <span className="text-gray-400 text-sm">Expert</span>
+                                </div>
+                                <span className="text-orange-400 font-bold">2h 15min</span>
+                              </div>
+                              <div className="text-gray-400 text-sm mb-4">
+                                La stratégie exclusive TheTheTrader ! Système complet de trading avec backtests, règles précises et gestion du risque optimisée.
+                              </div>
+                              <div className="grid grid-cols-3 gap-4 text-sm text-gray-300 mb-3">
+                                <div>🚀 Win Rate 85%</div>
+                                <div>📈 R:R 1:3</div>
+                                <div>⚡ Signaux rapides</div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-400 text-xs">👥 156 étudiants</span>
+                                <span className="text-gray-400 text-xs">⭐ 5.0/5</span>
+                                <span className="text-gray-400 text-xs">🔒 Accès VIP</span>
+                              </div>
+                            </div>
+
+                            {/* Cours 2 - Backtesting */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center gap-3">
+                                  <span className="bg-green-600 text-white px-3 py-1 rounded text-sm font-bold">LIVE</span>
+                                  <span className="text-white font-bold text-lg">Backtesting avancé</span>
+                                  <span className="text-gray-400 text-sm">Expert</span>
+                                </div>
+                                <span className="text-green-400 font-bold">1h 30min</span>
+                              </div>
+                              <div className="text-gray-400 text-sm mb-4">
+                                Maîtrisez l'art du backtesting ! Testez vos stratégies sur données historiques et optimisez vos performances avec des outils professionnels.
+                              </div>
+                              <div className="grid grid-cols-3 gap-4 text-sm text-gray-300 mb-3">
+                                <div>📊 TradingView</div>
+                                <div>🔍 Analyse data</div>
+                                <div>⚙️ Optimisation</div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-400 text-xs">👥 203 étudiants</span>
+                                <span className="text-gray-400 text-xs">⭐ 4.7/5</span>
+                                <span className="text-gray-400 text-xs">🎥 Session live</span>
+                              </div>
+                            </div>
+
+                            {/* Message de chat */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white">TT</div>
+                                <span className="text-white font-medium text-sm">TheTheTrader</span>
+                                <span className="text-gray-400 text-xs">18:45</span>
+                              </div>
+                              <p className="text-gray-300 text-sm">
+                                🚀 Session live backtesting demain à 20h ! On teste la stratégie Letsgooo sur 2 ans de données.
                               </p>
                             </div>
                           </>
