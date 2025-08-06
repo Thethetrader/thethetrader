@@ -784,7 +784,7 @@ const App = () => {
             {/* Nos Services - Mobile Optimized */}
             <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
               <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-8 sm:mb-12">
-                Nos Services
+                Les Services
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
                 {/* Service 1 */}
