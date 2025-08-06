@@ -1091,6 +1091,96 @@ const App = () => {
                           </>
                         )}
 
+                        {/* Vue Futur */}
+                        {mobileActiveChannel === 'futur' && (
+                          <>
+                            <div className="bg-gray-700 rounded-lg p-3">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="bg-red-600 text-white px-2 py-1 rounded text-xs font-bold">SELL</span>
+                                  <span className="text-white font-bold text-sm">NAS100</span>
+                                  <span className="text-gray-400 text-xs">1H</span>
+                                </div>
+                                <span className="text-green-400 font-bold text-sm">+$890</span>
+                              </div>
+                              <div className="grid grid-cols-2 gap-2 text-xs text-gray-300 mb-2">
+                                <div>Entry: 15800</div>
+                                <div>TP: 15650</div>
+                                <div>SL: 15900</div>
+                                <div>R:R: 1.5</div>
+                              </div>
+                              <div className="text-gray-400 text-xs mb-2">
+                                Signal baissier sur NAS100. Rejet de la résistance majeure.
+                              </div>
+                            </div>
+
+                            <div className="bg-gray-700 rounded-lg p-3">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="bg-green-600 text-white px-2 py-1 rounded text-xs font-bold">BUY</span>
+                                  <span className="text-white font-bold text-sm">SPX500</span>
+                                  <span className="text-gray-400 text-xs">4H</span>
+                                </div>
+                                <span className="text-yellow-400 font-bold text-sm">En cours</span>
+                              </div>
+                              <div className="grid grid-cols-2 gap-2 text-xs text-gray-300 mb-2">
+                                <div>Entry: 4450</div>
+                                <div>TP: 4520</div>
+                                <div>SL: 4400</div>
+                                <div>R:R: 1.4</div>
+                              </div>
+                              <div className="text-gray-400 text-xs mb-2">
+                                Rebond technique sur SPX500.
+                              </div>
+                            </div>
+                          </>
+                        )}
+
+                        {/* Vue Forex */}
+                        {mobileActiveChannel === 'forex' && (
+                          <>
+                            <div className="bg-gray-700 rounded-lg p-3">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="bg-green-600 text-white px-2 py-1 rounded text-xs font-bold">BUY</span>
+                                  <span className="text-white font-bold text-sm">EURUSD</span>
+                                  <span className="text-gray-400 text-xs">1H</span>
+                                </div>
+                                <span className="text-green-400 font-bold text-sm">+$540</span>
+                              </div>
+                              <div className="grid grid-cols-2 gap-2 text-xs text-gray-300 mb-2">
+                                <div>Entry: 1.0850</div>
+                                <div>TP: 1.0920</div>
+                                <div>SL: 1.0800</div>
+                                <div>R:R: 1.4</div>
+                              </div>
+                              <div className="text-gray-400 text-xs mb-2">
+                                Signal haussier EUR/USD. Breakout confirmé.
+                              </div>
+                            </div>
+
+                            <div className="bg-gray-700 rounded-lg p-3">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="bg-red-600 text-white px-2 py-1 rounded text-xs font-bold">SELL</span>
+                                  <span className="text-white font-bold text-sm">GBPJPY</span>
+                                  <span className="text-gray-400 text-xs">30m</span>
+                                </div>
+                                <span className="text-yellow-400 font-bold text-sm">En cours</span>
+                              </div>
+                              <div className="grid grid-cols-2 gap-2 text-xs text-gray-300 mb-2">
+                                <div>Entry: 185.50</div>
+                                <div>TP: 184.80</div>
+                                <div>SL: 186.00</div>
+                                <div>R:R: 1.4</div>
+                              </div>
+                              <div className="text-gray-400 text-xs mb-2">
+                                Signal baissier GBP/JPY.
+                              </div>
+                            </div>
+                          </>
+                        )}
+
                         {/* Vue Fondamentaux */}
                         {mobileActiveChannel === 'fondamentaux' && (
                           <>
@@ -1117,6 +1207,136 @@ const App = () => {
                               </div>
                               <div className="text-gray-300 text-xs mb-2">
                                 Maîtrisez vos émotions et développez un mental gagnant.
+                              </div>
+                            </div>
+                          </>
+                        )}
+
+                        {/* Vue Letsgooo Model */}
+                        {mobileActiveChannel === 'letsgooo-model' && (
+                          <>
+                            <div className="bg-gray-700 rounded-lg p-3">
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="bg-orange-600 text-white px-2 py-1 rounded text-xs font-bold">PREMIUM</span>
+                                <span className="text-white font-bold text-sm">Stratégie Letsgooo</span>
+                              </div>
+                              <div className="text-gray-400 text-xs mb-2">
+                                🚀 Performance: +89% | 📈 Win Rate: 76%
+                              </div>
+                              <div className="text-gray-300 text-xs mb-2">
+                                Formation avancée sur la stratégie exclusive Letsgooo model.
+                              </div>
+                            </div>
+
+                            <div className="bg-gray-700 rounded-lg p-3">
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="bg-red-600 text-white px-2 py-1 rounded text-xs font-bold">LIVE</span>
+                                <span className="text-white font-bold text-sm">Backtesting avancé</span>
+                              </div>
+                              <div className="text-gray-400 text-xs mb-2">
+                                🎯 Résultats: +156% | 📊 Sharpe: 2.4
+                              </div>
+                              <div className="text-gray-300 text-xs mb-2">
+                                Techniques de backtesting et optimisation de stratégies.
+                              </div>
+                            </div>
+                          </>
+                        )}
+
+                        {/* Vue Livestream */}
+                        {mobileActiveChannel === 'livestream' && (
+                          <>
+                            <div className="bg-red-600/20 border border-red-500/30 rounded-lg p-3">
+                              <div className="flex items-center gap-2 mb-2">
+                                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                                <span className="text-red-400 font-bold text-sm">LIVE - Session Trading</span>
+                              </div>
+                              <div className="text-gray-300 text-xs mb-2">
+                                🎥 En direct maintenant | 👥 124 viewers
+                              </div>
+                              <div className="text-gray-400 text-xs">
+                                Analyse des marchés et signaux en temps réel.
+                              </div>
+                            </div>
+
+                            <div className="bg-gray-700 rounded-lg p-3">
+                              <div className="flex items-center gap-2 mb-1">
+                                <div className="w-5 h-5 bg-purple-500 rounded-full flex items-center justify-center text-xs text-white">M</div>
+                                <span className="text-white font-medium text-xs">Member_Pro</span>
+                                <span className="text-gray-400 text-xs">14:23</span>
+                              </div>
+                              <p className="text-gray-300 text-xs">
+                                Excellent setup sur EURUSD ! 🔥
+                              </p>
+                            </div>
+                          </>
+                        )}
+
+                        {/* Vue General Chat */}
+                        {mobileActiveChannel === 'general-chat' && (
+                          <>
+                            <div className="bg-gray-700 rounded-lg p-3">
+                              <div className="flex items-center gap-2 mb-1">
+                                <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-xs text-white">A</div>
+                                <span className="text-white font-medium text-xs">AlexTrader</span>
+                                <span className="text-gray-400 text-xs">15:42</span>
+                              </div>
+                              <p className="text-gray-300 text-xs mb-1">
+                                Salut la team ! Quelqu'un a des infos sur les NFP de demain ? 🤔
+                              </p>
+                              <div className="flex items-center gap-2 text-xs">
+                                <span className="text-gray-400">💬 3</span>
+                                <span className="text-gray-400">👍 8</span>
+                              </div>
+                            </div>
+
+                            <div className="bg-gray-700 rounded-lg p-3">
+                              <div className="flex items-center gap-2 mb-1">
+                                <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white">S</div>
+                                <span className="text-white font-medium text-xs">Sarah_FX</span>
+                                <span className="text-gray-400 text-xs">15:45</span>
+                              </div>
+                              <p className="text-gray-300 text-xs mb-1">
+                                @AlexTrader Prévu à 14h30 demain ! Normalement impact fort sur USD 📈
+                              </p>
+                              <div className="flex items-center gap-2 text-xs">
+                                <span className="text-gray-400">👍 12</span>
+                                <span className="text-gray-400">🙏 4</span>
+                              </div>
+                            </div>
+                          </>
+                        )}
+
+                        {/* Vue Profit Loss */}
+                        {mobileActiveChannel === 'profit-loss' && (
+                          <>
+                            <div className="bg-green-600/20 border border-green-500/30 rounded-lg p-3">
+                              <div className="flex items-center gap-2 mb-2">
+                                <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-xs text-white">J</div>
+                                <span className="text-white font-medium text-xs">JulienPro</span>
+                                <span className="text-green-400 font-bold text-sm">+$2,340</span>
+                              </div>
+                              <div className="text-gray-300 text-xs mb-2">
+                                💰 Trade GBPUSD fermé ! Entry: 1.2650 | Exit: 1.2720
+                              </div>
+                              <div className="flex items-center gap-2 text-xs">
+                                <span className="text-gray-400">🔥 18</span>
+                                <span className="text-gray-400">💎 22</span>
+                              </div>
+                            </div>
+
+                            <div className="bg-red-600/20 border border-red-500/30 rounded-lg p-3">
+                              <div className="flex items-center gap-2 mb-2">
+                                <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-xs text-white">M</div>
+                                <span className="text-white font-medium text-xs">MaxTrading</span>
+                                <span className="text-red-400 font-bold text-sm">-$180</span>
+                              </div>
+                              <div className="text-gray-300 text-xs mb-2">
+                                📉 Stop Loss touché sur BTCUSD. Pas grave, on continue !
+                              </div>
+                              <div className="flex items-center gap-2 text-xs">
+                                <span className="text-gray-400">💪 9</span>
+                                <span className="text-gray-400">🙏 5</span>
                               </div>
                             </div>
                           </>
