@@ -944,8 +944,18 @@ const App = () => {
                           <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">TRADING HUB</h3>
                           <div className="space-y-1">
                             <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📺 Livestream</button>
-                            <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">💬 General-chat</button>
-                            <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">💰 Profit-loss</button>
+                            <button 
+                              className={`w-full text-left px-3 py-2 rounded text-sm ${previewChannel === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
+                              onClick={() => setPreviewChannel('general-chat')}
+                            >
+                              💬 General-chat
+                            </button>
+                            <button 
+                              className={`w-full text-left px-3 py-2 rounded text-sm ${previewChannel === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
+                              onClick={() => setPreviewChannel('profit-loss')}
+                            >
+                              💰 Profit-loss
+                            </button>
                                                             <button 
                                   className={`w-full text-left px-3 py-2 rounded text-sm ${previewChannel === 'calendar' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
                                   onClick={() => setPreviewChannel('calendar')}
@@ -992,6 +1002,8 @@ const App = () => {
                              previewChannel === 'forex' ? '# forex' : 
                              previewChannel === 'fondamentaux' ? '📚 Fondamentaux' : 
                              previewChannel === 'letsgooo-model' ? '🚀 Letsgooo-model' : 
+                             previewChannel === 'general-chat' ? '💬 General-chat' : 
+                             previewChannel === 'profit-loss' ? '💰 Profit-loss' : 
                              previewChannel === 'calendar' ? '📅 Calendrier' : 
                              previewChannel === 'trading-journal' ? '📊 Trading Journal' : '# crypto'}
                           </h2>
@@ -1341,6 +1353,185 @@ const App = () => {
                               <p className="text-gray-300 text-sm">
                                 🚀 Session live backtesting demain à 20h ! On teste la stratégie Letsgooo sur 2 ans de données.
                               </p>
+                            </div>
+                          </>
+                        )}
+
+                        {/* Vue General-chat - Discussions */}
+                        {previewChannel === 'general-chat' && (
+                          <>
+                            {/* Message 1 */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-sm text-white">M</div>
+                                <div>
+                                  <span className="text-white font-medium text-sm">Mike_Trader</span>
+                                  <span className="text-gray-400 text-xs ml-2">Il y a 5 min</span>
+                                </div>
+                              </div>
+                              <p className="text-gray-300 text-sm">
+                                Salut la team ! Quelqu'un a des infos sur l'ouverture de Londres demain ? 🇬🇧
+                              </p>
+                              <div className="flex items-center gap-2 mt-2">
+                                <span className="text-gray-400 text-xs">👍 3</span>
+                                <span className="text-gray-400 text-xs">💬 Répondre</span>
+                              </div>
+                            </div>
+
+                            {/* Message 2 */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-sm text-white">S</div>
+                                <div>
+                                  <span className="text-white font-medium text-sm">Sarah_FX</span>
+                                  <span className="text-gray-400 text-xs ml-2">Il y a 8 min</span>
+                                </div>
+                              </div>
+                              <p className="text-gray-300 text-sm">
+                                Les NFP de vendredi étaient 🔥 ! Qui a pris le trade sur EUR/USD ?
+                              </p>
+                              <div className="flex items-center gap-2 mt-2">
+                                <span className="text-gray-400 text-xs">🚀 5</span>
+                                <span className="text-gray-400 text-xs">💶 2</span>
+                                <span className="text-gray-400 text-xs">💬 Répondre</span>
+                              </div>
+                            </div>
+
+                            {/* Message 3 */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-sm text-white">A</div>
+                                <div>
+                                  <span className="text-white font-medium text-sm">Alex_Crypto</span>
+                                  <span className="text-gray-400 text-xs ml-2">Il y a 12 min</span>
+                                </div>
+                              </div>
+                              <p className="text-gray-300 text-sm">
+                                BTC qui teste les 45k encore... Cette fois c'est la bonne ? 📈
+                              </p>
+                              <div className="flex items-center gap-2 mt-2">
+                                <span className="text-gray-400 text-xs">⚡ 8</span>
+                                <span className="text-gray-400 text-xs">🎯 4</span>
+                                <span className="text-gray-400 text-xs">💬 Répondre</span>
+                              </div>
+                            </div>
+
+                            {/* Message de chat TheTheTrader */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-sm text-white">TT</div>
+                                <div>
+                                  <span className="text-white font-medium text-sm">TheTheTrader</span>
+                                  <span className="text-yellow-400 text-xs ml-2">👑 ADMIN</span>
+                                  <span className="text-gray-400 text-xs ml-2">Il y a 15 min</span>
+                                </div>
+                              </div>
+                              <p className="text-gray-300 text-sm">
+                                💬 N'hésitez pas à partager vos analyses et poser vos questions ! La communauté est là pour s'entraider 🚀
+                              </p>
+                              <div className="flex items-center gap-2 mt-2">
+                                <span className="text-gray-400 text-xs">❤️ 15</span>
+                                <span className="text-gray-400 text-xs">🔥 8</span>
+                                <span className="text-gray-400 text-xs">💬 Répondre</span>
+                              </div>
+                            </div>
+                          </>
+                        )}
+
+                        {/* Vue Profit-loss - Partage de PnL */}
+                        {previewChannel === 'profit-loss' && (
+                          <>
+                            {/* PnL 1 - Gros gain */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-3 mb-3">
+                                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-sm text-white">J</div>
+                                <div>
+                                  <span className="text-white font-medium text-sm">Jordan_Pro</span>
+                                  <span className="text-gray-400 text-xs ml-2">Il y a 2h</span>
+                                </div>
+                              </div>
+                              <div className="bg-green-600/20 border border-green-600/50 rounded-lg p-3 mb-3">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-white font-bold text-lg">EURUSD</span>
+                                  <span className="text-green-400 font-bold text-xl">+$2,450</span>
+                                </div>
+                                <div className="grid grid-cols-2 gap-3 text-sm text-gray-300">
+                                  <div>Entry: 1.0832</div>
+                                  <div>Exit: 1.0891</div>
+                                  <div>Risk: $500</div>
+                                  <div>R:R: 4.9</div>
+                                </div>
+                              </div>
+                              <p className="text-gray-300 text-sm mb-2">
+                                🔥 Excellent trade sur EUR/USD ! Merci TT pour l'analyse, signal parfait ! 🚀
+                              </p>
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-400 text-xs">🔥 12</span>
+                                <span className="text-gray-400 text-xs">💰 8</span>
+                                <span className="text-gray-400 text-xs">🎯 6</span>
+                              </div>
+                            </div>
+
+                            {/* PnL 2 - Trade moyen */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-3 mb-3">
+                                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-sm text-white">L</div>
+                                <div>
+                                  <span className="text-white font-medium text-sm">Lisa_Scalp</span>
+                                  <span className="text-gray-400 text-xs ml-2">Il y a 4h</span>
+                                </div>
+                              </div>
+                              <div className="bg-green-600/20 border border-green-600/50 rounded-lg p-3 mb-3">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-white font-bold text-lg">BTCUSD</span>
+                                  <span className="text-green-400 font-bold text-xl">+$680</span>
+                                </div>
+                                <div className="grid grid-cols-2 gap-3 text-sm text-gray-300">
+                                  <div>Entry: 44,890</div>
+                                  <div>Exit: 45,120</div>
+                                  <div>Risk: $300</div>
+                                  <div>R:R: 2.3</div>
+                                </div>
+                              </div>
+                              <p className="text-gray-300 text-sm mb-2">
+                                ⚡ Scalp rapide sur BTC ! 15 minutes de trade, clean !
+                              </p>
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-400 text-xs">⚡ 7</span>
+                                <span className="text-gray-400 text-xs">💎 4</span>
+                                <span className="text-gray-400 text-xs">🎯 3</span>
+                              </div>
+                            </div>
+
+                            {/* PnL 3 - Perte (pour le réalisme) */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-3 mb-3">
+                                <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-sm text-white">M</div>
+                                <div>
+                                  <span className="text-white font-medium text-sm">Max_Learning</span>
+                                  <span className="text-gray-400 text-xs ml-2">Il y a 6h</span>
+                                </div>
+                              </div>
+                              <div className="bg-red-600/20 border border-red-600/50 rounded-lg p-3 mb-3">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-white font-bold text-lg">GBPJPY</span>
+                                  <span className="text-red-400 font-bold text-xl">-$180</span>
+                                </div>
+                                <div className="grid grid-cols-2 gap-3 text-sm text-gray-300">
+                                  <div>Entry: 189.45</div>
+                                  <div>Exit: 189.09</div>
+                                  <div>Risk: $180</div>
+                                  <div>SL hit</div>
+                                </div>
+                              </div>
+                              <p className="text-gray-300 text-sm mb-2">
+                                💪 SL hit mais respecté ! On continue, le trading c'est ça aussi 📚
+                              </p>
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-400 text-xs">💪 5</span>
+                                <span className="text-gray-400 text-xs">📚 3</span>
+                                <span className="text-gray-400 text-xs">🎯 2</span>
+                              </div>
                             </div>
                           </>
                         )}
