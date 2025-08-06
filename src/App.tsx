@@ -459,7 +459,7 @@ const App = () => {
              ]
      },
     'calendar': {
-      title: '📅 Calendrier',
+      title: '📅 Trading Journal Signaux',
       messages: [
         { 
           id: 1, 
@@ -960,13 +960,13 @@ const App = () => {
                                   className={`w-full text-left px-3 py-2 rounded text-sm ${previewChannel === 'calendar' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
                                   onClick={() => setPreviewChannel('calendar')}
                                 >
-                                  📅 Calendrier
+                                  📅 Trading Journal Signaux
                                 </button>
                                 <button 
                                   className={`w-full text-left px-3 py-2 rounded text-sm ${previewChannel === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
                                   onClick={() => setPreviewChannel('trading-journal')}
                                 >
-                                  📊 Trading Journal
+                                  📊 Trading Journal Perso
                                 </button>
                           </div>
                         </div>
@@ -1004,8 +1004,8 @@ const App = () => {
                              previewChannel === 'letsgooo-model' ? '🚀 Letsgooo-model' : 
                              previewChannel === 'general-chat' ? '💬 General-chat' : 
                              previewChannel === 'profit-loss' ? '💰 Profit-loss' : 
-                             previewChannel === 'calendar' ? '📅 Calendrier' : 
-                             previewChannel === 'trading-journal' ? '📊 Trading Journal' : '# crypto'}
+                             previewChannel === 'calendar' ? '📅 Trading Journal Signaux' : 
+                             previewChannel === 'trading-journal' ? '📊 Trading Journal Perso' : '# crypto'}
                           </h2>
                           <span className="text-green-400 text-sm flex items-center gap-1">
                             🟢 Live
@@ -2041,7 +2041,7 @@ const App = () => {
                           }`}
                           onClick={() => setActiveChannel('calendar')}
                         >
-                          📅 Calendrier
+                          📅 Trading Journal Signaux
                         </div>
                       </div>
 
@@ -2135,7 +2135,7 @@ const App = () => {
                               }`}
                               onClick={() => setActiveChannel('calendar')}
                             >
-                              📅 Calendrier
+                              📅 Trading Journal Signaux
                             </div>
                           </div>
                         </div>
