@@ -1637,13 +1637,84 @@ const App = () => {
                                 </div>
                               </div>
                             </div>
+                            {/* Statistiques Calendrier Économique */}
+                            <div className="bg-gray-800 rounded-lg p-6">
+                              <h3 className="text-xl font-bold text-white mb-6">Statistiques Signaux</h3>
+                              
+                              {/* Impact Total - Grande carte orange */}
+                              <div className="bg-orange-600/20 border border-orange-500/30 rounded-xl p-6 mb-4">
+                                <div className="text-orange-300 text-sm mb-2">Events ce mois</div>
+                                <div className="text-4xl font-bold text-white">47</div>
+                              </div>
+
+                              {/* Precision Rate - Grande carte violette */}
+                              <div className="bg-purple-600/20 border border-purple-500/30 rounded-xl p-6 mb-6">
+                                <div className="text-purple-300 text-sm mb-2">Précision Rate</div>
+                                <div className="text-4xl font-bold text-white">82%</div>
+                              </div>
+
+                              {/* Grid 2x2 - Statistiques détaillées */}
+                              <div className="grid grid-cols-2 gap-4 mb-6">
+                                <div className="bg-gray-700/50 rounded-lg p-4">
+                                  <div className="text-gray-400 text-sm mb-2">Aujourd'hui</div>
+                                  <div className="text-2xl font-bold text-orange-400">3</div>
+                                </div>
+                                <div className="bg-gray-700/50 rounded-lg p-4">
+                                  <div className="text-gray-400 text-sm mb-2">Cette semaine</div>
+                                  <div className="text-2xl font-bold text-white">12</div>
+                                </div>
+                                <div className="bg-gray-700/50 rounded-lg p-4">
+                                  <div className="text-gray-400 text-sm mb-2">Impact Élevé</div>
+                                  <div className="text-2xl font-bold text-red-400">18</div>
+                                </div>
+                                <div className="bg-gray-700/50 rounded-lg p-4">
+                                  <div className="text-gray-400 text-sm mb-2">Impact Moyen</div>
+                                  <div className="text-2xl font-bold text-yellow-400">22</div>
+                                </div>
+                              </div>
+
+                              {/* Breakdown par devise */}
+                              <div>
+                                <h4 className="text-lg font-bold text-white mb-4">Impact par Devise</h4>
+                                <div className="space-y-3">
+                                  <div className="bg-green-600/20 border border-green-500/30 rounded-lg p-4 flex justify-between items-center">
+                                    <div>
+                                      <div className="text-white font-medium">USD</div>
+                                      <div className="text-gray-400 text-sm">15 événements</div>
+                                    </div>
+                                    <div className="text-green-400 text-xl font-bold">+240 pips</div>
+                                  </div>
+                                  <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-4 flex justify-between items-center">
+                                    <div>
+                                      <div className="text-white font-medium">EUR</div>
+                                      <div className="text-gray-400 text-sm">8 événements</div>
+                                    </div>
+                                    <div className="text-blue-400 text-xl font-bold">+85 pips</div>
+                                  </div>
+                                  <div className="bg-red-600/20 border border-red-500/30 rounded-lg p-4 flex justify-between items-center">
+                                    <div>
+                                      <div className="text-white font-medium">GBP</div>
+                                      <div className="text-gray-400 text-sm">6 événements</div>
+                                    </div>
+                                    <div className="text-red-400 text-xl font-bold">-45 pips</div>
+                                  </div>
+                                  <div className="bg-yellow-600/20 border border-yellow-500/30 rounded-lg p-4 flex justify-between items-center">
+                                    <div>
+                                      <div className="text-white font-medium">JPY</div>
+                                      <div className="text-gray-400 text-sm">4 événements</div>
+                                    </div>
+                                    <div className="text-yellow-400 text-xl font-bold">+120 pips</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                             
                             {/* Événements du jour */}
                             <div className="bg-gray-700 rounded-lg p-4">
                               <h4 className="text-white font-medium mb-3">Événements économiques - 4 Déc</h4>
                               <div className="space-y-2">
                                 <div className="flex items-center gap-3 text-sm">
-                                  <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">HIGH</span>
+                                  <span className="bg-red-600 text-white px-2 py-1 rounded text-xs">HIGH</span>
                                   <span className="text-white">14:30</span>
                                   <span className="text-gray-300">NFP USD</span>
                                   <span className="text-green-400">+250K</span>
@@ -1653,6 +1724,12 @@ const App = () => {
                                   <span className="text-white">16:00</span>
                                   <span className="text-gray-300">ISM Services</span>
                                   <span className="text-yellow-400">52.1</span>
+                                </div>
+                                <div className="flex items-center gap-3 text-sm">
+                                  <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">LOW</span>
+                                  <span className="text-white">18:00</span>
+                                  <span className="text-gray-300">Fed Speech</span>
+                                  <span className="text-blue-400">Hawkish</span>
                                 </div>
                               </div>
                             </div>
