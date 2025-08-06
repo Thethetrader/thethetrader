@@ -1641,15 +1641,15 @@ const App = () => {
                             <div className="bg-gray-800 rounded-lg p-6">
                               <h3 className="text-xl font-bold text-white mb-6">Statistiques Signaux</h3>
                               
-                              {/* P&L Total - Grande carte orange */}
-                              <div className="bg-orange-600/20 border border-orange-500/30 rounded-xl p-6 mb-4">
-                                <div className="text-orange-300 text-sm mb-2">P&L Total</div>
-                                <div className="text-4xl font-bold text-white">+1,850 pips</div>
+                              {/* P&L Total - Grande carte verte comme Trading Journal */}
+                              <div className="bg-green-600/20 border border-green-500/30 rounded-xl p-6 mb-4">
+                                <div className="text-green-300 text-sm mb-2">P&L Total</div>
+                                <div className="text-4xl font-bold text-white">+$2,485</div>
                               </div>
 
-                              {/* Win Rate - Grande carte violette */}
-                              <div className="bg-purple-600/20 border border-purple-500/30 rounded-xl p-6">
-                                <div className="text-purple-300 text-sm mb-2">Win Rate</div>
+                              {/* Win Rate - Grande carte bleue comme Trading Journal */}
+                              <div className="bg-blue-600/20 border border-blue-500/30 rounded-xl p-6">
+                                <div className="text-blue-300 text-sm mb-2">Win Rate</div>
                                 <div className="text-4xl font-bold text-white">89%</div>
                               </div>
                             </div>
