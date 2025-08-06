@@ -1624,16 +1624,12 @@ const App = () => {
                               {/* Légende */}
                               <div className="flex items-center justify-center gap-6 text-sm mt-6">
                                 <div className="flex items-center gap-2">
-                                  <div className="w-4 h-4 bg-red-600 rounded"></div>
-                                  <span className="text-white">Impact Élevé</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <div className="w-4 h-4 bg-yellow-600 rounded"></div>
-                                  <span className="text-white">Impact Moyen</span>
-                                </div>
-                                <div className="flex items-center gap-2">
                                   <div className="w-4 h-4 bg-green-600 rounded"></div>
-                                  <span className="text-white">Impact Faible</span>
+                                  <span className="text-white">WIN</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-4 h-4 bg-red-600 rounded"></div>
+                                  <span className="text-white">LOSS</span>
                                 </div>
                               </div>
                             </div>
