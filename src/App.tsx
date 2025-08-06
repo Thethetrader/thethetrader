@@ -876,8 +876,112 @@ const App = () => {
               </div>
             </div>
 
-            {/* Interface Mobile après Connexion */}
-            <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
+            {/* Interface Mobile après Connexion - Mobile uniquement */}
+            <div className="block md:hidden max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-8 sm:mb-12">
+                Aperçu de la plateforme
+              </h2>
+              
+              {/* Version Mobile */}
+              <div className="bg-gray-800/50 rounded-xl border border-gray-600/50 backdrop-blur-sm p-4">
+                <div className="bg-gray-900 rounded-lg overflow-hidden" style={{height: '500px'}}>
+                  {/* Header mobile */}
+                  <div className="bg-gray-800 p-3 border-b border-gray-700">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-white font-bold">TheTheTrader</h3>
+                      <span className="text-green-400 text-sm">🟢 Live</span>
+                    </div>
+                  </div>
+                  
+                  {/* Tabs mobiles */}
+                  <div className="bg-gray-800 border-b border-gray-700">
+                    <div className="flex overflow-x-auto p-2 gap-2">
+                      <button className="bg-blue-600 text-white px-3 py-1 rounded text-sm whitespace-nowrap">🟠 Crypto</button>
+                      <button className="text-gray-400 px-3 py-1 rounded text-sm whitespace-nowrap">📊 Futur</button>
+                      <button className="text-gray-400 px-3 py-1 rounded text-sm whitespace-nowrap">💱 Forex</button>
+                      <button className="text-gray-400 px-3 py-1 rounded text-sm whitespace-nowrap">📅 Journal</button>
+                    </div>
+                  </div>
+                  
+                  {/* Contenu mobile - Signaux */}
+                  <div className="p-3 space-y-3 overflow-y-auto" style={{height: '380px'}}>
+                    {/* Signal mobile BTC */}
+                    <div className="bg-gray-700 rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="bg-green-600 text-white px-2 py-1 rounded text-xs font-bold">BUY</span>
+                          <span className="text-white font-bold">BTCUSD</span>
+                        </div>
+                        <span className="text-green-400 font-bold text-sm">+$1,250</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-xs text-gray-300 mb-2">
+                        <div>Entry: 45000</div>
+                        <div>TP: 46000</div>
+                        <div>SL: 44000</div>
+                        <div>R:R: 2.0</div>
+                      </div>
+                      <div className="text-gray-400 text-xs mb-2">
+                        Signal crypto fort avec breakout confirmé 📈
+                      </div>
+                      <div className="flex items-center gap-2 text-xs">
+                        <span className="text-gray-400">⚡ 24</span>
+                        <span className="text-gray-400">🔥 18</span>
+                        <span className="text-gray-400">💎 31</span>
+                      </div>
+                    </div>
+                    
+                    {/* Signal mobile ETH */}
+                    <div className="bg-gray-700 rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="bg-red-600 text-white px-2 py-1 rounded text-xs font-bold">SELL</span>
+                          <span className="text-white font-bold">ETHUSD</span>
+                        </div>
+                        <span className="text-yellow-400 font-bold text-sm">En cours</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-xs text-gray-300 mb-2">
+                        <div>Entry: 2800</div>
+                        <div>TP: 2750</div>
+                        <div>SL: 2850</div>
+                        <div>R:R: 1.75</div>
+                      </div>
+                      <div className="text-gray-400 text-xs mb-2">
+                        Signal de correction sur ETH 📉
+                      </div>
+                      <div className="flex items-center gap-2 text-xs">
+                        <span className="text-gray-400">⚡ 16</span>
+                        <span className="text-gray-400">📉 12</span>
+                        <span className="text-gray-400">💎 8</span>
+                      </div>
+                    </div>
+                    
+                    {/* Message de chat mobile */}
+                    <div className="bg-gray-700 rounded-lg p-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white">TT</div>
+                        <span className="text-white font-medium text-sm">TheTheTrader</span>
+                        <span className="text-gray-400 text-xs">22:45</span>
+                      </div>
+                      <p className="text-gray-300 text-xs">
+                        📈 Excellente session ! BTC breakout confirmé 🚀
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Footer mobile avec stats */}
+                  <div className="bg-gray-800 border-t border-gray-700 p-3">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-gray-400">Win Rate: <span className="text-blue-400">75%</span></span>
+                      <span className="text-gray-400">Signaux: <span className="text-yellow-400">3</span></span>
+                      <span className="text-gray-400">P&L: <span className="text-green-400">+$2,480</span></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Interface Desktop - Desktop uniquement */}
+            <div className="hidden md:block max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
               <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-8 sm:mb-12">
                 Aperçu de la plateforme
               </h2>
