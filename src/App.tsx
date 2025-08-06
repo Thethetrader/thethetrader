@@ -19,6 +19,8 @@ const App = () => {
   const [password, setPassword] = useState('');
   const [activeChannel, setActiveChannel] = useState('crypto');
   const [previewChannel, setPreviewChannel] = useState('crypto');
+  const [mobileActiveChannel, setMobileActiveChannel] = useState(null);
+  const [showMobileChannel, setShowMobileChannel] = useState(false);
   
   // Données des signaux pour chaque salon mobile (identiques à l'app)
   const [mobileSignalsData, setMobileSignalsData] = useState({
@@ -884,33 +886,66 @@ const App = () => {
               
               {/* Version Mobile - Liste des salons */}
               <div className="bg-gray-800/50 rounded-xl border border-gray-600/50 backdrop-blur-sm p-4">
-                <div className="bg-gray-900 rounded-lg overflow-hidden" style={{height: '500px'}}>
+                <div className="bg-gray-900 rounded-lg overflow-hidden relative" style={{height: '500px'}}>
                   {/* Header mobile avec profil */}
                   <div className="bg-slate-700 p-3 border-b border-gray-600">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
+                        {showMobileChannel && (
+                          <button 
+                            onClick={() => setShowMobileChannel(false)}
+                            className="text-gray-400 hover:text-white"
+                          >
+                            ←
+                          </button>
+                        )}
                         <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">TT</div>
-                        <span className="text-white font-medium">TheTheTrader</span>
+                        <span className="text-white font-medium">
+                          {showMobileChannel ? (
+                            mobileActiveChannel === 'fondamentaux' ? '📚 Fondamentaux' :
+                            mobileActiveChannel === 'letsgooo-model' ? '🚀 Letsgooo model' :
+                            mobileActiveChannel === 'crypto' ? '🪙 Crypto' :
+                            mobileActiveChannel === 'futur' ? '📈 Futur' :
+                            mobileActiveChannel === 'forex' ? '💱 Forex' :
+                            mobileActiveChannel === 'livestream' ? '📺 Livestream' :
+                            mobileActiveChannel === 'general-chat' ? '💬 General-chat' :
+                            mobileActiveChannel === 'profit-loss' ? '💰 Profit-loss' :
+                            mobileActiveChannel === 'calendar' ? '📅 Journal Signaux' :
+                            mobileActiveChannel === 'trading-journal' ? '📊 Journal Perso' : 'TheTheTrader'
+                          ) : 'TheTheTrader'}
+                        </span>
                       </div>
                       <div className="text-gray-400">🏠</div>
                     </div>
                   </div>
                   
-                  {/* Liste des salons */}
-                  <div className="p-4 space-y-4 overflow-y-auto" style={{height: '440px'}}>
+                  {/* Liste des salons - Slide out vers la gauche */}
+                  <div className={`absolute inset-0 top-12 p-4 space-y-4 overflow-y-auto bg-gray-900 transition-transform duration-300 ${showMobileChannel ? '-translate-x-full' : 'translate-x-0'}`} style={{height: '440px'}}>
                     
                     {/* Section Education */}
                     <div>
                       <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3 font-medium">EDUCATION</h3>
                       <div className="space-y-2">
-                        <div className="bg-slate-700 rounded-lg p-3 flex items-center gap-3">
+                        <div 
+                          className="bg-slate-700 rounded-lg p-3 flex items-center gap-3 cursor-pointer hover:bg-slate-600 transition-colors"
+                          onClick={() => {
+                            setMobileActiveChannel('fondamentaux');
+                            setShowMobileChannel(true);
+                          }}
+                        >
                           <div className="text-xl">📚</div>
                           <div>
                             <div className="text-white font-medium text-sm">Fondamentaux</div>
                             <div className="text-gray-400 text-xs">Contenu éducatif</div>
                           </div>
                         </div>
-                        <div className="bg-slate-700 rounded-lg p-3 flex items-center gap-3">
+                        <div 
+                          className="bg-slate-700 rounded-lg p-3 flex items-center gap-3 cursor-pointer hover:bg-slate-600 transition-colors"
+                          onClick={() => {
+                            setMobileActiveChannel('letsgooo-model');
+                            setShowMobileChannel(true);
+                          }}
+                        >
                           <div className="text-xl">🚀</div>
                           <div>
                             <div className="text-white font-medium text-sm">Letsgooo model</div>
@@ -997,6 +1032,112 @@ const App = () => {
                       </div>
                     </div>
 
+                  </div>
+                  
+                  {/* Vue Canal - Slide in depuis la droite */}
+                  <div className={`absolute inset-0 top-12 bg-gray-900 transition-transform duration-300 ${showMobileChannel ? 'translate-x-0' : 'translate-x-full'}`}>
+                    <div className="h-full flex flex-col">
+                      {/* Contenu du canal */}
+                      <div className="flex-1 p-3 space-y-3 overflow-y-auto">
+                        
+                        {/* Vue Crypto */}
+                        {mobileActiveChannel === 'crypto' && (
+                          <>
+                            {/* Signal BTC */}
+                            <div className="bg-gray-700 rounded-lg p-3">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="bg-green-600 text-white px-2 py-1 rounded text-xs font-bold">BUY</span>
+                                  <span className="text-white font-bold text-sm">BTCUSD</span>
+                                  <span className="text-gray-400 text-xs">15m</span>
+                                </div>
+                                <span className="text-green-400 font-bold text-sm">+$1,250</span>
+                              </div>
+                              <div className="grid grid-cols-2 gap-2 text-xs text-gray-300 mb-2">
+                                <div>Entry: 45000</div>
+                                <div>TP: 46000</div>
+                                <div>SL: 44000</div>
+                                <div>R:R: 2.0</div>
+                              </div>
+                              <div className="text-gray-400 text-xs mb-2">
+                                Signal crypto fort avec breakout confirmé.
+                              </div>
+                              <div className="flex items-center gap-2 text-xs">
+                                <span className="text-gray-400">⚡ 24</span>
+                                <span className="text-gray-400">🔥 18</span>
+                              </div>
+                            </div>
+
+                            {/* Signal ETH */}
+                            <div className="bg-gray-700 rounded-lg p-3">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="bg-red-600 text-white px-2 py-1 rounded text-xs font-bold">SELL</span>
+                                  <span className="text-white font-bold text-sm">ETHUSD</span>
+                                  <span className="text-gray-400 text-xs">5m</span>
+                                </div>
+                                <span className="text-yellow-400 font-bold text-sm">En cours</span>
+                              </div>
+                              <div className="grid grid-cols-2 gap-2 text-xs text-gray-300 mb-2">
+                                <div>Entry: 2800</div>
+                                <div>TP: 2750</div>
+                                <div>SL: 2850</div>
+                                <div>R:R: 1.75</div>
+                              </div>
+                              <div className="text-gray-400 text-xs mb-2">
+                                Signal de correction sur ETH.
+                              </div>
+                            </div>
+                          </>
+                        )}
+
+                        {/* Vue Fondamentaux */}
+                        {mobileActiveChannel === 'fondamentaux' && (
+                          <>
+                            <div className="bg-gray-700 rounded-lg p-3">
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="bg-blue-600 text-white px-2 py-1 rounded text-xs font-bold">COURS</span>
+                                <span className="text-white font-bold text-sm">Les bases du trading</span>
+                              </div>
+                              <div className="text-gray-400 text-xs mb-2">
+                                📚 Durée: 2h30 | 🎯 Niveau: Débutant
+                              </div>
+                              <div className="text-gray-300 text-xs mb-2">
+                                Apprenez les fondamentaux du trading et l'analyse technique.
+                              </div>
+                            </div>
+
+                            <div className="bg-gray-700 rounded-lg p-3">
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="bg-purple-600 text-white px-2 py-1 rounded text-xs font-bold">COURS</span>
+                                <span className="text-white font-bold text-sm">Psychologie du trader</span>
+                              </div>
+                              <div className="text-gray-400 text-xs mb-2">
+                                📚 Durée: 1h45 | 🎯 Niveau: Intermédiaire
+                              </div>
+                              <div className="text-gray-300 text-xs mb-2">
+                                Maîtrisez vos émotions et développez un mental gagnant.
+                              </div>
+                            </div>
+                          </>
+                        )}
+
+                      </div>
+                      
+                      {/* Zone de saisie en bas */}
+                      <div className="border-t border-gray-700 p-3">
+                        <div className="flex items-center gap-2">
+                          <input 
+                            type="text" 
+                            placeholder="Tapez votre message..."
+                            className="flex-1 bg-gray-700 text-white text-xs px-3 py-2 rounded border-none outline-none"
+                          />
+                          <button className="bg-blue-600 text-white px-3 py-2 rounded text-xs">
+                            Envoyer
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
