@@ -1539,42 +1539,102 @@ const App = () => {
                         {/* Vue Calendrier - Signaux économiques */}
                         {previewChannel === 'calendar' && (
                           <div className="space-y-4">
-                            <div className="bg-gray-700 rounded-lg p-4">
-                              <h3 className="text-white font-semibold mb-4">Décembre 2024</h3>
-                              <div className="grid grid-cols-7 gap-2">
-                                {/* Headers */}
-                                <div className="text-center text-gray-400 text-sm py-2">L</div>
-                                <div className="text-center text-gray-400 text-sm py-2">M</div>
-                                <div className="text-center text-gray-400 text-sm py-2">M</div>
-                                <div className="text-center text-gray-400 text-sm py-2">J</div>
-                                <div className="text-center text-gray-400 text-sm py-2">V</div>
-                                <div className="text-center text-gray-400 text-sm py-2">S</div>
-                                <div className="text-center text-gray-400 text-sm py-2">D</div>
-                                
-                                {/* Jours */}
-                                <div className="text-center text-gray-500 text-sm py-2">25</div>
-                                <div className="text-center text-gray-500 text-sm py-2">26</div>
-                                <div className="text-center text-gray-500 text-sm py-2">27</div>
-                                <div className="text-center text-gray-500 text-sm py-2">28</div>
-                                <div className="text-center text-gray-500 text-sm py-2">29</div>
-                                <div className="text-center text-gray-500 text-sm py-2">30</div>
-                                <div className="text-center text-white text-sm py-2">1</div>
-                                
-                                <div className="text-center text-white text-sm py-2">2</div>
-                                <div className="text-center text-white text-sm py-2">3</div>
-                                <div className="text-center text-white text-sm py-2 bg-green-600 rounded">4</div>
-                                <div className="text-center text-white text-sm py-2">5</div>
-                                <div className="text-center text-white text-sm py-2 bg-red-600 rounded">6</div>
-                                <div className="text-center text-white text-sm py-2">7</div>
-                                <div className="text-center text-white text-sm py-2">8</div>
-                                
-                                <div className="text-center text-white text-sm py-2">9</div>
-                                <div className="text-center text-white text-sm py-2">10</div>
-                                <div className="text-center text-white text-sm py-2 bg-yellow-600 rounded">11</div>
-                                <div className="text-center text-white text-sm py-2">12</div>
-                                <div className="text-center text-white text-sm py-2">13</div>
-                                <div className="text-center text-white text-sm py-2">14</div>
-                                <div className="text-center text-white text-sm py-2">15</div>
+                            {/* Calendrier économique - Style original */}
+                            <div className="bg-gray-800 rounded-lg p-6 border border-gray-600">
+                              <div className="flex items-center justify-between mb-6">
+                                <h2 className="text-xl font-bold text-white">Calendrier Économique - Décembre 2024</h2>
+                              </div>
+
+                              {/* Jours de la semaine */}
+                              <div className="grid grid-cols-7 gap-1 md:gap-2 mb-4">
+                                {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
+                                  <div key={day} className="text-center text-gray-400 font-semibold py-3 text-sm uppercase tracking-wide">
+                                    {day.substring(0, 3)}
+                                  </div>
+                                ))}
+                              </div>
+
+                              {/* Grille du calendrier */}
+                              <div className="grid grid-cols-7 gap-1 md:gap-2">
+                                {(() => {
+                                  const economicDays = [
+                                    { date: 1, hasEvent: false },
+                                    { date: 2, hasEvent: false },
+                                    { date: 3, hasEvent: true, impact: 'high' },
+                                    { date: 4, hasEvent: true, impact: 'high' },
+                                    { date: 5, hasEvent: false },
+                                    { date: 6, hasEvent: true, impact: 'medium' },
+                                    { date: 7, hasEvent: false },
+                                    { date: 8, hasEvent: false },
+                                    { date: 9, hasEvent: false },
+                                    { date: 10, hasEvent: true, impact: 'low' },
+                                    { date: 11, hasEvent: true, impact: 'medium' },
+                                    { date: 12, hasEvent: false },
+                                    { date: 13, hasEvent: true, impact: 'high' },
+                                    { date: 14, hasEvent: false },
+                                    { date: 15, hasEvent: false },
+                                    { date: 16, hasEvent: false },
+                                    { date: 17, hasEvent: true, impact: 'medium' },
+                                    { date: 18, hasEvent: true, impact: 'high' },
+                                    { date: 19, hasEvent: false },
+                                    { date: 20, hasEvent: true, impact: 'low' },
+                                    { date: 21, hasEvent: false },
+                                    { date: 22, hasEvent: false },
+                                    { date: 23, hasEvent: false },
+                                    { date: 24, hasEvent: false },
+                                    { date: 25, hasEvent: false },
+                                    { date: 26, hasEvent: false },
+                                    { date: 27, hasEvent: true, impact: 'medium' },
+                                    { date: 28, hasEvent: false },
+                                    { date: 29, hasEvent: false },
+                                    { date: 30, hasEvent: false },
+                                    { date: 31, hasEvent: false }
+                                  ];
+
+                                  const getDayStyle = (day: { date: number; hasEvent: boolean; impact?: string }) => {
+                                    const baseStyle = "h-12 rounded flex items-center justify-center text-white font-semibold text-sm cursor-pointer hover:opacity-80 transition-opacity";
+                                    
+                                    if (!day.hasEvent) {
+                                      return `${baseStyle} bg-gray-700`;
+                                    }
+
+                                    switch (day.impact) {
+                                      case 'high':
+                                        return `${baseStyle} bg-red-600`;
+                                      case 'medium':
+                                        return `${baseStyle} bg-yellow-600 text-black`;
+                                      case 'low':
+                                        return `${baseStyle} bg-green-600`;
+                                      default:
+                                        return `${baseStyle} bg-gray-700`;
+                                    }
+                                  };
+
+                                  return economicDays.map((day) => (
+                                    <div
+                                      key={day.date}
+                                      className={getDayStyle(day)}
+                                    >
+                                      {day.date}
+                                    </div>
+                                  ));
+                                })()}
+                              </div>
+
+                              {/* Légende */}
+                              <div className="flex items-center justify-center gap-6 text-sm mt-6">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-4 h-4 bg-red-600 rounded"></div>
+                                  <span className="text-white">Impact Élevé</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-4 h-4 bg-yellow-600 rounded"></div>
+                                  <span className="text-white">Impact Moyen</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-4 h-4 bg-green-600 rounded"></div>
+                                  <span className="text-white">Impact Faible</span>
+                                </div>
                               </div>
                             </div>
                             
@@ -1602,42 +1662,98 @@ const App = () => {
                         {/* Vue Trading Journal */}
                         {previewChannel === 'trading-journal' && (
                           <div className="space-y-4">
-                            <div className="bg-gray-700 rounded-lg p-4">
-                              <h3 className="text-white font-semibold mb-4">Trading Journal - Décembre 2024</h3>
-                              <div className="grid grid-cols-7 gap-2">
-                                {/* Headers */}
-                                <div className="text-center text-gray-400 text-sm py-2">L</div>
-                                <div className="text-center text-gray-400 text-sm py-2">M</div>
-                                <div className="text-center text-gray-400 text-sm py-2">M</div>
-                                <div className="text-center text-gray-400 text-sm py-2">J</div>
-                                <div className="text-center text-gray-400 text-sm py-2">V</div>
-                                <div className="text-center text-gray-400 text-sm py-2">S</div>
-                                <div className="text-center text-gray-400 text-sm py-2">D</div>
-                                
-                                {/* Jours avec trades */}
-                                <div className="text-center text-gray-500 text-sm py-2">25</div>
-                                <div className="text-center text-gray-500 text-sm py-2">26</div>
-                                <div className="text-center text-gray-500 text-sm py-2">27</div>
-                                <div className="text-center text-gray-500 text-sm py-2">28</div>
-                                <div className="text-center text-gray-500 text-sm py-2">29</div>
-                                <div className="text-center text-gray-500 text-sm py-2">30</div>
-                                <div className="text-center text-white text-sm py-2">1</div>
-                                
-                                <div className="text-center text-white text-sm py-2 bg-green-600 rounded">2</div>
-                                <div className="text-center text-white text-sm py-2">3</div>
-                                <div className="text-center text-white text-sm py-2 bg-red-600 rounded">4</div>
-                                <div className="text-center text-white text-sm py-2">5</div>
-                                <div className="text-center text-white text-sm py-2 bg-blue-600 rounded">6</div>
-                                <div className="text-center text-white text-sm py-2">7</div>
-                                <div className="text-center text-white text-sm py-2">8</div>
-                                
-                                <div className="text-center text-white text-sm py-2">9</div>
-                                <div className="text-center text-white text-sm py-2 bg-green-600 rounded">10</div>
-                                <div className="text-center text-white text-sm py-2">11</div>
-                                <div className="text-center text-white text-sm py-2">12</div>
-                                <div className="text-center text-white text-sm py-2">13</div>
-                                <div className="text-center text-white text-sm py-2">14</div>
-                                <div className="text-center text-white text-sm py-2">15</div>
+                            {/* Calendrier Trading Journal - Code original */}
+                            <div className="bg-gray-800 rounded-lg p-6 border border-gray-600">
+                              <div className="flex items-center justify-between mb-6">
+                                <h2 className="text-xl font-bold text-white">Trading Journal - Décembre 2024</h2>
+                              </div>
+
+                              {/* Jours de la semaine */}
+                              <div className="grid grid-cols-7 gap-1 md:gap-2 mb-4">
+                                {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
+                                  <div key={day} className="text-center text-gray-400 font-semibold py-3 text-sm uppercase tracking-wide">
+                                    {day.substring(0, 3)}
+                                  </div>
+                                ))}
+                              </div>
+
+                              {/* Grille du calendrier */}
+                              <div className="grid grid-cols-7 gap-1 md:gap-2">
+                                {(() => {
+                                  const calendarDays = [
+                                    { date: 1, status: 'win' },
+                                    { date: 2, status: 'win' },
+                                    { date: 3, status: 'loss' },
+                                    { date: 4, status: 'win' },
+                                    { date: 5, status: 'be' },
+                                    { date: 6, status: 'win' },
+                                    { date: 7, status: 'win' },
+                                    { date: 8, status: 'win' },
+                                    { date: 9, status: 'loss' },
+                                    { date: 10, status: 'win' },
+                                    { date: 11, status: 'win' },
+                                    { date: 12, status: 'be' },
+                                    { date: 13, status: 'win' },
+                                    { date: 14, status: 'win' },
+                                    { date: 15, status: 'win' },
+                                    { date: 16, status: 'loss' },
+                                    { date: 17, status: 'win' },
+                                    { date: 18, status: 'win' },
+                                    { date: 19, status: 'win' },
+                                    { date: 20, status: 'be' },
+                                    { date: 21, status: 'win' },
+                                    { date: 22, status: 'win' },
+                                    { date: 23, status: 'loss' },
+                                    { date: 24, status: 'win' },
+                                    { date: 25, status: 'win' },
+                                    { date: 26, status: 'win' },
+                                    { date: 27, status: 'win' },
+                                    { date: 28, status: 'be' },
+                                    { date: 29, status: 'win' },
+                                    { date: 30, status: 'win' },
+                                    { date: 31, status: 'win' }
+                                  ];
+
+                                  const getDayStyle = (day: { date: number; status: string }) => {
+                                    const baseStyle = "h-12 rounded flex items-center justify-center text-white font-semibold text-sm cursor-pointer hover:opacity-80 transition-opacity";
+                                    
+                                    switch (day.status) {
+                                      case 'win':
+                                        return `${baseStyle} bg-green-500`;
+                                      case 'be':
+                                        return `${baseStyle} bg-yellow-500 text-black`;
+                                      case 'loss':
+                                        return `${baseStyle} bg-red-500`;
+                                      default:
+                                        return `${baseStyle} bg-gray-700`;
+                                    }
+                                  };
+
+                                  return calendarDays.map((day) => (
+                                    <div
+                                      key={day.date}
+                                      className={getDayStyle(day)}
+                                    >
+                                      {day.date}
+                                    </div>
+                                  ));
+                                })()}
+                              </div>
+
+                              {/* Légende */}
+                              <div className="flex items-center justify-center gap-6 text-sm mt-6">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-4 h-4 bg-green-500 rounded"></div>
+                                  <span className="text-white">Win</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-4 h-4 bg-yellow-500 rounded"></div>
+                                  <span className="text-white">BE</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-4 h-4 bg-red-500 rounded"></div>
+                                  <span className="text-white">Loss</span>
+                                </div>
                               </div>
                             </div>
                             
@@ -1660,67 +1776,21 @@ const App = () => {
                               </div>
                             </div>
                             
-                            {/* Statistiques Trading Journal */}
+                            {/* Statistiques Trading Journal - Code original */}
                             <div className="bg-gray-700 rounded-lg p-4">
-                              <h4 className="text-white font-medium mb-4">Statistiques - Décembre 2024</h4>
-                              <div className="grid grid-cols-2 gap-4">
-                                {/* Win Rate */}
-                                <div className="bg-gray-600 rounded-lg p-3">
-                                  <div className="text-center">
-                                    <div className="text-green-400 text-2xl font-bold mb-1">78%</div>
-                                    <div className="text-gray-300 text-sm">Win Rate</div>
-                                    <div className="text-gray-400 text-xs mt-1">14/18 trades</div>
-                                  </div>
+                              <h4 className="text-sm font-medium mb-3">Statistiques</h4>
+                              <div className="space-y-2">
+                                <div className="flex justify-between text-sm">
+                                  <span className="text-gray-400">Win Rate:</span>
+                                  <span className="text-blue-400">75%</span>
                                 </div>
-                                
-                                {/* P&L Total */}
-                                <div className="bg-gray-600 rounded-lg p-3">
-                                  <div className="text-center">
-                                    <div className="text-green-400 text-2xl font-bold mb-1">+$2,840</div>
-                                    <div className="text-gray-300 text-sm">P&L Total</div>
-                                    <div className="text-gray-400 text-xs mt-1">Ce mois</div>
-                                  </div>
+                                <div className="flex justify-between text-sm">
+                                  <span className="text-gray-400">Signaux actifs:</span>
+                                  <span className="text-yellow-400">3</span>
                                 </div>
-                                
-                                {/* R:R Moyen */}
-                                <div className="bg-gray-600 rounded-lg p-3">
-                                  <div className="text-center">
-                                    <div className="text-blue-400 text-2xl font-bold mb-1">2.3</div>
-                                    <div className="text-gray-300 text-sm">R:R Moyen</div>
-                                    <div className="text-gray-400 text-xs mt-1">Risk/Reward</div>
-                                  </div>
-                                </div>
-                                
-                                {/* Meilleur Trade */}
-                                <div className="bg-gray-600 rounded-lg p-3">
-                                  <div className="text-center">
-                                    <div className="text-yellow-400 text-2xl font-bold mb-1">+$890</div>
-                                    <div className="text-gray-300 text-sm">Best Trade</div>
-                                    <div className="text-gray-400 text-xs mt-1">GBPUSD</div>
-                                  </div>
-                                </div>
-                              </div>
-                              
-                              {/* Graphique simple */}
-                              <div className="mt-4">
-                                <div className="text-gray-300 text-sm mb-2">Performance 7 derniers jours</div>
-                                <div className="flex items-end gap-1 h-16">
-                                  <div className="bg-green-500 rounded-t w-4 h-8"></div>
-                                  <div className="bg-red-500 rounded-t w-4 h-4"></div>
-                                  <div className="bg-green-500 rounded-t w-4 h-12"></div>
-                                  <div className="bg-green-500 rounded-t w-4 h-10"></div>
-                                  <div className="bg-blue-500 rounded-t w-4 h-6"></div>
-                                  <div className="bg-green-500 rounded-t w-4 h-14"></div>
-                                  <div className="bg-green-500 rounded-t w-4 h-16"></div>
-                                </div>
-                                <div className="flex justify-between text-xs text-gray-400 mt-1">
-                                  <span>Lun</span>
-                                  <span>Mar</span>
-                                  <span>Mer</span>
-                                  <span>Jeu</span>
-                                  <span>Ven</span>
-                                  <span>Sam</span>
-                                  <span>Dim</span>
+                                <div className="flex justify-between text-sm">
+                                  <span className="text-gray-400">P&L Total:</span>
+                                  <span className="text-green-400">+$2,480</span>
                                 </div>
                               </div>
                             </div>
