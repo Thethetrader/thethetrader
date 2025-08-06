@@ -1659,6 +1659,71 @@ const App = () => {
                                 </div>
                               </div>
                             </div>
+                            
+                            {/* Statistiques Trading Journal */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <h4 className="text-white font-medium mb-4">Statistiques - Décembre 2024</h4>
+                              <div className="grid grid-cols-2 gap-4">
+                                {/* Win Rate */}
+                                <div className="bg-gray-600 rounded-lg p-3">
+                                  <div className="text-center">
+                                    <div className="text-green-400 text-2xl font-bold mb-1">78%</div>
+                                    <div className="text-gray-300 text-sm">Win Rate</div>
+                                    <div className="text-gray-400 text-xs mt-1">14/18 trades</div>
+                                  </div>
+                                </div>
+                                
+                                {/* P&L Total */}
+                                <div className="bg-gray-600 rounded-lg p-3">
+                                  <div className="text-center">
+                                    <div className="text-green-400 text-2xl font-bold mb-1">+$2,840</div>
+                                    <div className="text-gray-300 text-sm">P&L Total</div>
+                                    <div className="text-gray-400 text-xs mt-1">Ce mois</div>
+                                  </div>
+                                </div>
+                                
+                                {/* R:R Moyen */}
+                                <div className="bg-gray-600 rounded-lg p-3">
+                                  <div className="text-center">
+                                    <div className="text-blue-400 text-2xl font-bold mb-1">2.3</div>
+                                    <div className="text-gray-300 text-sm">R:R Moyen</div>
+                                    <div className="text-gray-400 text-xs mt-1">Risk/Reward</div>
+                                  </div>
+                                </div>
+                                
+                                {/* Meilleur Trade */}
+                                <div className="bg-gray-600 rounded-lg p-3">
+                                  <div className="text-center">
+                                    <div className="text-yellow-400 text-2xl font-bold mb-1">+$890</div>
+                                    <div className="text-gray-300 text-sm">Best Trade</div>
+                                    <div className="text-gray-400 text-xs mt-1">GBPUSD</div>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              {/* Graphique simple */}
+                              <div className="mt-4">
+                                <div className="text-gray-300 text-sm mb-2">Performance 7 derniers jours</div>
+                                <div className="flex items-end gap-1 h-16">
+                                  <div className="bg-green-500 rounded-t w-4 h-8"></div>
+                                  <div className="bg-red-500 rounded-t w-4 h-4"></div>
+                                  <div className="bg-green-500 rounded-t w-4 h-12"></div>
+                                  <div className="bg-green-500 rounded-t w-4 h-10"></div>
+                                  <div className="bg-blue-500 rounded-t w-4 h-6"></div>
+                                  <div className="bg-green-500 rounded-t w-4 h-14"></div>
+                                  <div className="bg-green-500 rounded-t w-4 h-16"></div>
+                                </div>
+                                <div className="flex justify-between text-xs text-gray-400 mt-1">
+                                  <span>Lun</span>
+                                  <span>Mar</span>
+                                  <span>Mer</span>
+                                  <span>Jeu</span>
+                                  <span>Ven</span>
+                                  <span>Sam</span>
+                                  <span>Dim</span>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         )}
 
