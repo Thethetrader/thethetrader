@@ -883,26 +883,165 @@ const App = () => {
               <div className="flex justify-center">
                 <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm w-full max-w-6xl">
                   {/* Mockup Desktop Interface */}
-                  <div className="bg-gray-900 rounded-lg p-4 mx-auto" style={{width: '100%', height: '600px'}}>
-                    {/* Header Mobile */}
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-sm text-white">TT</div>
-                        <span className="text-white font-bold text-sm">TheTheTrader</span>
+                  <div className="bg-gray-900 rounded-lg p-0 mx-auto h-screen max-h-[600px] flex" style={{width: '100%'}}>
+                    
+                    {/* Sidebar Desktop */}
+                    <div className="w-56 bg-gray-800 flex flex-col">
+                      <div className="p-4 border-b border-gray-700">
+                        <div className="flex items-center gap-3">
+                          <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm text-white">TT</div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-white">TheTheTrader</p>
+                          </div>
+                        </div>
                       </div>
-                      <button className="text-gray-400 text-lg">☰</button>
+
+                      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                        <div>
+                          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">ÉDUCATION</h3>
+                          <div className="space-y-1">
+                            <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📚 Fondamentaux</button>
+                            <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">🚀 Letsgooo-model</button>
+                          </div>
+                        </div>
+
+                        <div>
+                          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">SIGNAUX</h3>
+                          <div className="space-y-1">
+                            <button className="w-full text-left px-3 py-2 rounded text-sm bg-gray-700 text-white">🪙 Crypto</button>
+                            <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📈 Futur</button>
+                            <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">💱 Forex</button>
+                          </div>
+                        </div>
+
+                        <div>
+                          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">TRADING HUB</h3>
+                          <div className="space-y-1">
+                            <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📺 Livestream</button>
+                            <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">💬 General-chat</button>
+                            <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">💰 Profit-loss</button>
+                            <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📅 Calendrier</button>
+                            <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📊 Trading Journal</button>
+                          </div>
+                        </div>
+
+                        <div className="bg-gray-700 rounded-lg p-3">
+                          <h4 className="text-sm font-medium mb-2 text-white">Statistiques</h4>
+                          <div className="space-y-2">
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-400">Win Rate:</span>
+                              <span className="text-blue-400">75%</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-400">Signaux actifs:</span>
+                              <span className="text-yellow-400">3</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-400">P&L Total:</span>
+                              <span className="text-green-400">+$2,480</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
-                    {/* Navigation Mobile */}
-                    <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
-                      <div 
-                        className={`px-3 py-2 text-sm rounded-lg whitespace-nowrap cursor-pointer ${
-                          activeChannel === 'fondamentaux' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:text-white hover:bg-gray-600'
-                        }`}
-                        onClick={() => setActiveChannel('fondamentaux')}
-                      >
-                        📚 Fondamentaux
+                    {/* Zone principale */}
+                    <div className="flex-1 flex flex-col bg-gray-900">
+                      {/* Header de la zone principale */}
+                      <div className="p-4 border-b border-gray-700">
+                        <div className="flex items-center justify-between">
+                          <h2 className="text-lg font-semibold text-white"># crypto</h2>
+                          <span className="text-green-400 text-sm flex items-center gap-1">
+                            🟢 Live
+                          </span>
+                        </div>
                       </div>
+
+                      {/* Zone de contenu principale */}
+                      <div className="flex-1 p-4 space-y-4 overflow-y-auto">
+                        
+                        {/* Signal BTC */}
+                        <div className="bg-gray-700 rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <span className="bg-green-600 text-white px-3 py-1 rounded text-sm font-bold">BUY</span>
+                              <span className="text-white font-bold text-lg">BTCUSD</span>
+                              <span className="text-gray-400 text-sm">15m</span>
+                            </div>
+                            <span className="text-green-400 font-bold">+$1,250</span>
+                          </div>
+                          <div className="grid grid-cols-4 gap-4 text-sm text-gray-300 mb-3">
+                            <div>Entry: 45000</div>
+                            <div>TP: 46000</div>
+                            <div>SL: 44000</div>
+                            <div>R:R: 2.0</div>
+                          </div>
+                          <div className="text-gray-400 text-sm mb-3">
+                            Signal crypto fort avec breakout confirmé. Momentum bullish sur BTC.
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-400 text-xs">⚡ 24</span>
+                            <span className="text-gray-400 text-xs">🔥 18</span>
+                            <span className="text-gray-400 text-xs">💎 31</span>
+                          </div>
+                        </div>
+
+                        {/* Signal ETH */}
+                        <div className="bg-gray-700 rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <span className="bg-red-600 text-white px-3 py-1 rounded text-sm font-bold">SELL</span>
+                              <span className="text-white font-bold text-lg">ETHUSD</span>
+                              <span className="text-gray-400 text-sm">5m</span>
+                            </div>
+                            <span className="text-yellow-400 font-bold">En cours</span>
+                          </div>
+                          <div className="grid grid-cols-4 gap-4 text-sm text-gray-300 mb-3">
+                            <div>Entry: 2800</div>
+                            <div>TP: 2750</div>
+                            <div>SL: 2850</div>
+                            <div>R:R: 1.75</div>
+                          </div>
+                          <div className="text-gray-400 text-sm mb-3">
+                            Signal de correction sur ETH. Résistance forte à 2820.
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-400 text-xs">⚡ 16</span>
+                            <span className="text-gray-400 text-xs">📉 12</span>
+                            <span className="text-gray-400 text-xs">💎 8</span>
+                          </div>
+                        </div>
+
+                        {/* Message de chat */}
+                        <div className="bg-gray-700 rounded-lg p-4">
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white">TT</div>
+                            <span className="text-white font-medium text-sm">TheTheTrader</span>
+                            <span className="text-gray-400 text-xs">22:45</span>
+                          </div>
+                          <p className="text-gray-300 text-sm">
+                            📈 Excellente session aujourd'hui ! BTC breakout confirmé, on surveille la zone 46k pour la suite.
+                          </p>
+                        </div>
+
+                      </div>
+
+                      {/* Zone de saisie */}
+                      <div className="p-4 border-t border-gray-700">
+                        <div className="flex gap-2">
+                          <input 
+                            type="text" 
+                            placeholder="Tapez votre message..."
+                            className="flex-1 bg-gray-700 text-white px-3 py-2 rounded text-sm placeholder-gray-400"
+                          />
+                          <button className="bg-blue-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-blue-700">
+                            Envoyer
+                          </button>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
                       <div 
                         className={`px-3 py-2 text-sm rounded-lg whitespace-nowrap cursor-pointer ${
                           activeChannel === 'letsgooo-model' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:text-white hover:bg-gray-600'
