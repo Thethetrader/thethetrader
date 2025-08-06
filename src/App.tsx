@@ -18,6 +18,7 @@ const App = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [activeChannel, setActiveChannel] = useState('crypto');
+  const [previewChannel, setPreviewChannel] = useState('crypto');
   
   // Données des signaux pour chaque salon mobile (identiques à l'app)
   const [mobileSignalsData, setMobileSignalsData] = useState({
@@ -908,9 +909,14 @@ const App = () => {
                         <div>
                           <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">SIGNAUX</h3>
                           <div className="space-y-1">
-                            <button className="w-full text-left px-3 py-2 rounded text-sm bg-gray-700 text-white">🪙 Crypto</button>
-                            <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📈 Futur</button>
-                            <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">💱 Forex</button>
+                                                            <button 
+                                  className={`w-full text-left px-3 py-2 rounded text-sm ${previewChannel === 'crypto' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
+                                  onClick={() => setPreviewChannel('crypto')}
+                                >
+                                  🪙 Crypto
+                                </button>
+                                <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📈 Futur</button>
+                                <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">💱 Forex</button>
                           </div>
                         </div>
 
@@ -920,8 +926,18 @@ const App = () => {
                             <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📺 Livestream</button>
                             <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">💬 General-chat</button>
                             <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">💰 Profit-loss</button>
-                            <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📅 Calendrier</button>
-                            <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📊 Trading Journal</button>
+                                                            <button 
+                                  className={`w-full text-left px-3 py-2 rounded text-sm ${previewChannel === 'calendar' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
+                                  onClick={() => setPreviewChannel('calendar')}
+                                >
+                                  📅 Calendrier
+                                </button>
+                                <button 
+                                  className={`w-full text-left px-3 py-2 rounded text-sm ${previewChannel === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
+                                  onClick={() => setPreviewChannel('trading-journal')}
+                                >
+                                  📊 Trading Journal
+                                </button>
                           </div>
                         </div>
 
@@ -950,7 +966,11 @@ const App = () => {
                       {/* Header de la zone principale */}
                       <div className="p-4 border-b border-gray-700">
                         <div className="flex items-center justify-between">
-                          <h2 className="text-lg font-semibold text-white"># crypto</h2>
+                          <h2 className="text-lg font-semibold text-white">
+                            {previewChannel === 'crypto' ? '# crypto' : 
+                             previewChannel === 'calendar' ? '📅 Calendrier' : 
+                             previewChannel === 'trading-journal' ? '📊 Trading Journal' : '# crypto'}
+                          </h2>
                           <span className="text-green-400 text-sm flex items-center gap-1">
                             🟢 Live
                           </span>
@@ -960,69 +980,200 @@ const App = () => {
                       {/* Zone de contenu principale */}
                       <div className="flex-1 p-4 space-y-4 overflow-y-auto">
                         
-                        {/* Signal BTC */}
-                        <div className="bg-gray-700 rounded-lg p-4">
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-3">
-                              <span className="bg-green-600 text-white px-3 py-1 rounded text-sm font-bold">BUY</span>
-                              <span className="text-white font-bold text-lg">BTCUSD</span>
-                              <span className="text-gray-400 text-sm">15m</span>
+                        {/* Vue Crypto - Signaux */}
+                        {previewChannel === 'crypto' && (
+                          <>
+                            {/* Signal BTC */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center gap-3">
+                                  <span className="bg-green-600 text-white px-3 py-1 rounded text-sm font-bold">BUY</span>
+                                  <span className="text-white font-bold text-lg">BTCUSD</span>
+                                  <span className="text-gray-400 text-sm">15m</span>
+                                </div>
+                                <span className="text-green-400 font-bold">+$1,250</span>
+                              </div>
+                              <div className="grid grid-cols-4 gap-4 text-sm text-gray-300 mb-3">
+                                <div>Entry: 45000</div>
+                                <div>TP: 46000</div>
+                                <div>SL: 44000</div>
+                                <div>R:R: 2.0</div>
+                              </div>
+                              <div className="text-gray-400 text-sm mb-3">
+                                Signal crypto fort avec breakout confirmé. Momentum bullish sur BTC.
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-400 text-xs">⚡ 24</span>
+                                <span className="text-gray-400 text-xs">🔥 18</span>
+                                <span className="text-gray-400 text-xs">💎 31</span>
+                              </div>
                             </div>
-                            <span className="text-green-400 font-bold">+$1,250</span>
-                          </div>
-                          <div className="grid grid-cols-4 gap-4 text-sm text-gray-300 mb-3">
-                            <div>Entry: 45000</div>
-                            <div>TP: 46000</div>
-                            <div>SL: 44000</div>
-                            <div>R:R: 2.0</div>
-                          </div>
-                          <div className="text-gray-400 text-sm mb-3">
-                            Signal crypto fort avec breakout confirmé. Momentum bullish sur BTC.
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-gray-400 text-xs">⚡ 24</span>
-                            <span className="text-gray-400 text-xs">🔥 18</span>
-                            <span className="text-gray-400 text-xs">💎 31</span>
-                          </div>
-                        </div>
 
-                        {/* Signal ETH */}
-                        <div className="bg-gray-700 rounded-lg p-4">
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-3">
-                              <span className="bg-red-600 text-white px-3 py-1 rounded text-sm font-bold">SELL</span>
-                              <span className="text-white font-bold text-lg">ETHUSD</span>
-                              <span className="text-gray-400 text-sm">5m</span>
+                            {/* Signal ETH */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center gap-3">
+                                  <span className="bg-red-600 text-white px-3 py-1 rounded text-sm font-bold">SELL</span>
+                                  <span className="text-white font-bold text-lg">ETHUSD</span>
+                                  <span className="text-gray-400 text-sm">5m</span>
+                                </div>
+                                <span className="text-yellow-400 font-bold">En cours</span>
+                              </div>
+                              <div className="grid grid-cols-4 gap-4 text-sm text-gray-300 mb-3">
+                                <div>Entry: 2800</div>
+                                <div>TP: 2750</div>
+                                <div>SL: 2850</div>
+                                <div>R:R: 1.75</div>
+                              </div>
+                              <div className="text-gray-400 text-sm mb-3">
+                                Signal de correction sur ETH. Résistance forte à 2820.
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-400 text-xs">⚡ 16</span>
+                                <span className="text-gray-400 text-xs">📉 12</span>
+                                <span className="text-gray-400 text-xs">💎 8</span>
+                              </div>
                             </div>
-                            <span className="text-yellow-400 font-bold">En cours</span>
-                          </div>
-                          <div className="grid grid-cols-4 gap-4 text-sm text-gray-300 mb-3">
-                            <div>Entry: 2800</div>
-                            <div>TP: 2750</div>
-                            <div>SL: 2850</div>
-                            <div>R:R: 1.75</div>
-                          </div>
-                          <div className="text-gray-400 text-sm mb-3">
-                            Signal de correction sur ETH. Résistance forte à 2820.
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-gray-400 text-xs">⚡ 16</span>
-                            <span className="text-gray-400 text-xs">📉 12</span>
-                            <span className="text-gray-400 text-xs">💎 8</span>
-                          </div>
-                        </div>
 
-                        {/* Message de chat */}
-                        <div className="bg-gray-700 rounded-lg p-4">
-                          <div className="flex items-center gap-3 mb-2">
-                            <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white">TT</div>
-                            <span className="text-white font-medium text-sm">TheTheTrader</span>
-                            <span className="text-gray-400 text-xs">22:45</span>
+                            {/* Message de chat */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white">TT</div>
+                                <span className="text-white font-medium text-sm">TheTheTrader</span>
+                                <span className="text-gray-400 text-xs">22:45</span>
+                              </div>
+                              <p className="text-gray-300 text-sm">
+                                📈 Excellente session aujourd'hui ! BTC breakout confirmé, on surveille la zone 46k pour la suite.
+                              </p>
+                            </div>
+                          </>
+                        )}
+
+                        {/* Vue Calendrier - Signaux économiques */}
+                        {previewChannel === 'calendar' && (
+                          <div className="space-y-4">
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <h3 className="text-white font-semibold mb-4">Décembre 2024</h3>
+                              <div className="grid grid-cols-7 gap-2">
+                                {/* Headers */}
+                                <div className="text-center text-gray-400 text-sm py-2">L</div>
+                                <div className="text-center text-gray-400 text-sm py-2">M</div>
+                                <div className="text-center text-gray-400 text-sm py-2">M</div>
+                                <div className="text-center text-gray-400 text-sm py-2">J</div>
+                                <div className="text-center text-gray-400 text-sm py-2">V</div>
+                                <div className="text-center text-gray-400 text-sm py-2">S</div>
+                                <div className="text-center text-gray-400 text-sm py-2">D</div>
+                                
+                                {/* Jours */}
+                                <div className="text-center text-gray-500 text-sm py-2">25</div>
+                                <div className="text-center text-gray-500 text-sm py-2">26</div>
+                                <div className="text-center text-gray-500 text-sm py-2">27</div>
+                                <div className="text-center text-gray-500 text-sm py-2">28</div>
+                                <div className="text-center text-gray-500 text-sm py-2">29</div>
+                                <div className="text-center text-gray-500 text-sm py-2">30</div>
+                                <div className="text-center text-white text-sm py-2">1</div>
+                                
+                                <div className="text-center text-white text-sm py-2">2</div>
+                                <div className="text-center text-white text-sm py-2">3</div>
+                                <div className="text-center text-white text-sm py-2 bg-green-600 rounded">4</div>
+                                <div className="text-center text-white text-sm py-2">5</div>
+                                <div className="text-center text-white text-sm py-2 bg-red-600 rounded">6</div>
+                                <div className="text-center text-white text-sm py-2">7</div>
+                                <div className="text-center text-white text-sm py-2">8</div>
+                                
+                                <div className="text-center text-white text-sm py-2">9</div>
+                                <div className="text-center text-white text-sm py-2">10</div>
+                                <div className="text-center text-white text-sm py-2 bg-yellow-600 rounded">11</div>
+                                <div className="text-center text-white text-sm py-2">12</div>
+                                <div className="text-center text-white text-sm py-2">13</div>
+                                <div className="text-center text-white text-sm py-2">14</div>
+                                <div className="text-center text-white text-sm py-2">15</div>
+                              </div>
+                            </div>
+                            
+                            {/* Événements du jour */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <h4 className="text-white font-medium mb-3">Événements économiques - 4 Déc</h4>
+                              <div className="space-y-2">
+                                <div className="flex items-center gap-3 text-sm">
+                                  <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">HIGH</span>
+                                  <span className="text-white">14:30</span>
+                                  <span className="text-gray-300">NFP USD</span>
+                                  <span className="text-green-400">+250K</span>
+                                </div>
+                                <div className="flex items-center gap-3 text-sm">
+                                  <span className="bg-yellow-600 text-white px-2 py-1 rounded text-xs">MED</span>
+                                  <span className="text-white">16:00</span>
+                                  <span className="text-gray-300">ISM Services</span>
+                                  <span className="text-yellow-400">52.1</span>
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                          <p className="text-gray-300 text-sm">
-                            📈 Excellente session aujourd'hui ! BTC breakout confirmé, on surveille la zone 46k pour la suite.
-                          </p>
-                        </div>
+                        )}
+
+                        {/* Vue Trading Journal */}
+                        {previewChannel === 'trading-journal' && (
+                          <div className="space-y-4">
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <h3 className="text-white font-semibold mb-4">Trading Journal - Décembre 2024</h3>
+                              <div className="grid grid-cols-7 gap-2">
+                                {/* Headers */}
+                                <div className="text-center text-gray-400 text-sm py-2">L</div>
+                                <div className="text-center text-gray-400 text-sm py-2">M</div>
+                                <div className="text-center text-gray-400 text-sm py-2">M</div>
+                                <div className="text-center text-gray-400 text-sm py-2">J</div>
+                                <div className="text-center text-gray-400 text-sm py-2">V</div>
+                                <div className="text-center text-gray-400 text-sm py-2">S</div>
+                                <div className="text-center text-gray-400 text-sm py-2">D</div>
+                                
+                                {/* Jours avec trades */}
+                                <div className="text-center text-gray-500 text-sm py-2">25</div>
+                                <div className="text-center text-gray-500 text-sm py-2">26</div>
+                                <div className="text-center text-gray-500 text-sm py-2">27</div>
+                                <div className="text-center text-gray-500 text-sm py-2">28</div>
+                                <div className="text-center text-gray-500 text-sm py-2">29</div>
+                                <div className="text-center text-gray-500 text-sm py-2">30</div>
+                                <div className="text-center text-white text-sm py-2">1</div>
+                                
+                                <div className="text-center text-white text-sm py-2 bg-green-600 rounded">2</div>
+                                <div className="text-center text-white text-sm py-2">3</div>
+                                <div className="text-center text-white text-sm py-2 bg-red-600 rounded">4</div>
+                                <div className="text-center text-white text-sm py-2">5</div>
+                                <div className="text-center text-white text-sm py-2 bg-blue-600 rounded">6</div>
+                                <div className="text-center text-white text-sm py-2">7</div>
+                                <div className="text-center text-white text-sm py-2">8</div>
+                                
+                                <div className="text-center text-white text-sm py-2">9</div>
+                                <div className="text-center text-white text-sm py-2 bg-green-600 rounded">10</div>
+                                <div className="text-center text-white text-sm py-2">11</div>
+                                <div className="text-center text-white text-sm py-2">12</div>
+                                <div className="text-center text-white text-sm py-2">13</div>
+                                <div className="text-center text-white text-sm py-2">14</div>
+                                <div className="text-center text-white text-sm py-2">15</div>
+                              </div>
+                            </div>
+                            
+                            {/* Détails du trade */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <h4 className="text-white font-medium mb-3">Trades du 2 Déc - WIN</h4>
+                              <div className="space-y-3">
+                                <div className="bg-gray-600 rounded p-3">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="text-white font-bold">EURUSD</span>
+                                    <span className="text-green-400 font-bold">+$420</span>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2 text-sm text-gray-300">
+                                    <div>Entry: 1.0850</div>
+                                    <div>Exit: 1.0890</div>
+                                    <div>Risk: $200</div>
+                                    <div>R:R: 2.1</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
 
                       </div>
 
