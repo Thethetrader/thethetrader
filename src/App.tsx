@@ -1390,6 +1390,173 @@ const App = () => {
                           </>
                         )}
 
+                        {/* Vue Journal Signaux (Calendar) */}
+                        {mobileActiveChannel === 'calendar' && (
+                          <>
+                            {/* Calendrier économique mobile */}
+                            <div className="bg-gray-700 rounded-lg p-3">
+                              <h3 className="text-white font-bold text-sm mb-3">Calendrier Économique</h3>
+                              <div className="grid grid-cols-7 gap-1 text-xs">
+                                {/* Headers des jours */}
+                                <div className="text-gray-400 text-center p-1">L</div>
+                                <div className="text-gray-400 text-center p-1">M</div>
+                                <div className="text-gray-400 text-center p-1">M</div>
+                                <div className="text-gray-400 text-center p-1">J</div>
+                                <div className="text-gray-400 text-center p-1">V</div>
+                                <div className="text-gray-400 text-center p-1">S</div>
+                                <div className="text-gray-400 text-center p-1">D</div>
+                                
+                                {/* Jours du calendrier */}
+                                <div className="text-gray-500 text-center p-1">26</div>
+                                <div className="text-gray-500 text-center p-1">27</div>
+                                <div className="text-gray-500 text-center p-1">28</div>
+                                <div className="text-gray-500 text-center p-1">29</div>
+                                <div className="text-gray-500 text-center p-1">30</div>
+                                <div className="text-white text-center p-1">1</div>
+                                <div className="text-white text-center p-1">2</div>
+                                
+                                <div className="bg-red-600 text-white text-center p-1 rounded">3</div>
+                                <div className="text-white text-center p-1">4</div>
+                                <div className="bg-yellow-600 text-white text-center p-1 rounded">5</div>
+                                <div className="text-white text-center p-1">6</div>
+                                <div className="text-white text-center p-1">7</div>
+                                <div className="text-white text-center p-1">8</div>
+                                <div className="text-white text-center p-1">9</div>
+                                
+                                <div className="text-white text-center p-1">10</div>
+                                <div className="text-white text-center p-1">11</div>
+                                <div className="bg-green-600 text-white text-center p-1 rounded">12</div>
+                                <div className="text-white text-center p-1">13</div>
+                                <div className="text-white text-center p-1">14</div>
+                                <div className="bg-red-600 text-white text-center p-1 rounded">15</div>
+                                <div className="text-white text-center p-1">16</div>
+                              </div>
+                              
+                              {/* Légende */}
+                              <div className="flex justify-center gap-3 mt-3 text-xs">
+                                <div className="flex items-center gap-1">
+                                  <div className="w-2 h-2 bg-green-600 rounded"></div>
+                                  <span className="text-white">WIN</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <div className="w-2 h-2 bg-red-600 rounded"></div>
+                                  <span className="text-white">LOSS</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Stats Calendar */}
+                            <div className="bg-gray-700 rounded-lg p-3">
+                              <h3 className="text-white font-bold text-sm mb-3">Statistiques Signaux</h3>
+                              
+                              <div className="bg-green-600/20 border border-green-500/30 rounded-lg p-3 mb-2">
+                                <div className="text-green-300 text-xs mb-1">P&L Total</div>
+                                <div className="text-lg font-bold text-white">+$2,485</div>
+                              </div>
+
+                              <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-3">
+                                <div className="text-blue-300 text-xs mb-1">Win Rate</div>
+                                <div className="text-lg font-bold text-white">89%</div>
+                              </div>
+                            </div>
+                          </>
+                        )}
+
+                        {/* Vue Journal Perso (Trading Journal) */}
+                        {mobileActiveChannel === 'trading-journal' && (
+                          <>
+                            {/* Calendrier trading mobile */}
+                            <div className="bg-gray-700 rounded-lg p-3">
+                              <h3 className="text-white font-bold text-sm mb-3">Trading Journal</h3>
+                              <div className="grid grid-cols-7 gap-1 text-xs">
+                                {/* Headers des jours */}
+                                <div className="text-gray-400 text-center p-1">L</div>
+                                <div className="text-gray-400 text-center p-1">M</div>
+                                <div className="text-gray-400 text-center p-1">M</div>
+                                <div className="text-gray-400 text-center p-1">J</div>
+                                <div className="text-gray-400 text-center p-1">V</div>
+                                <div className="text-gray-400 text-center p-1">S</div>
+                                <div className="text-gray-400 text-center p-1">D</div>
+                                
+                                {/* Jours du calendrier */}
+                                <div className="text-gray-500 text-center p-1">26</div>
+                                <div className="text-gray-500 text-center p-1">27</div>
+                                <div className="text-gray-500 text-center p-1">28</div>
+                                <div className="text-gray-500 text-center p-1">29</div>
+                                <div className="text-gray-500 text-center p-1">30</div>
+                                <div className="text-white text-center p-1">1</div>
+                                <div className="bg-green-600 text-white text-center p-1 rounded">2</div>
+                                
+                                <div className="text-white text-center p-1">3</div>
+                                <div className="text-white text-center p-1">4</div>
+                                <div className="bg-red-600 text-white text-center p-1 rounded">5</div>
+                                <div className="text-white text-center p-1">6</div>
+                                <div className="text-white text-center p-1">7</div>
+                                <div className="bg-green-600 text-white text-center p-1 rounded">8</div>
+                                <div className="text-white text-center p-1">9</div>
+                                
+                                <div className="text-white text-center p-1">10</div>
+                                <div className="bg-blue-600 text-white text-center p-1 rounded">11</div>
+                                <div className="text-white text-center p-1">12</div>
+                                <div className="text-white text-center p-1">13</div>
+                                <div className="bg-green-600 text-white text-center p-1 rounded">14</div>
+                                <div className="text-white text-center p-1">15</div>
+                                <div className="text-white text-center p-1">16</div>
+                              </div>
+                              
+                              {/* Légende */}
+                              <div className="flex justify-center gap-3 mt-3 text-xs">
+                                <div className="flex items-center gap-1">
+                                  <div className="w-2 h-2 bg-green-600 rounded"></div>
+                                  <span className="text-white">WIN</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <div className="w-2 h-2 bg-red-600 rounded"></div>
+                                  <span className="text-white">LOSS</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <div className="w-2 h-2 bg-blue-600 rounded"></div>
+                                  <span className="text-white">BE</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Stats Trading Journal */}
+                            <div className="bg-gray-700 rounded-lg p-3">
+                              <h3 className="text-white font-bold text-sm mb-3">Statistiques Trades</h3>
+                              
+                              <div className="bg-green-600/20 border border-green-500/30 rounded-lg p-3 mb-2">
+                                <div className="text-green-300 text-xs mb-1">P&L Total</div>
+                                <div className="text-lg font-bold text-white">+$3,285</div>
+                              </div>
+
+                              <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-3 mb-3">
+                                <div className="text-blue-300 text-xs mb-1">Win Rate</div>
+                                <div className="text-lg font-bold text-white">74%</div>
+                              </div>
+
+                              <div className="grid grid-cols-2 gap-2 text-xs">
+                                <div className="bg-gray-600/50 rounded p-2">
+                                  <div className="text-gray-400 mb-1">Aujourd'hui</div>
+                                  <div className="text-blue-400 font-bold">2</div>
+                                </div>
+                                <div className="bg-gray-600/50 rounded p-2">
+                                  <div className="text-gray-400 mb-1">Ce mois</div>
+                                  <div className="text-white font-bold">23</div>
+                                </div>
+                                <div className="bg-gray-600/50 rounded p-2">
+                                  <div className="text-gray-400 mb-1">Avg Win</div>
+                                  <div className="text-green-400 font-bold">+$195</div>
+                                </div>
+                                <div className="bg-gray-600/50 rounded p-2">
+                                  <div className="text-gray-400 mb-1">Avg Loss</div>
+                                  <div className="text-red-400 font-bold">-$85</div>
+                                </div>
+                              </div>
+                            </div>
+                          </>
+                        )}
+
                       </div>
                       
                       {/* Zone de saisie en bas */}
