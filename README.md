@@ -99,7 +99,7 @@ export default tseslint.config({
 
 • **Add P&L calculations** - Implement actual profit/loss tracking based on entry/exit prices
 
-# Force rebuild - Fix 404 assets and blank page on Safari/Chrome
+# Force rebuild - Fix 404 assets and blank page on Safari/Chrome - REPUSH
 • **Enhance calendar functionality** - Add month navigation, date filtering, detailed day views
 • **Implement data export** - CSV/PDF reports for trading performance
 • **Add notification system** - Alerts for signal updates, win/loss confirmations
