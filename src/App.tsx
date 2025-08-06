@@ -1454,9 +1454,28 @@ const App = () => {
                                 <div className="text-lg font-bold text-white">+$2,485</div>
                               </div>
 
-                              <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-3">
+                              <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-3 mb-3">
                                 <div className="text-blue-300 text-xs mb-1">Win Rate</div>
                                 <div className="text-lg font-bold text-white">89%</div>
+                              </div>
+
+                              <div className="grid grid-cols-2 gap-2 text-xs">
+                                <div className="bg-gray-600/50 rounded p-2">
+                                  <div className="text-gray-400 mb-1">Aujourd'hui</div>
+                                  <div className="text-orange-400 font-bold">4</div>
+                                </div>
+                                <div className="bg-gray-600/50 rounded p-2">
+                                  <div className="text-gray-400 mb-1">Ce mois</div>
+                                  <div className="text-white font-bold">31</div>
+                                </div>
+                                <div className="bg-gray-600/50 rounded p-2">
+                                  <div className="text-gray-400 mb-1">Avg Impact</div>
+                                  <div className="text-green-400 font-bold">+59 pips</div>
+                                </div>
+                                <div className="bg-gray-600/50 rounded p-2">
+                                  <div className="text-gray-400 mb-1">Max Impact</div>
+                                  <div className="text-yellow-400 font-bold">+240 pips</div>
+                                </div>
                               </div>
                             </div>
                           </>
