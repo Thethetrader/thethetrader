@@ -915,8 +915,18 @@ const App = () => {
                                 >
                                   🪙 Crypto
                                 </button>
-                                <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📈 Futur</button>
-                                <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">💱 Forex</button>
+                                <button 
+                                  className={`w-full text-left px-3 py-2 rounded text-sm ${previewChannel === 'futur' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
+                                  onClick={() => setPreviewChannel('futur')}
+                                >
+                                  📈 Futur
+                                </button>
+                                <button 
+                                  className={`w-full text-left px-3 py-2 rounded text-sm ${previewChannel === 'forex' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
+                                  onClick={() => setPreviewChannel('forex')}
+                                >
+                                  💱 Forex
+                                </button>
                           </div>
                         </div>
 
@@ -968,6 +978,8 @@ const App = () => {
                         <div className="flex items-center justify-between">
                           <h2 className="text-lg font-semibold text-white">
                             {previewChannel === 'crypto' ? '# crypto' : 
+                             previewChannel === 'futur' ? '# futur' : 
+                             previewChannel === 'forex' ? '# forex' : 
                              previewChannel === 'calendar' ? '📅 Calendrier' : 
                              previewChannel === 'trading-journal' ? '📊 Trading Journal' : '# crypto'}
                           </h2>
@@ -1044,6 +1056,144 @@ const App = () => {
                               </div>
                               <p className="text-gray-300 text-sm">
                                 📈 Excellente session aujourd'hui ! BTC breakout confirmé, on surveille la zone 46k pour la suite.
+                              </p>
+                            </div>
+                          </>
+                        )}
+
+                        {/* Vue Futur - Signaux indices */}
+                        {previewChannel === 'futur' && (
+                          <>
+                            {/* Signal NAS100 */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center gap-3">
+                                  <span className="bg-red-600 text-white px-3 py-1 rounded text-sm font-bold">SELL</span>
+                                  <span className="text-white font-bold text-lg">NAS100</span>
+                                  <span className="text-gray-400 text-sm">1H</span>
+                                </div>
+                                <span className="text-green-400 font-bold">+$890</span>
+                              </div>
+                              <div className="grid grid-cols-4 gap-4 text-sm text-gray-300 mb-3">
+                                <div>Entry: 16850</div>
+                                <div>TP: 16700</div>
+                                <div>SL: 16950</div>
+                                <div>R:R: 1.5</div>
+                              </div>
+                              <div className="text-gray-400 text-sm mb-3">
+                                Signal short sur NAS100. Divergence baissière confirmée sur H1.
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-400 text-xs">📉 31</span>
+                                <span className="text-gray-400 text-xs">🔻 22</span>
+                                <span className="text-gray-400 text-xs">🎯 15</span>
+                              </div>
+                            </div>
+
+                            {/* Signal SPX500 */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center gap-3">
+                                  <span className="bg-green-600 text-white px-3 py-1 rounded text-sm font-bold">BUY</span>
+                                  <span className="text-white font-bold text-lg">SPX500</span>
+                                  <span className="text-gray-400 text-sm">4H</span>
+                                </div>
+                                <span className="text-yellow-400 font-bold">En cours</span>
+                              </div>
+                              <div className="grid grid-cols-4 gap-4 text-sm text-gray-300 mb-3">
+                                <div>Entry: 4720</div>
+                                <div>TP: 4850</div>
+                                <div>SL: 4650</div>
+                                <div>R:R: 1.85</div>
+                              </div>
+                              <div className="text-gray-400 text-sm mb-3">
+                                Breakout haussier sur SPX500. Support solide à 4700.
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-400 text-xs">📈 28</span>
+                                <span className="text-gray-400 text-xs">🚀 19</span>
+                                <span className="text-gray-400 text-xs">💪 12</span>
+                              </div>
+                            </div>
+
+                            {/* Message de chat */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white">TT</div>
+                                <span className="text-white font-medium text-sm">TheTheTrader</span>
+                                <span className="text-gray-400 text-xs">21:30</span>
+                              </div>
+                              <p className="text-gray-300 text-sm">
+                                📊 Les indices US montrent une belle dynamique. NAS100 en profit, SPX500 en cours !
+                              </p>
+                            </div>
+                          </>
+                        )}
+
+                        {/* Vue Forex - Signaux devises */}
+                        {previewChannel === 'forex' && (
+                          <>
+                            {/* Signal EURUSD */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center gap-3">
+                                  <span className="bg-green-600 text-white px-3 py-1 rounded text-sm font-bold">BUY</span>
+                                  <span className="text-white font-bold text-lg">EURUSD</span>
+                                  <span className="text-gray-400 text-sm">30m</span>
+                                </div>
+                                <span className="text-green-400 font-bold">+$320</span>
+                              </div>
+                              <div className="grid grid-cols-4 gap-4 text-sm text-gray-300 mb-3">
+                                <div>Entry: 1.0850</div>
+                                <div>TP: 1.0890</div>
+                                <div>SL: 1.0825</div>
+                                <div>R:R: 1.6</div>
+                              </div>
+                              <div className="text-gray-400 text-sm mb-3">
+                                EUR/USD rebond sur support majeur. Dollar faible avant NFP.
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-400 text-xs">💶 42</span>
+                                <span className="text-gray-400 text-xs">📊 28</span>
+                                <span className="text-gray-400 text-xs">🎯 33</span>
+                              </div>
+                            </div>
+
+                            {/* Signal GBPJPY */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center gap-3">
+                                  <span className="bg-red-600 text-white px-3 py-1 rounded text-sm font-bold">SELL</span>
+                                  <span className="text-white font-bold text-lg">GBPJPY</span>
+                                  <span className="text-gray-400 text-sm">15m</span>
+                                </div>
+                                <span className="text-yellow-400 font-bold">En cours</span>
+                              </div>
+                              <div className="grid grid-cols-4 gap-4 text-sm text-gray-300 mb-3">
+                                <div>Entry: 189.50</div>
+                                <div>TP: 188.80</div>
+                                <div>SL: 190.00</div>
+                                <div>R:R: 1.4</div>
+                              </div>
+                              <div className="text-gray-400 text-sm mb-3">
+                                GBP/JPY rejection à la résistance. Yen reprend des forces.
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-400 text-xs">🇬🇧 24</span>
+                                <span className="text-gray-400 text-xs">🇯🇵 18</span>
+                                <span className="text-gray-400 text-xs">📉 14</span>
+                              </div>
+                            </div>
+
+                            {/* Message de chat */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white">TT</div>
+                                <span className="text-white font-medium text-sm">TheTheTrader</span>
+                                <span className="text-gray-400 text-xs">20:15</span>
+                              </div>
+                              <p className="text-gray-300 text-sm">
+                                💱 Session forex active ! EUR/USD en profit, on surveille GBP/JPY de près.
                               </p>
                             </div>
                           </>
