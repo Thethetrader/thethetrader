@@ -959,21 +959,39 @@ const App = () => {
                     <div>
                       <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3 font-medium">SIGNAUX</h3>
                       <div className="space-y-2">
-                        <div className="bg-slate-700 rounded-lg p-3 flex items-center gap-3">
+                        <div 
+                          className="bg-slate-700 rounded-lg p-3 flex items-center gap-3 cursor-pointer hover:bg-slate-600 transition-colors"
+                          onClick={() => {
+                            setMobileActiveChannel('crypto');
+                            setShowMobileChannel(true);
+                          }}
+                        >
                           <div className="text-xl">🪙</div>
                           <div>
                             <div className="text-white font-medium text-sm">Crypto</div>
                             <div className="text-gray-400 text-xs">Canal de signaux</div>
                           </div>
                         </div>
-                        <div className="bg-slate-700 rounded-lg p-3 flex items-center gap-3">
+                        <div 
+                          className="bg-slate-700 rounded-lg p-3 flex items-center gap-3 cursor-pointer hover:bg-slate-600 transition-colors"
+                          onClick={() => {
+                            setMobileActiveChannel('futur');
+                            setShowMobileChannel(true);
+                          }}
+                        >
                           <div className="text-xl">📈</div>
                           <div>
                             <div className="text-white font-medium text-sm">Futur</div>
                             <div className="text-gray-400 text-xs">Canal de signaux</div>
                           </div>
                         </div>
-                        <div className="bg-slate-700 rounded-lg p-3 flex items-center gap-3">
+                        <div 
+                          className="bg-slate-700 rounded-lg p-3 flex items-center gap-3 cursor-pointer hover:bg-slate-600 transition-colors"
+                          onClick={() => {
+                            setMobileActiveChannel('forex');
+                            setShowMobileChannel(true);
+                          }}
+                        >
                           <div className="text-xl">💱</div>
                           <div>
                             <div className="text-white font-medium text-sm">Forex</div>
@@ -987,21 +1005,39 @@ const App = () => {
                     <div>
                       <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3 font-medium">TRADING HUB</h3>
                       <div className="space-y-2">
-                        <div className="bg-slate-700 rounded-lg p-3 flex items-center gap-3">
+                        <div 
+                          className="bg-slate-700 rounded-lg p-3 flex items-center gap-3 cursor-pointer hover:bg-slate-600 transition-colors"
+                          onClick={() => {
+                            setMobileActiveChannel('livestream');
+                            setShowMobileChannel(true);
+                          }}
+                        >
                           <div className="text-xl">📺</div>
                           <div>
                             <div className="text-white font-medium text-sm">Livestream</div>
                             <div className="text-gray-400 text-xs">Hub de trading</div>
                           </div>
                         </div>
-                        <div className="bg-slate-700 rounded-lg p-3 flex items-center gap-3">
+                        <div 
+                          className="bg-slate-700 rounded-lg p-3 flex items-center gap-3 cursor-pointer hover:bg-slate-600 transition-colors"
+                          onClick={() => {
+                            setMobileActiveChannel('general-chat');
+                            setShowMobileChannel(true);
+                          }}
+                        >
                           <div className="text-xl">💬</div>
                           <div>
                             <div className="text-white font-medium text-sm">General-chat</div>
                             <div className="text-gray-400 text-xs">Discussion générale</div>
                           </div>
                         </div>
-                        <div className="bg-slate-700 rounded-lg p-3 flex items-center gap-3">
+                        <div 
+                          className="bg-slate-700 rounded-lg p-3 flex items-center gap-3 cursor-pointer hover:bg-slate-600 transition-colors"
+                          onClick={() => {
+                            setMobileActiveChannel('profit-loss');
+                            setShowMobileChannel(true);
+                          }}
+                        >
                           <div className="text-xl">💰</div>
                           <div>
                             <div className="text-white font-medium text-sm">Profit-loss</div>
@@ -1015,14 +1051,26 @@ const App = () => {
                     <div>
                       <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3 font-medium">JOURNAUX</h3>
                       <div className="space-y-2">
-                        <div className="bg-slate-700 rounded-lg p-3 flex items-center gap-3">
+                        <div 
+                          className="bg-slate-700 rounded-lg p-3 flex items-center gap-3 cursor-pointer hover:bg-slate-600 transition-colors"
+                          onClick={() => {
+                            setMobileActiveChannel('calendar');
+                            setShowMobileChannel(true);
+                          }}
+                        >
                           <div className="text-xl">📅</div>
                           <div>
                             <div className="text-white font-medium text-sm">Journal Signaux</div>
                             <div className="text-gray-400 text-xs">Calendrier économique</div>
                           </div>
                         </div>
-                        <div className="bg-slate-700 rounded-lg p-3 flex items-center gap-3">
+                        <div 
+                          className="bg-slate-700 rounded-lg p-3 flex items-center gap-3 cursor-pointer hover:bg-slate-600 transition-colors"
+                          onClick={() => {
+                            setMobileActiveChannel('trading-journal');
+                            setShowMobileChannel(true);
+                          }}
+                        >
                           <div className="text-xl">📊</div>
                           <div>
                             <div className="text-white font-medium text-sm">Journal Perso</div>
