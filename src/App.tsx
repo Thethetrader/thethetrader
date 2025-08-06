@@ -925,21 +925,21 @@ const App = () => {
                       <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3 font-medium">SIGNAUX</h3>
                       <div className="space-y-2">
                         <div className="bg-slate-700 rounded-lg p-3 flex items-center gap-3">
-                          <div className="w-8 h-8 bg-gray-600 rounded flex items-center justify-center text-white text-sm">🌙</div>
+                          <div className="w-8 h-8 bg-gray-600 rounded flex items-center justify-center text-white text-sm">🪙</div>
                           <div>
                             <div className="text-white font-medium text-sm">Crypto</div>
                             <div className="text-gray-400 text-xs">Canal de signaux</div>
                           </div>
                         </div>
                         <div className="bg-slate-700 rounded-lg p-3 flex items-center gap-3">
-                          <div className="w-8 h-8 bg-gray-600 rounded flex items-center justify-center text-white text-sm">📊</div>
+                          <div className="w-8 h-8 bg-gray-600 rounded flex items-center justify-center text-white text-sm">📈</div>
                           <div>
                             <div className="text-white font-medium text-sm">Futur</div>
                             <div className="text-gray-400 text-xs">Canal de signaux</div>
                           </div>
                         </div>
                         <div className="bg-slate-700 rounded-lg p-3 flex items-center gap-3">
-                          <div className="w-8 h-8 bg-gray-600 rounded flex items-center justify-center text-white text-sm">🌙</div>
+                          <div className="w-8 h-8 bg-gray-600 rounded flex items-center justify-center text-white text-sm">💱</div>
                           <div>
                             <div className="text-white font-medium text-sm">Forex</div>
                             <div className="text-gray-400 text-xs">Canal de signaux</div>
