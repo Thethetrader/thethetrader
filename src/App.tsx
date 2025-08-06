@@ -1756,25 +1756,7 @@ const App = () => {
                                 </div>
                               </div>
                             </div>
-                            
-                            {/* Détails du trade */}
-                            <div className="bg-gray-700 rounded-lg p-4">
-                              <h4 className="text-white font-medium mb-3">Trades du 2 Déc - WIN</h4>
-                              <div className="space-y-3">
-                                <div className="bg-gray-600 rounded p-3">
-                                  <div className="flex items-center justify-between mb-2">
-                                    <span className="text-white font-bold">EURUSD</span>
-                                    <span className="text-green-400 font-bold">+$420</span>
-                                  </div>
-                                  <div className="grid grid-cols-2 gap-2 text-sm text-gray-300">
-                                    <div>Entry: 1.0850</div>
-                                    <div>Exit: 1.0890</div>
-                                    <div>Risk: $200</div>
-                                    <div>R:R: 2.1</div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
+
                             
                             {/* Statistiques Trading Journal - Format exact */}
                             <div className="bg-gray-800 rounded-lg p-6">
