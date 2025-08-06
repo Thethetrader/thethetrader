@@ -959,6 +959,41 @@ const App = () => {
                             <div className="text-gray-400 text-xs">Hub de trading</div>
                           </div>
                         </div>
+                        <div className="bg-slate-700 rounded-lg p-3 flex items-center gap-3">
+                          <div className="text-xl">💬</div>
+                          <div>
+                            <div className="text-white font-medium text-sm">General-chat</div>
+                            <div className="text-gray-400 text-xs">Discussion générale</div>
+                          </div>
+                        </div>
+                        <div className="bg-slate-700 rounded-lg p-3 flex items-center gap-3">
+                          <div className="text-xl">💰</div>
+                          <div>
+                            <div className="text-white font-medium text-sm">Profit-loss</div>
+                            <div className="text-gray-400 text-xs">Partage P&L</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Section Journaux */}
+                    <div>
+                      <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3 font-medium">JOURNAUX</h3>
+                      <div className="space-y-2">
+                        <div className="bg-slate-700 rounded-lg p-3 flex items-center gap-3">
+                          <div className="text-xl">📅</div>
+                          <div>
+                            <div className="text-white font-medium text-sm">Journal Signaux</div>
+                            <div className="text-gray-400 text-xs">Calendrier économique</div>
+                          </div>
+                        </div>
+                        <div className="bg-slate-700 rounded-lg p-3 flex items-center gap-3">
+                          <div className="text-xl">📊</div>
+                          <div>
+                            <div className="text-white font-medium text-sm">Journal Perso</div>
+                            <div className="text-gray-400 text-xs">Trading personnel</div>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
