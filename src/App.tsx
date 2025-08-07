@@ -945,6 +945,29 @@ const App = () => {
                   {/* Liste des salons - Slide out vers la gauche */}
                   <div className={`absolute inset-0 top-12 p-4 space-y-4 overflow-y-auto bg-gray-900 transition-transform duration-300 ${showMobileChannel ? '-translate-x-full' : 'translate-x-0'}`} style={{height: '640px'}}>
                     
+                    {/* Aperçu Statistiques */}
+                    <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-lg p-3 border border-blue-500/30">
+                      <h3 className="text-white font-bold text-sm mb-2">📊 Aperçu Rapide</h3>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="bg-gray-800/50 rounded p-2">
+                          <div className="text-green-400 font-bold">+$3,285</div>
+                          <div className="text-gray-400">P&L Total</div>
+                        </div>
+                        <div className="bg-gray-800/50 rounded p-2">
+                          <div className="text-blue-400 font-bold">74%</div>
+                          <div className="text-gray-400">Win Rate</div>
+                        </div>
+                        <div className="bg-gray-800/50 rounded p-2">
+                          <div className="text-white font-bold">23</div>
+                          <div className="text-gray-400">Ce mois</div>
+                        </div>
+                        <div className="bg-gray-800/50 rounded p-2">
+                          <div className="text-yellow-400 font-bold">5</div>
+                          <div className="text-gray-400">Signaux actifs</div>
+                        </div>
+                      </div>
+                    </div>
+                    
                     {/* Section Education */}
                     <div>
                       <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3 font-medium">EDUCATION</h3>
@@ -1126,27 +1149,27 @@ const App = () => {
                                 <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
                                   <div className="space-y-3">
                                     {/* Header avec titre et indicateur */}
-                                    <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2">
                                       <div className="w-3 h-3 rounded-full bg-green-500"></div>
                                       <h3 className="font-bold text-white text-xs">
                                         Signal BUY BTC – 1 min
                                       </h3>
-                                    </div>
+                                </div>
                                     
                                     {/* Détails du signal */}
                                     <div className="space-y-2">
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
                                         <span className="text-white text-xs">Entrée : 45000 USD</span>
-                                      </div>
+                              </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
                                         <span className="text-white text-xs">SL : 44000 USD</span>
-                                      </div>
+                              </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
                                         <span className="text-white text-xs">TP : 46000 USD</span>
-                                      </div>
+                              </div>
                                     </div>
                                     
                                     {/* Ratio R:R */}
@@ -1195,23 +1218,23 @@ const App = () => {
                                 <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
                                   <div className="space-y-3">
                                     {/* Header avec titre et indicateur */}
-                                    <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2">
                                       <div className="w-3 h-3 rounded-full bg-green-500"></div>
                                       <h3 className="font-bold text-white text-xs">
                                         Signal SELL ETH – 5 min
                                       </h3>
-                                    </div>
+                                </div>
                                     
                                     {/* Détails du signal */}
                                     <div className="space-y-2">
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
                                         <span className="text-white">Entrée : 2800 USD</span>
-                                      </div>
+                              </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
                                         <span className="text-white">SL : 2850 USD</span>
-                                      </div>
+                              </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
                                         <span className="text-white">TP : 2750 USD</span>
@@ -1269,29 +1292,29 @@ const App = () => {
                                 <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
                                   <div className="space-y-3">
                                     {/* Header avec titre et indicateur */}
-                                    <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2">
                                       <div className="w-3 h-3 rounded-full bg-green-500"></div>
                                       <h3 className="font-bold text-white text-xs">
                                         Signal SELL NAS100 Futures – 1H
                                       </h3>
-                                    </div>
+                                </div>
                                     
                                     {/* Détails du signal */}
                                     <div className="space-y-2">
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
                                         <span className="text-white">Entrée : 15800 USD</span>
-                                      </div>
+                              </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
                                         <span className="text-white">SL : 15900 USD</span>
-                                      </div>
+                              </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
                                         <span className="text-white">TP : 15650 USD</span>
-                                      </div>
-                                    </div>
-                                    
+                              </div>
+                            </div>
+
                                     {/* Ratio R:R */}
                                     <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
                                       <span className="text-red-400 text-sm">🎯</span>
@@ -1338,23 +1361,23 @@ const App = () => {
                                 <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
                                   <div className="space-y-3">
                                     {/* Header avec titre et indicateur */}
-                                    <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2">
                                       <div className="w-3 h-3 rounded-full bg-green-500"></div>
                                       <h3 className="font-bold text-white text-xs">
                                         Signal BUY SPX500 Futures – 4H
                                       </h3>
-                                    </div>
+                                </div>
                                     
                                     {/* Détails du signal */}
                                     <div className="space-y-2">
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
                                         <span className="text-white">Entrée : 4450 USD</span>
-                                      </div>
+                              </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
                                         <span className="text-white">SL : 4400 USD</span>
-                                      </div>
+                              </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
                                         <span className="text-white">TP : 4520 USD</span>
@@ -1412,29 +1435,29 @@ const App = () => {
                                 <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
                                   <div className="space-y-3">
                                     {/* Header avec titre et indicateur */}
-                                    <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2">
                                       <div className="w-3 h-3 rounded-full bg-green-500"></div>
                                       <h3 className="font-bold text-white text-xs">
                                         Signal BUY EURUSD – 1H
                                       </h3>
-                                    </div>
+                                </div>
                                     
                                     {/* Détails du signal */}
                                     <div className="space-y-2">
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
                                         <span className="text-white">Entrée : 1.0850 USD</span>
-                                      </div>
+                              </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
                                         <span className="text-white">SL : 1.0800 USD</span>
-                                      </div>
+                              </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
                                         <span className="text-white">TP : 1.0920 USD</span>
-                                      </div>
-                                    </div>
-                                    
+                              </div>
+                            </div>
+
                                     {/* Ratio R:R */}
                                     <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
                                       <span className="text-red-400 text-sm">🎯</span>
@@ -1481,23 +1504,23 @@ const App = () => {
                                 <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
                                   <div className="space-y-3">
                                     {/* Header avec titre et indicateur */}
-                                    <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2">
                                       <div className="w-3 h-3 rounded-full bg-green-500"></div>
                                       <h3 className="font-bold text-white text-xs">
                                         Signal SELL GBPJPY – 30m
                                       </h3>
-                                    </div>
+                                </div>
                                     
                                     {/* Détails du signal */}
                                     <div className="space-y-2">
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
                                         <span className="text-white">Entrée : 185.50 USD</span>
-                                      </div>
+                              </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
                                         <span className="text-white">SL : 186.00 USD</span>
-                                      </div>
+                              </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
                                         <span className="text-white">TP : 184.80 USD</span>
@@ -3281,11 +3304,11 @@ const App = () => {
             <div className="max-w-7xl mx-auto mb-10 px-4 sm:px-6">
               <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-4">
                 Ce qu'ils en pensent
-              </h2>
+                  </h2>
               <div className="flex items-center justify-center gap-2 mb-8 sm:mb-12">
                 <img src="https://cdn.trustpilot.net/brand-assets/4.1.0/logo-white.svg" alt="Trustpilot" className="h-8" />
                 <span className="text-gray-300 text-lg">Vérifié par Trustpilot</span>
-              </div>
+                  </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                 {/* Avis 1 - Simplicité interface */}
                 <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-400 transition-all duration-300 transform cursor-pointer group">
@@ -3299,14 +3322,14 @@ const App = () => {
                   <div className="text-2xl text-yellow-400 mb-4 group-hover:scale-110 transition-transform duration-300">⭐⭐⭐⭐⭐</div>
                   <div className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors duration-300">ScalpingQueen</div>
                   <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Le journal m'a donné la discipline qui me manquait. Je suis mes trades et j'analyse mes erreurs maintenant !</div>
-                </div>
+                          </div>
 
                 {/* Avis 3 - Qualité explications live */}
                 <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 hover:border-green-400 transition-all duration-300 transform cursor-pointer group">
                   <div className="text-2xl text-yellow-400 mb-4 group-hover:scale-110 transition-transform duration-300">⭐⭐⭐⭐⭐</div>
                   <div className="text-xl font-bold text-white mb-2 group-hover:text-green-400 transition-colors duration-300">ForexMaster</div>
                   <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Les lives sont incroyables ! TheThe explique tout clairement, même les concepts complexes deviennent simples.</div>
-                </div>
+                        </div>
 
                 {/* Avis 4 - Proximité avec TheThe */}
                 <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-400 transition-all duration-300 transform cursor-pointer group">
