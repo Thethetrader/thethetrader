@@ -1133,6 +1133,14 @@ const App = () => {
                               <div className="text-gray-400 text-xs mb-2">
                                 Signal de test avec boutons WIN/LOSS/BE
                               </div>
+                              {/* Image du signal */}
+                              <div className="mb-2">
+                                <img 
+                                  src="/images/tradingview-chart.png" 
+                                  alt="Graphique BTC signal" 
+                                  className="w-full rounded border border-gray-600"
+                                />
+                              </div>
                               <div className="flex items-center gap-2 text-xs">
                                 <span className="text-gray-400">⚡ 24</span>
                                 <span className="text-gray-400">🔥 18</span>
@@ -1157,6 +1165,14 @@ const App = () => {
                               </div>
                               <div className="text-gray-400 text-xs mb-2">
                                 Signal ETH avec boutons visibles
+                              </div>
+                              {/* Image du signal */}
+                              <div className="mb-2">
+                                <img 
+                                  src="/images/tradingview-chart.png" 
+                                  alt="Graphique ETH signal" 
+                                  className="w-full rounded border border-gray-600"
+                                />
                               </div>
                             </div>
                           </>
