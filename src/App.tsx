@@ -831,7 +831,16 @@ const App = () => {
                   </p>
                 </div>
 
-                {/* Service 4 - Live Trading */}
+                {/* Service 4 - App Mobile */}
+                <div className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 p-6 sm:p-8 rounded-xl border border-purple-500/50 backdrop-blur-sm hover:from-purple-600/30 hover:to-pink-600/30 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-400 transition-all duration-300 transform cursor-pointer group">
+                  <div className="text-6xl mb-8 group-hover:scale-110 transition-transform duration-300">📱</div>
+                  <h3 className="text-3xl font-bold text-white mb-6 group-hover:text-purple-400 transition-colors duration-300">App Ludique</h3>
+                  <p className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">
+                    Notifications push pour signaux, trading en temps réel, interface intuitive. Tradez où que vous soyez avec notre app native iOS.
+                  </p>
+                </div>
+
+                {/* Service 5 - Live Trading */}
                 <div className="bg-gradient-to-br from-red-600/20 to-orange-600/20 p-6 sm:p-8 rounded-xl border border-red-500/50 backdrop-blur-sm hover:from-red-600/30 hover:to-orange-600/30 hover:scale-105 hover:shadow-2xl hover:shadow-red-500/25 hover:border-red-400 transition-all duration-300 transform cursor-pointer group">
                   <div className="text-6xl mb-8 group-hover:scale-110 transition-transform duration-300">🎥</div>
                   <h3 className="text-3xl font-bold text-white mb-6 group-hover:text-red-400 transition-colors duration-300">Live Trading</h3>
