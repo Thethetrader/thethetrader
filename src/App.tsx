@@ -678,8 +678,8 @@ const App = () => {
           </div>
           <div className="hidden md:flex space-x-8">
             <a href="#services" className="text-gray-300 hover:text-white transition-all duration-200">Services</a>
-            <a href="#about" className="text-gray-300 hover:text-white transition-all duration-200">À propos</a>
-            <a href="#platform" className="text-gray-300 hover:text-white transition-all duration-200">La plateforme</a>
+            <a href="#about-thethetrader" className="text-gray-300 hover:text-white transition-all duration-200">À propos</a>
+            <a href="#interface" className="text-gray-300 hover:text-white transition-all duration-200">La plateforme</a>
             <a href="#pricing" className="text-gray-300 hover:text-white transition-all duration-200">Prix</a>
           </div>
           <div className="flex items-center space-x-3">
@@ -785,7 +785,7 @@ const App = () => {
             </div>
 
             {/* Nos Services - Mobile Optimized */}
-            <div className="max-w-7xl mx-auto mb-10 sm:mb-16 px-4 sm:px-6">
+            <div id="services" className="max-w-7xl mx-auto mb-10 sm:mb-16 px-4 sm:px-6">
               <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-12 sm:mb-20">
                 Les Services
               </h2>
@@ -829,7 +829,7 @@ const App = () => {
             </div>
 
             {/* À propos - Mobile Optimized */}
-            <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
+            <div id="about-thethetrader" className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
               <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm">
                                                     <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-6 sm:mb-8">
                     À propos de TheTheTrader
@@ -851,7 +851,7 @@ const App = () => {
             </div>
 
             {/* Avantages clés - Mobile Optimized */}
-            <div id="about" className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
+            <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
                               <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-8 sm:mb-12">
                   Pourquoi choisir TheTheTrader ?
                 </h2>
@@ -1616,7 +1616,7 @@ const App = () => {
             </div>
 
             {/* Interface Desktop - Desktop uniquement */}
-            <div id="platform" className="hidden md:block max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
+            <div id="interface" className="hidden md:block max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
               <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-8 sm:mb-12">
                 Aperçu de la plateforme
               </h2>
