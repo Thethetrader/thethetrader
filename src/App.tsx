@@ -1795,9 +1795,43 @@ const App = () => {
                         {/* Vue Journal Perso (Trading Journal) */}
                         {mobileActiveChannel === 'trading-journal' && (
                           <>
+                            {/* Stats Trading Journal - En haut pour visibilité */}
+                            <div className="bg-gray-700 rounded-lg p-3 mb-3">
+                              <h3 className="text-white font-bold text-sm mb-3">Statistiques Trades</h3>
+                              
+                              <div className="bg-green-600/20 border border-green-500/30 rounded-lg p-3 mb-2">
+                                <div className="text-green-300 text-xs mb-1">P&L Total</div>
+                                <div className="text-lg font-bold text-white">+$3,285</div>
+                              </div>
+
+                              <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-3 mb-3">
+                                <div className="text-blue-300 text-xs mb-1">Win Rate</div>
+                                <div className="text-lg font-bold text-white">74%</div>
+                              </div>
+
+                              <div className="grid grid-cols-2 gap-2 text-xs">
+                                <div className="bg-gray-600/50 rounded p-2">
+                                  <div className="text-gray-400 mb-1">Aujourd'hui</div>
+                                  <div className="text-blue-400 font-bold">2</div>
+                                </div>
+                                <div className="bg-gray-600/50 rounded p-2">
+                                  <div className="text-gray-400 mb-1">Ce mois</div>
+                                  <div className="text-white font-bold">23</div>
+                                </div>
+                                <div className="bg-gray-600/50 rounded p-2">
+                                  <div className="text-gray-400 mb-1">Avg Win</div>
+                                  <div className="text-green-400 font-bold">+$195</div>
+                                </div>
+                                <div className="bg-gray-600/50 rounded p-2">
+                                  <div className="text-gray-400 mb-1">Avg Loss</div>
+                                  <div className="text-red-400 font-bold">-$85</div>
+                                </div>
+                              </div>
+                            </div>
+
                             {/* Calendrier trading mobile */}
                             <div className="bg-gray-700 rounded-lg p-3">
-                              <h3 className="text-white font-bold text-sm mb-3">Trading Journal</h3>
+                              <h3 className="text-white font-bold text-sm mb-3">Calendrier Trading</h3>
                               <div className="grid grid-cols-7 gap-1 text-xs">
                                 {/* Headers des jours */}
                                 <div className="text-gray-400 text-center p-1">L</div>
@@ -1851,39 +1885,7 @@ const App = () => {
                               </div>
                             </div>
 
-                            {/* Stats Trading Journal */}
-                            <div className="bg-gray-700 rounded-lg p-3">
-                              <h3 className="text-white font-bold text-sm mb-3">Statistiques Trades</h3>
-                              
-                              <div className="bg-green-600/20 border border-green-500/30 rounded-lg p-3 mb-2">
-                                <div className="text-green-300 text-xs mb-1">P&L Total</div>
-                                <div className="text-lg font-bold text-white">+$3,285</div>
-                              </div>
 
-                              <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-3 mb-3">
-                                <div className="text-blue-300 text-xs mb-1">Win Rate</div>
-                                <div className="text-lg font-bold text-white">74%</div>
-                              </div>
-
-                              <div className="grid grid-cols-2 gap-2 text-xs">
-                                <div className="bg-gray-600/50 rounded p-2">
-                                  <div className="text-gray-400 mb-1">Aujourd'hui</div>
-                                  <div className="text-blue-400 font-bold">2</div>
-                                </div>
-                                <div className="bg-gray-600/50 rounded p-2">
-                                  <div className="text-gray-400 mb-1">Ce mois</div>
-                                  <div className="text-white font-bold">23</div>
-                                </div>
-                                <div className="bg-gray-600/50 rounded p-2">
-                                  <div className="text-gray-400 mb-1">Avg Win</div>
-                                  <div className="text-green-400 font-bold">+$195</div>
-                                </div>
-                                <div className="bg-gray-600/50 rounded p-2">
-                                  <div className="text-gray-400 mb-1">Avg Loss</div>
-                                  <div className="text-red-400 font-bold">-$85</div>
-                                </div>
-                              </div>
-                            </div>
                           </>
                         )}
 
