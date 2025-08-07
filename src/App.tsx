@@ -108,9 +108,9 @@ const App = () => {
   // Hook pour détecter PWA
   const { isPWA } = usePWA();
   
-  // Empêcher le scroll en PWA
+  // Empêcher le scroll en PWA seulement quand on est connecté (dans l'app)
   useEffect(() => {
-    if (isPWA) {
+    if (isPWA && user) {
       document.body.style.overflow = 'hidden';
       document.body.style.position = 'fixed';
       document.body.style.width = '100%';
@@ -128,7 +128,7 @@ const App = () => {
       document.body.style.width = '';
       document.body.style.height = '';
     };
-  }, [isPWA]);
+  }, [isPWA, user]);
 
   // Précharger l'image pour éviter le clignotement
   useEffect(() => {
