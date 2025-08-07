@@ -1115,64 +1115,140 @@ const App = () => {
                         {mobileActiveChannel === 'crypto' && (
                           <>
                             {/* Signal BTC */}
-                            <div className="bg-gray-700 rounded-lg p-3">
-                              <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-2">
-                                  <span className="bg-green-600 text-white px-2 py-1 rounded text-xs font-bold">BUY</span>
-                                  <span className="text-white font-bold text-sm">BTC</span>
-                                  <span className="text-gray-400 text-xs">1 min</span>
+                            <div className="flex items-start gap-3 mb-4">
+                              <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <span className="font-semibold text-white">TheTheTrader</span>
+                                  <span className="text-xs text-gray-400">22:30</span>
                                 </div>
-                                <span className="text-yellow-400 font-bold text-sm">ACTIVE</span>
-                              </div>
-                              <div className="grid grid-cols-2 gap-2 text-xs text-gray-300 mb-2">
-                                <div>Entry: 45000</div>
-                                <div>TP: 46000</div>
-                                <div>SL: 44000</div>
-                                <div>Time: 22:30</div>
-                              </div>
-                              <div className="text-gray-400 text-xs mb-2">
-                                Signal de test avec boutons WIN/LOSS/BE
-                              </div>
-                              {/* Image du signal */}
-                              <div className="mb-2">
-                                <img 
-                                  src="/images/tradingview-chart.png" 
-                                  alt="Graphique BTC signal" 
-                                  className="w-full rounded border border-gray-600"
-                                />
-                              </div>
-                              <div className="flex items-center gap-2 text-xs">
-                                <span className="text-gray-400">⚡ 24</span>
-                                <span className="text-gray-400">🔥 18</span>
+
+                                <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                                  <div className="space-y-3">
+                                    {/* Header avec titre et indicateur */}
+                                    <div className="flex items-center gap-2">
+                                      <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                                      <h3 className="font-bold text-white text-lg">
+                                        Signal BUY BTC – 1 min
+                                      </h3>
+                                    </div>
+                                    
+                                    {/* Détails du signal */}
+                                    <div className="space-y-2">
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-blue-400 text-sm">🔹</span>
+                                        <span className="text-white">Entrée : 45000 USD</span>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-blue-400 text-sm">🔹</span>
+                                        <span className="text-white">Stop Loss : 44000 USD</span>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-blue-400 text-sm">🔹</span>
+                                        <span className="text-white">Take Profit : 46000 USD</span>
+                                      </div>
+                                    </div>
+                                    
+                                    {/* Ratio R:R */}
+                                    <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
+                                      <span className="text-red-400 text-sm">🎯</span>
+                                      <span className="text-white text-sm">
+                                        Ratio R:R : ≈ 1:1
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Image du signal */}
+                                <div className="mt-2">
+                                  <img 
+                                    src="/images/tradingview-chart.png" 
+                                    alt="Signal screenshot" 
+                                    className="w-full rounded-lg border border-gray-600"
+                                  />
+                                </div>
+
+                                {/* Boutons de statut */}
+                                <div className="flex items-center gap-2 flex-wrap mt-2">
+                                  <button className="px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-600 hover:bg-green-500 text-gray-300 hover:text-white transition-all duration-200 flex items-center gap-1">
+                                    ✅ WIN
+                                  </button>
+                                  <button className="px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-600 hover:bg-red-500 text-gray-300 hover:text-white transition-all duration-200 flex items-center gap-1">
+                                    ❌ LOSS
+                                  </button>
+                                  <button className="px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-600 hover:bg-blue-500 text-gray-300 hover:text-white transition-all duration-200 flex items-center gap-1">
+                                    ⚖️ BE
+                                  </button>
+                                </div>
                               </div>
                             </div>
 
                             {/* Signal ETH */}
-                            <div className="bg-gray-700 rounded-lg p-3">
-                              <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-2">
-                                  <span className="bg-red-600 text-white px-2 py-1 rounded text-xs font-bold">SELL</span>
-                                  <span className="text-white font-bold text-sm">ETH</span>
-                                  <span className="text-gray-400 text-xs">5 min</span>
+                            <div className="flex items-start gap-3 mb-4">
+                              <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <span className="font-semibold text-white">TheTheTrader</span>
+                                  <span className="text-xs text-gray-400">22:35</span>
                                 </div>
-                                <span className="text-yellow-400 font-bold text-sm">ACTIVE</span>
-                              </div>
-                              <div className="grid grid-cols-2 gap-2 text-xs text-gray-300 mb-2">
-                                <div>Entry: 2800</div>
-                                <div>TP: 2750</div>
-                                <div>SL: 2850</div>
-                                <div>Time: 22:35</div>
-                              </div>
-                              <div className="text-gray-400 text-xs mb-2">
-                                Signal ETH avec boutons visibles
-                              </div>
-                              {/* Image du signal */}
-                              <div className="mb-2">
-                                <img 
-                                  src="/images/tradingview-chart.png" 
-                                  alt="Graphique ETH signal" 
-                                  className="w-full rounded border border-gray-600"
-                                />
+
+                                <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                                  <div className="space-y-3">
+                                    {/* Header avec titre et indicateur */}
+                                    <div className="flex items-center gap-2">
+                                      <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                                      <h3 className="font-bold text-white text-lg">
+                                        Signal SELL ETH – 5 min
+                                      </h3>
+                                    </div>
+                                    
+                                    {/* Détails du signal */}
+                                    <div className="space-y-2">
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-blue-400 text-sm">🔹</span>
+                                        <span className="text-white">Entrée : 2800 USD</span>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-blue-400 text-sm">🔹</span>
+                                        <span className="text-white">Stop Loss : 2850 USD</span>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-blue-400 text-sm">🔹</span>
+                                        <span className="text-white">Take Profit : 2750 USD</span>
+                                      </div>
+                                    </div>
+                                    
+                                    {/* Ratio R:R */}
+                                    <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
+                                      <span className="text-red-400 text-sm">🎯</span>
+                                      <span className="text-white text-sm">
+                                        Ratio R:R : ≈ 1:1
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Image du signal */}
+                                <div className="mt-2">
+                                  <img 
+                                    src="/images/tradingview-chart.png" 
+                                    alt="Signal screenshot" 
+                                    className="w-full rounded-lg border border-gray-600"
+                                  />
+                                </div>
+
+                                {/* Boutons de statut */}
+                                <div className="flex items-center gap-2 flex-wrap mt-2">
+                                  <button className="px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-600 hover:bg-green-500 text-gray-300 hover:text-white transition-all duration-200 flex items-center gap-1">
+                                    ✅ WIN
+                                  </button>
+                                  <button className="px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-600 hover:bg-red-500 text-gray-300 hover:text-white transition-all duration-200 flex items-center gap-1">
+                                    ❌ LOSS
+                                  </button>
+                                  <button className="px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-600 hover:bg-blue-500 text-gray-300 hover:text-white transition-all duration-200 flex items-center gap-1">
+                                    ⚖️ BE
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           </>
