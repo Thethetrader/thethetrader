@@ -1141,11 +1141,11 @@ const App = () => {
                                       </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
-                                        <span className="text-white text-xs">Stop Loss : 44000 USD</span>
+                                        <span className="text-white text-xs">SL : 44000 USD</span>
                                       </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
-                                        <span className="text-white text-xs">Take Profit : 46000 USD</span>
+                                        <span className="text-white text-xs">TP : 46000 USD</span>
                                       </div>
                                     </div>
                                     
@@ -1210,11 +1210,11 @@ const App = () => {
                                       </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
-                                        <span className="text-white">Stop Loss : 2850 USD</span>
+                                        <span className="text-white">SL : 2850 USD</span>
                                       </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
-                                        <span className="text-white">Take Profit : 2750 USD</span>
+                                        <span className="text-white">TP : 2750 USD</span>
                                       </div>
                                     </div>
                                     
@@ -1284,11 +1284,11 @@ const App = () => {
                                       </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
-                                        <span className="text-white">Stop Loss : 15900 USD</span>
+                                        <span className="text-white">SL : 15900 USD</span>
                                       </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
-                                        <span className="text-white">Take Profit : 15650 USD</span>
+                                        <span className="text-white">TP : 15650 USD</span>
                                       </div>
                                     </div>
                                     
@@ -1353,11 +1353,11 @@ const App = () => {
                                       </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
-                                        <span className="text-white">Stop Loss : 4400 USD</span>
+                                        <span className="text-white">SL : 4400 USD</span>
                                       </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
-                                        <span className="text-white">Take Profit : 4520 USD</span>
+                                        <span className="text-white">TP : 4520 USD</span>
                                       </div>
                                     </div>
                                     
@@ -1427,11 +1427,11 @@ const App = () => {
                                       </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
-                                        <span className="text-white">Stop Loss : 1.0800 USD</span>
+                                        <span className="text-white">SL : 1.0800 USD</span>
                                       </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
-                                        <span className="text-white">Take Profit : 1.0920 USD</span>
+                                        <span className="text-white">TP : 1.0920 USD</span>
                                       </div>
                                     </div>
                                     
@@ -1496,11 +1496,11 @@ const App = () => {
                                       </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
-                                        <span className="text-white">Stop Loss : 186.00 USD</span>
+                                        <span className="text-white">SL : 186.00 USD</span>
                                       </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
-                                        <span className="text-white">Take Profit : 184.80 USD</span>
+                                        <span className="text-white">TP : 184.80 USD</span>
                                       </div>
                                     </div>
                                     
@@ -2072,11 +2072,11 @@ const App = () => {
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Stop Loss : 44000 USD</span>
+                                  <span>SL : 44000 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Take Profit : 46000 USD</span>
+                                  <span>TP : 46000 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-red-400">🎯</span>
@@ -2105,11 +2105,11 @@ const App = () => {
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Stop Loss : 2850 USD</span>
+                                  <span>SL : 2850 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Take Profit : 2750 USD</span>
+                                  <span>TP : 2750 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-red-400">🎯</span>
@@ -2138,11 +2138,11 @@ const App = () => {
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Stop Loss : 93.80 USD</span>
+                                  <span>SL : 93.80 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Take Profit : 98.20 USD</span>
+                                  <span>TP : 98.20 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-red-400">🎯</span>
@@ -2171,11 +2171,11 @@ const App = () => {
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Stop Loss : 0.495 USD</span>
+                                  <span>SL : 0.495 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Take Profit : 0.475 USD</span>
+                                  <span>TP : 0.475 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-red-400">🎯</span>
@@ -2221,11 +2221,11 @@ const App = () => {
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Stop Loss : 16950 USD</span>
+                                  <span>SL : 16950 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Take Profit : 16700 USD</span>
+                                  <span>TP : 16700 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-red-400">🎯</span>
@@ -2254,11 +2254,11 @@ const App = () => {
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Stop Loss : 4650 USD</span>
+                                  <span>SL : 4650 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Take Profit : 4850 USD</span>
+                                  <span>TP : 4850 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-red-400">🎯</span>
@@ -2287,11 +2287,11 @@ const App = () => {
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Stop Loss : 2038.20 USD</span>
+                                  <span>SL : 2038.20 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Take Profit : 2058.80 USD</span>
+                                  <span>TP : 2058.80 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-red-400">🎯</span>
@@ -2320,11 +2320,11 @@ const App = () => {
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Stop Loss : 79.80 USD</span>
+                                  <span>SL : 79.80 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Take Profit : 77.20 USD</span>
+                                  <span>TP : 77.20 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-red-400">🎯</span>
@@ -2384,11 +2384,11 @@ const App = () => {
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Stop Loss : 102,800 USD</span>
+                                  <span>SL : 102,800 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Take Profit : 103,800 USD</span>
+                                  <span>TP : 103,800 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-red-400">🎯</span>
@@ -2501,11 +2501,11 @@ const App = () => {
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Stop Loss : 1.0825 USD</span>
+                                  <span>SL : 1.0825 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Take Profit : 1.0890 USD</span>
+                                  <span>TP : 1.0890 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-red-400">🎯</span>
@@ -2534,11 +2534,11 @@ const App = () => {
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Stop Loss : 190.00 USD</span>
+                                  <span>SL : 190.00 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Take Profit : 188.80 USD</span>
+                                  <span>TP : 188.80 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-red-400">🎯</span>
@@ -2567,11 +2567,11 @@ const App = () => {
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Stop Loss : 147.85 USD</span>
+                                  <span>SL : 147.85 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Take Profit : 148.85 USD</span>
+                                  <span>TP : 148.85 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-red-400">🎯</span>
@@ -2600,11 +2600,11 @@ const App = () => {
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Stop Loss : 0.6680 USD</span>
+                                  <span>SL : 0.6680 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-blue-400">🔹</span>
-                                  <span>Take Profit : 0.6620 USD</span>
+                                  <span>TP : 0.6620 USD</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-red-400">🎯</span>
