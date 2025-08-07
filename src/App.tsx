@@ -2981,57 +2981,55 @@ const App = () => {
 
             {/* Section Avis Clients */}
             <div className="max-w-7xl mx-auto mb-10 px-4 sm:px-6">
-              <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-8">
-                Avis Clients
+              <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-4">
+                Ce qu'ils en pensent
               </h2>
-              <div className="flex items-center justify-center gap-2 mb-8">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/1/14/Trustpilot_logo.svg" alt="Trustpilot" className="h-8" />
-                <span className="text-gray-300 text-lg">Avis vérifiés Trustpilot</span>
+              <div className="flex items-center justify-center gap-2 mb-8 sm:mb-12">
+                <img src="https://cdn.trustpilot.net/brand-assets/4.1.0/logo-white.svg" alt="Trustpilot" className="h-8" />
+                <span className="text-gray-300 text-lg">Vérifié par Trustpilot</span>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[
-                  { name: "Marc L.", text: "Setup ultra simple ! En 5 minutes j'étais connecté et je recevais déjà les signaux. Parfait pour débuter.", rating: 5 },
-                  { name: "Sophie D.", text: "Le journal de trading m'a enfin donné la discipline qui me manquait. Je suis mes trades maintenant !", rating: 5 },
-                  { name: "Antoine R.", text: "Les signaux sont très bien expliqués, on comprend pourquoi entrer et sortir. Merci pour la pédagogie !", rating: 5 },
-                  { name: "Julie M.", text: "Les lives sont incroyables ! Tout est expliqué clairement, même pour une débutante comme moi.", rating: 5 },
-                  { name: "Thomas K.", text: "J'apprécie vraiment la proximité avec TheThe. Il répond à nos questions et nous guide vraiment.", rating: 5 },
-                  { name: "Céline B.", text: "Interface super simple et intuitive. Pas besoin d'être expert pour s'y retrouver rapidement.", rating: 5 },
-                  { name: "David P.", text: "Configuration en quelques clics ! Rien à voir avec d'autres plateformes compliquées.", rating: 5 },
-                  { name: "Emma S.", text: "Le journal m'aide énormément à rester disciplinée et à analyser mes erreurs. Game changer !", rating: 5 },
-                  { name: "Maxime T.", text: "Signaux détaillés avec explications. On comprend la logique derrière chaque trade.", rating: 5 }
-                ].map((review, index) => (
-                  <div key={index} className="bg-gray-800/50 p-6 rounded-xl border border-gray-600/50 backdrop-blur-sm hover:bg-gray-800/70 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-500/50 transition-all duration-300 transform cursor-pointer group">
-                    <div className="flex items-center mb-3">
-                      <div className="flex text-yellow-400 mr-3">
-                        {[...Array(review.rating)].map((_, i) => (
-                          <span key={i}>⭐</span>
-                        ))}
-                      </div>
-                      <span className="font-semibold text-white">{review.name}</span>
-                    </div>
-                    <p className="text-gray-300 text-sm leading-relaxed group-hover:text-gray-200 transition-colors duration-300">{review.text}</p>
-                    <div className="mt-3 text-xs text-blue-400 flex items-center gap-1">
-                      <span>✓</span>
-                      <span>Avis vérifié Trustpilot</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                {/* Avis 1 */}
+                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-400 transition-all duration-300 transform cursor-pointer group">
+                  <div className="text-4xl text-purple-600 mb-4 group-hover:scale-110 transition-transform duration-300">⭐</div>
+                  <div className="text-xl font-bold text-white mb-2 group-hover:text-purple-400 transition-colors duration-300">Marc L.</div>
+                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Setup ultra simple ! En 5 minutes j'étais connecté et je recevais déjà les signaux. Parfait pour débuter.</div>
+                </div>
 
-              {/* Bouton Commencer maintenant après les avis */}
-              <div className="text-center mt-12">
-                <button 
-                  onClick={() => {
-                    const pricingSection = document.getElementById('pricing');
-                    if (pricingSection) {
-                      pricingSection.scrollIntoView({ behavior: 'smooth' });
-                    }
-                  }}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 sm:px-12 py-5 sm:py-6 rounded-lg text-xl sm:text-2xl font-semibold hover:opacity-90"
-                >
-                  Commencer maintenant
-                </button>
+                {/* Avis 2 */}
+                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25 hover:border-blue-400 transition-all duration-300 transform cursor-pointer group">
+                  <div className="text-4xl text-purple-600 mb-4 group-hover:scale-110 transition-transform duration-300">⭐</div>
+                  <div className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors duration-300">Sophie D.</div>
+                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Le journal de trading m'a enfin donné la discipline qui me manquait. Je suis mes trades maintenant !</div>
+                </div>
+
+                {/* Avis 3 */}
+                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 hover:border-green-400 transition-all duration-300 transform cursor-pointer group">
+                  <div className="text-4xl text-purple-600 mb-4 group-hover:scale-110 transition-transform duration-300">⭐</div>
+                  <div className="text-xl font-bold text-white mb-2 group-hover:text-green-400 transition-colors duration-300">Antoine R.</div>
+                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Les signaux sont très bien expliqués, on comprend pourquoi entrer et sortir. Merci pour la pédagogie !</div>
+                </div>
+
+                {/* Avis 4 */}
+                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-400 transition-all duration-300 transform cursor-pointer group">
+                  <div className="text-4xl text-purple-600 mb-4 group-hover:scale-110 transition-transform duration-300">⭐</div>
+                  <div className="text-xl font-bold text-white mb-2 group-hover:text-purple-400 transition-colors duration-300">Julie M.</div>
+                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Les lives sont incroyables ! Tout est expliqué clairement, même pour une débutante comme moi.</div>
+                </div>
+
+                {/* Avis 5 */}
+                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25 hover:border-blue-400 transition-all duration-300 transform cursor-pointer group">
+                  <div className="text-4xl text-purple-600 mb-4 group-hover:scale-110 transition-transform duration-300">⭐</div>
+                  <div className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors duration-300">Thomas K.</div>
+                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">J'apprécie vraiment la proximité avec TheThe. Il répond à nos questions et nous guide vraiment.</div>
+                </div>
+
+                {/* Avis 6 */}
+                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 hover:border-green-400 transition-all duration-300 transform cursor-pointer group">
+                  <div className="text-4xl text-purple-600 mb-4 group-hover:scale-110 transition-transform duration-300">⭐</div>
+                  <div className="text-xl font-bold text-white mb-2 group-hover:text-green-400 transition-colors duration-300">Céline B.</div>
+                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Interface super simple et intuitive. Pas besoin d'être expert pour s'y retrouver rapidement.</div>
+                </div>
               </div>
             </div>
 
