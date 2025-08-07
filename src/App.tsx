@@ -679,7 +679,8 @@ const App = () => {
           <div className="hidden md:flex space-x-8">
             <a href="#services" className="text-gray-300 hover:text-white transition-all duration-200">Services</a>
             <a href="#about" className="text-gray-300 hover:text-white transition-all duration-200">À propos</a>
-            <a href="#contact" className="text-gray-300 hover:text-white transition-all duration-200">Contact</a>
+            <a href="#platform" className="text-gray-300 hover:text-white transition-all duration-200">La plateforme</a>
+            <a href="#pricing" className="text-gray-300 hover:text-white transition-all duration-200">Prix</a>
           </div>
           <div className="flex items-center space-x-3">
             <button 
@@ -850,7 +851,7 @@ const App = () => {
             </div>
 
             {/* Avantages clés - Mobile Optimized */}
-            <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
+            <div id="about" className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
                               <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-8 sm:mb-12">
                   Pourquoi choisir TheTheTrader ?
                 </h2>
@@ -1615,7 +1616,7 @@ const App = () => {
             </div>
 
             {/* Interface Desktop - Desktop uniquement */}
-            <div className="hidden md:block max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
+            <div id="platform" className="hidden md:block max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
               <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-8 sm:mb-12">
                 Aperçu de la plateforme
               </h2>
