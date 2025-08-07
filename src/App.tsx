@@ -750,29 +750,29 @@ const App = () => {
       ) : (
         <>
           {/* Hero Section - Mobile Optimized */}
-          <div className="text-center pt-10 sm:pt-20 pb-0 px-4 sm:px-6">
-            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight hover:scale-105 transition-transform duration-300 cursor-pointer group">
+          <div className="text-center pt-20 sm:pt-32 pb-0 px-4 sm:px-6">
+            <h1 className="text-5xl sm:text-7xl md:text-9xl font-bold text-white mb-8 sm:mb-12 leading-tight hover:scale-105 transition-transform duration-300 cursor-pointer group">
               <span className="group-hover:text-blue-300 transition-colors duration-300">Le trading</span><br />
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent group-hover:from-blue-300 group-hover:to-purple-300 transition-all duration-300">
                 pour les nuls
               </span>
             </h1>
-            <p className="text-base sm:text-xl text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto px-2">
+            <p className="text-xl sm:text-3xl text-gray-300 mb-10 sm:mb-12 max-w-4xl mx-auto px-2">
               Un setup, des signaux expliqués, un journal de performance. Rejoins la communauté et trade en confiance.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 sm:mb-20 px-4">
+            <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 justify-center mb-12 sm:mb-28 px-4">
               <button 
                 onClick={() => setShowAuthModal(true)}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:opacity-90 w-full sm:w-auto"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 sm:px-12 py-5 sm:py-6 rounded-lg text-xl sm:text-2xl font-semibold hover:opacity-90 w-full sm:w-auto"
               >
                 Commencer maintenant
               </button>
             </div>
 
             {/* Barre de défilement - Full Width */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 sm:py-6 overflow-hidden relative mb-6 sm:mb-10 w-screen -mx-4 sm:-mx-6">
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 sm:py-10 overflow-hidden relative mb-10 sm:mb-16 w-screen -mx-4 sm:-mx-6">
               <div className="whitespace-nowrap animate-scroll">
-                <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
                 <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
                 <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
                 <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
@@ -784,15 +784,15 @@ const App = () => {
             </div>
 
             {/* Nos Services - Mobile Optimized */}
-            <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-8 sm:mb-12">
+            <div className="max-w-7xl mx-auto mb-10 sm:mb-16 px-4 sm:px-6">
+              <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-12 sm:mb-20">
                 Les Services
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-12">
                 {/* Service 1 */}
                 <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm hover:bg-gray-800/70 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-500/50 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">📊</div>
-                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-purple-400 transition-colors duration-300">Signaux de Trading</h3>
+                  <div className="text-6xl mb-8 group-hover:scale-110 transition-transform duration-300">📊</div>
+                  <h3 className="text-3xl font-bold text-white mb-6 group-hover:text-purple-400 transition-colors duration-300">Signaux de Trading</h3>
                   <p className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">
                     Recevez des signaux de trading précis avec des points d'entrée, de sortie et de stop-loss clairement définis.
                   </p>
@@ -812,7 +812,7 @@ const App = () => {
                   <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">📈</div>
                   <h3 className="text-xl font-bold text-white mb-3 group-hover:text-green-400 transition-colors duration-300">Suivi Performance</h3>
                   <p className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">
-                    Suivez vos performances avec notre calendrier de trading et nos analyses détaillées.
+                    Suivez vos performances avec notre calendrier de trading et nos analyses détaillées. Journal de trading personnalisé pour optimiser votre stratégie.
                   </p>
                 </div>
 
@@ -830,9 +830,9 @@ const App = () => {
             {/* À propos - Mobile Optimized */}
             <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
               <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm">
-                <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-6 sm:mb-8">
-                  À propos de TheTheTrader
-                </h2>
+                                                    <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-6 sm:mb-8">
+                    À propos de TheTheTrader
+                  </h2>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
                   <div>
                     <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
@@ -851,9 +851,9 @@ const App = () => {
 
             {/* Avantages clés - Mobile Optimized */}
             <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-8 sm:mb-12">
-                Pourquoi choisir TheTheTrader ?
-              </h2>
+                              <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-8 sm:mb-12">
+                  Pourquoi choisir TheTheTrader ?
+                </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
                 {/* Carte 1 */}
                 <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-400 transition-all duration-300 transform cursor-pointer group">
@@ -880,7 +880,7 @@ const App = () => {
 
             {/* Interface Mobile après Connexion - Mobile uniquement */}
             <div className="block md:hidden max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-8 sm:mb-12">
+              <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-8 sm:mb-12">
                 Aperçu de la plateforme
               </h2>
               
@@ -1578,19 +1578,21 @@ const App = () => {
 
                       </div>
                       
-                      {/* Zone de saisie en bas */}
-                      <div className="border-t border-gray-700 p-3">
-                        <div className="flex items-center gap-2">
-                          <input 
-                            type="text" 
-                            placeholder="Tapez votre message..."
-                            className="flex-1 bg-gray-700 text-white text-xs px-3 py-2 rounded border-none outline-none"
-                          />
-                          <button className="bg-blue-600 text-white px-3 py-2 rounded text-xs">
-                            Envoyer
-                          </button>
+                      {/* Zone de saisie en bas - seulement pour general-chat et profit-loss */}
+                      {(mobileActiveChannel === 'general-chat' || mobileActiveChannel === 'profit-loss') && (
+                        <div className="border-t border-gray-700 p-3">
+                          <div className="flex items-center gap-2">
+                            <input 
+                              type="text" 
+                              placeholder="Tapez votre message..."
+                              className="flex-1 bg-gray-700 text-white text-xs px-3 py-2 rounded border-none outline-none"
+                            />
+                            <button className="bg-blue-600 text-white px-3 py-2 rounded text-xs">
+                              Envoyer
+                            </button>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1599,13 +1601,13 @@ const App = () => {
 
             {/* Interface Desktop - Desktop uniquement */}
             <div className="hidden md:block max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-8 sm:mb-12">
+              <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-8 sm:mb-12">
                 Aperçu de la plateforme
               </h2>
               <div className="flex justify-center">
                 <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm w-full max-w-6xl">
                   {/* Mockup Desktop Interface */}
-                  <div className="bg-gray-900 rounded-lg p-0 mx-auto h-screen max-h-[600px] flex" style={{width: '100%'}}>
+                  <div className="bg-gray-900 rounded-lg p-0 mx-auto h-screen max-h-[800px] flex" style={{width: '100%'}}>
                     
                     {/* Sidebar Desktop */}
                     <div className="w-56 bg-gray-800 flex flex-col">
@@ -1664,7 +1666,12 @@ const App = () => {
                         <div>
                           <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">TRADING HUB</h3>
                           <div className="space-y-1">
-                            <button className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📺 Livestream</button>
+                            <button 
+                              className={`w-full text-left px-3 py-2 rounded text-sm ${previewChannel === 'livestream' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
+                              onClick={() => setPreviewChannel('livestream')}
+                            >
+                              📺 Livestream
+                            </button>
                             <button 
                               className={`w-full text-left px-3 py-2 rounded text-sm ${previewChannel === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
                               onClick={() => setPreviewChannel('general-chat')}
@@ -1723,6 +1730,7 @@ const App = () => {
                              previewChannel === 'forex' ? '# forex' : 
                              previewChannel === 'fondamentaux' ? '📚 Fondamentaux' : 
                              previewChannel === 'letsgooo-model' ? '🚀 Letsgooo-model' : 
+                             previewChannel === 'livestream' ? '📺 Livestream' : 
                              previewChannel === 'general-chat' ? '💬 General-chat' : 
                              previewChannel === 'profit-loss' ? '💰 Profit-loss' : 
                              previewChannel === 'calendar' ? '📅 Journal Signaux' : 
@@ -1742,23 +1750,30 @@ const App = () => {
                           <>
                             {/* Signal BTC */}
                             <div className="bg-gray-700 rounded-lg p-4">
-                              <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center gap-3">
-                                  <span className="bg-green-600 text-white px-3 py-1 rounded text-sm font-bold">BUY</span>
-                                  <span className="text-white font-bold text-lg">BTCUSD</span>
-                                  <span className="text-gray-400 text-sm">15m</span>
+                              <div className="flex items-center gap-2 mb-3">
+                                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <span className="text-white font-bold text-lg">Signal BUY BTCUSD – 15m</span>
+                              </div>
+                              <div className="space-y-2 text-sm text-gray-300 mb-3">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Entrée : 45000 USD</span>
                                 </div>
-                                <span className="text-green-400 font-bold">+$1,250</span>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Stop Loss : 44000 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Take Profit : 46000 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-red-400">🎯</span>
+                                  <span>Ratio R:R : ≈ 2.0</span>
+                                </div>
                               </div>
-                              <div className="grid grid-cols-4 gap-4 text-sm text-gray-300 mb-3">
-                                <div>Entry: 45000</div>
-                                <div>TP: 46000</div>
-                                <div>SL: 44000</div>
-                                <div>R:R: 2.0</div>
-                              </div>
-                              <div className="text-gray-400 text-sm mb-3">
-                                Signal crypto fort avec breakout confirmé. Momentum bullish sur BTC.
-                              </div>
+
+                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
                               <div className="flex items-center gap-2">
                                 <span className="text-gray-400 text-xs">⚡ 24</span>
                                 <span className="text-gray-400 text-xs">🔥 18</span>
@@ -1768,27 +1783,100 @@ const App = () => {
 
                             {/* Signal ETH */}
                             <div className="bg-gray-700 rounded-lg p-4">
-                              <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center gap-3">
-                                  <span className="bg-red-600 text-white px-3 py-1 rounded text-sm font-bold">SELL</span>
-                                  <span className="text-white font-bold text-lg">ETHUSD</span>
-                                  <span className="text-gray-400 text-sm">5m</span>
+                              <div className="flex items-center gap-2 mb-3">
+                                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                                <span className="text-white font-bold text-lg">Signal SELL ETHUSD – 5m</span>
+                              </div>
+                              <div className="space-y-2 text-sm text-gray-300 mb-3">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Entrée : 2800 USD</span>
                                 </div>
-                                <span className="text-yellow-400 font-bold">En cours</span>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Stop Loss : 2850 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Take Profit : 2750 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-red-400">🎯</span>
+                                  <span>Ratio R:R : ≈ 1.75</span>
+                                </div>
                               </div>
-                              <div className="grid grid-cols-4 gap-4 text-sm text-gray-300 mb-3">
-                                <div>Entry: 2800</div>
-                                <div>TP: 2750</div>
-                                <div>SL: 2850</div>
-                                <div>R:R: 1.75</div>
-                              </div>
-                              <div className="text-gray-400 text-sm mb-3">
-                                Signal de correction sur ETH. Résistance forte à 2820.
-                              </div>
+
+                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
                               <div className="flex items-center gap-2">
                                 <span className="text-gray-400 text-xs">⚡ 16</span>
                                 <span className="text-gray-400 text-xs">📉 12</span>
                                 <span className="text-gray-400 text-xs">💎 8</span>
+                              </div>
+                            </div>
+
+                            {/* Signal SOL */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-2 mb-3">
+                                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <span className="text-white font-bold text-lg">Signal BUY SOLUSD – 15m</span>
+                              </div>
+                              <div className="space-y-2 text-sm text-gray-300 mb-3">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Entrée : 95.50 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Stop Loss : 93.80 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Take Profit : 98.20 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-red-400">🎯</span>
+                                  <span>Ratio R:R : ≈ 1.8</span>
+                                </div>
+                              </div>
+
+                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-400 text-xs">🔥 42</span>
+                                <span className="text-gray-400 text-xs">🚀 28</span>
+                                <span className="text-gray-400 text-xs">💎 15</span>
+                              </div>
+                            </div>
+
+                            {/* Signal ADA */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-2 mb-3">
+                                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                                <span className="text-white font-bold text-lg">Signal SELL ADAUSD – 1H</span>
+                              </div>
+                              <div className="space-y-2 text-sm text-gray-300 mb-3">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Entrée : 0.485 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Stop Loss : 0.495 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Take Profit : 0.475 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-red-400">🎯</span>
+                                  <span>Ratio R:R : ≈ 1.5</span>
+                                </div>
+                              </div>
+
+                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-400 text-xs">📉 23</span>
+                                <span className="text-gray-400 text-xs">🔻 18</span>
+                                <span className="text-gray-400 text-xs">💎 9</span>
                               </div>
                             </div>
 
@@ -1811,23 +1899,30 @@ const App = () => {
                           <>
                             {/* Signal NAS100 */}
                             <div className="bg-gray-700 rounded-lg p-4">
-                              <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center gap-3">
-                                  <span className="bg-red-600 text-white px-3 py-1 rounded text-sm font-bold">SELL</span>
-                                  <span className="text-white font-bold text-lg">NAS100</span>
-                                  <span className="text-gray-400 text-sm">1H</span>
+                              <div className="flex items-center gap-2 mb-3">
+                                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                                <span className="text-white font-bold text-lg">Signal SELL NAS100 – 1H</span>
+                              </div>
+                              <div className="space-y-2 text-sm text-gray-300 mb-3">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Entrée : 16850 USD</span>
                                 </div>
-                                <span className="text-green-400 font-bold">+$890</span>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Stop Loss : 16950 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Take Profit : 16700 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-red-400">🎯</span>
+                                  <span>Ratio R:R : ≈ 1.5</span>
+                                </div>
                               </div>
-                              <div className="grid grid-cols-4 gap-4 text-sm text-gray-300 mb-3">
-                                <div>Entry: 16850</div>
-                                <div>TP: 16700</div>
-                                <div>SL: 16950</div>
-                                <div>R:R: 1.5</div>
-                              </div>
-                              <div className="text-gray-400 text-sm mb-3">
-                                Signal short sur NAS100. Divergence baissière confirmée sur H1.
-                              </div>
+
+                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
                               <div className="flex items-center gap-2">
                                 <span className="text-gray-400 text-xs">📉 31</span>
                                 <span className="text-gray-400 text-xs">🔻 22</span>
@@ -1837,27 +1932,100 @@ const App = () => {
 
                             {/* Signal SPX500 */}
                             <div className="bg-gray-700 rounded-lg p-4">
-                              <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center gap-3">
-                                  <span className="bg-green-600 text-white px-3 py-1 rounded text-sm font-bold">BUY</span>
-                                  <span className="text-white font-bold text-lg">SPX500</span>
-                                  <span className="text-gray-400 text-sm">4H</span>
+                              <div className="flex items-center gap-2 mb-3">
+                                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <span className="text-white font-bold text-lg">Signal BUY SPX500 – 4H</span>
+                              </div>
+                              <div className="space-y-2 text-sm text-gray-300 mb-3">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Entrée : 4720 USD</span>
                                 </div>
-                                <span className="text-yellow-400 font-bold">En cours</span>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Stop Loss : 4650 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Take Profit : 4850 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-red-400">🎯</span>
+                                  <span>Ratio R:R : ≈ 1.85</span>
+                                </div>
                               </div>
-                              <div className="grid grid-cols-4 gap-4 text-sm text-gray-300 mb-3">
-                                <div>Entry: 4720</div>
-                                <div>TP: 4850</div>
-                                <div>SL: 4650</div>
-                                <div>R:R: 1.85</div>
-                              </div>
-                              <div className="text-gray-400 text-sm mb-3">
-                                Breakout haussier sur SPX500. Support solide à 4700.
-                              </div>
+
+                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
                               <div className="flex items-center gap-2">
                                 <span className="text-gray-400 text-xs">📈 28</span>
                                 <span className="text-gray-400 text-xs">🚀 19</span>
                                 <span className="text-gray-400 text-xs">💪 12</span>
+                              </div>
+                            </div>
+
+                            {/* Signal GOLD */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-2 mb-3">
+                                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <span className="text-white font-bold text-lg">Signal BUY GOLD – 4H</span>
+                              </div>
+                              <div className="space-y-2 text-sm text-gray-300 mb-3">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Entrée : 2045.50 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Stop Loss : 2038.20 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Take Profit : 2058.80 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-red-400">🎯</span>
+                                  <span>Ratio R:R : ≈ 1.85</span>
+                                </div>
+                              </div>
+
+                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-400 text-xs">🥇 38</span>
+                                <span className="text-gray-400 text-xs">📈 25</span>
+                                <span className="text-gray-400 text-xs">💎 12</span>
+                              </div>
+                            </div>
+
+                            {/* Signal OIL */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-2 mb-3">
+                                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                                <span className="text-white font-bold text-lg">Signal SELL OIL – 1H</span>
+                              </div>
+                              <div className="space-y-2 text-sm text-gray-300 mb-3">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Entrée : 78.50 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Stop Loss : 79.80 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Take Profit : 77.20 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-red-400">🎯</span>
+                                  <span>Ratio R:R : ≈ 1.4</span>
+                                </div>
+                              </div>
+
+                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-400 text-xs">🛢️ 19</span>
+                                <span className="text-gray-400 text-xs">📉 14</span>
+                                <span className="text-gray-400 text-xs">💎 7</span>
                               </div>
                             </div>
 
@@ -1875,28 +2043,166 @@ const App = () => {
                           </>
                         )}
 
+                        {/* Vue Livestream */}
+                        {previewChannel === 'livestream' && (
+                          <>
+                            {/* Statut Live */}
+                            <div className="bg-red-600/20 border border-red-500/30 rounded-lg p-4">
+                              <div className="flex items-center gap-3 mb-3">
+                                <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                                <span className="text-red-400 font-bold text-lg">LIVE - Session Trading</span>
+                              </div>
+                              <div className="text-gray-300 text-sm mb-3">
+                                🎥 En direct maintenant | 👥 156 viewers | ⏰ Durée: 1h23
+                              </div>
+                              <div className="text-gray-400 text-sm">
+                                Analyse des marchés et signaux en temps réel. Posez vos questions dans le chat !
+                              </div>
+                            </div>
+
+                            {/* Signal en direct */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-2 mb-3">
+                                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                                <span className="text-white font-bold text-lg">Signal BUY BTCUSD – LIVE</span>
+                              </div>
+                              <div className="space-y-2 text-sm text-gray-300 mb-3">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Entrée : 103,200 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Stop Loss : 102,800 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Take Profit : 103,800 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-red-400">🎯</span>
+                                  <span>Ratio R:R : ≈ 1.5</span>
+                                </div>
+                              </div>
+
+                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-400 text-xs">🔥 45</span>
+                                <span className="text-gray-400 text-xs">🚀 32</span>
+                                <span className="text-gray-400 text-xs">💎 28</span>
+                              </div>
+                            </div>
+
+                            {/* Messages du chat live */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-xs text-white">M</div>
+                                <span className="text-white font-medium text-sm">Member_Pro</span>
+                                <span className="text-gray-400 text-xs">14:23</span>
+                              </div>
+                              <p className="text-gray-300 text-sm">
+                                Excellent setup sur BTC ! 🔥
+                              </p>
+                            </div>
+
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center text-xs text-white">S</div>
+                                <span className="text-white font-medium text-sm">Sarah_FX</span>
+                                <span className="text-gray-400 text-xs">14:25</span>
+                              </div>
+                              <p className="text-gray-300 text-sm">
+                                @TheTheTrader Quelle est la prochaine zone à surveiller ?
+                              </p>
+                            </div>
+
+                            {/* Messages de TheTheTrader */}
+                            <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-4">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white">TT</div>
+                                <span className="text-white font-medium text-sm">TheTheTrader</span>
+                                <span className="text-gray-400 text-xs">14:30</span>
+                              </div>
+                              <p className="text-gray-300 text-sm">
+                                📺 STREAM dans 10 min - NY PM session ! 🚀
+                              </p>
+                            </div>
+
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-xs text-white">A</div>
+                                <span className="text-white font-medium text-sm">AlexTrader</span>
+                                <span className="text-gray-400 text-xs">14:32</span>
+                              </div>
+                              <p className="text-gray-300 text-sm">
+                                Prêt pour le stream ! 🎯
+                              </p>
+                            </div>
+
+                            <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-4">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white">TT</div>
+                                <span className="text-white font-medium text-sm">TheTheTrader</span>
+                                <span className="text-gray-400 text-xs">14:35</span>
+                              </div>
+                              <p className="text-gray-300 text-sm">
+                                ⏰ 5 min avant le stream - Préparez vos questions ! 💬
+                              </p>
+                            </div>
+
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="w-6 h-6 bg-pink-500 rounded-full flex items-center justify-center text-xs text-white">L</div>
+                                <span className="text-white font-medium text-sm">Lisa_FX</span>
+                                <span className="text-gray-400 text-xs">14:37</span>
+                              </div>
+                              <p className="text-gray-300 text-sm">
+                                J'ai une question sur EURUSD ! 📈
+                              </p>
+                            </div>
+
+                            <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-4">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white">TT</div>
+                                <span className="text-white font-medium text-sm">TheTheTrader</span>
+                                <span className="text-gray-400 text-xs">14:38</span>
+                              </div>
+                              <p className="text-gray-300 text-sm">
+                                🎥 STREAM LIVE dans 2 min - NY PM session ! Préparez-vous ! 🔥
+                              </p>
+                            </div>
+                          </>
+                        )}
+
                         {/* Vue Forex - Signaux devises */}
                         {previewChannel === 'forex' && (
                           <>
                             {/* Signal EURUSD */}
                             <div className="bg-gray-700 rounded-lg p-4">
-                              <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center gap-3">
-                                  <span className="bg-green-600 text-white px-3 py-1 rounded text-sm font-bold">BUY</span>
-                                  <span className="text-white font-bold text-lg">EURUSD</span>
-                                  <span className="text-gray-400 text-sm">30m</span>
+                              <div className="flex items-center gap-2 mb-3">
+                                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <span className="text-white font-bold text-lg">Signal BUY EURUSD – 30m</span>
+                              </div>
+                              <div className="space-y-2 text-sm text-gray-300 mb-3">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Entrée : 1.0850 USD</span>
                                 </div>
-                                <span className="text-green-400 font-bold">+$320</span>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Stop Loss : 1.0825 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Take Profit : 1.0890 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-red-400">🎯</span>
+                                  <span>Ratio R:R : ≈ 1.6</span>
+                                </div>
                               </div>
-                              <div className="grid grid-cols-4 gap-4 text-sm text-gray-300 mb-3">
-                                <div>Entry: 1.0850</div>
-                                <div>TP: 1.0890</div>
-                                <div>SL: 1.0825</div>
-                                <div>R:R: 1.6</div>
-                              </div>
-                              <div className="text-gray-400 text-sm mb-3">
-                                EUR/USD rebond sur support majeur. Dollar faible avant NFP.
-                              </div>
+
+                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
                               <div className="flex items-center gap-2">
                                 <span className="text-gray-400 text-xs">💶 42</span>
                                 <span className="text-gray-400 text-xs">📊 28</span>
@@ -1906,27 +2212,100 @@ const App = () => {
 
                             {/* Signal GBPJPY */}
                             <div className="bg-gray-700 rounded-lg p-4">
-                              <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center gap-3">
-                                  <span className="bg-red-600 text-white px-3 py-1 rounded text-sm font-bold">SELL</span>
-                                  <span className="text-white font-bold text-lg">GBPJPY</span>
-                                  <span className="text-gray-400 text-sm">15m</span>
+                              <div className="flex items-center gap-2 mb-3">
+                                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                                <span className="text-white font-bold text-lg">Signal SELL GBPJPY – 15m</span>
+                              </div>
+                              <div className="space-y-2 text-sm text-gray-300 mb-3">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Entrée : 189.50 USD</span>
                                 </div>
-                                <span className="text-yellow-400 font-bold">En cours</span>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Stop Loss : 190.00 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Take Profit : 188.80 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-red-400">🎯</span>
+                                  <span>Ratio R:R : ≈ 1.4</span>
+                                </div>
                               </div>
-                              <div className="grid grid-cols-4 gap-4 text-sm text-gray-300 mb-3">
-                                <div>Entry: 189.50</div>
-                                <div>TP: 188.80</div>
-                                <div>SL: 190.00</div>
-                                <div>R:R: 1.4</div>
-                              </div>
-                              <div className="text-gray-400 text-sm mb-3">
-                                GBP/JPY rejection à la résistance. Yen reprend des forces.
-                              </div>
+
+                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
                               <div className="flex items-center gap-2">
                                 <span className="text-gray-400 text-xs">🇬🇧 24</span>
                                 <span className="text-gray-400 text-xs">🇯🇵 18</span>
                                 <span className="text-gray-400 text-xs">📉 14</span>
+                              </div>
+                            </div>
+
+                            {/* Signal USDJPY */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-2 mb-3">
+                                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <span className="text-white font-bold text-lg">Signal BUY USDJPY – 1H</span>
+                              </div>
+                              <div className="space-y-2 text-sm text-gray-300 mb-3">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Entrée : 148.25 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Stop Loss : 147.85 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Take Profit : 148.85 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-red-400">🎯</span>
+                                  <span>Ratio R:R : ≈ 1.7</span>
+                                </div>
+                              </div>
+
+                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-400 text-xs">🇯🇵 34</span>
+                                <span className="text-gray-400 text-xs">📈 22</span>
+                                <span className="text-gray-400 text-xs">💎 16</span>
+                              </div>
+                            </div>
+
+                            {/* Signal AUDUSD */}
+                            <div className="bg-gray-700 rounded-lg p-4">
+                              <div className="flex items-center gap-2 mb-3">
+                                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                                <span className="text-white font-bold text-lg">Signal SELL AUDUSD – 30m</span>
+                              </div>
+                              <div className="space-y-2 text-sm text-gray-300 mb-3">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Entrée : 0.6650 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Stop Loss : 0.6680 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">🔹</span>
+                                  <span>Take Profit : 0.6620 USD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-red-400">🎯</span>
+                                  <span>Ratio R:R : ≈ 1.5</span>
+                                </div>
+                              </div>
+
+                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-400 text-xs">🇦🇺 19</span>
+                                <span className="text-gray-400 text-xs">📉 15</span>
+                                <span className="text-gray-400 text-xs">💎 8</span>
                               </div>
                             </div>
 
@@ -2548,19 +2927,21 @@ const App = () => {
 
                       </div>
 
-                      {/* Zone de saisie */}
-                      <div className="p-4 border-t border-gray-700">
-                        <div className="flex gap-2">
-                          <input 
-                            type="text" 
-                            placeholder="Tapez votre message..."
-                            className="flex-1 bg-gray-700 text-white px-3 py-2 rounded text-sm placeholder-gray-400"
-                          />
-                          <button className="bg-blue-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-blue-700">
-                            Envoyer
-                          </button>
+                      {/* Zone de saisie - seulement pour general-chat et profit-loss */}
+                      {(previewChannel === 'general-chat' || previewChannel === 'profit-loss') && (
+                        <div className="p-4 border-t border-gray-700">
+                          <div className="flex gap-2">
+                            <input 
+                              type="text" 
+                              placeholder="Tapez votre message..."
+                              className="flex-1 bg-gray-700 text-white px-3 py-2 rounded text-sm placeholder-gray-400"
+                            />
+                            <button className="bg-blue-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-blue-700">
+                              Envoyer
+                            </button>
+                          </div>
                         </div>
-                      </div>
+                      )}
 
                     </div>
                   </div>
@@ -2572,14 +2953,14 @@ const App = () => {
 
             {/* Plans de prix - Mobile Optimized */}
             <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-8 sm:mb-12">
+              <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-8 sm:mb-12">
                 Choisissez votre plan
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 max-w-6xl mx-auto">
                 {/* Plan Starter */}
                 <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 p-8 sm:p-12 rounded-xl border border-purple-500/50 backdrop-blur-sm hover:from-purple-600/30 hover:to-blue-600/30 transition-all duration-300 min-h-[600px]">
                   <div className="text-center">
-                    <h3 className="text-2xl font-bold text-white mb-3">Starter</h3>
+                    <h3 className="text-xl font-bold text-white mb-3">Starter</h3>
                     <div className="text-4xl font-bold text-blue-400 mb-6">15€<span className="text-sm text-gray-400">/mois</span></div>
                     <div className="text-green-400 text-sm mb-4">🎯 Parfait pour débuter</div>
                                           <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
@@ -2625,7 +3006,7 @@ const App = () => {
                     RECOMMANDÉ
                   </div>
                   <div className="text-center">
-                    <h3 className="text-2xl font-bold text-white mb-3">Pro</h3>
+                    <h3 className="text-xl font-bold text-white mb-3">Pro</h3>
                     <div className="text-4xl font-bold text-blue-400 mb-6">25€<span className="text-sm text-gray-400">/mois</span></div>
                     <div className="text-green-400 text-sm mb-4">🚀 Pour trader comme un pro</div>
                                           <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
@@ -3065,19 +3446,21 @@ const App = () => {
                         ))}
                       </div>
 
-                      {/* Zone de saisie */}
-                      <div className="p-4 border-t border-gray-700">
-                        <div className="flex gap-2">
-                          <input 
-                            type="text" 
-                            placeholder="Tapez votre message..." 
-                            className="flex-1 bg-gray-700 text-white px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          />
-                          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
-                            Envoyer
-                          </button>
+                      {/* Zone de saisie - seulement pour general-chat et profit-loss */}
+                      {(previewChannel === 'general-chat' || previewChannel === 'profit-loss') && (
+                        <div className="p-4 border-t border-gray-700">
+                          <div className="flex gap-2">
+                            <input 
+                              type="text" 
+                              placeholder="Tapez votre message..." 
+                              className="flex-1 bg-gray-700 text-white px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                              Envoyer
+                            </button>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>
