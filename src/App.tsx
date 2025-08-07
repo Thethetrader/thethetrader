@@ -3590,6 +3590,22 @@ const App = () => {
                   </div>
                 </div>
 
+                {/* Avertissement sur les risques */}
+                <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-6 mt-12 mb-8">
+                  <div className="flex items-start gap-3">
+                    <div className="text-red-400 text-xl flex-shrink-0 mt-1">⚠️</div>
+                    <div>
+                      <h4 className="text-red-400 font-bold text-lg mb-3">Avertissement sur les risques</h4>
+                      <div className="text-gray-300 text-sm leading-relaxed space-y-2">
+                        <p><strong>Le trading comporte des risques importants de perte en capital.</strong> Vous pourriez perdre tout ou partie de votre investissement initial.</p>
+                        <p><strong>Les performances passées ne garantissent pas les résultats futurs.</strong> Les signaux et analyses présentés ne constituent pas des conseils en investissement personnalisés.</p>
+                        <p><strong>Tradez uniquement avec des fonds que vous pouvez vous permettre de perdre.</strong> TheTheTrader ne saurait être tenu responsable des pertes encourues suite à l'utilisation de nos services.</p>
+                        <p className="text-xs text-gray-400 mt-4">Ce service est destiné à des fins éducatives et d'information. Consultez un conseiller financier professionnel avant toute décision d'investissement.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Ligne de séparation et nom du site */}
                 <div className="border-t border-purple-700/50 mt-16 pt-8">
                   <div className="text-center">
