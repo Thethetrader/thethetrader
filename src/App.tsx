@@ -1128,7 +1128,7 @@ const App = () => {
                                     {/* Header avec titre et indicateur */}
                                     <div className="flex items-center gap-2">
                                       <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                                      <h3 className="font-bold text-white text-lg">
+                                      <h3 className="font-bold text-white text-sm">
                                         Signal BUY BTC – 1 min
                                       </h3>
                                     </div>
@@ -1197,7 +1197,7 @@ const App = () => {
                                     {/* Header avec titre et indicateur */}
                                     <div className="flex items-center gap-2">
                                       <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                                      <h3 className="font-bold text-white text-lg">
+                                      <h3 className="font-bold text-white text-sm">
                                         Signal SELL ETH – 5 min
                                       </h3>
                                     </div>
@@ -1271,7 +1271,7 @@ const App = () => {
                                     {/* Header avec titre et indicateur */}
                                     <div className="flex items-center gap-2">
                                       <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                                      <h3 className="font-bold text-white text-lg">
+                                      <h3 className="font-bold text-white text-sm">
                                         Signal SELL NAS100 Futures – 1H
                                       </h3>
                                     </div>
@@ -1340,7 +1340,7 @@ const App = () => {
                                     {/* Header avec titre et indicateur */}
                                     <div className="flex items-center gap-2">
                                       <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                                      <h3 className="font-bold text-white text-lg">
+                                      <h3 className="font-bold text-white text-sm">
                                         Signal BUY SPX500 Futures – 4H
                                       </h3>
                                     </div>
@@ -1414,7 +1414,7 @@ const App = () => {
                                     {/* Header avec titre et indicateur */}
                                     <div className="flex items-center gap-2">
                                       <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                                      <h3 className="font-bold text-white text-lg">
+                                      <h3 className="font-bold text-white text-sm">
                                         Signal BUY EURUSD – 1H
                                       </h3>
                                     </div>
@@ -1483,7 +1483,7 @@ const App = () => {
                                     {/* Header avec titre et indicateur */}
                                     <div className="flex items-center gap-2">
                                       <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                                      <h3 className="font-bold text-white text-lg">
+                                      <h3 className="font-bold text-white text-sm">
                                         Signal SELL GBPJPY – 30m
                                       </h3>
                                     </div>
