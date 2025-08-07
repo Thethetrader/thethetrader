@@ -1119,19 +1119,19 @@ const App = () => {
                               <div className="flex items-center justify-between mb-2">
                                 <div className="flex items-center gap-2">
                                   <span className="bg-green-600 text-white px-2 py-1 rounded text-xs font-bold">BUY</span>
-                                  <span className="text-white font-bold text-sm">BTCUSD</span>
-                                  <span className="text-gray-400 text-xs">15m</span>
+                                  <span className="text-white font-bold text-sm">BTC</span>
+                                  <span className="text-gray-400 text-xs">1 min</span>
                                 </div>
-                                <span className="text-green-400 font-bold text-sm">+$1,250</span>
+                                <span className="text-yellow-400 font-bold text-sm">ACTIVE</span>
                               </div>
                               <div className="grid grid-cols-2 gap-2 text-xs text-gray-300 mb-2">
                                 <div>Entry: 45000</div>
                                 <div>TP: 46000</div>
                                 <div>SL: 44000</div>
-                                <div>R:R: 2.0</div>
+                                <div>Time: 22:30</div>
                               </div>
                               <div className="text-gray-400 text-xs mb-2">
-                                Signal crypto fort avec breakout confirmé.
+                                Signal de test avec boutons WIN/LOSS/BE
                               </div>
                               <div className="flex items-center gap-2 text-xs">
                                 <span className="text-gray-400">⚡ 24</span>
@@ -1144,19 +1144,19 @@ const App = () => {
                               <div className="flex items-center justify-between mb-2">
                                 <div className="flex items-center gap-2">
                                   <span className="bg-red-600 text-white px-2 py-1 rounded text-xs font-bold">SELL</span>
-                                  <span className="text-white font-bold text-sm">ETHUSD</span>
-                                  <span className="text-gray-400 text-xs">5m</span>
+                                  <span className="text-white font-bold text-sm">ETH</span>
+                                  <span className="text-gray-400 text-xs">5 min</span>
                                 </div>
-                                <span className="text-yellow-400 font-bold text-sm">En cours</span>
+                                <span className="text-yellow-400 font-bold text-sm">ACTIVE</span>
                               </div>
                               <div className="grid grid-cols-2 gap-2 text-xs text-gray-300 mb-2">
                                 <div>Entry: 2800</div>
                                 <div>TP: 2750</div>
                                 <div>SL: 2850</div>
-                                <div>R:R: 1.75</div>
+                                <div>Time: 22:35</div>
                               </div>
                               <div className="text-gray-400 text-xs mb-2">
-                                Signal de correction sur ETH.
+                                Signal ETH avec boutons visibles
                               </div>
                             </div>
                           </>
