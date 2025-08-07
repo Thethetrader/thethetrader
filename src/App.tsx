@@ -800,8 +800,8 @@ const App = () => {
 
                 {/* Service 2 */}
                 <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm hover:bg-gray-800/70 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25 hover:border-blue-500/50 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">📚</div>
-                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors duration-300">Formation Complète</h3>
+                  <div className="text-6xl mb-8 group-hover:scale-110 transition-transform duration-300">📚</div>
+                  <h3 className="text-3xl font-bold text-white mb-6 group-hover:text-blue-400 transition-colors duration-300">Formation Complète</h3>
                   <p className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">
                     Apprenez les bases du trading avec nos cours structurés et nos stratégies éprouvées.
                   </p>
@@ -809,8 +809,8 @@ const App = () => {
 
                 {/* Service 3 */}
                 <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm hover:bg-gray-800/70 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 hover:border-green-500/50 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">📈</div>
-                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-green-400 transition-colors duration-300">Suivi Performance</h3>
+                  <div className="text-6xl mb-8 group-hover:scale-110 transition-transform duration-300">📈</div>
+                  <h3 className="text-3xl font-bold text-white mb-6 group-hover:text-green-400 transition-colors duration-300">Suivi Performance</h3>
                   <p className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">
                     Suivez vos performances avec notre calendrier de trading et nos analyses détaillées. Journal de trading personnalisé pour optimiser votre stratégie.
                   </p>
@@ -818,8 +818,8 @@ const App = () => {
 
                 {/* Service 4 - Live Trading */}
                 <div className="bg-gradient-to-br from-red-600/20 to-orange-600/20 p-6 sm:p-8 rounded-xl border border-red-500/50 backdrop-blur-sm hover:from-red-600/30 hover:to-orange-600/30 hover:scale-105 hover:shadow-2xl hover:shadow-red-500/25 hover:border-red-400 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">🎥</div>
-                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-red-400 transition-colors duration-300">Live Trading</h3>
+                  <div className="text-6xl mb-8 group-hover:scale-110 transition-transform duration-300">🎥</div>
+                  <h3 className="text-3xl font-bold text-white mb-6 group-hover:text-red-400 transition-colors duration-300">Live Trading</h3>
                   <p className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">
                     Regardez nos sessions de trading en direct 3 fois par semaine et apprenez en temps réel.
                   </p>
@@ -875,6 +875,21 @@ const App = () => {
                   <div className="text-xl font-bold text-white mb-2 group-hover:text-green-400 transition-colors duration-300">Communauté</div>
                   <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Rejoignez une communauté active de traders qui partagent et s'entraident.</div>
                 </div>
+              </div>
+              
+              {/* Bouton Commencer maintenant après Pourquoi choisir */}
+              <div className="text-center mt-8">
+                <button 
+                  onClick={() => {
+                    const pricingSection = document.getElementById('pricing');
+                    if (pricingSection) {
+                      pricingSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 sm:px-12 py-5 sm:py-6 rounded-lg text-xl sm:text-2xl font-semibold hover:opacity-90"
+                >
+                  Commencer maintenant
+                </button>
               </div>
             </div>
 
@@ -1607,7 +1622,7 @@ const App = () => {
               <div className="flex justify-center">
                 <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm w-full max-w-6xl">
                   {/* Mockup Desktop Interface */}
-                  <div className="bg-gray-900 rounded-lg p-0 mx-auto h-screen max-h-[800px] flex" style={{width: '100%'}}>
+                  <div className="bg-gray-900 rounded-lg p-0 mx-auto h-screen max-h-[900px] flex" style={{width: '100%'}}>
                     
                     {/* Sidebar Desktop */}
                     <div className="w-56 bg-gray-800 flex flex-col">
@@ -2949,10 +2964,79 @@ const App = () => {
               </div>
             </div>
 
+            {/* Bouton Commencer maintenant après Aperçu de la plateforme */}
+            <div className="text-center mt-8 mb-12">
+              <button 
+                onClick={() => {
+                  const pricingSection = document.getElementById('pricing');
+                  if (pricingSection) {
+                    pricingSection.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 sm:px-12 py-5 sm:py-6 rounded-lg text-xl sm:text-2xl font-semibold hover:opacity-90"
+              >
+                Commencer maintenant
+              </button>
+            </div>
 
+            {/* Section Avis Clients */}
+            <div className="max-w-7xl mx-auto mb-10 px-4 sm:px-6">
+              <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-8">
+                Avis Clients
+              </h2>
+              <div className="flex items-center justify-center gap-2 mb-8">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/14/Trustpilot_logo.svg" alt="Trustpilot" className="h-8" />
+                <span className="text-gray-300 text-lg">Avis vérifiés Trustpilot</span>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[
+                  { name: "Marc L.", text: "Setup ultra simple ! En 5 minutes j'étais connecté et je recevais déjà les signaux. Parfait pour débuter.", rating: 5 },
+                  { name: "Sophie D.", text: "Le journal de trading m'a enfin donné la discipline qui me manquait. Je suis mes trades maintenant !", rating: 5 },
+                  { name: "Antoine R.", text: "Les signaux sont très bien expliqués, on comprend pourquoi entrer et sortir. Merci pour la pédagogie !", rating: 5 },
+                  { name: "Julie M.", text: "Les lives sont incroyables ! Tout est expliqué clairement, même pour une débutante comme moi.", rating: 5 },
+                  { name: "Thomas K.", text: "J'apprécie vraiment la proximité avec TheThe. Il répond à nos questions et nous guide vraiment.", rating: 5 },
+                  { name: "Céline B.", text: "Interface super simple et intuitive. Pas besoin d'être expert pour s'y retrouver rapidement.", rating: 5 },
+                  { name: "David P.", text: "Configuration en quelques clics ! Rien à voir avec d'autres plateformes compliquées.", rating: 5 },
+                  { name: "Emma S.", text: "Le journal m'aide énormément à rester disciplinée et à analyser mes erreurs. Game changer !", rating: 5 },
+                  { name: "Maxime T.", text: "Signaux détaillés avec explications. On comprend la logique derrière chaque trade.", rating: 5 }
+                ].map((review, index) => (
+                  <div key={index} className="bg-gray-800/50 p-6 rounded-xl border border-gray-600/50 backdrop-blur-sm hover:bg-gray-800/70 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-500/50 transition-all duration-300 transform cursor-pointer group">
+                    <div className="flex items-center mb-3">
+                      <div className="flex text-yellow-400 mr-3">
+                        {[...Array(review.rating)].map((_, i) => (
+                          <span key={i}>⭐</span>
+                        ))}
+                      </div>
+                      <span className="font-semibold text-white">{review.name}</span>
+                    </div>
+                    <p className="text-gray-300 text-sm leading-relaxed group-hover:text-gray-200 transition-colors duration-300">{review.text}</p>
+                    <div className="mt-3 text-xs text-blue-400 flex items-center gap-1">
+                      <span>✓</span>
+                      <span>Avis vérifié Trustpilot</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Bouton Commencer maintenant après les avis */}
+              <div className="text-center mt-12">
+                <button 
+                  onClick={() => {
+                    const pricingSection = document.getElementById('pricing');
+                    if (pricingSection) {
+                      pricingSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 sm:px-12 py-5 sm:py-6 rounded-lg text-xl sm:text-2xl font-semibold hover:opacity-90"
+                >
+                  Commencer maintenant
+                </button>
+              </div>
+            </div>
 
             {/* Plans de prix - Mobile Optimized */}
-            <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
+            <div id="pricing" className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
               <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-8 sm:mb-12">
                 Choisissez votre plan
               </h2>

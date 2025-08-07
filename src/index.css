@@ -97,6 +97,20 @@ html {
   animation: scroll 25s linear infinite;
 }
 
+/* Animation de défilement horizontal inverse */
+@keyframes scroll-reverse {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-scroll-reverse {
+  animation: scroll-reverse 25s linear infinite;
+}
+
 /* Fallbacks pour Safari - désactiver les transitions problématiques */
 @supports (-webkit-appearance: none) {
   /* Safari-specific fixes */
