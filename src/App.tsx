@@ -855,7 +855,7 @@ const App = () => {
                               <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-8 sm:mb-12">
                   Pourquoi choisir TheTheTrader ?
                 </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
                 {/* Carte 1 */}
                 <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-400 transition-all duration-300 transform cursor-pointer group">
                   <div className="text-4xl text-purple-600 mb-4 group-hover:scale-110 transition-transform duration-300">⚡</div>
@@ -875,6 +875,13 @@ const App = () => {
                   <div className="text-4xl text-purple-600 mb-4 group-hover:scale-110 transition-transform duration-300">🤝</div>
                   <div className="text-xl font-bold text-white mb-2 group-hover:text-green-400 transition-colors duration-300">Communauté</div>
                   <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Rejoignez une communauté active de traders qui partagent et s'entraident.</div>
+                </div>
+
+                {/* Carte 4 - Journal de Trading */}
+                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-500/25 hover:border-yellow-400 transition-all duration-300 transform cursor-pointer group">
+                  <div className="text-4xl text-purple-600 mb-4 group-hover:scale-110 transition-transform duration-300">📔</div>
+                  <div className="text-xl font-bold text-white mb-2 group-hover:text-yellow-400 transition-colors duration-300">Journal Personnel</div>
+                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Chacun a son propre journal de trading pour suivre ses trades et analyser ses performances.</div>
                 </div>
               </div>
               
