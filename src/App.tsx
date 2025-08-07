@@ -722,7 +722,7 @@ const App = () => {
               </span>
             </h1>
             <p className="text-base sm:text-xl text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto px-2">
-              Un setup, des signaux expliqués, un journal de performance. Rejoins la communauté et trade en confiance.
+              Un setup très simple, des signaux expliqués, un journal de performance. Rejoins la communauté et trade en confiance.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 sm:mb-12 px-4">
               <button 
@@ -759,7 +759,7 @@ const App = () => {
               </span>
             </h1>
             <p className="text-xl sm:text-3xl text-gray-300 mb-10 sm:mb-12 max-w-4xl mx-auto px-2">
-              Un setup, des signaux expliqués, un journal de performance. Rejoins la communauté et trade en confiance.
+              Un setup très simple, des signaux expliqués, un journal de performance. Rejoins la communauté et trade en confiance.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 justify-center mb-12 sm:mb-28 px-4">
               <button 
