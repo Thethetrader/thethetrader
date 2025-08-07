@@ -1128,7 +1128,7 @@ const App = () => {
                                     {/* Header avec titre et indicateur */}
                                     <div className="flex items-center gap-2">
                                       <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                                      <h3 className="font-bold text-white text-sm">
+                                      <h3 className="font-bold text-white text-xs">
                                         Signal BUY BTC – 1 min
                                       </h3>
                                     </div>
@@ -1137,22 +1137,22 @@ const App = () => {
                                     <div className="space-y-2">
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
-                                        <span className="text-white">Entrée : 45000 USD</span>
+                                        <span className="text-white text-xs">Entrée : 45000 USD</span>
                                       </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
-                                        <span className="text-white">Stop Loss : 44000 USD</span>
+                                        <span className="text-white text-xs">Stop Loss : 44000 USD</span>
                                       </div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-blue-400 text-sm">🔹</span>
-                                        <span className="text-white">Take Profit : 46000 USD</span>
+                                        <span className="text-white text-xs">Take Profit : 46000 USD</span>
                                       </div>
                                     </div>
                                     
                                     {/* Ratio R:R */}
                                     <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
                                       <span className="text-red-400 text-sm">🎯</span>
-                                      <span className="text-white text-sm">
+                                      <span className="text-white text-xs">
                                         Ratio R:R : ≈ 1:1
                                       </span>
                                     </div>
@@ -1197,7 +1197,7 @@ const App = () => {
                                     {/* Header avec titre et indicateur */}
                                     <div className="flex items-center gap-2">
                                       <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                                      <h3 className="font-bold text-white text-sm">
+                                      <h3 className="font-bold text-white text-xs">
                                         Signal SELL ETH – 5 min
                                       </h3>
                                     </div>
@@ -1221,7 +1221,7 @@ const App = () => {
                                     {/* Ratio R:R */}
                                     <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
                                       <span className="text-red-400 text-sm">🎯</span>
-                                      <span className="text-white text-sm">
+                                      <span className="text-white text-xs">
                                         Ratio R:R : ≈ 1:1
                                       </span>
                                     </div>
@@ -1271,7 +1271,7 @@ const App = () => {
                                     {/* Header avec titre et indicateur */}
                                     <div className="flex items-center gap-2">
                                       <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                                      <h3 className="font-bold text-white text-sm">
+                                      <h3 className="font-bold text-white text-xs">
                                         Signal SELL NAS100 Futures – 1H
                                       </h3>
                                     </div>
@@ -1295,7 +1295,7 @@ const App = () => {
                                     {/* Ratio R:R */}
                                     <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
                                       <span className="text-red-400 text-sm">🎯</span>
-                                      <span className="text-white text-sm">
+                                      <span className="text-white text-xs">
                                         Ratio R:R : ≈ 1.5:1
                                       </span>
                                     </div>
@@ -1340,7 +1340,7 @@ const App = () => {
                                     {/* Header avec titre et indicateur */}
                                     <div className="flex items-center gap-2">
                                       <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                                      <h3 className="font-bold text-white text-sm">
+                                      <h3 className="font-bold text-white text-xs">
                                         Signal BUY SPX500 Futures – 4H
                                       </h3>
                                     </div>
@@ -1364,7 +1364,7 @@ const App = () => {
                                     {/* Ratio R:R */}
                                     <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
                                       <span className="text-red-400 text-sm">🎯</span>
-                                      <span className="text-white text-sm">
+                                      <span className="text-white text-xs">
                                         Ratio R:R : ≈ 1.4:1
                                       </span>
                                     </div>
@@ -1414,7 +1414,7 @@ const App = () => {
                                     {/* Header avec titre et indicateur */}
                                     <div className="flex items-center gap-2">
                                       <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                                      <h3 className="font-bold text-white text-sm">
+                                      <h3 className="font-bold text-white text-xs">
                                         Signal BUY EURUSD – 1H
                                       </h3>
                                     </div>
@@ -1438,7 +1438,7 @@ const App = () => {
                                     {/* Ratio R:R */}
                                     <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
                                       <span className="text-red-400 text-sm">🎯</span>
-                                      <span className="text-white text-sm">
+                                      <span className="text-white text-xs">
                                         Ratio R:R : ≈ 1.4:1
                                       </span>
                                     </div>
@@ -1483,7 +1483,7 @@ const App = () => {
                                     {/* Header avec titre et indicateur */}
                                     <div className="flex items-center gap-2">
                                       <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                                      <h3 className="font-bold text-white text-sm">
+                                      <h3 className="font-bold text-white text-xs">
                                         Signal SELL GBPJPY – 30m
                                       </h3>
                                     </div>
@@ -1507,7 +1507,7 @@ const App = () => {
                                     {/* Ratio R:R */}
                                     <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
                                       <span className="text-red-400 text-sm">🎯</span>
-                                      <span className="text-white text-sm">
+                                      <span className="text-white text-xs">
                                         Ratio R:R : ≈ 1.4:1
                                       </span>
                                     </div>
