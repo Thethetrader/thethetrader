@@ -836,7 +836,7 @@ const App = () => {
                   <div className="text-6xl mb-8 group-hover:scale-110 transition-transform duration-300">📱</div>
                   <h3 className="text-3xl font-bold text-white mb-6 group-hover:text-purple-400 transition-colors duration-300">App Ludique</h3>
                   <p className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">
-                    Notifications push pour signaux, trading en temps réel, interface intuitive. Tradez où que vous soyez avec notre app native iOS.
+                    Notifications push pour signaux, suivez les sessions live trading, interface intuitive. Tradez où que vous soyez avec notre app native iOS.
                   </p>
                 </div>
 
