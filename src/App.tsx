@@ -790,29 +790,21 @@ const App = () => {
                 Commencer maintenant
               </button>
               <button 
-                onClick={async (e) => {
+                onClick={(e) => {
                   e.preventDefault();
-                  
-                  // Pour Chrome/Edge/Opera - Installation automatique
-                  if (window.deferredPrompt) {
-                    try {
-                      await window.deferredPrompt.prompt();
-                      const { outcome } = await window.deferredPrompt.userChoice;
-                      if (outcome === 'accepted') {
-                        console.log('PWA installée !');
+                  // Déclencher l'installation PWA
+                  if ('serviceWorker' in navigator) {
+                    // Montrer les instructions d'installation PWA pour iOS
+                    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                      alert('Pour installer l\'app:\n1. Appuyez sur le bouton Partager 📤\n2. Sélectionnez "Sur l\'écran d\'accueil"\n3. Confirmez l\'installation');
+                    } else {
+                      // Pour autres navigateurs, essayer le prompt d'installation
+                      if (window.deferredPrompt) {
+                        window.deferredPrompt.prompt();
+                      } else {
+                        alert('Utilisez le menu de votre navigateur pour "Ajouter à l\'écran d\'accueil" ou "Installer l\'application"');
                       }
-                      window.deferredPrompt = null;
-                    } catch (error) {
-                      console.log('Erreur installation:', error);
                     }
-                  } 
-                  // Pour iOS Safari - Instructions courtes
-                  else if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-                    alert('📱 Appuyez sur Partager → "Sur l\'écran d\'accueil"');
-                  }
-                  // Pour Firefox/autres
-                  else {
-                    alert('📲 Menu navigateur → "Installer l\'application"');
                   }
                 }}
                 className="bg-black/80 border-2 border-gray-600 text-white px-10 sm:px-12 py-5 sm:py-6 rounded-lg text-xl sm:text-2xl font-semibold hover:bg-black/90 hover:border-white transition-all duration-300 w-full sm:w-auto flex items-center justify-center gap-3"
@@ -820,7 +812,7 @@ const App = () => {
                 <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2L3 7l9 5 9-5-9-5zM3 17l9 5 9-5M3 12l9 5 9-5"/>
                 </svg>
-                Installer l'app
+                Installer l'app PWA
               </button>
             </div>
 
