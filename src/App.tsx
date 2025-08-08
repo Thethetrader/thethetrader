@@ -12,6 +12,13 @@ interface User {
   email: string;
 }
 
+// Déclaration pour le prompt d'installation PWA
+declare global {
+  interface Window {
+    deferredPrompt: any;
+  }
+}
+
 const App = () => {
   const [user, setUser] = useState<User | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
