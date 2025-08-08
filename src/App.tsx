@@ -3340,11 +3340,11 @@ const App = () => {
                   <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Interface ultra simple ! Tout est à portée de main, pas besoin d'être expert pour s'y retrouver.</div>
                 </div>
 
-                {/* Avis 2 - Journal discipline */}
+                {/* Avis 2 - Qualité app mobile */}
                 <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25 hover:border-blue-400 transition-all duration-300 transform cursor-pointer group">
                   <div className="text-2xl text-yellow-400 mb-4 group-hover:scale-110 transition-transform duration-300">⭐⭐⭐⭐⭐</div>
-                  <div className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors duration-300">ScalpingQueen</div>
-                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Le journal m'a donné la discipline qui me manquait. Je suis mes trades et j'analyse mes erreurs maintenant !</div>
+                  <div className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors duration-300">iOSTrader</div>
+                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">L'app iOS est parfaite ! Notifications instantanées pour les signaux, interface fluide. Je ne rate plus jamais un live !</div>
                           </div>
 
                 {/* Avis 3 - Qualité explications live */}
