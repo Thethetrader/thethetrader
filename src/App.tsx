@@ -803,7 +803,7 @@ const App = () => {
               <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-12 sm:mb-20">
                 Les Services
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8">
                 {/* Service 1 */}
                 <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm hover:bg-gray-800/70 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-500/50 transition-all duration-300 transform cursor-pointer group">
                   <div className="text-6xl mb-8 group-hover:scale-110 transition-transform duration-300">📊</div>
