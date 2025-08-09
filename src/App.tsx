@@ -839,7 +839,7 @@ const App = () => {
                 {/* Service 1 */}
                 <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm hover:bg-gray-800/70 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-500/50 transition-all duration-300 transform cursor-pointer group">
                   <div className="text-6xl mb-8 group-hover:scale-110 transition-transform duration-300">📊</div>
-                  <h3 className="text-3xl font-bold text-white mb-6 group-hover:text-purple-400 transition-colors duration-300">Signaux de Trading</h3>
+                  <h3 className="text-xl font-bold text-white mb-6 group-hover:text-purple-400 transition-colors duration-300">Signaux de Trading</h3>
                   <p className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">
                     Recevez des signaux de trading précis avec des points d'entrée, de sortie et de stop-loss clairement définis.
                   </p>
@@ -848,7 +848,7 @@ const App = () => {
                 {/* Service 2 */}
                 <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm hover:bg-gray-800/70 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25 hover:border-blue-500/50 transition-all duration-300 transform cursor-pointer group">
                   <div className="text-6xl mb-8 group-hover:scale-110 transition-transform duration-300">📚</div>
-                  <h3 className="text-3xl font-bold text-white mb-6 group-hover:text-blue-400 transition-colors duration-300">Formation Complète</h3>
+                  <h3 className="text-xl font-bold text-white mb-6 group-hover:text-blue-400 transition-colors duration-300">Formation Complète</h3>
                   <p className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">
                     Apprenez les bases du trading avec nos cours structurés et nos stratégies éprouvées. Apprentissage de mon setup ultra simple.
                   </p>
@@ -857,7 +857,7 @@ const App = () => {
                 {/* Service 3 */}
                 <div className="bg-gray-800/50 p-6 sm:p-8 rounded-xl border border-gray-600/50 backdrop-blur-sm hover:bg-gray-800/70 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 hover:border-green-500/50 transition-all duration-300 transform cursor-pointer group">
                   <div className="text-6xl mb-8 group-hover:scale-110 transition-transform duration-300">📈</div>
-                  <h3 className="text-3xl font-bold text-white mb-6 group-hover:text-green-400 transition-colors duration-300">Suivi Performance</h3>
+                  <h3 className="text-xl font-bold text-white mb-6 group-hover:text-green-400 transition-colors duration-300">Suivi Performance</h3>
                   <p className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">
                     Suivez vos performances avec notre calendrier de trading et nos analyses détaillées. Journal de trading personnalisé pour optimiser votre stratégie.
                   </p>
@@ -866,7 +866,7 @@ const App = () => {
                 {/* Service 4 - App Mobile */}
                 <div className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 p-6 sm:p-8 rounded-xl border border-purple-500/50 backdrop-blur-sm hover:from-purple-600/30 hover:to-pink-600/30 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-400 transition-all duration-300 transform cursor-pointer group">
                   <div className="text-6xl mb-8 group-hover:scale-110 transition-transform duration-300">📱</div>
-                  <h3 className="text-3xl font-bold text-white mb-6 group-hover:text-purple-400 transition-colors duration-300">App Ludique</h3>
+                  <h3 className="text-xl font-bold text-white mb-6 group-hover:text-purple-400 transition-colors duration-300">App Ludique</h3>
                   <p className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">
                     Notifications push pour signaux, suivez les sessions live trading, interface intuitive. Tradez où que vous soyez avec notre app native iOS.
                   </p>
@@ -875,7 +875,7 @@ const App = () => {
                 {/* Service 5 - Live Trading */}
                 <div className="bg-gradient-to-br from-red-600/20 to-orange-600/20 p-6 sm:p-8 rounded-xl border border-red-500/50 backdrop-blur-sm hover:from-red-600/30 hover:to-orange-600/30 hover:scale-105 hover:shadow-2xl hover:shadow-red-500/25 hover:border-red-400 transition-all duration-300 transform cursor-pointer group">
                   <div className="text-6xl mb-8 group-hover:scale-110 transition-transform duration-300">🎥</div>
-                  <h3 className="text-3xl font-bold text-white mb-6 group-hover:text-red-400 transition-colors duration-300">Live Trading</h3>
+                  <h3 className="text-xl font-bold text-white mb-6 group-hover:text-red-400 transition-colors duration-300">Live Trading</h3>
                   <p className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">
                     Regardez nos sessions de trading en direct 3 fois par semaine et apprenez en temps réel.
                   </p>
