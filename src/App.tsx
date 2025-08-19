@@ -1184,10 +1184,10 @@ const App = () => {
                   </div>
                   
                   {/* Vue Canal - Slide in depuis la droite */}
-                  <div className={`absolute inset-0 top-12 bg-gray-900 transition-transform duration-300 ${showMobileChannel ? 'translate-x-0' : 'translate-x-full'}`} style={{height: 'calc(100vh - 3rem)'}}>
-                    <div className="h-full flex flex-col relative">
+                  <div className={`absolute inset-0 top-12 bg-gray-900 transition-transform duration-300 ${showMobileChannel ? 'translate-x-0' : 'translate-x-full'}`}>
+                    <div className="h-full flex flex-col">
                       {/* Contenu du canal */}
-                      <div className="flex-1 p-3 space-y-3 overflow-y-auto">
+                      <div className="flex-1 p-3 space-y-3 overflow-y-auto" style={{paddingBottom: '80px'}}>
                         
                         {/* Vue Crypto */}
                         {mobileActiveChannel === 'crypto' && (
@@ -1972,7 +1972,7 @@ const App = () => {
                     
                     {/* Zone de saisie en bas - seulement pour general-chat et profit-loss */}
                     {(mobileActiveChannel === 'general-chat' || mobileActiveChannel === 'profit-loss') && (
-                      <div className="sticky bottom-0 border-t border-gray-700 p-3 bg-gray-900">
+                      <div className="fixed bottom-0 left-0 right-0 border-t border-gray-700 p-3 bg-gray-900 z-50">
                         <div className="flex items-center gap-2">
                           <input 
                             type="text" 
