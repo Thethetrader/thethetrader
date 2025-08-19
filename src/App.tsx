@@ -1053,6 +1053,19 @@ const App = () => {
                             <div className="text-gray-400 text-xs">Contenu éducatif</div>
                           </div>
                         </div>
+                        <div 
+                          className="bg-slate-700 rounded-lg p-3 flex items-center gap-3 cursor-pointer hover:bg-slate-600 transition-colors"
+                          onClick={() => {
+                            setMobileActiveChannel('formation');
+                            setShowMobileChannel(true);
+                          }}
+                        >
+                          <div className="text-xl">🎓</div>
+                          <div>
+                            <div className="text-white font-medium text-sm">Formation</div>
+                            <div className="text-gray-400 text-xs">Cours complet scalping</div>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
@@ -1678,6 +1691,31 @@ const App = () => {
                               </div>
                             </div>
                           </>
+                        )}
+
+                        {/* Vue Formation */}
+                        {mobileActiveChannel === 'formation' && (
+                          <div className="overflow-x-hidden max-w-full">
+                            <div className="space-y-4">
+                              <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-4">
+                                <div className="flex items-center gap-2 mb-3">
+                                  <span className="bg-blue-600 text-white px-2 py-1 rounded text-xs font-bold">COURS COMPLET</span>
+                                  <span className="text-white font-bold text-sm">🎓 Formation Scalping</span>
+                                </div>
+                                <div className="text-blue-300 text-xs mb-2">
+                                  📚 Guide complet | 🎯 Setup A+ | ⚡ CRT & AMD | 🦄 Concepts avancés
+                                </div>
+                                <div className="text-gray-300 text-xs mb-3">
+                                  Formation complète aux concepts fondamentaux et stratégies avancées de scalping trading.
+                                </div>
+                                <div className="text-center">
+                                  <button className="bg-blue-600 text-white px-4 py-2 rounded text-xs font-medium hover:bg-blue-700 transition-colors">
+                                    📖 Accéder au cours complet
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         )}
 
                         {/* Vue Livestream */}
