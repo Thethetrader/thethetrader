@@ -1726,7 +1726,34 @@ export default function TradingPlatformShell() {
               mobileView === 'channels' ? 'translate-x-0' : '-translate-x-full'
             }`}
           >
-                        <div className="p-4 space-y-6 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
+                        <div className="p-4 space-y-6 h-full overflow-y-auto" style={{ paddingTop: '20px' }}>
+              
+              {/* Hero Section - Trading pour les Nuls */}
+              <div className="text-center pt-8 pb-8 px-4">
+                <h1 className="text-4xl font-bold text-white mb-4">
+                  Le trading
+                </h1>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-8">
+                  pour les nuls
+                </h1>
+                <p className="text-gray-300 text-lg leading-relaxed mb-8">
+                  Un setup très simple, des signaux expliqués, un journal de performance. 
+                  Rejoins la communauté et trade en confiance.
+                </p>
+                <button 
+                  onClick={() => {
+                    const firstChannel = channels.find(c => ['fondamentaux', 'letsgooo-model'].includes(c.id));
+                    if (firstChannel) {
+                      handleChannelChange(firstChannel.id, firstChannel.name);
+                      setMobileView('content');
+                    }
+                  }}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:opacity-90 mb-12"
+                >
+                  Commencer maintenant
+                </button>
+              </div>
+
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">ÉDUCATION</h3>
                 <div className="space-y-2">
