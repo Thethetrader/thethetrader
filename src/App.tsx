@@ -1187,7 +1187,7 @@ const App = () => {
                   <div className={`absolute inset-0 top-12 bg-gray-900 transition-transform duration-300 ${showMobileChannel ? 'translate-x-0' : 'translate-x-full'}`}>
                     <div className="h-full flex flex-col">
                       {/* Contenu du canal */}
-                      <div className="flex-1 p-3 space-y-3 overflow-y-auto" style={{paddingTop: '60px', paddingBottom: '80px'}}>
+                      <div className="flex-1 p-3 space-y-3 overflow-y-auto" style={{paddingTop: '100px', paddingBottom: '80px'}}>
                         
                         {/* Vue Crypto */}
                         {mobileActiveChannel === 'crypto' && (
