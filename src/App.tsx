@@ -1970,6 +1970,14 @@ const App = () => {
                       </div>
                     </div>
                     
+                    {/* DEBUG - TOUJOURS visible sur mobile */}
+                    <div className="md:hidden fixed top-4 left-4 right-4 border border-yellow-500 bg-yellow-900 p-2 z-50 rounded">
+                      <div className="text-white text-xs">
+                        DEBUG Mobile: showChannel={showMobileChannel ? 'true' : 'false'} | 
+                        activeChannel={mobileActiveChannel || 'none'}
+                      </div>
+                    </div>
+                    
                     {/* Zone de saisie en bas - TOUJOURS visible pour debug */}
                     {showMobileChannel && (
                       <div className="fixed bottom-16 left-4 right-4 border border-red-500 bg-red-900 p-3 z-50 rounded">
