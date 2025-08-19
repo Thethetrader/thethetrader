@@ -1783,9 +1783,9 @@ const App = () => {
                         {mobileActiveChannel === 'calendar' && (
                           <>
                             {/* Calendrier économique mobile */}
-                            <div className="bg-gray-700 rounded-lg p-3">
+                            <div className="bg-gray-700 rounded-lg p-3 overflow-x-hidden">
                               <h3 className="text-white font-bold text-sm mb-3">Calendrier Économique</h3>
-                              <div className="grid grid-cols-7 gap-1 text-xs">
+                              <div className="grid grid-cols-7 gap-1 text-xs min-w-0 max-w-full">
                                 {/* Headers des jours */}
                                 <div className="text-gray-400 text-center p-1">L</div>
                                 <div className="text-gray-400 text-center p-1">M</div>
@@ -1908,9 +1908,9 @@ const App = () => {
                             </div>
 
                             {/* Calendrier trading mobile */}
-                            <div className="bg-gray-700 rounded-lg p-3">
+                            <div className="bg-gray-700 rounded-lg p-3 overflow-x-hidden">
                               <h3 className="text-white font-bold text-sm mb-3">Calendrier Trading</h3>
-                              <div className="grid grid-cols-7 gap-1 text-xs">
+                              <div className="grid grid-cols-7 gap-1 text-xs min-w-0 max-w-full">
                                 {/* Headers des jours */}
                                 <div className="text-gray-400 text-center p-1">L</div>
                                 <div className="text-gray-400 text-center p-1">M</div>
