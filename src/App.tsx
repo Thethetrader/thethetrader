@@ -1972,7 +1972,7 @@ const App = () => {
                     
                     {/* Zone de saisie en bas - seulement pour general-chat et profit-loss */}
                     {(mobileActiveChannel === 'general-chat' || mobileActiveChannel === 'profit-loss') && (
-                      <div className="border-t border-gray-700 p-3 bg-gray-900 flex-shrink-0">
+                      <div className="sticky bottom-0 border-t border-gray-700 p-3 bg-gray-900">
                         <div className="flex items-center gap-2">
                           <input 
                             type="text" 
