@@ -1695,9 +1695,9 @@ const App = () => {
 
                         {/* Vue Formation */}
                         {mobileActiveChannel === 'formation' && (
-                          <div className="overflow-x-hidden max-w-full">
-                            <div className="space-y-4">
-                              <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-4">
+                          <div className="overflow-x-hidden max-w-full min-w-0">
+                            <div className="space-y-4 overflow-x-hidden">
+                              <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-4 overflow-x-hidden">
                                 <div className="flex items-center gap-2 mb-3">
                                   <span className="bg-blue-600 text-white px-2 py-1 rounded text-xs font-bold">COURS COMPLET</span>
                                   <span className="text-white font-bold text-sm">🎓 Formation Scalping</span>
