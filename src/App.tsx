@@ -1184,7 +1184,7 @@ const App = () => {
                   </div>
                   
                   {/* Vue Canal - Slide in depuis la droite */}
-                  <div className={`absolute inset-0 top-12 bottom-0 bg-gray-900 transition-transform duration-300 ${showMobileChannel ? 'translate-x-0' : 'translate-x-full'}`}>
+                  <div className={`absolute inset-0 top-12 bg-gray-900 transition-transform duration-300 ${showMobileChannel ? 'translate-x-0' : 'translate-x-full'}`} style={{height: 'calc(100vh - 3rem)'}}>
                     <div className="h-full flex flex-col relative">
                       {/* Contenu du canal */}
                       <div className="flex-1 p-3 space-y-3 overflow-y-auto">
