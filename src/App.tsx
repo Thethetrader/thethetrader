@@ -1187,7 +1187,7 @@ const App = () => {
                   <div className={`absolute inset-0 top-12 bottom-0 bg-gray-900 transition-transform duration-300 ${showMobileChannel ? 'translate-x-0' : 'translate-x-full'}`}>
                     <div className="h-full flex flex-col relative">
                       {/* Contenu du canal */}
-                      <div className="flex-1 p-3 pb-24 space-y-3 overflow-y-auto">
+                      <div className="flex-1 p-3 space-y-3 overflow-y-auto">
                         
                         {/* Vue Crypto */}
                         {mobileActiveChannel === 'crypto' && (
@@ -1968,23 +1968,23 @@ const App = () => {
                         )}
 
                       </div>
-                      
-                      {/* Zone de saisie en bas - seulement pour general-chat et profit-loss */}
-                      {(mobileActiveChannel === 'general-chat' || mobileActiveChannel === 'profit-loss') && (
-                        <div className="absolute bottom-0 left-0 right-0 border-t border-gray-700 p-3 bg-gray-900 z-10">
-                          <div className="flex items-center gap-2">
-                            <input 
-                              type="text" 
-                              placeholder="Tapez votre message..."
-                              className="flex-1 bg-gray-700 text-white text-xs px-3 py-2 rounded border-none outline-none"
-                            />
-                            <button className="bg-blue-600 text-white px-3 py-2 rounded text-xs">
-                              Envoyer
-                            </button>
-                          </div>
-                        </div>
-                      )}
                     </div>
+                    
+                    {/* Zone de saisie en bas - seulement pour general-chat et profit-loss */}
+                    {(mobileActiveChannel === 'general-chat' || mobileActiveChannel === 'profit-loss') && (
+                      <div className="border-t border-gray-700 p-3 bg-gray-900 flex-shrink-0">
+                        <div className="flex items-center gap-2">
+                          <input 
+                            type="text" 
+                            placeholder="Tapez votre message..."
+                            className="flex-1 bg-gray-700 text-white text-xs px-3 py-2 rounded border-none outline-none"
+                          />
+                          <button className="bg-blue-600 text-white px-3 py-2 rounded text-xs">
+                            Envoyer
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
