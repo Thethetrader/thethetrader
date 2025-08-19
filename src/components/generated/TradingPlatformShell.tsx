@@ -1585,7 +1585,12 @@ export default function TradingPlatformShell() {
       {/* Desktop Sidebar */}
       <div className="hidden md:flex w-56 bg-gray-800 flex-col">
         <div className="p-4 border-b border-gray-700">
-          <div className="flex items-center gap-3">
+          {/* Titre principal centré */}
+          <div className="text-center mb-4">
+            <h1 className="text-xl font-bold text-white">Trading pour les Nuls</h1>
+          </div>
+          
+          <div className="flex items-center gap-3" style={{marginTop: '0.25rem'}}>
             <label className="cursor-pointer">
               <input
                 type="file"
