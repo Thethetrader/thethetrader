@@ -1970,9 +1970,10 @@ const App = () => {
                       </div>
                     </div>
                     
-                    {/* Zone de saisie en bas - seulement pour general-chat et profit-loss */}
-                    {(mobileActiveChannel === 'general-chat' || mobileActiveChannel === 'profit-loss') && (
-                      <div className="fixed bottom-16 left-0 right-0 border-t border-gray-700 p-3 bg-gray-900 z-50">
+                    {/* Zone de saisie en bas - TOUJOURS visible pour debug */}
+                    {showMobileChannel && (
+                      <div className="fixed bottom-16 left-4 right-4 border border-red-500 bg-red-900 p-3 z-50 rounded">
+                        <div className="text-white text-xs mb-2">DEBUG: Salon actuel = {mobileActiveChannel}</div>
                         <div className="flex items-center gap-2">
                           <input 
                             type="text" 
