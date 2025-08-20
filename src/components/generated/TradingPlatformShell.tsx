@@ -2303,7 +2303,7 @@ export default function TradingPlatformShell() {
                                   <ul className="space-y-1 text-sm">
                                     <li>→ <strong>Le corps (body) :</strong> différence entre ouverture et clôture</li>
                                     <li>→ <strong>Les mèches (wicks) :</strong> les plus hauts et plus bas atteints</li>
-                                    <li>→ <strong>Couleur :</strong> verte/blanche si clôture > ouverture, rouge/noire si clôture < ouverture</li>
+                                    <li>→ <strong>Couleur :</strong> verte/blanche si clôture &gt; ouverture, rouge/noire si clôture &lt; ouverture</li>
                                   </ul>
                                 </div>
                               </div>
