@@ -2262,6 +2262,165 @@ export default function TradingPlatformShell() {
                   <div className="flex flex-col h-full">
                     {/* Messages de chat */}
                     <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
+                      {/* Cours Scalping pour le salon Fondamentaux */}
+                      {selectedChannel.id === 'fondamentaux' && (chatMessages[selectedChannel.id] || []).length === 0 && (
+                        <div className="bg-gray-800 rounded-lg p-6 mb-6">
+                          <div className="text-center mb-8 p-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white">
+                            <h1 className="text-3xl font-bold mb-4">🧠 Scalp Trading pour les Nuls</h1>
+                            <p className="text-xl opacity-90">Guide complet des concepts fondamentaux et stratégies avancées</p>
+                          </div>
+                          
+                          <div className="space-y-6 text-gray-300">
+                            <div className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4">
+                              <p className="text-yellow-200"><strong>📖 Avertissement :</strong> Ce guide présente un ensemble de concepts appris et expérimentés sur les marchés financiers. Il ne s'agit pas d'inventions originales, mais d'un setup personnel basé sur l'observation et l'expérience pratique.</p>
+                            </div>
+                            
+                            <div>
+                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">1. 📚 Introduction</h2>
+                              <p>Ce document vous présente les fondamentaux essentiels pour comprendre comment les charts évoluent et ce qui influence leurs mouvements. L'objectif est de construire une base solide avant d'aborder les stratégies avancées.</p>
+                            </div>
+                            
+                            <div>
+                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">2. 🧠 Fondamentaux des Charts</h2>
+                              <div className="bg-gray-700 rounded-lg p-4 mb-4">
+                                <h3 className="text-lg font-semibold text-green-400 mb-2">📈 Qu'est-ce qu'une Chart ?</h3>
+                                <p className="mb-3">Une chart (ou graphique) est une représentation visuelle du prix d'un actif financier dans le temps (Bitcoin, or, actions, etc.).</p>
+                                <div className="bg-gray-600 rounded p-3">
+                                  <h4 className="font-semibold text-blue-300 mb-2">Elle permet de :</h4>
+                                  <ul className="space-y-1 text-sm">
+                                    <li>→ Voir comment le prix évolue</li>
+                                    <li>→ Trouver des points d'entrée/sortie</li>
+                                    <li>→ Comprendre le comportement du marché</li>
+                                  </ul>
+                                </div>
+                              </div>
+                              
+                              <div className="bg-gray-700 rounded-lg p-4">
+                                <h3 className="text-lg font-semibold text-green-400 mb-2">🕯️ Comprendre les Bougies</h3>
+                                <p className="mb-3">Chaque bougie montre l'évolution du prix sur une période donnée (1 min, 1h, 1 jour, etc.)</p>
+                                <div className="bg-gray-600 rounded p-3">
+                                  <h4 className="font-semibold text-blue-300 mb-2">Composition d'une bougie :</h4>
+                                  <ul className="space-y-1 text-sm">
+                                    <li>→ <strong>Le corps (body) :</strong> différence entre ouverture et clôture</li>
+                                    <li>→ <strong>Les mèches (wicks) :</strong> les plus hauts et plus bas atteints</li>
+                                    <li>→ <strong>Couleur :</strong> verte/blanche si clôture > ouverture, rouge/noire si clôture < ouverture</li>
+                                  </ul>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">3. 🧠 Mouvement des Prix (Modèle AMD)</h2>
+                              <div className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4 mb-4">
+                                <p><strong>🚗💨 Analogie :</strong> Le prix, c'est comme un voyage de A à B. Pour avancer, il a besoin de liquidité, comme une voiture a besoin d'essence.</p>
+                              </div>
+                              
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                <div className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4 text-center">
+                                  <div className="text-2xl font-bold mb-2">1️⃣</div>
+                                  <div className="font-semibold mb-2">Accumulation</div>
+                                  <p className="text-sm">Le prix se prépare 🛑⛽</p>
+                                </div>
+                                <div className="bg-red-600/20 border border-red-600/30 rounded-lg p-4 text-center">
+                                  <div className="text-2xl font-bold mb-2">2️⃣</div>
+                                  <div className="font-semibold mb-2">Manipulation</div>
+                                  <p className="text-sm">Il piège les traders 🎯🪤</p>
+                                </div>
+                                <div className="bg-green-600/20 border border-green-600/30 rounded-lg p-4 text-center">
+                                  <div className="text-2xl font-bold mb-2">3️⃣</div>
+                                  <div className="font-semibold mb-2">Distribution</div>
+                                  <p className="text-sm">Le vrai mouvement 🚀📈</p>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">4. 📈 Support et Résistance</h2>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-green-600/20 border border-green-600/30 rounded-lg p-4 text-center">
+                                  <strong className="text-green-300">🔹 Support</strong><br/>
+                                  <span className="text-sm">Zone où le prix rebondit vers le haut 🔼</span>
+                                </div>
+                                <div className="bg-red-600/20 border border-red-600/30 rounded-lg p-4 text-center">
+                                  <strong className="text-red-300">🔹 Résistance</strong><br/>
+                                  <span className="text-sm">Zone où le prix bloque et redescend 🔽</span>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">5. 🔬 Concepts Avancés</h2>
+                              <div className="space-y-4">
+                                <div className="bg-gray-700 rounded-lg p-4">
+                                  <h3 className="text-lg font-semibold text-purple-400 mb-2">🧱 ORDER BLOCK (OB)</h3>
+                                  <p className="mb-2">Un Order Block représente la dernière bougie haussière (ou baissière) avant un mouvement impulsif majeur dans la direction opposée.</p>
+                                  <div className="text-sm text-blue-300">
+                                    → Ces zones deviennent des repères de liquidité<br/>
+                                    → Souvent retestées par le prix<br/>
+                                    → Offrent des points d'entrée à fort potentiel
+                                  </div>
+                                </div>
+                                
+                                <div className="bg-gray-700 rounded-lg p-4">
+                                  <h3 className="text-lg font-semibold text-purple-400 mb-2">⚡📉📈 FVG – Fair Value Gap</h3>
+                                  <p className="mb-2">Un FVG est une zone de déséquilibre créée lors d'un mouvement rapide et violent du marché 🚀.</p>
+                                  <div className="text-sm text-blue-300">
+                                    → Le prix revient fréquemment combler ces gaps<br/>
+                                    → Zones intéressantes pour entrer ou sortir d'une position
+                                  </div>
+                                </div>
+                                
+                                <div className="bg-gray-700 rounded-lg p-4">
+                                  <h3 className="text-lg font-semibold text-purple-400 mb-2">🦄 Unicorn</h3>
+                                  <p className="mb-2">C'est un setup formé par l'association d'un Breaker (BRKR) ⚡ et d'un Fair Value Gap (FVG) 📉.</p>
+                                  <div className="text-sm text-blue-300">
+                                    → Zone à forte probabilité de réaction du prix<br/>
+                                    → Rassemble deux zones institutionnelles clés<br/>
+                                    → Point d'entrée ou de prise de profit idéal
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">6. 🕵️ CRT – Candle Range Theory</h2>
+                              <p className="mb-4">La Candle Range Theory (CRT) est une méthode d'analyse basée sur 3 bougies consécutives.</p>
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4 text-center">
+                                  <div className="text-2xl font-bold mb-2">1️⃣</div>
+                                  <div className="font-semibold mb-2">La Range</div>
+                                  <p className="text-sm">Bougie avec grand corps<br/>Zone de stagnation</p>
+                                </div>
+                                <div className="bg-red-600/20 border border-red-600/30 rounded-lg p-4 text-center">
+                                  <div className="text-2xl font-bold mb-2">2️⃣</div>
+                                  <div className="font-semibold mb-2">Manipulation</div>
+                                  <p className="text-sm">Va chercher la liquidité<br/>Piège les traders</p>
+                                </div>
+                                <div className="bg-green-600/20 border border-green-600/30 rounded-lg p-4 text-center">
+                                  <div className="text-2xl font-bold mb-2">3️⃣</div>
+                                  <div className="font-semibold mb-2">Distribution</div>
+                                  <p className="text-sm">Bougie directionnelle<br/>Zone d'entrée</p>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">7. 📌 Le Setup "A+"</h2>
+                              <div className="bg-green-600/20 border border-green-600/30 rounded-lg p-4 mb-4">
+                                <h3 className="font-semibold mb-2">PRINCIPE DU MODÈLE</h3>
+                                <p className="mb-2">Le principe du modèle, c'est de prendre position après la phase de manipulation ⏸️, sur la timeframe basse (LTF) du contexte défini sur la timeframe haute (HTF) 📊.</p>
+                                <p>🎯 Cela permet d'éviter les pièges des faux breakouts 🚫 et de s'aligner avec la vraie direction du mouvement ➡️.</p>
+                              </div>
+                            </div>
+                            
+                            <div className="bg-red-600/20 border border-red-600/30 rounded-lg p-4">
+                              <h4 className="font-semibold mb-2">⚠️ Avertissement Légal</h4>
+                              <p className="text-sm">Ce document est fourni à des fins éducatives uniquement. Le trading comporte des risques significatifs de perte financière. Il est essentiel de bien comprendre les risques avant de trader et ne jamais risquer plus que ce que vous pouvez vous permettre de perdre.</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      
                       {(chatMessages[selectedChannel.id] || []).length > 0 && (
                         (chatMessages[selectedChannel.id] || []).map((message) => (
                           <div key={message.id} className="flex items-start gap-3">
