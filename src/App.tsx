@@ -748,11 +748,11 @@ const App = () => {
                 Commencer maintenant
               </button>
             </div>
-          </div>
+            </div>
 
           {/* Barre de défilement - En bas */}
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 sm:py-10 overflow-hidden relative w-full">
-            <div className="whitespace-nowrap animate-scroll">
+              <div className="whitespace-nowrap animate-scroll">
               <span className="text-xl sm:text-4xl font-bold mx-8 sm:mx-32">EASY SETUP EASY TRADING</span>
               <span className="text-xl sm:text-4xl font-bold mx-8 sm:mx-32">EASY SETUP EASY TRADING</span>
               <span className="text-xl sm:text-4xl font-bold mx-8 sm:mx-32">EASY SETUP EASY TRADING</span>
@@ -2001,23 +2001,23 @@ const App = () => {
                         )}
 
                       </div>
-                    </div>
-                    
-                    {/* Zone de saisie en bas - seulement pour general-chat et profit-loss */}
-                    {(mobileActiveChannel === 'general-chat' || mobileActiveChannel === 'profit-loss') && (
-                      <div className="fixed bottom-20 left-4 right-4 border-t border-gray-700 p-3 bg-gray-900 z-50 rounded-lg shadow-lg">
-                        <div className="flex items-center gap-2">
-                          <input 
-                            type="text" 
-                            placeholder="Tapez votre message..."
-                            className="flex-1 bg-gray-700 text-white text-xs px-3 py-2 rounded border-none outline-none"
-                          />
-                          <button className="bg-blue-600 text-white px-3 py-2 rounded text-xs">
-                            Envoyer
-                          </button>
-                        </div>
                       </div>
-                    )}
+                      
+                      {/* Zone de saisie en bas - seulement pour general-chat et profit-loss */}
+                      {(mobileActiveChannel === 'general-chat' || mobileActiveChannel === 'profit-loss') && (
+                      <div className="fixed bottom-20 left-4 right-4 border-t border-gray-700 p-3 bg-gray-900 z-50 rounded-lg shadow-lg">
+                          <div className="flex items-center gap-2">
+                            <input 
+                              type="text" 
+                              placeholder="Tapez votre message..."
+                              className="flex-1 bg-gray-700 text-white text-xs px-3 py-2 rounded border-none outline-none"
+                            />
+                            <button className="bg-blue-600 text-white px-3 py-2 rounded text-xs">
+                              Envoyer
+                            </button>
+                          </div>
+                        </div>
+                      )}
                   </div>
                 </div>
               </div>
@@ -2747,71 +2747,163 @@ const App = () => {
                           </>
                         )}
 
-                        {/* Vue Fondamentaux - Cours de base */}
+                        {/* Vue Fondamentaux - Cours Scalping complet */}
                         {previewChannel === 'fondamentaux' && (
-                          <>
-                            {/* Cours 1 - Bases du trading */}
-                            <div className="bg-gray-700 rounded-lg p-4">
-                              <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center gap-3">
-                                  <span className="bg-blue-600 text-white px-3 py-1 rounded text-sm font-bold">COURS</span>
-                                  <span className="text-white font-bold text-lg">Les bases du trading</span>
-                                  <span className="text-gray-400 text-sm">Débutant</span>
+                          <div className="bg-gray-800 rounded-lg p-6 mb-6">
+                            <div className="text-center mb-8 p-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white">
+                              <h1 className="text-3xl font-bold mb-4">🧠 Scalp Trading pour les Nuls</h1>
+                              <p className="text-xl opacity-90">Guide complet des concepts fondamentaux et stratégies avancées</p>
+                            </div>
+                            
+                            <div className="space-y-6 text-gray-300">
+                              <div className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4">
+                                <p className="text-yellow-200"><strong>📖 Avertissement :</strong> Ce guide présente un ensemble de concepts appris et expérimentés sur les marchés financiers. Il ne s'agit pas d'inventions originales, mais d'un setup personnel basé sur l'observation et l'expérience pratique.</p>
+                              </div>
+                              
+                              <div>
+                                <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">1. 📚 Introduction</h2>
+                                <p>Ce document vous présente les fondamentaux essentiels pour comprendre comment les charts évoluent et ce qui influence leurs mouvements. L'objectif est de construire une base solide avant d'aborder les stratégies avancées.</p>
+                              </div>
+                              
+                              <div>
+                                <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">2. 🧠 Fondamentaux des Charts</h2>
+                                <div className="bg-gray-700 rounded-lg p-4 mb-4">
+                                  <h3 className="text-lg font-semibold text-green-400 mb-2">📈 Qu'est-ce qu'une Chart ?</h3>
+                                  <p className="mb-3">Une chart (ou graphique) est une représentation visuelle du prix d'un actif financier dans le temps (Bitcoin, or, actions, etc.).</p>
+                                  <div className="bg-gray-600 rounded p-3">
+                                    <h4 className="font-semibold text-blue-300 mb-2">Elle permet de :</h4>
+                                    <ul className="space-y-1 text-sm">
+                                      <li>→ Voir comment le prix évolue</li>
+                                      <li>→ Trouver des points d'entrée/sortie</li>
+                                      <li>→ Comprendre le comportement du marché</li>
+                                    </ul>
+                                  </div>
                                 </div>
-                                <span className="text-blue-400 font-bold">45 min</span>
-                              </div>
-                              <div className="text-gray-400 text-sm mb-4">
-                                Apprenez les concepts fondamentaux du trading : marchés financiers, analyse technique et gestion des risques. Ce cours couvre les bases essentielles pour débuter.
-                              </div>
-                              <div className="grid grid-cols-3 gap-4 text-sm text-gray-300 mb-3">
-                                <div>📊 Analyse technique</div>
-                                <div>💰 Gestion du capital</div>
-                                <div>🎯 Stratégies de base</div>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <span className="text-gray-400 text-xs">👥 1,247 étudiants</span>
-                                <span className="text-gray-400 text-xs">⭐ 4.8/5</span>
-                                <span className="text-gray-400 text-xs">📝 12 modules</span>
-                              </div>
-                            </div>
-
-                            {/* Cours 2 - Psychologie */}
-                            <div className="bg-gray-700 rounded-lg p-4">
-                              <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center gap-3">
-                                  <span className="bg-purple-600 text-white px-3 py-1 rounded text-sm font-bold">COURS</span>
-                                  <span className="text-white font-bold text-lg">Psychologie du trader</span>
-                                  <span className="text-gray-400 text-sm">Intermédiaire</span>
+                                
+                                <div className="bg-gray-700 rounded-lg p-4">
+                                  <h3 className="text-lg font-semibold text-green-400 mb-2">🕯️ Comprendre les Bougies</h3>
+                                  <p className="mb-3">Chaque bougie montre l'évolution du prix sur une période donnée (1 min, 1h, 1 jour, etc.)</p>
+                                  <div className="bg-gray-600 rounded p-3">
+                                    <h4 className="font-semibold text-blue-300 mb-2">Composition d'une bougie :</h4>
+                                    <ul className="space-y-1 text-sm">
+                                      <li>→ <strong>Le corps (body) :</strong> différence entre ouverture et clôture</li>
+                                      <li>→ <strong>Les mèches (wicks) :</strong> les plus hauts et plus bas atteints</li>
+                                      <li>→ <strong>Couleur :</strong> verte/blanche si clôture &gt; ouverture, rouge/noire si clôture &lt; ouverture</li>
+                                    </ul>
+                                  </div>
                                 </div>
-                                <span className="text-purple-400 font-bold">32 min</span>
                               </div>
-                              <div className="text-gray-400 text-sm mb-4">
-                                Maîtrisez vos émotions et développez la mentalité gagnante. Gestion du stress, discipline et contrôle de soi sont les clés du succès.
+                              
+                              <div>
+                                <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">3. 🧠 Mouvement des Prix (Modèle AMD)</h2>
+                                <div className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4 mb-4">
+                                  <p><strong>🚗💨 Analogie :</strong> Le prix, c'est comme un voyage de A à B. Pour avancer, il a besoin de liquidité, comme une voiture a besoin d'essence.</p>
+                                </div>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                  <div className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4 text-center">
+                                    <div className="text-2xl font-bold mb-2">1️⃣</div>
+                                    <div className="font-semibold mb-2">Accumulation</div>
+                                    <p className="text-sm">Le prix se prépare 🛑⛽</p>
+                                  </div>
+                                  <div className="bg-red-600/20 border border-red-600/30 rounded-lg p-4 text-center">
+                                    <div className="text-2xl font-bold mb-2">2️⃣</div>
+                                    <div className="font-semibold mb-2">Manipulation</div>
+                                    <p className="text-sm">Il piège les traders 🎯🪤</p>
+                                  </div>
+                                  <div className="bg-green-600/20 border border-green-600/30 rounded-lg p-4 text-center">
+                                    <div className="text-2xl font-bold mb-2">3️⃣</div>
+                                    <div className="font-semibold mb-2">Distribution</div>
+                                    <p className="text-sm">Le vrai mouvement 🚀📈</p>
+                                  </div>
+                                </div>
                               </div>
-                              <div className="grid grid-cols-3 gap-4 text-sm text-gray-300 mb-3">
-                                <div>🧠 Mindset</div>
-                                <div>😌 Gestion stress</div>
-                                <div>🎯 Discipline</div>
+                              
+                              <div>
+                                <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">4. 📈 Support et Résistance</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  <div className="bg-green-600/20 border border-green-600/30 rounded-lg p-4 text-center">
+                                    <strong className="text-green-300">🔹 Support</strong><br/>
+                                    <span className="text-sm">Zone où le prix rebondit vers le haut 🔼</span>
+                                  </div>
+                                  <div className="bg-red-600/20 border border-red-600/30 rounded-lg p-4 text-center">
+                                    <strong className="text-red-300">🔹 Résistance</strong><br/>
+                                    <span className="text-sm">Zone où le prix bloque et redescend 🔽</span>
+                                  </div>
+                                </div>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <span className="text-gray-400 text-xs">👥 892 étudiants</span>
-                                <span className="text-gray-400 text-xs">⭐ 4.9/5</span>
-                                <span className="text-gray-400 text-xs">📝 8 modules</span>
+                              
+                              <div>
+                                <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">5. 🔬 Concepts Avancés</h2>
+                                <div className="space-y-4">
+                                  <div className="bg-gray-700 rounded-lg p-4">
+                                    <h3 className="text-lg font-semibold text-purple-400 mb-2">🧱 ORDER BLOCK (OB)</h3>
+                                    <p className="mb-2">Un Order Block représente la dernière bougie haussière (ou baissière) avant un mouvement impulsif majeur dans la direction opposée.</p>
+                                    <div className="text-sm text-blue-300">
+                                      → Ces zones deviennent des repères de liquidité<br/>
+                                      → Souvent retestées par le prix<br/>
+                                      → Offrent des points d'entrée à fort potentiel
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="bg-gray-700 rounded-lg p-4">
+                                    <h3 className="text-lg font-semibold text-purple-400 mb-2">⚡📉📈 FVG – Fair Value Gap</h3>
+                                    <p className="mb-2">Un FVG est une zone de déséquilibre créée lors d'un mouvement rapide et violent du marché 🚀.</p>
+                                    <div className="text-sm text-blue-300">
+                                      → Le prix revient fréquemment combler ces gaps<br/>
+                                      → Zones intéressantes pour entrer ou sortir d'une position
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="bg-gray-700 rounded-lg p-4">
+                                    <h3 className="text-lg font-semibold text-purple-400 mb-2">🦄 Unicorn</h3>
+                                    <p className="mb-2">C'est un setup formé par l'association d'un Breaker (BRKR) ⚡ et d'un Fair Value Gap (FVG) 📉.</p>
+                                    <div className="text-sm text-blue-300">
+                                      → Zone à forte probabilité de réaction du prix<br/>
+                                      → Rassemble deux zones institutionnelles clés<br/>
+                                      → Point d'entrée ou de prise de profit idéal
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">6. 🕵️ CRT – Candle Range Theory</h2>
+                                <p className="mb-4">La Candle Range Theory (CRT) est une méthode d'analyse basée sur 3 bougies consécutives.</p>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                  <div className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4 text-center">
+                                    <div className="text-2xl font-bold mb-2">1️⃣</div>
+                                    <div className="font-semibold mb-2">La Range</div>
+                                    <p className="text-sm">Bougie avec grand corps<br/>Zone de stagnation</p>
+                                  </div>
+                                  <div className="bg-red-600/20 border border-red-600/30 rounded-lg p-4 text-center">
+                                    <div className="text-2xl font-bold mb-2">2️⃣</div>
+                                    <div className="font-semibold mb-2">Manipulation</div>
+                                    <p className="text-sm">Va chercher la liquidité<br/>Piège les traders</p>
+                                  </div>
+                                  <div className="bg-green-600/20 border border-green-600/30 rounded-lg p-4 text-center">
+                                    <div className="text-2xl font-bold mb-2">3️⃣</div>
+                                    <div className="font-semibold mb-2">Distribution</div>
+                                    <p className="text-sm">Bougie directionnelle<br/>Zone d'entrée</p>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">7. 📌 Le Setup "A+"</h2>
+                                <div className="bg-green-600/20 border border-green-600/30 rounded-lg p-4 mb-4">
+                                  <h3 className="font-semibold mb-2">PRINCIPE DU MODÈLE</h3>
+                                  <p className="mb-2">Le principe du modèle, c'est de prendre position après la phase de manipulation ⏸️, sur la timeframe basse (LTF) du contexte défini sur la timeframe haute (HTF) 📊.</p>
+                                  <p>🎯 Cela permet d'éviter les pièges des faux breakouts 🚫 et de s'aligner avec la vraie direction du mouvement ➡️.</p>
+                                </div>
+                              </div>
+                              
+                              <div className="bg-red-600/20 border border-red-600/30 rounded-lg p-4">
+                                <h4 className="font-semibold mb-2">⚠️ Avertissement Légal</h4>
+                                <p className="text-sm">Ce document est fourni à des fins éducatives uniquement. Le trading comporte des risques significatifs de perte financière. Il est essentiel de bien comprendre les risques avant de trader et ne jamais risquer plus que ce que vous pouvez vous permettre de perdre.</p>
                               </div>
                             </div>
-
-                            {/* Message de chat */}
-                            <div className="bg-gray-700 rounded-lg p-4">
-                              <div className="flex items-center gap-3 mb-2">
-                                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white">TT</div>
-                                <span className="text-white font-medium text-sm">TheTheTrader</span>
-                                <span className="text-gray-400 text-xs">19:00</span>
-                              </div>
-                              <p className="text-gray-300 text-sm">
-                                📚 N'oubliez pas que la formation est la base de tout ! Commencez par les fondamentaux avant de trader.
-                              </p>
-                            </div>
-                          </>
+                          </div>
                         )}
 
                         {/* Vue Letsgooo-model - Cours avancés */}
