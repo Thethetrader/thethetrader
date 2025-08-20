@@ -1432,26 +1432,26 @@ export default function TradingPlatformShell() {
             </div>
 
           {/* Légende */}
-          <div className="flex items-center justify-center gap-6 mt-8 pt-6 border-t border-gray-600">
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-green-500/60 border border-green-400/50 rounded"></div>
-              <span className="text-sm text-gray-300">WIN</span>
+          <div className="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-gray-600">
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-green-500/60 border border-green-400/50 rounded"></div>
+              <span className="text-xs text-gray-300">WIN</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-red-500/60 border border-red-400/50 rounded"></div>
-              <span className="text-sm text-gray-300">LOSS</span>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-red-500/60 border border-red-400/50 rounded"></div>
+              <span className="text-xs text-gray-300">LOSS</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-blue-500/60 border border-blue-400/50 rounded"></div>
-              <span className="text-sm text-gray-300">BREAK EVEN</span>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-blue-500/60 border border-blue-400/50 rounded"></div>
+              <span className="text-xs text-gray-300">BREAK</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-gray-700 border border-gray-600 rounded"></div>
-              <span className="text-sm text-gray-300">NO TRADE</span>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-gray-700 border border-gray-600 rounded"></div>
+              <span className="text-xs text-gray-300">NO TRADE</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 border-2 border-blue-400 rounded"></div>
-              <span className="text-sm text-gray-300">Today</span>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 border-2 border-blue-400 rounded"></div>
+              <span className="text-xs text-gray-300">Today</span>
             </div>
           </div>
         </div>
