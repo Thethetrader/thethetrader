@@ -2263,7 +2263,7 @@ export default function TradingPlatformShell() {
                     {/* Messages de chat */}
                     <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
                       {/* Cours Scalping pour le salon Fondamentaux */}
-                      {selectedChannel.id === 'fondamentaux' && (chatMessages[selectedChannel.id] || []).length === 0 && (
+                      {selectedChannel.id === 'fondamentaux' && (
                         <div className="bg-gray-800 rounded-lg p-6 mb-6">
                           <div className="text-center mb-8 p-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white">
                             <h1 className="text-3xl font-bold mb-4">🧠 Scalp Trading pour les Nuls</h1>
