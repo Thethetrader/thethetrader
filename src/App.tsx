@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './index.css';
-import TradingPlatformShell from './components/generated/TradingPlatformShell';
+// import TradingPlatformShell from './components/generated/TradingPlatformShell';
 import { useNotifications } from './hooks/use-notifications';
 import { usePWA } from './hooks/use-pwa';
 
@@ -673,7 +673,7 @@ const App = () => {
     return (
       <div className="relative">
         {/* Ton salon complet */}
-        <TradingPlatformShell />
+        <div>App en cours de chargement...</div>
         
         {/* Petit logo déconnexion en bas à gauche - Desktop seulement */}
         <button 
