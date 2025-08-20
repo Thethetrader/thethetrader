@@ -728,64 +728,59 @@ const App = () => {
 
       {/* Version PWA - Page fixe sans scroll */}
       {isPWA ? (
-        <div className="h-screen w-screen overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col justify-center items-center px-4 sm:px-6">
-          {/* Logo en haut */}
-          <div className="text-xl sm:text-2xl font-bold text-white mb-8">
-            TheTheTrader
-          </div>
-          
-          {/* Hero Section - Centré */}
-          <div className="text-center flex-1 flex flex-col justify-center">
-            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight hover:scale-105 transition-transform duration-300 cursor-pointer group">
+        <>
+          {/* Hero Section - Mobile Optimized */}
+          <div className="text-center pt-20 sm:pt-32 pb-0 px-4 sm:px-6">
+            <h1 className="text-5xl sm:text-7xl md:text-9xl font-bold text-white mb-8 sm:mb-12 leading-tight hover:scale-105 transition-transform duration-300 cursor-pointer group">
               <span className="group-hover:text-blue-300 transition-colors duration-300">Le trading</span><br />
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent group-hover:from-blue-300 group-hover:to-purple-300 transition-all duration-300">
                 pour les nuls
               </span>
             </h1>
-            <p className="text-base sm:text-xl text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto px-2">
+            <p className="text-xl sm:text-3xl text-gray-300 mb-10 sm:mb-12 max-w-4xl mx-auto px-2">
               Un setup très simple, des signaux expliqués, un journal de performance. Rejoins la communauté et trade en confiance.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 sm:mb-12 px-4">
+            <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 justify-center mb-12 sm:mb-28 px-4">
               <button 
                 onClick={() => setShowAuthModal(true)}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:opacity-90 w-full sm:w-auto"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 sm:px-12 py-5 sm:py-6 rounded-lg text-xl sm:text-2xl font-semibold hover:opacity-90 w-full sm:w-auto"
               >
                 Commencer maintenant
               </button>
             </div>
 
             {/* Barre de défilement - Full Width */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 sm:py-6 overflow-hidden relative w-screen -mx-4 sm:-mx-6">
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 sm:py-10 overflow-hidden relative mb-10 sm:mb-16 w-screen -mx-4 sm:-mx-6">
               <div className="whitespace-nowrap animate-scroll">
-                <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
-                <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
-                <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
-                <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
-                <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
-                <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
-                <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
-                <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+                <span className="text-xl sm:text-4xl font-bold mx-8 sm:mx-32">EASY SETUP EASY TRADING</span>
+                <span className="text-xl sm:text-4xl font-bold mx-8 sm:mx-32">EASY SETUP EASY TRADING</span>
+                <span className="text-xl sm:text-4xl font-bold mx-8 sm:mx-32">EASY SETUP EASY TRADING</span>
+                <span className="text-xl sm:text-4xl font-bold mx-8 sm:mx-32">EASY SETUP EASY TRADING</span>
+                <span className="text-xl sm:text-4xl font-bold mx-8 sm:mx-32">EASY SETUP EASY TRADING</span>
+                <span className="text-xl sm:text-4xl font-bold mx-8 sm:mx-32">EASY SETUP EASY TRADING</span>
+                <span className="text-xl sm:text-4xl font-bold mx-8 sm:mx-32">EASY SETUP EASY TRADING</span>
+                <span className="text-xl sm:text-4xl font-bold mx-8 sm:mx-32">EASY SETUP EASY TRADING</span>
               </div>
             </div>
           </div>
-        </div>
+        </>
       ) : (
         <>
-          {/* Hero Section - Identique PWA */}
-          <div className="text-center pt-20 sm:pt-32 pb-0 px-4 sm:px-6 flex-1 flex flex-col justify-center">
-            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight hover:scale-105 transition-transform duration-300 cursor-pointer group">
+          {/* Hero Section - Mobile Optimized */}
+          <div className="text-center pt-20 sm:pt-32 pb-0 px-4 sm:px-6">
+            <h1 className="text-5xl sm:text-7xl md:text-9xl font-bold text-white mb-8 sm:mb-12 leading-tight hover:scale-105 transition-transform duration-300 cursor-pointer group">
               <span className="group-hover:text-blue-300 transition-colors duration-300">Le trading</span><br />
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent group-hover:from-blue-300 group-hover:to-purple-300 transition-all duration-300">
                 pour les nuls
               </span>
             </h1>
-            <p className="text-base sm:text-xl text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto px-2">
+            <p className="text-xl sm:text-3xl text-gray-300 mb-10 sm:mb-12 max-w-4xl mx-auto px-2">
               Un setup très simple, des signaux expliqués, un journal de performance. Rejoins la communauté et trade en confiance.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 sm:mb-12 px-4">
+            <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 justify-center mb-12 sm:mb-28 px-4">
               <button 
                 onClick={() => setShowAuthModal(true)}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:opacity-90 w-full sm:w-auto"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 sm:px-12 py-5 sm:py-6 rounded-lg text-xl sm:text-2xl font-semibold hover:opacity-90 w-full sm:w-auto"
               >
                 Commencer maintenant
               </button>
