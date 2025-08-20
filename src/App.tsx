@@ -20,7 +20,7 @@ declare global {
 }
 
 const App = () => {
-  const [user, setUser] = useState<User | null>({ id: 'test', email: 'test@test.com' });
+  const [user, setUser] = useState<User | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
