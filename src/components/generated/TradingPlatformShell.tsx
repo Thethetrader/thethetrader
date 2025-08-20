@@ -1990,7 +1990,7 @@ export default function TradingPlatformShell() {
                 )}
               </div>
             ) : (
-              <div className="p-4 md:p-6 space-y-4 w-full h-full overflow-y-auto" style={{ paddingBottom: '100px' }}>
+              <div className="p-4 md:p-6 space-y-4 w-full h-full overflow-y-auto" style={{ paddingTop: '80px', paddingBottom: '100px' }}>
 
 
 
@@ -2652,7 +2652,7 @@ export default function TradingPlatformShell() {
           {(view === 'calendar' || selectedChannel.id === 'trading-journal') ? (
             getTradingCalendar()
           ) : (
-            <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '20px' }}>
+            <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '80px' }}>
               {/* Bouton + Signal pour les canaux de signaux */}
               {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream'].includes(selectedChannel.id) && (
                 <div className="flex justify-end mb-4">
