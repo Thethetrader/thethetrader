@@ -730,7 +730,7 @@ const App = () => {
       {isPWA ? (
         <div className="h-screen w-screen flex flex-col justify-center items-center overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
           {/* Hero Section - Centré verticalement */}
-          <div className="text-center flex-1 flex flex-col justify-center px-4 sm:px-6">
+          <div className="text-center flex-1 flex flex-col justify-center px-4 sm:px-6 max-w-full">
             <h1 className="text-5xl sm:text-7xl md:text-9xl font-bold text-white mb-8 sm:mb-12 leading-tight hover:scale-105 transition-transform duration-300 cursor-pointer group">
               <span className="group-hover:text-blue-300 transition-colors duration-300">Le trading</span><br />
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent group-hover:from-blue-300 group-hover:to-purple-300 transition-all duration-300">
@@ -740,7 +740,7 @@ const App = () => {
             <p className="text-xl sm:text-3xl text-gray-300 mb-10 sm:mb-12 max-w-4xl mx-auto px-2">
               Un setup très simple, des signaux expliqués, un journal de performance. Rejoins la communauté et trade en confiance.
             </p>
-            <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 justify-center mb-12 sm:mb-16 px-4">
+            <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 justify-center mb-8 sm:mb-12 px-4">
               <button 
                 onClick={() => setShowAuthModal(true)}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 sm:px-12 py-5 sm:py-6 rounded-lg text-xl sm:text-2xl font-semibold hover:opacity-90 w-full sm:w-auto"
@@ -748,19 +748,19 @@ const App = () => {
                 Commencer maintenant
               </button>
             </div>
-            </div>
-
-          {/* Barre de défilement - En bas */}
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 sm:py-10 overflow-hidden relative w-full">
+            
+            {/* Barre de défilement - Sous le bouton */}
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 sm:py-6 overflow-hidden relative w-full max-w-full rounded-lg mx-auto">
               <div className="whitespace-nowrap animate-scroll">
-              <span className="text-xl sm:text-4xl font-bold mx-8 sm:mx-32">EASY SETUP EASY TRADING</span>
-              <span className="text-xl sm:text-4xl font-bold mx-8 sm:mx-32">EASY SETUP EASY TRADING</span>
-              <span className="text-xl sm:text-4xl font-bold mx-8 sm:mx-32">EASY SETUP EASY TRADING</span>
-              <span className="text-xl sm:text-4xl font-bold mx-8 sm:mx-32">EASY SETUP EASY TRADING</span>
-              <span className="text-xl sm:text-4xl font-bold mx-8 sm:mx-32">EASY SETUP EASY TRADING</span>
-              <span className="text-xl sm:text-4xl font-bold mx-8 sm:mx-32">EASY SETUP EASY TRADING</span>
-              <span className="text-xl sm:text-4xl font-bold mx-8 sm:mx-32">EASY SETUP EASY TRADING</span>
-              <span className="text-xl sm:text-4xl font-bold mx-8 sm:mx-32">EASY SETUP EASY TRADING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY TRADING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY TRADING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY TRADING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY TRADING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY TRADING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY TRADING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY TRADING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY TRADING</span>
+              </div>
             </div>
           </div>
         </div>
