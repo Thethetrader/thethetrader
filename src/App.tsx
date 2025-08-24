@@ -694,8 +694,16 @@ const App = () => {
       {/* Navigation - Masquée en PWA */}
       {!isPWA && (
         <nav className="flex items-center justify-between p-4 sm:p-6 relative z-50">
-          <div className="text-xl sm:text-2xl font-bold text-white">
-            TheTheTrader
+          <div className="flex items-center">
+            <img 
+              src="/logo.png" 
+              alt="Trading pour les nuls" 
+              className="h-8 sm:h-10 w-auto"
+              style={{
+                filter: 'drop-shadow(0 0 0 transparent)',
+                mixBlendMode: 'screen'
+              }}
+            />
           </div>
           <div className="hidden md:flex space-x-8">
             <a href="#services" className="text-gray-300 hover:text-white transition-all duration-200">Services</a>
@@ -4110,9 +4118,17 @@ const App = () => {
                 {/* Ligne de séparation et nom du site */}
                 <div className="border-t border-purple-700/50 mt-16 pt-8">
                   <div className="text-center">
-                    <h1 className="text-6xl md:text-8xl font-bold text-white tracking-tight">
-                      TheTheTrader
-                    </h1>
+                    <div className="flex justify-center mb-4">
+                      <img 
+                        src="/logo.png" 
+                        alt="Trading pour les nuls" 
+                        className="h-20 md:h-28 w-auto"
+                        style={{
+                          filter: 'drop-shadow(0 0 0 transparent)',
+                          mixBlendMode: 'screen'
+                        }}
+                      />
+                    </div>
                     <p className="text-gray-400 text-sm mt-4">© 2025 TheTheTrader. Trading avec simplicité.</p>
                   </div>
                 </div>
