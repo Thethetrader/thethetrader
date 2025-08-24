@@ -698,7 +698,7 @@ const App = () => {
             <img 
               src="/logo-removebg-preview.png" 
               alt="Trading pour les nuls" 
-              className="h-8 sm:h-10 md:h-32 lg:h-40 w-auto"
+              className="h-8 sm:h-10 md:h-16 w-auto"
 
             />
           </div>
@@ -740,7 +740,7 @@ const App = () => {
               <img 
                 src="/logo-removebg-preview.png" 
                 alt="Trading pour les nuls" 
-                className="h-32 sm:h-48 md:h-[36rem] lg:h-[48rem] xl:h-[56rem] w-auto"
+                className="h-32 sm:h-48 md:h-64 lg:h-80 w-auto"
 
               />
             </div>
@@ -779,7 +779,7 @@ const App = () => {
               <img 
                 src="/logo-removebg-preview.png" 
                 alt="Trading pour les nuls" 
-                className="h-32 sm:h-48 md:h-[36rem] lg:h-[48rem] xl:h-[56rem] w-auto"
+                className="h-32 sm:h-48 md:h-64 lg:h-80 w-auto"
 
               />
             </div>
@@ -4133,7 +4133,7 @@ const App = () => {
                       <img 
                         src="/logo-removebg-preview.png" 
                         alt="Trading pour les nuls" 
-                        className="h-20 md:h-56 lg:h-64 xl:h-72 w-auto"
+                        className="h-20 md:h-32 lg:h-40 w-auto"
 
                       />
                     </div>
