@@ -2266,7 +2266,7 @@ export default function TradingPlatformShell() {
                       {selectedChannel.id === 'fondamentaux' && (
                         <div className="bg-gray-800 rounded-lg p-6 mb-6">
                           <div className="text-center mb-8 p-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white">
-                            <div className="flex justify-center mb-4">
+                            <div className="flex justify-center mb-0">
                   <img 
                     src="/logo-removebg-preview.png" 
                     alt="Trading pour les nuls" 
@@ -2274,7 +2274,7 @@ export default function TradingPlatformShell() {
 
                   />
                 </div>
-                            <p className="text-xl opacity-90">Guide complet des concepts fondamentaux et stratégies avancées</p>
+                            <p className="text-xl opacity-90 -mt-4">Guide complet des concepts fondamentaux et stratégies avancées</p>
                           </div>
                           
                           <div className="space-y-6 text-gray-300">

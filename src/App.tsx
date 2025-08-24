@@ -698,7 +698,7 @@ const App = () => {
             <img 
               src="/logo-removebg-preview.png" 
               alt="Trading pour les nuls" 
-              className="h-8 sm:h-10 md:h-16 w-auto"
+              className="h-8 sm:h-10 md:h-32 w-auto"
 
             />
           </div>
@@ -736,15 +736,16 @@ const App = () => {
         <div className="h-screen w-screen flex flex-col justify-center items-center overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
           {/* Hero Section - Centré verticalement */}
           <div className="text-center flex-1 flex flex-col justify-center px-4 sm:px-6 max-w-full">
-            <div className="mb-8 sm:mb-12 flex justify-center hover:scale-105 transition-transform duration-300">
+            <div className="mb-0 flex justify-center hover:scale-105 transition-transform duration-300">
               <img 
                 src="/logo-removebg-preview.png" 
                 alt="Trading pour les nuls" 
-                className="h-32 sm:h-48 md:h-64 lg:h-80 w-auto"
+                className="h-32 sm:h-48 md:h-[32rem] lg:h-[40rem] w-auto object-cover"
+                style={{ clipPath: 'inset(10% 5% 15% 5%)' }}
 
               />
             </div>
-            <p className="text-xl sm:text-3xl text-gray-300 mb-10 sm:mb-12 max-w-4xl mx-auto px-2">
+            <p className="text-xl sm:text-3xl text-gray-300 mb-10 sm:mb-12 max-w-4xl mx-auto px-2 -mt-20 sm:-mt-32 md:-mt-40">
               Un setup très simple, des signaux expliqués, un journal de performance. Rejoins la communauté et trade en confiance.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 justify-center mb-8 sm:mb-12 px-4">
@@ -775,15 +776,16 @@ const App = () => {
         <>
           {/* Hero Section - Mobile Optimized */}
           <div className="text-center pt-20 sm:pt-32 pb-0 px-4 sm:px-6">
-            <div className="mb-8 sm:mb-12 flex justify-center hover:scale-105 transition-transform duration-300">
+            <div className="mb-0 flex justify-center hover:scale-105 transition-transform duration-300">
               <img 
                 src="/logo-removebg-preview.png" 
                 alt="Trading pour les nuls" 
-                className="h-32 sm:h-48 md:h-64 lg:h-80 w-auto"
+                className="h-32 sm:h-48 md:h-[32rem] lg:h-[40rem] w-auto object-cover"
+                style={{ clipPath: 'inset(10% 5% 15% 5%)' }}
 
               />
             </div>
-            <p className="text-xl sm:text-3xl text-gray-300 mb-10 sm:mb-12 max-w-4xl mx-auto px-2">
+            <p className="text-xl sm:text-3xl text-gray-300 mb-10 sm:mb-12 max-w-4xl mx-auto px-2 -mt-20 sm:-mt-32 md:-mt-40">
               Un setup très simple, des signaux expliqués, un journal de performance. Rejoins la communauté et trade en confiance.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 justify-center mb-12 sm:mb-28 px-4">
@@ -4133,7 +4135,7 @@ const App = () => {
                       <img 
                         src="/logo-removebg-preview.png" 
                         alt="Trading pour les nuls" 
-                        className="h-20 md:h-32 lg:h-40 w-auto"
+                        className="h-20 md:h-64 lg:h-80 w-auto"
 
                       />
                     </div>
