@@ -2266,7 +2266,17 @@ export default function TradingPlatformShell() {
                       {selectedChannel.id === 'fondamentaux' && (
                         <div className="bg-gray-800 rounded-lg p-6 mb-6">
                           <div className="text-center mb-8 p-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white">
-                            <h1 className="text-3xl font-bold mb-4">🧠 Scalp Trading pour les Nuls</h1>
+                            <div className="flex justify-center mb-4">
+                  <img 
+                    src="/logo.png" 
+                    alt="Trading pour les nuls" 
+                    className="h-12 w-auto"
+                    style={{
+                      filter: 'drop-shadow(0 0 0 transparent)',
+                      mixBlendMode: 'screen'
+                    }}
+                  />
+                </div>
                             <p className="text-xl opacity-90">Guide complet des concepts fondamentaux et stratégies avancées</p>
                           </div>
                           
