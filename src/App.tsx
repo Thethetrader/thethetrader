@@ -696,7 +696,7 @@ const App = () => {
         <nav className="flex items-center justify-between p-4 sm:p-6 relative z-50">
           <div className="flex items-center">
             <img 
-              src="/logo.png" 
+              src="/logo-removebg-preview.png" 
               alt="Trading pour les nuls" 
               className="h-8 sm:h-10 w-auto"
               style={{
@@ -741,13 +741,10 @@ const App = () => {
           <div className="text-center flex-1 flex flex-col justify-center px-4 sm:px-6 max-w-full">
             <div className="mb-8 sm:mb-12 flex justify-center hover:scale-105 transition-transform duration-300">
               <img 
-                src="/logo.png" 
+                src="/logo-removebg-preview.png" 
                 alt="Trading pour les nuls" 
                 className="h-32 sm:h-48 md:h-64 w-auto"
-                style={{
-                  filter: 'drop-shadow(0 0 0 transparent)',
-                  mixBlendMode: 'screen'
-                }}
+
               />
             </div>
             <p className="text-xl sm:text-3xl text-gray-300 mb-10 sm:mb-12 max-w-4xl mx-auto px-2">
@@ -783,13 +780,10 @@ const App = () => {
           <div className="text-center pt-20 sm:pt-32 pb-0 px-4 sm:px-6">
             <div className="mb-8 sm:mb-12 flex justify-center hover:scale-105 transition-transform duration-300">
               <img 
-                src="/logo.png" 
+                src="/logo-removebg-preview.png" 
                 alt="Trading pour les nuls" 
                 className="h-32 sm:h-48 md:h-64 w-auto"
-                style={{
-                  filter: 'drop-shadow(0 0 0 transparent)',
-                  mixBlendMode: 'screen'
-                }}
+
               />
             </div>
             <p className="text-xl sm:text-3xl text-gray-300 mb-10 sm:mb-12 max-w-4xl mx-auto px-2">
@@ -2771,7 +2765,7 @@ const App = () => {
                             <div className="text-center mb-8 p-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white">
                               <div className="flex justify-center mb-4">
                   <img 
-                    src="/logo.png" 
+                    src="/logo-removebg-preview.png" 
                     alt="Trading pour les nuls" 
                     className="h-12 w-auto"
                     style={{
@@ -4140,7 +4134,7 @@ const App = () => {
                   <div className="text-center">
                     <div className="flex justify-center mb-4">
                       <img 
-                        src="/logo.png" 
+                        src="/logo-removebg-preview.png" 
                         alt="Trading pour les nuls" 
                         className="h-20 md:h-28 w-auto"
                         style={{

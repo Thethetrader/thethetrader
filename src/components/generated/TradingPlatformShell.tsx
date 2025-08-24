@@ -2268,13 +2268,10 @@ export default function TradingPlatformShell() {
                           <div className="text-center mb-8 p-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white">
                             <div className="flex justify-center mb-4">
                   <img 
-                    src="/logo.png" 
+                    src="/logo-removebg-preview.png" 
                     alt="Trading pour les nuls" 
                     className="h-12 w-auto"
-                    style={{
-                      filter: 'drop-shadow(0 0 0 transparent)',
-                      mixBlendMode: 'screen'
-                    }}
+
                   />
                 </div>
                             <p className="text-xl opacity-90">Guide complet des concepts fondamentaux et stratégies avancées</p>
