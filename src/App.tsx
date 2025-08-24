@@ -698,7 +698,7 @@ const App = () => {
             <img 
               src="/logo-removebg-preview.png" 
               alt="Trading pour les nuls" 
-              className="h-8 sm:h-10 md:h-24 w-auto"
+              className="h-8 sm:h-10 md:h-32 lg:h-40 w-auto"
 
             />
           </div>
@@ -740,7 +740,7 @@ const App = () => {
               <img 
                 src="/logo-removebg-preview.png" 
                 alt="Trading pour les nuls" 
-                className="h-32 sm:h-48 md:h-96 lg:h-[32rem] w-auto"
+                className="h-32 sm:h-48 md:h-[36rem] lg:h-[48rem] xl:h-[56rem] w-auto"
 
               />
             </div>
@@ -779,7 +779,7 @@ const App = () => {
               <img 
                 src="/logo-removebg-preview.png" 
                 alt="Trading pour les nuls" 
-                className="h-32 sm:h-48 md:h-96 lg:h-[32rem] w-auto"
+                className="h-32 sm:h-48 md:h-[36rem] lg:h-[48rem] xl:h-[56rem] w-auto"
 
               />
             </div>
@@ -4133,11 +4133,8 @@ const App = () => {
                       <img 
                         src="/logo-removebg-preview.png" 
                         alt="Trading pour les nuls" 
-                        className="h-20 md:h-40 lg:h-48 w-auto"
-                        style={{
-                          filter: 'drop-shadow(0 0 0 transparent)',
-                          mixBlendMode: 'screen'
-                        }}
+                        className="h-20 md:h-56 lg:h-64 xl:h-72 w-auto"
+
                       />
                     </div>
                     <p className="text-gray-400 text-sm mt-4">© 2025 TheTheTrader. Trading avec simplicité.</p>
