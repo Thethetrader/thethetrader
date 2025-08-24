@@ -698,11 +698,8 @@ const App = () => {
             <img 
               src="/logo-removebg-preview.png" 
               alt="Trading pour les nuls" 
-              className="h-8 sm:h-10 w-auto"
-              style={{
-                filter: 'drop-shadow(0 0 0 transparent)',
-                mixBlendMode: 'screen'
-              }}
+              className="h-8 sm:h-10 md:h-24 w-auto"
+
             />
           </div>
           <div className="hidden md:flex space-x-8">
@@ -743,7 +740,7 @@ const App = () => {
               <img 
                 src="/logo-removebg-preview.png" 
                 alt="Trading pour les nuls" 
-                className="h-32 sm:h-48 md:h-64 w-auto"
+                className="h-32 sm:h-48 md:h-96 lg:h-[32rem] w-auto"
 
               />
             </div>
@@ -782,7 +779,7 @@ const App = () => {
               <img 
                 src="/logo-removebg-preview.png" 
                 alt="Trading pour les nuls" 
-                className="h-32 sm:h-48 md:h-64 w-auto"
+                className="h-32 sm:h-48 md:h-96 lg:h-[32rem] w-auto"
 
               />
             </div>
@@ -4136,7 +4133,7 @@ const App = () => {
                       <img 
                         src="/logo-removebg-preview.png" 
                         alt="Trading pour les nuls" 
-                        className="h-20 md:h-28 w-auto"
+                        className="h-20 md:h-40 lg:h-48 w-auto"
                         style={{
                           filter: 'drop-shadow(0 0 0 transparent)',
                           mixBlendMode: 'screen'
