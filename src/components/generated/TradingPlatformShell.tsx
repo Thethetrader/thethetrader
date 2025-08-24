@@ -2270,11 +2270,12 @@ export default function TradingPlatformShell() {
                   <img 
                     src="/logo-removebg-preview.png" 
                     alt="Trading pour les nuls" 
-                    className="h-12 w-auto"
+                    className="h-24 w-auto object-cover"
+                    style={{ clipPath: 'inset(10% 5% 15% 5%)' }}
 
                   />
                 </div>
-                            <p className="text-xl opacity-90 -mt-4">Guide complet des concepts fondamentaux et stratégies avancées</p>
+                            <p className="text-xl opacity-90 -mt-3">Guide complet des concepts fondamentaux et stratégies avancées</p>
                           </div>
                           
                           <div className="space-y-6 text-gray-300">
