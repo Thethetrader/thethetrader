@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { supabaseConfig } from '../config/supabase-config'
 
 const SupabaseTest = () => {
   const [status, setStatus] = useState('🔌 Test de connexion Supabase...')
@@ -18,7 +19,7 @@ const SupabaseTest = () => {
           setDetails(error.message)
         } else {
           setStatus('✅ Connexion Supabase réussie!')
-          setDetails(`URL: ${supabase.supabaseUrl}`)
+          setDetails(`URL: ${supabaseConfig.url}`)
         }
 
       } catch (err) {

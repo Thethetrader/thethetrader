@@ -10,6 +10,9 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      crypto: 'crypto-browserify',
+      stream: 'stream-browserify',
+      buffer: 'buffer'
     },
   },
   server: {
@@ -24,5 +27,8 @@ export default defineConfig({
         manualChunks: undefined
       }
     }
+  },
+  define: {
+    global: 'globalThis',
   }
 });
