@@ -1603,6 +1603,7 @@ export default function TradingPlatformShell() {
             </label>
             <div className="flex-1">
               <p className="text-sm font-medium">TheTheTrader</p>
+              <p className="text-xs text-gray-400">En ligne</p>
             </div>
           </div>
         </div>
@@ -2270,7 +2271,7 @@ export default function TradingPlatformShell() {
                   <img 
                     src="/logo-removebg-preview.png" 
                     alt="Trading pour les nuls" 
-                    className="h-24 w-auto object-cover"
+                    className="h-48 w-auto object-cover"
                     style={{ clipPath: 'inset(10% 5% 15% 5%)' }}
 
                   />

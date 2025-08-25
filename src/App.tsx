@@ -740,7 +740,7 @@ const App = () => {
               <img 
                 src="/logo-removebg-preview.png" 
                 alt="Trading pour les nuls" 
-                className="h-40 sm:h-56 w-auto object-cover"
+                className="h-80 sm:h-96 w-auto object-cover"
                 style={{ clipPath: 'inset(10% 5% 15% 5%)' }}
 
               />
@@ -753,7 +753,7 @@ const App = () => {
                 onClick={() => setShowAuthModal(true)}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 sm:px-12 py-5 sm:py-6 rounded-lg text-xl sm:text-2xl font-semibold hover:opacity-90 w-full sm:w-auto"
               >
-                Commencer maintenant
+                Se connecter
               </button>
             </div>
             
@@ -780,7 +780,7 @@ const App = () => {
               <img 
                 src="/logo-removebg-preview.png" 
                 alt="Trading pour les nuls" 
-                className="h-32 sm:h-48 md:h-[32rem] lg:h-[40rem] w-auto object-cover"
+                className="h-64 sm:h-80 md:h-[32rem] lg:h-[40rem] w-auto object-cover"
                 style={{ clipPath: 'inset(10% 5% 15% 5%)' }}
 
               />
@@ -793,7 +793,7 @@ const App = () => {
                 onClick={() => setShowAuthModal(true)}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 sm:px-12 py-5 sm:py-6 rounded-lg text-xl sm:text-2xl font-semibold hover:opacity-90 w-full sm:w-auto"
               >
-                Commencer maintenant
+                Se connecter
               </button>
               <button 
                 onClick={(e) => {
@@ -946,7 +946,7 @@ const App = () => {
                 </div>
               </div>
               
-              {/* Bouton Commencer maintenant après Pourquoi choisir */}
+              {/* Bouton Se connecter après Pourquoi choisir */}
               <div className="text-center mt-8">
                 <button 
                   onClick={() => {
@@ -957,7 +957,7 @@ const App = () => {
                   }}
                   className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 sm:px-12 py-5 sm:py-6 rounded-lg text-xl sm:text-2xl font-semibold hover:opacity-90"
                 >
-                  Commencer maintenant
+                  Se connecter
                 </button>
               </div>
             </div>
@@ -3486,7 +3486,7 @@ const App = () => {
               </div>
             </div>
 
-            {/* Bouton Commencer maintenant après Aperçu de la plateforme */}
+            {/* Bouton Se connecter après Aperçu de la plateforme */}
             <div className="text-center mt-8 mb-12">
               <button 
                 onClick={() => {
@@ -3497,7 +3497,7 @@ const App = () => {
                 }}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 sm:px-12 py-5 sm:py-6 rounded-lg text-xl sm:text-2xl font-semibold hover:opacity-90"
               >
-                Commencer maintenant
+                Se connecter
               </button>
             </div>
 
@@ -3599,7 +3599,7 @@ const App = () => {
                       </li>
                     </ul>
                     <button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-4 px-6 rounded-lg font-semibold text-lg transition-colors">
-                      Commencer maintenant
+                      Se connecter
                     </button>
                   </div>
                 </div>
@@ -3922,7 +3922,7 @@ const App = () => {
                                         
                                         {/* Bouton d'action */}
                                         <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200">
-                                          Commencer la formation
+                                          Se connecter
                                         </button>
                                       </div>
                                     </div>
