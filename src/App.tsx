@@ -22,6 +22,7 @@ declare global {
 const App = () => {
   const [user, setUser] = useState<User | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState<string>('home');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [activeChannel, setActiveChannel] = useState('crypto');
@@ -666,6 +667,261 @@ const App = () => {
     setUser(null);
     setEmail('');
     setPassword('');
+    setCurrentPage('home');
+  };
+
+  // Function to render legal pages
+  const renderLegalPage = () => {
+    const pages: Record<string, { title: string; content: React.ReactElement }> = {
+      'mentions-legales': {
+        title: 'Mentions légales',
+        content: (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-white mb-4">Mentions légales</h2>
+            <div className="space-y-4 text-gray-300">
+              <p><strong>Dénomination sociale :</strong> TheTheTrader</p>
+              <p><strong>Activité :</strong> Plateforme éducative de trading et signaux financiers</p>
+              <p><strong>Hébergeur :</strong> Netlify, Inc. - 2325 3rd Street, Suite 296, San Francisco, CA 94107</p>
+              <p><strong>Directeur de publication :</strong> TheTheTrader</p>
+              <p className="text-sm text-gray-400">Dernière mise à jour : Janvier 2025</p>
+            </div>
+          </div>
+        )
+      },
+      'politique-confidentialite': {
+        title: 'Politique de confidentialité',
+        content: (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-white mb-4">Politique de confidentialité</h2>
+            <div className="space-y-4 text-gray-300">
+              <h3 className="text-lg font-semibold text-white">Collecte des données</h3>
+              <p>Nous collectons uniquement les données nécessaires au fonctionnement de notre service : adresse email pour la création de compte.</p>
+              
+              <h3 className="text-lg font-semibold text-white">Utilisation des données</h3>
+              <p>Vos données sont utilisées pour vous fournir l'accès à nos signaux de trading et contenus éducatifs.</p>
+              
+              <h3 className="text-lg font-semibold text-white">Protection des données</h3>
+              <p>Nous mettons en place toutes les mesures techniques et organisationnelles pour protéger vos données personnelles.</p>
+              
+              <p className="text-sm text-gray-400">Conformément au RGPD. Dernière mise à jour : Janvier 2025</p>
+            </div>
+          </div>
+        )
+      },
+      'conditions-utilisation': {
+        title: 'Conditions d\'utilisation',
+        content: (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-white mb-4">Conditions d'utilisation</h2>
+            <div className="space-y-4 text-gray-300">
+              <h3 className="text-lg font-semibold text-white">Acceptation des conditions</h3>
+              <p>En utilisant TheTheTrader, vous acceptez ces conditions d'utilisation.</p>
+              
+              <h3 className="text-lg font-semibold text-white">Services fournis</h3>
+              <p>Nous fournissons des signaux de trading, du contenu éducatif et des outils d'analyse à des fins informatives uniquement.</p>
+              
+              <h3 className="text-lg font-semibold text-white">Responsabilités</h3>
+              <p>Vous êtes seul responsable de vos décisions de trading. Nos services ne constituent pas des conseils financiers personnalisés.</p>
+              
+              <h3 className="text-lg font-semibold text-white">Limitation de responsabilité</h3>
+              <p>TheTheTrader ne peut être tenu responsable des pertes financières résultant de l'utilisation de nos services.</p>
+              
+              <p className="text-sm text-gray-400">Dernière mise à jour : Janvier 2025</p>
+            </div>
+          </div>
+        )
+      },
+      'avertissement-risques': {
+        title: 'Avertissement sur les risques',
+        content: (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-white mb-4">Avertissement sur les risques</h2>
+            <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-6 mb-6">
+              <div className="flex items-start gap-3">
+                <div className="text-red-400 text-xl flex-shrink-0 mt-1">⚠️</div>
+                <div className="space-y-4 text-gray-300">
+                  <p><strong className="text-red-400">RISQUE ÉLEVÉ DE PERTE EN CAPITAL</strong></p>
+                  <p>Le trading de produits financiers comporte un risque élevé de perte en capital. Vous pourriez perdre tout ou partie de votre investissement initial.</p>
+                  <p><strong>Les performances passées ne garantissent pas les résultats futurs.</strong> Les signaux et analyses présentés sur cette plateforme ne constituent pas des conseils en investissement personnalisés.</p>
+                  <p><strong>Ne tradez qu'avec des fonds que vous pouvez vous permettre de perdre.</strong></p>
+                  <p>Les produits dérivés (CFD, Forex, Futures) sont particulièrement risqués en raison de l'effet de levier.</p>
+                  <p><strong>Consultez un conseiller financier professionnel</strong> avant toute décision d'investissement importante.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      },
+      'conflits-interets': {
+        title: 'Conflits d\'intérêts',
+        content: (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-white mb-4">Conflits d'intérêts</h2>
+            <div className="space-y-4 text-gray-300">
+              <h3 className="text-lg font-semibold text-white">Transparence</h3>
+              <p>TheTheTrader s'engage à une transparence totale concernant les potentiels conflits d'intérêts.</p>
+              
+              <h3 className="text-lg font-semibold text-white">Partenariats</h3>
+              <p>Nous pouvons recevoir des commissions de la part de brokers partenaires. Ces partenariats n'influencent pas nos analyses.</p>
+              
+              <h3 className="text-lg font-semibold text-white">Positions personnelles</h3>
+              <p>Nos analystes peuvent détenir des positions sur les instruments analysés. Cela sera mentionné le cas échéant.</p>
+              
+              <p className="text-sm text-gray-400">Dernière mise à jour : Janvier 2025</p>
+            </div>
+          </div>
+        )
+      },
+      'cookies-traceurs': {
+        title: 'Cookies et traceurs',
+        content: (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-white mb-4">Cookies et traceurs</h2>
+            <div className="space-y-4 text-gray-300">
+              <h3 className="text-lg font-semibold text-white">Utilisation des cookies</h3>
+              <p>Nous utilisons des cookies pour améliorer votre expérience utilisateur et analyser l'utilisation de notre site.</p>
+              
+              <h3 className="text-lg font-semibold text-white">Types de cookies</h3>
+              <ul className="list-disc list-inside space-y-2">
+                <li><strong>Cookies techniques :</strong> Nécessaires au fonctionnement du site</li>
+                <li><strong>Cookies analytiques :</strong> Pour comprendre l'utilisation du site</li>
+                <li><strong>Cookies de préférences :</strong> Pour mémoriser vos choix</li>
+              </ul>
+              
+              <h3 className="text-lg font-semibold text-white">Gestion des cookies</h3>
+              <p>Vous pouvez gérer vos préférences de cookies dans les paramètres de votre navigateur.</p>
+              
+              <p className="text-sm text-gray-400">Dernière mise à jour : Janvier 2025</p>
+            </div>
+          </div>
+        )
+      },
+      'support-client': {
+        title: 'Support client',
+        content: (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-white mb-4">Support client</h2>
+            <div className="space-y-4 text-gray-300">
+              <h3 className="text-lg font-semibold text-white">Comment nous contacter</h3>
+              <div className="bg-gray-800 rounded-lg p-6">
+                <div className="space-y-3">
+                  <p><strong>Email :</strong> support@tradingpourlesnuls.com</p>
+                  <p><strong>Heures d'ouverture :</strong> Lundi - Vendredi, 9h00 - 18h00 (CET)</p>
+                  <p><strong>Temps de réponse moyen :</strong> 24-48 heures</p>
+                </div>
+              </div>
+              
+              <h3 className="text-lg font-semibold text-white">Questions fréquentes</h3>
+              <div className="space-y-3">
+                <div className="bg-gray-800 rounded-lg p-4">
+                  <p><strong>Q: Comment accéder aux signaux ?</strong></p>
+                  <p>R: Créez un compte et connectez-vous pour accéder à tous nos signaux en temps réel.</p>
+                </div>
+                <div className="bg-gray-800 rounded-lg p-4">
+                  <p><strong>Q: Les signaux sont-ils gratuits ?</strong></p>
+                  <p>R: Oui, notre service est actuellement gratuit pour tous les utilisateurs inscrits.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      },
+      'signalement-incident': {
+        title: 'Signalement d\'incident',
+        content: (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-white mb-4">Signalement d'incident</h2>
+            <div className="space-y-4 text-gray-300">
+              <h3 className="text-lg font-semibold text-white">Signaler un problème</h3>
+              <p>Si vous rencontrez un problème technique ou souhaitez signaler un incident, contactez-nous immédiatement.</p>
+              
+              <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-6">
+                <h4 className="text-yellow-400 font-semibold mb-3">🚨 Signalement d'urgence</h4>
+                <div className="space-y-2">
+                  <p><strong>Email prioritaire :</strong> incident@tradingpourlesnuls.com</p>
+                  <p><strong>Objet :</strong> [URGENT] - Description du problème</p>
+                </div>
+              </div>
+              
+              <h3 className="text-lg font-semibold text-white">Types d'incidents à signaler</h3>
+              <ul className="list-disc list-inside space-y-2">
+                <li>Problèmes de sécurité</li>
+                <li>Bugs critiques de la plateforme</li>
+                <li>Erreurs dans les signaux</li>
+                <li>Problèmes d'accès au compte</li>
+              </ul>
+            </div>
+          </div>
+        )
+      },
+      'nous-contacter': {
+        title: 'Nous contacter',
+        content: (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-white mb-4">Nous contacter</h2>
+            <div className="space-y-4 text-gray-300">
+              <h3 className="text-lg font-semibold text-white">Informations de contact</h3>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="bg-gray-800 rounded-lg p-6">
+                  <h4 className="text-white font-semibold mb-3">📧 Contact général</h4>
+                  <p>contact@tradingpourlesnuls.com</p>
+                </div>
+                <div className="bg-gray-800 rounded-lg p-6">
+                  <h4 className="text-white font-semibold mb-3">🛠️ Support technique</h4>
+                  <p>support@tradingpourlesnuls.com</p>
+                </div>
+                <div className="bg-gray-800 rounded-lg p-6">
+                  <h4 className="text-white font-semibold mb-3">📈 Partenariats</h4>
+                  <p>business@tradingpourlesnuls.com</p>
+                </div>
+                <div className="bg-gray-800 rounded-lg p-6">
+                  <h4 className="text-white font-semibold mb-3">⚖️ Questions légales</h4>
+                  <p>legal@tradingpourlesnuls.com</p>
+                </div>
+              </div>
+              
+              <h3 className="text-lg font-semibold text-white">Horaires d'ouverture</h3>
+              <div className="bg-gray-800 rounded-lg p-6">
+                <div className="space-y-2">
+                  <p><strong>Lundi - Vendredi :</strong> 9h00 - 18h00 (CET)</p>
+                  <p><strong>Week-end :</strong> Fermé</p>
+                  <p><strong>Jours fériés :</strong> Fermé</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      }
+    };
+
+    if (currentPage === 'home' || !pages[currentPage]) return null;
+
+    const page = pages[currentPage];
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        {/* Header with back button */}
+        <nav className="flex items-center justify-between p-4 sm:p-6 relative z-50 border-b border-purple-700/50">
+          <button 
+            onClick={() => setCurrentPage('home')}
+            className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Retour
+          </button>
+          <div className="text-xl sm:text-2xl font-bold text-white">
+            {page.title}
+          </div>
+          <div className="w-20"></div>
+        </nav>
+
+        {/* Page content */}
+        <div className="max-w-4xl mx-auto p-6 sm:p-8">
+          {page.content}
+        </div>
+      </div>
+    );
   };
 
   // Si utilisateur connecté, afficher ton salon complet
@@ -685,6 +941,11 @@ const App = () => {
         </button>
       </div>
     );
+  }
+
+  // Si on est sur une page légale, l'afficher
+  if (currentPage !== 'home') {
+    return renderLegalPage();
   }
 
 
@@ -4085,9 +4346,9 @@ const App = () => {
                   <div>
                     <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Informations Légales</h4>
                     <div className="space-y-3">
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Mentions légales</a>
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Politique de confidentialité</a>
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Conditions d'utilisation</a>
+                      <button onClick={() => setCurrentPage('mentions-legales')} className="block text-gray-300 hover:text-white transition-colors text-sm text-left">Mentions légales</button>
+                      <button onClick={() => setCurrentPage('politique-confidentialite')} className="block text-gray-300 hover:text-white transition-colors text-sm text-left">Politique de confidentialité</button>
+                      <button onClick={() => setCurrentPage('conditions-utilisation')} className="block text-gray-300 hover:text-white transition-colors text-sm text-left">Conditions d'utilisation</button>
                     </div>
                   </div>
 
@@ -4095,9 +4356,9 @@ const App = () => {
                   <div>
                     <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Conformité</h4>
                     <div className="space-y-3">
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Avertissement sur les risques</a>
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Conflits d'intérêts</a>
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Cookies et traceurs</a>
+                      <button onClick={() => setCurrentPage('avertissement-risques')} className="block text-gray-300 hover:text-white transition-colors text-sm text-left">Avertissement sur les risques</button>
+                      <button onClick={() => setCurrentPage('conflits-interets')} className="block text-gray-300 hover:text-white transition-colors text-sm text-left">Conflits d'intérêts</button>
+                      <button onClick={() => setCurrentPage('cookies-traceurs')} className="block text-gray-300 hover:text-white transition-colors text-sm text-left">Cookies et traceurs</button>
                     </div>
                   </div>
 
@@ -4105,9 +4366,9 @@ const App = () => {
                   <div>
                     <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Contact</h4>
                     <div className="space-y-3">
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Support client</a>
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Signalement d'incident</a>
-                      <a href="#" className="block text-gray-300 hover:text-white transition-colors text-sm">Nous contacter</a>
+                      <button onClick={() => setCurrentPage('support-client')} className="block text-gray-300 hover:text-white transition-colors text-sm text-left">Support client</button>
+                      <button onClick={() => setCurrentPage('signalement-incident')} className="block text-gray-300 hover:text-white transition-colors text-sm text-left">Signalement d'incident</button>
+                      <button onClick={() => setCurrentPage('nous-contacter')} className="block text-gray-300 hover:text-white transition-colors text-sm text-left">Nous contacter</button>
                     </div>
                   </div>
                 </div>
