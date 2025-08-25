@@ -2276,7 +2276,7 @@ export default function TradingPlatformShell() {
 
                   />
                 </div>
-                            <p className="text-xl opacity-90 -mt-12">Guide complet des concepts fondamentaux et stratégies avancées</p>
+                            <p className="text-xl opacity-90 -mt-3">Guide complet des concepts fondamentaux et stratégies avancées</p>
                           </div>
                           
                           <div className="space-y-6 text-gray-300">

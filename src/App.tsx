@@ -745,7 +745,7 @@ const App = () => {
 
               />
             </div>
-            <p className="text-xl sm:text-3xl text-gray-300 mb-10 sm:mb-12 max-w-4xl mx-auto px-2 -mt-4">
+            <p className="text-xl sm:text-3xl text-gray-300 mb-10 sm:mb-12 max-w-4xl mx-auto px-2 -mt-12">
               Un setup très simple, des signaux expliqués, un journal de performance. Rejoins la communauté et trade en confiance.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 justify-center mb-8 sm:mb-12 px-4">
