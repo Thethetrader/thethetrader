@@ -1019,7 +1019,7 @@ const App = () => {
               </button>
             </div>
 
-            {/* Test Supabase - TEMPORAIRE */}
+            {/* Test Supabase - TEMPORAIRE PWA */}
             <div className="mb-8 px-4">
               <SupabaseTest />
             </div>
@@ -1101,6 +1101,11 @@ const App = () => {
                 <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
                 <span className="text-sm sm:text-2xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
               </div>
+            </div>
+
+            {/* Test Supabase - TEMPORAIRE DESKTOP */}
+            <div className="mb-8 px-4">
+              <SupabaseTest />
             </div>
 
             {/* Nos Services - Mobile Optimized */}

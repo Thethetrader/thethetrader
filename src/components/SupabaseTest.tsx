@@ -2,81 +2,80 @@ import React, { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 
 const SupabaseTest = () => {
-  const [status, setStatus] = useState('Connexion en cours...')
-  const [tables, setTables] = useState<string[]>([])
+  const [status, setStatus] = useState('🔌 Test de connexion Supabase...')
+  const [details, setDetails] = useState('')
 
   useEffect(() => {
     const testConnection = async () => {
       try {
+        setStatus('🔌 Connexion en cours...')
+        
         // Test de connexion basique
-        const { data, error } = await supabase
-          .from('information_schema.tables')
-          .select('table_name')
-          .eq('table_schema', 'public')
-          .limit(10)
+        const { data, error } = await supabase.auth.getSession()
 
         if (error) {
-          setStatus(`❌ Erreur: ${error.message}`)
-          return
+          setStatus('❌ Erreur de connexion')
+          setDetails(error.message)
+        } else {
+          setStatus('✅ Connexion Supabase réussie!')
+          setDetails(`URL: ${supabase.supabaseUrl}`)
         }
-
-        setStatus('✅ Connexion Supabase réussie!')
-        setTables(data?.map(t => t.table_name) || [])
-
-        // Créer la table signals si elle n'existe pas
-        const createSignalsTable = async () => {
-          const { error: createError } = await supabase.rpc('exec_sql', {
-            sql: `
-              CREATE TABLE IF NOT EXISTS signals (
-                id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-                symbol VARCHAR(20) NOT NULL,
-                type VARCHAR(10) CHECK (type IN ('buy', 'sell')) NOT NULL,
-                entry_price DECIMAL(20, 8) NOT NULL,
-                stop_loss DECIMAL(20, 8),
-                take_profit DECIMAL(20, 8),
-                risk_reward DECIMAL(10, 2),
-                status VARCHAR(20) CHECK (status IN ('active', 'closed', 'cancelled')) DEFAULT 'active',
-                outcome VARCHAR(20) CHECK (outcome IN ('win', 'loss', 'breakeven')),
-                channel VARCHAR(20) CHECK (channel IN ('crypto', 'forex', 'futures')) NOT NULL,
-                notes TEXT,
-                created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-                created_by UUID
-              );
-            `
-          })
-
-          if (createError) {
-            console.log('Table signals existe déjà ou erreur:', createError.message)
-          } else {
-            console.log('✅ Table signals créée!')
-          }
-        }
-
-        await createSignalsTable()
 
       } catch (err) {
-        setStatus(`❌ Erreur de connexion: ${err instanceof Error ? err.message : 'Erreur inconnue'}`)
+        setStatus('❌ Erreur de connexion')
+        setDetails(err instanceof Error ? err.message : 'Erreur inconnue')
       }
     }
 
     testConnection()
   }, [])
 
-  return (
-    <div className="bg-gray-800 p-6 rounded-lg">
-      <h3 className="text-white text-lg font-semibold mb-4">🔌 Test Supabase</h3>
-      <p className="text-gray-300 mb-4">{status}</p>
+  const addTestSignal = async () => {
+    try {
+      setStatus('📊 Ajout d\'un signal de test...')
       
-      {tables.length > 0 && (
-        <div>
-          <h4 className="text-white font-medium mb-2">Tables existantes:</h4>
-          <ul className="text-gray-400 text-sm">
-            {tables.map(table => (
-              <li key={table}>• {table}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+      const { data, error } = await supabase
+        .from('signals')
+        .insert([
+          {
+            symbol: 'BTCUSDT',
+            type: 'buy',
+            entry_price: 45000.00,
+            stop_loss: 44000.00,
+            take_profit: 47000.00,
+            risk_reward: 2.0,
+            channel: 'crypto',
+            notes: 'Signal de test - cassure de résistance'
+          }
+        ])
+        .select()
+
+      if (error) {
+        setStatus('❌ Erreur lors de l\'ajout du signal')
+        setDetails(error.message)
+      } else {
+        setStatus('✅ Signal ajouté avec succès!')
+        setDetails(`Signal ID: ${data?.[0]?.id}`)
+      }
+
+    } catch (err) {
+      setStatus('❌ Erreur lors de l\'ajout du signal')
+      setDetails(err instanceof Error ? err.message : 'Erreur inconnue')
+    }
+  }
+
+  return (
+    <div className="bg-gray-800 p-6 rounded-lg border border-gray-600">
+      <h3 className="text-white text-lg font-semibold mb-4">🔌 Test Supabase</h3>
+      <p className="text-gray-300 mb-2">{status}</p>
+      {details && <p className="text-gray-400 text-sm mb-4">{details}</p>}
+      
+      <button 
+        onClick={addTestSignal}
+        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+      >
+        📊 Ajouter un signal de test
+      </button>
     </div>
   )
 }
