@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './index.css';
 import TradingPlatformShell from './components/generated/TradingPlatformShell';
+import SupabaseTest from './components/SupabaseTest';
 import { useNotifications } from './hooks/use-notifications';
 import { usePWA } from './hooks/use-pwa';
 
@@ -1016,6 +1017,11 @@ const App = () => {
               >
                 Se connecter
               </button>
+            </div>
+
+            {/* Test Supabase - TEMPORAIRE */}
+            <div className="mb-8 px-4">
+              <SupabaseTest />
             </div>
             
             {/* Barre de défilement - Sous le bouton */}
