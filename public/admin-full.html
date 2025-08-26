@@ -1116,17 +1116,159 @@
             window.location.href = '/admin-simple.html';
         }
 
-        // Initialize with crypto content
+        // Initialize with channels list instead of going directly to a salon
         window.addEventListener('load', function() {
             // Check if mobile or desktop
             const isMobile = window.innerWidth <= 768;
             
             if (isMobile) {
-                showMobileContent('crypto');
+                // Show channels list first, not salon content
+                showMobileChannels();
             } else {
-                showContent('crypto');
+                // Show channels list first, not salon content
+                showChannelsList();
             }
         });
+        
+        // Function to show channels list on desktop
+        function showChannelsList() {
+            const contentBody = document.querySelector('.content-body');
+            const contentTitle = document.querySelector('.content-title');
+            
+            contentTitle.innerHTML = '📋 Liste des Salons';
+            contentBody.innerHTML = `
+                <div class="p-6 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- ÉDUCATION -->
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">ÉDUCATION</h3>
+                            <div class="space-y-2">
+                                <button class="w-full text-left p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors" onclick="showContent('fondamentaux')">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-xl">📚</span>
+                                        <div>
+                                            <h4 class="font-medium">Fondamentaux</h4>
+                                            <p class="text-sm text-gray-400">Contenu éducatif</p>
+                                        </div>
+                                    </div>
+                                </button>
+                                <button class="w-full text-left p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors" onclick="showContent('letsgooo-model')">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-xl">🚀</span>
+                                        <div>
+                                            <h4 class="font-medium">Letsgooo model</h4>
+                                            <p class="text-sm text-gray-400">Contenu éducatif</p>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- SIGNAUX -->
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">SIGNAUX</h3>
+                            <div class="space-y-2">
+                                <button class="w-full text-left p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors" onclick="showContent('crypto')">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-xl">🪙</span>
+                                        <div>
+                                            <h4 class="font-medium">Crypto</h4>
+                                            <p class="text-sm text-gray-400">Canal de signaux</p>
+                                        </div>
+                                    </div>
+                                </button>
+                                <button class="w-full text-left p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors" onclick="showContent('futur')">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-xl">📈</span>
+                                        <div>
+                                            <h4 class="font-medium">Futur</h4>
+                                            <p class="text-sm text-gray-400">Canal de signaux</p>
+                                        </div>
+                                    </div>
+                                </button>
+                                <button class="w-full text-left p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors" onclick="showContent('forex')">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-xl">💱</span>
+                                        <div>
+                                            <h4 class="font-medium">Forex</h4>
+                                            <p class="text-sm text-gray-400">Canal de signaux</p>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- TRADING HUB -->
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">TRADING HUB</h3>
+                            <div class="space-y-2">
+                                <button class="w-full text-left p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors" onclick="showContent('livestream')">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-xl">📺</span>
+                                        <div>
+                                            <h4 class="font-medium">Livestream</h4>
+                                            <p class="text-sm text-gray-400">Hub de trading</p>
+                                        </div>
+                                    </div>
+                                </button>
+                                <button class="w-full text-left p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors" onclick="showContent('general-chat')">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-xl">💬</span>
+                                        <div>
+                                            <h4 class="font-medium">General-chat</h4>
+                                            <p class="text-sm text-gray-400">Hub de trading</p>
+                                        </div>
+                                    </div>
+                                </button>
+                                <button class="w-full text-left p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors" onclick="showContent('profit-loss')">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-xl">💰</span>
+                                        <div>
+                                            <h4 class="font-medium">Profit-loss</h4>
+                                            <p class="text-sm text-gray-400">Hub de trading</p>
+                                        </div>
+                                    </div>
+                                </button>
+                                <button class="w-full text-left p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors" onclick="showContent('calendrier')">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-xl">📅</span>
+                                        <div>
+                                            <h4 class="font-medium">Calendrier</h4>
+                                            <p class="text-sm text-gray-400">Suivi des performances</p>
+                                        </div>
+                                    </div>
+                                </button>
+                                <button class="w-full text-left p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors" onclick="showContent('trading-journal')">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-xl">📊</span>
+                                        <div>
+                                            <h4 class="font-medium">Trading Journal</h4>
+                                            <p class="text-sm text-gray-400">Journal de trading</p>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- ADMIN -->
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">ADMIN</h3>
+                            <div class="space-y-2">
+                                <button class="w-full text-left p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors" onclick="showContent('user-management')">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-xl">👥</span>
+                                        <div>
+                                            <h4 class="font-medium">Gestion Utilisateurs</h4>
+                                            <p class="text-sm text-gray-400">Administration</p>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
 
         // Content functions for each channel
         function showCryptoContent() {
