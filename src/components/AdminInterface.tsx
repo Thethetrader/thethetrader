@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createClient } from '@supabase/supabase-js';
 
 export default function AdminInterface() {
+  // Configuration Supabase
+  const supabaseUrl = 'https://bamwcozzfshuozsfmjah.supabase.co';
+  const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhbXdjb3p6ZnNodW96c2ZtamFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDM0ODcsImV4cCI6MjA2NTY3OTQ4N30.NWSUKoYLl0oGS-dXf4jhtmLRiSuBSk-0lV3NRHJLvrs';
+  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
   const [selectedChannel, setSelectedChannel] = useState({ id: 'crypto', name: 'crypto' });
   const [view, setView] = useState<'signals' | 'calendar'>('signals');
   const [mobileView, setMobileView] = useState<'channels' | 'content'>('channels');
@@ -59,6 +65,11 @@ export default function AdminInterface() {
     reactions: []
   }]);
 
+  // Charger les utilisateurs au montage du composant
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
   // Initialiser les signaux existants avec le statut ACTIVE
   useEffect(() => {
     setSignals(prevSignals => 
@@ -94,6 +105,22 @@ export default function AdminInterface() {
   const [streamTitle, setStreamTitle] = useState('');
   const [streamDescription, setStreamDescription] = useState('');
   const [viewerCount, setViewerCount] = useState(0);
+  // États pour la gestion des utilisateurs
+  const [users, setUsers] = useState<Array<{
+    id: string;
+    email: string;
+    created_at: string;
+    last_sign_in_at?: string;
+    status: 'active' | 'inactive';
+  }>>([]);
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [showDeleteUserModal, setShowDeleteUserModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [newUserData, setNewUserData] = useState({
+    email: '',
+    password: ''
+  });
+
   const [chatMessages, setChatMessages] = useState<{[channelId: string]: Array<{
     id: string;
     text: string;
@@ -841,7 +868,8 @@ export default function AdminInterface() {
     { id: 'general-chat', name: 'general-chat', emoji: '💬', fullName: 'Général chat' },
     { id: 'profit-loss', name: 'profit-loss', emoji: '💰', fullName: 'Profit loss' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Calendrier' },
-    { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Trading Journal' }
+    { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Trading Journal' },
+    { id: 'user-management', name: 'user-management', emoji: '👥', fullName: 'Gestion Utilisateurs' }
   ];
 
   const handleCreateSignal = () => {
@@ -900,6 +928,72 @@ export default function AdminInterface() {
     });
     setShowTradeModal(false);
     alert('Trade ajouté avec succès !');
+  };
+
+  // Fonctions pour la gestion des utilisateurs
+  const loadUsers = async () => {
+    try {
+      const { data, error } = await supabase.auth.admin.listUsers();
+      if (error) {
+        console.error('Erreur chargement utilisateurs:', error);
+        return;
+      }
+      
+      if (data.users) {
+        const formattedUsers = data.users.map(user => ({
+          id: user.id,
+          email: user.email || '',
+          created_at: user.created_at,
+          last_sign_in_at: user.last_sign_in_at,
+          status: user.confirmed_at ? 'active' : 'inactive'
+        }));
+        setUsers(formattedUsers);
+      }
+    } catch (error) {
+      console.error('Erreur chargement utilisateurs:', error);
+    }
+  };
+
+  const createUser = async () => {
+    try {
+      const { data, error } = await supabase.auth.admin.createUser({
+        email: newUserData.email,
+        password: newUserData.password,
+        email_confirm: true
+      });
+
+      if (error) {
+        alert(`Erreur création utilisateur: ${error.message}`);
+        return;
+      }
+
+      alert('Utilisateur créé avec succès !');
+      setNewUserData({ email: '', password: '' });
+      setShowUserModal(false);
+      loadUsers(); // Recharger la liste
+    } catch (error) {
+      alert('Erreur création utilisateur');
+      console.error('Erreur création:', error);
+    }
+  };
+
+  const deleteUser = async (userId: string) => {
+    try {
+      const { error } = await supabase.auth.admin.deleteUser(userId);
+      
+      if (error) {
+        alert(`Erreur suppression: ${error.message}`);
+        return;
+      }
+
+      alert('Utilisateur supprimé avec succès !');
+      setShowDeleteUserModal(false);
+      setSelectedUser(null);
+      loadUsers(); // Recharger la liste
+    } catch (error) {
+      alert('Erreur suppression utilisateur');
+      console.error('Erreur suppression:', error);
+    }
   };
 
   const handleTradingViewPasteTrade = (e: React.ClipboardEvent<HTMLDivElement>) => {
@@ -1869,7 +1963,7 @@ export default function AdminInterface() {
               mobileView === 'content' ? 'translate-x-0' : 'translate-x-full'
             }`}
           >
-            {(view === 'calendar' || selectedChannel.id === 'trading-journal') ? (
+            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'user-management') ? (
               <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '0px' }}>
                 {/* Header avec bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
                 {selectedChannel.id === 'trading-journal' && (
@@ -1897,7 +1991,73 @@ export default function AdminInterface() {
                   </div>
                 )}
                 
-                {getTradingCalendar()}
+                {/* Gestion des utilisateurs */}
+                {selectedChannel.id === 'user-management' ? (
+                  <div className="space-y-6">
+                    <div className="flex justify-between items-center border-b border-gray-600 pb-4">
+                      <div>
+                        <h1 className="text-2xl font-bold text-white">Gestion Utilisateurs</h1>
+                        <p className="text-sm text-gray-400 mt-1">Gérer tous les utilisateurs de la plateforme</p>
+                      </div>
+                      <button 
+                        onClick={() => setShowUserModal(true)}
+                        className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-sm font-medium"
+                      >
+                        + Ajouter Utilisateur
+                      </button>
+                    </div>
+
+                    {/* Liste des utilisateurs */}
+                    <div className="bg-gray-800 rounded-lg overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead className="bg-gray-700">
+                            <tr>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Email</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Statut</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Créé le</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Dernière connexion</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-700">
+                            {users.map((user) => (
+                              <tr key={user.id} className="hover:bg-gray-700">
+                                <td className="px-4 py-4 whitespace-nowrap text-sm text-white">{user.email}</td>
+                                <td className="px-4 py-4 whitespace-nowrap">
+                                  <span className={`px-2 py-1 text-xs rounded-full ${
+                                    user.status === 'active' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+                                  }`}>
+                                    {user.status === 'active' ? 'Actif' : 'Inactif'}
+                                  </span>
+                                </td>
+                                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-300">
+                                  {new Date(user.created_at).toLocaleDateString('fr-FR')}
+                                </td>
+                                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-300">
+                                  {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString('fr-FR') : 'Jamais'}
+                                </td>
+                                <td className="px-4 py-4 whitespace-nowrap text-sm">
+                                  <button 
+                                    onClick={() => {
+                                      setSelectedUser(user);
+                                      setShowDeleteUserModal(true);
+                                    }}
+                                    className="text-red-400 hover:text-red-300"
+                                  >
+                                    🗑️ Supprimer
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  getTradingCalendar()
+                )}
                 
                 {/* Affichage des trades pour la date sélectionnée - SEULEMENT pour Trading Journal */}
                 {(() => {
@@ -3237,8 +3397,84 @@ export default function AdminInterface() {
         </div>
       )}
 
-      {/* Modal pour ajouter un trade */}
-      {showTradeModal && (
+              {/* Modal pour ajouter un utilisateur */}
+        {showUserModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md">
+              <h3 className="text-xl font-bold text-white mb-4">Ajouter un utilisateur</h3>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                  <input
+                    type="email"
+                    value={newUserData.email}
+                    onChange={(e) => setNewUserData({ ...newUserData, email: e.target.value })}
+                    className="w-full p-3 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500"
+                    placeholder="email@exemple.com"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Mot de passe</label>
+                  <input
+                    type="password"
+                    value={newUserData.password}
+                    onChange={(e) => setNewUserData({ ...newUserData, password: e.target.value })}
+                    className="w-full p-3 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500"
+                    placeholder="Mot de passe"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setShowUserModal(false)}
+                  className="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={createUser}
+                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                >
+                  Créer
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal de confirmation suppression */}
+        {showDeleteUserModal && selectedUser && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md">
+              <h3 className="text-xl font-bold text-white mb-4">Confirmer la suppression</h3>
+              <p className="text-gray-300 mb-6">
+                Êtes-vous sûr de vouloir supprimer l'utilisateur <strong>{selectedUser.email}</strong> ?
+                Cette action est irréversible.
+              </p>
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowDeleteUserModal(false)}
+                  className="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={() => deleteUser(selectedUser.id)}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                >
+                  Supprimer
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal pour ajouter un trade */}
+        {showTradeModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-gray-800 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="p-6">
