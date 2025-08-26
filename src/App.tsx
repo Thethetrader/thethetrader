@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './index.css';
 import TradingPlatformShell from './components/generated/TradingPlatformShell';
 import SupabaseTest from './components/SupabaseTest';
+import SignalsAdmin from './components/SignalsAdmin';
+import AdminLogin from './components/AdminLogin';
 import { useNotifications } from './hooks/use-notifications';
 import { usePWA } from './hooks/use-pwa';
 
@@ -24,6 +26,19 @@ const App = () => {
   const [user, setUser] = useState<User | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [currentPage, setCurrentPage] = useState<string>('home');
+  
+  // Exposer setCurrentPage globalement pour debug
+  useEffect(() => {
+    (window as any).setCurrentPage = setCurrentPage;
+    (window as any).getCurrentPage = () => currentPage;
+  }, [currentPage]);
+
+  // Vérifier l'URL pour l'admin
+  useEffect(() => {
+    if (window.location.pathname === '/admin') {
+      setCurrentPage('admin');
+    }
+  }, []);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [activeChannel, setActiveChannel] = useState('crypto');
@@ -659,6 +674,7 @@ const App = () => {
 
   const handleLogin = () => {
     if (email && password) {
+      // Authentification temporaire pour accéder à l'interface
       setUser({ id: '1', email });
       setShowAuthModal(false);
     }
@@ -925,6 +941,22 @@ const App = () => {
     );
   };
 
+  // Si on est sur la page admin, vérifier l'authentification (IGNORER l'état user)
+  if (currentPage === 'admin') {
+    const isAdminAuthenticated = localStorage.getItem('adminAuthenticated') === 'true'
+    console.log('Vérification admin:', { currentPage, isAdminAuthenticated })
+    
+    if (isAdminAuthenticated) {
+      return <SignalsAdmin />;
+    } else {
+      return <AdminLogin onLogin={() => {
+        // Force re-render après connexion admin
+        setCurrentPage('temp');
+        setTimeout(() => setCurrentPage('admin'), 10);
+      }} />;
+    }
+  }
+
   // Si utilisateur connecté, afficher ton salon complet
   if (user) {
     return (
@@ -943,7 +975,7 @@ const App = () => {
       </div>
     );
   }
-
+                
   // Si on est sur une page légale, l'afficher
   if (currentPage !== 'home') {
     return renderLegalPage();
@@ -1022,6 +1054,7 @@ const App = () => {
             {/* Test Supabase - TEMPORAIRE PWA */}
             <div className="mb-8 px-4">
               <SupabaseTest />
+
             </div>
             
             {/* Barre de défilement - Sous le bouton */}
@@ -1106,6 +1139,7 @@ const App = () => {
             {/* Test Supabase - TEMPORAIRE DESKTOP */}
             <div className="mb-8 px-4">
               <SupabaseTest />
+
             </div>
 
             {/* Nos Services - Mobile Optimized */}
