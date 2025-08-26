@@ -862,6 +862,23 @@ export default function SignalsAdmin() {
         <div className={`absolute inset-0 bg-gray-900 transform transition-transform duration-300 ease-in-out z-10 ${
           mobileView === 'content' ? 'translate-x-0' : 'translate-x-full'
         }`}>
+          {/* Mobile Content Header */}
+          <div className="bg-gray-800 border-b border-gray-700 p-4 flex items-center justify-between" style={{ height: '60px' }}>
+            <button 
+              onClick={() => setMobileView('channels')}
+              className="flex items-center gap-2 text-gray-400 hover:text-white"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              <span className="text-sm font-medium">
+                {view === 'calendar' ? '📅 Calendrier' : 
+                 selectedChannel.id === 'user-management' ? '👥 Gestion Utilisateurs' :
+                 channels.find(c => c.id === selectedChannel.id)?.fullName || selectedChannel.name}
+              </span>
+            </button>
+          </div>
+
           {(view === 'calendar' || selectedChannel.id === 'trading-journal') ? (
             getTradingCalendar()
           ) : (
