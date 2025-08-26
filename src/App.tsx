@@ -691,7 +691,16 @@ const App = () => {
 
   const handleLogin = () => {
     if (email && password) {
-      // Authentification temporaire pour accéder à l'interface
+      // Vérifier si ce sont les identifiants admin
+      if (email === 'admin' && password === 'admin123') {
+        // Rediriger vers l'admin
+        localStorage.setItem('adminAuthenticated', 'true');
+        setCurrentPage('admin');
+        setShowAuthModal(false);
+        return;
+      }
+      
+      // Authentification temporaire pour accéder à l'interface normale
       setUser({ id: '1', email });
       setShowAuthModal(false);
     }
@@ -1020,13 +1029,6 @@ const App = () => {
             <a href="#pricing" className="text-gray-300 hover:text-white transition-all duration-200">Prix</a>
           </div>
           <div className="flex items-center space-x-3">
-            <button 
-              onClick={() => setCurrentPage('admin')}
-              className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold text-sm transition-all duration-200"
-              title="Accès Admin"
-            >
-              🔐 Admin
-            </button>
             <button 
               onClick={permission === 'granted' ? sendTestNotification : requestPermission}
               className={`px-3 py-2 rounded-lg font-semibold text-sm transition-all duration-200 ${
