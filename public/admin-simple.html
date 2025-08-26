@@ -125,6 +125,7 @@
         </form>
         
         <button class="install-btn" onclick="installPWA()">📱 Installer PWA Admin</button>
+        <button class="install-btn" onclick="goToFullAdmin()" style="background: #8b5cf6; margin-top: 0.5rem;">🚀 Interface Admin Complète</button>
     </div>
 
     <script>
@@ -135,11 +136,14 @@
             const password = document.getElementById('password').value;
             const error = document.getElementById('error');
             
-            // Identifiants admin
+                        // Identifiants admin
             if (username === 'admin' && password === 'thethetrader2025') {
                 error.style.display = 'none';
-                // Rediriger vers l'interface admin React
-                window.location.href = '/admin';
+                // Afficher un message de succès
+                alert('✅ Connexion réussie ! Utilisez le bouton "Interface Admin Complète" pour continuer.');
+                // Vider le formulaire
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
             } else {
                 error.style.display = 'block';
                 error.textContent = '❌ Identifiants incorrects';
@@ -155,6 +159,13 @@
                     alert('Utilisez le menu navigateur pour "Ajouter à l\'écran d\'accueil"');
                 }
             }
+        }
+
+        function goToFullAdmin() {
+            // Marquer comme connecté
+            localStorage.setItem('adminAuthenticated', 'true');
+            // Aller vers l'interface complète
+            window.location.href = '/admin';
         }
     </script>
 </body>
