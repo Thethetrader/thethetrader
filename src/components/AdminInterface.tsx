@@ -2007,10 +2007,6 @@ export default function AdminInterface() {
           >
             {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'user-management') ? (
               <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '0px' }}>
-                {/* Debug: Affichage des conditions */}
-                <div className="hidden md:block text-xs text-gray-500 mb-2">
-                  Debug: view={view}, selectedChannel.id={selectedChannel.id}
-                </div>
                 {/* Header avec bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
                 {selectedChannel.id === 'trading-journal' && (
                   <div className="hidden md:flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
@@ -2868,7 +2864,7 @@ export default function AdminInterface() {
 
         {/* Desktop Content Area */}
         <div className="hidden md:block flex-1 overflow-y-auto overflow-x-hidden">
-          {(view === 'calendar' || selectedChannel.id === 'trading-journal') ? (
+          {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'user-management') ? (
             getTradingCalendar()
           ) : (
             <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '80px' }}>
