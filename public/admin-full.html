@@ -814,6 +814,26 @@
         .mobile-stats-value.active { color: #f59e0b; }
         .mobile-stats-value.pnl { color: #10b981; }
 
+        /* Calendar Grid - Force display on mobile portrait */
+        .calendar-grid {
+            display: grid !important;
+            grid-template-columns: repeat(7, 1fr) !important;
+            gap: 2px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1 !important;
+            min-height: 40px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 12px !important;
+            border-radius: 4px !important;
+            border: 1px solid #4b5563 !important;
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 display: none;
@@ -821,6 +841,21 @@
             
             .main-content {
                 margin-left: 0;
+            }
+            
+            /* Mobile specific calendar styling */
+            .calendar-grid {
+                gap: 1px !important;
+            }
+            
+            .calendar-day {
+                min-height: 35px !important;
+                font-size: 11px !important;
+            }
+            
+            .calendar-day-header {
+                font-size: 10px !important;
+                padding: 4px 0 !important;
             }
         }
     </style>
@@ -2198,7 +2233,7 @@
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">D</div>
                         </div>
                         
-                        <div class="grid grid-cols-7 gap-1">
+                        <div class="calendar-grid">
                             ${generateRealCalendarGrid(currentDate)}
                         </div>
                     </div>
@@ -2257,7 +2292,7 @@
                 }
                 
                 // Jours du mois
-                let dayClass = 'border-2 rounded-lg h-16 p-1 cursor-pointer transition-all hover:shadow-md bg-gray-700 border-gray-600 text-gray-400';
+                let dayClass = 'calendar-day bg-gray-700 border-gray-600 text-gray-400';
                 
                 if (isToday) {
                     dayClass += ' ring-2 ring-blue-400';
@@ -2265,9 +2300,7 @@
                 
                 calendarHTML += `
                     <div class="${dayClass}">
-                        <div class="flex flex-col h-full justify-between">
-                            <div class="text-xs font-semibold">${dayNumber}</div>
-                        </div>
+                        ${dayNumber}
                     </div>
                 `;
             }
@@ -2305,7 +2338,7 @@
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">D</div>
                         </div>
                         
-                        <div class="grid grid-cols-7 gap-1">
+                        <div class="calendar-grid">
                             ${generateRealCalendarGrid(currentDate)}
                         </div>
                     </div>
