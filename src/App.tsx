@@ -44,9 +44,11 @@ const App = () => {
     const manifestLink = document.querySelector('link[rel="manifest"]') as HTMLLinkElement;
     if (manifestLink) {
       if (currentPage === 'admin') {
-        manifestLink.href = '/manifest-admin.json';
+        manifestLink.href = '/manifest-admin.json?v=' + Date.now();
+        console.log('Manifeste changé vers admin');
       } else {
-        manifestLink.href = '/manifest.json';
+        manifestLink.href = '/manifest.json?v=' + Date.now();
+        console.log('Manifeste changé vers normal');
       }
     }
   }, [currentPage]);

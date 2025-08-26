@@ -96,9 +96,29 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 mb-4">
             Accès réservé aux administrateurs
           </p>
+          
+          {/* Bouton d'installation PWA Admin */}
+          <button
+            onClick={() => {
+              if ('serviceWorker' in navigator) {
+                if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                  alert('Pour installer l\'app admin:\n1. Appuyez sur Partager 📤\n2. "Sur l\'écran d\'accueil"\n3. Confirmez');
+                } else {
+                  if (window.deferredPrompt) {
+                    window.deferredPrompt.prompt();
+                  } else {
+                    alert('Utilisez le menu navigateur pour "Ajouter à l\'écran d\'accueil"');
+                  }
+                }
+              }
+            }}
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+          >
+            📱 Installer PWA Admin
+          </button>
         </div>
       </div>
     </div>
