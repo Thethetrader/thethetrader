@@ -1695,7 +1695,7 @@ export default function AdminInterface() {
                   </div>
                 </label>
                 <div>
-                  <p className="text-sm font-medium">TheTheTrader</p>
+                  <p className="text-sm font-medium">Admin</p>
                 </div>
               </div>
               <button onClick={handleLogout} className="text-gray-400 hover:text-white">
@@ -2013,7 +2013,7 @@ export default function AdminInterface() {
                           <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="font-semibold text-white">TheTheTrader</span>
+                              <span className="font-semibold text-white">Admin</span>
                               <span className="text-xs text-gray-400">{signal.timestamp}</span>
                             </div>
 
@@ -2651,7 +2651,7 @@ export default function AdminInterface() {
                   </div>
                 ) : (
                   <div className="text-center py-8">
-                    <div className="text-gray-400 text-sm">Bienvenue sur TheTheTrader</div>
+                    <div className="text-gray-400 text-sm">Bienvenue sur Admin</div>
                     <div className="text-gray-500 text-xs mt-1">Plateforme de trading en cours de développement</div>
                   </div>
                 )}
@@ -2687,7 +2687,7 @@ export default function AdminInterface() {
                         <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <span className="font-semibold text-white">TheTheTrader</span>
+                            <span className="font-semibold text-white">Admin</span>
                             <span className="text-xs text-gray-400">{signal.timestamp}</span>
                           </div>
 
@@ -3031,7 +3031,7 @@ export default function AdminInterface() {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <div className="text-gray-400 text-sm">Bienvenue sur TheTheTrader</div>
+                  <div className="text-gray-400 text-sm">Bienvenue sur Admin</div>
                   <div className="text-gray-500 text-xs mt-1">Plateforme de trading en cours de développement</div>
                 </div>
               )}
