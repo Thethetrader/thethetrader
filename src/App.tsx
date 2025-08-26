@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './index.css';
 import TradingPlatformShell from './components/generated/TradingPlatformShell';
-import SignalsAdmin from './components/SignalsAdmin';
+import AdminTradingPlatform from './components/AdminTradingPlatform';
 import AdminLogin from './components/AdminLogin';
 import { useNotifications } from './hooks/use-notifications';
 import { usePWA } from './hooks/use-pwa';
@@ -972,7 +972,7 @@ const App = () => {
     
     if (isAdminAuthenticated) {
       console.log('Admin authentifié, affichage SignalsAdmin')
-      return <SignalsAdmin />;
+              return <AdminTradingPlatform />;
     } else {
       console.log('Admin non authentifié, affichage AdminLogin')
       return <AdminLogin onLogin={() => {
