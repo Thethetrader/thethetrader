@@ -1131,11 +1131,7 @@ const App = () => {
               </div>
             </div>
 
-            {/* Test Supabase - TEMPORAIRE DESKTOP */}
-            <div className="mb-8 px-4">
-              <SupabaseTest />
 
-            </div>
 
             {/* Nos Services - Mobile Optimized */}
             <div id="services" className="max-w-7xl mx-auto mb-10 sm:mb-16 px-4 sm:px-6">
