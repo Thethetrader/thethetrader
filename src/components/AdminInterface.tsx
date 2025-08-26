@@ -1323,18 +1323,90 @@ export default function AdminInterface() {
     return false;
   };
 
-  const getTradingCalendar = () => (
-    <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '80px' }}>
-      {/* Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-gray-600 pb-4 gap-4 md:gap-0">
-        <div className="hidden md:block">
-          <h1 className="text-2xl font-bold text-white">
-            {selectedChannel.id === 'trading-journal' ? 'Mon Trading Journal' : 'Calendrier des Signaux'}
-          </h1>
-          <p className="text-sm text-gray-400 mt-1">
-            {selectedChannel.id === 'trading-journal' ? 'Journal tous tes trades' : 'Suivi des performances des signaux'}
-          </p>
+  const getTradingCalendar = () => {
+    // Si c'est la gestion des utilisateurs, afficher l'interface dédiée
+    if (selectedChannel.id === 'user-management') {
+      return (
+        <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '80px' }}>
+          <div className="space-y-6">
+            <div className="flex justify-between items-center border-b border-gray-600 pb-4">
+              <div>
+                <h1 className="text-2xl font-bold text-white">Gestion Utilisateurs</h1>
+                <p className="text-sm text-gray-400 mt-1">Gérer tous les utilisateurs de la plateforme</p>
+              </div>
+              <button 
+                onClick={() => setShowUserModal(true)}
+                className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-sm font-medium"
+              >
+                + Ajouter Utilisateur
+              </button>
+            </div>
+
+            {/* Liste des utilisateurs */}
+            <div className="bg-gray-800 rounded-lg overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-700">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Email</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Statut</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Créé le</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Dernière connexion</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-700">
+                    {users.map((user) => (
+                      <tr key={user.id} className="hover:bg-gray-700">
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-white">{user.email}</td>
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          <span className={`px-2 py-1 text-xs rounded-full ${
+                            user.status === 'active' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+                          }`}>
+                            {user.status === 'active' ? 'Actif' : 'Inactif'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-300">
+                          {new Date(user.created_at).toLocaleDateString('fr-FR')}
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-300">
+                          {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString('fr-FR') : 'Jamais'}
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm">
+                          <button 
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setShowDeleteUserModal(true);
+                            }}
+                            className="text-red-400 hover:text-red-300"
+                          >
+                            🗑️ Supprimer
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
+      );
+    }
+
+    // Sinon, afficher le calendrier normal
+    return (
+      <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '80px' }}>
+        {/* Header */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-gray-600 pb-4 gap-4 md:gap-0">
+          <div className="hidden md:block">
+            <h1 className="text-2xl font-bold text-white">
+              {selectedChannel.id === 'trading-journal' ? 'Mon Trading Journal' : 'Calendrier des Signaux'}
+            </h1>
+            <p className="text-sm text-gray-400 mt-1">
+              {selectedChannel.id === 'trading-journal' ? 'Journal tous tes trades' : 'Suivi des performances des signaux'}
+            </p>
+          </div>
         
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3 text-white">
