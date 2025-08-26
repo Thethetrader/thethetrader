@@ -703,8 +703,8 @@ export default function AdminTradingPlatform() {
   };
 
   const handleLogout = () => {
-    // Nettoyer le localStorage
-    localStorage.clear();
+    // Supprimer l'authentification admin
+    localStorage.removeItem('adminAuthenticated');
     // Rediriger vers la landing page
     window.location.href = '/';
   };
