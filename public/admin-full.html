@@ -648,10 +648,27 @@
         }
 
         .mobile-content-container {
-            position: relative;
-            flex: 1;
-            overflow: hidden;
-            padding-top: 60px;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-content-container {
+                display: block;
+            }
+            
+            .content-body {
+                display: none !important;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-content-container {
+                display: none !important;
+            }
+            
+            .content-body {
+                display: block !important;
+            }
         }
 
         .mobile-channels-list {
@@ -1101,8 +1118,14 @@
 
         // Initialize with crypto content
         window.addEventListener('load', function() {
-            showContent('crypto');
-            showMobileContent('crypto');
+            // Check if mobile or desktop
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {
+                showMobileContent('crypto');
+            } else {
+                showContent('crypto');
+            }
         });
 
         // Content functions for each channel
