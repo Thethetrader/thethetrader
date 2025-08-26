@@ -122,6 +122,12 @@ export default function AdminInterface() {
     email: '',
     password: ''
   });
+  
+  // États pour recherche et filtres
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [sortBy, setSortBy] = useState<'email' | 'created_at' | 'last_sign_in_at'>('created_at');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   const [chatMessages, setChatMessages] = useState<{[channelId: string]: Array<{
     id: string;
@@ -933,6 +939,70 @@ export default function AdminInterface() {
   };
 
   // Fonctions pour la gestion des utilisateurs
+  
+  // Fonction pour filtrer et trier les utilisateurs
+  const getFilteredUsers = () => {
+    let filteredUsers = [...users];
+    
+    // Filtrer par terme de recherche
+    if (searchTerm) {
+      filteredUsers = filteredUsers.filter(user => 
+        user.email.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    // Filtrer par statut
+    if (statusFilter !== 'all') {
+      filteredUsers = filteredUsers.filter(user => user.status === statusFilter);
+    }
+    
+    // Trier
+    filteredUsers.sort((a, b) => {
+      let aValue, bValue;
+      
+      switch (sortBy) {
+        case 'email':
+          aValue = a.email;
+          bValue = b.email;
+          break;
+        case 'created_at':
+          aValue = new Date(a.created_at);
+          bValue = new Date(b.created_at);
+          break;
+        case 'last_sign_in_at':
+          aValue = a.last_sign_in_at ? new Date(a.last_sign_in_at) : new Date(0);
+          bValue = b.last_sign_in_at ? new Date(b.last_sign_in_at) : new Date(0);
+          break;
+        default:
+          return 0;
+      }
+      
+      if (sortOrder === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+    
+    return filteredUsers;
+  };
+  
+  // Fonction pour calculer les statistiques
+  const getUserStats = () => {
+    const total = users.length;
+    const active = users.filter(user => user.status === 'active').length;
+    const inactive = users.filter(user => user.status === 'inactive').length;
+    
+    // Nouveaux utilisateurs cette semaine
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const newThisWeek = users.filter(user => 
+      new Date(user.created_at) > oneWeekAgo
+    ).length;
+    
+    return { total, active, inactive, newThisWeek };
+  };
+
   const loadUsers = async () => {
     try {
       const { data, error } = await supabaseAdmin.auth.admin.listUsers();
@@ -1328,20 +1398,104 @@ export default function AdminInterface() {
   const getTradingCalendar = () => {
     // Si c'est la gestion des utilisateurs, afficher l'interface dédiée
     if (selectedChannel.id === 'user-management') {
+      const stats = getUserStats();
+      const filteredUsers = getFilteredUsers();
+      
       return (
         <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '80px' }}>
           <div className="space-y-6">
-            <div className="flex justify-between items-center border-b border-gray-600 pb-4">
-              <div>
-                <h1 className="text-2xl font-bold text-white">Gestion Utilisateurs</h1>
-                <p className="text-sm text-gray-400 mt-1">Gérer tous les utilisateurs de la plateforme</p>
+            {/* Header avec statistiques */}
+            <div className="border-b border-gray-600 pb-6">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h1 className="text-2xl font-bold text-white">Gestion Utilisateurs</h1>
+                  <p className="text-sm text-gray-400 mt-1">Gérer tous les utilisateurs de la plateforme</p>
+                </div>
+                <button 
+                  onClick={() => setShowUserModal(true)}
+                  className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-sm font-medium"
+                >
+                  + Ajouter Utilisateur
+                </button>
               </div>
-              <button 
-                onClick={() => setShowUserModal(true)}
-                className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-sm font-medium"
-              >
-                + Ajouter Utilisateur
-              </button>
+              
+              {/* Statistiques */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-gray-800 rounded-lg p-4">
+                  <div className="text-2xl font-bold text-blue-400">{stats.total}</div>
+                  <div className="text-sm text-gray-400">Total utilisateurs</div>
+                </div>
+                <div className="bg-gray-800 rounded-lg p-4">
+                  <div className="text-2xl font-bold text-green-400">{stats.active}</div>
+                  <div className="text-sm text-gray-400">Actifs</div>
+                </div>
+                <div className="bg-gray-800 rounded-lg p-4">
+                  <div className="text-2xl font-bold text-red-400">{stats.inactive}</div>
+                  <div className="text-sm text-gray-400">Inactifs</div>
+                </div>
+                <div className="bg-gray-800 rounded-lg p-4">
+                  <div className="text-2xl font-bold text-purple-400">{stats.newThisWeek}</div>
+                  <div className="text-sm text-gray-400">Nouveaux (7j)</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Filtres et recherche */}
+            <div className="bg-gray-800 rounded-lg p-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {/* Barre de recherche */}
+                <div>
+                  <label className="block text-xs font-medium text-gray-400 mb-1">Rechercher</label>
+                  <input
+                    type="text"
+                    placeholder="Email utilisateur..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-sm text-white focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                
+                {/* Filtre statut */}
+                <div>
+                  <label className="block text-xs font-medium text-gray-400 mb-1">Statut</label>
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'inactive')}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-sm text-white focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="all">Tous</option>
+                    <option value="active">Actifs</option>
+                    <option value="inactive">Inactifs</option>
+                  </select>
+                </div>
+                
+                {/* Trier par */}
+                <div>
+                  <label className="block text-xs font-medium text-gray-400 mb-1">Trier par</label>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as 'email' | 'created_at' | 'last_sign_in_at')}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-sm text-white focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="created_at">Date création</option>
+                    <option value="last_sign_in_at">Dernière connexion</option>
+                    <option value="email">Email</option>
+                  </select>
+                </div>
+                
+                {/* Ordre */}
+                <div>
+                  <label className="block text-xs font-medium text-gray-400 mb-1">Ordre</label>
+                  <select
+                    value={sortOrder}
+                    onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-sm text-white focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="desc">Décroissant</option>
+                    <option value="asc">Croissant</option>
+                  </select>
+                </div>
+              </div>
             </div>
 
             {/* Liste des utilisateurs */}
@@ -1358,35 +1512,64 @@ export default function AdminInterface() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-700">
-                    {users.map((user) => (
-                      <tr key={user.id} className="hover:bg-gray-700">
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-white">{user.email}</td>
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <span className={`px-2 py-1 text-xs rounded-full ${
-                            user.status === 'active' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-                          }`}>
-                            {user.status === 'active' ? 'Actif' : 'Inactif'}
-                          </span>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-300">
-                          {new Date(user.created_at).toLocaleDateString('fr-FR')}
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-300">
-                          {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString('fr-FR') : 'Jamais'}
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm">
-                          <button 
-                            onClick={() => {
-                              setSelectedUser(user);
-                              setShowDeleteUserModal(true);
-                            }}
-                            className="text-red-400 hover:text-red-300"
-                          >
-                            🗑️ Supprimer
-                          </button>
+                    {filteredUsers.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="px-4 py-8 text-center text-gray-400">
+                          {searchTerm || statusFilter !== 'all' ? 'Aucun utilisateur trouvé avec ces critères' : 'Aucun utilisateur pour le moment'}
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      filteredUsers.map((user) => (
+                        <tr key={user.id} className="hover:bg-gray-700">
+                          <td className="px-4 py-4 whitespace-nowrap text-sm text-white">{user.email}</td>
+                          <td className="px-4 py-4 whitespace-nowrap">
+                            <span className={`px-2 py-1 text-xs rounded-full ${
+                              user.status === 'active' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+                            }`}>
+                              {user.status === 'active' ? 'Actif' : 'Inactif'}
+                            </span>
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-300">
+                            {new Date(user.created_at).toLocaleDateString('fr-FR')}
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-300">
+                            {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString('fr-FR') : 'Jamais'}
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap text-sm">
+                            <div className="flex gap-2">
+                              <button 
+                                onClick={() => {
+                                  alert('Fonctionnalité de réinitialisation du mot de passe à venir');
+                                }}
+                                className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-xs"
+                                title="Réinitialiser mot de passe"
+                              >
+                                🔑
+                              </button>
+                              <button 
+                                onClick={() => {
+                                  alert('Fonctionnalité de désactivation/réactivation à venir');
+                                }}
+                                className="bg-yellow-600 hover:bg-yellow-700 px-3 py-1 rounded text-xs"
+                                title={user.status === 'active' ? 'Désactiver' : 'Réactiver'}
+                              >
+                                {user.status === 'active' ? '🚫' : '✅'}
+                              </button>
+                              <button 
+                                onClick={() => {
+                                  setSelectedUser(user);
+                                  setShowDeleteUserModal(true);
+                                }}
+                                className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-xs"
+                                title="Supprimer utilisateur"
+                              >
+                                🗑️
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
