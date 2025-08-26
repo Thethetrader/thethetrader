@@ -2187,6 +2187,7 @@
                             <span class="text-lg font-semibold">${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}</span>
                         </div>
                         
+                        <!-- Calendrier en grille pour mobile -->
                         <div class="grid grid-cols-7 gap-1">
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">L</div>
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">M</div>
@@ -2196,7 +2197,7 @@
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">S</div>
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">D</div>
                             
-                            ${generateMobileCalendarDays(currentDate)}
+                            ${generateMobileCalendarGrid(currentDate)}
                         </div>
                     </div>
                     
@@ -2240,6 +2241,7 @@
                             <span class="text-lg font-semibold">${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}</span>
                         </div>
                         
+                        <!-- Calendrier en grille pour mobile -->
                         <div class="grid grid-cols-7 gap-1">
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">L</div>
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">M</div>
@@ -2249,7 +2251,7 @@
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">S</div>
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">D</div>
                             
-                            ${generateMobileCalendarDays(currentDate)}
+                            ${generateMobileCalendarGrid(currentDate)}
                         </div>
                     </div>
                     
@@ -2258,15 +2260,15 @@
                         <div class="space-y-3">
                             <div class="flex justify-between">
                                 <span class="text-gray-400">P&L Total:</span>
-                                <span class="text-green-400 font-bold">+$850</span>
+                                <span class="text-green-400 font-bold">+$1,250</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-400">Win Rate:</span>
-                                <span class="text-blue-400 font-bold">75%</span>
+                                <span class="text-blue-400 font-bold">78%</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-400">Trades ce mois:</span>
-                                <span class="text-white font-bold">8</span>
+                                <span class="text-gray-400">Signaux actifs:</span>
+                                <span class="text-yellow-400 font-bold">3</span>
                             </div>
                         </div>
                     </div>
@@ -2314,6 +2316,48 @@
             }
             
             return html;
+        }
+
+        function generateMobileCalendarGrid(date) {
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const startDate = new Date(firstDay);
+            const endDate = new Date(lastDay);
+            
+            // Ajuster le début pour commencer par lundi
+            const dayOfWeek = firstDay.getDay();
+            const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+            startDate.setDate(startDate.getDate() - mondayOffset);
+            
+            let calendarHTML = '';
+            let currentDate = new Date(startDate);
+            
+            // Générer 6 semaines (42 jours) pour couvrir tous les mois
+            for (let week = 0; week < 6; week++) {
+                for (let day = 0; day < 7; day++) {
+                    const isCurrentMonth = currentDate.getMonth() === month;
+                    const isToday = currentDate.toDateString() === new Date().toDateString();
+                    const dayNumber = currentDate.getDate();
+                    
+                    let dayClass = 'text-center py-2 text-sm border border-gray-600 rounded';
+                    
+                    if (!isCurrentMonth) {
+                        dayClass += ' text-gray-600 bg-gray-800';
+                    } else if (isToday) {
+                        dayClass += ' text-white bg-blue-600 font-bold';
+                    } else {
+                        dayClass += ' text-white bg-gray-700 hover:bg-gray-600 cursor-pointer';
+                    }
+                    
+                    calendarHTML += `<div class="${dayClass}">${dayNumber}</div>`;
+                    
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+            }
+            
+            return calendarHTML;
         }
     </script>
 </body>
