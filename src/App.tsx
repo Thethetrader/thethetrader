@@ -39,6 +39,14 @@ const App = () => {
     }
   }, []);
 
+  // Si on est sur admin.html, forcer la page admin
+  if (window.location.pathname === '/admin.html') {
+    setCurrentPage('admin');
+  }
+
+  // Détecter automatiquement si on est sur admin.html
+  const isAdminPage = window.location.pathname === '/admin.html';
+
   // Changer le manifeste selon la page
   useEffect(() => {
     const manifestLink = document.querySelector('link[rel="manifest"]') as HTMLLinkElement;
