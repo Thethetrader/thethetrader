@@ -34,7 +34,7 @@ const App = () => {
 
   // Vérifier l'URL pour l'admin
   useEffect(() => {
-    if (window.location.pathname === '/admin') {
+    if (window.location.pathname === '/admin' || window.location.pathname === '/admin.html') {
       setCurrentPage('admin');
     }
   }, []);
