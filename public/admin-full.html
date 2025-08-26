@@ -610,6 +610,190 @@
                 margin-top: 24px;
             }
         }
+
+        /* Mobile Navigation Styles */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 30;
+            background-color: #1f2937;
+            border-bottom: 1px solid #374151;
+            padding: 12px;
+            height: 60px;
+        }
+
+        .mobile-nav.show {
+            display: block;
+        }
+
+        .mobile-nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .mobile-nav-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mobile-nav-avatar {
+            width: 32px;
+            height: 32px;
+            background-color: #3b82f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .mobile-nav-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #9ca3af;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .mobile-nav-back:hover {
+            color: white;
+        }
+
+        .mobile-nav-back svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .mobile-content-container {
+            position: relative;
+            flex: 1;
+            overflow: hidden;
+            padding-top: 60px;
+        }
+
+        .mobile-channels-list {
+            position: absolute;
+            inset: 0;
+            background-color: #1f2937;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 10;
+            overflow-y: auto;
+            padding: 16px;
+            padding-top: 80px;
+        }
+
+        .mobile-channels-list.show {
+            transform: translateX(0);
+        }
+
+        .mobile-content-area {
+            position: absolute;
+            inset: 0;
+            background-color: #111827;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 10;
+            overflow-y: auto;
+        }
+
+        .mobile-content-area.show {
+            transform: translateX(0);
+        }
+
+        .mobile-channel-button {
+            width: 100%;
+            text-align: left;
+            padding: 16px;
+            border-radius: 8px;
+            background-color: #374151;
+            transition: background-color 0.2s;
+            margin-bottom: 8px;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .mobile-channel-button:hover {
+            background-color: #4b5563;
+        }
+
+        .mobile-channel-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mobile-channel-emoji {
+            font-size: 18px;
+        }
+
+        .mobile-channel-info h4 {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .mobile-channel-info p {
+            font-size: 14px;
+            color: #9ca3af;
+        }
+
+        .mobile-stats-panel {
+            background-color: #374151;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 24px;
+        }
+
+        .mobile-stats-panel h4 {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .mobile-stats-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .mobile-stats-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .mobile-stats-label {
+            color: #9ca3af;
+        }
+
+        .mobile-stats-value {
+            font-weight: 500;
+        }
+
+        .mobile-stats-value.win-rate { color: #3b82f6; }
+        .mobile-stats-value.active { color: #f59e0b; }
+        .mobile-stats-value.pnl { color: #10b981; }
+
+        @media (max-width: 768px) {
+            .mobile-toggle {
+                display: block;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -681,12 +865,191 @@
         
         <!-- Main Content -->
         <div class="main-content">
+            <!-- Mobile Navigation -->
+            <div class="mobile-nav md:hidden" id="mobileNav">
+                <div class="mobile-nav-header">
+                    <div class="mobile-nav-profile">
+                        <div class="mobile-nav-avatar">TT</div>
+                        <div>
+                            <p class="text-sm font-medium">TheTheTrader</p>
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="text-gray-400 hover:text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
             <div class="content-header">
                 <h1 class="content-title">🪙 Crypto</h1>
                 <button class="logout-btn" onclick="logout()">🏠 Retour Accueil</button>
             </div>
             
-            <div class="content-body">
+            <!-- Mobile Content Container -->
+            <div class="mobile-content-container md:hidden">
+                <!-- Mobile Channels List -->
+                <div class="mobile-channels-list" id="mobileChannelsList">
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">ÉDUCATION</h3>
+                            <div class="space-y-2">
+                                <button class="mobile-channel-button" onclick="showMobileContent('fondamentaux')">
+                                    <div class="mobile-channel-content">
+                                        <span class="mobile-channel-emoji">📚</span>
+                                        <div class="mobile-channel-info">
+                                            <h4>Fondamentaux</h4>
+                                            <p>Contenu éducatif</p>
+                                        </div>
+                                    </div>
+                                </button>
+                                <button class="mobile-channel-button" onclick="showMobileContent('letsgooo-model')">
+                                    <div class="mobile-channel-content">
+                                        <span class="mobile-channel-emoji">🚀</span>
+                                        <div class="mobile-channel-info">
+                                            <h4>Letsgooo model</h4>
+                                            <p>Contenu éducatif</p>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">SIGNAUX</h3>
+                            <div class="space-y-2">
+                                <button class="mobile-channel-button" onclick="showMobileContent('crypto')">
+                                    <div class="mobile-channel-content">
+                                        <span class="mobile-channel-emoji">🪙</span>
+                                        <div class="mobile-channel-info">
+                                            <h4>Crypto</h4>
+                                            <p>Canal de signaux</p>
+                                        </div>
+                                    </div>
+                                </button>
+                                <button class="mobile-channel-button" onclick="showMobileContent('futur')">
+                                    <div class="mobile-channel-content">
+                                        <span class="mobile-channel-emoji">📈</span>
+                                        <div class="mobile-channel-info">
+                                            <h4>Futur</h4>
+                                            <p>Canal de signaux</p>
+                                        </div>
+                                    </div>
+                                </button>
+                                <button class="mobile-channel-button" onclick="showMobileContent('forex')">
+                                    <div class="mobile-channel-content">
+                                        <span class="mobile-channel-emoji">💱</span>
+                                        <div class="mobile-channel-info">
+                                            <h4>Forex</h4>
+                                            <p>Canal de signaux</p>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">TRADING HUB</h3>
+                            <div class="space-y-2">
+                                <button class="mobile-channel-button" onclick="showMobileContent('livestream')">
+                                    <div class="mobile-channel-content">
+                                        <span class="mobile-channel-emoji">📺</span>
+                                        <div class="mobile-channel-info">
+                                            <h4>Livestream</h4>
+                                            <p>Hub de trading</p>
+                                        </div>
+                                    </div>
+                                </button>
+                                <button class="mobile-channel-button" onclick="showMobileContent('general-chat')">
+                                    <div class="mobile-channel-content">
+                                        <span class="mobile-channel-emoji">💬</span>
+                                        <div class="mobile-channel-info">
+                                            <h4>General-chat</h4>
+                                            <p>Hub de trading</p>
+                                        </div>
+                                    </div>
+                                </button>
+                                <button class="mobile-channel-button" onclick="showMobileContent('profit-loss')">
+                                    <div class="mobile-channel-content">
+                                        <span class="mobile-channel-emoji">💰</span>
+                                        <div class="mobile-channel-content">
+                                            <h4>Profit-loss</h4>
+                                            <p>Hub de trading</p>
+                                        </div>
+                                    </div>
+                                </button>
+                                <button class="mobile-channel-button" onclick="showMobileContent('calendrier')">
+                                    <div class="mobile-channel-content">
+                                        <span class="mobile-channel-emoji">📅</span>
+                                        <div class="mobile-channel-info">
+                                            <h4>Calendrier</h4>
+                                            <p>Suivi des performances</p>
+                                        </div>
+                                    </div>
+                                </button>
+                                <button class="mobile-channel-button" onclick="showMobileContent('trading-journal')">
+                                    <div class="mobile-channel-content">
+                                        <span class="mobile-channel-emoji">📊</span>
+                                        <div class="mobile-channel-info">
+                                            <h4>Trading Journal</h4>
+                                            <p>Journal de trading</p>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mobile-stats-panel">
+                            <h4>Statistiques</h4>
+                            <div class="mobile-stats-row">
+                                <span class="mobile-stats-label">Win Rate:</span>
+                                <span class="mobile-stats-value win-rate">78%</span>
+                            </div>
+                            <div class="mobile-stats-row">
+                                <span class="mobile-stats-label">Signaux actifs:</span>
+                                <span class="mobile-stats-value active">3</span>
+                            </div>
+                            <div class="mobile-stats-row">
+                                <span class="mobile-stats-label">P&L Total:</span>
+                                <span class="mobile-stats-value pnl">+$1,250</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">ADMIN</h3>
+                            <div class="space-y-2">
+                                <button class="mobile-channel-button" onclick="showMobileContent('user-management')">
+                                    <div class="mobile-channel-content">
+                                        <span class="mobile-channel-emoji">👥</span>
+                                        <div class="mobile-channel-info">
+                                            <h4>Gestion Utilisateurs</h4>
+                                            <p>Administration</p>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Content Area -->
+                <div class="mobile-content-area" id="mobileContentArea">
+                    <div class="mobile-nav-header">
+                        <button class="mobile-nav-back" onclick="showMobileChannels()">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                            </svg>
+                            <span class="text-sm font-medium" id="mobileContentTitle">🪙 Crypto</span>
+                        </button>
+                    </div>
+                    <div class="p-4" id="mobileContentBody">
+                        <!-- Content will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-body hidden md:block">
                 <!-- Content areas will be populated by JavaScript -->
             </div>
         </div>
@@ -776,6 +1139,7 @@
         // Initialize with crypto content
         window.addEventListener('load', function() {
             showContent('crypto');
+            showMobileContent('crypto');
         });
 
         // Content functions for each channel
@@ -820,9 +1184,167 @@
             contentBody.innerHTML = `
                 <div class="p-4 md:p-6 space-y-4 w-full h-full overflow-y-auto" style="padding-top: 80px; padding-bottom: 100px;">
                     <div class="space-y-4">
-                        <div class="text-center py-8">
-                            <div class="text-gray-400 text-sm">Contenu éducatif à venir</div>
-                            <div class="text-gray-500 text-xs mt-1">Fondamentaux du trading</div>
+                        <div class="bg-gray-800 rounded-lg p-6 mb-6">
+                            <div class="text-center mb-8 p-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white">
+                                <div class="flex justify-center mb-0">
+                                    <img 
+                                        src="/logo-removebg-preview.png" 
+                                        alt="Trading pour les nuls" 
+                                        class="h-48 w-auto object-cover"
+                                        style="clip-path: inset(10% 5% 15% 5%);"
+                                    />
+                                </div>
+                                <p class="text-xl opacity-90 -mt-3">Guide complet des concepts fondamentaux et stratégies avancées</p>
+                            </div>
+                            
+                            <div class="space-y-6 text-gray-300">
+                                <div class="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4">
+                                    <p class="text-yellow-200"><strong>📖 Avertissement :</strong> Ce guide présente un ensemble de concepts appris et expérimentés sur les marchés financiers. Il ne s'agit pas d'inventions originales, mais d'un setup personnel basé sur l'observation et l'expérience pratique.</p>
+                                </div>
+                                
+                                <div>
+                                    <h2 class="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">1. 📚 Introduction</h2>
+                                    <p>Ce document vous présente les fondamentaux essentiels pour comprendre comment les charts évoluent et ce qui influence leurs mouvements. L'objectif est de construire une base solide avant d'aborder les stratégies avancées.</p>
+                                </div>
+                                
+                                <div>
+                                    <h2 class="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">2. 🧠 Fondamentaux des Charts</h2>
+                                    <div class="bg-gray-700 rounded-lg p-4 mb-4">
+                                        <h3 class="text-lg font-semibold text-green-400 mb-2">📈 Qu'est-ce qu'une Chart ?</h3>
+                                        <p class="mb-3">Une chart (ou graphique) est une représentation visuelle du prix d'un actif financier dans le temps (Bitcoin, or, actions, etc.).</p>
+                                        <div class="bg-gray-600 rounded p-3">
+                                            <h4 class="font-semibold text-blue-300 mb-2">Elle permet de :</h4>
+                                            <ul class="space-y-1 text-sm">
+                                                <li>→ Voir comment le prix évolue</li>
+                                                <li>→ Trouver des points d'entrée/sortie</li>
+                                                <li>→ Comprendre le comportement du marché</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-gray-700 rounded-lg p-4">
+                                        <h3 class="text-lg font-semibold text-green-400 mb-2">🕯️ Comprendre les Bougies</h3>
+                                        <p class="mb-3">Chaque bougie montre l'évolution du prix sur une période donnée (1 min, 1h, 1 jour, etc.)</p>
+                                        <div class="bg-gray-600 rounded p-3">
+                                            <h4 class="font-semibold text-blue-300 mb-2">Composition d'une bougie :</h4>
+                                            <ul class="space-y-1 text-sm">
+                                                <li>→ <strong>Le corps (body) :</strong> différence entre ouverture et clôture</li>
+                                                <li>→ <strong>Les mèches (wicks) :</strong> les plus hauts et plus bas atteints</li>
+                                                <li>→ <strong>Couleur :</strong> verte/blanche si clôture > ouverture, rouge/noire si clôture < ouverture</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h2 class="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">3. 🧠 Mouvement des Prix (Modèle AMD)</h2>
+                                    <div class="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4 mb-4">
+                                        <p><strong>🚗💨 Analogie :</strong> Le prix, c'est comme un voyage de A à B. Pour avancer, il a besoin de liquidité, comme une voiture a besoin d'essence.</p>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                        <div class="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4 text-center">
+                                            <div class="text-2xl font-bold mb-2">1️⃣</div>
+                                            <div class="font-semibold mb-2">Accumulation</div>
+                                            <p class="text-sm">Le prix se prépare 🛑⛽</p>
+                                        </div>
+                                        <div class="bg-red-600/20 border border-red-600/30 rounded-lg p-4 text-center">
+                                            <div class="text-2xl font-bold mb-2">2️⃣</div>
+                                            <div class="font-semibold mb-2">Manipulation</div>
+                                            <p class="text-sm">Il piège les traders 🎯🪤</p>
+                                        </div>
+                                        <div class="bg-green-600/20 border border-green-600/30 rounded-lg p-4 text-center">
+                                            <div class="text-2xl font-bold mb-2">3️⃣</div>
+                                            <div class="font-semibold mb-2">Distribution</div>
+                                            <p class="text-sm">Le vrai mouvement 🚀📈</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h2 class="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">4. 📈 Support et Résistance</h2>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="bg-green-600/20 border border-green-600/30 rounded-lg p-4 text-center">
+                                            <strong class="text-green-300">🔹 Support</strong><br/>
+                                            <span class="text-sm">Zone où le prix rebondit vers le haut 🔼</span>
+                                        </div>
+                                        <div class="bg-red-600/20 border border-red-600/30 rounded-lg p-4 text-center">
+                                            <strong class="text-red-300">🔹 Résistance</strong><br/>
+                                            <span class="text-sm">Zone où le prix bloque et redescend 🔽</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h2 class="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">5. 🔬 Concepts Avancés</h2>
+                                    <div class="space-y-4">
+                                        <div class="bg-gray-700 rounded-lg p-4">
+                                            <h3 class="text-lg font-semibold text-purple-400 mb-2">🧱 ORDER BLOCK (OB)</h3>
+                                            <p class="mb-2">Un Order Block représente la dernière bougie haussière (ou baissière) avant un mouvement impulsif majeur dans la direction opposée.</p>
+                                            <div class="text-sm text-blue-300">
+                                                → Ces zones deviennent des repères de liquidité<br/>
+                                                → Souvent retestées par le prix<br/>
+                                                → Offrent des points d'entrée à fort potentiel
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="bg-gray-700 rounded-lg p-4">
+                                            <h3 class="text-lg font-semibold text-purple-400 mb-2">⚡📉📈 FVG – Fair Value Gap</h3>
+                                            <p class="mb-2">Un FVG est une zone de déséquilibre créée lors d'un mouvement rapide et violent du marché 🚀.</p>
+                                            <div class="text-sm text-blue-300">
+                                                → Le prix revient fréquemment combler ces gaps<br/>
+                                                → Zones intéressantes pour entrer ou sortir d'une position
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="bg-gray-700 rounded-lg p-4">
+                                            <h3 class="text-lg font-semibold text-purple-400 mb-2">🦄 Unicorn</h3>
+                                            <p class="mb-2">C'est un setup formé par l'association d'un Breaker (BRKR) ⚡ et d'un Fair Value Gap (FVG) 📉.</p>
+                                            <div class="text-sm text-blue-300">
+                                                → Zone à forte probabilité de réaction du prix<br/>
+                                                → Rassemble deux zones institutionnelles clés<br/>
+                                                → Point d'entrée ou de prise de profit idéal
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h2 class="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">6. 🕵️ CRT – Candle Range Theory</h2>
+                                    <p class="mb-4">La Candle Range Theory (CRT) est une méthode d'analyse basée sur 3 bougies consécutives.</p>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div class="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4 text-center">
+                                            <div class="text-2xl font-bold mb-2">1️⃣</div>
+                                            <div class="font-semibold mb-2">La Range</div>
+                                            <p class="text-sm">Bougie avec grand corps<br/>Zone de stagnation</p>
+                                        </div>
+                                        <div class="bg-red-600/20 border border-red-600/30 rounded-lg p-4 text-center">
+                                            <div class="text-2xl font-bold mb-2">2️⃣</div>
+                                            <div class="font-semibold mb-2">Manipulation</div>
+                                            <p class="text-sm">Va chercher la liquidité<br/>Piège les traders</p>
+                                        </div>
+                                        <div class="bg-green-600/20 border border-green-600/30 rounded-lg p-4 text-center">
+                                            <div class="text-2xl font-bold mb-2">3️⃣</div>
+                                            <div class="font-semibold mb-2">Distribution</div>
+                                            <p class="text-sm">Bougie directionnelle<br/>Zone d'entrée</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h2 class="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">7. 📌 Le Setup "A+"</h2>
+                                    <div class="bg-green-600/20 border border-green-600/30 rounded-lg p-4 mb-4">
+                                        <h3 class="font-semibold mb-2">PRINCIPE DU MODÈLE</h3>
+                                        <p class="mb-2">Le principe du modèle, c'est de prendre position après la phase de manipulation ⏸️, sur la timeframe basse (LTF) du contexte défini sur la timeframe haute (HTF) 📊.</p>
+                                        <p>🎯 Cela permet d'éviter les pièges des faux breakouts 🚫 et de s'aligner avec la vraie direction du mouvement ➡️.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-red-600/20 border border-red-600/30 rounded-lg p-4">
+                                    <h4 class="font-semibold mb-2">⚠️ Avertissement Légal</h4>
+                                    <p class="text-sm">Ce document est fourni à des fins éducatives uniquement. Le trading comporte des risques significatifs de perte financière. Il est essentiel de bien comprendre les risques avant de trader et ne jamais risquer plus que ce que vous pouvez vous permettre de perdre.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1264,6 +1786,326 @@
         function nextMonth() {
             // Implementation for next month navigation
             console.log('Next month');
+        }
+
+        // Mobile navigation functions
+        function showMobileContent(contentType) {
+            // Hide channels list, show content area
+            document.getElementById('mobileChannelsList').classList.remove('show');
+            document.getElementById('mobileContentArea').classList.add('show');
+            
+            // Update mobile content title
+            const mobileContentTitle = document.getElementById('mobileContentTitle');
+            const mobileContentBody = document.getElementById('mobileContentBody');
+            
+            // Clear previous content
+            mobileContentBody.innerHTML = '';
+            
+            switch(contentType) {
+                case 'crypto':
+                    mobileContentTitle.innerHTML = '🪙 Crypto';
+                    mobileContentBody.innerHTML = `
+                        <div class="space-y-4">
+                            <div class="text-center py-8">
+                                <div class="text-gray-400 text-sm">Aucun signal pour le moment</div>
+                                <div class="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'futur':
+                    mobileContentTitle.innerHTML = '📈 Futur';
+                    mobileContentBody.innerHTML = `
+                        <div class="space-y-4">
+                            <div class="text-center py-8">
+                                <div class="text-gray-400 text-sm">Aucun signal pour le moment</div>
+                                <div class="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'forex':
+                    mobileContentTitle.innerHTML = '💱 Forex';
+                    mobileContentBody.innerHTML = `
+                        <div class="space-y-4">
+                            <div class="text-center py-8">
+                                <div class="text-gray-400 text-sm">Aucun signal pour le moment</div>
+                                <div class="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'fondamentaux':
+                    mobileContentTitle.innerHTML = '📚 Fondamentaux';
+                    mobileContentBody.innerHTML = `
+                        <div class="bg-gray-800 rounded-lg p-6 mb-6">
+                            <div class="text-center mb-8 p-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white">
+                                <div class="flex justify-center mb-0">
+                                    <img 
+                                        src="/logo-removebg-preview.png" 
+                                        alt="Trading pour les nuls" 
+                                        class="h-32 w-auto object-cover"
+                                        style="clip-path: inset(10% 5% 15% 5%);"
+                                    />
+                                </div>
+                                <p class="text-lg opacity-90 -mt-3">Guide complet des concepts fondamentaux et stratégies avancées</p>
+                            </div>
+                            
+                            <div class="space-y-6 text-gray-300">
+                                <div class="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4">
+                                    <p class="text-yellow-200"><strong>📖 Avertissement :</strong> Ce guide présente un ensemble de concepts appris et expérimentés sur les marchés financiers.</p>
+                                </div>
+                                
+                                <div>
+                                    <h2 class="text-xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">1. 📚 Introduction</h2>
+                                    <p>Ce document vous présente les fondamentaux essentiels pour comprendre comment les charts évoluent et ce qui influence leurs mouvements.</p>
+                                </div>
+                                
+                                <div>
+                                    <h2 class="text-xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">2. 🧠 Fondamentaux des Charts</h2>
+                                    <div class="bg-gray-700 rounded-lg p-4 mb-4">
+                                        <h3 class="text-lg font-semibold text-green-400 mb-2">📈 Qu'est-ce qu'une Chart ?</h3>
+                                        <p class="mb-3">Une chart est une représentation visuelle du prix d'un actif financier dans le temps.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-red-600/20 border border-red-600/30 rounded-lg p-4">
+                                    <h4 class="font-semibold mb-2">⚠️ Avertissement Légal</h4>
+                                    <p class="text-sm">Ce document est fourni à des fins éducatives uniquement. Le trading comporte des risques significatifs.</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'letsgooo-model':
+                    mobileContentTitle.innerHTML = '🚀 Letsgooo-model';
+                    mobileContentBody.innerHTML = `
+                        <div class="space-y-4">
+                            <div class="text-center py-8">
+                                <div class="text-gray-400 text-sm">Contenu éducatif à venir</div>
+                                <div class="text-gray-500 text-xs mt-1">Letsgooo model</div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'livestream':
+                    mobileContentTitle.innerHTML = '📺 Livestream';
+                    mobileContentBody.innerHTML = `
+                        <div class="flex flex-col h-full">
+                            <div class="flex-1 flex flex-col gap-4 p-4">
+                                <div class="flex-1 bg-gray-900 rounded-lg overflow-hidden">
+                                    <div class="h-full flex flex-col items-center justify-center p-8">
+                                        <div class="text-center space-y-4">
+                                            <div class="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto">
+                                                <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M8 5v14l11-7z"/>
+                                                </svg>
+                                            </div>
+                                            <h2 class="text-xl font-bold text-white">Aucun stream en cours</h2>
+                                            <p class="text-gray-400">Commencez votre session de trading en direct</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'general-chat':
+                    mobileContentTitle.innerHTML = '💬 General-chat';
+                    mobileContentBody.innerHTML = `
+                        <div class="space-y-4">
+                            <div class="text-center py-8">
+                                <div class="text-gray-400 text-sm">Chat général</div>
+                                <div class="text-gray-500 text-xs mt-1">Zone de discussion</div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'profit-loss':
+                    mobileContentTitle.innerHTML = '💰 Profit-loss';
+                    mobileContentBody.innerHTML = `
+                        <div class="space-y-4">
+                            <div class="text-center py-8">
+                                <div class="text-gray-400 text-sm">Suivi des profits et pertes</div>
+                                <div class="text-gray-500 text-xs mt-1">Analyse des performances</div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'calendrier':
+                    mobileContentTitle.innerHTML = '📅 Calendrier';
+                    showMobileCalendar(mobileContentBody);
+                    break;
+                case 'trading-journal':
+                    mobileContentTitle.innerHTML = '📊 Trading Journal';
+                    showMobileTradingJournal(mobileContentBody);
+                    break;
+                case 'user-management':
+                    mobileContentTitle.innerHTML = '👥 Gestion Utilisateurs';
+                    mobileContentBody.innerHTML = `
+                        <div class="space-y-4">
+                            <div class="text-center py-8">
+                                <div class="text-gray-400 text-sm">Gestion des utilisateurs</div>
+                                <div class="text-gray-500 text-xs mt-1">Interface d'administration des utilisateurs</div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+        }
+
+        function showMobileChannels() {
+            // Show channels list, hide content area
+            document.getElementById('mobileChannelsList').classList.add('show');
+            document.getElementById('mobileContentArea').classList.remove('show');
+        }
+
+        function showMobileCalendar(container) {
+            const currentDate = new Date();
+            const monthNames = [
+                'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+                'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'
+            ];
+            
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <div class="text-center mb-6">
+                        <h1 class="text-xl font-bold text-white">Calendrier des Signaux</h1>
+                        <p class="text-sm text-gray-400 mt-1">Suivi des performances des signaux</p>
+                    </div>
+                    
+                    <div class="bg-gray-800 rounded-lg p-4">
+                        <div class="text-center mb-4">
+                            <span class="text-lg font-semibold">${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-7 gap-1">
+                            <div class="text-center text-gray-400 font-semibold py-2 text-xs">L</div>
+                            <div class="text-center text-gray-400 font-semibold py-2 text-xs">M</div>
+                            <div class="text-center text-gray-400 font-semibold py-2 text-xs">M</div>
+                            <div class="text-center text-gray-400 font-semibold py-2 text-xs">J</div>
+                            <div class="text-center text-gray-400 font-semibold py-2 text-xs">V</div>
+                            <div class="text-center text-gray-400 font-semibold py-2 text-xs">S</div>
+                            <div class="text-center text-gray-400 font-semibold py-2 text-xs">D</div>
+                            
+                            ${generateMobileCalendarDays(currentDate)}
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-800 rounded-lg p-4">
+                        <h3 class="text-lg font-bold text-white mb-4">Statistiques Signaux</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">P&L Total:</span>
+                                <span class="text-green-400 font-bold">+$1,250</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Win Rate:</span>
+                                <span class="text-blue-400 font-bold">78%</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Signaux actifs:</span>
+                                <span class="text-yellow-400 font-bold">3</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showMobileTradingJournal(container) {
+            const currentDate = new Date();
+            const monthNames = [
+                'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+                'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'
+            ];
+            
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <div class="text-center mb-6">
+                        <h1 class="text-xl font-bold text-white">Mon Trading Journal</h1>
+                        <p class="text-sm text-gray-400 mt-1">Journal tous tes trades</p>
+                    </div>
+                    
+                    <div class="bg-gray-800 rounded-lg p-4">
+                        <div class="text-center mb-4">
+                            <span class="text-lg font-semibold">${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-7 gap-1">
+                            <div class="text-center text-gray-400 font-semibold py-2 text-xs">L</div>
+                            <div class="text-center text-gray-400 font-semibold py-2 text-xs">M</div>
+                            <div class="text-center text-gray-400 font-semibold py-2 text-xs">M</div>
+                            <div class="text-center text-gray-400 font-semibold py-2 text-xs">J</div>
+                            <div class="text-center text-gray-400 font-semibold py-2 text-xs">V</div>
+                            <div class="text-center text-gray-400 font-semibold py-2 text-xs">S</div>
+                            <div class="text-center text-gray-400 font-semibold py-2 text-xs">D</div>
+                            
+                            ${generateMobileCalendarDays(currentDate)}
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-800 rounded-lg p-4">
+                        <h3 class="text-lg font-bold text-white mb-4">Mon Trading Journal</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">P&L Total:</span>
+                                <span class="text-green-400 font-bold">+$850</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Win Rate:</span>
+                                <span class="text-blue-400 font-bold">75%</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Trades ce mois:</span>
+                                <span class="text-white font-bold">8</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateMobileCalendarDays(date) {
+            const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+            const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+            const daysInMonth = lastDayOfMonth.getDate();
+            const firstDayWeekday = firstDayOfMonth.getDay();
+            
+            const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
+            const totalCells = Math.ceil((adjustedFirstDay + daysInMonth) / 7) * 7;
+            let html = '';
+            
+            for (let i = 0; i < totalCells; i++) {
+                const dayNumber = i - adjustedFirstDay + 1;
+                const today = new Date();
+                const isToday = dayNumber === today.getDate() && 
+                               date.getMonth() === today.getMonth() && 
+                               date.getFullYear() === today.getFullYear();
+                
+                if (dayNumber < 1 || dayNumber > daysInMonth) {
+                    html += '<div class="h-12 bg-gray-700 rounded border border-gray-600"></div>';
+                } else {
+                    let dayClass = 'h-12 bg-gray-700 border border-gray-600 rounded flex items-center justify-center text-sm font-semibold';
+                    let dayContent = dayNumber;
+                    
+                    if (dayNumber === 1) {
+                        dayClass = 'h-12 bg-green-500/60 border border-green-400/50 rounded flex items-center justify-center text-sm font-semibold text-white';
+                    } else if (dayNumber === 2) {
+                        dayClass = 'h-12 bg-red-500/60 border border-red-400/50 rounded flex items-center justify-center text-sm font-semibold text-white';
+                    } else if (dayNumber === 3) {
+                        dayClass = 'h-12 bg-blue-500/60 border border-blue-400/50 rounded flex items-center justify-center text-sm font-semibold text-white';
+                    } else if (dayNumber === 4) {
+                        dayClass = 'h-12 bg-green-500/60 border border-green-400/50 rounded flex items-center justify-center text-sm font-semibold text-white';
+                    }
+                    
+                    if (isToday) dayClass += ' ring-2 ring-blue-400';
+                    
+                    html += `<div class="${dayClass}">${dayContent}</div>`;
+                }
+            }
+            
+            return html;
         }
     </script>
 </body>
