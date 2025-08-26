@@ -82,6 +82,11 @@ export default function SignalsAdmin() {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   const handleChannelChange = (channelId: string, channelName: string) => {
+    // Réinitialiser selectedDate si on quitte le Trading Journal
+    if (selectedChannel.id === 'trading-journal' && channelId !== 'trading-journal') {
+      setSelectedDate(null);
+    }
+    
     setSelectedChannel({id: channelId, name: channelName});
     setView('signals');
     scrollToTop();
@@ -346,8 +351,8 @@ export default function SignalsAdmin() {
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-gray-600 pb-4 gap-4 md:gap-0">
         <div className="hidden md:block">
-          <h1 className="text-2xl font-bold text-white">Trading Calendar</h1>
-          <p className="text-sm text-gray-400 mt-1">Track your daily trading performance</p>
+          <h1 className="text-2xl font-bold text-white">Calendrier des Signaux</h1>
+          <p className="text-sm text-gray-400 mt-1">Suivi des performances des signaux</p>
         </div>
         
         <div className="flex items-center gap-4">
@@ -560,7 +565,7 @@ export default function SignalsAdmin() {
         {/* Panneau des statistiques */}
         <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6">
           <h3 className="text-lg font-bold text-white mb-6">
-            {selectedChannel.id === 'trading-journal' ? 'Statistiques Trades' : 'Statistiques Calendrier Signaux'}
+            {selectedChannel.id === 'trading-journal' ? 'Mon Trading Journal' : 'Statistiques Signaux'}
           </h3>
           
           {/* Métriques principales */}
@@ -708,7 +713,31 @@ export default function SignalsAdmin() {
         <div className={`flex-1 bg-gray-900 transform transition-transform duration-300 ease-in-out ${
           mobileView === 'channels' ? 'translate-x-0' : '-translate-x-full'
         } absolute inset-0 z-20`}>
-          <div className="p-4 space-y-6 pt-20">
+          <div className="p-4 space-y-6 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
+            <div>
+              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">ÉDUCATION</h3>
+              <div className="space-y-2">
+                {channels.filter(c => ['fondamentaux', 'letsgooo-model'].includes(c.id)).map(channel => (
+                  <button
+                    key={channel.id}
+                    onClick={() => {
+                      handleChannelChange(channel.id, channel.name);
+                      setMobileView('content');
+                    }}
+                    className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg">{channel.emoji}</span>
+                      <div>
+                        <p className="font-medium text-white">{channel.fullName}</p>
+                        <p className="text-sm text-gray-400">Contenu éducatif</p>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div>
               <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">SIGNAUX</h3>
               <div className="space-y-2">
@@ -723,28 +752,10 @@ export default function SignalsAdmin() {
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-lg">{channel.emoji}</span>
-                      <span className="text-white font-medium">{channel.fullName}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">APPRENTISSAGE</h3>
-              <div className="space-y-2">
-                {channels.filter(c => ['fondamentaux', 'letsgooo-model'].includes(c.id)).map(channel => (
-                  <button
-                    key={channel.id}
-                    onClick={() => {
-                      handleChannelChange(channel.id, channel.name);
-                      setMobileView('content');
-                    }}
-                    className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">{channel.emoji}</span>
-                      <span className="text-white font-medium">{channel.fullName}</span>
+                      <div>
+                        <p className="font-medium text-white">{channel.fullName}</p>
+                        <p className="text-sm text-gray-400">Canal de signaux</p>
+                      </div>
                     </div>
                   </button>
                 ))}
@@ -754,7 +765,7 @@ export default function SignalsAdmin() {
             <div>
               <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">TRADING HUB</h3>
               <div className="space-y-2">
-                {channels.filter(c => ['livestream', 'general-chat', 'profit-loss', 'user-management'].includes(c.id)).map(channel => (
+                {channels.filter(c => ['livestream', 'general-chat', 'profit-loss'].includes(c.id)).map(channel => (
                   <button
                     key={channel.id}
                     onClick={() => {
@@ -765,37 +776,85 @@ export default function SignalsAdmin() {
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-lg">{channel.emoji}</span>
-                      <span className="text-white font-medium">{channel.fullName}</span>
+                      <div>
+                        <p className="font-medium text-white">{channel.fullName}</p>
+                        <p className="text-sm text-gray-400">Hub de trading</p>
+                      </div>
                     </div>
                   </button>
                 ))}
+                
+                <button
+                  onClick={() => {
+                    setView('calendar');
+                    setMobileView('content');
+                    scrollToTop();
+                  }}
+                  className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg">📅</span>
+                    <div>
+                      <p className="font-medium text-white">Calendrier</p>
+                      <p className="text-sm text-gray-400">Suivi des performances</p>
+                    </div>
+                  </div>
+                </button>
+                
+                <button
+                  onClick={() => {
+                    handleChannelChange('trading-journal', 'trading-journal');
+                    setMobileView('content');
+                  }}
+                  className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg">📊</span>
+                    <div>
+                      <p className="font-medium text-white">Trading Journal</p>
+                      <p className="text-sm text-gray-400">Journal de trading</p>
+                    </div>
+                  </div>
+                </button>
               </div>
             </div>
 
-            <div>
-              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">OUTILS</h3>
+            <div className="bg-gray-700 rounded-lg p-4">
+              <h4 className="text-sm font-medium mb-3">Statistiques</h4>
               <div className="space-y-2">
-                {channels.filter(c => ['calendrier', 'trading-journal'].includes(c.id)).map(channel => (
-                  <button
-                    key={channel.id}
-                    onClick={() => {
-                      if (channel.id === 'calendrier') {
-                        setView('calendar');
-                      } else {
-                        handleChannelChange(channel.id, channel.name);
-                      }
-                      setMobileView('content');
-                    }}
-                    className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">{channel.emoji}</span>
-                      <span className="text-white font-medium">{channel.fullName}</span>
-                    </div>
-                  </button>
-                ))}
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">Win Rate:</span>
+                  <span className="text-blue-400">{calculateWinRate()}%</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">Signaux actifs:</span>
+                  <span className="text-yellow-400">{signals.filter(s => s.status === 'ACTIVE').length}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">P&L Total:</span>
+                  <span className={calculateTotalPnL() >= 0 ? 'text-green-400' : 'text-red-400'}>
+                    {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
+                  </span>
+                </div>
               </div>
             </div>
+
+            {/* Gestion Utilisateurs sous les stats */}
+            <button
+              onClick={() => {
+                handleChannelChange('user-management', 'user-management');
+                setMobileView('content');
+              }}
+              className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-lg">👥</span>
+                <div>
+                  <p className="font-medium text-white">Gestion Utilisateurs</p>
+                  <p className="text-sm text-gray-400">Admin interface</p>
+                </div>
+              </div>
+            </button>
           </div>
         </div>
 
@@ -804,35 +863,7 @@ export default function SignalsAdmin() {
           mobileView === 'content' ? 'translate-x-0' : 'translate-x-full'
         }`}>
           {(view === 'calendar' || selectedChannel.id === 'trading-journal') ? (
-            <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '0px' }}>
-              {/* Header avec bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
-              {selectedChannel.id === 'trading-journal' && (
-                <div className="hidden md:flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
-                  <div>
-                    <h1 className="text-2xl font-bold text-white">Mon Journal de Trading</h1>
-                    <p className="text-sm text-gray-400 mt-1">Suivez vos trades personnels</p>
-                  </div>
-                  <button 
-                    onClick={handleAddTrade}
-                    className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
-                  >
-                    + Ajouter Trade
-                  </button>
-                </div>
-              )}
-              
-              {/* Header pour le calendrier normal */}
-              {view === 'calendar' && selectedChannel.id !== 'trading-journal' && (
-                <div className="flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
-                  <div>
-                    <h1 className="text-2xl font-bold text-white">Calendrier des Signaux</h1>
-                    <p className="text-sm text-gray-400 mt-1">Suivi des performances des signaux</p>
-                  </div>
-                </div>
-              )}
-              
-              {getTradingCalendar()}
-            </div>
+            getTradingCalendar()
           ) : (
             <div className="p-4 md:p-6 space-y-4 w-full h-full overflow-y-auto" style={{ paddingTop: '80px', paddingBottom: '100px' }}>
             {/* Gestion des utilisateurs */}
@@ -1100,108 +1131,82 @@ export default function SignalsAdmin() {
       </div>
 
       {/* Desktop Sidebar */}
-      <div className="hidden md:block w-64 bg-gray-800 border-r border-gray-700 flex flex-col">
+      <div className="hidden md:flex w-56 bg-gray-800 flex-col">
         <div className="p-4 border-b border-gray-700">
           <div className="flex items-center gap-3">
-            <img 
-              src="/logo-removebg-preview.png" 
-              alt="Trading pour les nuls" 
-              className="h-8 w-auto object-cover"
-              style={{ clipPath: 'inset(10% 5% 15% 5%)' }}
-            />
-            <div className="text-white font-bold text-sm">TheTheTrader</div>
+            <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
+              TT
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium">TheTheTrader</p>
+              <p className="text-xs text-gray-400">En ligne</p>
+            </div>
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-6">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
           <div>
-            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">SIGNAUX</h3>
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">ÉDUCATION</h3>
             <div className="space-y-1">
-              {channels.filter(c => ['crypto', 'futur', 'forex'].includes(c.id)).map(channel => (
-                <button
-                  key={channel.id}
-                  onClick={() => handleChannelChange(channel.id, channel.name)}
-                  className={`w-full text-left px-3 py-2 rounded text-sm ${
-                    selectedChannel.id === channel.id ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'
-                  }`}
-                >
-                  {channel.emoji} {channel.fullName}
-                </button>
-              ))}
+              <button onClick={() => handleChannelChange('fondamentaux', 'fondamentaux')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'fondamentaux' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📚 Fondamentaux</button>
+              <button onClick={() => handleChannelChange('letsgooo-model', 'letsgooo-model')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'letsgooo-model' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>🚀 Letsgooo-model</button>
             </div>
           </div>
 
           <div>
-            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">APPRENTISSAGE</h3>
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">SIGNAUX</h3>
             <div className="space-y-1">
-              {channels.filter(c => ['fondamentaux', 'letsgooo-model'].includes(c.id)).map(channel => (
-                <button
-                  key={channel.id}
-                  onClick={() => handleChannelChange(channel.id, channel.name)}
-                  className={`w-full text-left px-3 py-2 rounded text-sm ${
-                    selectedChannel.id === channel.id ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'
-                  }`}
-                >
-                  {channel.emoji} {channel.fullName}
-                </button>
-              ))}
+              <button onClick={() => handleChannelChange('crypto', 'crypto')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'crypto' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>🪙 Crypto</button>
+              <button onClick={() => handleChannelChange('futur', 'futur')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'futur' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📈 Futur</button>
+              <button onClick={() => handleChannelChange('forex', 'forex')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'forex' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💱 Forex</button>
             </div>
           </div>
 
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">TRADING HUB</h3>
             <div className="space-y-1">
-              {channels.filter(c => ['livestream', 'general-chat', 'profit-loss'].includes(c.id)).map(channel => (
-                <button
-                  key={channel.id}
-                  onClick={() => handleChannelChange(channel.id, channel.name)}
-                  className={`w-full text-left px-3 py-2 rounded text-sm ${
-                    selectedChannel.id === channel.id ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'
-                  }`}
-                >
-                  {channel.emoji} {channel.fullName}
-                </button>
-              ))}
+              <button onClick={() => handleChannelChange('livestream', 'livestream')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
+              <button onClick={() => handleChannelChange('general-chat', 'general-chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 General-chat</button>
+              <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
+              <button onClick={() => {
+                setSelectedChannel({id: 'calendar', name: 'calendar'});
+                setView('calendar');
+                scrollToTop();
+              }} className={`w-full text-left px-3 py-2 rounded text-sm ${view === 'calendar' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Calendrier</button>
+              <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Trading Journal</button>
             </div>
           </div>
 
-          <div>
-            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">OUTILS</h3>
-            <div className="space-y-1">
-              {channels.filter(c => ['calendrier', 'trading-journal'].includes(c.id)).map(channel => (
-                <button
-                  key={channel.id}
-                  onClick={() => {
-                    if (channel.id === 'calendrier') {
-                      setView('calendar');
-                    } else {
-                      handleChannelChange(channel.id, channel.name);
-                    }
-                  }}
-                  className={`w-full text-left px-3 py-2 rounded text-sm ${
-                    (view === 'calendar' && channel.id === 'calendrier') || selectedChannel.id === channel.id 
-                      ? 'bg-gray-700 text-white' 
-                      : 'text-gray-400 hover:text-white hover:bg-gray-700'
-                  }`}
-                >
-                  {channel.emoji} {channel.fullName}
-                </button>
-              ))}
+          <div className="bg-gray-700 rounded-lg p-3">
+            <h4 className="text-sm font-medium mb-2">Statistiques</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Win Rate:</span>
+                <span className="text-blue-400">{calculateWinRate()}%</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Signaux actifs:</span>
+                <span className="text-yellow-400">{signals.filter(s => s.status === 'ACTIVE').length}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">P&L Total:</span>
+                <span className={calculateTotalPnL() >= 0 ? 'text-green-400' : 'text-red-400'}>
+                  {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
+                </span>
+              </div>
             </div>
           </div>
 
+          {/* Gestion Utilisateurs sous les stats */}
           <div>
-            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">ADMIN</h3>
-            <div className="space-y-1">
-              <button 
-                onClick={() => handleChannelChange('user-management', 'user-management')} 
-                className={`w-full text-left px-3 py-2 rounded text-sm ${
-                  selectedChannel.id === 'user-management' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'
-                }`}
-              >
-                👥 Gestion Utilisateurs
-              </button>
-            </div>
+            <button 
+              onClick={() => handleChannelChange('user-management', 'user-management')} 
+              className={`w-full text-left px-3 py-2 rounded text-sm ${
+                selectedChannel.id === 'user-management' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'
+              }`}
+            >
+              👥 Gestion Utilisateurs
+            </button>
           </div>
         </div>
       </div>
@@ -1210,35 +1215,7 @@ export default function SignalsAdmin() {
       <div className="hidden md:block flex-1 p-6">
         {/* Calendrier et Trading Journal */}
         {(view === 'calendar' || selectedChannel.id === 'trading-journal') ? (
-          <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '0px' }}>
-            {/* Header avec bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
-            {selectedChannel.id === 'trading-journal' && (
-              <div className="hidden md:flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
-                <div>
-                  <h1 className="text-2xl font-bold text-white">Mon Journal de Trading</h1>
-                  <p className="text-sm text-gray-400 mt-1">Suivez vos trades personnels</p>
-                </div>
-                <button 
-                  onClick={handleAddTrade}
-                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
-                >
-                  + Ajouter Trade
-                </button>
-              </div>
-            )}
-            
-            {/* Header pour le calendrier normal */}
-            {view === 'calendar' && selectedChannel.id !== 'trading-journal' && (
-              <div className="flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
-                <div>
-                  <h1 className="text-2xl font-bold text-white">Calendrier des Signaux</h1>
-                  <p className="text-sm text-gray-400 mt-1">Suivi des performances des signaux</p>
-                </div>
-              </div>
-            )}
-            
-            {getTradingCalendar()}
-          </div>
+          getTradingCalendar()
         ) : selectedChannel.id === 'user-management' ? (
           <div className="space-y-6">
             <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">

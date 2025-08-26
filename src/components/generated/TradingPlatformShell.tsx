@@ -1234,8 +1234,8 @@ export default function TradingPlatformShell() {
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-gray-600 pb-4 gap-4 md:gap-0">
         <div className="hidden md:block">
-          <h1 className="text-2xl font-bold text-white">Trading Calendar</h1>
-          <p className="text-sm text-gray-400 mt-1">Track your daily trading performance</p>
+          <h1 className="text-2xl font-bold text-white">Calendrier des Signaux</h1>
+          <p className="text-sm text-gray-400 mt-1">Suivi des performances des signaux</p>
         </div>
         
         <div className="flex items-center gap-4">
@@ -1459,7 +1459,7 @@ export default function TradingPlatformShell() {
         {/* Panneau des statistiques */}
         <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6">
           <h3 className="text-lg font-bold text-white mb-6">
-            {selectedChannel.id === 'trading-journal' ? 'Statistiques Trades' : 'Statistiques Calendrier Signaux'}
+            {selectedChannel.id === 'trading-journal' ? 'Mon Trading Journal' : 'Statistiques Signaux'}
           </h3>
           
           {/* Métriques principales */}
@@ -1871,8 +1871,8 @@ export default function TradingPlatformShell() {
                 {selectedChannel.id === 'trading-journal' && (
                   <div className="hidden md:flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
                     <div>
-                      <h1 className="text-2xl font-bold text-white">Mon Journal de Trading</h1>
-                      <p className="text-sm text-gray-400 mt-1">Suivez vos trades personnels</p>
+                      <h1 className="text-2xl font-bold text-white">Mon Trading Journal</h1>
+                      <p className="text-sm text-gray-400 mt-1">Journal tous tes trades</p>
                     </div>
                     <button 
                       onClick={handleAddTrade}
