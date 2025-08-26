@@ -1952,7 +1952,7 @@ export default function AdminInterface() {
                         handleChannelChange(channel.id, channel.name);
                         setMobileView('content');
                       }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-red-700 hover:bg-red-600 transition-colors"
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <span className="text-lg">{channel.emoji}</span>
@@ -2024,7 +2024,7 @@ export default function AdminInterface() {
                 
                 {/* Gestion des utilisateurs */}
                 {selectedChannel.id === 'user-management' ? (
-                  <div className="space-y-6">
+                  <div className="space-y-6" style={{ paddingTop: '80px' }}>
                     <div className="flex justify-between items-center border-b border-gray-600 pb-4">
                       <div>
                         <h1 className="text-2xl font-bold text-white">Gestion Utilisateurs</h1>
