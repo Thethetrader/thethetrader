@@ -38,6 +38,19 @@ const App = () => {
       setCurrentPage('admin');
     }
   }, []);
+
+  // Changer le manifeste selon la page
+  useEffect(() => {
+    const manifestLink = document.querySelector('link[rel="manifest"]') as HTMLLinkElement;
+    if (manifestLink) {
+      if (currentPage === 'admin') {
+        manifestLink.href = '/manifest-admin.json';
+      } else {
+        manifestLink.href = '/manifest.json';
+      }
+    }
+  }, [currentPage]);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [activeChannel, setActiveChannel] = useState('crypto');

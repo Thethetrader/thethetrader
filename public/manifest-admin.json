@@ -1,0 +1,22 @@
+{
+  "name": "TheTheTrader Admin",
+  "short_name": "TheTheTrader Admin",
+  "description": "Interface d'administration TheTheTrader",
+  "start_url": "/admin",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+} 
