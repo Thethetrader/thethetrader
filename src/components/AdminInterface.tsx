@@ -1408,8 +1408,8 @@ export default function AdminInterface() {
             <div className="border-b border-gray-600 pb-6">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h1 className="text-2xl font-bold text-white">Gestion Utilisateurs</h1>
-                  <p className="text-sm text-gray-400 mt-1">Gérer tous les utilisateurs de la plateforme</p>
+                  <h1 className="text-2xl font-bold text-white">Gestion Utilisateurs v2.0 🚀</h1>
+                  <p className="text-sm text-gray-400 mt-1">Nouvelle interface avec stats et filtres</p>
                 </div>
                 <button 
                   onClick={() => setShowUserModal(true)}
@@ -1420,7 +1420,7 @@ export default function AdminInterface() {
               </div>
               
               {/* Statistiques */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="bg-gray-800 rounded-lg p-4">
                   <div className="text-2xl font-bold text-blue-400">{stats.total}</div>
                   <div className="text-sm text-gray-400">Total utilisateurs</div>
@@ -1442,7 +1442,7 @@ export default function AdminInterface() {
 
             {/* Filtres et recherche */}
             <div className="bg-gray-800 rounded-lg p-4">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 {/* Barre de recherche */}
                 <div>
                   <label className="block text-xs font-medium text-gray-400 mb-1">Rechercher</label>
