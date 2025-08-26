@@ -182,12 +182,28 @@
             padding: 8px 16px;
             border-radius: 6px;
             font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
             transition: background-color 0.2s;
         }
         
         .logout-btn:hover {
             background-color: #b91c1c;
+        }
+        
+        .back-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .back-btn:hover {
+            color: white;
+            background-color: #374151;
         }
         
         .content-body {
@@ -872,7 +888,14 @@
             </div>
 
             <div class="content-header">
-                <h1 class="content-title">🪙 Crypto</h1>
+                <div class="flex items-center gap-4">
+                    <button class="back-btn" onclick="showChannelsList()" id="backToChannelsBtn" style="display: none;">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+                    <h1 class="content-title">📋 Liste des Salons</h1>
+                </div>
                 <button class="logout-btn" onclick="logout()">🏠 Retour Accueil</button>
             </div>
             
@@ -1056,9 +1079,13 @@
             });
             event.target.classList.add('active');
             
-            // Update header title
+            // Update header title and show back arrow
             const contentTitle = document.querySelector('.content-title');
             const contentBody = document.querySelector('.content-body');
+            const backBtn = document.getElementById('backToChannelsBtn');
+            
+            // Show back arrow when viewing salon content
+            backBtn.style.display = 'block';
             
             // Clear previous content
             contentBody.innerHTML = '';
@@ -1134,6 +1161,10 @@
         function showChannelsList() {
             const contentBody = document.querySelector('.content-body');
             const contentTitle = document.querySelector('.content-title');
+            const backBtn = document.getElementById('backToChannelsBtn');
+            
+            // Hide back arrow when showing channels list
+            backBtn.style.display = 'none';
             
             contentTitle.innerHTML = '📋 Liste des Salons';
             contentBody.innerHTML = `
