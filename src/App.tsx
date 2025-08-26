@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './index.css';
 import TradingPlatformShell from './components/generated/TradingPlatformShell';
-import AdminTradingPlatform from './components/AdminTradingPlatform';
-import AdminLogin from './components/AdminLogin';
+
 import { useNotifications } from './hooks/use-notifications';
 import { usePWA } from './hooks/use-pwa';
 
@@ -32,36 +31,9 @@ const App = () => {
     (window as any).getCurrentPage = () => currentPage;
   }, [currentPage]);
 
-  // Vérifier l'URL pour l'admin
-  useEffect(() => {
-    console.log('URL actuelle:', window.location.pathname);
-    if (window.location.pathname === '/admin' || window.location.pathname === '/admin.html') {
-      console.log('Page admin détectée, changement vers admin');
-      setCurrentPage('admin');
-    }
-  }, []);
 
-  // Si on est sur admin.html, forcer la page admin
-  if (window.location.pathname === '/admin.html') {
-    setCurrentPage('admin');
-  }
 
-  // Détecter automatiquement si on est sur admin.html
-  const isAdminPage = window.location.pathname === '/admin.html';
 
-  // Changer le manifeste selon la page
-  useEffect(() => {
-    const manifestLink = document.querySelector('link[rel="manifest"]') as HTMLLinkElement;
-    if (manifestLink) {
-      if (currentPage === 'admin') {
-        manifestLink.href = '/manifest-admin.json?v=' + Date.now();
-        console.log('Manifeste changé vers admin');
-      } else {
-        manifestLink.href = '/manifest.json?v=' + Date.now();
-        console.log('Manifeste changé vers normal');
-      }
-    }
-  }, [currentPage]);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -965,23 +937,7 @@ const App = () => {
     );
   };
 
-  // Si on est sur la page admin, vérifier l'authentification (IGNORER l'état user)
-  if (currentPage === 'admin') {
-    const isAdminAuthenticated = localStorage.getItem('adminAuthenticated') === 'true'
-    console.log('Vérification admin:', { currentPage, isAdminAuthenticated })
-    
-    if (isAdminAuthenticated) {
-      console.log('Admin authentifié, affichage SignalsAdmin')
-              return <AdminTradingPlatform />;
-    } else {
-      console.log('Admin non authentifié, affichage AdminLogin')
-      return <AdminLogin onLogin={() => {
-        // Force re-render après connexion admin
-        setCurrentPage('temp');
-        setTimeout(() => setCurrentPage('admin'), 10);
-      }} />;
-    }
-  }
+
 
   // Si utilisateur connecté, afficher ton salon complet
   if (user) {
@@ -3383,7 +3339,7 @@ const App = () => {
                                 <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-sm text-white">TT</div>
                                 <div>
                                   <span className="text-white font-medium text-sm">TheTheTrader</span>
-                                  <span className="text-yellow-400 text-xs ml-2">👑 ADMIN</span>
+                  
                                   <span className="text-gray-400 text-xs ml-2">Il y a 15 min</span>
                                 </div>
                               </div>
