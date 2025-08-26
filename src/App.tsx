@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './index.css';
 import TradingPlatformShell from './components/generated/TradingPlatformShell';
-import SupabaseTest from './components/SupabaseTest';
 import SignalsAdmin from './components/SignalsAdmin';
 import AdminLogin from './components/AdminLogin';
 import { useNotifications } from './hooks/use-notifications';
@@ -1051,11 +1050,7 @@ const App = () => {
               </button>
             </div>
 
-            {/* Test Supabase - TEMPORAIRE PWA */}
-            <div className="mb-8 px-4">
-              <SupabaseTest />
 
-            </div>
             
             {/* Barre de défilement - Sous le bouton */}
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 sm:py-6 overflow-hidden relative w-full max-w-full rounded-lg mx-auto">
