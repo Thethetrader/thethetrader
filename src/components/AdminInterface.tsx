@@ -1770,6 +1770,17 @@ export default function AdminInterface() {
               <button onClick={() => handleChannelChange('user-management', 'user-management')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'user-management' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>👥 Gestion Utilisateurs</button>
             </div>
           </div>
+
+          {/* Bouton déconnexion en bas de la sidebar - Desktop seulement */}
+          <div className="mt-4 pt-4 border-t border-gray-700">
+            <button 
+              onClick={handleLogout}
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white rounded-lg transition-colors"
+            >
+              <span className="text-lg">🏠</span>
+              <span className="text-sm">Retour accueil</span>
+            </button>
+          </div>
         </div>
       </div>
 
