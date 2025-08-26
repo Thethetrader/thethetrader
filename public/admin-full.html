@@ -14,10 +14,9 @@
         }
         
         body {
-            font-family: Arial, sans-serif;
-            background: #111827;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #111827;
             color: white;
-            height: 100vh;
             overflow: hidden;
         }
         
@@ -26,177 +25,215 @@
             height: 100vh;
         }
         
-        /* Desktop Sidebar - Identique à l'interface normale */
+        /* Sidebar */
         .sidebar {
             width: 224px;
-            background: #1f2937;
+            background-color: #1f2937;
             border-right: 1px solid #374151;
             display: flex;
             flex-direction: column;
+            overflow-y: auto;
         }
         
         .sidebar-header {
-            padding: 1rem;
+            padding: 16px;
             border-bottom: 1px solid #374151;
         }
         
         .sidebar-header-content {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 12px;
         }
         
         .avatar {
             width: 32px;
             height: 32px;
-            background: #3b82f6;
+            background-color: #3b82f6;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 14px;
             font-weight: bold;
-            font-size: 0.875rem;
         }
         
         .user-info h3 {
-            font-size: 0.875rem;
+            font-size: 14px;
             font-weight: 500;
-            margin-bottom: 0.125rem;
         }
         
         .user-status {
-            font-size: 0.75rem;
+            font-size: 12px;
             color: #9ca3af;
         }
         
         .sidebar-content {
             flex: 1;
-            overflow-y: auto;
-            padding: 1rem;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
         
         .sidebar-section {
-            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
         
         .sidebar-title {
-            color: #9ca3af;
-            font-size: 0.75rem;
+            font-size: 12px;
             font-weight: 600;
+            color: #9ca3af;
             text-transform: uppercase;
-            margin-bottom: 0.5rem;
             letter-spacing: 0.05em;
+            margin-bottom: 8px;
         }
         
         .sidebar-item {
-            display: block;
             width: 100%;
-            padding: 0.5rem 0.75rem;
-            color: #9ca3af;
+            text-align: left;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
             background: none;
             border: none;
-            text-align: left;
-            border-radius: 0.375rem;
+            color: #9ca3af;
             cursor: pointer;
-            margin-bottom: 0.125rem;
-            font-size: 0.875rem;
             transition: all 0.2s;
         }
         
         .sidebar-item:hover {
-            background: #374151;
+            background-color: #374151;
             color: white;
         }
         
         .sidebar-item.active {
-            background: #374151;
+            background-color: #374151;
             color: white;
         }
         
         .stats-panel {
-            background: #374151;
-            border-radius: 0.5rem;
-            padding: 0.75rem;
-            margin-top: 1rem;
+            background-color: #374151;
+            border-radius: 8px;
+            padding: 12px;
         }
         
         .stats-panel h4 {
-            font-size: 0.875rem;
+            font-size: 14px;
             font-weight: 500;
-            margin-bottom: 0.5rem;
+            margin-bottom: 8px;
         }
         
-        .stat-row {
+        .stats-row {
             display: flex;
             justify-content: space-between;
-            font-size: 0.875rem;
-            margin-bottom: 0.5rem;
+            font-size: 14px;
+            margin-bottom: 4px;
         }
         
-        .stat-label {
+        .stats-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .stats-label {
             color: #9ca3af;
         }
         
-        .stat-value {
-            color: #3b82f6;
+        .stats-value {
+            font-weight: 500;
         }
         
-        .stat-value.win-rate {
-            color: #10b981;
-        }
-        
-        .stat-value.active {
-            color: #f59e0b;
-        }
-        
-        .stat-value.pnl {
-            color: #10b981;
-        }
-        
-        .stat-value.pnl.negative {
-            color: #ef4444;
-        }
+        .stats-value.win-rate { color: #3b82f6; }
+        .stats-value.active { color: #f59e0b; }
+        .stats-value.pnl { color: #10b981; }
         
         /* Main Content */
         .main-content {
             flex: 1;
-            background: #111827;
             display: flex;
             flex-direction: column;
+            background-color: #111827;
         }
         
         .content-header {
-            background: #1f2937;
+            background-color: #1f2937;
             border-bottom: 1px solid #374151;
-            padding: 1rem 1.5rem;
+            padding: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            height: 60px;
         }
         
         .content-title {
-            font-size: 1.5rem;
-            font-weight: bold;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .logout-btn {
-            background: #dc2626;
+            background-color: #dc2626;
             color: white;
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
             cursor: pointer;
-            font-size: 0.875rem;
+            transition: background-color 0.2s;
         }
         
         .logout-btn:hover {
-            background: #b91c1c;
+            background-color: #b91c1c;
         }
         
         .content-body {
             flex: 1;
-            padding: 1.5rem;
             overflow-y: auto;
+            padding: 16px;
+        }
+        
+        /* Mobile Toggle */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 1000;
+            background-color: #374151;
+            border: none;
+            color: white;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mobile-toggle {
+                display: block;
+            }
+            
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                height: 100vh;
+                z-index: 999;
+                transition: left 0.3s ease;
+            }
+            
+            .sidebar.open {
+                left: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
         }
         
         /* Content Areas */
@@ -208,137 +245,58 @@
             display: block;
         }
         
-        /* Signals Content */
-        .signals-grid {
-            display: grid;
-            gap: 1rem;
-        }
-        
-        .signal-card {
-            background: #1f2937;
-            border: 1px solid #374151;
-            border-radius: 0.5rem;
-            padding: 1rem;
-        }
-        
-        .signal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
-        }
-        
-        .signal-type {
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-        
-        .signal-type.buy {
-            background: #10b981;
-            color: white;
-        }
-        
-        .signal-type.sell {
-            background: #ef4444;
-            color: white;
-        }
-        
-        .signal-symbol {
-            font-weight: bold;
-            font-size: 1.125rem;
-        }
-        
-        .signal-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
-        }
-        
-        .signal-detail {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .signal-detail-label {
-            color: #9ca3af;
-            font-size: 0.875rem;
-        }
-        
-        .signal-detail-value {
-            font-weight: 500;
-        }
-        
-        .signal-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-        
-        .action-btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-        
-        .action-btn.win {
-            background: #10b981;
-            color: white;
-        }
-        
-        .action-btn.loss {
-            background: #ef4444;
-            color: white;
-        }
-        
-        .action-btn.be {
-            background: #3b82f6;
-            color: white;
-        }
-        
-        /* Calendar Content */
+        /* Calendar Styles */
         .calendar-container {
-            background: #1f2937;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            border: 1px solid #374151;
+            background-color: #111827;
+            padding: 24px;
+            height: 100%;
+            overflow-y: auto;
         }
         
         .calendar-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #374151;
+        }
+        
+        .calendar-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .calendar-subtitle {
+            font-size: 14px;
+            color: #9ca3af;
+            margin-top: 4px;
         }
         
         .calendar-nav {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 12px;
         }
         
-        .nav-btn {
-            background: #374151;
+        .calendar-nav button {
+            background: none;
             border: none;
             color: white;
-            padding: 0.5rem;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            font-size: 1.25rem;
+            font-size: 18px;
             font-weight: bold;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
         }
         
-        .nav-btn:hover {
-            background: #4b5563;
+        .calendar-nav button:hover {
+            background-color: #374151;
         }
         
-        .month-year {
-            font-size: 1.25rem;
+        .calendar-month {
+            font-size: 18px;
             font-weight: 600;
             min-width: 120px;
             text-align: center;
@@ -347,126 +305,310 @@
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
+            gap: 4px;
+            margin-bottom: 16px;
         }
         
-        .calendar-day-header {
+        .calendar-weekdays {
+            display: contents;
+        }
+        
+        .calendar-weekday {
             text-align: center;
             color: #9ca3af;
-            font-weight: 500;
-            padding: 0.5rem;
+            font-weight: 600;
+            padding: 12px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
         .calendar-day {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 0.375rem;
+            border: 2px solid #374151;
+            border-radius: 8px;
+            height: 96px;
+            padding: 8px;
             cursor: pointer;
-            font-weight: 500;
             transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         
         .calendar-day:hover {
-            background: #374151;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         
+        .calendar-day.today {
+            ring: 2px;
+            ring-color: #3b82f6;
+        }
+        
+        .calendar-day.selected {
+            ring: 2px;
+            ring-color: #a855f7;
+        }
+        
+        .calendar-day-number {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .calendar-day-content {
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+        }
+        
+        @media (min-width: 768px) {
+            .calendar-day-content {
+                display: block;
+            }
+        }
+        
+        /* Calendar Colors */
         .calendar-day.win {
-            background: #10b981;
+            background-color: rgba(34, 197, 94, 0.6);
+            border-color: rgba(34, 197, 94, 0.5);
             color: white;
         }
         
         .calendar-day.loss {
-            background: #ef4444;
+            background-color: rgba(239, 68, 68, 0.6);
+            border-color: rgba(239, 68, 68, 0.5);
             color: white;
         }
         
-        .calendar-day.be {
-            background: #3b82f6;
+        .calendar-day.break-even {
+            background-color: rgba(59, 130, 246, 0.6);
+            border-color: rgba(59, 130, 246, 0.5);
             color: white;
         }
         
-        .calendar-day.empty {
-            background: none;
-            cursor: default;
+        .calendar-day.active {
+            background-color: rgba(245, 158, 11, 0.6);
+            border-color: rgba(245, 158, 11, 0.5);
+            color: white;
         }
         
-        .calendar-day.empty:hover {
-            background: none;
+        .calendar-day.no-trade {
+            background-color: #374151;
+            border-color: #4b5563;
+            color: #9ca3af;
         }
         
-        /* Stats Panel */
+        /* Statistics Panel */
         .stats-container {
-            background: #1f2937;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            border: 1px solid #374151;
+            width: 320px;
+            background-color: #1f2937;
+            border-radius: 12px;
+            padding: 24px;
+            margin-left: 24px;
         }
         
         .stats-title {
-            font-size: 1.125rem;
+            font-size: 18px;
             font-weight: bold;
-            margin-bottom: 1rem;
+            margin-bottom: 24px;
         }
         
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+        .stats-metrics {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 32px;
         }
         
         .stat-card {
-            background: #374151;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            border: 1px solid #4b5563;
+            border: 1px solid;
+            border-radius: 8px;
+            padding: 16px;
         }
         
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
+        .stat-card.pnl-positive {
+            background-color: rgba(34, 197, 94, 0.2);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+        
+        .stat-card.pnl-negative {
+            background-color: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+        
+        .stat-card.blue {
+            background-color: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        
+        .stat-card.gray {
+            background-color: #374151;
+            border-color: #4b5563;
         }
         
         .stat-label {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label.pnl-positive { color: #86efac; }
+        .stat-label.pnl-negative { color: #fca5a5; }
+        .stat-label.blue { color: #93c5fd; }
+        .stat-label.gray { color: #9ca3af; }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .stat-value.pnl-positive { color: #bbf7d0; }
+        .stat-value.pnl-negative { color: #fecaca; }
+        .stat-value.blue { color: #bfdbfe; }
+        .stat-value.gray { color: white; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        /* Weekly Breakdown */
+        .weekly-breakdown {
+            margin-top: 24px;
+        }
+        
+        .weekly-breakdown h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #d1d5db;
+            margin-bottom: 16px;
+        }
+        
+        .week-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid;
+            margin-bottom: 8px;
+        }
+        
+        .week-item.current {
+            background-color: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        
+        .week-item.other {
+            background-color: rgba(55, 65, 81, 0.5);
+            border-color: #4b5563;
+        }
+        
+        .week-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .week-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .week-name.current { color: #93c5fd; }
+        .week-name.other { color: #d1d5db; }
+        
+        .week-trades {
+            font-size: 12px;
             color: #9ca3af;
-            font-size: 0.875rem;
         }
         
-        /* Mobile */
-        @media (max-width: 768px) {
-            .sidebar {
-                position: fixed;
-                left: 0;
-                top: 0;
-                height: 100vh;
-                z-index: 50;
-                transform: translateX(-100%);
-                transition: transform 0.3s;
-            }
-            
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            
-            .mobile-toggle {
-                display: block;
-                position: fixed;
-                top: 1rem;
-                left: 1rem;
-                z-index: 60;
-                background: #374151;
-                border: none;
-                color: white;
-                padding: 0.5rem;
-                border-radius: 0.375rem;
-            }
+        .week-stats {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
-        .mobile-toggle {
-            display: none;
+        .win-badge {
+            background-color: #10b981;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .loss-badge {
+            background-color: #ef4444;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .week-pnl {
+            font-size: 12px;
+        }
+        
+        .week-pnl.positive { color: #86efac; }
+        .week-pnl.negative { color: #fca5a5; }
+        .week-pnl.neutral { color: #9ca3af; }
+        
+        /* Legend */
+        .calendar-legend {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid #4b5563;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid;
+        }
+        
+        .legend-text {
+            font-size: 12px;
+            color: #d1d5db;
+        }
+        
+        /* Layout */
+        .calendar-layout {
+            display: flex;
+            gap: 24px;
+            overflow-x: hidden;
+        }
+        
+        .calendar-main {
+            flex: 1;
+            min-width: 0;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .calendar-layout {
+                flex-direction: column;
+            }
+            
+            .stats-container {
+                width: 100%;
+                margin-left: 0;
+                margin-top: 24px;
+            }
         }
     </style>
 </head>
@@ -487,43 +629,49 @@
             </div>
             
             <div class="sidebar-content">
+                <!-- ÉDUCATION -->
                 <div class="sidebar-section">
                     <div class="sidebar-title">ÉDUCATION</div>
                     <button class="sidebar-item" onclick="showContent('fondamentaux')">📚 Fondamentaux</button>
                     <button class="sidebar-item" onclick="showContent('letsgooo-model')">🚀 Letsgooo-model</button>
                 </div>
                 
+                <!-- SIGNAUX -->
                 <div class="sidebar-section">
                     <div class="sidebar-title">SIGNAUX</div>
-                    <button class="sidebar-item active" onclick="showContent('crypto')">🪙 Crypto</button>
+                    <button class="sidebar-item" onclick="showContent('crypto')">🪙 Crypto</button>
                     <button class="sidebar-item" onclick="showContent('futur')">📈 Futur</button>
                     <button class="sidebar-item" onclick="showContent('forex')">💱 Forex</button>
                 </div>
                 
+                <!-- TRADING HUB -->
                 <div class="sidebar-section">
                     <div class="sidebar-title">TRADING HUB</div>
                     <button class="sidebar-item" onclick="showContent('livestream')">📺 Livestream</button>
                     <button class="sidebar-item" onclick="showContent('general-chat')">💬 General-chat</button>
                     <button class="sidebar-item" onclick="showContent('profit-loss')">💰 Profit-loss</button>
-                    <button class="sidebar-item" onclick="showContent('calendar')">📅 Calendrier</button>
+                    <button class="sidebar-item" onclick="showContent('calendrier')">📅 Calendrier</button>
                     <button class="sidebar-item" onclick="showContent('trading-journal')">📊 Trading Journal</button>
                 </div>
                 
+                <!-- Statistiques -->
                 <div class="stats-panel">
                     <h4>Statistiques</h4>
-                    <div class="stat-row">
-                        <span class="stat-label">Win Rate:</span>
-                        <span class="stat-value win-rate">78%</span>
+                    <div class="stats-row">
+                        <span class="stats-label">Win Rate:</span>
+                        <span class="stats-value win-rate">78%</span>
                     </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Signaux actifs:</span>
-                        <span class="stat-value active">3</span>
+                    <div class="stats-row">
+                        <span class="stats-label">Signaux actifs:</span>
+                        <span class="stats-value active">3</span>
                     </div>
-                    <div class="stat-row">
-                        <span class="stat-value pnl">+$1,250</span>
+                    <div class="stats-row">
+                        <span class="stats-label">P&L Total:</span>
+                        <span class="stats-value pnl">+$1,250</span>
                     </div>
                 </div>
                 
+                <!-- ADMIN -->
                 <div class="sidebar-section">
                     <div class="sidebar-title">ADMIN</div>
                     <button class="sidebar-item" onclick="showContent('user-management')">👥 Gestion Utilisateurs</button>
@@ -539,262 +687,12 @@
             </div>
             
             <div class="content-body">
-                <!-- Crypto Content -->
-                <div class="content-area active" id="crypto">
-                    <div class="signals-grid">
-                        <div class="signal-card">
-                            <div class="signal-header">
-                                <span class="signal-type buy">BUY</span>
-                                <span class="signal-symbol">BTC</span>
-                            </div>
-                            <div class="signal-details">
-                                <div class="signal-detail">
-                                    <span class="signal-detail-label">Entrée:</span>
-                                    <span class="signal-detail-value">$45,000</span>
-                                </div>
-                                <div class="signal-detail">
-                                    <span class="signal-detail-label">Take Profit:</span>
-                                    <span class="signal-detail-value">$46,000</span>
-                                </div>
-                                <div class="signal-detail">
-                                    <span class="signal-detail-label">Stop Loss:</span>
-                                    <span class="signal-detail-value">$44,000</span>
-                                </div>
-                                <div class="signal-detail">
-                                    <span class="signal-detail-label">Timeframe:</span>
-                                    <span class="signal-detail-value">1 min</span>
-                                </div>
-                            </div>
-                            <div class="signal-actions">
-                                <button class="action-btn win">WIN</button>
-                                <button class="action-btn loss">LOSS</button>
-                                <button class="action-btn be">BE</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Calendar Content -->
-                <div class="content-area" id="calendar">
-                    <div class="calendar-container">
-                        <div class="calendar-header">
-                            <div class="calendar-nav">
-                                <button class="nav-btn" onclick="previousMonth()">‹</button>
-                                <div class="month-year">Janvier 2025</div>
-                                <button class="nav-btn" onclick="nextMonth()">›</button>
-                            </div>
-                        </div>
-                        
-                        <div class="calendar-grid">
-                            <div class="calendar-day-header">L</div>
-                            <div class="calendar-day-header">M</div>
-                            <div class="calendar-day-header">M</div>
-                            <div class="calendar-day-header">J</div>
-                            <div class="calendar-day-header">V</div>
-                            <div class="calendar-day-header">S</div>
-                            <div class="calendar-day-header">D</div>
-                            
-                            <div class="calendar-day empty"></div>
-                            <div class="calendar-day empty"></div>
-                            <div class="calendar-day win">1</div>
-                            <div class="calendar-day loss">2</div>
-                            <div class="calendar-day be">3</div>
-                            <div class="calendar-day win">4</div>
-                            <div class="calendar-day">5</div>
-                            <!-- Add more days as needed -->
-                        </div>
-                    </div>
-                    
-                    <div class="stats-container">
-                        <h3 class="stats-title">Statistiques Signaux</h3>
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-value">78%</div>
-                                <div class="stat-label">Win Rate</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-value">3</div>
-                                <div class="stat-label">Signaux actifs</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-value">+$1,250</div>
-                                <div class="stat-label">P&L Total</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Trading Journal Content -->
-                <div class="content-area" id="trading-journal">
-                    <div class="calendar-container">
-                        <div class="calendar-header">
-                            <div class="calendar-nav">
-                                <button class="nav-btn" onclick="previousMonth()">‹</button>
-                                <div class="month-year">Janvier 2025</div>
-                                <button class="nav-btn" onclick="nextMonth()">›</button>
-                            </div>
-                        </div>
-                        
-                        <div class="calendar-grid">
-                            <div class="calendar-day-header">L</div>
-                            <div class="calendar-day-header">M</div>
-                            <div class="calendar-day-header">M</div>
-                            <div class="calendar-day-header">J</div>
-                            <div class="calendar-day-header">V</div>
-                            <div class="calendar-day-header">S</div>
-                            <div class="calendar-day-header">D</div>
-                            
-                            <div class="calendar-day empty"></div>
-                            <div class="calendar-day empty"></div>
-                            <div class="calendar-day win">1</div>
-                            <div class="calendar-day loss">2</div>
-                            <div class="calendar-day be">3</div>
-                            <div class="calendar-day win">4</div>
-                            <div class="calendar-day">5</div>
-                        </div>
-                    </div>
-                    
-                    <div class="stats-container">
-                        <h3 class="stats-title">Statistiques Trades</h3>
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-value">75%</div>
-                                <div class="stat-label">Win Rate</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-value">12</div>
-                                <div class="stat-label">Trades ce mois</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-value">+$850</div>
-                                <div class="stat-label">P&L Total</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- User Management Content -->
-                <div class="content-area" id="user-management">
-                    <div class="stats-container">
-                        <h3 class="stats-title">Gestion des Utilisateurs</h3>
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-value">0</div>
-                                <div class="stat-label">Utilisateurs actifs</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-value">0</div>
-                                <div class="stat-label">Nouveaux aujourd'hui</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-value">0</div>
-                                <div class="stat-label">En ligne</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-value">0</div>
-                                <div class="stat-label">Abonnés premium</div>
-                            </div>
-                        </div>
-                        
-                        <div style="margin-top: 1.5rem;">
-                            <button class="action-btn win" style="margin-right: 0.5rem;">+ Ajouter utilisateur</button>
-                            <button class="action-btn be">📊 Exporter données</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Other content areas -->
-                <div class="content-area" id="fondamentaux">
-                    <h2>📚 Fondamentaux</h2>
-                    <p>Contenu éducatif sur les fondamentaux du trading...</p>
-                </div>
-                
-                <div class="content-area" id="letsgooo-model">
-                    <h2>🚀 Letsgooo-model</h2>
-                    <p>Modèle de trading Letsgooo...</p>
-                </div>
-                
-                <div class="content-area" id="futur">
-                    <h2>📈 Futur</h2>
-                    <p>Signaux futures...</p>
-                </div>
-                
-                <div class="content-area" id="forex">
-                    <h2>💱 Forex</h2>
-                    <p>Signaux forex...</p>
-                </div>
-                
-                <div class="content-area" id="livestream">
-                    <h2>📺 Livestream</h2>
-                    <p>Salon de livestream...</p>
-                </div>
-                
-                <div class="content-area" id="general-chat">
-                    <h2>💬 General-chat</h2>
-                    <p>Chat général...</p>
-                </div>
-                
-                <div class="content-area" id="profit-loss">
-                    <h2>💰 Profit-loss</h2>
-                    <p>Suivi des profits et pertes...</p>
-                </div>
+                <!-- Content areas will be populated by JavaScript -->
             </div>
         </div>
     </div>
 
     <script>
-        function showContent(contentId) {
-            // Hide all content areas
-            document.querySelectorAll('.content-area').forEach(area => {
-                area.classList.remove('active');
-            });
-            
-            // Show selected content
-            document.getElementById(contentId).classList.add('active');
-            
-            // Update sidebar active state
-            document.querySelectorAll('.sidebar-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Update header title
-            const titles = {
-                'fondamentaux': '📚 Fondamentaux',
-                'letsgooo-model': '🚀 Letsgooo-model',
-                'crypto': '🪙 Crypto',
-                'futur': '📈 Futur',
-                'forex': '💱 Forex',
-                'livestream': '📺 Livestream',
-                'general-chat': '💬 General-chat',
-                'profit-loss': '💰 Profit-loss',
-                'calendar': '📅 Calendrier',
-                'trading-journal': '📊 Trading Journal',
-                'user-management': '👥 Gestion des Utilisateurs'
-            };
-            
-            document.querySelector('.content-title').textContent = titles[contentId] || 'Admin Panel';
-        }
-        
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('show');
-        }
-        
-        function logout() {
-            localStorage.removeItem('adminAuthenticated');
-            window.location.href = '/admin-simple.html';
-        }
-        
-        function previousMonth() {
-            // Navigation du calendrier
-            console.log('Mois précédent');
-        }
-        
-        function nextMonth() {
-            // Navigation du calendrier
-            console.log('Mois suivant');
-        }
-        
         // Check authentication on load
         window.addEventListener('load', function() {
             const isAuthenticated = localStorage.getItem('adminAuthenticated') === 'true';
@@ -802,6 +700,571 @@
                 window.location.href = '/admin-simple.html';
             }
         });
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        function showContent(contentType) {
+            // Update active state in sidebar
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update header title
+            const contentTitle = document.querySelector('.content-title');
+            const contentBody = document.querySelector('.content-body');
+            
+            // Clear previous content
+            contentBody.innerHTML = '';
+            
+            switch(contentType) {
+                case 'crypto':
+                    contentTitle.innerHTML = '🪙 Crypto';
+                    showCryptoContent();
+                    break;
+                case 'futur':
+                    contentTitle.innerHTML = '📈 Futur';
+                    showFuturContent();
+                    break;
+                case 'forex':
+                    contentTitle.innerHTML = '💱 Forex';
+                    showForexContent();
+                    break;
+                case 'fondamentaux':
+                    contentTitle.innerHTML = '📚 Fondamentaux';
+                    showFondamentauxContent();
+                    break;
+                case 'letsgooo-model':
+                    contentTitle.innerHTML = '🚀 Letsgooo-model';
+                    showLetsgoooModelContent();
+                    break;
+                case 'livestream':
+                    contentTitle.innerHTML = '📺 Livestream';
+                    showLivestreamContent();
+                    break;
+                case 'general-chat':
+                    contentTitle.innerHTML = '💬 General-chat';
+                    showGeneralChatContent();
+                    break;
+                case 'profit-loss':
+                    contentTitle.innerHTML = '💰 Profit-loss';
+                    showProfitLossContent();
+                    break;
+                case 'calendrier':
+                    contentTitle.innerHTML = '📅 Calendrier';
+                    showCalendarContent();
+                    break;
+                case 'trading-journal':
+                    contentTitle.innerHTML = '📊 Trading Journal';
+                    showTradingJournalContent();
+                    break;
+                case 'user-management':
+                    contentTitle.innerHTML = '👥 Gestion Utilisateurs';
+                    showUserManagementContent();
+                    break;
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('adminAuthenticated');
+            window.location.href = '/admin-simple.html';
+        }
+
+        // Initialize with crypto content
+        window.addEventListener('load', function() {
+            showContent('crypto');
+        });
+
+        // Content functions for each channel
+        function showCryptoContent() {
+            const contentBody = document.querySelector('.content-body');
+            contentBody.innerHTML = `
+                <div class="space-y-4">
+                    <div class="text-center py-8">
+                        <div class="text-gray-400 text-sm">Aucun signal pour le moment</div>
+                        <div class="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showFuturContent() {
+            const contentBody = document.querySelector('.content-body');
+            contentBody.innerHTML = `
+                <div class="space-y-4">
+                    <div class="text-center py-8">
+                        <div class="text-gray-400 text-sm">Aucun signal pour le moment</div>
+                        <div class="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showForexContent() {
+            const contentBody = document.querySelector('.content-body');
+            contentBody.innerHTML = `
+                <div class="space-y-4">
+                    <div class="text-center py-8">
+                        <div class="text-gray-400 text-sm">Aucun signal pour le moment</div>
+                        <div class="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showFondamentauxContent() {
+            const contentBody = document.querySelector('.content-body');
+            contentBody.innerHTML = `
+                <div class="p-4 md:p-6 space-y-4 w-full h-full overflow-y-auto" style="padding-top: 80px; padding-bottom: 100px;">
+                    <div class="space-y-4">
+                        <div class="text-center py-8">
+                            <div class="text-gray-400 text-sm">Contenu éducatif à venir</div>
+                            <div class="text-gray-500 text-xs mt-1">Fondamentaux du trading</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showLetsgoooModelContent() {
+            const contentBody = document.querySelector('.content-body');
+            contentBody.innerHTML = `
+                <div class="p-4 md:p-6 space-y-4 w-full h-full overflow-y-auto" style="padding-top: 80px; padding-bottom: 100px;">
+                    <div class="space-y-4">
+                        <div class="text-center py-8">
+                            <div class="text-gray-400 text-sm">Contenu éducatif à venir</div>
+                            <div class="text-gray-500 text-xs mt-1">Letsgooo model</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showLivestreamContent() {
+            const contentBody = document.querySelector('.content-body');
+            contentBody.innerHTML = `
+                <div class="flex flex-col h-full">
+                    <div class="flex-1 flex flex-col lg:flex-row gap-4 p-4">
+                        <div class="flex-1 bg-gray-900 rounded-lg overflow-hidden">
+                            <div class="h-full flex flex-col items-center justify-center p-8">
+                                <div class="text-center space-y-4">
+                                    <div class="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto">
+                                        <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M8 5v14l11-7z"/>
+                                        </svg>
+                                    </div>
+                                    <h2 class="text-xl font-bold text-white">Aucun stream en cours</h2>
+                                    <p class="text-gray-400">Commencez votre session de trading en direct</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showGeneralChatContent() {
+            const contentBody = document.querySelector('.content-body');
+            contentBody.innerHTML = `
+                <div class="p-4 md:p-6 space-y-4 w-full h-full overflow-y-auto" style="padding-top: 80px; padding-bottom: 100px;">
+                    <div class="space-y-4">
+                        <div class="text-center py-8">
+                            <div class="text-gray-400 text-sm">Chat général</div>
+                            <div class="text-gray-500 text-xs mt-1">Zone de discussion</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showProfitLossContent() {
+            const contentBody = document.querySelector('.content-body');
+            contentBody.innerHTML = `
+                <div class="p-4 md:p-6 space-y-4 w-full h-full overflow-y-auto" style="padding-top: 80px; padding-bottom: 100px;">
+                    <div class="space-y-4">
+                        <div class="text-center py-8">
+                            <div class="text-gray-400 text-sm">Suivi des profits et pertes</div>
+                            <div class="text-gray-500 text-xs mt-1">Analyse des performances</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showCalendarContent() {
+            const contentBody = document.querySelector('.content-body');
+            const currentDate = new Date();
+            const monthNames = [
+                'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+                'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'
+            ];
+            
+            contentBody.innerHTML = `
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <div>
+                            <h1 class="calendar-title">Calendrier des Signaux</h1>
+                            <p class="calendar-subtitle">Suivi des performances des signaux</p>
+                        </div>
+                        <div class="calendar-nav">
+                            <button onclick="previousMonth()">‹</button>
+                            <span class="calendar-month">${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}</span>
+                            <button onclick="nextMonth()">›</button>
+                        </div>
+                    </div>
+                    
+                    <div class="calendar-layout">
+                        <div class="calendar-main">
+                            <div class="calendar-grid">
+                                <div class="calendar-weekdays">
+                                    <div class="calendar-weekday">L</div>
+                                    <div class="calendar-weekday">M</div>
+                                    <div class="calendar-weekday">M</div>
+                                    <div class="calendar-weekday">J</div>
+                                    <div class="calendar-weekday">V</div>
+                                    <div class="calendar-weekday">S</div>
+                                    <div class="calendar-weekday">D</div>
+                                </div>
+                                ${generateCalendarDays(currentDate)}
+                            </div>
+                            
+                            <div class="calendar-legend">
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: rgba(34, 197, 94, 0.6); border-color: rgba(34, 197, 94, 0.5);"></div>
+                                    <span class="legend-text">WIN</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: rgba(239, 68, 68, 0.6); border-color: rgba(239, 68, 68, 0.5);"></div>
+                                    <span class="legend-text">LOSS</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: rgba(59, 130, 246, 0.6); border-color: rgba(59, 130, 246, 0.5);"></div>
+                                    <span class="legend-text">BREAK</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #374151; border-color: #4b5563;"></div>
+                                    <span class="legend-text">NO TRADE</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="border: 2px solid #3b82f6; background: transparent;"></div>
+                                    <span class="legend-text">Today</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stats-container">
+                            <h3 class="stats-title">Statistiques Signaux</h3>
+                            <div class="stats-metrics">
+                                <div class="stat-card pnl-positive">
+                                    <div class="stat-label pnl-positive">P&L Total</div>
+                                    <div class="stat-value pnl-positive">+$1,250</div>
+                                </div>
+                                <div class="stat-card blue">
+                                    <div class="stat-label blue">Win Rate</div>
+                                    <div class="stat-value blue">78%</div>
+                                </div>
+                                <div class="stats-grid">
+                                    <div class="stat-card gray">
+                                        <div class="stat-label gray">Aujourd'hui</div>
+                                        <div class="stat-value gray">2</div>
+                                    </div>
+                                    <div class="stat-card gray">
+                                        <div class="stat-label gray">Ce mois</div>
+                                        <div class="stat-value gray">15</div>
+                                    </div>
+                                </div>
+                                <div class="stats-grid">
+                                    <div class="stat-card gray">
+                                        <div class="stat-label gray">Avg Win</div>
+                                        <div class="stat-value gray">+$150</div>
+                                    </div>
+                                    <div class="stat-card gray">
+                                        <div class="stat-label gray">Avg Loss</div>
+                                        <div class="stat-value gray">-$80</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="weekly-breakdown">
+                                <h4>Weekly Breakdown</h4>
+                                <div class="space-y-2">
+                                    <div class="week-item current">
+                                        <div class="week-info">
+                                            <div class="week-name current">Week 1</div>
+                                            <div class="week-trades">3 trades</div>
+                                        </div>
+                                        <div class="week-stats">
+                                            <div class="win-badge">2W</div>
+                                            <div class="week-pnl positive">+$300</div>
+                                        </div>
+                                    </div>
+                                    <div class="week-item other">
+                                        <div class="week-info">
+                                            <div class="week-name other">Week 2</div>
+                                            <div class="week-trades">4 trades</div>
+                                        </div>
+                                        <div class="week-stats">
+                                            <div class="win-badge">3W</div>
+                                            <div class="loss-badge">1L</div>
+                                            <div class="week-pnl positive">+$450</div>
+                                        </div>
+                                    </div>
+                                    <div class="week-item other">
+                                        <div class="week-info">
+                                            <div class="week-name other">Week 3</div>
+                                            <div class="week-trades">2 trades</div>
+                                        </div>
+                                        <div class="week-stats">
+                                            <div class="win-badge">1W</div>
+                                            <div class="loss-badge">1L</div>
+                                            <div class="week-pnl neutral">$0</div>
+                                        </div>
+                                    </div>
+                                    <div class="week-item other">
+                                        <div class="week-info">
+                                            <div class="week-name other">Week 4</div>
+                                            <div class="week-trades">0 trades</div>
+                                        </div>
+                                        <div class="week-stats">
+                                            <div class="week-pnl neutral">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showTradingJournalContent() {
+            const contentBody = document.querySelector('.content-body');
+            const currentDate = new Date();
+            const monthNames = [
+                'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+                'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'
+            ];
+            
+            contentBody.innerHTML = `
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <div>
+                            <h1 class="calendar-title">Mon Trading Journal</h1>
+                            <p class="calendar-subtitle">Journal tous tes trades</p>
+                        </div>
+                        <div class="calendar-nav">
+                            <button onclick="previousMonth()">‹</button>
+                            <span class="calendar-month">${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}</span>
+                            <button onclick="nextMonth()">›</button>
+                        </div>
+                    </div>
+                    
+                    <div class="calendar-layout">
+                        <div class="calendar-main">
+                            <div class="calendar-grid">
+                                <div class="calendar-weekdays">
+                                    <div class="calendar-weekday">L</div>
+                                    <div class="calendar-weekday">M</div>
+                                    <div class="calendar-weekday">M</div>
+                                    <div class="calendar-weekday">J</div>
+                                    <div class="calendar-weekday">V</div>
+                                    <div class="calendar-weekday">S</div>
+                                    <div class="calendar-weekday">D</div>
+                                </div>
+                                ${generateCalendarDays(currentDate)}
+                            </div>
+                            
+                            <div class="calendar-legend">
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: rgba(34, 197, 94, 0.6); border-color: rgba(34, 197, 94, 0.5);"></div>
+                                    <span class="legend-text">WIN</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: rgba(239, 68, 68, 0.6); border-color: rgba(239, 68, 68, 0.5);"></div>
+                                    <span class="legend-text">LOSS</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: rgba(59, 130, 246, 0.6); border-color: rgba(59, 130, 246, 0.5);"></div>
+                                    <span class="legend-text">BREAK</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #374151; border-color: #4b5563;"></div>
+                                    <span class="legend-text">NO TRADE</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="border: 2px solid #3b82f6; background: transparent;"></div>
+                                    <span class="legend-text">Today</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stats-container">
+                            <h3 class="stats-title">Mon Trading Journal</h3>
+                            <div class="stats-metrics">
+                                <div class="stat-card pnl-positive">
+                                    <div class="stat-label pnl-positive">P&L Total</div>
+                                    <div class="stat-value pnl-positive">+$850</div>
+                                </div>
+                                <div class="stat-card blue">
+                                    <div class="stat-label blue">Win Rate</div>
+                                    <div class="stat-value blue">75%</div>
+                                </div>
+                                <div class="stats-grid">
+                                    <div class="stat-card gray">
+                                        <div class="stat-label gray">Aujourd'hui</div>
+                                        <div class="stat-value gray">1</div>
+                                    </div>
+                                    <div class="stat-card gray">
+                                        <div class="stat-label gray">Ce mois</div>
+                                        <div class="stat-value gray">8</div>
+                                    </div>
+                                </div>
+                                <div class="stats-grid">
+                                    <div class="stat-card gray">
+                                        <div class="stat-label gray">Avg Win</div>
+                                        <div class="stat-value gray">+$120</div>
+                                    </div>
+                                    <div class="stat-card gray">
+                                        <div class="stat-label gray">Avg Loss</div>
+                                        <div class="stat-value gray">-$90</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="weekly-breakdown">
+                                <h4>Weekly Breakdown</h4>
+                                <div class="space-y-2">
+                                    <div class="week-item current">
+                                        <div class="week-info">
+                                            <div class="week-name current">Week 1</div>
+                                            <div class="week-trades">2 trades</div>
+                                        </div>
+                                        <div class="week-stats">
+                                            <div class="win-badge">2W</div>
+                                            <div class="week-pnl positive">+$240</div>
+                                        </div>
+                                    </div>
+                                    <div class="week-item other">
+                                        <div class="week-info">
+                                            <div class="week-name other">Week 2</div>
+                                            <div class="week-trades">3 trades</div>
+                                        </div>
+                                        <div class="week-stats">
+                                            <div class="win-badge">2W</div>
+                                            <div class="loss-badge">1L</div>
+                                            <div class="week-pnl positive">+$180</div>
+                                        </div>
+                                    </div>
+                                    <div class="week-item other">
+                                        <div class="week-info">
+                                            <div class="week-name other">Week 3</div>
+                                            <div class="week-trades">2 trades</div>
+                                        </div>
+                                        <div class="week-stats">
+                                            <div class="win-badge">1W</div>
+                                            <div class="loss-badge">1L</div>
+                                            <div class="week-pnl neutral">$0</div>
+                                        </div>
+                                    </div>
+                                    <div class="week-item other">
+                                        <div class="week-info">
+                                            <div class="week-name other">Week 4</div>
+                                            <div class="week-trades">1 trade</div>
+                                        </div>
+                                        <div class="week-stats">
+                                            <div class="win-badge">1W</div>
+                                            <div class="week-pnl positive">+$430</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showUserManagementContent() {
+            const contentBody = document.querySelector('.content-body');
+            contentBody.innerHTML = `
+                <div class="space-y-4">
+                    <div class="text-center py-8">
+                        <div class="text-gray-400 text-sm">Gestion des utilisateurs</div>
+                        <div class="text-gray-500 text-xs mt-1">Interface d'administration des utilisateurs</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Calendar helper functions
+        function generateCalendarDays(date) {
+            const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+            const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+            const daysInMonth = lastDayOfMonth.getDate();
+            const firstDayWeekday = firstDayOfMonth.getDay();
+            
+            // Adjust for Monday start (0 = Monday, 6 = Sunday)
+            const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
+            
+            const totalCells = Math.ceil((adjustedFirstDay + daysInMonth) / 7) * 7;
+            let html = '';
+            
+            for (let i = 0; i < totalCells; i++) {
+                const dayNumber = i - adjustedFirstDay + 1;
+                const today = new Date();
+                const isToday = dayNumber === today.getDate() && 
+                               date.getMonth() === today.getMonth() && 
+                               date.getFullYear() === today.getFullYear();
+                
+                if (dayNumber < 1 || dayNumber > daysInMonth) {
+                    // Empty cells
+                    html += '<div class="calendar-day no-trade"></div>';
+                } else {
+                    // Days with content
+                    let dayClass = 'calendar-day no-trade';
+                    let dayContent = '';
+                    
+                    // Add some sample data for demonstration
+                    if (dayNumber === 1) {
+                        dayClass = 'calendar-day win';
+                        dayContent = '1 signal';
+                    } else if (dayNumber === 2) {
+                        dayClass = 'calendar-day loss';
+                        dayContent = '1 signal';
+                    } else if (dayNumber === 3) {
+                        dayClass = 'calendar-day break-even';
+                        dayContent = '1 signal';
+                    } else if (dayNumber === 4) {
+                        dayClass = 'calendar-day win';
+                        dayContent = '2 signals';
+                    }
+                    
+                    if (isToday) dayClass += ' today';
+                    
+                    html += `
+                        <div class="${dayClass}">
+                            <div class="calendar-day-number">${dayNumber}</div>
+                            <div class="calendar-day-content">${dayContent}</div>
+                        </div>
+                    `;
+                }
+            }
+            
+            return html;
+        }
+
+        function previousMonth() {
+            // Implementation for previous month navigation
+            console.log('Previous month');
+        }
+
+        function nextMonth() {
+            // Implementation for next month navigation
+            console.log('Next month');
+        }
     </script>
 </body>
 </html> 
