@@ -5,7 +5,9 @@ export default function AdminInterface() {
   // Configuration Supabase
   const supabaseUrl = 'https://bamwcozzfshuozsfmjah.supabase.co';
   const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhbXdjb3p6ZnNodW96c2ZtamFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDM0ODcsImV4cCI6MjA2NTY3OTQ4N30.NWSUKoYLl0oGS-dXf4jhtmLRiSuBSk-0lV3NRHJLvrs';
+  const supabaseServiceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhbXdjb3p6ZnNodW96c2ZtamFoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MDEwMzQ4NywiZXhwIjoyMDY1Njc5NDg3fQ.oh90uSpCLIpg9nJ5RkTejg0s2WSf4aZqz5D798WpZ4Q';
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
+  const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
   const [selectedChannel, setSelectedChannel] = useState({ id: 'crypto', name: 'crypto' });
   const [view, setView] = useState<'signals' | 'calendar'>('signals');
@@ -933,7 +935,7 @@ export default function AdminInterface() {
   // Fonctions pour la gestion des utilisateurs
   const loadUsers = async () => {
     try {
-      const { data, error } = await supabase.auth.admin.listUsers();
+      const { data, error } = await supabaseAdmin.auth.admin.listUsers();
       if (error) {
         console.error('Erreur chargement utilisateurs:', error);
         return;
@@ -956,7 +958,7 @@ export default function AdminInterface() {
 
   const createUser = async () => {
     try {
-      const { data, error } = await supabase.auth.admin.createUser({
+      const { data, error } = await supabaseAdmin.auth.admin.createUser({
         email: newUserData.email,
         password: newUserData.password,
         email_confirm: true
@@ -979,7 +981,7 @@ export default function AdminInterface() {
 
   const deleteUser = async (userId: string) => {
     try {
-      const { error } = await supabase.auth.admin.deleteUser(userId);
+      const { error } = await supabaseAdmin.auth.admin.deleteUser(userId);
       
       if (error) {
         alert(`Erreur suppression: ${error.message}`);
