@@ -2,7 +2,7 @@
   "name": "TheTheTrader Admin",
   "short_name": "Admin TT",
   "description": "Interface d'administration TheTheTrader",
-  "start_url": "/admin",
+  "start_url": "/admin?v=2",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
