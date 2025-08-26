@@ -1021,6 +1021,13 @@ const App = () => {
           </div>
           <div className="flex items-center space-x-3">
             <button 
+              onClick={() => setCurrentPage('admin')}
+              className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold text-sm transition-all duration-200"
+              title="Accès Admin"
+            >
+              🔐 Admin
+            </button>
+            <button 
               onClick={permission === 'granted' ? sendTestNotification : requestPermission}
               className={`px-3 py-2 rounded-lg font-semibold text-sm transition-all duration-200 ${
                 permission === 'granted' 
