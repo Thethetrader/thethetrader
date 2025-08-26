@@ -141,8 +141,8 @@
                 error.style.display = 'none';
                 // Marquer comme connecté et rediriger
                 localStorage.setItem('adminAuthenticated', 'true');
-                // Rediriger vers l'interface admin React
-                window.location.href = '/admin';
+                // Rediriger vers l'interface admin HTML complète
+                window.location.href = '/admin-full.html';
             } else {
                 error.style.display = 'block';
                 error.textContent = '❌ Identifiants incorrects';
