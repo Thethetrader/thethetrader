@@ -669,11 +669,35 @@
         
         @media (max-width: 768px) {
             .mobile-content-container {
-                display: block;
+                display: block !important;
             }
             
             .content-body {
                 display: none !important;
+            }
+            
+            /* Ensure mobile content is visible in portrait mode */
+            .mobile-channels-list,
+            .mobile-content-area {
+                position: absolute;
+                inset: 0;
+                background-color: #1f2937;
+                z-index: 10;
+                overflow-y: auto;
+                padding: 16px;
+                padding-top: 80px;
+            }
+            
+            .mobile-channels-list {
+                transform: translateX(0);
+            }
+            
+            .mobile-content-area {
+                transform: translateX(100%);
+            }
+            
+            .mobile-content-area.show {
+                transform: translateX(0);
             }
         }
         
@@ -1146,16 +1170,41 @@
         // Initialize with channels list instead of going directly to a salon
         window.addEventListener('load', function() {
             // Check if mobile or desktop
-            const isMobile = window.innerWidth <= 768;
+            checkDeviceAndInitialize();
+        });
+        
+        // Handle orientation change
+        window.addEventListener('orientationchange', function() {
+            // Wait a bit for orientation to settle
+            setTimeout(function() {
+                checkDeviceAndInitialize();
+            }, 100);
+        });
+        
+        // Handle resize for responsive behavior
+        window.addEventListener('resize', function() {
+            checkDeviceAndInitialize();
+        });
+        
+        function checkDeviceAndInitialize() {
+            const isMobile = window.innerWidth <= 768 || window.orientation !== undefined;
+            
+            console.log('Device check:', {
+                width: window.innerWidth,
+                orientation: window.orientation,
+                isMobile: isMobile
+            });
             
             if (isMobile) {
+                console.log('Initializing mobile view');
                 // Show channels list first, not salon content
                 showMobileChannels();
             } else {
+                console.log('Initializing desktop view');
                 // Show channels list first, not salon content
                 showChannelsList();
             }
-        });
+        }
         
         // Function to show channels list on desktop
         function showChannelsList() {
