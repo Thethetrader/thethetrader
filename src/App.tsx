@@ -730,7 +730,7 @@ const App = () => {
         // Rediriger vers l'admin
         localStorage.setItem('adminAuthenticated', 'true');
         setCurrentPage('admin');
-        setShowAuthModal(false);
+      setShowAuthModal(false);
         return;
       }
       

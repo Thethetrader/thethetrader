@@ -1748,7 +1748,8 @@ export default function AdminInterface() {
         </div>
       </div>
     </div>
-  );
+    );
+  };
 
   return (
     <div className="h-screen w-full bg-gray-900 text-white overflow-hidden flex" style={{ paddingTop: '0px' }}>
