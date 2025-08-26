@@ -199,36 +199,12 @@
         /* Mobile Toggle */
         .mobile-toggle {
             display: none;
-            position: fixed;
-            top: 16px;
-            left: 16px;
-            z-index: 1000;
-            background-color: #374151;
-            border: none;
-            color: white;
-            padding: 8px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 18px;
         }
         
         /* Responsive */
         @media (max-width: 768px) {
-            .mobile-toggle {
-                display: block;
-            }
-            
             .sidebar {
-                position: fixed;
-                left: -100%;
-                top: 0;
-                height: 100vh;
-                z-index: 999;
-                transition: left 0.3s ease;
-            }
-            
-            .sidebar.open {
-                left: 0;
+                display: none;
             }
             
             .main-content {
@@ -782,10 +758,6 @@
         .mobile-stats-value.pnl { color: #10b981; }
 
         @media (max-width: 768px) {
-            .mobile-toggle {
-                display: block;
-            }
-            
             .sidebar {
                 display: none;
             }
@@ -868,12 +840,12 @@
             <!-- Mobile Navigation -->
             <div class="mobile-nav md:hidden" id="mobileNav">
                 <div class="mobile-nav-header">
-                    <div class="mobile-nav-profile">
-                        <div class="mobile-nav-avatar">TT</div>
-                        <div>
-                            <p class="text-sm font-medium">TheTheTrader</p>
-                        </div>
-                    </div>
+                    <button class="mobile-nav-back" onclick="showMobileChannels()">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        <span class="text-sm font-medium" id="mobileHeaderTitle">📚 Fondamentaux</span>
+                    </button>
                     <button onclick="logout()" class="text-gray-400 hover:text-white">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -890,7 +862,7 @@
             <!-- Mobile Content Container -->
             <div class="mobile-content-container md:hidden">
                 <!-- Mobile Channels List -->
-                <div class="mobile-channels-list" id="mobileChannelsList">
+                <div class="mobile-channels-list show" id="mobileChannelsList">
                     <div class="space-y-6">
                         <div>
                             <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">ÉDUCATION</h3>
@@ -973,7 +945,7 @@
                                 <button class="mobile-channel-button" onclick="showMobileContent('profit-loss')">
                                     <div class="mobile-channel-content">
                                         <span class="mobile-channel-emoji">💰</span>
-                                        <div class="mobile-channel-content">
+                                        <div class="mobile-channel-info">
                                             <h4>Profit-loss</h4>
                                             <p>Hub de trading</p>
                                         </div>
@@ -1035,14 +1007,6 @@
 
                 <!-- Mobile Content Area -->
                 <div class="mobile-content-area" id="mobileContentArea">
-                    <div class="mobile-nav-header">
-                        <button class="mobile-nav-back" onclick="showMobileChannels()">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                            </svg>
-                            <span class="text-sm font-medium" id="mobileContentTitle">🪙 Crypto</span>
-                        </button>
-                    </div>
                     <div class="p-4" id="mobileContentBody">
                         <!-- Content will be populated by JavaScript -->
                     </div>
@@ -1065,8 +1029,7 @@
         });
 
         function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('open');
+            // Function removed - no longer needed
         }
 
         function showContent(contentType) {
@@ -1794,8 +1757,8 @@
             document.getElementById('mobileChannelsList').classList.remove('show');
             document.getElementById('mobileContentArea').classList.add('show');
             
-            // Update mobile content title
-            const mobileContentTitle = document.getElementById('mobileContentTitle');
+            // Update mobile header title
+            const mobileHeaderTitle = document.getElementById('mobileHeaderTitle');
             const mobileContentBody = document.getElementById('mobileContentBody');
             
             // Clear previous content
@@ -1803,7 +1766,7 @@
             
             switch(contentType) {
                 case 'crypto':
-                    mobileContentTitle.innerHTML = '🪙 Crypto';
+                    mobileHeaderTitle.innerHTML = '🪙 Crypto';
                     mobileContentBody.innerHTML = `
                         <div class="space-y-4">
                             <div class="text-center py-8">
@@ -1814,7 +1777,7 @@
                     `;
                     break;
                 case 'futur':
-                    mobileContentTitle.innerHTML = '📈 Futur';
+                    mobileHeaderTitle.innerHTML = '📈 Futur';
                     mobileContentBody.innerHTML = `
                         <div class="space-y-4">
                             <div class="text-center py-8">
@@ -1825,7 +1788,7 @@
                     `;
                     break;
                 case 'forex':
-                    mobileContentTitle.innerHTML = '💱 Forex';
+                    mobileHeaderTitle.innerHTML = '💱 Forex';
                     mobileContentBody.innerHTML = `
                         <div class="space-y-4">
                             <div class="text-center py-8">
@@ -1836,7 +1799,7 @@
                     `;
                     break;
                 case 'fondamentaux':
-                    mobileContentTitle.innerHTML = '📚 Fondamentaux';
+                    mobileHeaderTitle.innerHTML = '📚 Fondamentaux';
                     mobileContentBody.innerHTML = `
                         <div class="bg-gray-800 rounded-lg p-6 mb-6">
                             <div class="text-center mb-8 p-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white">
@@ -1878,7 +1841,7 @@
                     `;
                     break;
                 case 'letsgooo-model':
-                    mobileContentTitle.innerHTML = '🚀 Letsgooo-model';
+                    mobileHeaderTitle.innerHTML = '🚀 Letsgooo-model';
                     mobileContentBody.innerHTML = `
                         <div class="space-y-4">
                             <div class="text-center py-8">
@@ -1889,7 +1852,7 @@
                     `;
                     break;
                 case 'livestream':
-                    mobileContentTitle.innerHTML = '📺 Livestream';
+                    mobileHeaderTitle.innerHTML = '📺 Livestream';
                     mobileContentBody.innerHTML = `
                         <div class="flex flex-col h-full">
                             <div class="flex-1 flex flex-col gap-4 p-4">
@@ -1911,7 +1874,7 @@
                     `;
                     break;
                 case 'general-chat':
-                    mobileContentTitle.innerHTML = '💬 General-chat';
+                    mobileHeaderTitle.innerHTML = '💬 General-chat';
                     mobileContentBody.innerHTML = `
                         <div class="space-y-4">
                             <div class="text-center py-8">
@@ -1922,7 +1885,7 @@
                     `;
                     break;
                 case 'profit-loss':
-                    mobileContentTitle.innerHTML = '💰 Profit-loss';
+                    mobileHeaderTitle.innerHTML = '💰 Profit-loss';
                     mobileContentBody.innerHTML = `
                         <div class="space-y-4">
                             <div class="text-center py-8">
@@ -1933,15 +1896,15 @@
                     `;
                     break;
                 case 'calendrier':
-                    mobileContentTitle.innerHTML = '📅 Calendrier';
+                    mobileHeaderTitle.innerHTML = '📅 Calendrier';
                     showMobileCalendar(mobileContentBody);
                     break;
                 case 'trading-journal':
-                    mobileContentTitle.innerHTML = '📊 Trading Journal';
+                    mobileHeaderTitle.innerHTML = '📊 Trading Journal';
                     showMobileTradingJournal(mobileContentBody);
                     break;
                 case 'user-management':
-                    mobileContentTitle.innerHTML = '👥 Gestion Utilisateurs';
+                    mobileHeaderTitle.innerHTML = '👥 Gestion Utilisateurs';
                     mobileContentBody.innerHTML = `
                         <div class="space-y-4">
                             <div class="text-center py-8">
