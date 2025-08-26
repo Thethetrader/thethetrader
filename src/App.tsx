@@ -3,11 +3,17 @@ import './index.css';
 import TradingPlatformShell from './components/generated/TradingPlatformShell';
 import AdminLogin from './components/AdminLogin';
 import AdminInterface from './components/AdminInterface';
+import { createClient } from '@supabase/supabase-js';
 
 import { useNotifications } from './hooks/use-notifications';
 import { usePWA } from './hooks/use-pwa';
 
 // FORCE DEPLOYMENT: 2025-01-13 04:25:00 - FIX OLD CONTENT
+
+// Configuration Supabase
+const supabaseUrl = 'https://bamwcozzfshuozsfmjah.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhbXdjb3p6ZnNodW96c2ZtamFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDM0ODcsImV4cCI6MjA2NTY3OTQ4N30.NWSUKoYLl0oGS-dXf4jhtmLRJSuBSk-0lV3NRJLHvrs';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Types
 interface User {
@@ -38,6 +44,34 @@ const App = () => {
     if (window.location.pathname === '/admin') {
       setCurrentPage('admin');
     }
+  }, []);
+
+  // Vérifier session Supabase au chargement
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser({ 
+          id: session.user.id, 
+          email: session.user.email || '' 
+        });
+      }
+    });
+
+    // Écouter les changements d'auth
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser({ 
+          id: session.user.id, 
+          email: session.user.email || '' 
+        });
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   // Changer manifeste selon la page
@@ -689,7 +723,7 @@ const App = () => {
 
 
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (email && password) {
       // Vérifier si ce sont les identifiants admin
       if (email === 'admin' && password === 'admin123') {
@@ -700,12 +734,34 @@ const App = () => {
         return;
       }
       
-      // Identifiants incorrects
-      alert('Identifiants incorrects');
+      // Authentification Supabase pour utilisateurs normaux
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: email,
+          password: password,
+        });
+
+        if (error) {
+          alert(`Erreur de connexion: ${error.message}`);
+          return;
+        }
+
+        if (data.user) {
+          // Connexion réussie
+          setUser({ id: data.user.id, email: data.user.email || email });
+          setShowAuthModal(false);
+        }
+      } catch (error) {
+        alert('Erreur de connexion');
+        console.error('Erreur login:', error);
+      }
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    // Déconnexion Supabase
+    await supabase.auth.signOut();
+    
     setUser(null);
     setEmail('');
     setPassword('');
