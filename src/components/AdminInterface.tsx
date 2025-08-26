@@ -1700,7 +1700,7 @@ export default function AdminInterface() {
               </div>
             </label>
             <div className="flex-1">
-              <p className="text-sm font-medium">TheTheTrader</p>
+              <p className="text-sm font-medium">Admin</p>
               <p className="text-xs text-gray-400">En ligne</p>
             </div>
           </div>
