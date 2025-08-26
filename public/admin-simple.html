@@ -139,11 +139,10 @@
                         // Identifiants admin
             if (username === 'admin' && password === 'thethetrader2025') {
                 error.style.display = 'none';
-                // Afficher un message de succès
-                alert('✅ Connexion réussie ! Utilisez le bouton "Interface Admin Complète" pour continuer.');
-                // Vider le formulaire
-                document.getElementById('username').value = '';
-                document.getElementById('password').value = '';
+                // Marquer comme connecté et rediriger
+                localStorage.setItem('adminAuthenticated', 'true');
+                // Rediriger vers l'interface admin React
+                window.location.href = '/admin';
             } else {
                 error.style.display = 'block';
                 error.textContent = '❌ Identifiants incorrects';

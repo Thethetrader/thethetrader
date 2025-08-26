@@ -34,7 +34,9 @@ const App = () => {
 
   // Vérifier l'URL pour l'admin
   useEffect(() => {
+    console.log('URL actuelle:', window.location.pathname);
     if (window.location.pathname === '/admin' || window.location.pathname === '/admin.html') {
+      console.log('Page admin détectée, changement vers admin');
       setCurrentPage('admin');
     }
   }, []);
@@ -969,8 +971,10 @@ const App = () => {
     console.log('Vérification admin:', { currentPage, isAdminAuthenticated })
     
     if (isAdminAuthenticated) {
+      console.log('Admin authentifié, affichage SignalsAdmin')
       return <SignalsAdmin />;
     } else {
+      console.log('Admin non authentifié, affichage AdminLogin')
       return <AdminLogin onLogin={() => {
         // Force re-render après connexion admin
         setCurrentPage('temp');
