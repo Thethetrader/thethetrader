@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './index.css';
 import TradingPlatformShell from './components/generated/TradingPlatformShell';
+import AdminLogin from './components/AdminLogin';
+import AdminInterface from './components/AdminInterface';
 
 import { useNotifications } from './hooks/use-notifications';
 import { usePWA } from './hooks/use-pwa';
@@ -30,6 +32,13 @@ const App = () => {
     (window as any).setCurrentPage = setCurrentPage;
     (window as any).getCurrentPage = () => currentPage;
   }, [currentPage]);
+
+  // Détecter URL admin
+  useEffect(() => {
+    if (window.location.pathname === '/admin') {
+      setCurrentPage('admin');
+    }
+  }, []);
 
 
 
@@ -938,6 +947,20 @@ const App = () => {
   };
 
 
+
+  // Vérifier accès admin AVANT la vérification user
+  if (currentPage === 'admin') {
+    const isAdminAuthenticated = localStorage.getItem('adminAuthenticated') === 'true';
+    
+    if (isAdminAuthenticated) {
+      return <AdminInterface />;
+    } else {
+      return <AdminLogin onLogin={() => {
+        setCurrentPage('temp');
+        setTimeout(() => setCurrentPage('admin'), 100);
+      }} />;
+    }
+  }
 
   // Si utilisateur connecté, afficher ton salon complet
   if (user) {
