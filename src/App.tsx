@@ -700,9 +700,8 @@ const App = () => {
         return;
       }
       
-      // Authentification temporaire pour accéder à l'interface normale
-      setUser({ id: '1', email });
-      setShowAuthModal(false);
+      // Identifiants incorrects
+      alert('Identifiants incorrects');
     }
   };
 
