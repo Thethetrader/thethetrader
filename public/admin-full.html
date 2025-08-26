@@ -2187,8 +2187,8 @@
                             <span class="text-lg font-semibold">${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}</span>
                         </div>
                         
-                        <!-- Calendrier en grille pour mobile -->
-                        <div class="grid grid-cols-7 gap-1">
+                        <!-- Vrai calendrier en grille comme dans l'interface normale -->
+                        <div class="grid grid-cols-7 gap-1 mb-4">
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">L</div>
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">M</div>
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">M</div>
@@ -2196,8 +2196,10 @@
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">V</div>
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">S</div>
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">D</div>
-                            
-                            ${generateMobileCalendarGrid(currentDate)}
+                        </div>
+                        
+                        <div class="grid grid-cols-7 gap-1">
+                            ${generateRealCalendarGrid(currentDate)}
                         </div>
                     </div>
                     
@@ -2221,6 +2223,57 @@
                 </div>
             `;
         }
+        
+        function generateRealCalendarGrid(date) {
+            const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+            const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+            const daysInMonth = lastDayOfMonth.getDate();
+            const firstDayWeekday = firstDayOfMonth.getDay(); // 0 = dimanche, 1 = lundi, etc.
+            
+            // Ajuster pour que lundi soit 0
+            const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
+            
+            const totalCells = Math.ceil((adjustedFirstDay + daysInMonth) / 7) * 7;
+            
+            let calendarHTML = '';
+            
+            for (let i = 0; i < totalCells; i++) {
+                const dayNumber = i - adjustedFirstDay + 1;
+                const today = new Date();
+                const isToday = dayNumber === today.getDate() && 
+                               date.getMonth() === today.getMonth() && 
+                               date.getFullYear() === today.getFullYear();
+                
+                // Celles vides au début
+                if (dayNumber < 1) {
+                    calendarHTML += '<div class="border-2 rounded-lg h-16 p-1 bg-gray-800 border-gray-700"></div>';
+                    continue;
+                }
+                
+                // Celles vides à la fin
+                if (dayNumber > daysInMonth) {
+                    calendarHTML += '<div class="border-2 rounded-lg h-16 p-1 bg-gray-800 border-gray-700"></div>';
+                    continue;
+                }
+                
+                // Jours du mois
+                let dayClass = 'border-2 rounded-lg h-16 p-1 cursor-pointer transition-all hover:shadow-md bg-gray-700 border-gray-600 text-gray-400';
+                
+                if (isToday) {
+                    dayClass += ' ring-2 ring-blue-400';
+                }
+                
+                calendarHTML += `
+                    <div class="${dayClass}">
+                        <div class="flex flex-col h-full justify-between">
+                            <div class="text-xs font-semibold">${dayNumber}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            return calendarHTML;
+        }
 
         function showMobileTradingJournal(container) {
             const currentDate = new Date();
@@ -2241,8 +2294,8 @@
                             <span class="text-lg font-semibold">${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}</span>
                         </div>
                         
-                        <!-- Calendrier en grille pour mobile -->
-                        <div class="grid grid-cols-7 gap-1">
+                        <!-- Vrai calendrier en grille comme dans l'interface normale -->
+                        <div class="grid grid-cols-7 gap-1 mb-4">
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">L</div>
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">M</div>
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">M</div>
@@ -2250,8 +2303,10 @@
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">V</div>
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">S</div>
                             <div class="text-center text-gray-400 font-semibold py-2 text-xs">D</div>
-                            
-                            ${generateMobileCalendarGrid(currentDate)}
+                        </div>
+                        
+                        <div class="grid grid-cols-7 gap-1">
+                            ${generateRealCalendarGrid(currentDate)}
                         </div>
                     </div>
                     
@@ -2276,89 +2331,7 @@
             `;
         }
 
-        function generateMobileCalendarDays(date) {
-            const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-            const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-            const daysInMonth = lastDayOfMonth.getDate();
-            const firstDayWeekday = firstDayOfMonth.getDay();
-            
-            const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
-            const totalCells = Math.ceil((adjustedFirstDay + daysInMonth) / 7) * 7;
-            let html = '';
-            
-            for (let i = 0; i < totalCells; i++) {
-                const dayNumber = i - adjustedFirstDay + 1;
-                const today = new Date();
-                const isToday = dayNumber === today.getDate() && 
-                               date.getMonth() === today.getMonth() && 
-                               date.getFullYear() === today.getFullYear();
-                
-                if (dayNumber < 1 || dayNumber > daysInMonth) {
-                    html += '<div class="h-12 bg-gray-700 rounded border border-gray-600"></div>';
-                } else {
-                    let dayClass = 'h-12 bg-gray-700 border border-gray-600 rounded flex items-center justify-center text-sm font-semibold';
-                    let dayContent = dayNumber;
-                    
-                    if (dayNumber === 1) {
-                        dayClass = 'h-12 bg-green-500/60 border border-green-400/50 rounded flex items-center justify-center text-sm font-semibold text-white';
-                    } else if (dayNumber === 2) {
-                        dayClass = 'h-12 bg-red-500/60 border border-red-400/50 rounded flex items-center justify-center text-sm font-semibold text-white';
-                    } else if (dayNumber === 3) {
-                        dayClass = 'h-12 bg-blue-500/60 border border-blue-400/50 rounded flex items-center justify-center text-sm font-semibold text-white';
-                    } else if (dayNumber === 4) {
-                        dayClass = 'h-12 bg-green-500/60 border border-green-400/50 rounded flex items-center justify-center text-sm font-semibold text-white';
-                    }
-                    
-                    if (isToday) dayClass += ' ring-2 ring-blue-400';
-                    
-                    html += `<div class="${dayClass}">${dayContent}</div>`;
-                }
-            }
-            
-            return html;
-        }
 
-        function generateMobileCalendarGrid(date) {
-            const year = date.getFullYear();
-            const month = date.getMonth();
-            const firstDay = new Date(year, month, 1);
-            const lastDay = new Date(year, month + 1, 0);
-            const startDate = new Date(firstDay);
-            const endDate = new Date(lastDay);
-            
-            // Ajuster le début pour commencer par lundi
-            const dayOfWeek = firstDay.getDay();
-            const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-            startDate.setDate(startDate.getDate() - mondayOffset);
-            
-            let calendarHTML = '';
-            let currentDate = new Date(startDate);
-            
-            // Générer 6 semaines (42 jours) pour couvrir tous les mois
-            for (let week = 0; week < 6; week++) {
-                for (let day = 0; day < 7; day++) {
-                    const isCurrentMonth = currentDate.getMonth() === month;
-                    const isToday = currentDate.toDateString() === new Date().toDateString();
-                    const dayNumber = currentDate.getDate();
-                    
-                    let dayClass = 'text-center py-2 text-sm border border-gray-600 rounded';
-                    
-                    if (!isCurrentMonth) {
-                        dayClass += ' text-gray-600 bg-gray-800';
-                    } else if (isToday) {
-                        dayClass += ' text-white bg-blue-600 font-bold';
-                    } else {
-                        dayClass += ' text-white bg-gray-700 hover:bg-gray-600 cursor-pointer';
-                    }
-                    
-                    calendarHTML += `<div class="${dayClass}">${dayNumber}</div>`;
-                    
-                    currentDate.setDate(currentDate.getDate() + 1);
-                }
-            }
-            
-            return calendarHTML;
-        }
     </script>
 </body>
 </html> 
