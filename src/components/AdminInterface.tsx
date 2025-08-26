@@ -1935,6 +1935,30 @@ export default function AdminInterface() {
                 </div>
               </div>
 
+              <div>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">ADMIN</h3>
+                <div className="space-y-2">
+                  {channels.filter(c => ['user-management'].includes(c.id)).map(channel => (
+                    <button
+                      key={channel.id}
+                      onClick={() => {
+                        handleChannelChange(channel.id, channel.name);
+                        setMobileView('content');
+                      }}
+                      className="w-full text-left px-4 py-3 rounded-lg bg-red-700 hover:bg-red-600 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">{channel.emoji}</span>
+                        <div>
+                          <p className="font-medium text-white">{channel.fullName}</p>
+                          <p className="text-sm text-gray-400">Gestion des utilisateurs</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div className="bg-gray-700 rounded-lg p-4">
                 <h4 className="text-sm font-medium mb-3">Statistiques</h4>
                 <div className="space-y-2">
