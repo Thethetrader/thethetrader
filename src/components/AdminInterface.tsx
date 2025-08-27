@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { supabase, addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, subscribeToSignals } from '../utils/supabase-setup';
 import { initializeDatabase } from '../utils/init-database';
+import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 
 export default function AdminInterface() {
   // Configuration Supabase
@@ -133,13 +134,26 @@ export default function AdminInterface() {
     }
   }, []);
   const [chatMessage, setChatMessage] = useState('');
-  const [profileImage, setProfileImage] = useState<string | null>(() => {
-    const savedImage = localStorage.getItem('adminProfileImage');
-    console.log('🔍 ADMIN Profile image from localStorage:', savedImage ? 'FOUND' : 'NOT FOUND');
-    console.log('📱 PWA Mode:', window.matchMedia('(display-mode: standalone)').matches);
-    console.log('🌐 User Agent:', navigator.userAgent.includes('Mobile') ? 'MOBILE' : 'DESKTOP');
-    return savedImage || null;
-  });
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+
+  // Initialiser le profil au chargement
+  useEffect(() => {
+    const initProfile = async () => {
+      console.log('🔄 Initialisation profil admin...');
+      console.log('📱 PWA Mode:', window.matchMedia('(display-mode: standalone)').matches);
+      console.log('🌐 User Agent:', navigator.userAgent.includes('Mobile') ? 'MOBILE' : 'DESKTOP');
+      
+      const image = await initializeProfile('admin');
+      if (image) {
+        setProfileImage(image);
+        console.log('✅ Photo de profil chargée');
+      } else {
+        console.log('❌ Aucune photo de profil trouvée');
+      }
+    };
+    
+    initProfile();
+  }, []);
   const [isLiveStreaming, setIsLiveStreaming] = useState(false);
   const [streamTitle, setStreamTitle] = useState('');
   const [streamDescription, setStreamDescription] = useState('');
@@ -793,12 +807,20 @@ export default function AdminInterface() {
     if (file && file.type.startsWith('image/')) {
       console.log('🖼️ ADMIN Processing image...');
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         const base64Image = e.target?.result as string;
-        console.log('💾 ADMIN Saving to localStorage and state...');
+        console.log('💾 ADMIN Syncing to localStorage AND Supabase...');
+        
+        // Mettre à jour l'état immédiatement
         setProfileImage(base64Image);
-        localStorage.setItem('adminProfileImage', base64Image);
-        console.log('✅ ADMIN Profile image saved!');
+        
+        // Synchroniser avec localStorage et Supabase
+        const result = await syncProfileImage('admin', base64Image);
+        if (result.success) {
+          console.log('✅ ADMIN Profile image synchronized across all devices!');
+        } else {
+          console.error('❌ ADMIN Sync failed:', result.error);
+        }
       };
       reader.readAsDataURL(file);
     }

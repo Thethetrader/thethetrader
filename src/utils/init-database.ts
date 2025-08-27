@@ -58,6 +58,24 @@ CREATE POLICY "Everyone can read signals" ON signals FOR SELECT USING (true);
 -- Politiques : utilisateurs authentifiés peuvent écrire
 CREATE POLICY "Authenticated users can insert messages" ON messages FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 CREATE POLICY "Authenticated users can insert signals" ON signals FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+-- Table pour les profils utilisateur (photos de profil synchronisées)
+CREATE TABLE user_profiles (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id TEXT UNIQUE NOT NULL,
+  user_type TEXT NOT NULL CHECK (user_type IN ('user', 'admin')),
+  profile_image TEXT,
+  display_name TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Index et politiques pour user_profiles
+CREATE INDEX idx_user_profiles_user_id ON user_profiles(user_id);
+ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Everyone can read profiles" ON user_profiles FOR SELECT USING (true);
+CREATE POLICY "Users can update their own profile" ON user_profiles FOR UPDATE USING (true);
+CREATE POLICY "Users can insert their profile" ON user_profiles FOR INSERT WITH CHECK (true);
       `);
     } else {
       console.log('✅ Table messages trouvée');
