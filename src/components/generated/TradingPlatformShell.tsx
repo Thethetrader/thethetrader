@@ -132,7 +132,9 @@ export default function TradingPlatformShell() {
     loadSignals(selectedChannel.id);
   }, [selectedChannel.id]);
   const [chatMessage, setChatMessage] = useState('');
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [profileImage, setProfileImage] = useState<string | null>(() => {
+    return localStorage.getItem('userProfileImage') || null;
+  });
   const [isLiveStreaming, setIsLiveStreaming] = useState(false);
   const [streamTitle, setStreamTitle] = useState('');
   const [streamDescription, setStreamDescription] = useState('');
@@ -740,8 +742,13 @@ export default function TradingPlatformShell() {
   };
 
   const handleLogout = () => {
+    // Garder la photo de profil même après déconnexion
+    const profileImageBackup = localStorage.getItem('userProfileImage');
     // Nettoyer le localStorage
     localStorage.clear();
+    if (profileImageBackup) {
+      localStorage.setItem('userProfileImage', profileImageBackup);
+    }
     // Rediriger vers la landing page
     window.location.href = '/';
   };
@@ -751,6 +758,7 @@ export default function TradingPlatformShell() {
     if (file && file.type.startsWith('image/')) {
       const imageUrl = URL.createObjectURL(file);
       setProfileImage(imageUrl);
+      localStorage.setItem('userProfileImage', imageUrl);
     }
   };
 
