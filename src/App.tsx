@@ -39,10 +39,11 @@ const App = () => {
     (window as any).getCurrentPage = () => currentPage;
   }, [currentPage]);
 
-  // Détecter URL admin
+  // Détecter URL admin et vérifier persistance
   useEffect(() => {
     if (window.location.pathname === '/admin') {
       setCurrentPage('admin');
+      console.log('🔍 Admin auth check:', localStorage.getItem('adminAuthenticated'));
     }
   }, []);
 
