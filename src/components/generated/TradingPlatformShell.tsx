@@ -137,13 +137,7 @@ export default function TradingPlatformShell() {
   const [streamTitle, setStreamTitle] = useState('');
   const [streamDescription, setStreamDescription] = useState('');
   const [viewerCount, setViewerCount] = useState(0);
-  const [chatMessages, setChatMessages] = useState<{[channelId: string]: Array<{
-    id: string;
-    text: string;
-    timestamp: string;
-    author: string;
-    attachment?: File;
-  }>}>({});
+
   // États pour le journal de trading personnalisé
   const [showTradeModal, setShowTradeModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(() => {
@@ -872,7 +866,7 @@ export default function TradingPlatformShell() {
         messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
       }
     }, 100);
-  }, [chatMessages, selectedChannel.id]);
+  }, [messages, selectedChannel.id]);
 
   const channels = [
     { id: 'crypto', name: 'crypto', emoji: '🪙', fullName: 'Crypto' },
@@ -1166,9 +1160,9 @@ export default function TradingPlatformShell() {
         id: Date.now().toString(),
         text: chatMessage,
         timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-        author: 'TheTheTrader'
+        user: 'TheTheTrader'
       };
-      setChatMessages(prev => ({
+      setMessages(prev => ({
         ...prev,
         [selectedChannel.id]: [...(prev[selectedChannel.id] || []), newMessage]
       }));
@@ -1190,10 +1184,10 @@ export default function TradingPlatformShell() {
                       id: Date.now().toString(),
                       text: '',
                       timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                      author: 'TheTheTrader',
-                      attachment: file
+                      user: 'TheTheTrader',
+                      file: file
                     };
-                    setChatMessages(prev => ({
+                    setMessages(prev => ({
                       ...prev,
                       [selectedChannel.id]: [...(prev[selectedChannel.id] || []), newMessage]
                     }));
@@ -2261,13 +2255,13 @@ export default function TradingPlatformShell() {
                         </div>
                         
                         <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                          {(chatMessages['livestream'] || []).length === 0 ? (
+                          {(messages['livestream'] || []).length === 0 ? (
                             <div className="text-center py-8">
                               <div className="text-gray-400 text-sm">Aucun message</div>
                               <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
                             </div>
                           ) : (
-                            (chatMessages['livestream'] || []).map((message) => (
+                            (messages['livestream'] || []).map((message) => (
                               <div key={message.id} className="flex items-start gap-2">
                                 <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs">T</div>
                                 <div className="flex-1">
@@ -2477,8 +2471,8 @@ export default function TradingPlatformShell() {
                         </div>
                       )}
                       
-                      {(chatMessages[selectedChannel.id] || []).length > 0 && (
-                        (chatMessages[selectedChannel.id] || []).map((message) => (
+                      {(messages[selectedChannel.id] || []).length > 0 && (
+                        (messages[selectedChannel.id] || []).map((message) => (
                           <div key={message.id} className="flex items-start gap-3">
                             <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
                             <div className="flex-1">
@@ -2647,13 +2641,13 @@ export default function TradingPlatformShell() {
                         </div>
                         
                         <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                          {(chatMessages['livestream'] || []).length === 0 ? (
+                          {(messages['livestream'] || []).length === 0 ? (
                             <div className="text-center py-8">
                               <div className="text-gray-400 text-sm">Aucun message</div>
                               <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
                             </div>
                           ) : (
-                            (chatMessages['livestream'] || []).map((message) => (
+                            (messages['livestream'] || []).map((message) => (
                               <div key={message.id} className="flex items-start gap-2">
                                 <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs">T</div>
                                 <div className="flex-1">
@@ -2957,13 +2951,13 @@ export default function TradingPlatformShell() {
                       </div>
                       
                       <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                        {(chatMessages['livestream'] || []).length === 0 ? (
+                        {(messages['livestream'] || []).length === 0 ? (
                           <div className="text-center py-8">
                             <div className="text-gray-400 text-sm">Aucun message</div>
                             <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
                           </div>
                         ) : (
-                          (chatMessages['livestream'] || []).map((message) => (
+                          (messages['livestream'] || []).map((message) => (
                             <div key={message.id} className="flex items-start gap-2">
                               <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs">T</div>
                               <div className="flex-1">
@@ -3006,8 +3000,8 @@ export default function TradingPlatformShell() {
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}
                   <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
-                    {(chatMessages[selectedChannel.id] || []).length > 0 && (
-                      (chatMessages[selectedChannel.id] || []).map((message) => (
+                    {(messages[selectedChannel.id] || []).length > 0 && (
+                      (messages[selectedChannel.id] || []).map((message) => (
                         <div key={message.id} className="flex items-start gap-3">
                           <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
                           <div className="flex-1">
