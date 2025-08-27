@@ -80,6 +80,7 @@ export default function AdminInterface() {
         text: msg.content,
         timestamp: new Date(msg.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         author: msg.author,
+        author_avatar: msg.author_avatar, // CONSERVER l'avatar de l'auteur !
         attachment: undefined
       }));
       
@@ -1416,7 +1417,8 @@ export default function AdminInterface() {
             id: savedMessage.id || Date.now().toString(),
             text: savedMessage.content,
             timestamp: new Date(savedMessage.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-            author: savedMessage.author
+            author: savedMessage.author,
+            author_avatar: savedMessage.author_avatar // CONSERVER l'avatar de l'auteur !
           };
           
           setChatMessages(prev => ({
@@ -1433,7 +1435,8 @@ export default function AdminInterface() {
         id: Date.now().toString(),
         text: chatMessage,
         timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-            author: 'Admin (Local)'
+            author: 'Admin (Local)',
+            author_avatar: profileImage || undefined // CONSERVER l'avatar de l'auteur !
       };
           
       setChatMessages(prev => ({
