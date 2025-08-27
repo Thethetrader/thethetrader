@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getMessages, getSignals, subscribeToMessages, subscribeToSignals } from '../../utils/supabase-setup';
+import { getMessages, getSignals, subscribeToMessages, subscribeToSignals, addMessage } from '../../utils/supabase-setup';
 import { initializeDatabase } from '../../utils/init-database';
 
 export default function TradingPlatformShell() {
@@ -1154,18 +1154,40 @@ export default function TradingPlatformShell() {
     alert('Signal créé avec succès !');
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (chatMessage.trim()) {
-      const newMessage = {
-        id: Date.now().toString(),
-        text: chatMessage,
-        timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-        user: 'TheTheTrader'
-      };
-      setMessages(prev => ({
-        ...prev,
-        [selectedChannel.id]: [...(prev[selectedChannel.id] || []), newMessage]
-      }));
+      try {
+        // Envoyer vers Supabase
+        const messageData = {
+          channel_id: selectedChannel.id,
+          content: chatMessage,
+          author: 'TheTheTrader',
+          author_type: 'user' as const
+        };
+
+        const savedMessage = await addMessage(messageData);
+
+        if (savedMessage) {
+          const newMessage = {
+            id: savedMessage.id || Date.now().toString(),
+            text: savedMessage.content,
+            timestamp: new Date(savedMessage.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+            user: savedMessage.author
+          };
+
+          setMessages(prev => ({
+            ...prev,
+            [selectedChannel.id]: [...(prev[selectedChannel.id] || []), newMessage]
+          }));
+
+          console.log('✅ Message envoyé à Supabase:', savedMessage);
+        } else {
+          console.error('❌ Erreur envoi message Supabase');
+        }
+      } catch (error) {
+        console.error('💥 ERREUR envoi message:', error);
+      }
+
       setChatMessage('');
       
       // Scroll automatique après envoi
