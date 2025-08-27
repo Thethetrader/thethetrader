@@ -11,9 +11,10 @@ export default function AdminInterface() {
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
   const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
-  const [selectedChannel, setSelectedChannel] = useState({ id: 'home', name: 'home' });
+  const [selectedChannel, setSelectedChannel] = useState({ id: 'fondamentaux', name: 'fondamentaux' });
   const [view, setView] = useState<'signals' | 'calendar'>('signals');
   const [mobileView, setMobileView] = useState<'channels' | 'content'>('channels');
+  const [showChannelsOverlay, setShowChannelsOverlay] = useState(true);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<{[channelId: string]: Array<{id: string, text: string, user: string, timestamp: string, file?: File}>}>({});
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
