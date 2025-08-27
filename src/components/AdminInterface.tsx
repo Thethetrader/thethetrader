@@ -134,7 +134,9 @@ export default function AdminInterface() {
   }, []);
   const [chatMessage, setChatMessage] = useState('');
   const [profileImage, setProfileImage] = useState<string | null>(() => {
-    return localStorage.getItem('adminProfileImage') || null;
+    const savedImage = localStorage.getItem('adminProfileImage');
+    console.log('🔍 ADMIN Profile image from localStorage:', savedImage ? 'FOUND' : 'NOT FOUND');
+    return savedImage || null;
   });
   const [isLiveStreaming, setIsLiveStreaming] = useState(false);
   const [streamTitle, setStreamTitle] = useState('');
@@ -785,12 +787,16 @@ export default function AdminInterface() {
 
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    console.log('📁 ADMIN File selected:', file ? file.name : 'NO FILE');
     if (file && file.type.startsWith('image/')) {
+      console.log('🖼️ ADMIN Processing image...');
       const reader = new FileReader();
       reader.onload = (e) => {
         const base64Image = e.target?.result as string;
+        console.log('💾 ADMIN Saving to localStorage and state...');
         setProfileImage(base64Image);
         localStorage.setItem('adminProfileImage', base64Image);
+        console.log('✅ ADMIN Profile image saved!');
       };
       reader.readAsDataURL(file);
     }
