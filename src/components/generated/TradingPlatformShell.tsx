@@ -3089,8 +3089,10 @@ export default function TradingPlatformShell() {
                       (messages[selectedChannel.id] || []).map((message) => (
                         <div key={message.id} className="flex items-start gap-3">
                           <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
-                            {message.author === 'TheTheTrader' && profileImage ? (
-                              <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+                            {message.author_avatar ? (
+                              <img src={message.author_avatar} alt="Profile" className="w-full h-full object-cover" />
+                            ) : message.author === 'Admin' ? (
+                              'A'
                             ) : (
                               'TT'
                             )}
