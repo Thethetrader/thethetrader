@@ -12,6 +12,7 @@ export interface Message {
   content: string;
   author: string;
   author_type?: 'user' | 'admin';
+  author_avatar?: string; // Photo de profil base64 de l'auteur
   timestamp?: string;
   created_at?: string;
 }

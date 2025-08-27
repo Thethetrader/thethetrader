@@ -19,6 +19,7 @@ CREATE TABLE messages (
   content TEXT NOT NULL,
   author TEXT NOT NULL,
   author_type TEXT DEFAULT 'user' CHECK (author_type IN ('user', 'admin')),
+  author_avatar TEXT, -- Photo de profil base64 de l'auteur
   timestamp TIMESTAMPTZ DEFAULT NOW(),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );

@@ -1399,12 +1399,13 @@ export default function AdminInterface() {
           content: chatMessage
         });
         
-        // Envoyer à Supabase
+        // Envoyer à Supabase avec avatar admin
         const messageData = {
           channel_id: selectedChannel.id,
           content: chatMessage,
           author: 'Admin',
-          author_type: 'admin' as const
+          author_type: 'admin' as const,
+          author_avatar: profileImage || undefined // Photo de profil admin
         };
         
         const savedMessage = await addMessage(messageData);
@@ -3065,10 +3066,12 @@ export default function AdminInterface() {
                         (chatMessages[selectedChannel.id] || []).map((message) => (
                           <div key={message.id} className="flex items-start gap-3">
                             <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
-                              {message.author === 'Admin' && profileImage ? (
-                                <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
-                              ) : (
+                              {message.author_avatar ? (
+                                <img src={message.author_avatar} alt="Profile" className="w-full h-full object-cover" />
+                              ) : message.author === 'Admin' ? (
                                 'A'
+                              ) : (
+                                'TT'
                               )}
                             </div>
                             <div className="flex-1">
