@@ -70,10 +70,38 @@ export default function AdminInterface() {
     reactions: []
   }]);
 
+  // Fonction pour charger les messages depuis Supabase
+  const loadMessages = async (channelId: string) => {
+    try {
+      const messages = await getMessages(channelId);
+      const formattedMessages = messages.map(msg => ({
+        id: msg.id || '',
+        text: msg.content,
+        timestamp: new Date(msg.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        author: msg.author,
+        attachment: undefined
+      }));
+      
+      setChatMessages(prev => ({
+        ...prev,
+        [channelId]: formattedMessages
+      }));
+      
+      console.log(`✅ Messages chargés pour ${channelId}:`, formattedMessages.length);
+    } catch (error) {
+      console.error('❌ Erreur chargement messages:', error);
+    }
+  };
+
   // Charger les utilisateurs au montage du composant
   useEffect(() => {
     loadUsers();
   }, []);
+
+  // Charger les messages quand on change de canal
+  useEffect(() => {
+    loadMessages(selectedChannel.id);
+  }, [selectedChannel.id]);
 
   // Initialiser les signaux existants avec le statut ACTIVE
   useEffect(() => {
