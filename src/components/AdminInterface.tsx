@@ -2638,7 +2638,13 @@ export default function AdminInterface() {
                     ) : (
                       signals.filter(signal => signal.channel_id === selectedChannel.id).map((signal) => (
                         <div key={signal.id} className="flex items-start gap-3">
-                          <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
+                          <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
+                            {profileImage ? (
+                              <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+                            ) : (
+                              'A'
+                            )}
+                          </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
                               <span className="font-semibold text-white">Admin</span>
