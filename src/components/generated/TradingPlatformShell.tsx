@@ -1218,7 +1218,9 @@ export default function TradingPlatformShell() {
             id: savedMessage.id || Date.now().toString(),
             text: savedMessage.content,
             timestamp: new Date(savedMessage.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-            user: savedMessage.author
+            user: savedMessage.author,
+            author: savedMessage.author, // CONSERVER le nom de l'auteur !
+            author_avatar: savedMessage.author_avatar // CONSERVER l'avatar de l'auteur !
           };
 
           setMessages(prev => ({
@@ -1253,6 +1255,8 @@ export default function TradingPlatformShell() {
                       text: '',
                       timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
                       user: 'TheTheTrader',
+                      author: 'TheTheTrader', // CONSERVER le nom de l'auteur !
+                      author_avatar: profileImage || undefined, // CONSERVER l'avatar de l'auteur !
                       file: file
                     };
                     setMessages(prev => ({
