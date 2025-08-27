@@ -795,8 +795,19 @@ export default function AdminInterface() {
   };
 
   const handleLogout = () => {
+    // PRÉSERVER la photo de profil admin avant déconnexion
+    const adminProfileImageBackup = localStorage.getItem('adminProfileImage');
+    console.log('💾 ADMIN Sauvegarde photo avant déconnexion:', adminProfileImageBackup ? 'TROUVÉE' : 'PAS TROUVÉE');
+    
     // Nettoyer le localStorage
     localStorage.clear();
+    
+    // RESTAURER la photo de profil admin après nettoyage
+    if (adminProfileImageBackup) {
+      localStorage.setItem('adminProfileImage', adminProfileImageBackup);
+      console.log('✅ ADMIN Photo de profil restaurée après déconnexion');
+    }
+    
     // Rediriger vers la landing page
     window.location.href = '/';
   };

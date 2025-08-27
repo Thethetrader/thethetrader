@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getMessages, getSignals, subscribeToMessages, subscribeToSignals, addMessage } from '../../utils/supabase-setup';
 import { initializeDatabase } from '../../utils/init-database';
+import { syncProfileImage, getProfileImage, initializeProfile } from '../../utils/profile-manager';
 
 export default function TradingPlatformShell() {
   const [selectedChannel, setSelectedChannel] = useState({ id: 'crypto', name: 'crypto' });
@@ -132,11 +133,26 @@ export default function TradingPlatformShell() {
     loadSignals(selectedChannel.id);
   }, [selectedChannel.id]);
   const [chatMessage, setChatMessage] = useState('');
-  const [profileImage, setProfileImage] = useState<string | null>(() => {
-    const savedImage = localStorage.getItem('userProfileImage');
-    console.log('🔍 Profile image from localStorage:', savedImage ? 'FOUND' : 'NOT FOUND');
-    return savedImage || null;
-  });
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+
+  // Initialiser le profil utilisateur au chargement
+  useEffect(() => {
+    const initProfile = async () => {
+      console.log('🔄 Initialisation profil utilisateur...');
+      console.log('📱 PWA Mode:', window.matchMedia('(display-mode: standalone)').matches);
+      console.log('🌐 User Agent:', navigator.userAgent.includes('Mobile') ? 'MOBILE' : 'DESKTOP');
+      
+      const image = await initializeProfile('user');
+      if (image) {
+        setProfileImage(image);
+        console.log('✅ Photo de profil utilisateur chargée');
+      } else {
+        console.log('❌ Aucune photo de profil utilisateur trouvée');
+      }
+    };
+    
+    initProfile();
+  }, []);
   const [isLiveStreaming, setIsLiveStreaming] = useState(false);
   const [streamTitle, setStreamTitle] = useState('');
   const [streamDescription, setStreamDescription] = useState('');
@@ -757,16 +773,24 @@ export default function TradingPlatformShell() {
 
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    console.log('📁 File selected:', file ? file.name : 'NO FILE');
+    console.log('📁 USER File selected:', file ? file.name : 'NO FILE');
     if (file && file.type.startsWith('image/')) {
-      console.log('🖼️ Processing image...');
+      console.log('🖼️ USER Processing image...');
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         const base64Image = e.target?.result as string;
-        console.log('💾 Saving to localStorage and state...');
+        console.log('💾 USER Syncing to localStorage AND Supabase...');
+        
+        // Mettre à jour l'état immédiatement
         setProfileImage(base64Image);
-        localStorage.setItem('userProfileImage', base64Image);
-        console.log('✅ Profile image saved!');
+        
+        // Synchroniser avec localStorage et Supabase
+        const result = await syncProfileImage('user', base64Image);
+        if (result.success) {
+          console.log('✅ USER Profile image synchronized across all devices!');
+        } else {
+          console.error('❌ USER Sync failed:', result.error);
+        }
       };
       reader.readAsDataURL(file);
     }
