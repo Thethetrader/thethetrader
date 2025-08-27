@@ -1316,34 +1316,73 @@ export default function AdminInterface() {
 
   const handleSendMessage = async () => {
     if (chatMessage.trim()) {
-      // Envoyer à Supabase
-      const messageData = {
-        channel_id: selectedChannel.id,
-        content: chatMessage,
-        author: 'Admin',
-        author_type: 'admin' as const
-      };
-      
-      const savedMessage = await addMessage(messageData);
-      
-      if (savedMessage) {
-        // Ajouter aussi localement pour l'affichage immédiat
-        const newMessage = {
-          id: savedMessage.id || Date.now().toString(),
-          text: savedMessage.content,
-          timestamp: new Date(savedMessage.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-          author: savedMessage.author
+      try {
+        console.log('🚀 Tentative envoi message PWA...', {
+          channel: selectedChannel.id,
+          content: chatMessage
+        });
+        
+        // Envoyer à Supabase
+        const messageData = {
+          channel_id: selectedChannel.id,
+          content: chatMessage,
+          author: 'Admin',
+          author_type: 'admin' as const
+        };
+        
+        const savedMessage = await addMessage(messageData);
+        
+        if (savedMessage) {
+          // Ajouter aussi localement pour l'affichage immédiat
+          const newMessage = {
+            id: savedMessage.id || Date.now().toString(),
+            text: savedMessage.content,
+            timestamp: new Date(savedMessage.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+            author: savedMessage.author
+          };
+          
+          setChatMessages(prev => ({
+            ...prev,
+            [selectedChannel.id]: [...(prev[selectedChannel.id] || []), newMessage]
+          }));
+          
+          console.log('✅ Message envoyé à Supabase:', savedMessage);
+        } else {
+          console.error('❌ Erreur envoi message Supabase');
+          
+          // Mode dégradé : ajouter uniquement localement si Supabase échoue
+          const fallbackMessage = {
+            id: Date.now().toString(),
+            text: chatMessage,
+            timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+            author: 'Admin (Local)'
+          };
+          
+          setChatMessages(prev => ({
+            ...prev,
+            [selectedChannel.id]: [...(prev[selectedChannel.id] || []), fallbackMessage]
+          }));
+          
+          console.warn('⚠️ Message ajouté en mode local uniquement');
+        }
+        
+      } catch (error) {
+        console.error('💥 ERREUR PWA:', error);
+        
+        // Mode dégradé complet : fonctionnement local
+        const fallbackMessage = {
+          id: Date.now().toString(),
+          text: chatMessage,
+          timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+          author: 'Admin (Offline)'
         };
         
         setChatMessages(prev => ({
           ...prev,
-          [selectedChannel.id]: [...(prev[selectedChannel.id] || []), newMessage]
+          [selectedChannel.id]: [...(prev[selectedChannel.id] || []), fallbackMessage]
         }));
         
-        console.log('✅ Message envoyé à Supabase:', savedMessage);
-      } else {
-        console.error('❌ Erreur envoi message Supabase');
-        alert('Erreur lors de l\'envoi du message');
+        console.warn('⚠️ Mode offline activé - message local uniquement');
       }
       
       setChatMessage('');
