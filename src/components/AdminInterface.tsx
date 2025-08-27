@@ -136,6 +136,8 @@ export default function AdminInterface() {
   const [profileImage, setProfileImage] = useState<string | null>(() => {
     const savedImage = localStorage.getItem('adminProfileImage');
     console.log('🔍 ADMIN Profile image from localStorage:', savedImage ? 'FOUND' : 'NOT FOUND');
+    console.log('📱 PWA Mode:', window.matchMedia('(display-mode: standalone)').matches);
+    console.log('🌐 User Agent:', navigator.userAgent.includes('Mobile') ? 'MOBILE' : 'DESKTOP');
     return savedImage || null;
   });
   const [isLiveStreaming, setIsLiveStreaming] = useState(false);
