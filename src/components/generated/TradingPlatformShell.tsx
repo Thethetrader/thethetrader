@@ -73,9 +73,14 @@ export default function TradingPlatformShell() {
         attachment: undefined
       }));
       
-      setChatMessages(prev => ({
+      setMessages(prev => ({
         ...prev,
-        [channelId]: formattedMessages
+        [channelId]: formattedMessages.map(msg => ({
+          id: msg.id,
+          text: msg.text,
+          user: msg.author,
+          timestamp: msg.timestamp
+        }))
       }));
       
       console.log(`✅ Messages chargés pour ${channelId}:`, formattedMessages.length);
