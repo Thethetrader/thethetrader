@@ -2327,7 +2327,13 @@ export default function TradingPlatformShell() {
                           ) : (
                             (messages['livestream'] || []).map((message) => (
                               <div key={message.id} className="flex items-start gap-2">
-                                <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs">T</div>
+                                <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs overflow-hidden">
+                                  {message.author === 'TheTheTrader' && profileImage ? (
+                                    <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+                                  ) : (
+                                    'T'
+                                  )}
+                                </div>
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2 mb-1">
                                     <span className="font-medium text-white text-sm">{message.author}</span>
@@ -2719,7 +2725,13 @@ export default function TradingPlatformShell() {
                           ) : (
                             (messages['livestream'] || []).map((message) => (
                               <div key={message.id} className="flex items-start gap-2">
-                                <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs">T</div>
+                                <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs overflow-hidden">
+                                  {message.author === 'TheTheTrader' && profileImage ? (
+                                    <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+                                  ) : (
+                                    'T'
+                                  )}
+                                </div>
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2 mb-1">
                                     <span className="font-medium text-white text-sm">{message.author}</span>
