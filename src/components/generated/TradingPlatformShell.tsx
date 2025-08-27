@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { getMessages, getSignals, subscribeToMessages, subscribeToSignals } from '../../utils/supabase-setup';
+import { initializeDatabase } from '../../utils/init-database';
 
 export default function TradingPlatformShell() {
   const [selectedChannel, setSelectedChannel] = useState({ id: 'crypto', name: 'crypto' });
@@ -59,35 +61,71 @@ export default function TradingPlatformShell() {
     reactions: []
   }]);
 
-  // Initialiser les signaux existants avec le statut ACTIVE
-  useEffect(() => {
-    setSignals(prevSignals => 
-      prevSignals.map(signal => ({
-        ...signal,
-        status: signal.status || 'ACTIVE'
-      }))
-    );
-    
-    // Ajouter un signal de test si aucun signal n'existe
-    if (signals.length === 0) {
-      const testSignal = {
-        id: 'test-1',
-        type: 'BUY',
-        symbol: 'BTC',
-        timeframe: '1 min',
-        entry: '45000',
-        takeProfit: '46000',
-        stopLoss: '44000',
-        description: 'Signal de test',
-        image: null,
-        timestamp: '22:30',
-        status: 'ACTIVE' as const,
-        channel_id: 'crypto',
-        reactions: []
-      };
-      setSignals([testSignal]);
+  // Fonction pour charger les messages depuis Supabase
+  const loadMessages = async (channelId: string) => {
+    try {
+      const messages = await getMessages(channelId);
+      const formattedMessages = messages.map(msg => ({
+        id: msg.id || '',
+        text: msg.content,
+        timestamp: new Date(msg.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        author: msg.author,
+        attachment: undefined
+      }));
+      
+      setChatMessages(prev => ({
+        ...prev,
+        [channelId]: formattedMessages
+      }));
+      
+      console.log(`✅ Messages chargés pour ${channelId}:`, formattedMessages.length);
+    } catch (error) {
+      console.error('❌ Erreur chargement messages:', error);
     }
+  };
+
+  // Fonction pour charger les signaux depuis Supabase
+  const loadSignals = async (channelId: string) => {
+    try {
+      const signals = await getSignals(channelId);
+      const formattedSignals = signals.map(signal => ({
+        id: signal.id || '',
+        type: signal.type,
+        symbol: signal.symbol,
+        timeframe: signal.timeframe,
+        entry: signal.entry_price?.toString() || 'N/A',
+        takeProfit: signal.take_profit?.toString() || 'N/A',
+        stopLoss: signal.stop_loss?.toString() || 'N/A',
+        description: signal.description || '',
+        image: null,
+        timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        status: signal.status || 'ACTIVE' as const,
+        channel_id: signal.channel_id,
+        reactions: []
+      }));
+      
+      setSignals(formattedSignals);
+      console.log(`✅ Signaux chargés pour ${channelId}:`, formattedSignals.length);
+    } catch (error) {
+      console.error('❌ Erreur chargement signaux:', error);
+    }
+  };
+
+  // Initialiser l'app avec Supabase
+  useEffect(() => {
+    const initApp = async () => {
+      await initializeDatabase();
+      await loadMessages(selectedChannel.id);
+      await loadSignals(selectedChannel.id);
+    };
+    initApp();
   }, []);
+
+  // Charger les données quand on change de canal
+  useEffect(() => {
+    loadMessages(selectedChannel.id);
+    loadSignals(selectedChannel.id);
+  }, [selectedChannel.id]);
   const [chatMessage, setChatMessage] = useState('');
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [isLiveStreaming, setIsLiveStreaming] = useState(false);
