@@ -71,6 +71,7 @@ export default function TradingPlatformShell() {
         text: msg.content,
         timestamp: new Date(msg.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         author: msg.author,
+        author_avatar: msg.author_avatar, // CONSERVER l'avatar de l'auteur !
         attachment: undefined
       }));
       
@@ -80,6 +81,8 @@ export default function TradingPlatformShell() {
           id: msg.id,
           text: msg.text,
           user: msg.author,
+          author: msg.author, // CONSERVER le nom de l'auteur !
+          author_avatar: msg.author_avatar, // CONSERVER l'avatar de l'auteur !
           timestamp: msg.timestamp
         }))
       }));
