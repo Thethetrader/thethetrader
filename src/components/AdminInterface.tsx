@@ -11,7 +11,7 @@ export default function AdminInterface() {
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
   const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
-  const [selectedChannel, setSelectedChannel] = useState({ id: 'crypto', name: 'crypto' });
+  const [selectedChannel, setSelectedChannel] = useState({ id: 'home', name: 'home' });
   const [view, setView] = useState<'signals' | 'calendar'>('signals');
   const [mobileView, setMobileView] = useState<'channels' | 'content'>('channels');
   const [message, setMessage] = useState('');
