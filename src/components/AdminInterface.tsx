@@ -11,7 +11,7 @@ export default function AdminInterface() {
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
   const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
-  const [selectedChannel, setSelectedChannel] = useState({ id: 'crypto', name: 'crypto' });
+  const [selectedChannel, setSelectedChannel] = useState({ id: 'general-chat', name: 'general-chat' });
   const [view, setView] = useState<'signals' | 'calendar'>('signals');
   const [mobileView, setMobileView] = useState<'channels' | 'content'>('channels');
   const [message, setMessage] = useState('');
@@ -1282,15 +1282,15 @@ export default function AdminInterface() {
         takeProfit: savedSignal.take_profit?.toString() || 'N/A',
         stopLoss: savedSignal.stop_loss?.toString() || 'N/A',
         description: savedSignal.description || '',
-        image: signalData.image,
+      image: signalData.image,
         timestamp: new Date(savedSignal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         status: savedSignal.status || 'ACTIVE' as const,
         channel_id: savedSignal.channel_id,
-        reactions: []
-      };
+      reactions: []
+    };
 
-      // Ajouter le signal à la liste (en premier)
-      setSignals(prevSignals => [newSignal, ...prevSignals]);
+    // Ajouter le signal à la liste (en premier)
+    setSignals(prevSignals => [newSignal, ...prevSignals]);
       console.log('✅ Signal sauvé en Supabase:', savedSignal);
       
       alert('Signal créé et sauvé en base ! ✅');
@@ -1334,7 +1334,7 @@ export default function AdminInterface() {
         
         if (savedMessage) {
           // Ajouter aussi localement pour l'affichage immédiat
-          const newMessage = {
+      const newMessage = {
             id: savedMessage.id || Date.now().toString(),
             text: savedMessage.content,
             timestamp: new Date(savedMessage.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
@@ -1352,14 +1352,14 @@ export default function AdminInterface() {
           
           // Mode dégradé : ajouter uniquement localement si Supabase échoue
           const fallbackMessage = {
-            id: Date.now().toString(),
-            text: chatMessage,
-            timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        id: Date.now().toString(),
+        text: chatMessage,
+        timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
             author: 'Admin (Local)'
-          };
+      };
           
-          setChatMessages(prev => ({
-            ...prev,
+      setChatMessages(prev => ({
+        ...prev,
             [selectedChannel.id]: [...(prev[selectedChannel.id] || []), fallbackMessage]
           }));
           
@@ -1671,17 +1671,17 @@ export default function AdminInterface() {
 
     // Sinon, afficher le calendrier normal
     return (
-      <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '80px' }}>
-        {/* Header */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-gray-600 pb-4 gap-4 md:gap-0">
-          <div className="hidden md:block">
-            <h1 className="text-2xl font-bold text-white">
-              {selectedChannel.id === 'trading-journal' ? 'Mon Trading Journal' : 'Calendrier des Signaux'}
-            </h1>
-            <p className="text-sm text-gray-400 mt-1">
-              {selectedChannel.id === 'trading-journal' ? 'Journal tous tes trades' : 'Suivi des performances des signaux'}
-            </p>
-          </div>
+    <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '80px' }}>
+      {/* Header */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-gray-600 pb-4 gap-4 md:gap-0">
+        <div className="hidden md:block">
+          <h1 className="text-2xl font-bold text-white">
+            {selectedChannel.id === 'trading-journal' ? 'Mon Trading Journal' : 'Calendrier des Signaux'}
+          </h1>
+          <p className="text-sm text-gray-400 mt-1">
+            {selectedChannel.id === 'trading-journal' ? 'Journal tous tes trades' : 'Suivi des performances des signaux'}
+          </p>
+        </div>
         
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3 text-white">
@@ -2023,7 +2023,7 @@ export default function AdminInterface() {
         </div>
       </div>
     </div>
-    );
+  );
   };
 
   return (
@@ -3858,13 +3858,13 @@ export default function AdminInterface() {
                 >
                   Supprimer
                 </button>
-              </div>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Modal pour ajouter un trade */}
-        {showTradeModal && (
+      {/* Modal pour ajouter un trade */}
+      {showTradeModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-gray-800 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="p-6">
