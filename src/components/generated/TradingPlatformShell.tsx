@@ -133,7 +133,9 @@ export default function TradingPlatformShell() {
   }, [selectedChannel.id]);
   const [chatMessage, setChatMessage] = useState('');
   const [profileImage, setProfileImage] = useState<string | null>(() => {
-    return localStorage.getItem('userProfileImage') || null;
+    const savedImage = localStorage.getItem('userProfileImage');
+    console.log('🔍 Profile image from localStorage:', savedImage ? 'FOUND' : 'NOT FOUND');
+    return savedImage || null;
   });
   const [isLiveStreaming, setIsLiveStreaming] = useState(false);
   const [streamTitle, setStreamTitle] = useState('');
@@ -755,12 +757,16 @@ export default function TradingPlatformShell() {
 
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    console.log('📁 File selected:', file ? file.name : 'NO FILE');
     if (file && file.type.startsWith('image/')) {
+      console.log('🖼️ Processing image...');
       const reader = new FileReader();
       reader.onload = (e) => {
         const base64Image = e.target?.result as string;
+        console.log('💾 Saving to localStorage and state...');
         setProfileImage(base64Image);
         localStorage.setItem('userProfileImage', base64Image);
+        console.log('✅ Profile image saved!');
       };
       reader.readAsDataURL(file);
     }
