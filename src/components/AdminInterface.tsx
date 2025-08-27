@@ -133,7 +133,9 @@ export default function AdminInterface() {
     }
   }, []);
   const [chatMessage, setChatMessage] = useState('');
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [profileImage, setProfileImage] = useState<string | null>(() => {
+    return localStorage.getItem('adminProfileImage') || null;
+  });
   const [isLiveStreaming, setIsLiveStreaming] = useState(false);
   const [streamTitle, setStreamTitle] = useState('');
   const [streamDescription, setStreamDescription] = useState('');
@@ -784,8 +786,13 @@ export default function AdminInterface() {
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file && file.type.startsWith('image/')) {
-      const imageUrl = URL.createObjectURL(file);
-      setProfileImage(imageUrl);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64Image = e.target?.result as string;
+        setProfileImage(base64Image);
+        localStorage.setItem('adminProfileImage', base64Image);
+      };
+      reader.readAsDataURL(file);
     }
   };
 

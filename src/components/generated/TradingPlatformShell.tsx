@@ -756,9 +756,13 @@ export default function TradingPlatformShell() {
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file && file.type.startsWith('image/')) {
-      const imageUrl = URL.createObjectURL(file);
-      setProfileImage(imageUrl);
-      localStorage.setItem('userProfileImage', imageUrl);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64Image = e.target?.result as string;
+        setProfileImage(base64Image);
+        localStorage.setItem('userProfileImage', base64Image);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
