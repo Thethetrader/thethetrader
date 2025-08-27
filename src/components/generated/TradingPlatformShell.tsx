@@ -3,7 +3,7 @@ import { getMessages, getSignals, subscribeToMessages, subscribeToSignals } from
 import { initializeDatabase } from '../../utils/init-database';
 
 export default function TradingPlatformShell() {
-  const [selectedChannel, setSelectedChannel] = useState({ id: 'crypto', name: 'crypto' });
+  const [selectedChannel, setSelectedChannel] = useState({ id: 'general-chat', name: 'general-chat' });
   const [view, setView] = useState<'signals' | 'calendar'>('signals');
   const [mobileView, setMobileView] = useState<'channels' | 'content'>('channels');
   const [message, setMessage] = useState('');
