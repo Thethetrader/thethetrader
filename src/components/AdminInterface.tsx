@@ -3029,7 +3029,13 @@ export default function AdminInterface() {
                       {(chatMessages[selectedChannel.id] || []).length > 0 && (
                         (chatMessages[selectedChannel.id] || []).map((message) => (
                           <div key={message.id} className="flex items-start gap-3">
-                            <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
+                            <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
+                              {message.author === 'Admin' && profileImage ? (
+                                <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+                              ) : (
+                                'A'
+                              )}
+                            </div>
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-1">
                                 <span className="font-semibold text-white">{message.author}</span>
@@ -3558,7 +3564,13 @@ export default function AdminInterface() {
                     {(chatMessages[selectedChannel.id] || []).length > 0 && (
                       (chatMessages[selectedChannel.id] || []).map((message) => (
                         <div key={message.id} className="flex items-start gap-3">
-                          <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
+                          <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
+                            {message.author === 'Admin' && profileImage ? (
+                              <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+                            ) : (
+                              'A'
+                            )}
+                          </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
                               <span className="font-semibold text-white">{message.author}</span>
