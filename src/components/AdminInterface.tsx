@@ -1403,7 +1403,7 @@ export default function AdminInterface() {
                       id: Date.now().toString(),
                       text: '',
                       timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                      author: 'TheTheTrader',
+                      author: 'Admin',
                       attachment: file
                     };
                     setChatMessages(prev => ({
