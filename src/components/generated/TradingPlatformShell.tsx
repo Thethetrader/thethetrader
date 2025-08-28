@@ -1374,8 +1374,12 @@ export default function TradingPlatformShell() {
                             user: savedMessage.author,
                             author: savedMessage.author,
                             author_avatar: savedMessage.author_avatar,
-                      attachment: file
-                    };
+                            attachment: savedMessage.attachment_data ? {
+                              type: savedMessage.attachment_type || 'image/jpeg',
+                              name: savedMessage.attachment_name || 'image.jpg'
+                            } : undefined,
+                            attachment_data: savedMessage.attachment_data
+                          };
                           
                           setMessages(prev => ({
                             ...prev,
@@ -2701,11 +2705,11 @@ export default function TradingPlatformShell() {
                               </div>
                               <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
                                 <p className="text-white">{message.text}</p>
-                                {message.attachment && (
+                                {message.attachment_data && (
                                   <div className="mt-2">
-                                    {message.attachment.type.startsWith('image/') ? (
+                                    {true ? (
                                       <img 
-                                        src={URL.createObjectURL(message.attachment)} 
+                                        src={message.attachment_data} 
                                         alt="Attachment"
                                         className="mt-2 max-w-full rounded-lg border border-gray-600"
                                       />
@@ -3258,17 +3262,17 @@ export default function TradingPlatformShell() {
                             </div>
                                                           <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
                                 <p className="text-white">{message.text}</p>
-                                {message.attachment && (
+                                {message.attachment_data && (
                                   <div className="mt-2">
-                                    {message.attachment.type.startsWith('image/') ? (
+                                    {true ? (
                                       <div className="relative">
                                       <img 
-                                        src={URL.createObjectURL(message.attachment)} 
+                                        src={message.attachment_data} 
                                         alt="Attachment"
                                           className="mt-2 max-w-xs max-h-48 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
                                           onClick={() => {
                                             const newWindow = window.open();
-                                            newWindow!.document.write(`<img src="${URL.createObjectURL(message.attachment)}" style="max-width: 100%; height: auto;" />`);
+                                            newWindow!.document.write(`<img src="${message.attachment_data}" style="max-width: 100%; height: auto;" />`);
                                             newWindow!.document.title = 'Image en grand';
                                           }}
                                         />
