@@ -72,7 +72,11 @@ export default function TradingPlatformShell() {
         timestamp: new Date(msg.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         author: msg.author,
         author_avatar: msg.author_avatar, // CONSERVER l'avatar de l'auteur !
-        attachment: undefined
+        attachment: msg.attachment_data ? {
+          type: msg.attachment_type || 'image/jpeg',
+          name: msg.attachment_name || 'image.jpg'
+        } : undefined,
+        attachment_data: msg.attachment_data
       }));
       
       setMessages(prev => ({
@@ -88,6 +92,12 @@ export default function TradingPlatformShell() {
       }));
       
       console.log(`✅ Messages chargés pour ${channelId}:`, formattedMessages.length);
+      console.log('📋 Messages actuels:', formattedMessages);
+      
+      // Scroller vers le bas après le chargement des messages
+      setTimeout(() => {
+        scrollToBottom();
+      }, 5);
     } catch (error) {
       console.error('❌ Erreur chargement messages:', error);
     }
@@ -134,6 +144,54 @@ export default function TradingPlatformShell() {
   useEffect(() => {
     loadMessages(selectedChannel.id);
     loadSignals(selectedChannel.id);
+    // Scroller vers le bas quand on entre dans un salon
+    setTimeout(() => {
+      scrollToBottom();
+    }, 50);
+  }, [selectedChannel.id]);
+
+  // Subscription temps réel pour les messages
+  useEffect(() => {
+    console.log('🔄 Initialisation subscription utilisateur pour:', selectedChannel.id);
+    
+    const subscription = subscribeToMessages(selectedChannel.id, (newMessage) => {
+      console.log('🔄 Nouveau message reçu utilisateur:', newMessage);
+      
+      const formattedMessage = {
+        id: newMessage.id || '',
+        text: newMessage.content,
+        timestamp: new Date(newMessage.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        user: newMessage.author,
+        author: newMessage.author,
+        author_avatar: newMessage.author_avatar,
+        attachment: newMessage.attachment_data ? {
+          type: newMessage.attachment_type || 'image/jpeg',
+          name: newMessage.attachment_name || 'image.jpg'
+        } : undefined,
+        attachment_data: newMessage.attachment_data
+      };
+      
+      setMessages(prev => ({
+        ...prev,
+        [selectedChannel.id]: [...(prev[selectedChannel.id] || []), formattedMessage]
+      }));
+      
+      // Scroll vers le bas pour voir le nouveau message
+      setTimeout(() => {
+        scrollToBottom();
+      }, 5);
+    });
+
+    // Fallback: recharger les messages toutes les 2 secondes
+    const interval = setInterval(() => {
+      console.log('🔄 Rechargement automatique utilisateur pour:', selectedChannel.id);
+      loadMessages(selectedChannel.id);
+    }, 2000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearInterval(interval);
+    };
   }, [selectedChannel.id]);
   const [chatMessage, setChatMessage] = useState('');
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -762,6 +820,48 @@ export default function TradingPlatformShell() {
     }
   };
 
+  const scrollToBottom = () => {
+    // Scroller vers le bas pour voir les messages les plus récents
+    console.log('🔄 Scrolling to bottom user...', {
+      hasRef: !!messagesContainerRef.current,
+      channelId: selectedChannel.id
+    });
+    
+    // Méthode 1: Avec la référence
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+    
+    // Méthode 2: Avec sélecteur CSS comme backup
+    const scrollContainer = document.querySelector('.overflow-y-auto.overflow-x-hidden.p-4.space-y-4.pb-32');
+    if (scrollContainer) {
+      scrollContainer.scrollTop = scrollContainer.scrollHeight;
+      console.log('✅ Scroll with CSS selector worked');
+    }
+    
+    // Méthode 3: Forcer avec tous les conteneurs possibles
+    const allContainers = document.querySelectorAll('[class*="overflow-y-auto"]');
+    allContainers.forEach((container, index) => {
+      container.scrollTop = container.scrollHeight;
+      console.log(`📜 Scrolled container ${index}`);
+    });
+    
+    // Méthode 4: Multiple tentatives avec délais
+    setTimeout(() => {
+      if (messagesContainerRef.current) {
+        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+      }
+    }, 50);
+    
+    setTimeout(() => {
+      if (messagesContainerRef.current) {
+        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+      }
+    }, 200);
+    
+    console.log('✅ Scroll to bottom user completed');
+  };
+
   const handleLogout = () => {
     // Garder la photo de profil même après déconnexion
     const profileImageBackup = localStorage.getItem('userProfileImage');
@@ -1214,7 +1314,7 @@ export default function TradingPlatformShell() {
         const savedMessage = await addMessage(messageData);
 
         if (savedMessage) {
-          const newMessage = {
+      const newMessage = {
             id: savedMessage.id || Date.now().toString(),
             text: savedMessage.content,
             timestamp: new Date(savedMessage.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
@@ -1239,39 +1339,66 @@ export default function TradingPlatformShell() {
       setChatMessage('');
       
       // Scroll automatique après envoi
-      setTimeout(() => {
-        if (messagesContainerRef.current) {
-          messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-        }
-      }, 50);
+      scrollToBottom();
     }
   };
 
-                  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+                  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
                   const file = event.target.files?.[0];
                   if (file) {
-                    const newMessage = {
-                      id: Date.now().toString(),
-                      text: '',
-                      timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                      user: 'TheTheTrader',
-                      author: 'TheTheTrader', // CONSERVER le nom de l'auteur !
-                      author_avatar: profileImage || undefined, // CONSERVER l'avatar de l'auteur !
-                      file: file
+                    try {
+                      // Convertir le fichier en base64
+                      const reader = new FileReader();
+                      reader.onload = async (e) => {
+                        const base64Image = e.target?.result as string;
+                        
+                        // Envoyer à Supabase avec l'image en base64
+                        const messageData = {
+                          channel_id: selectedChannel.id,
+                          content: `📎 Image: ${file.name}`,
+                      author: 'TheTheTrader',
+                          author_type: 'user' as const,
+                          author_avatar: profileImage || undefined,
+                          attachment_data: base64Image,
+                          attachment_type: file.type,
+                          attachment_name: file.name
+                        };
+                        
+                        const savedMessage = await addMessage(messageData);
+                        
+                        if (savedMessage) {
+                          const newMessage = {
+                            id: savedMessage.id || Date.now().toString(),
+                            text: savedMessage.content,
+                            timestamp: new Date(savedMessage.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                            user: savedMessage.author,
+                            author: savedMessage.author,
+                            author_avatar: savedMessage.author_avatar,
+                      attachment: file
                     };
-                    setMessages(prev => ({
-                      ...prev,
-                      [selectedChannel.id]: [...(prev[selectedChannel.id] || []), newMessage]
-                    }));
+                          
+                          setMessages(prev => ({
+                            ...prev,
+                            [selectedChannel.id]: [...(prev[selectedChannel.id] || []), newMessage]
+                          }));
+                          
+                          console.log('✅ Image envoyée à Supabase:', savedMessage);
+                        } else {
+                          console.error('❌ Erreur envoi image Supabase');
+                        }
+                      };
+                      reader.readAsDataURL(file);
+                      
                     // Reset the input
                     event.target.value = '';
-                    
-                    // Scroll automatique après upload
-                    setTimeout(() => {
-                      if (messagesContainerRef.current) {
-                        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-                      }
-                    }, 50);
+                      
+                      // Scroll automatique après upload
+                      setTimeout(() => {
+                        scrollToBottom();
+                      }, 10);
+                    } catch (error) {
+                      console.error('💥 ERREUR upload image:', error);
+                    }
                   }
                 };
 
@@ -1483,8 +1610,8 @@ export default function TradingPlatformShell() {
                     }
                   }
                 }
-
-                return (
+              
+              return (
                   <div 
                     key={i} 
                     onClick={(e) => {
@@ -1521,28 +1648,28 @@ export default function TradingPlatformShell() {
                       }
                     }}
                     className={`
-                      border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 cursor-pointer transition-all hover:shadow-md
+                    border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 cursor-pointer transition-all hover:shadow-md
                       ${bgColor}
-                      ${isToday ? 'ring-2 ring-blue-400' : ''}
+                    ${isToday ? 'ring-2 ring-blue-400' : ''}
                       ${selectedChannel.id === 'trading-journal' && selectedDate && 
                         selectedDate.getDate() === dayNumber && 
                         selectedDate.getMonth() === currentDate.getMonth() && 
                         selectedDate.getFullYear() === currentDate.getFullYear() 
                         ? 'ring-2 ring-purple-400' : ''}
-                    `}>
-                    <div className="flex flex-col h-full justify-between">
+                  `}>
+                  <div className="flex flex-col h-full justify-between">
                       <div className="text-xs md:text-sm font-semibold">{dayNumber}</div>
                       {tradeCount > 0 && (
-                        <div className="text-xs font-bold text-center hidden md:block">
+                      <div className="text-xs font-bold text-center hidden md:block">
                           {tradeCount} {selectedChannel.id === 'trading-journal' ? 'trade' : 'signal'}{tradeCount > 1 ? 's' : ''}
-                        </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
-                );
+                </div>
+              );
               });
             })()}
-            </div>
+          </div>
 
           {/* Légende */}
           <div className="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-gray-600">
@@ -1656,7 +1783,7 @@ export default function TradingPlatformShell() {
                     </div>
                     <div className="text-xs text-gray-400">
                       {weekData.trades} trade{weekData.trades !== 1 ? 's' : ''}
-                    </div>
+                  </div>
                   </div>
                   <div className="flex items-center gap-2">
                     {(weekData.wins > 0 || weekData.losses > 0) ? (
@@ -1712,7 +1839,7 @@ export default function TradingPlatformShell() {
                 ) : (
                   'TT'
                 )}
-              </div>
+            </div>
             </label>
             <div className="flex-1">
               <p className="text-sm font-medium">TheTheTrader</p>
@@ -1801,7 +1928,7 @@ export default function TradingPlatformShell() {
                     ) : (
                       'TT'
                     )}
-                  </div>
+                </div>
                 </label>
                 <div>
                   <p className="text-sm font-medium">TheTheTrader</p>
@@ -2135,7 +2262,7 @@ export default function TradingPlatformShell() {
                             <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 max-w-2xl md:max-w-2xl max-w-full">
                               <div className="space-y-3">
                                 {/* Header avec titre et indicateur */}
-                                <div className="flex items-center gap-2">
+                                  <div className="flex items-center gap-2">
                                   <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-500' : 'bg-gray-500'}`}></div>
                                   <h3 className="font-bold text-white text-lg">
                                     Signal {signal.type} {signal.symbol} {selectedChannel.id === 'futur' ? 'Futures' : ''} – {signal.timeframe}
@@ -2144,25 +2271,25 @@ export default function TradingPlatformShell() {
                                 
                                 {/* Détails du signal */}
                                 <div className="space-y-2">
-                                  {signal.entry !== 'N/A' && (
-                                    <div className="flex items-center gap-2">
+                                    {signal.entry !== 'N/A' && (
+                                      <div className="flex items-center gap-2">
                                       <span className="text-blue-400 text-sm">🔹</span>
                                       <span className="text-white">Entrée : {signal.entry} USD</span>
-                                    </div>
-                                  )}
-                                  {signal.stopLoss !== 'N/A' && (
-                                    <div className="flex items-center gap-2">
+                                      </div>
+                                    )}
+                                    {signal.stopLoss !== 'N/A' && (
+                                      <div className="flex items-center gap-2">
                                       <span className="text-blue-400 text-sm">🔹</span>
                                       <span className="text-white">Stop Loss : {signal.stopLoss} USD</span>
-                                    </div>
-                                  )}
+                                      </div>
+                                    )}
                                   {signal.takeProfit !== 'N/A' && (
-                                    <div className="flex items-center gap-2">
+                                      <div className="flex items-center gap-2">
                                       <span className="text-blue-400 text-sm">🔹</span>
                                       <span className="text-white">Take Profit : {signal.takeProfit} USD</span>
-                                    </div>
-                                  )}
-                                </div>
+                                      </div>
+                                    )}
+                                  </div>
                                 
                                 {/* Ratio R:R */}
                                 {signal.entry !== 'N/A' && signal.takeProfit !== 'N/A' && signal.stopLoss !== 'N/A' && (
@@ -2171,7 +2298,7 @@ export default function TradingPlatformShell() {
                                     <span className="text-white text-sm">
                                       Ratio R:R : ≈ {calculateRiskReward(signal.entry, signal.takeProfit, signal.stopLoss)}
                                     </span>
-                                  </div>
+                                </div>
                                 )}
                               </div>
                             </div>
@@ -2334,11 +2461,11 @@ export default function TradingPlatformShell() {
                         
                         <div className="flex-1 overflow-y-auto p-4 space-y-3">
                           {(messages['livestream'] || []).length === 0 ? (
-                            <div className="text-center py-8">
+                        <div className="text-center py-8">
                               <div className="text-gray-400 text-sm">Aucun message</div>
                               <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
-                            </div>
-                          ) : (
+                        </div>
+                      ) : (
                             (messages['livestream'] || []).map((message) => (
                               <div key={message.id} className="flex items-start gap-2">
                                 <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs overflow-hidden">
@@ -2835,7 +2962,7 @@ export default function TradingPlatformShell() {
                           <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 max-w-full md:max-w-2xl">
                             <div className="space-y-3">
                               {/* Header avec titre et indicateur */}
-                              <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2">
                                 <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-500' : 'bg-gray-500'}`}></div>
                                 <h3 className="font-bold text-white text-lg">
                                   Signal {signal.type} {signal.symbol} {selectedChannel.id === 'futur' ? 'Futures' : ''} – {signal.timeframe}
@@ -2844,25 +2971,25 @@ export default function TradingPlatformShell() {
                               
                               {/* Détails du signal */}
                               <div className="space-y-2">
-                                {signal.entry !== 'N/A' && (
-                                  <div className="flex items-center gap-2">
+                                  {signal.entry !== 'N/A' && (
+                                    <div className="flex items-center gap-2">
                                     <span className="text-blue-400 text-sm">🔹</span>
                                     <span className="text-white">Entrée : {signal.entry} USD</span>
-                                  </div>
-                                )}
-                                {signal.stopLoss !== 'N/A' && (
-                                  <div className="flex items-center gap-2">
+                                    </div>
+                                  )}
+                                  {signal.stopLoss !== 'N/A' && (
+                                    <div className="flex items-center gap-2">
                                     <span className="text-blue-400 text-sm">🔹</span>
                                     <span className="text-white">Stop Loss : {signal.stopLoss} USD</span>
-                                  </div>
-                                )}
+                                    </div>
+                                  )}
                                 {signal.takeProfit !== 'N/A' && (
-                                  <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-2">
                                     <span className="text-blue-400 text-sm">🔹</span>
                                     <span className="text-white">Take Profit : {signal.takeProfit} USD</span>
-                                  </div>
-                                )}
-                              </div>
+                                    </div>
+                                  )}
+                                </div>
                               
                               {/* Ratio R:R */}
                               {signal.entry !== 'N/A' && signal.takeProfit !== 'N/A' && signal.stopLoss !== 'N/A' && (
@@ -2871,7 +2998,7 @@ export default function TradingPlatformShell() {
                                   <span className="text-white text-sm">
                                     Ratio R:R : ≈ {calculateRiskReward(signal.entry, signal.takeProfit, signal.stopLoss)}
                                   </span>
-                                </div>
+                              </div>
                               )}
                             </div>
                           </div>
@@ -3056,11 +3183,11 @@ export default function TradingPlatformShell() {
                       
                       <div className="flex-1 overflow-y-auto p-4 space-y-3">
                         {(messages['livestream'] || []).length === 0 ? (
-                          <div className="text-center py-8">
+                      <div className="text-center py-8">
                             <div className="text-gray-400 text-sm">Aucun message</div>
                             <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
-                          </div>
-                        ) : (
+                      </div>
+                    ) : (
                           (messages['livestream'] || []).map((message) => (
                             <div key={message.id} className="flex items-start gap-2">
                               <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs overflow-hidden">
@@ -3129,16 +3256,24 @@ export default function TradingPlatformShell() {
                               <span className="font-semibold text-white">{message.author}</span>
                               <span className="text-xs text-gray-400">{message.timestamp}</span>
                             </div>
-                            <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
+                                                          <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
                                 <p className="text-white">{message.text}</p>
                                 {message.attachment && (
                                   <div className="mt-2">
                                     {message.attachment.type.startsWith('image/') ? (
+                                      <div className="relative">
                                       <img 
                                         src={URL.createObjectURL(message.attachment)} 
                                         alt="Attachment"
-                                        className="mt-2 max-w-full rounded-lg border border-gray-600"
-                                      />
+                                          className="mt-2 max-w-xs max-h-48 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                                          onClick={() => {
+                                            const newWindow = window.open();
+                                            newWindow!.document.write(`<img src="${URL.createObjectURL(message.attachment)}" style="max-width: 100%; height: auto;" />`);
+                                            newWindow!.document.title = 'Image en grand';
+                                          }}
+                                        />
+                                        <div className="text-xs text-gray-400 mt-1">Cliquez pour agrandir</div>
+                                      </div>
                                     ) : (
                                       <div className="flex items-center gap-2 text-blue-400">
                                         <span>📎</span>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../utils/supabase-setup'
 import { supabaseConfig } from '../config/supabase-config'
 
 const SupabaseTest = () => {

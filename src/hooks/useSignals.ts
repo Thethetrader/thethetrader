@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase, Signal } from '../lib/supabase'
+import { supabase, Signal } from '../utils/supabase-setup'
 
 export const useSignals = (channel?: string) => {
   const [signals, setSignals] = useState<Signal[]>([])

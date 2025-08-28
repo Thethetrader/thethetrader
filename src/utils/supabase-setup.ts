@@ -1,9 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
+import { supabaseConfig } from '../config/supabase-config';
 
-const supabaseUrl = 'https://bamwcozzfshuozsfmjah.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhbXdjb3p6ZnNodW96c2ZtamFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDM0ODcsImV4cCI6MjA2NTY3OTQ4N30.NWSUKoYLl0oGS-dXf4jhtmLRiSuBSk-0lV3NRHJLvrs';
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
 
 // Types pour TypeScript
 export interface Message {
@@ -15,6 +13,9 @@ export interface Message {
   author_avatar?: string; // Photo de profil base64 de l'auteur
   timestamp?: string;
   created_at?: string;
+  attachment_data?: string; // Image en base64
+  attachment_type?: string; // Type MIME de l'image
+  attachment_name?: string; // Nom du fichier
 }
 
 export interface Signal {
@@ -66,6 +67,11 @@ export const getMessages = async (channelId: string): Promise<Message[]> => {
     if (error) {
       console.error('Erreur récupération messages:', error);
       return [];
+    }
+    
+    console.log(`📨 Messages récupérés pour ${channelId}:`, data?.length || 0);
+    if (data && data.length > 0) {
+      console.log('📋 Structure du premier message:', Object.keys(data[0]));
     }
     
     return data || [];
@@ -136,7 +142,15 @@ export const updateSignalStatus = async (signalId: string, status: 'WIN' | 'LOSS
 
 // Subscriptions temps réel
 export const subscribeToMessages = (channelId: string, callback: (message: Message) => void) => {
-  return supabase
+  console.log('🔌 Création subscription messages pour:', channelId);
+  
+  // Test de connexion Supabase
+  supabase.auth.getSession().then(({ data, error }) => {
+    console.log('🔑 Session Supabase:', data.session ? 'Connecté' : 'Non connecté');
+    if (error) console.log('❌ Erreur session:', error);
+  });
+  
+  const subscription = supabase
     .channel(`messages-${channelId}`)
     .on('postgres_changes', 
       { 
@@ -146,10 +160,22 @@ export const subscribeToMessages = (channelId: string, callback: (message: Messa
         filter: `channel_id=eq.${channelId}`
       }, 
       (payload) => {
+        console.log('📨 Message reçu via subscription:', payload);
         callback(payload.new as Message);
       }
     )
-    .subscribe();
+    .subscribe((status) => {
+      console.log('📡 Status subscription:', status);
+      if (status === 'SUBSCRIBED') {
+        console.log('✅ Subscription active pour:', channelId);
+      } else if (status === 'CLOSED') {
+        console.log('❌ Subscription fermée pour:', channelId);
+      } else if (status === 'CHANNEL_ERROR') {
+        console.log('💥 Erreur subscription pour:', channelId);
+      }
+    });
+    
+  return subscription;
 };
 
 export const subscribeToSignals = (channelId: string, callback: (signal: Signal) => void) => {

@@ -1,16 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { createClient } from '@supabase/supabase-js';
 import { supabase, addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, subscribeToSignals } from '../utils/supabase-setup';
-import { initializeDatabase } from '../utils/init-database';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 
 export default function AdminInterface() {
-  // Configuration Supabase
-  const supabaseUrl = 'https://bamwcozzfshuozsfmjah.supabase.co';
-  const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhbXdjb3p6ZnNodW96c2ZtamFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDM0ODcsImV4cCI6MjA2NTY3OTQ4N30.NWSUKoYLl0oGS-dXf4jhtmLRiSuBSk-0lV3NRHJLvrs';
-  const supabaseServiceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhbXdjb3p6ZnNodW96c2ZtamFoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MDEwMzQ4NywiZXhwIjoyMDY1Njc5NDg3fQ.oh90uSpCLIpg9nJ5RkTejg0s2WSf4aZqz5D798WpZ4Q';
-  const supabase = createClient(supabaseUrl, supabaseAnonKey);
-  const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
   const [selectedChannel, setSelectedChannel] = useState({ id: 'fondamentaux', name: 'fondamentaux' });
   const [view, setView] = useState<'signals' | 'calendar'>('signals');
@@ -81,7 +73,11 @@ export default function AdminInterface() {
         timestamp: new Date(msg.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         author: msg.author,
         author_avatar: msg.author_avatar, // CONSERVER l'avatar de l'auteur !
-        attachment: undefined
+        attachment: msg.attachment_data ? {
+          type: msg.attachment_type || 'image/jpeg',
+          name: msg.attachment_name || 'image.jpg'
+        } : undefined,
+        attachment_data: msg.attachment_data
       }));
       
       setChatMessages(prev => ({
@@ -90,6 +86,11 @@ export default function AdminInterface() {
       }));
       
       console.log(`✅ Messages chargés pour ${channelId}:`, formattedMessages.length);
+      
+      // Scroller vers le bas après le chargement des messages
+      setTimeout(() => {
+        scrollToBottom();
+      }, 5);
     } catch (error) {
       console.error('❌ Erreur chargement messages:', error);
     }
@@ -103,6 +104,50 @@ export default function AdminInterface() {
   // Charger les messages quand on change de canal
   useEffect(() => {
     loadMessages(selectedChannel.id);
+    // Scroller vers le bas quand on entre dans un salon
+    setTimeout(() => {
+      scrollToBottom();
+    }, 50);
+  }, [selectedChannel.id]);
+
+
+
+
+
+  // Subscription temps réel pour les messages
+  useEffect(() => {
+    console.log('🔄 Initialisation subscription admin pour:', selectedChannel.id);
+    
+    const subscription = subscribeToMessages(selectedChannel.id, (newMessage) => {
+      console.log('🔄 Nouveau message reçu admin:', newMessage);
+      
+      const formattedMessage = {
+        id: newMessage.id || '',
+        text: newMessage.content,
+        timestamp: new Date(newMessage.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        author: newMessage.author,
+        author_avatar: newMessage.author_avatar,
+        attachment: newMessage.attachment_data ? {
+          type: newMessage.attachment_type || 'image/jpeg',
+          name: newMessage.attachment_name || 'image.jpg'
+        } : undefined,
+        attachment_data: newMessage.attachment_data
+      };
+      
+      setChatMessages(prev => ({
+        ...prev,
+        [selectedChannel.id]: [...(prev[selectedChannel.id] || []), formattedMessage]
+      }));
+      
+      // Scroll vers le bas pour voir le nouveau message
+      setTimeout(() => {
+        scrollToBottom();
+      }, 5);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [selectedChannel.id]);
 
   // Initialiser les signaux existants avec le statut ACTIVE
@@ -795,6 +840,48 @@ export default function AdminInterface() {
     }
   };
 
+  const scrollToBottom = () => {
+    // Scroller vers le bas pour voir les messages les plus récents
+    console.log('🔄 Scrolling to bottom admin...', {
+      hasRef: !!messagesContainerRef.current,
+      channelId: selectedChannel.id
+    });
+    
+    // Méthode 1: Avec la référence
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+    
+    // Méthode 2: Avec sélecteur CSS comme backup
+    const scrollContainer = document.querySelector('.overflow-y-auto.overflow-x-hidden.p-4.space-y-4.pb-32');
+    if (scrollContainer) {
+      scrollContainer.scrollTop = scrollContainer.scrollHeight;
+      console.log('✅ Scroll with CSS selector worked');
+    }
+    
+    // Méthode 3: Forcer avec tous les conteneurs possibles
+    const allContainers = document.querySelectorAll('[class*="overflow-y-auto"]');
+    allContainers.forEach((container, index) => {
+      container.scrollTop = container.scrollHeight;
+      console.log(`📜 Scrolled container ${index}`);
+    });
+    
+    // Méthode 4: Multiple tentatives avec délais
+    setTimeout(() => {
+      if (messagesContainerRef.current) {
+        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+      }
+    }, 50);
+    
+    setTimeout(() => {
+      if (messagesContainerRef.current) {
+        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+      }
+    }, 200);
+    
+    console.log('✅ Scroll to bottom admin completed');
+  };
+
   const handleLogout = () => {
     // PRÉSERVER la photo de profil admin avant déconnexion
     const adminProfileImageBackup = localStorage.getItem('adminProfileImage');
@@ -1470,36 +1557,66 @@ export default function AdminInterface() {
       
       // Scroll automatique après envoi
       setTimeout(() => {
-        if (messagesContainerRef.current) {
-          messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-        }
-      }, 50);
+        scrollToBottom();
+      }, 10);
     }
   };
 
-                  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+                  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
                   const file = event.target.files?.[0];
                   if (file) {
-                    const newMessage = {
-                      id: Date.now().toString(),
-                      text: '',
-                      timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                      author: 'Admin',
-                      attachment: file
-                    };
-                    setChatMessages(prev => ({
-                      ...prev,
-                      [selectedChannel.id]: [...(prev[selectedChannel.id] || []), newMessage]
-                    }));
-                    // Reset the input
-                    event.target.value = '';
-                    
-                    // Scroll automatique après upload
-                    setTimeout(() => {
-                      if (messagesContainerRef.current) {
-                        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-                      }
-                    }, 50);
+                    try {
+                      // Convertir le fichier en base64
+                      const reader = new FileReader();
+                      reader.onload = async (e) => {
+                        const base64Image = e.target?.result as string;
+                        
+                        // Envoyer à Supabase avec l'image en base64
+                        const messageData = {
+                          channel_id: selectedChannel.id,
+                          content: `📎 Image: ${file.name}`,
+                          author: 'Admin',
+                          author_type: 'admin' as const,
+                          author_avatar: profileImage || undefined,
+                          attachment_data: base64Image,
+                          attachment_type: file.type,
+                          attachment_name: file.name
+                        };
+                        
+                        const savedMessage = await addMessage(messageData);
+                        
+                        if (savedMessage) {
+                          const newMessage = {
+                            id: savedMessage.id || Date.now().toString(),
+                            text: savedMessage.content,
+                            timestamp: new Date(savedMessage.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                            author: savedMessage.author,
+                            author_avatar: savedMessage.author_avatar,
+                            attachment: file
+                          };
+                          
+                          setChatMessages(prev => ({
+                            ...prev,
+                            [selectedChannel.id]: [...(prev[selectedChannel.id] || []), newMessage]
+                          }));
+                          
+                          console.log('✅ Image envoyée à Supabase:', savedMessage);
+                        } else {
+                          console.error('❌ Erreur envoi image Supabase');
+                        }
+                      };
+                      reader.readAsDataURL(file);
+                      
+                      // Reset the input
+                      event.target.value = '';
+                      
+                      // Scroll automatique après upload
+                      setTimeout(() => {
+                        scrollToBottom();
+                      }, 10);
+                    } catch (error) {
+                      console.error('💥 ERREUR upload image:', error);
+                    }
                   }
                 };
 
@@ -2902,7 +3019,7 @@ export default function AdminInterface() {
                   </div>
                 ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) ? (
                   <div className="flex flex-col h-full">
-                    {/* Messages de chat */}
+                                        {/* Messages de chat */}
                     <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
                       {/* Cours Scalping pour le salon Fondamentaux */}
                       {selectedChannel.id === 'fondamentaux' && (
@@ -3093,11 +3210,19 @@ export default function AdminInterface() {
                                 {message.attachment && (
                                   <div className="mt-2">
                                     {message.attachment.type.startsWith('image/') ? (
-                                      <img 
-                                        src={URL.createObjectURL(message.attachment)} 
-                                        alt="Attachment"
-                                        className="mt-2 max-w-full rounded-lg border border-gray-600"
-                                      />
+                                      <div className="relative">
+                                        <img 
+                                          src={URL.createObjectURL(message.attachment)} 
+                                          alt="Attachment"
+                                          className="mt-2 max-w-xs max-h-48 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                                          onClick={() => {
+                                            const newWindow = window.open();
+                                            newWindow!.document.write(`<img src="${URL.createObjectURL(message.attachment)}" style="max-width: 100%; height: auto;" />`);
+                                            newWindow!.document.title = 'Image en grand';
+                                          }}
+                                        />
+                                        <div className="text-xs text-gray-400 mt-1">Cliquez pour agrandir</div>
+                                      </div>
                                     ) : (
                                       <div className="flex items-center gap-2 text-blue-400">
                                         <span>📎</span>
@@ -3614,6 +3739,8 @@ export default function AdminInterface() {
                           <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
                             {message.author === 'Admin' && profileImage ? (
                               <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+                            ) : message.author_avatar ? (
+                              <img src={message.author_avatar} alt="Profile" className="w-full h-full object-cover" />
                             ) : (
                               'A'
                             )}
@@ -3628,11 +3755,19 @@ export default function AdminInterface() {
                                 {message.attachment && (
                                   <div className="mt-2">
                                     {message.attachment.type.startsWith('image/') ? (
-                                      <img 
-                                        src={URL.createObjectURL(message.attachment)} 
-                                        alt="Attachment"
-                                        className="mt-2 max-w-full rounded-lg border border-gray-600"
-                                      />
+                                      <div className="relative">
+                                        <img 
+                                          src={URL.createObjectURL(message.attachment)} 
+                                          alt="Attachment"
+                                          className="mt-2 max-w-xs max-h-48 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                                          onClick={() => {
+                                            const newWindow = window.open();
+                                            newWindow!.document.write(`<img src="${URL.createObjectURL(message.attachment)}" style="max-width: 100%; height: auto;" />`);
+                                            newWindow!.document.title = 'Image en grand';
+                                          }}
+                                        />
+                                        <div className="text-xs text-gray-400 mt-1">Cliquez pour agrandir</div>
+                                      </div>
                                     ) : (
                                       <div className="flex items-center gap-2 text-blue-400">
                                         <span>📎</span>
