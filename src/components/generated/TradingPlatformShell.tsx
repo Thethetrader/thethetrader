@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateSignalReactions } from '../../utils/firebase-setup';
-import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
-
+import { getMessages, getSignals, subscribeToMessages, addMessage } from '../../utils/supabase-setup';
+import { initializeDatabase } from '../../utils/init-database';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../../utils/profile-manager';
 
 export default function TradingPlatformShell() {
@@ -13,14 +12,12 @@ export default function TradingPlatformShell() {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showGifPicker, setShowGifPicker] = useState(false);
   const [showFileUpload, setShowFileUpload] = useState(false);
+  const [showSignalModal, setShowSignalModal] = useState(false);
   const [showTradesModal, setShowTradesModal] = useState(false);
   const [showSignalsModal, setShowSignalsModal] = useState(false);
   const [selectedTradesDate, setSelectedTradesDate] = useState<Date | null>(null);
   const [selectedSignalsDate, setSelectedSignalsDate] = useState<Date | null>(null);
   const [pasteArea, setPasteArea] = useState('');
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [unreadMessages, setUnreadMessages] = useState<{[channelId: string]: number}>({});
-  const [lastChannelOpenTime, setLastChannelOpenTime] = useState<{[channelId: string]: number}>({});
   const [signals, setSignals] = useState<Array<{
     id: string;
     type: string;
@@ -36,26 +33,50 @@ export default function TradingPlatformShell() {
     channel_id: string;
     reactions?: string[];
     pnl?: string;
-    closeMessage?: string;
-  }>>([]);
+  }>>([{
+    id: 'test-1',
+    type: 'BUY',
+    symbol: 'BTC',
+    timeframe: '1 min',
+    entry: '45000',
+    takeProfit: '46000',
+    stopLoss: '44000',
+    description: 'Signal de test avec boutons WIN/LOSS/BE',
+    image: null,
+    timestamp: '22:30',
+    status: 'ACTIVE',
+    channel_id: 'crypto'
+  }, {
+    id: 'test-2',
+    type: 'SELL',
+    symbol: 'ETH',
+    timeframe: '5 min',
+    entry: '2800',
+    takeProfit: '2750',
+    stopLoss: '2850',
+    description: 'Signal ETH avec boutons visibles',
+    image: null,
+    timestamp: '22:35',
+    status: 'ACTIVE',
+    channel_id: 'forex',
+    reactions: []
+  }]);
 
-  // État pour suivre le nombre de signaux chargés par canal (pour éviter les doublons)
-  const [signalsLoadedCount, setSignalsLoadedCount] = useState<{[channelId: string]: number}>({});
-
-  // Fonction pour charger les messages depuis Firebase (max 20)
+  // Fonction pour charger les messages depuis Supabase
   const loadMessages = async (channelId: string) => {
     try {
       const messages = await getMessages(channelId);
-      // Limiter à 20 messages pour les salons de chat
-      const limitedMessages = ['general-chat', 'profit-loss'].includes(channelId) ? messages.slice(-20) : messages;
-      const formattedMessages = limitedMessages.map(msg => ({
+      const formattedMessages = messages.map(msg => ({
         id: msg.id || '',
         text: msg.content,
         timestamp: new Date(msg.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         author: msg.author,
         author_avatar: msg.author_avatar, // CONSERVER l'avatar de l'auteur !
-        attachment: undefined,
-        attachment_data: msg.attachment_data // CONSERVER les photos !
+        attachment: msg.attachment_data ? {
+          type: msg.attachment_type || 'image/jpeg',
+          name: msg.attachment_name || 'image.jpg'
+        } : undefined,
+        attachment_data: msg.attachment_data
       }));
       
       setMessages(prev => ({
@@ -66,130 +87,73 @@ export default function TradingPlatformShell() {
           user: msg.author,
           author: msg.author, // CONSERVER le nom de l'auteur !
           author_avatar: msg.author_avatar, // CONSERVER l'avatar de l'auteur !
-          timestamp: msg.timestamp,
-          attachment_data: msg.attachment_data // CONSERVER les photos !
+          timestamp: msg.timestamp
         }))
       }));
       
       console.log(`✅ Messages chargés pour ${channelId}:`, formattedMessages.length);
+      console.log('📋 Messages actuels:', formattedMessages);
+      
+      // Scroller vers le bas après le chargement des messages
+      setTimeout(() => {
+        scrollToBottom();
+      }, 5);
     } catch (error) {
       console.error('❌ Erreur chargement messages:', error);
     }
   };
 
-  // Fonction pour charger les signaux depuis Firebase (optimisé - max 3)
+  // Fonction pour charger les signaux depuis Supabase
   const loadSignals = async (channelId: string) => {
     try {
-      console.log('🚀 DÉBUT CHARGEMENT SIGNAUX PWA pour canal:', channelId);
-      const signals = await getSignals(channelId, 3); // Limite à 3 signaux
-      console.log('🔍 SIGNAUX BRUTS RÉCUPÉRÉS DEPUIS FIREBASE pour', channelId, ':', signals.map(s => ({symbol: s.symbol, type: s.type, id: s.id})));
+      const signals = await getSignals(channelId);
       const formattedSignals = signals.map(signal => ({
         id: signal.id || '',
         type: signal.type,
         symbol: signal.symbol,
         timeframe: signal.timeframe,
-        entry: signal.entry?.toString() || 'N/A',
-        takeProfit: signal.takeProfit?.toString() || 'N/A',
-        stopLoss: signal.stopLoss?.toString() || 'N/A',
+        entry: signal.entry_price?.toString() || 'N/A',
+        takeProfit: signal.take_profit?.toString() || 'N/A',
+        stopLoss: signal.stop_loss?.toString() || 'N/A',
         description: signal.description || '',
         image: null,
         timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         status: signal.status || 'ACTIVE' as const,
         channel_id: signal.channel_id,
-        reactions: [],
-        pnl: signal.pnl,
-        closeMessage: signal.closeMessage
+        reactions: []
       }));
       
       setSignals(formattedSignals);
-
-      // Initialiser le compteur de signaux chargés pour ce canal
-      setSignalsLoadedCount(prev => ({
-        ...prev,
-        [channelId]: formattedSignals.length
-      }));
-
-      console.log(`✅ SIGNAUX CHARGÉS ET AFFICHÉS DANS PWA pour ${channelId}:`, formattedSignals.length);
-      console.log('🔍 DÉTAIL DES SIGNAUX AFFICHÉS:', formattedSignals.map(s => ({symbol: s.symbol, type: s.type, id: s.id, timestamp: s.timestamp})));
-      console.log('🎯 État signals utilisateur après setSignals:', formattedSignals);
-      console.log(`📊 Compteur mis à jour pour ${channelId}:`, formattedSignals.length);
-      
-      // Envoyer des notifications pour les nouveaux signaux
-      if (formattedSignals.length > 0) {
-        // Notifier le signal le plus récent
-        const latestSignal = formattedSignals[0];
-        notifyNewSignal(latestSignal);
-      }
-      
-      // Scroll automatique après chargement des signaux
-      setTimeout(() => {
-        scrollToBottom();
-      }, 100);
+      console.log(`✅ Signaux chargés pour ${channelId}:`, formattedSignals.length);
     } catch (error) {
       console.error('❌ Erreur chargement signaux:', error);
     }
   };
 
-  // Initialiser l'app avec Firebase
+  // Initialiser l'app avec Supabase
   useEffect(() => {
     const initApp = async () => {
+      await initializeDatabase();
       await loadMessages(selectedChannel.id);
       await loadSignals(selectedChannel.id);
-      
-      // Initialiser les notifications push
-      await initializeNotifications();
     };
     initApp();
   }, []);
 
-  // Subscription globale pour tous les canaux
-  useEffect(() => {
-    const channels = ['crypto', 'futur', 'forex', 'fondamentaux', 'letsgooo-model', 'livestream', 'general-chat', 'profit-loss'];
-    
-    const subscriptions = channels.map(channelId => {
-      return subscribeToMessages(channelId, (newMessage) => {
-        console.log(`🔄 Nouveau message reçu dans ${channelId}:`, newMessage);
-        
-        // Compter les nouveaux messages seulement si on n'est pas dans ce canal
-        if (selectedChannel.id !== channelId) {
-          console.log(`📊 Incrementing unread count for ${channelId}`);
-          setUnreadMessages(prev => ({
-            ...prev,
-            [channelId]: (prev[channelId] || 0) + 1
-          }));
-        }
-      });
-    });
-
-    return () => {
-      subscriptions.forEach(sub => sub.unsubscribe());
-    };
-  }, [selectedChannel.id]);
-
   // Charger les données quand on change de canal
   useEffect(() => {
-    console.log('🔄 Changement de canal utilisateur:', selectedChannel.id);
     loadMessages(selectedChannel.id);
     loadSignals(selectedChannel.id);
+    // Scroller vers le bas quand on entre dans un salon
+    setTimeout(() => {
+      scrollToBottom();
+    }, 50);
+  }, [selectedChannel.id]);
+
+  // Subscription temps réel pour les messages
+  useEffect(() => {
+    console.log('🔄 Initialisation subscription utilisateur pour:', selectedChannel.id);
     
-    // Subscription aux signaux temps réel pour les réactions et notifications
-    const signalSubscription = subscribeToSignals(selectedChannel.id, (updatedSignal) => {
-      console.log('🔄 Signal mis à jour reçu:', updatedSignal);
-      
-      // Mettre à jour les signaux avec les nouvelles réactions
-      setSignals(prev => prev.map(signal => 
-        signal.id === updatedSignal.id ? { ...signal, reactions: updatedSignal.reactions || [] } : signal
-      ));
-      
-      // Envoyer une notification pour les signaux fermés (WIN/LOSS/BE)
-      if (updatedSignal.status !== 'ACTIVE' && (updatedSignal as any).closeMessage) {
-        notifySignalClosed(updatedSignal);
-        // Mettre à jour les statistiques fixes
-        updateFixedStats(updatedSignal);
-      }
-    });
-    
-    // Subscription aux messages temps réel pour le canal actuel
     const subscription = subscribeToMessages(selectedChannel.id, (newMessage) => {
       console.log('🔄 Nouveau message reçu utilisateur:', newMessage);
       
@@ -197,6 +161,7 @@ export default function TradingPlatformShell() {
         id: newMessage.id || '',
         text: newMessage.content,
         timestamp: new Date(newMessage.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        user: newMessage.author,
         author: newMessage.author,
         author_avatar: newMessage.author_avatar,
         attachment: newMessage.attachment_data ? {
@@ -208,20 +173,8 @@ export default function TradingPlatformShell() {
       
       setMessages(prev => ({
         ...prev,
-        [selectedChannel.id]: [...(prev[selectedChannel.id] || []), {
-          id: formattedMessage.id,
-          text: formattedMessage.text,
-          user: formattedMessage.author,
-          author: formattedMessage.author,
-          author_avatar: formattedMessage.author_avatar,
-          timestamp: formattedMessage.timestamp,
-          attachment_data: formattedMessage.attachment_data
-        }]
+        [selectedChannel.id]: [...(prev[selectedChannel.id] || []), formattedMessage]
       }));
-      
-      // Compter les nouveaux messages seulement si on n'est pas dans le canal actuel
-      // (car on va voir le message immédiatement)
-      // Cette logique sera gérée par la subscription globale
       
       // Scroll vers le bas pour voir le nouveau message
       setTimeout(() => {
@@ -229,9 +182,15 @@ export default function TradingPlatformShell() {
       }, 5);
     });
 
+    // Fallback: recharger les messages toutes les 2 secondes
+    const interval = setInterval(() => {
+      console.log('🔄 Rechargement automatique utilisateur pour:', selectedChannel.id);
+      loadMessages(selectedChannel.id);
+    }, 2000);
+
     return () => {
       subscription.unsubscribe();
-      signalSubscription.unsubscribe();
+      clearInterval(interval);
     };
   }, [selectedChannel.id]);
   const [chatMessage, setChatMessage] = useState('');
@@ -255,110 +214,6 @@ export default function TradingPlatformShell() {
     
     initProfile();
   }, []);
-
-  // Subscription globale pour compter les messages non lus
-  useEffect(() => {
-    const allChannels = ['fondamentaux', 'letsgooo-model', 'crypto', 'futur', 'forex', 'livestream', 'general-chat', 'profit-loss', 'trading-journal'];
-    
-    const subscriptions = allChannels.map(channelId => {
-      return subscribeToMessages(channelId, (newMessage) => {
-        // Vérifier si le message est plus récent que la dernière ouverture du salon
-        const lastOpenTime = lastChannelOpenTime[channelId] || 0;
-        const messageTime = typeof newMessage.timestamp === 'number' ? newMessage.timestamp : Date.now();
-        
-        // Si le salon n'a jamais été ouvert, compter tous les messages
-        // Sinon, compter seulement les messages plus récents que la dernière ouverture
-        if (lastOpenTime === 0 || messageTime > lastOpenTime) {
-          // Ne pas compter si on est actuellement dans ce salon
-          if (selectedChannel.id !== channelId) {
-            console.log(`📊 Message reçu dans ${channelId} (canal non actif)`);
-          }
-        }
-      });
-    });
-
-    return () => {
-      subscriptions.forEach(subscription => subscription.unsubscribe());
-    };
-  }, [selectedChannel.id, lastChannelOpenTime]);
-
-  // Subscription globale pour les nouveaux signaux
-  useEffect(() => {
-    console.log('🔄 Initialisation de la subscription globale aux signaux');
-    console.log('📊 Canals surveillés:', ['crypto', 'futur', 'forex', 'fondamentaux', 'letsgooo-model']);
-
-    // Délai pour éviter les doublons avec le chargement initial
-    const timeoutId = setTimeout(() => {
-      const signalChannels = ['crypto', 'futur', 'forex', 'fondamentaux', 'letsgooo-model'];
-    
-    const signalSubscriptions = signalChannels.map(channelId => {
-      return subscribeToSignals(channelId, (newSignal) => {
-        console.log('🆕 NOUVEAU SIGNAL REÇU DANS PWA - Canal:', channelId, 'Signal:', newSignal.symbol, newSignal.type, 'ID:', newSignal.id);
-        
-        // Envoyer une notification pour tous les nouveaux signaux
-        if (newSignal.status === 'ACTIVE') {
-          console.log('🆕 Notification envoyée pour le nouveau signal:', newSignal.symbol, newSignal.type);
-          notifyNewSignal(newSignal);
-        } else {
-          console.log('📱 Signal non actif - pas de notification:', newSignal.status);
-        }
-        
-        // Mettre à jour les signaux en temps réel pour tous les canaux
-        setSignals(prev => {
-          // Vérifier d'abord si on a des signaux pour ce canal (éviter les doublons pendant le chargement)
-          const channelSignals = prev.filter(s => s.channel_id === newSignal.channel_id);
-          const hasSignalsForChannel = channelSignals.length > 0;
-
-          // Si on n'a pas encore de signaux pour ce canal, attendre que loadSignals se termine
-          if (!hasSignalsForChannel && newSignal.channel_id === selectedChannel.id) {
-            console.log('⏳ Attente du chargement initial pour', newSignal.channel_id);
-            return prev;
-          }
-
-          // Vérification plus stricte des doublons (par ID et par contenu)
-          const exists = prev.some(s =>
-            s.id === newSignal.id ||
-            (s.symbol === newSignal.symbol &&
-             s.type === newSignal.type &&
-             s.channel_id === newSignal.channel_id &&
-             Math.abs(new Date(s.timestamp).getTime() - (newSignal.timestamp || Date.now())) < 60000) // Même minute
-          );
-
-          if (!exists) {
-            const formattedSignal = {
-              id: newSignal.id || '',
-              type: newSignal.type,
-              symbol: newSignal.symbol,
-              timeframe: newSignal.timeframe,
-              entry: newSignal.entry?.toString() || 'N/A',
-              takeProfit: newSignal.takeProfit?.toString() || 'N/A',
-              stopLoss: newSignal.stopLoss?.toString() || 'N/A',
-              description: newSignal.description || '',
-              image: null,
-              timestamp: new Date(newSignal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-              status: newSignal.status || 'ACTIVE' as const,
-              channel_id: newSignal.channel_id,
-              reactions: newSignal.reactions || [],
-              pnl: newSignal.pnl,
-              closeMessage: newSignal.closeMessage
-            };
-            console.log('✅ Signal ajouté à la liste (temps réel):', formattedSignal.symbol, formattedSignal.type);
-            // Ajouter à la fin (les signaux sont déjà dans l'ordre chronologique)
-            return [...prev, formattedSignal];
-          } else {
-            console.log('🚫 Signal déjà existant (temps réel) - ignoré:', newSignal.symbol, newSignal.type);
-            return prev;
-          }
-        });
-      });
-    });
-
-    }, 2000); // Délai de 2 secondes pour éviter les doublons avec le chargement initial
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, []); // Subscription globale - pas de dépendance
   const [isLiveStreaming, setIsLiveStreaming] = useState(false);
   const [streamTitle, setStreamTitle] = useState('');
   const [streamDescription, setStreamDescription] = useState('');
@@ -366,7 +221,6 @@ export default function TradingPlatformShell() {
 
   // États pour le journal de trading personnalisé
   const [showTradeModal, setShowTradeModal] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(() => {
     // Récupérer selectedDate depuis localStorage
     const saved = localStorage.getItem('selectedDate');
@@ -388,30 +242,10 @@ export default function TradingPlatformShell() {
     if (selectedChannel.id === 'trading-journal' && channelId !== 'trading-journal') {
       setSelectedDate(null);
     }
-
-    // Nettoyer les signaux du canal précédent pour éviter les mélanges
-    if (selectedChannel.id !== channelId) {
-      setSignals(prev => prev.filter(signal => signal.channel_id !== selectedChannel.id));
-      console.log(`🧹 Signaux nettoyés pour l'ancien canal: ${selectedChannel.id}`);
-    }
-
+    
     setSelectedChannel({id: channelId, name: channelName});
     setView('signals');
     scrollToTop();
-    
-    // Enregistrer le timestamp d'ouverture du salon
-    setLastChannelOpenTime(prev => ({
-      ...prev,
-      [channelId]: Date.now()
-    }));
-    
-    // Réinitialiser les messages non lus pour ce canal
-    setUnreadMessages(prev => ({
-      ...prev,
-      [channelId]: 0
-    }));
-    
-    console.log(`📊 Channel opened: ${channelId} at ${new Date().toLocaleTimeString()}`);
   };
   const [personalTrades, setPersonalTrades] = useState<Array<{
     id: string;
@@ -480,11 +314,6 @@ export default function TradingPlatformShell() {
     console.log('Trades chargés:', personalTrades);
   }, [personalTrades]);
 
-  // Debug: Afficher les messages non lus
-  useEffect(() => {
-    console.log('📊 Unread messages state:', unreadMessages);
-  }, [unreadMessages]);
-
   const [signalData, setSignalData] = useState({
     type: 'BUY',
     symbol: '',
@@ -499,18 +328,6 @@ export default function TradingPlatformShell() {
   // États pour le copier-coller TradingView
   const [debugMode, setDebugMode] = useState(false);
   const [pasteDebug, setPasteDebug] = useState('');
-
-  // Fonction de debug pour voir les signaux actuels
-  const debugSignals = () => {
-    const currentSignals = signals.filter(s => s.channel_id === selectedChannel.id);
-    console.log('🔍 DEBUG - SIGNAUX ACTUELS DANS PWA pour canal', selectedChannel.id, ':');
-    currentSignals.forEach((signal, index) => {
-      console.log(`${index + 1}. ${signal.symbol} ${signal.type} - ID: ${signal.id} - Timestamp: ${signal.timestamp}`);
-    });
-    console.log(`📊 Total: ${currentSignals.length} signaux`);
-    alert(`Debug: ${currentSignals.length} signaux dans le canal ${selectedChannel.id}. Regarde la console pour les détails.`);
-  };
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [isPasteActive, setIsPasteActive] = useState(false);
   const [error, setError] = useState('');
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -786,73 +603,32 @@ export default function TradingPlatformShell() {
     return parseFloat(cleanStr) || 0;
   };
 
-  // Statistiques fixes stockées dans localStorage
-  const getFixedStats = () => {
-    const saved = localStorage.getItem('tradingStats');
-    if (saved) {
-      return JSON.parse(saved);
-    }
-    // Stats par défaut si rien n'est sauvegardé
-    return {
-      totalPnL: 0,
-      winRate: 0,
-      avgWin: 0,
-      avgLoss: 0,
-      totalTrades: 0
-    };
-  };
-
-  const updateFixedStats = (signal: any) => {
-    if (signal.status === 'ACTIVE') return; // Ne mettre à jour que pour les signaux fermés
-
-    const currentStats = getFixedStats();
-    const pnlValue = parsePnL(signal.pnl || '0');
-
-    const newStats = {
-      totalPnL: currentStats.totalPnL + pnlValue,
-      winRate: 0, // Sera recalculé
-      avgWin: currentStats.avgWin,
-      avgLoss: currentStats.avgLoss,
-      totalTrades: currentStats.totalTrades + 1
-    };
-
-    // Recalculer winRate et moyennes
-    const allSignals = JSON.parse(localStorage.getItem('allSignals') || '[]');
-    allSignals.push(signal);
-
-    const closedSignals = allSignals.filter((s: any) => s.status !== 'ACTIVE');
-    const wins = closedSignals.filter((s: any) => s.status === 'WIN');
-    const losses = closedSignals.filter((s: any) => s.status === 'LOSS');
-
-    newStats.winRate = closedSignals.length > 0 ? Math.round((wins.length / closedSignals.length) * 100) : 0;
-
-    if (wins.length > 0) {
-      newStats.avgWin = Math.round(wins.reduce((total: number, s: any) => total + parsePnL(s.pnl || '0'), 0) / wins.length);
-    }
-
-    if (losses.length > 0) {
-      newStats.avgLoss = Math.round(losses.reduce((total: number, s: any) => total + Math.abs(parsePnL(s.pnl || '0')), 0) / losses.length);
-    }
-
-    localStorage.setItem('tradingStats', JSON.stringify(newStats));
-    localStorage.setItem('allSignals', JSON.stringify(allSignals));
-  };
-
-  // Fonctions pour les statistiques des signaux (utilisent les stats fixes)
+  // Fonctions pour les statistiques des signaux
   const calculateTotalPnL = (): number => {
-    return getFixedStats().totalPnL;
+    return signals
+      .filter(s => s.pnl && s.status !== 'ACTIVE')
+      .reduce((total, signal) => total + parsePnL(signal.pnl), 0);
   };
 
   const calculateWinRate = (): number => {
-    return getFixedStats().winRate;
+    const closedSignals = signals.filter(s => s.status !== 'ACTIVE');
+    if (closedSignals.length === 0) return 0;
+    const wins = closedSignals.filter(s => s.status === 'WIN').length;
+    return Math.round((wins / closedSignals.length) * 100);
   };
 
   const calculateAvgWin = (): number => {
-    return getFixedStats().avgWin;
+    const winSignals = signals.filter(s => s.status === 'WIN' && s.pnl);
+    if (winSignals.length === 0) return 0;
+    const totalWinPnL = winSignals.reduce((total, signal) => total + parsePnL(signal.pnl), 0);
+    return Math.round(totalWinPnL / winSignals.length);
   };
 
   const calculateAvgLoss = (): number => {
-    return getFixedStats().avgLoss;
+    const lossSignals = signals.filter(s => s.status === 'LOSS' && s.pnl);
+    if (lossSignals.length === 0) return 0;
+    const totalLossPnL = lossSignals.reduce((total, signal) => total + Math.abs(parsePnL(signal.pnl)), 0);
+    return Math.round(totalLossPnL / lossSignals.length);
   };
 
   const getTodaySignals = () => {
@@ -1010,8 +786,7 @@ export default function TradingPlatformShell() {
   };
 
   // Fonctions pour gérer les statuts des signaux
-  const handleReaction = async (signalId: string, emoji: string) => {
-    // Mettre à jour localement d'abord
+  const handleReaction = (signalId: string, emoji: string) => {
     setSignals(prev => prev.map(signal => {
       if (signal.id === signalId) {
         const currentReactions = signal.reactions || [];
@@ -1019,21 +794,15 @@ export default function TradingPlatformShell() {
         
         if (hasReaction) {
           // Retirer la réaction
-          const newReactions = currentReactions.filter(r => r !== emoji);
-          // Sauvegarder dans Firebase
-          updateSignalReactions(signalId, newReactions);
           return {
             ...signal,
-            reactions: newReactions
+            reactions: currentReactions.filter(r => r !== emoji)
           };
         } else {
           // Ajouter la réaction
-          const newReactions = [...currentReactions, emoji];
-          // Sauvegarder dans Firebase
-          updateSignalReactions(signalId, newReactions);
           return {
             ...signal,
-            reactions: newReactions
+            reactions: [...currentReactions, emoji]
           };
         }
       }
@@ -1210,16 +979,39 @@ export default function TradingPlatformShell() {
     }
   };
 
-  // Fonction handleSignalStatus supprimée - seul admin peut changer le statut des signaux
+  const handleSignalStatus = (signalId: string, newStatus: 'WIN' | 'LOSS' | 'BE' | 'ACTIVE') => {
+    const signal = signals.find(s => s.id === signalId);
+    if (!signal) return;
 
-  // Scroll automatique vers le bas quand de nouveaux messages arrivent, quand on change de canal, ou quand les signaux changent
+    if (signal.status === newStatus) {
+      // Si on clique sur le même statut, on remet en ACTIVE
+      setSignals(prev => prev.map(s => 
+        s.id === signalId ? { ...s, status: 'ACTIVE', pnl: undefined } : s
+      ));
+    } else if (newStatus === 'ACTIVE') {
+      // Si on veut remettre en ACTIVE directement
+      setSignals(prev => prev.map(s => 
+        s.id === signalId ? { ...s, status: 'ACTIVE', pnl: undefined } : s
+      ));
+    } else {
+      // Sinon on demande le P&L
+      const pnl = prompt(`Entrez le P&L final pour ce signal (ex: +$150 ou -$50):`);
+      if (pnl !== null) {
+        setSignals(prev => prev.map(s => 
+          s.id === signalId ? { ...s, status: newStatus, pnl } : s
+        ));
+      }
+    }
+  };
+
+  // Scroll automatique vers le bas quand de nouveaux messages arrivent ou quand on change de canal
   useEffect(() => {
     setTimeout(() => {
       if (messagesContainerRef.current) {
         messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
       }
     }, 100);
-  }, [messages, selectedChannel.id, signals]);
+  }, [messages, selectedChannel.id]);
 
   const channels = [
     { id: 'crypto', name: 'crypto', emoji: '🪙', fullName: 'Crypto' },
@@ -1234,7 +1026,9 @@ export default function TradingPlatformShell() {
     { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Trading Journal' }
   ];
 
-  // Fonction supprimée - seul admin peut créer des signaux
+  const handleCreateSignal = () => {
+    setShowSignalModal(true);
+  };
 
   // Fonctions pour le journal de trading personnalisé
   const handleAddTrade = () => {
@@ -1462,45 +1256,32 @@ export default function TradingPlatformShell() {
     return [];
   };
 
-  const handleSignalSubmit = async () => {
+  const handleSignalSubmit = () => {
     // Validation minimale - juste besoin d'au moins un champ rempli
     if (!signalData.symbol && !signalData.entry && !signalData.takeProfit && !signalData.stopLoss && !signalData.description) {
       alert('Veuillez remplir au moins un champ pour créer le signal');
       return;
     }
 
-    try {
-      // Préparer les données pour Firebase
-      const signalForFirebase = {
-        channel_id: selectedChannel.id,
-        type: signalData.type as 'BUY' | 'SELL',
-        symbol: signalData.symbol || 'N/A',
-        timeframe: signalData.timeframe || '1 min',
-        entry: signalData.entry || '0',
-        takeProfit: signalData.takeProfit || '0',
-        stopLoss: signalData.stopLoss || '0',
-        description: signalData.description || '',
-        author: 'TheTheTrader',
-        image: signalData.image,
-        status: 'ACTIVE' as const
-      };
+    const newSignal = {
+      id: Date.now().toString(),
+      type: signalData.type,
+      symbol: signalData.symbol || 'N/A',
+      timeframe: signalData.timeframe || '1 min',
+      entry: signalData.entry || 'N/A',
+      takeProfit: signalData.takeProfit || 'N/A',
+      stopLoss: signalData.stopLoss || 'N/A',
+      description: signalData.description || '',
+      image: signalData.image,
+      timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+      status: 'ACTIVE' as const,
+      channel_id: selectedChannel.id,
+      reactions: []
+    };
 
-      // Sauvegarder en Firebase
-      const savedSignal = await addSignal(signalForFirebase);
-      
-      if (savedSignal) {
-        console.log('✅ Signal sauvé en Firebase:', savedSignal);
-        alert('Signal créé et sauvé en base ! ✅');
-      } else {
-        console.error('❌ Erreur sauvegarde signal');
-        alert('Erreur lors de la sauvegarde du signal');
-        return;
-      }
-    } catch (error) {
-      console.error('❌ Erreur création signal:', error);
-      alert('Erreur lors de la création du signal');
-      return;
-    }
+    // Ajouter le signal à la liste (en premier)
+    setSignals(prevSignals => [newSignal, ...prevSignals]);
+    console.log('Nouveau signal:', newSignal);
     
     // Reset form et fermer modal
     setSignalData({
@@ -1513,13 +1294,15 @@ export default function TradingPlatformShell() {
       description: '',
       image: null
     });
-    // Modal supprimée
+    setShowSignalModal(false);
+    
+    alert('Signal créé avec succès !');
   };
 
   const handleSendMessage = async () => {
     if (chatMessage.trim()) {
       try {
-        // Envoyer vers Firebase avec avatar utilisateur
+        // Envoyer vers Supabase avec avatar utilisateur
         const messageData = {
           channel_id: selectedChannel.id,
           content: chatMessage,
@@ -1530,11 +1313,24 @@ export default function TradingPlatformShell() {
 
         const savedMessage = await addMessage(messageData);
 
-                if (savedMessage) {
-          console.log('✅ Message envoyé à Firebase:', savedMessage);
-          // La subscription temps réel ajoutera le message automatiquement
+        if (savedMessage) {
+      const newMessage = {
+            id: savedMessage.id || Date.now().toString(),
+            text: savedMessage.content,
+            timestamp: new Date(savedMessage.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+            user: savedMessage.author,
+            author: savedMessage.author, // CONSERVER le nom de l'auteur !
+            author_avatar: savedMessage.author_avatar // CONSERVER l'avatar de l'auteur !
+          };
+
+          setMessages(prev => ({
+            ...prev,
+            [selectedChannel.id]: [...(prev[selectedChannel.id] || []), newMessage]
+          }));
+
+          console.log('✅ Message envoyé à Supabase:', savedMessage);
         } else {
-          console.error('❌ Erreur envoi message Firebase');
+          console.error('❌ Erreur envoi message Supabase');
         }
       } catch (error) {
         console.error('💥 ERREUR envoi message:', error);
@@ -1543,44 +1339,59 @@ export default function TradingPlatformShell() {
       setChatMessage('');
       
       // Scroll automatique après envoi
-      setTimeout(() => {
-        scrollToBottom();
-      }, 50);
+      scrollToBottom();
     }
   };
 
-                                    const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+                  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
                   const file = event.target.files?.[0];
                   if (file) {
-                      // Upload image vers Firebase Storage
-                      const imageURL = await uploadImage(file);
-                      
-                      try {
-                        // Envoyer à Firebase avec l'URL de l'image
+                    try {
+                      // Convertir le fichier en base64
+                      const reader = new FileReader();
+                      reader.onload = async (e) => {
+                        const base64Image = e.target?.result as string;
+                        
+                        // Envoyer à Supabase avec l'image en base64
                         const messageData = {
                           channel_id: selectedChannel.id,
-                          content: '',
-                      author: 'TheTheTrader',
+                          content: `📎 Image: ${file.name}`,
+                          author: 'TheTheTrader',
                           author_type: 'user' as const,
                           author_avatar: profileImage || undefined,
-                          attachment_data: imageURL,
+                          attachment_data: base64Image,
                           attachment_type: file.type,
                           attachment_name: file.name
                         };
+                        
+                        const savedMessage = await addMessage(messageData);
+                        
+                        if (savedMessage) {
+                          const newMessage = {
+                            id: savedMessage.id || Date.now().toString(),
+                            text: savedMessage.content,
+                            timestamp: new Date(savedMessage.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                            user: savedMessage.author,
+                            author: savedMessage.author,
+                            author_avatar: savedMessage.author_avatar,
+                            attachment: savedMessage.attachment_data ? {
+                              type: savedMessage.attachment_type || 'image/jpeg',
+                              name: savedMessage.attachment_name || 'image.jpg'
+                            } : undefined,
+                            attachment_data: savedMessage.attachment_data
+                          };
                           
-                          console.log('📤 Message data envoyé utilisateur:', messageData);
-                          const savedMessage = await addMessage(messageData);
-                          console.log('✅ Message sauvegardé utilisateur:', savedMessage);
+                          setMessages(prev => ({
+                            ...prev,
+                            [selectedChannel.id]: [...(prev[selectedChannel.id] || []), newMessage]
+                          }));
                           
-                                                  if (savedMessage) {
-                          console.log('✅ Image envoyée utilisateur à Firebase:', savedMessage);
-                          // La subscription temps réel ajoutera le message automatiquement
+                          console.log('✅ Image envoyée à Supabase:', savedMessage);
                         } else {
-                          console.error('❌ Erreur envoi image utilisateur Firebase');
+                          console.error('❌ Erreur envoi image Supabase');
                         }
-                      } catch (error) {
-                        console.error('💥 ERREUR upload image utilisateur:', error);
-                      }
+                      };
+                      reader.readAsDataURL(file);
                       
                     // Reset the input
                     event.target.value = '';
@@ -1588,7 +1399,10 @@ export default function TradingPlatformShell() {
                       // Scroll automatique après upload
                       setTimeout(() => {
                         scrollToBottom();
-                      }, 50);
+                      }, 10);
+                    } catch (error) {
+                      console.error('💥 ERREUR upload image:', error);
+                    }
                   }
                 };
 
@@ -2042,26 +1856,26 @@ export default function TradingPlatformShell() {
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">ÉDUCATION</h3>
             <div className="space-y-1">
-              <button onClick={() => handleChannelChange('fondamentaux', 'fondamentaux')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'fondamentaux' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📚 Fondamentaux {unreadMessages['fondamentaux'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['fondamentaux']}</span>}</button>
-              <button onClick={() => handleChannelChange('letsgooo-model', 'letsgooo-model')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'letsgooo-model' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>🚀 Letsgooo-model {unreadMessages['letsgooo-model'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['letsgooo-model']}</span>}</button>
+              <button onClick={() => handleChannelChange('fondamentaux', 'fondamentaux')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'fondamentaux' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📚 Fondamentaux</button>
+              <button onClick={() => handleChannelChange('letsgooo-model', 'letsgooo-model')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'letsgooo-model' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>🚀 Letsgooo-model</button>
             </div>
           </div>
 
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">SIGNAUX</h3>
             <div className="space-y-1">
-              <button onClick={() => handleChannelChange('crypto', 'crypto')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'crypto' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>🪙 Crypto {unreadMessages['crypto'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['crypto']}</span>}</button>
-              <button onClick={() => handleChannelChange('futur', 'futur')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'futur' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📈 Futur {unreadMessages['futur'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['futur']}</span>}</button>
-              <button onClick={() => handleChannelChange('forex', 'forex')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'forex' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💱 Forex {unreadMessages['forex'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['forex']}</span>}</button>
+              <button onClick={() => handleChannelChange('crypto', 'crypto')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'crypto' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>🪙 Crypto</button>
+              <button onClick={() => handleChannelChange('futur', 'futur')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'futur' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📈 Futur</button>
+              <button onClick={() => handleChannelChange('forex', 'forex')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'forex' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💱 Forex</button>
             </div>
           </div>
 
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">TRADING HUB</h3>
             <div className="space-y-1">
-              <button onClick={() => handleChannelChange('livestream', 'livestream')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📺 Livestream {unreadMessages['livestream'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['livestream']}</span>}</button>
-              <button onClick={() => handleChannelChange('general-chat', 'general-chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 General-chat {unreadMessages['general-chat'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['general-chat']}</span>}</button>
-              <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💰 Profit-loss {unreadMessages['profit-loss'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['profit-loss']}</span>}</button>
+              <button onClick={() => handleChannelChange('livestream', 'livestream')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
+              <button onClick={() => handleChannelChange('general-chat', 'general-chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 General-chat</button>
+              <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
               <button onClick={() => {
                 // Réinitialiser selectedDate si on quitte le Trading Journal
                 if (selectedChannel.id === 'trading-journal') {
@@ -2124,19 +1938,11 @@ export default function TradingPlatformShell() {
                   <p className="text-sm font-medium">TheTheTrader</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <button onClick={() => setShowSettings(true)} className="text-gray-400 hover:text-white">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                </button>
-                <button onClick={handleLogout} className="text-gray-400 hover:text-white">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                  </svg>
-                </button>
-              </div>
+              <button onClick={handleLogout} className="text-gray-400 hover:text-white">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+              </button>
             </div>
           ) : (
             <div className="flex items-center justify-between">
@@ -2176,7 +1982,7 @@ export default function TradingPlatformShell() {
                         handleChannelChange(channel.id, channel.name);
                         setMobileView('content');
                       }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors relative"
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <span className="text-lg">{channel.emoji}</span>
@@ -2185,11 +1991,6 @@ export default function TradingPlatformShell() {
                           <p className="text-sm text-gray-400">Contenu éducatif</p>
                         </div>
                       </div>
-                      {unreadMessages[channel.id] > 0 && (
-                        <span className="absolute top-2 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                          {unreadMessages[channel.id]}
-                        </span>
-                      )}
                     </button>
                   ))}
                 </div>
@@ -2205,7 +2006,7 @@ export default function TradingPlatformShell() {
                         handleChannelChange(channel.id, channel.name);
                         setMobileView('content');
                       }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors relative"
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <span className="text-lg">{channel.emoji}</span>
@@ -2214,11 +2015,6 @@ export default function TradingPlatformShell() {
                           <p className="text-sm text-gray-400">Canal de signaux</p>
                         </div>
                       </div>
-                      {unreadMessages[channel.id] > 0 && (
-                        <span className="absolute top-2 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                          {unreadMessages[channel.id]}
-                        </span>
-                      )}
                     </button>
                   ))}
                 </div>
@@ -2234,7 +2030,7 @@ export default function TradingPlatformShell() {
                         handleChannelChange(channel.id, channel.name);
                         setMobileView('content');
                       }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors relative"
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <span className="text-lg">{channel.emoji}</span>
@@ -2243,11 +2039,6 @@ export default function TradingPlatformShell() {
                           <p className="text-sm text-gray-400">Hub de trading</p>
                         </div>
                       </div>
-                      {unreadMessages[channel.id] > 0 && (
-                        <span className="absolute top-2 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                          {unreadMessages[channel.id]}
-                        </span>
-                      )}
                     </button>
                   ))}
                   
@@ -2451,90 +2242,13 @@ export default function TradingPlatformShell() {
                 {/* Affichage des signaux */}
                 {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream'].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
-                    {/* Bouton Voir plus fixe en haut */}
-                    <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={async () => {
-                            const currentSignalsForChannel = signals.filter(s => s.channel_id === selectedChannel.id);
-
-                            if (currentSignalsForChannel.length === 0) {
-                              console.log('ℹ️ Aucun signal chargé pour ce canal');
-                              return;
-                            }
-
-                            // Trouver le timestamp du signal le plus ancien pour charger les suivants
-                            const oldestSignal = currentSignalsForChannel[currentSignalsForChannel.length - 1];
-                            const beforeTimestamp = new Date(oldestSignal.timestamp).getTime();
-
-                            console.log(`🔄 Chargement de signaux plus anciens pour ${selectedChannel.id} (avant ${beforeTimestamp})`);
-
-                            const more = await getSignals(selectedChannel.id, 10, beforeTimestamp);
-                            const existingIds = new Set(currentSignalsForChannel.map(s => s.id));
-
-                            console.log('🔍 Signaux existants:', currentSignalsForChannel.length, 'IDs:', Array.from(existingIds));
-                            console.log('🔍 Signaux reçus de Firebase:', more.length, 'IDs:', more.map(s => s.id));
-
-                            // Tous les signaux reçus devraient être nouveaux car on charge avant le plus ancien
-                            const newSignals = more.filter(signal => {
-                              const signalId = signal.id || '';
-                              const exists = existingIds.has(signalId);
-                              if (exists) {
-                                console.log('🚫 Signal déjà existant - ignoré:', signal.symbol, signal.type, signalId);
-                              } else {
-                                console.log('✅ Nouveau signal détecté:', signal.symbol, signal.type, signalId);
-                              }
-                              return !exists;
-                            });
-
-                            if (newSignals.length === 0) {
-                              console.log('ℹ️ Aucun nouveau signal à charger (fin de la liste atteinte)');
-                              return;
-                            }
-
-                            const formatted = newSignals.map(signal => ({
-                              id: signal.id || '',
-                              type: signal.type,
-                              symbol: signal.symbol,
-                              timeframe: signal.timeframe,
-                              entry: signal.entry?.toString() || 'N/A',
-                              takeProfit: signal.takeProfit?.toString() || 'N/A',
-                              stopLoss: signal.stopLoss?.toString() || 'N/A',
-                              description: signal.description || '',
-                              image: null,
-                              timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                              status: signal.status || 'ACTIVE' as const,
-                              channel_id: signal.channel_id,
-                              reactions: signal.reactions || [], // Garder les réactions existantes
-                              pnl: signal.pnl,
-                              closeMessage: signal.closeMessage
-                            }));
-
-                            console.log(`✅ Ajout de ${formatted.length} nouveaux signaux plus anciens`);
-                            setSignals(prev => [...prev, ...formatted]);
-                          }}
-                          className="px-4 py-2 text-sm rounded bg-gray-700 hover:bg-gray-600 text-white"
-                        >
-                          Voir plus (+10)
-                        </button>
-                        <button
-                          onClick={debugSignals}
-                          className="px-3 py-1 text-xs rounded bg-blue-600 hover:bg-blue-500 text-white"
-                          title="Voir les signaux actuels dans la console"
-                        >
-                          🔍 Debug
-                        </button>
-                      </div>
-                    </div>
                     {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                       <div className="text-center py-8">
                         <div className="text-gray-400 text-sm">Aucun signal pour le moment</div>
                         <div className="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
                       </div>
                     ) : (
-                      signals
-                        .filter(signal => signal.channel_id === selectedChannel.id)
-                        .map((signal) => (
+                      signals.filter(signal => signal.channel_id === selectedChannel.id).map((signal) => (
                         <div key={signal.id} className="flex items-start gap-3">
                           <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
                             {profileImage ? (
@@ -2590,16 +2304,6 @@ export default function TradingPlatformShell() {
                                     </span>
                                 </div>
                                 )}
-
-                                {/* Message de fermeture */}
-                                {signal.closeMessage && (
-                                  <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
-                                    <span className="text-yellow-400 text-sm">🔒</span>
-                                    <span className="text-yellow-400 text-sm font-medium">
-                                      {signal.closeMessage}
-                                    </span>
-                                  </div>
-                                )}
                               </div>
                             </div>
 
@@ -2613,35 +2317,44 @@ export default function TradingPlatformShell() {
                               </div>
                             )}
 
-                            {/* Boutons de statut supprimés - seul admin peut changer WIN/LOSS/BE */}
-
-                            {/* Réactions emoji */}
-                            <div className="flex items-center gap-2 mt-3">
+                            <div className="flex items-center gap-2 flex-wrap mt-2">
                               <button 
-                                onClick={() => handleReaction(signal.id, '🔥')}
-                                className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
+                                onClick={() => handleSignalStatus(signal.id, signal.status === 'WIN' ? 'ACTIVE' : 'WIN')}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                                  signal.status === 'WIN' 
+                                    ? 'bg-green-500 text-white shadow-lg shadow-green-500/20' 
+                                    : 'bg-gray-600 hover:bg-green-500 text-gray-300 hover:text-white'
+                                }`}
                               >
-                                🔥 {signal.reactions?.filter(r => r === '🔥').length || 0}
+                                ✅ WIN
                               </button>
                               <button 
-                                onClick={() => handleReaction(signal.id, '💎')}
-                                className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
+                                onClick={() => handleSignalStatus(signal.id, signal.status === 'LOSS' ? 'ACTIVE' : 'LOSS')}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                                  signal.status === 'LOSS' 
+                                    ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' 
+                                    : 'bg-gray-600 hover:bg-red-500 text-gray-300 hover:text-white'
+                                }`}
                               >
-                                💎 {signal.reactions?.filter(r => r === '💎').length || 0}
+                                ❌ LOSS
                               </button>
                               <button 
-                                onClick={() => handleReaction(signal.id, '🚀')}
-                                className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
+                                onClick={() => handleSignalStatus(signal.id, signal.status === 'BE' ? 'ACTIVE' : 'BE')}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                                  signal.status === 'BE' 
+                                    ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
+                                    : 'bg-gray-600 hover:bg-blue-500 text-gray-300 hover:text-white'
+                                }`}
                               >
-                                🚀 {signal.reactions?.filter(r => r === '🚀').length || 0}
-                              </button>
-                              <button 
-                                onClick={() => handleReaction(signal.id, '👏')}
-                                className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
-                              >
-                                👏 {signal.reactions?.filter(r => r === '👏').length || 0}
+                                ⚖️ BE
                               </button>
                             </div>
+
+
+
+
+
+
                           </div>
                         </div>
                       ))
@@ -2991,18 +2704,21 @@ export default function TradingPlatformShell() {
                                 <span className="text-xs text-gray-400">{message.timestamp}</span>
                               </div>
                               <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
-                                {message.text && <p className="text-white">{message.text}</p>}
+                                <p className="text-white">{message.text}</p>
                                 {message.attachment_data && (
                                   <div className="mt-2">
-                                    <div className="relative">
+                                    {true ? (
                                       <img 
                                         src={message.attachment_data} 
                                         alt="Attachment"
-                                        className="mt-2 w-full h-48 md:h-64 object-cover rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
-                                        onClick={() => setSelectedImage(message.attachment_data)}
+                                        className="mt-2 max-w-full rounded-lg border border-gray-600"
                                       />
-                                      <div className="text-xs text-gray-400 mt-1">Cliquez pour agrandir</div>
-                                    </div>
+                                    ) : (
+                                      <div className="flex items-center gap-2 text-blue-400">
+                                        <span>📎</span>
+                                        <span className="text-sm">Pièce jointe</span>
+                                      </div>
+                                    )}
                                   </div>
                                 )}
                               </div>
@@ -3216,7 +2932,12 @@ export default function TradingPlatformShell() {
             getTradingCalendar()
           ) : (
             <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '80px' }}>
-              {/* Bouton + Signal supprimé - seul admin peut créer des signaux */}
+              {/* Bouton + Signal pour les canaux de signaux */}
+              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream'].includes(selectedChannel.id) && (
+                <div className="flex justify-end mb-4">
+                  <button onClick={handleCreateSignal} className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm">+ Signal</button>
+                </div>
+              )}
 
               {/* Affichage des signaux */}
               {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream'].includes(selectedChannel.id) ? (
@@ -3283,16 +3004,6 @@ export default function TradingPlatformShell() {
                                   </span>
                               </div>
                               )}
-
-                              {/* Message de fermeture */}
-                              {signal.closeMessage && (
-                                <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
-                                  <span className="text-yellow-400 text-sm">🔒</span>
-                                  <span className="text-yellow-400 text-sm font-medium">
-                                    {signal.closeMessage}
-                                  </span>
-                                </div>
-                              )}
                             </div>
                           </div>
 
@@ -3306,7 +3017,38 @@ export default function TradingPlatformShell() {
                             </div>
                           )}
 
-                          {/* Boutons de statut supprimés - seul admin peut changer WIN/LOSS/BE */}
+                          <div className="flex items-center gap-2 flex-wrap mt-2">
+                            <button 
+                              onClick={() => handleSignalStatus(signal.id, signal.status === 'WIN' ? 'ACTIVE' : 'WIN')}
+                              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                                signal.status === 'WIN' 
+                                  ? 'bg-green-500 text-white shadow-lg shadow-green-500/20' 
+                                  : 'bg-gray-600 hover:bg-green-500 text-gray-300 hover:text-white'
+                              }`}
+                            >
+                              ✅ WIN
+                            </button>
+                            <button 
+                              onClick={() => handleSignalStatus(signal.id, signal.status === 'LOSS' ? 'ACTIVE' : 'LOSS')}
+                              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                                signal.status === 'LOSS' 
+                                  ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' 
+                                  : 'bg-gray-600 hover:bg-red-500 text-gray-300 hover:text-white'
+                              }`}
+                            >
+                              ❌ LOSS
+                            </button>
+                            <button 
+                              onClick={() => handleSignalStatus(signal.id, signal.status === 'BE' ? 'ACTIVE' : 'BE')}
+                              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                                signal.status === 'BE' 
+                                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
+                                  : 'bg-gray-600 hover:bg-blue-500 text-gray-300 hover:text-white'
+                              }`}
+                            >
+                              ⚖️ BE
+                            </button>
+                          </div>
 
                           {/* Réactions emoji */}
                           <div className="flex items-center gap-2 mt-3">
@@ -3501,40 +3243,6 @@ export default function TradingPlatformShell() {
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}
                   <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
-                    {/* Bouton Voir plus pour les salons de chat */}
-                    {['general-chat', 'profit-loss'].includes(selectedChannel.id) && (messages[selectedChannel.id] || []).length >= 20 && (
-                      <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
-                        <button
-                          onClick={async () => {
-                            const more = await getMessages(selectedChannel.id);
-                            const formatted = more.map(msg => ({
-                              id: msg.id || '',
-                              text: msg.content,
-                              timestamp: new Date(msg.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                              author: msg.author,
-                              author_avatar: msg.author_avatar,
-                              attachment: undefined,
-                              attachment_data: msg.attachment_data
-                            }));
-                            setMessages(prev => ({
-                              ...prev,
-                              [selectedChannel.id]: formatted.map(msg => ({
-                                id: msg.id,
-                                text: msg.text,
-                                user: msg.author,
-                                author: msg.author,
-                                author_avatar: msg.author_avatar,
-                                timestamp: msg.timestamp,
-                                attachment_data: msg.attachment_data
-                              }))
-                            }));
-                          }}
-                          className="px-4 py-2 text-sm rounded bg-gray-700 hover:bg-gray-600 text-white"
-                        >
-                          Voir plus de messages
-                        </button>
-                      </div>
-                    )}
                     {(messages[selectedChannel.id] || []).length > 0 && (
                       (messages[selectedChannel.id] || []).map((message) => (
                         <div key={message.id} className="flex items-start gap-3">
@@ -3552,19 +3260,30 @@ export default function TradingPlatformShell() {
                               <span className="font-semibold text-white">{message.author}</span>
                               <span className="text-xs text-gray-400">{message.timestamp}</span>
                             </div>
-                            <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
-                                {message.text && <p className="text-white">{message.text}</p>}
+                                                          <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
+                                <p className="text-white">{message.text}</p>
                                 {message.attachment_data && (
                                   <div className="mt-2">
-                                    <div className="relative">
+                                    {true ? (
+                                      <div className="relative">
                                       <img 
                                         src={message.attachment_data} 
                                         alt="Attachment"
-                                        className="mt-2 w-full h-48 md:h-64 object-cover rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
-                                        onClick={() => setSelectedImage(message.attachment_data)}
-                                      />
-                                      <div className="text-xs text-gray-400 mt-1">Cliquez pour agrandir</div>
-                                    </div>
+                                          className="mt-2 max-w-xs max-h-48 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                                          onClick={() => {
+                                            const newWindow = window.open();
+                                            newWindow!.document.write(`<img src="${message.attachment_data}" style="max-width: 100%; height: auto;" />`);
+                                            newWindow!.document.title = 'Image en grand';
+                                          }}
+                                        />
+                                        <div className="text-xs text-gray-400 mt-1">Cliquez pour agrandir</div>
+                                      </div>
+                                    ) : (
+                                      <div className="flex items-center gap-2 text-blue-400">
+                                        <span>📎</span>
+                                        <span className="text-sm">Pièce jointe</span>
+                                      </div>
+                                    )}
                                   </div>
                                 )}
                               </div>
@@ -3618,7 +3337,201 @@ export default function TradingPlatformShell() {
       </div>
 
       {/* Modal de création de signal */}
-      {/* Modal de signal supprimée - seul admin peut créer des signaux */}
+      {showSignalModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold text-white">Créer un signal</h2>
+                <button 
+                  onClick={() => setShowSignalModal(false)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  ✕
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                {/* Zone de collage TradingView */}
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="block text-sm font-medium text-gray-300">📋 Coller données TradingView</label>
+                    <button
+                      onClick={() => setDebugMode(!debugMode)}
+                      className={`text-xs px-2 py-1 rounded ${debugMode ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300'}`}
+                    >
+                      {debugMode ? '🔧 Debug ON' : '🔧 Debug OFF'}
+                    </button>
+                  </div>
+                  <div
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 min-h-[80px] flex items-center justify-center cursor-pointer"
+                    onPaste={handleTradingViewPaste}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const text = e.dataTransfer.getData('text');
+                      if (text) {
+                        // Simuler un événement de collage
+                        const fakeEvent = {
+                          preventDefault: () => {},
+                          clipboardData: {
+                            getData: (type: string) => {
+                              if (type === 'text/html') return '';
+                              if (type === 'text') return text;
+                              return '';
+                            }
+                          }
+                        } as React.ClipboardEvent<HTMLDivElement>;
+                        handleTradingViewPaste(fakeEvent);
+                      }
+                    }}
+                    onDragOver={(e) => e.preventDefault()}
+                  >
+                    {isPasteActive ? (
+                      <div className="text-blue-400">🔄 Traitement en cours...</div>
+                    ) : (
+                      <div className="text-center">
+                        <div className="text-gray-400 mb-1">📋 Cliquez ici et collez (Ctrl+V)</div>
+                        <div className="text-xs text-gray-500">ou glissez-déposez du texte</div>
+                      </div>
+                    )}
+                  </div>
+                  {error && (
+                    <p className="text-xs text-red-400 mt-1">{error}</p>
+                  )}
+                  {debugMode && pasteDebug && (
+                    <div className="text-xs text-gray-400 mt-1 bg-gray-900 p-2 rounded">
+                      <div className="font-semibold">Debug:</div>
+                      <pre className="whitespace-pre-wrap text-xs">{pasteDebug}</pre>
+                    </div>
+                  )}
+                  <p className="text-xs text-gray-400 mt-1">Collez directement depuis TradingView (Risk/Reward tool)</p>
+                </div>
+
+                {/* Type de signal */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Type</label>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setSignalData({...signalData, type: 'BUY'})}
+                      className={`px-3 py-2 rounded text-sm ${signalData.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-300'}`}
+                    >
+                      📈 BUY
+                    </button>
+                    <button
+                      onClick={() => setSignalData({...signalData, type: 'SELL'})}
+                      className={`px-3 py-2 rounded text-sm ${signalData.type === 'SELL' ? 'bg-red-600 text-white' : 'bg-gray-600 text-gray-300'}`}
+                    >
+                      📉 SELL
+                    </button>
+                  </div>
+                </div>
+
+                {/* Symbol */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Symbole</label>
+                  <input
+                    type="text"
+                    value={signalData.symbol}
+                    onChange={(e) => setSignalData({...signalData, symbol: e.target.value})}
+                    placeholder="BTCUSD, EURUSD, etc."
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
+                  />
+                </div>
+
+                {/* Timeframe */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Timeframe</label>
+                  <input
+                    type="text"
+                    value={signalData.timeframe}
+                    onChange={(e) => setSignalData({...signalData, timeframe: e.target.value})}
+                    placeholder="1 min, 5 min, 1H, etc."
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
+                  />
+                </div>
+
+                {/* Entry */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Prix d'entrée</label>
+                  <input
+                    type="text"
+                    value={signalData.entry}
+                    onChange={(e) => setSignalData({...signalData, entry: e.target.value})}
+                    placeholder="103474.00 USD"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
+                  />
+                </div>
+
+                {/* Take Profit */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Take Profit</label>
+                  <input
+                    type="text"
+                    value={signalData.takeProfit}
+                    onChange={(e) => setSignalData({...signalData, takeProfit: e.target.value})}
+                    placeholder="104626.00 USD"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
+                  />
+                </div>
+
+                {/* Stop Loss */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Stop Loss</label>
+                  <input
+                    type="text"
+                    value={signalData.stopLoss}
+                    onChange={(e) => setSignalData({...signalData, stopLoss: e.target.value})}
+                    placeholder="102862.00 USD"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
+                  />
+                </div>
+
+                {/* Description */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                  <textarea
+                    value={signalData.description}
+                    onChange={(e) => setSignalData({...signalData, description: e.target.value})}
+                    placeholder="Notes supplémentaires..."
+                    rows={3}
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
+                  />
+                </div>
+                
+                {/* Image */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Capture d'écran</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) setSignalData({...signalData, image: file});
+                    }}
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
+                  />
+                </div>
+               
+                {/* Boutons */}
+                <div className="flex gap-3 pt-4">
+                  <button
+                    onClick={() => setShowSignalModal(false)}
+                    className="flex-1 bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    onClick={handleSignalSubmit}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white"
+                  >
+                    Créer le signal
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal pour ajouter un trade */}
       {showTradeModal && (
@@ -4052,133 +3965,6 @@ export default function TradingPlatformShell() {
                 </button>
               </div>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal Paramètres */}
-      {showSettings && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-white">⚙️ Paramètres</h2>
-                <button 
-                  onClick={() => setShowSettings(false)}
-                  className="text-gray-400 hover:text-white text-2xl"
-                >
-                  ×
-                </button>
-              </div>
-
-              <div className="space-y-6">
-                {/* Section Notifications */}
-                <div>
-                  <h3 className="text-lg font-medium text-white mb-4">🔔 Notifications</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-white font-medium">Notifications Push</p>
-                        <p className="text-sm text-gray-400">Recevoir les notifications sur l'écran verrouillé</p>
-                      </div>
-                      <button
-                        onClick={async () => {
-                          const permission = await requestNotificationPermission();
-                          if (permission) {
-                            alert('✅ Notifications activées ! Vérifiez les paramètres iOS.');
-                          } else {
-                            alert('❌ Permissions refusées. Allez dans Réglages → Notifications → TheTheTrader');
-                          }
-                        }}
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm"
-                      >
-                        Activer
-                      </button>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-white font-medium">Notifications Signaux</p>
-                        <p className="text-sm text-gray-400">Alertes pour nouveaux signaux</p>
-                      </div>
-                      <div className="text-green-400 text-sm">✅ Activé</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Section Profil */}
-                <div>
-                  <h3 className="text-lg font-medium text-white mb-4">👤 Profil</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-12 w-12 bg-blue-500 rounded-full flex items-center justify-center text-lg overflow-hidden">
-                        {profileImage ? (
-                          <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
-                        ) : (
-                          'TT'
-                        )}
-                      </div>
-                      <div>
-                        <p className="text-white font-medium">TheTheTrader</p>
-                        <p className="text-sm text-gray-400">Utilisateur PWA</p>
-                      </div>
-                    </div>
-                    
-                    <label className="cursor-pointer block">
-                      <input
-                        type="file"
-                        onChange={handleProfileImageChange}
-                        className="hidden"
-                        accept="image/*"
-                      />
-                      <span className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-sm inline-block">
-                        📷 Changer photo
-                      </span>
-                    </label>
-                  </div>
-                </div>
-
-                {/* Section Aide */}
-                <div>
-                  <h3 className="text-lg font-medium text-white mb-4">❓ Aide</h3>
-                  <div className="space-y-2 text-sm text-gray-400">
-                    <p>• Pour activer les notifications sur écran verrouillé :</p>
-                    <p className="ml-4">Réglages → Notifications → TheTheTrader</p>
-                    <p>• Activer "Afficher sur l'écran de verrouillage"</p>
-                    <p>• Activer "Sons" et "Badges"</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 pt-4 border-t border-gray-600">
-                <button
-                  onClick={() => setShowSettings(false)}
-                  className="w-full bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
-                >
-                  Fermer
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Popup Image */}
-      {selectedImage && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" onClick={() => setSelectedImage(null)}>
-          <div className="relative max-w-4xl max-h-[90vh]">
-            <img 
-              src={selectedImage} 
-              alt="Image agrandie"
-              className="max-w-full max-h-full object-contain rounded-lg"
-              onClick={(e) => e.stopPropagation()}
-            />
-            <button
-              onClick={() => setSelectedImage(null)}
-              className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl"
-            >
-              ×
-            </button>
           </div>
         </div>
       )}
