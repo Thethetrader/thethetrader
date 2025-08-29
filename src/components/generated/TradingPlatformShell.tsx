@@ -121,6 +121,11 @@ export default function TradingPlatformShell() {
       setSignals(formattedSignals);
       console.log(`✅ Signaux chargés pour ${channelId}:`, formattedSignals.length);
       console.log('🔍 Signaux formatés utilisateur:', formattedSignals);
+      
+      // Scroll automatique après chargement des signaux
+      setTimeout(() => {
+        scrollToBottom();
+      }, 100);
     } catch (error) {
       console.error('❌ Erreur chargement signaux:', error);
     }
@@ -1072,16 +1077,21 @@ export default function TradingPlatformShell() {
         ));
       }
     }
+
+    // Scroll automatique après changement de statut
+    setTimeout(() => {
+      scrollToBottom();
+    }, 5);
   };
 
-  // Scroll automatique vers le bas quand de nouveaux messages arrivent ou quand on change de canal
+  // Scroll automatique vers le bas quand de nouveaux messages arrivent, quand on change de canal, ou quand les signaux changent
   useEffect(() => {
     setTimeout(() => {
       if (messagesContainerRef.current) {
         messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
       }
     }, 100);
-  }, [messages, selectedChannel.id]);
+  }, [messages, selectedChannel.id, signals]);
 
   const channels = [
     { id: 'crypto', name: 'crypto', emoji: '🪙', fullName: 'Crypto' },
