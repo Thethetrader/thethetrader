@@ -320,7 +320,7 @@ export default function TradingPlatformShell() {
                 pnl: newSignal.pnl,
                 closeMessage: newSignal.closeMessage
               };
-              return [formattedSignal, ...prev]; // Ajouter au début
+              return [...prev, formattedSignal]; // Ajouter à la fin
             }
             return prev;
           });
@@ -2401,7 +2401,7 @@ export default function TradingPlatformShell() {
                         <div className="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
                       </div>
                     ) : (
-                      signals.filter(signal => signal.channel_id === selectedChannel.id).reverse().map((signal) => (
+                      signals.filter(signal => signal.channel_id === selectedChannel.id).map((signal) => (
                         <div key={signal.id} className="flex items-start gap-3">
                           <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
                             {profileImage ? (
