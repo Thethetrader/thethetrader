@@ -297,6 +297,33 @@ export default function AdminInterface() {
     }
   }, [selectedDate]);
   
+  // Fonction pour charger les signaux depuis Firebase
+  const loadSignals = async (channelId: string) => {
+    try {
+      const signals = await getSignals(channelId);
+      const formattedSignals = signals.map(signal => ({
+        id: signal.id || '',
+        type: signal.type,
+        symbol: signal.symbol,
+        timeframe: signal.timeframe,
+        entry: signal.entry_price?.toString() || 'N/A',
+        takeProfit: signal.take_profit?.toString() || 'N/A',
+        stopLoss: signal.stop_loss?.toString() || 'N/A',
+        description: signal.description || '',
+        image: null,
+        timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        status: signal.status || 'ACTIVE' as const,
+        channel_id: signal.channel_id,
+        reactions: []
+      }));
+      
+      setSignals(formattedSignals);
+      console.log(`✅ Signaux chargés pour ${channelId}:`, formattedSignals.length);
+    } catch (error) {
+      console.error('❌ Erreur chargement signaux:', error);
+    }
+  };
+
   // Fonction pour changer de canal et réinitialiser selectedDate si nécessaire
   const handleChannelChange = (channelId: string, channelName: string) => {
     // Réinitialiser selectedDate si on quitte le Trading Journal
@@ -308,14 +335,16 @@ export default function AdminInterface() {
     setView('signals');
     scrollToTop();
     
+    // Charger les signaux pour ce canal
+    loadSignals(channelId);
+    
     // Réinitialiser les messages non lus pour ce canal
     setUnreadMessages(prev => ({
       ...prev,
       [channelId]: 0
     }));
     
-    // Marquer tous les messages comme lus pour ce canal
-    console.log(`📊 Clearing unread count for ${channelId}`);
+    console.log(`📊 Channel changed to ${channelId}`);
   };
   const [personalTrades, setPersonalTrades] = useState<Array<{
     id: string;
@@ -383,6 +412,11 @@ export default function AdminInterface() {
   useEffect(() => {
     console.log('Trades chargés:', personalTrades);
   }, [personalTrades]);
+
+  // Charger les signaux au démarrage
+  useEffect(() => {
+    loadSignals(selectedChannel.id);
+  }, []);
 
   const [signalData, setSignalData] = useState({
     type: 'BUY',
@@ -1461,9 +1495,13 @@ export default function AdminInterface() {
 
     // Ajouter le signal à la liste (en premier)
     setSignals(prevSignals => [newSignal, ...prevSignals]);
-      console.log('✅ Signal sauvé en Supabase:', savedSignal);
-      
-      alert('Signal créé et sauvé en base ! ✅');
+    
+    // Recharger les signaux pour s'assurer de la synchronisation
+    loadSignals(selectedChannel.id);
+    
+    console.log('✅ Signal sauvé en Firebase:', savedSignal);
+    
+    alert('Signal créé et sauvé en base ! ✅');
     } else {
       console.error('❌ Erreur sauvegarde signal');
       alert('Erreur lors de la sauvegarde du signal');
