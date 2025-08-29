@@ -80,9 +80,9 @@ export default function TradingPlatformShell() {
   // Fonction pour charger les signaux depuis Firebase (optimisé - max 3)
   const loadSignals = async (channelId: string) => {
     try {
-      console.log('🚀 Début chargement signaux utilisateur pour:', channelId);
+      console.log('🚀 DÉBUT CHARGEMENT SIGNAUX PWA pour canal:', channelId);
       const signals = await getSignals(channelId, 3); // Limite à 3 signaux
-      console.log('🔍 Signaux bruts utilisateur:', signals);
+      console.log('🔍 SIGNAUX BRUTS RÉCUPÉRÉS DEPUIS FIREBASE pour', channelId, ':', signals.map(s => ({symbol: s.symbol, type: s.type, id: s.id})));
       const formattedSignals = signals.map(signal => ({
         id: signal.id || '',
         type: signal.type,
@@ -109,8 +109,8 @@ export default function TradingPlatformShell() {
         [channelId]: formattedSignals.length
       }));
 
-      console.log(`✅ Signaux chargés pour ${channelId}:`, formattedSignals.length);
-      console.log('🔍 Signaux formatés utilisateur:', formattedSignals);
+      console.log(`✅ SIGNAUX CHARGÉS ET AFFICHÉS DANS PWA pour ${channelId}:`, formattedSignals.length);
+      console.log('🔍 DÉTAIL DES SIGNAUX AFFICHÉS:', formattedSignals.map(s => ({symbol: s.symbol, type: s.type, id: s.id, timestamp: s.timestamp})));
       console.log('🎯 État signals utilisateur après setSignals:', formattedSignals);
       console.log(`📊 Compteur mis à jour pour ${channelId}:`, formattedSignals.length);
       
@@ -293,7 +293,7 @@ export default function TradingPlatformShell() {
     
     const signalSubscriptions = signalChannels.map(channelId => {
       return subscribeToSignals(channelId, (newSignal) => {
-        console.log('🆕 Nouveau signal reçu globalement:', newSignal);
+        console.log('🆕 NOUVEAU SIGNAL REÇU DANS PWA - Canal:', channelId, 'Signal:', newSignal.symbol, newSignal.type, 'ID:', newSignal.id);
         
         // Envoyer une notification pour tous les nouveaux signaux
         if (newSignal.status === 'ACTIVE') {
@@ -499,6 +499,17 @@ export default function TradingPlatformShell() {
   // États pour le copier-coller TradingView
   const [debugMode, setDebugMode] = useState(false);
   const [pasteDebug, setPasteDebug] = useState('');
+
+  // Fonction de debug pour voir les signaux actuels
+  const debugSignals = () => {
+    const currentSignals = signals.filter(s => s.channel_id === selectedChannel.id);
+    console.log('🔍 DEBUG - SIGNAUX ACTUELS DANS PWA pour canal', selectedChannel.id, ':');
+    currentSignals.forEach((signal, index) => {
+      console.log(`${index + 1}. ${signal.symbol} ${signal.type} - ID: ${signal.id} - Timestamp: ${signal.timestamp}`);
+    });
+    console.log(`📊 Total: ${currentSignals.length} signaux`);
+    alert(`Debug: ${currentSignals.length} signaux dans le canal ${selectedChannel.id}. Regarde la console pour les détails.`);
+  };
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [isPasteActive, setIsPasteActive] = useState(false);
   const [error, setError] = useState('');
@@ -2442,69 +2453,78 @@ export default function TradingPlatformShell() {
                   <div className="space-y-4">
                     {/* Bouton Voir plus fixe en haut */}
                     <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
-                      <button
-                        onClick={async () => {
-                          const currentSignalsForChannel = signals.filter(s => s.channel_id === selectedChannel.id);
+                      <div className="flex gap-2">
+                        <button
+                          onClick={async () => {
+                            const currentSignalsForChannel = signals.filter(s => s.channel_id === selectedChannel.id);
 
-                          if (currentSignalsForChannel.length === 0) {
-                            console.log('ℹ️ Aucun signal chargé pour ce canal');
-                            return;
-                          }
-
-                          // Trouver le timestamp du signal le plus ancien pour charger les suivants
-                          const oldestSignal = currentSignalsForChannel[currentSignalsForChannel.length - 1];
-                          const beforeTimestamp = new Date(oldestSignal.timestamp).getTime();
-
-                          console.log(`🔄 Chargement de signaux plus anciens pour ${selectedChannel.id} (avant ${beforeTimestamp})`);
-
-                          const more = await getSignals(selectedChannel.id, 10, beforeTimestamp);
-                          const existingIds = new Set(currentSignalsForChannel.map(s => s.id));
-
-                          console.log('🔍 Signaux existants:', currentSignalsForChannel.length, 'IDs:', Array.from(existingIds));
-                          console.log('🔍 Signaux reçus de Firebase:', more.length, 'IDs:', more.map(s => s.id));
-
-                          // Tous les signaux reçus devraient être nouveaux car on charge avant le plus ancien
-                          const newSignals = more.filter(signal => {
-                            const signalId = signal.id || '';
-                            const exists = existingIds.has(signalId);
-                            if (exists) {
-                              console.log('🚫 Signal déjà existant - ignoré:', signal.symbol, signal.type, signalId);
-                            } else {
-                              console.log('✅ Nouveau signal détecté:', signal.symbol, signal.type, signalId);
+                            if (currentSignalsForChannel.length === 0) {
+                              console.log('ℹ️ Aucun signal chargé pour ce canal');
+                              return;
                             }
-                            return !exists;
-                          });
 
-                          if (newSignals.length === 0) {
-                            console.log('ℹ️ Aucun nouveau signal à charger (fin de la liste atteinte)');
-                            return;
-                          }
+                            // Trouver le timestamp du signal le plus ancien pour charger les suivants
+                            const oldestSignal = currentSignalsForChannel[currentSignalsForChannel.length - 1];
+                            const beforeTimestamp = new Date(oldestSignal.timestamp).getTime();
 
-                          const formatted = newSignals.map(signal => ({
-                            id: signal.id || '',
-                            type: signal.type,
-                            symbol: signal.symbol,
-                            timeframe: signal.timeframe,
-                            entry: signal.entry?.toString() || 'N/A',
-                            takeProfit: signal.takeProfit?.toString() || 'N/A',
-                            stopLoss: signal.stopLoss?.toString() || 'N/A',
-                            description: signal.description || '',
-                            image: null,
-                            timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                            status: signal.status || 'ACTIVE' as const,
-                            channel_id: signal.channel_id,
-                            reactions: signal.reactions || [], // Garder les réactions existantes
-                            pnl: signal.pnl,
-                            closeMessage: signal.closeMessage
-                          }));
+                            console.log(`🔄 Chargement de signaux plus anciens pour ${selectedChannel.id} (avant ${beforeTimestamp})`);
 
-                          console.log(`✅ Ajout de ${formatted.length} nouveaux signaux plus anciens`);
-                          setSignals(prev => [...prev, ...formatted]);
-                        }}
-                        className="px-4 py-2 text-sm rounded bg-gray-700 hover:bg-gray-600 text-white"
-                      >
-                        Voir plus (+10)
-                      </button>
+                            const more = await getSignals(selectedChannel.id, 10, beforeTimestamp);
+                            const existingIds = new Set(currentSignalsForChannel.map(s => s.id));
+
+                            console.log('🔍 Signaux existants:', currentSignalsForChannel.length, 'IDs:', Array.from(existingIds));
+                            console.log('🔍 Signaux reçus de Firebase:', more.length, 'IDs:', more.map(s => s.id));
+
+                            // Tous les signaux reçus devraient être nouveaux car on charge avant le plus ancien
+                            const newSignals = more.filter(signal => {
+                              const signalId = signal.id || '';
+                              const exists = existingIds.has(signalId);
+                              if (exists) {
+                                console.log('🚫 Signal déjà existant - ignoré:', signal.symbol, signal.type, signalId);
+                              } else {
+                                console.log('✅ Nouveau signal détecté:', signal.symbol, signal.type, signalId);
+                              }
+                              return !exists;
+                            });
+
+                            if (newSignals.length === 0) {
+                              console.log('ℹ️ Aucun nouveau signal à charger (fin de la liste atteinte)');
+                              return;
+                            }
+
+                            const formatted = newSignals.map(signal => ({
+                              id: signal.id || '',
+                              type: signal.type,
+                              symbol: signal.symbol,
+                              timeframe: signal.timeframe,
+                              entry: signal.entry?.toString() || 'N/A',
+                              takeProfit: signal.takeProfit?.toString() || 'N/A',
+                              stopLoss: signal.stopLoss?.toString() || 'N/A',
+                              description: signal.description || '',
+                              image: null,
+                              timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                              status: signal.status || 'ACTIVE' as const,
+                              channel_id: signal.channel_id,
+                              reactions: signal.reactions || [], // Garder les réactions existantes
+                              pnl: signal.pnl,
+                              closeMessage: signal.closeMessage
+                            }));
+
+                            console.log(`✅ Ajout de ${formatted.length} nouveaux signaux plus anciens`);
+                            setSignals(prev => [...prev, ...formatted]);
+                          }}
+                          className="px-4 py-2 text-sm rounded bg-gray-700 hover:bg-gray-600 text-white"
+                        >
+                          Voir plus (+10)
+                        </button>
+                        <button
+                          onClick={debugSignals}
+                          className="px-3 py-1 text-xs rounded bg-blue-600 hover:bg-blue-500 text-white"
+                          title="Voir les signaux actuels dans la console"
+                        >
+                          🔍 Debug
+                        </button>
+                      </div>
                     </div>
                     {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                       <div className="text-center py-8">
