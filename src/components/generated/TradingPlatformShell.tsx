@@ -173,6 +173,8 @@ export default function TradingPlatformShell() {
       // Envoyer une notification pour les signaux fermés (WIN/LOSS/BE)
       if (updatedSignal.status !== 'ACTIVE' && (updatedSignal as any).closeMessage) {
         notifySignalClosed(updatedSignal);
+        // Mettre à jour les statistiques fixes
+        updateFixedStats(updatedSignal);
       }
     });
     
@@ -745,32 +747,73 @@ export default function TradingPlatformShell() {
     return parseFloat(cleanStr) || 0;
   };
 
-  // Fonctions pour les statistiques des signaux
+  // Statistiques fixes stockées dans localStorage
+  const getFixedStats = () => {
+    const saved = localStorage.getItem('tradingStats');
+    if (saved) {
+      return JSON.parse(saved);
+    }
+    // Stats par défaut si rien n'est sauvegardé
+    return {
+      totalPnL: 0,
+      winRate: 0,
+      avgWin: 0,
+      avgLoss: 0,
+      totalTrades: 0
+    };
+  };
+
+  const updateFixedStats = (signal: any) => {
+    if (signal.status === 'ACTIVE') return; // Ne mettre à jour que pour les signaux fermés
+
+    const currentStats = getFixedStats();
+    const pnlValue = parsePnL(signal.pnl || '0');
+
+    const newStats = {
+      totalPnL: currentStats.totalPnL + pnlValue,
+      winRate: 0, // Sera recalculé
+      avgWin: currentStats.avgWin,
+      avgLoss: currentStats.avgLoss,
+      totalTrades: currentStats.totalTrades + 1
+    };
+
+    // Recalculer winRate et moyennes
+    const allSignals = JSON.parse(localStorage.getItem('allSignals') || '[]');
+    allSignals.push(signal);
+
+    const closedSignals = allSignals.filter((s: any) => s.status !== 'ACTIVE');
+    const wins = closedSignals.filter((s: any) => s.status === 'WIN');
+    const losses = closedSignals.filter((s: any) => s.status === 'LOSS');
+
+    newStats.winRate = closedSignals.length > 0 ? Math.round((wins.length / closedSignals.length) * 100) : 0;
+
+    if (wins.length > 0) {
+      newStats.avgWin = Math.round(wins.reduce((total: number, s: any) => total + parsePnL(s.pnl || '0'), 0) / wins.length);
+    }
+
+    if (losses.length > 0) {
+      newStats.avgLoss = Math.round(losses.reduce((total: number, s: any) => total + Math.abs(parsePnL(s.pnl || '0')), 0) / losses.length);
+    }
+
+    localStorage.setItem('tradingStats', JSON.stringify(newStats));
+    localStorage.setItem('allSignals', JSON.stringify(allSignals));
+  };
+
+  // Fonctions pour les statistiques des signaux (utilisent les stats fixes)
   const calculateTotalPnL = (): number => {
-    return signals
-      .filter(s => s.pnl && s.status !== 'ACTIVE')
-      .reduce((total, signal) => total + parsePnL(signal.pnl), 0);
+    return getFixedStats().totalPnL;
   };
 
   const calculateWinRate = (): number => {
-    const closedSignals = signals.filter(s => s.status !== 'ACTIVE');
-    if (closedSignals.length === 0) return 0;
-    const wins = closedSignals.filter(s => s.status === 'WIN').length;
-    return Math.round((wins / closedSignals.length) * 100);
+    return getFixedStats().winRate;
   };
 
   const calculateAvgWin = (): number => {
-    const winSignals = signals.filter(s => s.status === 'WIN' && s.pnl);
-    if (winSignals.length === 0) return 0;
-    const totalWinPnL = winSignals.reduce((total, signal) => total + parsePnL(signal.pnl), 0);
-    return Math.round(totalWinPnL / winSignals.length);
+    return getFixedStats().avgWin;
   };
 
   const calculateAvgLoss = (): number => {
-    const lossSignals = signals.filter(s => s.status === 'LOSS' && s.pnl);
-    if (lossSignals.length === 0) return 0;
-    const totalLossPnL = lossSignals.reduce((total, signal) => total + Math.abs(parsePnL(signal.pnl)), 0);
-    return Math.round(totalLossPnL / lossSignals.length);
+    return getFixedStats().avgLoss;
   };
 
   const getTodaySignals = () => {

@@ -1109,6 +1109,49 @@ export default function AdminInterface() {
         
         // Envoyer une notification pour le signal fermé
         notifySignalClosed({ ...signal, status: newStatus, pnl, closeMessage });
+
+        // Mettre à jour les statistiques fixes dans localStorage
+        const updateFixedStats = (closedSignal: any) => {
+          const currentStats = JSON.parse(localStorage.getItem('tradingStats') || JSON.stringify({
+            totalPnL: 0,
+            winRate: 0,
+            avgWin: 0,
+            avgLoss: 0,
+            totalTrades: 0
+          }));
+
+          const pnlValue = parseFloat(pnl.replace(/[^\d.-]/g, '')) || 0;
+          const newStats = {
+            totalPnL: currentStats.totalPnL + pnlValue,
+            winRate: 0,
+            avgWin: currentStats.avgWin,
+            avgLoss: currentStats.avgLoss,
+            totalTrades: currentStats.totalTrades + 1
+          };
+
+          // Recalculer les stats avec tous les signaux
+          const allSignals = JSON.parse(localStorage.getItem('allSignals') || '[]');
+          allSignals.push(closedSignal);
+
+          const closedSignals = allSignals.filter((s: any) => s.status !== 'ACTIVE');
+          const wins = closedSignals.filter((s: any) => s.status === 'WIN');
+          const losses = closedSignals.filter((s: any) => s.status === 'LOSS');
+
+          newStats.winRate = closedSignals.length > 0 ? Math.round((wins.length / closedSignals.length) * 100) : 0;
+
+          if (wins.length > 0) {
+            newStats.avgWin = Math.round(wins.reduce((total: number, s: any) => total + (parseFloat(s.pnl?.replace(/[^\d.-]/g, '')) || 0), 0) / wins.length);
+          }
+
+          if (losses.length > 0) {
+            newStats.avgLoss = Math.round(losses.reduce((total: number, s: any) => total + Math.abs(parseFloat(s.pnl?.replace(/[^\d.-]/g, '')) || 0), 0) / losses.length);
+          }
+
+          localStorage.setItem('tradingStats', JSON.stringify(newStats));
+          localStorage.setItem('allSignals', JSON.stringify(allSignals));
+        };
+
+        updateFixedStats({ ...signal, status: newStatus, pnl, closeMessage });
       }
     }
   };
