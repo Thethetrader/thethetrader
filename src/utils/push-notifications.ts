@@ -14,7 +14,16 @@ interface PushNotificationData {
 
 // Initialiser Firebase
 const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
+
+// Vérifier si Firebase Messaging est supporté
+let messaging: any = null;
+try {
+  if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+    messaging = getMessaging(app);
+  }
+} catch (error) {
+  console.log('⚠️ Firebase Messaging non supporté dans ce navigateur');
+}
 
 // Demander la permission pour les notifications
 export const requestNotificationPermission = async (): Promise<boolean> => {
