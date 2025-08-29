@@ -273,9 +273,29 @@ export default function TradingPlatformShell() {
   useEffect(() => {
     const signalChannels = ['crypto', 'futur', 'forex', 'fondamentaux', 'letsgooo-model'];
     
+    // Récupérer le timestamp de la dernière connexion
+    const lastConnectionTime = localStorage.getItem('lastConnectionTime') || '0';
+    const connectionTime = Date.now();
+    
+    // Sauvegarder le timestamp de connexion actuel
+    localStorage.setItem('lastConnectionTime', connectionTime.toString());
+    
     const signalSubscriptions = signalChannels.map(channelId => {
       return subscribeToSignals(channelId, (newSignal) => {
         console.log('🆕 Nouveau signal reçu globalement:', newSignal);
+        
+        // Vérifier si c'est un vrai nouveau signal (après la connexion)
+        const signalTime = typeof newSignal.timestamp === 'number' ? newSignal.timestamp : Date.now();
+        if (signalTime > parseInt(lastConnectionTime)) {
+          console.log('🆕 VRAI nouveau signal - notification envoyée');
+          
+          // Envoyer une notification seulement pour les vrais nouveaux signaux
+          if (newSignal.status === 'ACTIVE') {
+            notifyNewSignal(newSignal);
+          }
+        } else {
+          console.log('📱 Signal ancien - pas de notification');
+        }
         
         // Si on est dans le canal du signal, l'ajouter à la liste
         if (selectedChannel.id === channelId) {
