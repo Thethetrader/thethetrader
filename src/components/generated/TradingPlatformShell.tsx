@@ -1372,6 +1372,10 @@ export default function TradingPlatformShell() {
 
   const handleSendMessage = async () => {
     if (chatMessage.trim()) {
+      console.log('🚀 Début envoi message côté:', window.matchMedia('(display-mode: standalone)').matches ? 'PWA' : 'Desktop');
+      console.log('📝 Message à envoyer:', chatMessage);
+      console.log('📺 Canal sélectionné:', selectedChannel.id);
+      
       try {
         // Créer le message local immédiatement pour l'affichage instantané
         const localMessage = {
@@ -1384,11 +1388,17 @@ export default function TradingPlatformShell() {
           attachment_data: undefined
         };
 
+        console.log('📱 Message local créé:', localMessage);
+
         // Ajouter le message localement immédiatement
-        setMessages(prev => ({
-          ...prev,
-          [selectedChannel.id]: [...(prev[selectedChannel.id] || []), localMessage]
-        }));
+        setMessages(prev => {
+          const newMessages = {
+            ...prev,
+            [selectedChannel.id]: [...(prev[selectedChannel.id] || []), localMessage]
+          };
+          console.log('✅ Messages mis à jour localement:', newMessages[selectedChannel.id]);
+          return newMessages;
+        });
 
         // Envoyer vers Firebase avec avatar utilisateur
         const messageData = {
@@ -1399,20 +1409,25 @@ export default function TradingPlatformShell() {
           author_avatar: profileImage || undefined // Photo de profil utilisateur
         };
 
+        console.log('📤 Envoi vers Firebase:', messageData);
         const savedMessage = await addMessage(messageData);
 
         if (savedMessage) {
           console.log('✅ Message envoyé à Firebase:', savedMessage);
           // Remplacer le message local par le message Firebase avec le bon ID
-          setMessages(prev => ({
-            ...prev,
-            [selectedChannel.id]: prev[selectedChannel.id]?.map(msg => 
-              msg.id === localMessage.id ? {
-                ...msg,
-                id: savedMessage.id || msg.id
-              } : msg
-            ) || []
-          }));
+          setMessages(prev => {
+            const updatedMessages = {
+              ...prev,
+              [selectedChannel.id]: prev[selectedChannel.id]?.map(msg => 
+                msg.id === localMessage.id ? {
+                  ...msg,
+                  id: savedMessage.id || msg.id
+                } : msg
+              ) || []
+            };
+            console.log('🔄 Messages mis à jour avec Firebase:', updatedMessages[selectedChannel.id]);
+            return updatedMessages;
+          });
         } else {
           console.error('❌ Erreur envoi message Firebase');
           // En cas d'erreur, garder le message local
