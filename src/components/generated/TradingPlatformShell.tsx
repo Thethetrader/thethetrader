@@ -1373,6 +1373,23 @@ export default function TradingPlatformShell() {
   const handleSendMessage = async () => {
     if (chatMessage.trim()) {
       try {
+        // Créer le message local immédiatement pour l'affichage instantané
+        const localMessage = {
+          id: `local-${Date.now()}`,
+          text: chatMessage,
+          user: 'TheTheTrader',
+          author: 'TheTheTrader',
+          author_avatar: profileImage || undefined,
+          timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+          attachment_data: undefined
+        };
+
+        // Ajouter le message localement immédiatement
+        setMessages(prev => ({
+          ...prev,
+          [selectedChannel.id]: [...(prev[selectedChannel.id] || []), localMessage]
+        }));
+
         // Envoyer vers Firebase avec avatar utilisateur
         const messageData = {
           channel_id: selectedChannel.id,
@@ -1384,14 +1401,25 @@ export default function TradingPlatformShell() {
 
         const savedMessage = await addMessage(messageData);
 
-                if (savedMessage) {
+        if (savedMessage) {
           console.log('✅ Message envoyé à Firebase:', savedMessage);
-          // La subscription temps réel ajoutera le message automatiquement
+          // Remplacer le message local par le message Firebase avec le bon ID
+          setMessages(prev => ({
+            ...prev,
+            [selectedChannel.id]: prev[selectedChannel.id]?.map(msg => 
+              msg.id === localMessage.id ? {
+                ...msg,
+                id: savedMessage.id || msg.id
+              } : msg
+            ) || []
+          }));
         } else {
           console.error('❌ Erreur envoi message Firebase');
+          // En cas d'erreur, garder le message local
         }
       } catch (error) {
         console.error('💥 ERREUR envoi message:', error);
+        // En cas d'erreur, garder le message local
       }
 
       setChatMessage('');
