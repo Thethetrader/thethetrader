@@ -229,9 +229,9 @@ export default function AdminInterface() {
       const image = await initializeProfile('admin');
       if (image) {
         setProfileImage(image);
-        console.log('✅ Photo de profil chargée');
+        console.log('✅ Photo de profil admin chargée:', image);
       } else {
-        console.log('❌ Aucune photo de profil trouvée');
+        console.log('❌ Aucune photo de profil admin trouvée');
       }
     };
     
@@ -279,6 +279,11 @@ export default function AdminInterface() {
   useEffect(() => {
     // initializeDatabase();
   }, []);
+
+  // Debug: Afficher profileImage
+  useEffect(() => {
+    console.log('🔍 Profile image state:', profileImage);
+  }, [profileImage]);
 
   // États pour le journal de trading personnalisé
   const [showTradeModal, setShowTradeModal] = useState(false);
