@@ -1200,6 +1200,13 @@ export default function AdminInterface() {
       ));
       // Sauvegarder dans Firebase
       updateSignalStatus(signalId, 'ACTIVE');
+      
+      // Mettre à jour allSignalsForStats pour que les stats se mettent à jour
+      setAllSignalsForStats(prev => prev.map(s => 
+        s.id === signalId ? { ...s, status: 'ACTIVE', pnl: undefined, closeMessage: undefined } : s
+      ));
+      
+      console.log('🔄 [ADMIN] Signal remis en ACTIVE - allSignalsForStats mis à jour pour les stats');
     } else if (newStatus === 'ACTIVE') {
       // Si on veut remettre en ACTIVE directement
       const updatedSignal = { ...signal, status: 'ACTIVE', pnl: undefined, closeMessage: undefined };
@@ -1208,6 +1215,13 @@ export default function AdminInterface() {
       ));
       // Sauvegarder dans Firebase
       updateSignalStatus(signalId, 'ACTIVE');
+      
+      // Mettre à jour allSignalsForStats pour que les stats se mettent à jour
+      setAllSignalsForStats(prev => prev.map(s => 
+        s.id === signalId ? { ...s, status: 'ACTIVE', pnl: undefined, closeMessage: undefined } : s
+      ));
+      
+      console.log('🔄 [ADMIN] Signal remis en ACTIVE - allSignalsForStats mis à jour pour les stats');
     } else {
       // Sinon on demande le P&L
       const pnl = prompt(`Entrez le P&L final pour ce signal (ex: +$150 ou -$50):`);
@@ -1230,6 +1244,13 @@ export default function AdminInterface() {
         
         // Envoyer une notification pour le signal fermé
         notifySignalClosed({ ...signal, status: newStatus, pnl, closeMessage });
+        
+        // Mettre à jour allSignalsForStats pour que les stats se mettent à jour
+        setAllSignalsForStats(prev => prev.map(s => 
+          s.id === signalId ? { ...s, status: newStatus, pnl, closeMessage } : s
+        ));
+        
+        console.log('🔄 [ADMIN] Signal fermé - allSignalsForStats mis à jour pour les stats');
       }
     }
   };
