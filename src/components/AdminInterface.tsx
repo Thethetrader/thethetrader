@@ -2235,25 +2235,37 @@ export default function AdminInterface() {
                     }
                   }
                 } else {
-                  // Logique pour les signaux (calendrier normal)
-                  if (daySignals.length > 0) {
-                    tradeCount = daySignals.length;
-                    
-                    // Déterminer la couleur selon les statuts des signaux
-                    const hasWin = daySignals.some(s => s.status === 'WIN');
-                    const hasLoss = daySignals.some(s => s.status === 'LOSS');
-                    const hasBE = daySignals.some(s => s.status === 'BE');
-                    
-                    if (hasWin && !hasLoss) {
-                      bgColor = 'bg-green-500/60 border-green-400/50 text-white'; // WIN
-                    } else if (hasLoss && !hasWin) {
-                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // LOSS
-                    } else if (hasBE || (hasWin && hasLoss)) {
-                      bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // BE ou mixte
-                    } else {
-                      bgColor = 'bg-yellow-500/60 border-yellow-400/50 text-white'; // ACTIVE
-                    }
+                                  // Logique pour les signaux (calendrier normal)
+                if (daySignals.length > 0) {
+                  tradeCount = daySignals.length;
+                  
+                  // Déterminer la couleur selon les statuts des signaux
+                  const hasWin = daySignals.some(s => s.status === 'WIN');
+                  const hasLoss = daySignals.some(s => s.status === 'LOSS');
+                  const hasBE = daySignals.some(s => s.status === 'BE');
+                  
+                  // Debug pour le jour 30
+                  if (dayNumber === 30) {
+                    console.log('🔍 [ADMIN] === DEBUG JOUR 30 ===');
+                    console.log('🔍 [ADMIN] daySignals:', daySignals.length);
+                    console.log('🔍 [ADMIN] Statuts des signaux:', daySignals.map(s => ({ status: s.status, symbol: s.symbol })));
+                    console.log('🔍 [ADMIN] hasWin:', hasWin, 'hasLoss:', hasLoss, 'hasBE:', hasBE);
                   }
+                  
+                  if (hasWin && !hasLoss) {
+                    bgColor = 'bg-green-500/60 border-green-400/50 text-white'; // WIN
+                    if (dayNumber === 30) console.log('🎨 [ADMIN] Jour 30: Couleur VERTE (WIN)');
+                  } else if (hasLoss && !hasWin) {
+                    bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // LOSS
+                    if (dayNumber === 30) console.log('🎨 [ADMIN] Jour 30: Couleur ROUGE (LOSS)');
+                  } else if (hasBE || (hasWin && hasLoss)) {
+                    bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // BE ou mixte
+                    if (dayNumber === 30) console.log('🎨 [ADMIN] Jour 30: Couleur BLEUE (BE/MIXTE)');
+                  } else {
+                    bgColor = 'bg-yellow-500/60 border-yellow-400/50 text-white'; // ACTIVE
+                    if (dayNumber === 30) console.log('🎨 [ADMIN] Jour 30: Couleur JAUNE (ACTIVE)');
+                  }
+                }
                 }
 
                 return (
