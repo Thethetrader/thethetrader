@@ -223,18 +223,23 @@ export const getSignals = async (channelId?: string, limit: number = 3, beforeTi
   }
 };
 
-// Subscription temps réel pour les signaux (optimisée)
+// Subscription temps réel pour les signaux (même logique que les messages)
 export const subscribeToSignals = (channelId: string, callback: (signal: Signal) => void) => {
   const signalsRef = ref(database, 'signals');
-  const q = query(signalsRef, orderByChild('channel_id'), equalTo(channelId));
+  const q = query(signalsRef, orderByChild('channel_id'), equalTo(channelId), limitToLast(3));
 
-  // Utiliser onChildAdded pour détecter seulement les nouveaux signaux
-  const unsubscribe = onChildAdded(q, (snapshot) => {
-    const data = snapshot.val();
-    const signalId = snapshot.key;
-    
-    console.log(`🆕 Nouveau signal détecté dans ${channelId}:`, signalId);
-    callback({ id: signalId, ...data });
+  // Garder une trace des signaux déjà traités
+  const processedSignals = new Set<string>();
+
+  const unsubscribe = onValue(q, (snapshot) => {
+    snapshot.forEach((childSnapshot) => {
+      const data = childSnapshot.val();
+      const signalId = childSnapshot.key as string;
+      if (!processedSignals.has(signalId)) {
+        processedSignals.add(signalId);
+        callback({ id: signalId, ...data });
+      }
+    });
   });
 
   return { unsubscribe };
