@@ -960,11 +960,26 @@ export default function AdminInterface() {
       const weekEnd = new Date(currentYear, currentMonth, weekNum * 7);
       
       const weekSignals = allSignalsForStats.filter(s => {
+        // Si le timestamp est au format HH:MM, on considère que c'est cette semaine
+        if (typeof s.timestamp === 'string' && s.timestamp.includes(':')) {
+          console.log('🔍 [ADMIN] Weekly - Timestamp HH:MM, considéré comme cette semaine');
+          return true;
+        }
+        
+        // Sinon, on essaie de parser la date
         const signalDate = new Date(s.timestamp);
-        return signalDate >= weekStart && 
+        if (isNaN(signalDate.getTime())) {
+          console.log('🔍 [ADMIN] Weekly - Date invalide, considéré comme cette semaine');
+          return true;
+        }
+        
+        const isInWeek = signalDate >= weekStart && 
                signalDate <= weekEnd &&
                signalDate.getMonth() === currentMonth &&
                signalDate.getFullYear() === currentYear;
+        
+        console.log('🔍 [ADMIN] Weekly - Signal date:', signalDate.toDateString(), 'Dans semaine', weekNum, '?', isInWeek);
+        return isInWeek;
       });
       
       const closedSignals = weekSignals.filter(s => s.status !== 'ACTIVE');
