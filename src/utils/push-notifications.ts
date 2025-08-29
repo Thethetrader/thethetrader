@@ -1,4 +1,8 @@
-// Système de notifications push pour les signaux de trading
+// Système de notifications push pour les signaux de trading avec Firebase Cloud Messaging
+import { initializeApp } from 'firebase/app';
+import { getMessaging, getToken, onMessage } from 'firebase/messaging';
+import { firebaseConfig } from '../config/firebase-config';
+
 interface PushNotificationData {
   title: string;
   body: string;
@@ -8,7 +12,9 @@ interface PushNotificationData {
   data?: any;
 }
 
-
+// Initialiser Firebase
+const app = initializeApp(firebaseConfig);
+const messaging = getMessaging(app);
 
 // Demander la permission pour les notifications
 export const requestNotificationPermission = async (): Promise<boolean> => {
@@ -30,6 +36,12 @@ export const requestNotificationPermission = async (): Promise<boolean> => {
   try {
     const permission = await Notification.requestPermission();
     console.log('📱 Permission notifications:', permission);
+    
+    if (permission === 'granted') {
+      // Demander le token FCM
+      await requestFCMToken();
+    }
+    
     return permission === 'granted';
   } catch (error) {
     console.error('❌ Erreur demande permission notifications:', error);
@@ -37,11 +49,42 @@ export const requestNotificationPermission = async (): Promise<boolean> => {
   }
 };
 
-// Envoyer une notification locale
+// Demander le token FCM pour les notifications push
+const requestFCMToken = async (): Promise<string | null> => {
+  try {
+    // Vérifier si le service worker est enregistré
+    if ('serviceWorker' in navigator) {
+      const registration = await navigator.serviceWorker.register('/sw.js');
+      console.log('✅ Service Worker enregistré:', registration);
+      
+      // Demander le token FCM
+      const token = await getToken(messaging, {
+        vapidKey: 'YOUR_VAPID_KEY', // À remplacer par ta vraie clé VAPID
+        serviceWorkerRegistration: registration
+      });
+      
+      if (token) {
+        console.log('✅ Token FCM obtenu:', token);
+        // Ici tu peux envoyer le token à ton serveur pour l'associer à l'utilisateur
+        localStorage.setItem('fcmToken', token);
+        return token;
+      } else {
+        console.log('❌ Aucun token FCM disponible');
+        return null;
+      }
+    } else {
+      console.log('❌ Service Worker non supporté');
+      return null;
+    }
+  } catch (error) {
+    console.error('❌ Erreur obtention token FCM:', error);
+    return null;
+  }
+};
+
+// Envoyer une notification locale (fallback)
 export const sendLocalNotification = (notification: PushNotificationData): void => {
-  console.log('📱 Vérification notifications...');
-  console.log('📱 Notification dans window:', 'Notification' in window);
-  console.log('📱 Permission actuelle:', Notification.permission);
+  console.log('📱 Envoi notification locale...');
   
   if (!('Notification' in window) || Notification.permission !== 'granted') {
     console.log('❌ Notifications non disponibles');
@@ -55,7 +98,7 @@ export const sendLocalNotification = (notification: PushNotificationData): void 
       badge: notification.badge || '/logo.png',
       tag: notification.tag || 'trading-signal',
       data: notification.data,
-      requireInteraction: true, // La notification reste visible
+      requireInteraction: true,
       silent: false
     });
 
@@ -63,13 +106,9 @@ export const sendLocalNotification = (notification: PushNotificationData): void 
     notif.onclick = (event) => {
       event.preventDefault();
       notif.close();
-      
-      // Focus sur la fenêtre/onglet
       window.focus();
       
-      // Naviguer vers le canal du signal si nécessaire
       if (notification.data?.channelId) {
-        // Émettre un événement pour changer de canal
         window.dispatchEvent(new CustomEvent('signalNotificationClicked', {
           detail: { channelId: notification.data.channelId }
         }));
@@ -81,15 +120,15 @@ export const sendLocalNotification = (notification: PushNotificationData): void 
       notif.close();
     }, 10000);
 
-    console.log('📱 Notification envoyée:', notification.title);
+    console.log('📱 Notification locale envoyée:', notification.title);
   } catch (error) {
-    console.error('❌ Erreur envoi notification:', error);
+    console.error('❌ Erreur envoi notification locale:', error);
   }
 };
 
 // Notification pour un nouveau signal
 export const notifyNewSignal = (signal: any): void => {
-  console.log('📱 Tentative d\'envoi notification nouveau signal:', signal);
+  console.log('📱 Notification nouveau signal:', signal);
   
   const notification: PushNotificationData = {
     title: `🚀 Nouveau Signal ${signal.type} ${signal.symbol}`,
@@ -101,11 +140,17 @@ export const notifyNewSignal = (signal: any): void => {
       signalId: signal.id,
       channelId: signal.channel_id,
       type: 'new_signal'
-    },
- 
+    }
   };
 
-  sendLocalNotification(notification);
+  // Essayer d'envoyer une notification push, sinon fallback local
+  if (messaging) {
+    console.log('📱 Tentative notification push...');
+    // Ici tu peux envoyer une notification push via ton serveur
+  } else {
+    console.log('📱 Fallback notification locale');
+    sendLocalNotification(notification);
+  }
 };
 
 // Notification pour un signal fermé (WIN/LOSS/BE)
@@ -123,35 +168,60 @@ export const notifySignalClosed = (signal: any): void => {
       signalId: signal.id,
       channelId: signal.channel_id,
       type: 'signal_closed'
-    },
-
+    }
   };
 
-  sendLocalNotification(notification);
+  // Essayer d'envoyer une notification push, sinon fallback local
+  if (messaging) {
+    console.log('📱 Tentative notification push signal fermé...');
+    // Ici tu peux envoyer une notification push via ton serveur
+  } else {
+    console.log('📱 Fallback notification locale signal fermé');
+    sendLocalNotification(notification);
+  }
 };
 
 // Initialiser le système de notifications
 export const initializeNotifications = async (): Promise<void> => {
-  console.log('🚀 Initialisation du système de notifications...');
+  console.log('🚀 Initialisation du système de notifications push...');
   
-  // Demander la permission
-  const hasPermission = await requestNotificationPermission();
-  
-  if (hasPermission) {
-    console.log('✅ Notifications activées');
+  try {
+    // Demander la permission
+    const hasPermission = await requestNotificationPermission();
     
-    // Écouter les clics sur les notifications
-    window.addEventListener('signalNotificationClicked', (event: any) => {
-      const { channelId } = event.detail;
-      console.log('📱 Notification cliquée, canal:', channelId);
+    if (hasPermission) {
+      console.log('✅ Notifications activées');
       
-      // Émettre un événement pour changer de canal
-      window.dispatchEvent(new CustomEvent('navigateToChannel', {
-        detail: { channelId }
-      }));
-    });
-  } else {
-    console.log('❌ Notifications non autorisées');
+      // Écouter les messages FCM quand l'app est ouverte
+      onMessage(messaging, (payload) => {
+        console.log('📱 Message FCM reçu:', payload);
+        
+        // Afficher la notification
+        const notification = payload.notification;
+        if (notification) {
+          sendLocalNotification({
+            title: notification.title || 'Nouvelle notification',
+            body: notification.body || '',
+            icon: notification.icon || '/logo.png',
+            data: payload.data
+          });
+        }
+      });
+      
+      // Écouter les clics sur les notifications
+      window.addEventListener('signalNotificationClicked', (event: any) => {
+        const { channelId } = event.detail;
+        console.log('📱 Notification cliquée, canal:', channelId);
+        
+        window.dispatchEvent(new CustomEvent('navigateToChannel', {
+          detail: { channelId }
+        }));
+      });
+    } else {
+      console.log('❌ Notifications non autorisées');
+    }
+  } catch (error) {
+    console.error('❌ Erreur initialisation notifications:', error);
   }
 };
 
