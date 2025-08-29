@@ -1,7 +1,7 @@
 // Service Worker pour TheTheTrader PWA
 // Gère les notifications push en arrière-plan
 
-const CACHE_NAME = 'thethetrader-v3';
+const CACHE_NAME = 'thethetrader-v4-force-refresh';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -24,7 +24,7 @@ self.addEventListener('install', (event) => {
 
 // Activation du service worker
 self.addEventListener('activate', (event) => {
-  console.log('✅ Service Worker activé');
+  console.log('✅ Service Worker activé - FORCE REFRESH');
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
@@ -35,6 +35,13 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
+    }).then(() => {
+      // Forcer le rechargement de toutes les pages ouvertes
+      self.clients.matchAll().then(clients => {
+        clients.forEach(client => {
+          client.postMessage({ type: 'FORCE_REFRESH' });
+        });
+      });
     })
   );
 });
