@@ -228,22 +228,13 @@ export const subscribeToSignals = (channelId: string, callback: (signal: Signal)
   const signalsRef = ref(database, 'signals');
   const q = query(signalsRef, orderByChild('channel_id'), equalTo(channelId));
 
-  // Garder une trace des signaux déjà traités pour éviter les doublons
-  const processedSignals = new Set();
-
-  const unsubscribe = onValue(q, (snapshot) => {
-    console.log(`🔄 Snapshot reçu pour canal ${channelId}, ${snapshot.size} signaux`);
-    snapshot.forEach((childSnapshot) => {
-      const data = childSnapshot.val();
-      const signalId = childSnapshot.key;
-
-      const signalKey = `${signalId}-${data.status}-${data.timestamp}`;
-      if (!processedSignals.has(signalKey)) {
-        processedSignals.add(signalKey);
-        console.log(`🆕 Nouveau signal détecté dans ${channelId}:`, signalId);
-        callback({ id: signalId, ...data });
-      }
-    });
+  // Utiliser onChildAdded pour détecter seulement les nouveaux signaux
+  const unsubscribe = onChildAdded(q, (snapshot) => {
+    const data = snapshot.val();
+    const signalId = snapshot.key;
+    
+    console.log(`🆕 Nouveau signal détecté dans ${channelId}:`, signalId);
+    callback({ id: signalId, ...data });
   });
 
   return { unsubscribe };

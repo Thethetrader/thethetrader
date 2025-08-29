@@ -180,37 +180,43 @@ export default function TradingPlatformShell() {
     const newSignalSubscription = subscribeToSignals(selectedChannel.id, (newSignal) => {
       console.log('🆕 Nouveau signal reçu utilisateur:', newSignal);
       
-      // Vérifier si c'est un nouveau signal (pas une mise à jour)
-      if (newSignal && !newSignal.reactions) {
-        const formattedSignal = {
-          id: newSignal.id || '',
-          type: newSignal.type,
-          symbol: newSignal.symbol,
-          timeframe: newSignal.timeframe,
-          entry: newSignal.entry?.toString() || 'N/A',
-          takeProfit: newSignal.takeProfit?.toString() || 'N/A',
-          stopLoss: newSignal.stopLoss?.toString() || 'N/A',
-          description: newSignal.description || '',
-          image: null,
-          timestamp: new Date(newSignal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-          status: newSignal.status || 'ACTIVE' as const,
-          channel_id: newSignal.channel_id,
-          reactions: [],
-          pnl: newSignal.pnl,
-          closeMessage: newSignal.closeMessage
-        };
+      const formattedSignal = {
+        id: newSignal.id || '',
+        type: newSignal.type,
+        symbol: newSignal.symbol,
+        timeframe: newSignal.timeframe,
+        entry: newSignal.entry?.toString() || 'N/A',
+        takeProfit: newSignal.takeProfit?.toString() || 'N/A',
+        stopLoss: newSignal.stopLoss?.toString() || 'N/A',
+        description: newSignal.description || '',
+        image: null,
+        timestamp: new Date(newSignal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        status: newSignal.status || 'ACTIVE' as const,
+        channel_id: newSignal.channel_id,
+        reactions: [],
+        pnl: newSignal.pnl,
+        closeMessage: newSignal.closeMessage
+      };
+      
+      // Ajouter le nouveau signal à la fin (même logique que les messages)
+      setSignals(prev => {
+        const currentChannelSignals = prev.filter(signal => signal.channel_id === selectedChannel.id);
+        const otherChannelSignals = prev.filter(signal => signal.channel_id !== selectedChannel.id);
         
-        // Ajouter le nouveau signal à la fin
-        setSignals(prev => [...prev, formattedSignal]);
-        
-        // Notifier le nouveau signal
-        notifyNewSignal(formattedSignal);
-        
-        // Scroll automatique
-        setTimeout(() => {
-          scrollToBottom();
-        }, 100);
-      }
+        return [
+          ...otherChannelSignals,
+          ...currentChannelSignals,
+          formattedSignal
+        ];
+      });
+      
+      // Notifier le nouveau signal
+      notifyNewSignal(formattedSignal);
+      
+      // Scroll automatique
+      setTimeout(() => {
+        scrollToBottom();
+      }, 100);
     });
     
     // Subscription aux messages temps réel pour le canal actuel
