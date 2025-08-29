@@ -2160,12 +2160,24 @@ export default function AdminInterface() {
                 }
               
                               // Vérifier s'il y a des trades personnels ou des signaux pour ce jour
+                if (selectedChannel.id === 'trading-journal' && dayNumber === 29) {
+                  console.log('🔍 [ADMIN] === DEBUG JOUR 29 ===');
+                  console.log('🔍 [ADMIN] Total personalTrades:', personalTrades.length);
+                  console.log('🔍 [ADMIN] Toutes les dates des trades:', personalTrades.map(t => ({ date: t.date, status: t.status })));
+                }
+                
                 const dayTrades = selectedChannel.id === 'trading-journal' ? 
                   personalTrades.filter(trade => {
+                    console.log('🔍 [ADMIN] Filtrage trade pour jour', dayNumber, 'Trade date:', trade.date, 'Type:', typeof trade.date);
                     const tradeDate = new Date(trade.date);
-                    return tradeDate.getDate() === dayNumber && 
-                           tradeDate.getMonth() === currentDate.getMonth() && 
-                           tradeDate.getFullYear() === currentDate.getFullYear();
+                    console.log('🔍 [ADMIN] Trade date parsée:', tradeDate.toDateString());
+                    
+                    const isMatch = tradeDate.getDate() === dayNumber && 
+                                   tradeDate.getMonth() === currentDate.getMonth() && 
+                                   tradeDate.getFullYear() === currentDate.getFullYear();
+                    
+                    console.log('🔍 [ADMIN] Trade correspond au jour', dayNumber, '?', isMatch);
+                    return isMatch;
                   }) : [];
 
                 const daySignals = selectedChannel.id !== 'trading-journal' ? 
