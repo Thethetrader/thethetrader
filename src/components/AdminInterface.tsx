@@ -2401,7 +2401,7 @@ export default function AdminInterface() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Signaux actifs:</span>
-                <span className="text-yellow-400">{signals.filter(s => s.status === 'ACTIVE').length}</span>
+                <span className="text-yellow-400">{allSignalsForStats.filter(s => s.status === 'ACTIVE').length}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">P&L Total:</span>
@@ -2634,7 +2634,7 @@ export default function AdminInterface() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Signaux actifs:</span>
-                    <span className="text-yellow-400">{signals.filter(s => s.status === 'ACTIVE').length}</span>
+                    <span className="text-yellow-400">{allSignalsForStats.filter(s => s.status === 'ACTIVE').length}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">P&L Total:</span>
