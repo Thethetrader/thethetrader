@@ -705,8 +705,25 @@ export default function TradingPlatformShell() {
     const loadAllSignalsForStats = async () => {
       try {
         console.log('📊 Chargement de TOUS les signaux pour statistiques et calendrier...');
-        const allSignals = await getSignals('', 1000); // Récupère 1000 signaux (tous)
-        if (allSignals && allSignals.length > 0) {
+        
+        // Charger les signaux de tous les canaux individuellement
+        const channels = ['fondamentaux', 'letsgooo-model', 'crypto', 'futur', 'forex', 'livestream'];
+        let allSignals: any[] = [];
+        
+        for (const channelId of channels) {
+          try {
+            console.log(`🔍 Chargement signaux pour ${channelId}...`);
+            const channelSignals = await getSignals(channelId, 100); // 100 signaux par canal
+            if (channelSignals && channelSignals.length > 0) {
+              allSignals = [...allSignals, ...channelSignals];
+              console.log(`✅ ${channelSignals.length} signaux chargés pour ${channelId}`);
+            }
+          } catch (error) {
+            console.error(`❌ Erreur chargement signaux pour ${channelId}:`, error);
+          }
+        }
+        
+        if (allSignals.length > 0) {
           // Formater les signaux pour correspondre au type attendu
           const formattedSignals = allSignals.map(signal => ({
             id: signal.id || '',
@@ -725,8 +742,15 @@ export default function TradingPlatformShell() {
             pnl: signal.pnl,
             closeMessage: signal.closeMessage
           }));
+          
           setAllSignalsForStats(formattedSignals);
-          console.log(`✅ ${formattedSignals.length} signaux formatés chargés pour statistiques`);
+          console.log(`✅ ${formattedSignals.length} signaux formatés chargés pour statistiques au total`);
+          console.log('📊 Signaux par canal:', channels.map(ch => ({
+            channel: ch,
+            count: formattedSignals.filter(s => s.channel_id === ch).length
+          })));
+        } else {
+          console.log('⚠️ Aucun signal trouvé pour les statistiques');
         }
       } catch (error) {
         console.error('❌ Erreur chargement signaux pour statistiques:', error);
