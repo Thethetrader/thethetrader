@@ -2170,8 +2170,24 @@ export default function AdminInterface() {
 
                 const daySignals = selectedChannel.id !== 'trading-journal' ? 
                   allSignalsForStats.filter(signal => {
-                    const signalDate = new Date();
-                    // Pour l'instant, on utilise la date actuelle car les signaux n'ont pas de date spécifique
+                    // Si le timestamp est au format HH:MM, on considère que c'est le jour actuel
+                    if (typeof signal.timestamp === 'string' && signal.timestamp.includes(':')) {
+                      const today = new Date();
+                      return today.getDate() === dayNumber && 
+                             today.getMonth() === currentDate.getMonth() && 
+                             today.getFullYear() === currentDate.getFullYear();
+                    }
+                    
+                    // Sinon, on utilise la vraie date du signal
+                    const signalDate = new Date(signal.timestamp);
+                    if (isNaN(signalDate.getTime())) {
+                      // Date invalide, on considère que c'est le jour actuel
+                      const today = new Date();
+                      return today.getDate() === dayNumber && 
+                             today.getMonth() === currentDate.getMonth() && 
+                             today.getFullYear() === currentDate.getFullYear();
+                    }
+                    
                     return signalDate.getDate() === dayNumber && 
                            signalDate.getMonth() === currentDate.getMonth() && 
                            signalDate.getFullYear() === currentDate.getFullYear();
