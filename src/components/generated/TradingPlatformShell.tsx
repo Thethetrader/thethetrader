@@ -44,7 +44,7 @@ export default function TradingPlatformShell() {
     try {
       const messages = await getMessages(channelId);
       // Limiter à 20 messages pour les salons de chat et inverser l'ordre
-      const limitedMessages = ['general-chat', 'profit-loss'].includes(channelId) ? messages.slice(-20).reverse() : messages.reverse();
+      const limitedMessages = ['general-chat', 'profit-loss', 'crypto-general-chat'].includes(channelId) ? messages.slice(-20).reverse() : messages.reverse();
       const formattedMessages = limitedMessages.map(msg => ({
         id: msg.id || '',
         text: msg.content,
@@ -133,7 +133,7 @@ export default function TradingPlatformShell() {
 
   // Subscription globale pour tous les canaux
   useEffect(() => {
-    const channels = ['crypto', 'futur', 'forex', 'fondamentaux', 'letsgooo-model', 'livestream', 'general-chat', 'profit-loss'];
+    const channels = ['crypto', 'futur', 'forex', 'fondamentaux', 'letsgooo-model', 'livestream', 'general-chat', 'profit-loss', 'crypto-general-chat'];
     
     const subscriptions = channels.map(channelId => {
       return subscribeToMessages(channelId, (newMessage) => {
@@ -289,7 +289,7 @@ export default function TradingPlatformShell() {
 
   // Subscription globale pour compter les messages non lus
   useEffect(() => {
-    const allChannels = ['fondamentaux', 'letsgooo-model', 'crypto', 'futur', 'forex', 'livestream', 'general-chat', 'profit-loss', 'trading-journal'];
+    const allChannels = ['fondamentaux', 'letsgooo-model', 'crypto', 'futur', 'forex', 'livestream', 'general-chat', 'profit-loss', 'trading-journal', 'crypto-general-chat'];
     
     const subscriptions = allChannels.map(channelId => {
       return subscribeToMessages(channelId, (newMessage) => {
