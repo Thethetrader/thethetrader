@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions } from '../utils/firebase-setup';
+import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals } from '../utils/firebase-setup';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 
 export default function AdminInterface() {
@@ -423,7 +423,21 @@ export default function AdminInterface() {
   // Charger les signaux au démarrage
   useEffect(() => {
     loadSignals(selectedChannel.id);
-  }, []);
+    
+    // Subscription aux signaux temps réel pour les réactions
+    const signalSubscription = subscribeToSignals(selectedChannel.id, (updatedSignal) => {
+      console.log('🔄 Signal mis à jour reçu admin:', updatedSignal);
+      
+      // Mettre à jour les signaux avec les nouvelles réactions
+      setSignals(prev => prev.map(signal => 
+        signal.id === updatedSignal.id ? { ...signal, reactions: updatedSignal.reactions || [] } : signal
+      ));
+    });
+
+    return () => {
+      signalSubscription.unsubscribe();
+    };
+  }, [selectedChannel.id]);
 
   const [signalData, setSignalData] = useState({
     type: 'BUY',

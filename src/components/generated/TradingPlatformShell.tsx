@@ -170,10 +170,15 @@ export default function TradingPlatformShell() {
     loadMessages(selectedChannel.id);
     loadSignals(selectedChannel.id);
     
-    // TODO: Subscription aux signaux temps réel
-    // const signalSubscription = subscribeToSignals(selectedChannel.id, (newSignal) => {
-    //   console.log('🔄 Nouveau signal reçu:', newSignal);
-    // });
+    // Subscription aux signaux temps réel pour les réactions
+    const signalSubscription = subscribeToSignals(selectedChannel.id, (updatedSignal) => {
+      console.log('🔄 Signal mis à jour reçu:', updatedSignal);
+      
+      // Mettre à jour les signaux avec les nouvelles réactions
+      setSignals(prev => prev.map(signal => 
+        signal.id === updatedSignal.id ? { ...signal, reactions: updatedSignal.reactions || [] } : signal
+      ));
+    });
     
     // Subscription aux messages temps réel pour le canal actuel
     const subscription = subscribeToMessages(selectedChannel.id, (newMessage) => {
@@ -217,6 +222,7 @@ export default function TradingPlatformShell() {
 
     return () => {
       subscription.unsubscribe();
+      signalSubscription.unsubscribe();
     };
   }, [selectedChannel.id]);
   const [chatMessage, setChatMessage] = useState('');
