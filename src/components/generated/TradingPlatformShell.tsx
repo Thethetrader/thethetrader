@@ -762,30 +762,45 @@ export default function TradingPlatformShell() {
 
   // Fonctions pour les statistiques des signaux (utilisent TOUS les signaux)
   const calculateTotalPnL = (): number => {
-    return allSignalsForStats
-      .filter(s => s.pnl && s.status !== 'ACTIVE')
-      .reduce((total, signal) => total + parsePnL(signal.pnl), 0);
+    console.log('🔍 calculateTotalPnL - allSignalsForStats:', allSignalsForStats.length);
+    const filteredSignals = allSignalsForStats.filter(s => s.pnl && s.status !== 'ACTIVE');
+    console.log('🔍 Signaux avec PnL et fermés:', filteredSignals.length);
+    const total = filteredSignals.reduce((total, signal) => total + parsePnL(signal.pnl), 0);
+    console.log('💰 Total PnL calculé:', total);
+    return total;
   };
 
   const calculateWinRate = (): number => {
+    console.log('🔍 calculateWinRate - allSignalsForStats:', allSignalsForStats.length);
     const closedSignals = allSignalsForStats.filter(s => s.status !== 'ACTIVE');
+    console.log('🔍 Signaux fermés:', closedSignals.length);
     if (closedSignals.length === 0) return 0;
     const wins = closedSignals.filter(s => s.status === 'WIN').length;
-    return Math.round((wins / closedSignals.length) * 100);
+    const winRate = Math.round((wins / closedSignals.length) * 100);
+    console.log('🏆 Win Rate calculé:', winRate + '%');
+    return winRate;
   };
 
   const calculateAvgWin = (): number => {
+    console.log('🔍 calculateAvgWin - allSignalsForStats:', allSignalsForStats.length);
     const winSignals = allSignalsForStats.filter(s => s.status === 'WIN' && s.pnl);
+    console.log('🔍 Signaux gagnants avec PnL:', winSignals.length);
     if (winSignals.length === 0) return 0;
     const totalWinPnL = winSignals.reduce((total, signal) => total + parsePnL(signal.pnl), 0);
-    return Math.round(totalWinPnL / winSignals.length);
+    const avgWin = Math.round(totalWinPnL / winSignals.length);
+    console.log('💚 Moyenne gains calculée:', avgWin);
+    return avgWin;
   };
 
   const calculateAvgLoss = (): number => {
+    console.log('🔍 calculateAvgLoss - allSignalsForStats:', allSignalsForStats.length);
     const lossSignals = allSignalsForStats.filter(s => s.status === 'LOSS' && s.pnl);
+    console.log('🔍 Signaux perdants avec PnL:', lossSignals.length);
     if (lossSignals.length === 0) return 0;
     const totalLossPnL = lossSignals.reduce((total, signal) => total + Math.abs(parsePnL(signal.pnl)), 0);
-    return Math.round(totalLossPnL / lossSignals.length);
+    const avgLoss = Math.round(totalLossPnL / lossSignals.length);
+    console.log('💔 Moyenne pertes calculée:', avgLoss);
+    return avgLoss;
   };
 
   const getTodaySignals = () => {
