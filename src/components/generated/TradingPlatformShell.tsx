@@ -19,7 +19,7 @@ export default function TradingPlatformShell() {
   const [pasteArea, setPasteArea] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [unreadMessages, setUnreadMessages] = useState<{[channelId: string]: number}>({});
-  const [lastSeenMessages, setLastSeenMessages] = useState<{[channelId: string]: string}>({});
+  const [lastChannelOpenTime, setLastChannelOpenTime] = useState<{[channelId: string]: number}>({});
   const [signals, setSignals] = useState<Array<{
     id: string;
     type: string;
@@ -233,6 +233,36 @@ export default function TradingPlatformShell() {
     
     initProfile();
   }, []);
+
+  // Subscription globale pour compter les messages non lus
+  useEffect(() => {
+    const allChannels = ['fondamentaux', 'letsgooo-model', 'crypto', 'futur', 'forex', 'livestream', 'general-chat', 'profit-loss', 'trading-journal'];
+    
+    const subscriptions = allChannels.map(channelId => {
+      return subscribeToMessages(channelId, (newMessage) => {
+        // Vérifier si le message est plus récent que la dernière ouverture du salon
+        const lastOpenTime = lastChannelOpenTime[channelId] || 0;
+        const messageTime = typeof newMessage.timestamp === 'number' ? newMessage.timestamp : Date.now();
+        
+        // Si le salon n'a jamais été ouvert, compter tous les messages
+        // Sinon, compter seulement les messages plus récents que la dernière ouverture
+        if (lastOpenTime === 0 || messageTime > lastOpenTime) {
+          // Ne pas compter si on est actuellement dans ce salon
+          if (selectedChannel.id !== channelId) {
+            setUnreadMessages(prev => ({
+              ...prev,
+              [channelId]: (prev[channelId] || 0) + 1
+            }));
+            console.log(`📊 Unread message added to ${channelId}: ${newMessage.content}`);
+          }
+        }
+      });
+    });
+
+    return () => {
+      subscriptions.forEach(subscription => subscription.unsubscribe());
+    };
+  }, [selectedChannel.id, lastChannelOpenTime]);
   const [isLiveStreaming, setIsLiveStreaming] = useState(false);
   const [streamTitle, setStreamTitle] = useState('');
   const [streamDescription, setStreamDescription] = useState('');
@@ -266,14 +296,19 @@ export default function TradingPlatformShell() {
     setView('signals');
     scrollToTop();
     
+    // Enregistrer le timestamp d'ouverture du salon
+    setLastChannelOpenTime(prev => ({
+      ...prev,
+      [channelId]: Date.now()
+    }));
+    
     // Réinitialiser les messages non lus pour ce canal
     setUnreadMessages(prev => ({
       ...prev,
       [channelId]: 0
     }));
     
-    // Marquer tous les messages comme lus pour ce canal
-    console.log(`📊 Clearing unread count for ${channelId}`);
+    console.log(`📊 Channel opened: ${channelId} at ${new Date().toLocaleTimeString()}`);
   };
   const [personalTrades, setPersonalTrades] = useState<Array<{
     id: string;
