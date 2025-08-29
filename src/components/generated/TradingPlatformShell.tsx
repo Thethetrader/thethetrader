@@ -1315,8 +1315,8 @@ export default function TradingPlatformShell() {
   };
 
                                     const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-                    const file = event.target.files?.[0];
-                    if (file) {
+                  const file = event.target.files?.[0];
+                  if (file) {
                       // Upload image vers Firebase Storage
                       const imageURL = await uploadImage(file);
                       
@@ -1325,7 +1325,7 @@ export default function TradingPlatformShell() {
                         const messageData = {
                           channel_id: selectedChannel.id,
                           content: '',
-                          author: 'TheTheTrader',
+                      author: 'TheTheTrader',
                           author_type: 'user' as const,
                           author_avatar: profileImage || undefined,
                           attachment_data: imageURL,
@@ -1347,15 +1347,15 @@ export default function TradingPlatformShell() {
                         console.error('💥 ERREUR upload image utilisateur:', error);
                       }
                       
-                      // Reset the input
-                      event.target.value = '';
+                    // Reset the input
+                    event.target.value = '';
                       
                       // Scroll automatique après upload
                       setTimeout(() => {
                         scrollToBottom();
                       }, 50);
-                    }
-                  };
+                  }
+                };
 
   const parseSignalData = (text: string) => {
     // Chercher tous les nombres
@@ -2662,7 +2662,7 @@ export default function TradingPlatformShell() {
                                       <img 
                                         src={message.attachment_data} 
                                         alt="Attachment"
-                                        className="mt-2 max-w-xs max-h-48 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                                        className="mt-2 w-full h-48 md:h-64 object-cover rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
                                         onClick={() => {
                                           const newWindow = window.open();
                                           newWindow!.document.write(`<img src="${message.attachment_data}" style="max-width: 100%; height: auto;" />`);
@@ -3220,7 +3220,7 @@ export default function TradingPlatformShell() {
                                       <img 
                                         src={message.attachment_data} 
                                         alt="Attachment"
-                                        className="mt-2 max-w-xs max-h-48 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                                        className="mt-2 w-full h-48 md:h-64 object-cover rounded-lg border border-gray-600 transition-opacity"
                                         onClick={() => {
                                           const newWindow = window.open();
                                           newWindow!.document.write(`<img src="${message.attachment_data}" style="max-width: 100%; height: auto;" />`);

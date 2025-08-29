@@ -1568,25 +1568,8 @@ export default function AdminInterface() {
                         console.log('✅ Message sauvegardé:', savedMessage);
                         
                         if (savedMessage) {
-                          const newMessage = {
-                            id: savedMessage.id || Date.now().toString(),
-                            text: savedMessage.content,
-                            timestamp: new Date(savedMessage.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                            author: savedMessage.author,
-                            author_avatar: savedMessage.author_avatar,
-                            attachment: savedMessage.attachment_data ? {
-                              type: savedMessage.attachment_type || 'image/jpeg',
-                              name: savedMessage.attachment_name || 'image.jpg'
-                            } : undefined,
-                            attachment_data: savedMessage.attachment_data
-                          };
-                          
-                          setChatMessages(prev => ({
-                            ...prev,
-                            [selectedChannel.id]: [...(prev[selectedChannel.id] || []), newMessage]
-                          }));
-                          
                           console.log('✅ Image envoyée à Firebase:', savedMessage);
+                          // La subscription temps réel ajoutera le message automatiquement
                         } else {
                           console.error('❌ Erreur envoi image Firebase');
                         }
