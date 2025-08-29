@@ -2301,25 +2301,54 @@ export default function TradingPlatformShell() {
                     <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
                       <button
                         onClick={async () => {
-                          const more = await getSignals(selectedChannel.id, signals.filter(s => s.channel_id === selectedChannel.id).length + 10);
-                          const formatted = more.map(signal => ({
-                            id: signal.id || '',
-                            type: signal.type,
-                            symbol: signal.symbol,
-                            timeframe: signal.timeframe,
-                            entry: signal.entry?.toString() || 'N/A',
-                            takeProfit: signal.takeProfit?.toString() || 'N/A',
-                            stopLoss: signal.stopLoss?.toString() || 'N/A',
-                            description: signal.description || '',
-                            image: null,
-                            timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                            status: signal.status || 'ACTIVE' as const,
-                            channel_id: signal.channel_id,
-                            reactions: signal.reactions || [], // Garder les réactions existantes
-                            pnl: signal.pnl,
-                            closeMessage: signal.closeMessage
-                          }));
-                          setSignals(prev => [...prev, ...formatted]); // Ajouter au lieu de remplacer
+                          try {
+                            const currentSignals = signals.filter(s => s.channel_id === selectedChannel.id);
+                            if (currentSignals.length > 0) {
+                              // Trouver le timestamp du signal le plus ancien
+                              const oldestSignal = currentSignals[currentSignals.length - 1]; // Le dernier dans l'ordre chronologique
+                              const beforeTimestamp = new Date(oldestSignal.timestamp).getTime();
+                              
+                              console.log('🔍 Chargement de signaux plus anciens avant:', beforeTimestamp);
+                              
+                              // Charger 10 signaux plus anciens
+                              const more = await getSignals(selectedChannel.id, 10, beforeTimestamp);
+                              
+                              if (more && more.length > 0) {
+                                const formatted = more.map(signal => ({
+                                  id: signal.id || '',
+                                  type: signal.type,
+                                  symbol: signal.symbol,
+                                  timeframe: signal.timeframe,
+                                  entry: signal.entry?.toString() || 'N/A',
+                                  takeProfit: signal.takeProfit?.toString() || 'N/A',
+                                  stopLoss: signal.stopLoss?.toString() || 'N/A',
+                                  description: signal.description || '',
+                                  image: null,
+                                  timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                                  status: signal.status || 'ACTIVE' as const,
+                                  channel_id: signal.channel_id,
+                                  reactions: signal.reactions || [],
+                                  pnl: signal.pnl,
+                                  closeMessage: signal.closeMessage
+                                }));
+                                
+                                // Filtrer les doublons avant d'ajouter
+                                const existingIds = new Set(currentSignals.map(s => s.id));
+                                const newSignals = formatted.filter(s => !existingIds.has(s.id));
+                                
+                                if (newSignals.length > 0) {
+                                  setSignals(prev => [...prev, ...newSignals]);
+                                  console.log(`✅ ${newSignals.length} nouveaux signaux ajoutés`);
+                                } else {
+                                  console.log('ℹ️ Aucun nouveau signal à ajouter');
+                                }
+                              } else {
+                                console.log('ℹ️ Aucun signal plus ancien trouvé');
+                              }
+                            }
+                          } catch (error) {
+                            console.error('❌ Erreur lors du chargement de signaux supplémentaires:', error);
+                          }
                         }}
                         className="px-4 py-2 text-sm rounded bg-gray-700 hover:bg-gray-600 text-white"
                       >
