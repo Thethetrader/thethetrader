@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage } from '../../utils/firebase-setup';
+import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals } from '../../utils/firebase-setup';
 import { initializeDatabase } from '../../utils/init-database';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../../utils/profile-manager';
 
@@ -163,6 +163,11 @@ export default function TradingPlatformShell() {
   useEffect(() => {
     loadMessages(selectedChannel.id);
     loadSignals(selectedChannel.id);
+    
+    // TODO: Subscription aux signaux temps réel
+    // const signalSubscription = subscribeToSignals(selectedChannel.id, (newSignal) => {
+    //   console.log('🔄 Nouveau signal reçu:', newSignal);
+    // });
     
     // Subscription aux messages temps réel pour le canal actuel
     const subscription = subscribeToMessages(selectedChannel.id, (newMessage) => {
@@ -1285,32 +1290,45 @@ export default function TradingPlatformShell() {
     return [];
   };
 
-  const handleSignalSubmit = () => {
+  const handleSignalSubmit = async () => {
     // Validation minimale - juste besoin d'au moins un champ rempli
     if (!signalData.symbol && !signalData.entry && !signalData.takeProfit && !signalData.stopLoss && !signalData.description) {
       alert('Veuillez remplir au moins un champ pour créer le signal');
       return;
     }
 
-    const newSignal = {
-      id: Date.now().toString(),
-      type: signalData.type,
-      symbol: signalData.symbol || 'N/A',
-      timeframe: signalData.timeframe || '1 min',
-      entry: signalData.entry || 'N/A',
-      takeProfit: signalData.takeProfit || 'N/A',
-      stopLoss: signalData.stopLoss || 'N/A',
-      description: signalData.description || '',
-      image: signalData.image,
-      timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-      status: 'ACTIVE' as const,
-      channel_id: selectedChannel.id,
-      reactions: []
-    };
+    try {
+      // Préparer les données pour Firebase
+      const signalForFirebase = {
+        channel_id: selectedChannel.id,
+        type: signalData.type as 'BUY' | 'SELL',
+        symbol: signalData.symbol || 'N/A',
+        timeframe: signalData.timeframe || '1 min',
+        entry: signalData.entry || '0',
+        takeProfit: signalData.takeProfit || '0',
+        stopLoss: signalData.stopLoss || '0',
+        description: signalData.description || '',
+        author: 'TheTheTrader',
+        image: signalData.image,
+        status: 'ACTIVE' as const
+      };
 
-    // Ajouter le signal à la liste (en premier)
-    setSignals(prevSignals => [newSignal, ...prevSignals]);
-    console.log('Nouveau signal:', newSignal);
+      // Sauvegarder en Firebase
+      const savedSignal = await addSignal(signalForFirebase);
+      
+      if (savedSignal) {
+        console.log('✅ Signal sauvé en Firebase:', savedSignal);
+        alert('Signal créé et sauvé en base ! ✅');
+      } else {
+        console.error('❌ Erreur sauvegarde signal');
+        alert('Erreur lors de la sauvegarde du signal');
+        return;
+      }
+    } catch (error) {
+      console.error('❌ Erreur création signal:', error);
+      alert('Erreur lors de la création du signal');
+      return;
+    }
     
     // Reset form et fermer modal
     setSignalData({
@@ -1324,8 +1342,6 @@ export default function TradingPlatformShell() {
       image: null
     });
     setShowSignalModal(false);
-    
-    alert('Signal créé avec succès !');
   };
 
   const handleSendMessage = async () => {

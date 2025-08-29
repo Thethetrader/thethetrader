@@ -189,6 +189,26 @@ export const getSignals = async (channelId: string): Promise<Signal[]> => {
   }
 };
 
+// Subscription temps réel pour les signaux
+export const subscribeToSignals = (channelId: string, callback: (signal: Signal) => void) => {
+  const signalsRef = ref(database, 'signals');
+  
+  const unsubscribe = onValue(signalsRef, (snapshot) => {
+    snapshot.forEach((childSnapshot) => {
+      const data = childSnapshot.val();
+      if (data.channel_id === channelId) {
+        const signalId = childSnapshot.key;
+        callback({
+          id: signalId,
+          ...data
+        });
+      }
+    });
+  });
+  
+  return { unsubscribe };
+};
+
 export const updateSignalStatus = async (signalId: string, status: 'WIN' | 'LOSS' | 'BE', pnl?: string): Promise<boolean> => {
   try {
     const signalRef = ref(database, `signals/${signalId}`);
