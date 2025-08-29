@@ -729,23 +729,32 @@ export default function AdminInterface() {
         
         if (allSignals.length > 0) {
           // Formater les signaux pour correspondre au type attendu
-          const formattedSignals = allSignals.map(signal => ({
-            id: signal.id || '',
-            type: signal.type,
-            symbol: signal.symbol,
-            timeframe: signal.timeframe,
-            entry: signal.entry?.toString() || 'N/A',
-            takeProfit: signal.takeProfit?.toString() || 'N/A',
-            stopLoss: signal.stopLoss?.toString() || 'N/A',
-            description: signal.description || '',
-            image: null,
-            timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-            status: signal.status || 'ACTIVE' as const,
-            channel_id: signal.channel_id,
-            reactions: signal.reactions || [],
-            pnl: signal.pnl,
-            closeMessage: signal.closeMessage
-          }));
+          const formattedSignals = allSignals.map(signal => {
+            // Pour les signaux fermés, garder la vraie date
+            // Pour les signaux actifs, utiliser HH:MM
+            const isClosed = signal.status && signal.status !== 'ACTIVE';
+            const timestamp = isClosed 
+              ? new Date(signal.timestamp || Date.now()).toISOString() // Vraie date pour signaux fermés
+              : new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); // HH:MM pour signaux actifs
+            
+            return {
+              id: signal.id || '',
+              type: signal.type,
+              symbol: signal.symbol,
+              timeframe: signal.timeframe,
+              entry: signal.entry?.toString() || 'N/A',
+              takeProfit: signal.takeProfit?.toString() || 'N/A',
+              stopLoss: signal.stopLoss?.toString() || 'N/A',
+              description: signal.description || '',
+              image: null,
+              timestamp: timestamp,
+              status: signal.status || 'ACTIVE' as const,
+              channel_id: signal.channel_id,
+              reactions: signal.reactions || [],
+              pnl: signal.pnl,
+              closeMessage: signal.closeMessage
+            };
+          });
           
           setAllSignalsForStats(formattedSignals);
           console.log(`✅ [ADMIN] ${formattedSignals.length} signaux formatés chargés pour statistiques au total`);
