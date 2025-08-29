@@ -57,11 +57,11 @@ const requestFCMToken = async (): Promise<string | null> => {
       const registration = await navigator.serviceWorker.register('/sw.js');
       console.log('✅ Service Worker enregistré:', registration);
       
-      // Demander le token FCM
-      const token = await getToken(messaging, {
-        vapidKey: 'YOUR_VAPID_KEY', // À remplacer par ta vraie clé VAPID
-        serviceWorkerRegistration: registration
-      });
+              // Demander le token FCM
+        const token = await getToken(messaging, {
+          vapidKey: 'BKATJNvQG6Ix5oelm4oKxaskNzNk9uTcXqrwRr8wBalBJZDvcGGZdG2KxeLbM8hfCWtlmHxpu_yXiNzMdiD-bP0',
+          serviceWorkerRegistration: registration
+        });
       
       if (token) {
         console.log('✅ Token FCM obtenu:', token);
