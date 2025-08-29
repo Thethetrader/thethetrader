@@ -43,16 +43,30 @@ export interface Signal {
 // Ajouter un message à Firebase
 export const addMessage = async (message: Omit<Message, 'id' | 'timestamp'>): Promise<Message | null> => {
   try {
+    // Nettoyer le message en supprimant les propriétés undefined
+    const cleanMessage = Object.fromEntries(
+      Object.entries(message).filter(([_, value]) => value !== undefined)
+    );
+    
+    console.log('🧹 Message nettoyé avant envoi Firebase:', cleanMessage);
+    
     const messagesRef = ref(database, 'messages');
     const newMessageRef = push(messagesRef, {
-      ...message,
+      ...cleanMessage,
       timestamp: serverTimestamp()
     });
     
     return {
-      id: newMessageRef.key,
-      ...message,
-      timestamp: new Date().toISOString()
+      id: newMessageRef.key || '',
+      content: cleanMessage.content,
+      author: cleanMessage.author,
+      author_type: cleanMessage.author_type as 'admin' | 'user',
+      author_avatar: cleanMessage.author_avatar,
+      timestamp: new Date().toISOString(),
+      channel_id: cleanMessage.channel_id,
+      attachment_data: cleanMessage.attachment_data,
+      attachment_type: cleanMessage.attachment_type,
+      attachment_name: cleanMessage.attachment_name
     };
   } catch (error) {
     console.error('Erreur ajout message Firebase:', error);
