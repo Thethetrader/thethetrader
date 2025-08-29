@@ -258,11 +258,7 @@ export default function TradingPlatformShell() {
         if (lastOpenTime === 0 || messageTime > lastOpenTime) {
           // Ne pas compter si on est actuellement dans ce salon
           if (selectedChannel.id !== channelId) {
-            setUnreadMessages(prev => ({
-              ...prev,
-              [channelId]: (prev[channelId] || 0) + 1
-            }));
-            console.log(`📊 Unread message added to ${channelId}: ${newMessage.content}`);
+            console.log(`📊 Message reçu dans ${channelId} (canal non actif)`);
           }
         }
       });
@@ -272,6 +268,50 @@ export default function TradingPlatformShell() {
       subscriptions.forEach(subscription => subscription.unsubscribe());
     };
   }, [selectedChannel.id, lastChannelOpenTime]);
+
+  // Subscription globale pour les nouveaux signaux
+  useEffect(() => {
+    const signalChannels = ['crypto', 'futur', 'forex', 'fondamentaux', 'letsgooo-model'];
+    
+    const signalSubscriptions = signalChannels.map(channelId => {
+      return subscribeToSignals(channelId, (newSignal) => {
+        console.log('🆕 Nouveau signal reçu globalement:', newSignal);
+        
+        // Si on est dans le canal du signal, l'ajouter à la liste
+        if (selectedChannel.id === channelId) {
+          setSignals(prev => {
+            // Vérifier si le signal existe déjà
+            const exists = prev.some(s => s.id === newSignal.id);
+            if (!exists) {
+              const formattedSignal = {
+                id: newSignal.id || '',
+                type: newSignal.type,
+                symbol: newSignal.symbol,
+                timeframe: newSignal.timeframe,
+                entry: newSignal.entry?.toString() || 'N/A',
+                takeProfit: newSignal.takeProfit?.toString() || 'N/A',
+                stopLoss: newSignal.stopLoss?.toString() || 'N/A',
+                description: newSignal.description || '',
+                image: null,
+                timestamp: new Date(newSignal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                status: newSignal.status || 'ACTIVE' as const,
+                channel_id: newSignal.channel_id,
+                reactions: newSignal.reactions || [],
+                pnl: newSignal.pnl,
+                closeMessage: newSignal.closeMessage
+              };
+              return [formattedSignal, ...prev]; // Ajouter au début
+            }
+            return prev;
+          });
+        }
+      });
+    });
+
+    return () => {
+      signalSubscriptions.forEach(subscription => subscription.unsubscribe());
+    };
+  }, [selectedChannel.id]);
   const [isLiveStreaming, setIsLiveStreaming] = useState(false);
   const [streamTitle, setStreamTitle] = useState('');
   const [streamDescription, setStreamDescription] = useState('');
