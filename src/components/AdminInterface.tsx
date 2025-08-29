@@ -404,6 +404,13 @@ export default function AdminInterface() {
   const [error, setError] = useState('');
   const [currentDate, setCurrentDate] = useState(new Date());
 
+  // Forcer la mise à jour de currentDate vers la date actuelle au chargement
+  useEffect(() => {
+    const now = new Date();
+    console.log('🔄 [ADMIN] Mise à jour currentDate vers la date actuelle:', now.toDateString());
+    setCurrentDate(now);
+  }, []);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
