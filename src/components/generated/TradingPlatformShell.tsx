@@ -3951,7 +3951,7 @@ export default function TradingPlatformShell() {
                       <button
                         onClick={async () => {
                           const permission = await requestNotificationPermission();
-                          if (permission === 'granted') {
+                          if (permission) {
                             alert('✅ Notifications activées ! Vérifiez les paramètres iOS.');
                           } else {
                             alert('❌ Permissions refusées. Allez dans Réglages → Notifications → TheTheTrader');
