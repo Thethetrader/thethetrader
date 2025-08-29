@@ -273,7 +273,10 @@ export default function TradingPlatformShell() {
   useEffect(() => {
     console.log('🔄 Initialisation de la subscription globale aux signaux');
     console.log('📊 Canals surveillés:', ['crypto', 'futur', 'forex', 'fondamentaux', 'letsgooo-model']);
-    const signalChannels = ['crypto', 'futur', 'forex', 'fondamentaux', 'letsgooo-model'];
+
+    // Délai pour éviter les doublons avec le chargement initial
+    const timeoutId = setTimeout(() => {
+      const signalChannels = ['crypto', 'futur', 'forex', 'fondamentaux', 'letsgooo-model'];
     
     const signalSubscriptions = signalChannels.map(channelId => {
       return subscribeToSignals(channelId, (newSignal) => {
@@ -289,8 +292,14 @@ export default function TradingPlatformShell() {
         
         // Mettre à jour les signaux en temps réel pour tous les canaux
         setSignals(prev => {
-          // Vérifier si le signal existe déjà
-          const exists = prev.some(s => s.id === newSignal.id);
+          // Vérification plus stricte des doublons (par ID et par contenu)
+          const exists = prev.some(s =>
+            s.id === newSignal.id ||
+            (s.symbol === newSignal.symbol &&
+             s.type === newSignal.type &&
+             s.timestamp === new Date(newSignal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }))
+          );
+
           if (!exists) {
             const formattedSignal = {
               id: newSignal.id || '',
@@ -309,16 +318,21 @@ export default function TradingPlatformShell() {
               pnl: newSignal.pnl,
               closeMessage: newSignal.closeMessage
             };
+            console.log('✅ Signal ajouté à la liste:', formattedSignal.symbol, formattedSignal.type);
             // Ajouter à la fin (les signaux sont déjà dans l'ordre chronologique)
             return [...prev, formattedSignal];
+          } else {
+            console.log('🚫 Signal déjà existant - ignoré:', newSignal.symbol, newSignal.type);
+            return prev;
           }
-          return prev;
         });
       });
     });
 
+    }, 2000); // Délai de 2 secondes pour éviter les doublons avec le chargement initial
+
     return () => {
-      signalSubscriptions.forEach(subscription => subscription.unsubscribe());
+      clearTimeout(timeoutId);
     };
   }, []); // Subscription globale - pas de dépendance
   const [isLiveStreaming, setIsLiveStreaming] = useState(false);
