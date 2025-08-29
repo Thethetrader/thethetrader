@@ -2399,12 +2399,12 @@ export default function AdminInterface() {
                     {(weekData.wins > 0 || weekData.losses > 0) ? (
                       <div className="flex items-center gap-1">
                         {weekData.wins > 0 && (
-                          <div className="text-sm bg-green-500 text-white px-3 py-1 rounded-lg font-bold shadow-lg">
+                          <div className="text-sm bg-green-700 text-green-100 px-3 py-1 rounded-lg font-bold shadow-lg">
                             {weekData.wins}W
                           </div>
                         )}
                         {weekData.losses > 0 && (
-                          <div className="text-sm bg-red-500 text-white px-3 py-1 rounded-lg font-bold shadow-lg">
+                          <div className="text-sm bg-red-700 text-red-100 px-3 py-1 rounded-lg font-bold shadow-lg">
                             {weekData.losses}L
                           </div>
                         )}
