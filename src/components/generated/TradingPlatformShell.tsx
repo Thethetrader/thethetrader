@@ -271,6 +271,7 @@ export default function TradingPlatformShell() {
 
   // Subscription globale pour les nouveaux signaux
   useEffect(() => {
+    console.log('🔄 Initialisation de la subscription globale aux signaux');
     const signalChannels = ['crypto', 'futur', 'forex', 'fondamentaux', 'letsgooo-model'];
     
     const signalSubscriptions = signalChannels.map(channelId => {
@@ -316,7 +317,7 @@ export default function TradingPlatformShell() {
     return () => {
       signalSubscriptions.forEach(subscription => subscription.unsubscribe());
     };
-  }, [selectedChannel.id]);
+  }, []); // Subscription globale - pas de dépendance
   const [isLiveStreaming, setIsLiveStreaming] = useState(false);
   const [streamTitle, setStreamTitle] = useState('');
   const [streamDescription, setStreamDescription] = useState('');
