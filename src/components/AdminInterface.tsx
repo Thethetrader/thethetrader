@@ -19,6 +19,7 @@ export default function AdminInterface() {
   const [selectedTradesDate, setSelectedTradesDate] = useState<Date | null>(null);
   const [selectedSignalsDate, setSelectedSignalsDate] = useState<Date | null>(null);
   const [pasteArea, setPasteArea] = useState('');
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [signals, setSignals] = useState<Array<{
     id: string;
     type: string;
@@ -3727,11 +3728,7 @@ export default function AdminInterface() {
                                           src={message.attachment_data} 
                                           alt="Attachment"
                                           className="mt-2 max-w-xs max-h-48 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
-                                          onClick={() => {
-                                            const newWindow = window.open();
-                                            newWindow!.document.write(`<img src="${message.attachment_data}" style="max-width: 100%; height: auto;" />`);
-                                            newWindow!.document.title = 'Image en grand';
-                                          }}
+                                          onClick={() => setSelectedImage(message.attachment_data)}
                                         />
                                         <div className="text-xs text-gray-400 mt-1">Cliquez pour agrandir</div>
                                       </div>
@@ -4498,6 +4495,26 @@ export default function AdminInterface() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Popup Image */}
+      {selectedImage && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" onClick={() => setSelectedImage(null)}>
+          <div className="relative max-w-4xl max-h-[90vh]">
+            <img 
+              src={selectedImage} 
+              alt="Image agrandie"
+              className="max-w-full max-h-full object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl"
+            >
+              ×
+            </button>
           </div>
         </div>
       )}
