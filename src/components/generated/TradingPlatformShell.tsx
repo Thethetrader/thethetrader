@@ -339,6 +339,7 @@ export default function TradingPlatformShell() {
 
   // États pour le journal de trading personnalisé
   const [showTradeModal, setShowTradeModal] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(() => {
     // Récupérer selectedDate depuis localStorage
     const saved = localStorage.getItem('selectedDate');
@@ -2038,11 +2039,19 @@ export default function TradingPlatformShell() {
                   <p className="text-sm font-medium">TheTheTrader</p>
                 </div>
               </div>
-              <button onClick={handleLogout} className="text-gray-400 hover:text-white">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
-              </button>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setShowSettings(true)} className="text-gray-400 hover:text-white">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </button>
+                <button onClick={handleLogout} className="text-gray-400 hover:text-white">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                  </svg>
+                </button>
+              </div>
             </div>
           ) : (
             <div className="flex items-center justify-between">
@@ -3904,6 +3913,113 @@ export default function TradingPlatformShell() {
               <div className="mt-6 pt-4 border-t border-gray-600">
                 <button
                   onClick={() => setShowSignalsModal(false)}
+                  className="w-full bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
+                >
+                  Fermer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Paramètres */}
+      {showSettings && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-semibold text-white">⚙️ Paramètres</h2>
+                <button 
+                  onClick={() => setShowSettings(false)}
+                  className="text-gray-400 hover:text-white text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {/* Section Notifications */}
+                <div>
+                  <h3 className="text-lg font-medium text-white mb-4">🔔 Notifications</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-white font-medium">Notifications Push</p>
+                        <p className="text-sm text-gray-400">Recevoir les notifications sur l'écran verrouillé</p>
+                      </div>
+                      <button
+                        onClick={async () => {
+                          const permission = await requestNotificationPermission();
+                          if (permission === 'granted') {
+                            alert('✅ Notifications activées ! Vérifiez les paramètres iOS.');
+                          } else {
+                            alert('❌ Permissions refusées. Allez dans Réglages → Notifications → TheTheTrader');
+                          }
+                        }}
+                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm"
+                      >
+                        Activer
+                      </button>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-white font-medium">Notifications Signaux</p>
+                        <p className="text-sm text-gray-400">Alertes pour nouveaux signaux</p>
+                      </div>
+                      <div className="text-green-400 text-sm">✅ Activé</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section Profil */}
+                <div>
+                  <h3 className="text-lg font-medium text-white mb-4">👤 Profil</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-12 w-12 bg-blue-500 rounded-full flex items-center justify-center text-lg overflow-hidden">
+                        {profileImage ? (
+                          <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+                        ) : (
+                          'TT'
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-white font-medium">TheTheTrader</p>
+                        <p className="text-sm text-gray-400">Utilisateur PWA</p>
+                      </div>
+                    </div>
+                    
+                    <label className="cursor-pointer block">
+                      <input
+                        type="file"
+                        onChange={handleProfileImageChange}
+                        className="hidden"
+                        accept="image/*"
+                      />
+                      <span className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-sm inline-block">
+                        📷 Changer photo
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Section Aide */}
+                <div>
+                  <h3 className="text-lg font-medium text-white mb-4">❓ Aide</h3>
+                  <div className="space-y-2 text-sm text-gray-400">
+                    <p>• Pour activer les notifications sur écran verrouillé :</p>
+                    <p className="ml-4">Réglages → Notifications → TheTheTrader</p>
+                    <p>• Activer "Afficher sur l'écran de verrouillage"</p>
+                    <p>• Activer "Sons" et "Badges"</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-gray-600">
+                <button
+                  onClick={() => setShowSettings(false)}
                   className="w-full bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
                 >
                   Fermer
