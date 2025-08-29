@@ -755,7 +755,28 @@ export default function AdminInterface() {
     };
 
     loadAllSignalsForStats();
-  }, []);
+  }, [selectedChannel.id]); // Recharger quand le canal change
+
+  // Mettre à jour allSignalsForStats en temps réel quand de nouveaux signaux arrivent
+  useEffect(() => {
+    if (signals.length > 0) {
+      console.log('🔄 [ADMIN] Mise à jour temps réel des statistiques...');
+      console.log('📊 [ADMIN] Signaux actuels dans le fil:', signals.length);
+      
+      // Mettre à jour allSignalsForStats avec les nouveaux signaux
+      setAllSignalsForStats(prev => {
+        const existingIds = new Set(prev.map(s => s.id));
+        const newSignals = signals.filter(s => !existingIds.has(s.id));
+        
+        if (newSignals.length > 0) {
+          console.log(`✅ [ADMIN] ${newSignals.length} nouveaux signaux ajoutés aux stats`);
+          return [...prev, ...newSignals];
+        }
+        
+        return prev;
+      });
+    }
+  }, [signals]);
 
   // Fonctions pour les statistiques des signaux (utilisent TOUS les signaux)
   const calculateTotalPnL = (): number => {
