@@ -305,13 +305,8 @@ export default function TradingPlatformShell() {
               pnl: newSignal.pnl,
               closeMessage: newSignal.closeMessage
             };
-            // Ajouter à la fin et trier par timestamp (plus ancien en haut)
-            const updatedSignals = [...prev, formattedSignal];
-            return updatedSignals.sort((a, b) => {
-              const timeA = new Date(a.timestamp || Date.now()).getTime();
-              const timeB = new Date(b.timestamp || Date.now()).getTime();
-              return timeA - timeB;
-            });
+            // Ajouter à la fin (les signaux sont déjà dans l'ordre chronologique)
+            return [...prev, formattedSignal];
           }
           return prev;
         });
