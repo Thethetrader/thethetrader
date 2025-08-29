@@ -93,7 +93,7 @@ export default function MainContentArea({ className, onSignalsChange, signals: e
       reactions: {}
     };
 
-    setSignals(prev => [newSignal, ...prev]);
+    setSignals(prev => [...prev, newSignal]);
     
     // Reset form
     setFormData({

@@ -16,6 +16,15 @@ if ('serviceWorker' in navigator) {
         // Listen for updates
         registration.addEventListener('updatefound', () => {
           console.log('Service worker update found');
+          const newWorker = registration.installing;
+          if (newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                // Nouvelle version disponible - forcer le refresh
+                window.location.reload();
+              }
+            });
+          }
         });
       })
       .catch((registrationError) => {

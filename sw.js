@@ -1,7 +1,7 @@
 // Service Worker pour TheTheTrader PWA
 // Gère les notifications push en arrière-plan
 
-const CACHE_NAME = 'thethetrader-v1';
+const CACHE_NAME = 'thethetrader-v2';
 const urlsToCache = [
   '/',
   '/index.html',

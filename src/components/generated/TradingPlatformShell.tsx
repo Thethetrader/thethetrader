@@ -43,8 +43,8 @@ export default function TradingPlatformShell() {
   const loadMessages = async (channelId: string) => {
     try {
       const messages = await getMessages(channelId);
-      // Limiter à 20 messages pour les salons de chat
-      const limitedMessages = ['general-chat', 'profit-loss'].includes(channelId) ? messages.slice(-20) : messages;
+      // Limiter à 20 messages pour les salons de chat et inverser l'ordre
+      const limitedMessages = ['general-chat', 'profit-loss'].includes(channelId) ? messages.slice(-20).reverse() : messages.reverse();
       const formattedMessages = limitedMessages.map(msg => ({
         id: msg.id || '',
         text: msg.content,
@@ -98,7 +98,7 @@ export default function TradingPlatformShell() {
         closeMessage: signal.closeMessage
       }));
       
-      setSignals(formattedSignals);
+      setSignals(formattedSignals.reverse());
       console.log(`✅ Signaux chargés pour ${channelId}:`, formattedSignals.length);
       console.log('🔍 Signaux formatés utilisateur:', formattedSignals);
       console.log('🎯 État signals utilisateur après setSignals:', formattedSignals);
@@ -2521,7 +2521,7 @@ export default function TradingPlatformShell() {
                         <div className="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
                       </div>
                     ) : (
-                      signals.filter(signal => signal.channel_id === selectedChannel.id).reverse().map((signal) => (
+                      signals.filter(signal => signal.channel_id === selectedChannel.id).map((signal) => (
                         <div key={signal.id} className="flex items-start gap-3">
                           <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
                             {profileImage ? (

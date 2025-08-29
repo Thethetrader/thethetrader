@@ -287,7 +287,7 @@ export default function AdminInterface() {
         closeMessage: signal.closeMessage
       }));
       
-      setSignals(formattedSignals);
+      setSignals(formattedSignals.reverse());
       console.log(`✅ Signaux chargés pour ${channelId}:`, formattedSignals.length);
       console.log('🎯 État signals admin après setSignals:', formattedSignals);
     } catch (error) {
@@ -1721,35 +1721,12 @@ export default function AdminInterface() {
     const savedSignal = await addSignal(signalForFirebase);
     
     if (savedSignal) {
-      // Ajouter aussi localement pour l'affichage immédiat
-      const newSignal = {
-        id: savedSignal.id || Date.now().toString(),
-        type: savedSignal.type,
-        symbol: savedSignal.symbol,
-        timeframe: savedSignal.timeframe,
-        entry: savedSignal.entry || 'N/A',
-        takeProfit: savedSignal.takeProfit || 'N/A',
-        stopLoss: savedSignal.stopLoss || 'N/A',
-        description: savedSignal.description || '',
-      image: signalData.image,
-        timestamp: new Date(savedSignal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-        status: savedSignal.status || 'ACTIVE' as const,
-        channel_id: savedSignal.channel_id,
-      reactions: []
-    };
-
-    // Ajouter le signal à la liste (en premier)
-    setSignals(prevSignals => [newSignal, ...prevSignals]);
-    
-    // Recharger les signaux pour s'assurer de la synchronisation
-    loadSignals(selectedChannel.id);
-    
-    // Envoyer une notification pour le nouveau signal
-    notifyNewSignal(savedSignal);
-    
-    console.log('✅ Signal sauvé en Firebase:', savedSignal);
-    
-    alert('Signal créé et sauvé en base ! ✅');
+      console.log('✅ Signal sauvé en Firebase:', savedSignal);
+      
+      // Envoyer une notification pour le nouveau signal
+      notifyNewSignal(savedSignal);
+      
+      alert('Signal créé et sauvé en base ! ✅');
     } else {
       console.error('❌ Erreur sauvegarde signal');
       alert('Erreur lors de la sauvegarde du signal');
