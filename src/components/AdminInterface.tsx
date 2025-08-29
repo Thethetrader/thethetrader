@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals } from '../utils/firebase-setup';
+import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database } from '../utils/firebase-setup';
+import { initializeNotifications, notifyNewSignal, notifySignalClosed } from '../utils/push-notifications';
+import { ref, update } from 'firebase/database';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 
 export default function AdminInterface() {
@@ -20,7 +22,7 @@ export default function AdminInterface() {
   const [selectedSignalsDate, setSelectedSignalsDate] = useState<Date | null>(null);
   const [pasteArea, setPasteArea] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [unreadMessages, setUnreadMessages] = useState<{[channelId: string]: number}>({});
+
   const [lastSeenMessages, setLastSeenMessages] = useState<{[channelId: string]: string}>({});
   const [signals, setSignals] = useState<Array<{
     id: string;
@@ -37,34 +39,8 @@ export default function AdminInterface() {
     channel_id: string;
     reactions?: string[];
     pnl?: string;
-  }>>([{
-    id: 'test-1',
-    type: 'BUY',
-    symbol: 'BTC',
-    timeframe: '1 min',
-    entry: '45000',
-    takeProfit: '46000',
-    stopLoss: '44000',
-    description: 'Signal de test avec boutons WIN/LOSS/BE',
-    image: null,
-    timestamp: '22:30',
-    status: 'ACTIVE',
-    channel_id: 'crypto'
-  }, {
-    id: 'test-2',
-    type: 'SELL',
-    symbol: 'ETH',
-    timeframe: '5 min',
-    entry: '2800',
-    takeProfit: '2750',
-    stopLoss: '2850',
-    description: 'Signal ETH avec boutons visibles',
-    image: null,
-    timestamp: '22:35',
-    status: 'ACTIVE',
-    channel_id: 'forex',
-    reactions: []
-  }]);
+    closeMessage?: string;
+  }>>([]);
 
   // Fonction pour charger les messages depuis Firebase
   const loadMessages = async (channelId: string) => {
@@ -123,14 +99,19 @@ export default function AdminInterface() {
     };
   }, [selectedChannel.id]);
 
-  // Charger les utilisateurs au montage du composant
+  // Charger les signaux et initialiser les notifications au montage du composant
   useEffect(() => {
-    loadUsers();
+    loadSignals(selectedChannel.id);
+    
+    // Initialiser les notifications push
+    initializeNotifications();
   }, []);
 
   // Charger les messages quand on change de canal
   useEffect(() => {
     loadMessages(selectedChannel.id);
+    // Charger aussi les signaux
+    loadSignals(selectedChannel.id);
     // Scroller vers le bas quand on entre dans un salon
     setTimeout(() => {
       scrollToBottom();
@@ -176,14 +157,8 @@ export default function AdminInterface() {
       subscription.unsubscribe();
     };
 
-    // Fallback: recharger les messages toutes les 2 secondes
-    const interval = setInterval(() => {
-      loadMessages(selectedChannel.id);
-    }, 2000);
-
     return () => {
       subscription.unsubscribe();
-      clearInterval(interval);
     };
   }, [selectedChannel.id]);
 
@@ -196,25 +171,7 @@ export default function AdminInterface() {
       }))
     );
     
-    // Ajouter un signal de test si aucun signal n'existe
-    if (signals.length === 0) {
-      const testSignal = {
-        id: 'test-1',
-        type: 'BUY',
-        symbol: 'BTC',
-        timeframe: '1 min',
-        entry: '45000',
-        takeProfit: '46000',
-        stopLoss: '44000',
-        description: 'Signal de test',
-        image: null,
-        timestamp: '22:30',
-        status: 'ACTIVE' as const,
-        channel_id: 'crypto',
-        reactions: []
-      };
-      setSignals([testSignal]);
-    }
+
   }, []);
   const [chatMessage, setChatMessage] = useState('');
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -226,10 +183,11 @@ export default function AdminInterface() {
       console.log('📱 PWA Mode:', window.matchMedia('(display-mode: standalone)').matches);
       console.log('🌐 User Agent:', navigator.userAgent.includes('Mobile') ? 'MOBILE' : 'DESKTOP');
       
-      const image = await initializeProfile('admin');
-      if (image) {
-        setProfileImage(image);
-        console.log('✅ Photo de profil admin chargée:', image);
+      // Charger depuis localStorage directement
+      const localImage = localStorage.getItem('adminProfileImage');
+      if (localImage) {
+        setProfileImage(localImage);
+        console.log('✅ Photo de profil admin chargée depuis localStorage:', localImage);
       } else {
         console.log('❌ Aucune photo de profil admin trouvée');
       }
@@ -305,9 +263,17 @@ export default function AdminInterface() {
   // Fonction pour charger les signaux depuis Firebase
   const loadSignals = async (channelId: string) => {
     try {
-      const signals = await getSignals(channelId);
-      console.log('🔍 Signaux bruts reçus de Firebase:', signals);
-      const formattedSignals = signals.map(signal => ({
+      console.log('🔍 Début loadSignals pour channel:', channelId);
+      const startTime = performance.now();
+      
+      // Charger SEULEMENT les signaux du canal (optimisé)
+      const filteredSignals = await getSignals(channelId);
+      
+      const endTime = performance.now();
+      console.log(`⏱️ getSignals a pris ${endTime - startTime} millisecondes`);
+      console.log('🔍 Signaux reçus pour channel', channelId, ':', filteredSignals);
+      
+      const formattedSignals = filteredSignals.map(signal => ({
         id: signal.id || '',
         type: signal.type,
         symbol: signal.symbol,
@@ -320,12 +286,14 @@ export default function AdminInterface() {
         timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         status: signal.status || 'ACTIVE' as const,
         channel_id: signal.channel_id,
-        reactions: []
+        reactions: signal.reactions || [],
+        pnl: signal.pnl,
+        closeMessage: signal.closeMessage
       }));
       
       setSignals(formattedSignals);
       console.log(`✅ Signaux chargés pour ${channelId}:`, formattedSignals.length);
-      console.log('🔍 Signaux formatés:', formattedSignals);
+      console.log('🎯 État signals admin après setSignals:', formattedSignals);
     } catch (error) {
       console.error('❌ Erreur chargement signaux:', error);
     }
@@ -342,8 +310,8 @@ export default function AdminInterface() {
     setView('signals');
     scrollToTop();
     
-    // Charger les signaux pour ce canal
-    loadSignals(channelId);
+    // Les signaux seront chargés automatiquement par le useEffect qui écoute selectedChannel.id
+    // Pas besoin d'appeler loadSignals ici
     
     // Réinitialiser les messages non lus pour ce canal
     setUnreadMessages(prev => ({
@@ -420,23 +388,10 @@ export default function AdminInterface() {
     console.log('Trades chargés:', personalTrades);
   }, [personalTrades]);
 
-  // Charger les signaux au démarrage
+  // Charger les signaux au démarrage (SIMPLE ET RAPIDE)
   useEffect(() => {
+    console.log('🔄 useEffect loadSignals appelé pour channel:', selectedChannel.id);
     loadSignals(selectedChannel.id);
-    
-    // Subscription aux signaux temps réel pour les réactions
-    const signalSubscription = subscribeToSignals(selectedChannel.id, (updatedSignal) => {
-      console.log('🔄 Signal mis à jour reçu admin:', updatedSignal);
-      
-      // Mettre à jour les signaux avec les nouvelles réactions
-      setSignals(prev => prev.map(signal => 
-        signal.id === updatedSignal.id ? { ...signal, reactions: updatedSignal.reactions || [] } : signal
-      ));
-    });
-
-    return () => {
-      signalSubscription.unsubscribe();
-    };
   }, [selectedChannel.id]);
 
   const [signalData, setSignalData] = useState({
@@ -555,25 +510,28 @@ export default function AdminInterface() {
               }
             }
             
-            // Calculate Risk:Reward ratio if available
-            if (stopLevel !== undefined && profitLevel !== undefined) {
+            // Calculate Risk:Reward ratio and Take Profit if available
+            if (stopLevel !== undefined && profitLevel !== undefined && entryPrice !== undefined) {
               const rrRatio = Math.round((profitLevel / stopLevel) * 100) / 100;
               extracted.rr = rrRatio.toString();
               
-              // Calculate Stop Loss based on entry price and stopLevel
-              if (entryPrice !== undefined) {
-                let slPrice;
-                if (extracted.tradeType === 'buy') {
-                  // For Long trades
-                  const stopDistance = stopLevel / 4; // Similar to Google Script
-                  slPrice = entryPrice - stopDistance;
-                } else {
-                  // For Short trades
-                  const stopDistance = stopLevel / 4;
-                  slPrice = entryPrice + stopDistance;
-                }
-                extracted.stopLoss = slPrice.toString();
+              // Calculate Stop Loss and Take Profit based on entry price and levels
+              let slPrice, tpPrice;
+              if (extracted.tradeType === 'buy') {
+                // For Long trades
+                const stopDistance = stopLevel / 4; 
+                const profitDistance = profitLevel / 4;
+                slPrice = entryPrice - stopDistance;
+                tpPrice = entryPrice + profitDistance;
+              } else {
+                // For Short trades  
+                const stopDistance = stopLevel / 4;
+                const profitDistance = profitLevel / 4;
+                slPrice = entryPrice + stopDistance;
+                tpPrice = entryPrice - profitDistance;
               }
+              extracted.stopLoss = slPrice.toString();
+              extracted.takeProfit = tpPrice.toString();
             }
             
             // Extract timestamps for entry/exit if available
@@ -672,7 +630,7 @@ export default function AdminInterface() {
         type: extracted.tradeType === 'buy' ? 'BUY' : 'SELL',
         symbol: extracted.symbol || signalData.symbol,
         entry: extracted.entryPrice || signalData.entry,
-        takeProfit: extracted.exitPrice || signalData.takeProfit,
+        takeProfit: extracted.takeProfit || signalData.takeProfit,
         stopLoss: extracted.stopLoss || signalData.stopLoss,
       });
       
@@ -1117,27 +1075,48 @@ export default function AdminInterface() {
     }
   };
 
-  const handleSignalStatus = (signalId: string, newStatus: 'WIN' | 'LOSS' | 'BE' | 'ACTIVE') => {
+  const handleSignalStatus = async (signalId: string, newStatus: 'WIN' | 'LOSS' | 'BE' | 'ACTIVE') => {
     const signal = signals.find(s => s.id === signalId);
     if (!signal) return;
 
     if (signal.status === newStatus) {
       // Si on clique sur le même statut, on remet en ACTIVE
+      const updatedSignal = { ...signal, status: 'ACTIVE', pnl: undefined, closeMessage: undefined };
       setSignals(prev => prev.map(s => 
-        s.id === signalId ? { ...s, status: 'ACTIVE', pnl: undefined } : s
+        s.id === signalId ? updatedSignal : s
       ));
+      // Sauvegarder dans Firebase
+      updateSignalStatus(signalId, 'ACTIVE');
     } else if (newStatus === 'ACTIVE') {
       // Si on veut remettre en ACTIVE directement
+      const updatedSignal = { ...signal, status: 'ACTIVE', pnl: undefined, closeMessage: undefined };
       setSignals(prev => prev.map(s => 
-        s.id === signalId ? { ...s, status: 'ACTIVE', pnl: undefined } : s
+        s.id === signalId ? updatedSignal : s
       ));
+      // Sauvegarder dans Firebase
+      updateSignalStatus(signalId, 'ACTIVE');
     } else {
       // Sinon on demande le P&L
       const pnl = prompt(`Entrez le P&L final pour ce signal (ex: +$150 ou -$50):`);
       if (pnl !== null) {
+        // Générer la phrase de fermeture
+        const statusText = newStatus === 'WIN' ? 'gagnante' : newStatus === 'LOSS' ? 'perdante' : 'break-even';
+        const closeMessage = `Position ${statusText} fermée - P&L: ${pnl}`;
+        
+        const updatedSignal = { ...signal, status: newStatus, pnl, closeMessage };
         setSignals(prev => prev.map(s => 
-          s.id === signalId ? { ...s, status: newStatus, pnl } : s
+          s.id === signalId ? updatedSignal : s
         ));
+        
+        // Sauvegarder dans Firebase
+        updateSignalStatus(signalId, newStatus, pnl);
+        
+        // Sauvegarder le message de fermeture dans Firebase
+        const signalRef = ref(database, `signals/${signalId}`);
+        await update(signalRef, { closeMessage });
+        
+        // Envoyer une notification pour le signal fermé
+        notifySignalClosed({ ...signal, status: newStatus, pnl, closeMessage });
       }
     }
   };
@@ -1526,6 +1505,9 @@ export default function AdminInterface() {
     
     // Recharger les signaux pour s'assurer de la synchronisation
     loadSignals(selectedChannel.id);
+    
+    // Envoyer une notification pour le nouveau signal
+    notifyNewSignal(savedSignal);
     
     console.log('✅ Signal sauvé en Firebase:', savedSignal);
     
@@ -2284,26 +2266,26 @@ export default function AdminInterface() {
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">ÉDUCATION</h3>
             <div className="space-y-1">
-              <button onClick={() => handleChannelChange('fondamentaux', 'fondamentaux')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'fondamentaux' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📚 Fondamentaux {unreadMessages['fondamentaux'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['fondamentaux']}</span>}</button>
-              <button onClick={() => handleChannelChange('letsgooo-model', 'letsgooo-model')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'letsgooo-model' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>🚀 Letsgooo-model {unreadMessages['letsgooo-model'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['letsgooo-model']}</span>}</button>
+              <button onClick={() => handleChannelChange('fondamentaux', 'fondamentaux')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'fondamentaux' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📚 Fondamentaux</button>
+              <button onClick={() => handleChannelChange('letsgooo-model', 'letsgooo-model')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'letsgooo-model' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>🚀 Letsgooo-model</button>
             </div>
           </div>
 
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">SIGNAUX</h3>
             <div className="space-y-1">
-              <button onClick={() => handleChannelChange('crypto', 'crypto')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'crypto' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>🪙 Crypto {unreadMessages['crypto'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['crypto']}</span>}</button>
-              <button onClick={() => handleChannelChange('futur', 'futur')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'futur' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📈 Futur {unreadMessages['futur'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['futur']}</span>}</button>
-              <button onClick={() => handleChannelChange('forex', 'forex')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'forex' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💱 Forex {unreadMessages['forex'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['forex']}</span>}</button>
+              <button onClick={() => handleChannelChange('crypto', 'crypto')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'crypto' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>🪙 Crypto</button>
+              <button onClick={() => handleChannelChange('futur', 'futur')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'futur' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📈 Futur</button>
+              <button onClick={() => handleChannelChange('forex', 'forex')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'forex' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💱 Forex</button>
             </div>
           </div>
 
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">TRADING HUB</h3>
             <div className="space-y-1">
-              <button onClick={() => handleChannelChange('livestream', 'livestream')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📺 Livestream {unreadMessages['livestream'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['livestream']}</span>}</button>
-              <button onClick={() => handleChannelChange('general-chat', 'general-chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 General-chat {unreadMessages['general-chat'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['general-chat']}</span>}</button>
-              <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💰 Profit-loss {unreadMessages['profit-loss'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['profit-loss']}</span>}</button>
+              <button onClick={() => handleChannelChange('livestream', 'livestream')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📺 Livestream</button>
+              <button onClick={() => handleChannelChange('general-chat', 'general-chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 General-chat</button>
+              <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💰 Profit-loss</button>
               <button onClick={() => {
                 // Réinitialiser selectedDate si on quitte le Trading Journal
                 if (selectedChannel.id === 'trading-journal') {
@@ -2783,8 +2765,8 @@ export default function AdminInterface() {
                         <div className="text-gray-400 text-sm">Aucun signal pour le moment</div>
                         <div className="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
                       </div>
-                    ) : (
-                      signals.filter(signal => signal.channel_id === selectedChannel.id).map((signal) => (
+                                          ) : (
+                        signals.filter(signal => signal.channel_id === selectedChannel.id).map((signal) => (
                         <div key={signal.id} className="flex items-start gap-3">
                           <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
                             {profileImage ? (
@@ -2840,6 +2822,16 @@ export default function AdminInterface() {
                                     </span>
                                   </div>
                                 )}
+
+                                {/* Message de fermeture */}
+                                {signal.closeMessage && (
+                                  <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
+                                    <span className="text-yellow-400 text-sm">🔒</span>
+                                    <span className="text-yellow-400 text-sm font-medium">
+                                      {signal.closeMessage}
+                                    </span>
+                                  </div>
+                                )}
                               </div>
                             </div>
 
@@ -2883,6 +2875,34 @@ export default function AdminInterface() {
                                 }`}
                               >
                                 ⚖️ BE
+                              </button>
+                            </div>
+
+                            {/* Réactions emoji */}
+                            <div className="flex items-center gap-2 mt-3">
+                              <button 
+                                onClick={() => handleReaction(signal.id, '🔥')}
+                                className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
+                              >
+                                🔥 {signal.reactions?.filter(r => r === '🔥').length || 0}
+                              </button>
+                              <button 
+                                onClick={() => handleReaction(signal.id, '💎')}
+                                className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
+                              >
+                                💎 {signal.reactions?.filter(r => r === '💎').length || 0}
+                              </button>
+                              <button 
+                                onClick={() => handleReaction(signal.id, '🚀')}
+                                className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
+                              >
+                                🚀 {signal.reactions?.filter(r => r === '🚀').length || 0}
+                              </button>
+                              <button 
+                                onClick={() => handleReaction(signal.id, '👏')}
+                                className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
+                              >
+                                👏 {signal.reactions?.filter(r => r === '👏').length || 0}
                               </button>
                             </div>
 
@@ -3464,9 +3484,35 @@ export default function AdminInterface() {
             getTradingCalendar()
           ) : (
             <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '80px' }}>
-              {/* Bouton + Signal pour les canaux de signaux */}
+              {/* Boutons en haut fixe */}
               {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream'].includes(selectedChannel.id) && (
-                <div className="flex justify-end mb-4">
+                <div className="flex justify-between items-center mb-4 sticky top-0 bg-gray-900 p-2 rounded z-10">
+                  <button
+                    onClick={async () => {
+                      const more = await getSignals(selectedChannel.id, signals.filter(s => s.channel_id === selectedChannel.id).length + 10);
+                      const formatted = more.map(signal => ({
+                        id: signal.id || '',
+                        type: signal.type,
+                        symbol: signal.symbol,
+                        timeframe: signal.timeframe,
+                        entry: signal.entry?.toString() || 'N/A',
+                        takeProfit: signal.takeProfit?.toString() || 'N/A',
+                        stopLoss: signal.stopLoss?.toString() || 'N/A',
+                        description: signal.description || '',
+                        image: null,
+                        timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                        status: signal.status || 'ACTIVE' as const,
+                        channel_id: signal.channel_id,
+                        reactions: signal.reactions || [],
+                        pnl: signal.pnl,
+                        closeMessage: signal.closeMessage
+                      }));
+                                                  setSignals(formatted);
+                    }}
+                    className="px-4 py-2 text-sm rounded bg-gray-700 hover:bg-gray-600 text-white"
+                  >
+Voir plus (+10)
+                  </button>
                   <button onClick={handleCreateSignal} className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm">+ Signal</button>
                 </div>
               )}
@@ -3480,7 +3526,10 @@ export default function AdminInterface() {
                       <div className="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
                     </div>
                   ) : (
-                    signals.filter(signal => signal.channel_id === selectedChannel.id).map((signal) => (
+                    signals
+                      .filter(signal => signal.channel_id === selectedChannel.id)
+                      .reverse()
+                      .map((signal) => (
                       <div key={signal.id} className="flex items-start gap-3">
                         <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
                         <div className="flex-1">
@@ -3527,6 +3576,16 @@ export default function AdminInterface() {
                                   <span className="text-red-400 text-sm">🎯</span>
                                   <span className="text-white text-sm">
                                     Ratio R:R : ≈ {calculateRiskReward(signal.entry, signal.takeProfit, signal.stopLoss)}
+                                  </span>
+                                </div>
+                              )}
+
+                              {/* Message de fermeture */}
+                              {signal.closeMessage && (
+                                <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
+                                  <span className="text-yellow-400 text-sm">🔒</span>
+                                  <span className="text-yellow-400 text-sm font-medium">
+                                    {signal.closeMessage}
                                   </span>
                                 </div>
                               )}
@@ -3607,6 +3666,7 @@ export default function AdminInterface() {
                       </div>
                     ))
                   )}
+
                 </div>
               ) : selectedChannel.id === 'livestream' ? (
                 <div className="flex flex-col h-full">
@@ -3761,6 +3821,35 @@ export default function AdminInterface() {
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}
                   <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
+                    {/* Bouton Voir plus pour les messages */}
+                    {(chatMessages[selectedChannel.id] || []).length >= 50 && (
+                      <div className="flex justify-center pt-2">
+                        <button
+                          onClick={async () => {
+                            const more = await getMessages(selectedChannel.id);
+                            const formatted = more.map(msg => ({
+                              id: msg.id || '',
+                              text: msg.content,
+                              timestamp: new Date(msg.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                              author: msg.author,
+                              author_avatar: msg.author_avatar,
+                              attachment: msg.attachment_data ? {
+                                type: msg.attachment_type || 'image/jpeg',
+                                name: msg.attachment_name || 'image.jpg'
+                              } : undefined,
+                              attachment_data: msg.attachment_data
+                            }));
+                            setChatMessages(prev => ({
+                              ...prev,
+                              [selectedChannel.id]: [...formatted, ...(prev[selectedChannel.id] || [])]
+                            }));
+                          }}
+                          className="px-4 py-2 text-sm rounded bg-gray-700 hover:bg-gray-600 text-white"
+                        >
+                          Voir plus de messages
+                        </button>
+                      </div>
+                    )}
                     {(chatMessages[selectedChannel.id] || []).length > 0 && (
                       (chatMessages[selectedChannel.id] || []).map((message) => (
                         <div key={message.id} className="flex items-start gap-3">
@@ -4556,6 +4645,19 @@ export default function AdminInterface() {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Bouton + Signal fixe */}
+      {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream'].includes(selectedChannel.id) && (
+        <div className="fixed bottom-6 right-6 z-50">
+          <button 
+            onClick={handleCreateSignal}
+            className="bg-blue-600 hover:bg-blue-700 px-4 py-3 rounded-full text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2"
+          >
+            <span className="text-xl">+</span>
+            <span className="text-sm font-medium">Signal</span>
+          </button>
         </div>
       )}
 

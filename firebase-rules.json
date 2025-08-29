@@ -1,0 +1,18 @@
+{
+  "rules": {
+    "signals": {
+      ".read": true,
+      ".write": true,
+      ".indexOn": ["channel_id", "timestamp"]
+    },
+    "messages": {
+      ".read": true,
+      ".write": true,
+      ".indexOn": ["channel_id", "timestamp"]
+    },
+    "user_profiles": {
+      ".read": true,
+      ".write": true
+    }
+  }
+} 

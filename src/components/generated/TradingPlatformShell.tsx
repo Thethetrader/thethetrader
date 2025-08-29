@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateSignalReactions } from '../../utils/firebase-setup';
-import { initializeDatabase } from '../../utils/init-database';
+import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
+
 import { syncProfileImage, getProfileImage, initializeProfile } from '../../utils/profile-manager';
 
 export default function TradingPlatformShell() {
@@ -35,40 +36,16 @@ export default function TradingPlatformShell() {
     channel_id: string;
     reactions?: string[];
     pnl?: string;
-  }>>([{
-    id: 'test-1',
-    type: 'BUY',
-    symbol: 'BTC',
-    timeframe: '1 min',
-    entry: '45000',
-    takeProfit: '46000',
-    stopLoss: '44000',
-    description: 'Signal de test avec boutons WIN/LOSS/BE',
-    image: null,
-    timestamp: '22:30',
-    status: 'ACTIVE',
-    channel_id: 'crypto'
-  }, {
-    id: 'test-2',
-    type: 'SELL',
-    symbol: 'ETH',
-    timeframe: '5 min',
-    entry: '2800',
-    takeProfit: '2750',
-    stopLoss: '2850',
-    description: 'Signal ETH avec boutons visibles',
-    image: null,
-    timestamp: '22:35',
-    status: 'ACTIVE',
-    channel_id: 'forex',
-    reactions: []
-  }]);
+    closeMessage?: string;
+  }>>([]);
 
-  // Fonction pour charger les messages depuis Firebase
+  // Fonction pour charger les messages depuis Firebase (max 20)
   const loadMessages = async (channelId: string) => {
     try {
       const messages = await getMessages(channelId);
-      const formattedMessages = messages.map(msg => ({
+      // Limiter à 20 messages pour les salons de chat
+      const limitedMessages = ['general-chat', 'profit-loss'].includes(channelId) ? messages.slice(-20) : messages;
+      const formattedMessages = limitedMessages.map(msg => ({
         id: msg.id || '',
         text: msg.content,
         timestamp: new Date(msg.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
@@ -97,10 +74,11 @@ export default function TradingPlatformShell() {
     }
   };
 
-  // Fonction pour charger les signaux depuis Firebase
+  // Fonction pour charger les signaux depuis Firebase (optimisé - max 3)
   const loadSignals = async (channelId: string) => {
     try {
-      const signals = await getSignals(channelId);
+      console.log('🚀 Début chargement signaux utilisateur pour:', channelId);
+      const signals = await getSignals(channelId, 3); // Limite à 3 signaux
       console.log('🔍 Signaux bruts utilisateur:', signals);
       const formattedSignals = signals.map(signal => ({
         id: signal.id || '',
@@ -115,12 +93,22 @@ export default function TradingPlatformShell() {
         timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         status: signal.status || 'ACTIVE' as const,
         channel_id: signal.channel_id,
-        reactions: []
+        reactions: [],
+        pnl: signal.pnl,
+        closeMessage: signal.closeMessage
       }));
       
       setSignals(formattedSignals);
       console.log(`✅ Signaux chargés pour ${channelId}:`, formattedSignals.length);
       console.log('🔍 Signaux formatés utilisateur:', formattedSignals);
+      console.log('🎯 État signals utilisateur après setSignals:', formattedSignals);
+      
+      // Envoyer des notifications pour les nouveaux signaux
+      if (formattedSignals.length > 0) {
+        // Notifier le signal le plus récent
+        const latestSignal = formattedSignals[0];
+        notifyNewSignal(latestSignal);
+      }
       
       // Scroll automatique après chargement des signaux
       setTimeout(() => {
@@ -134,9 +122,11 @@ export default function TradingPlatformShell() {
   // Initialiser l'app avec Firebase
   useEffect(() => {
     const initApp = async () => {
-      await initializeDatabase();
       await loadMessages(selectedChannel.id);
       await loadSignals(selectedChannel.id);
+      
+      // Initialiser les notifications push
+      await initializeNotifications();
     };
     initApp();
   }, []);
@@ -167,10 +157,11 @@ export default function TradingPlatformShell() {
 
   // Charger les données quand on change de canal
   useEffect(() => {
+    console.log('🔄 Changement de canal utilisateur:', selectedChannel.id);
     loadMessages(selectedChannel.id);
     loadSignals(selectedChannel.id);
     
-    // Subscription aux signaux temps réel pour les réactions
+    // Subscription aux signaux temps réel pour les réactions et notifications
     const signalSubscription = subscribeToSignals(selectedChannel.id, (updatedSignal) => {
       console.log('🔄 Signal mis à jour reçu:', updatedSignal);
       
@@ -178,6 +169,11 @@ export default function TradingPlatformShell() {
       setSignals(prev => prev.map(signal => 
         signal.id === updatedSignal.id ? { ...signal, reactions: updatedSignal.reactions || [] } : signal
       ));
+      
+      // Envoyer une notification pour les signaux fermés (WIN/LOSS/BE)
+      if (updatedSignal.status !== 'ACTIVE' && (updatedSignal as any).closeMessage) {
+        notifySignalClosed(updatedSignal);
+      }
     });
     
     // Subscription aux messages temps réel pour le canal actuel
@@ -409,6 +405,7 @@ export default function TradingPlatformShell() {
   // États pour le copier-coller TradingView
   const [debugMode, setDebugMode] = useState(false);
   const [pasteDebug, setPasteDebug] = useState('');
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [isPasteActive, setIsPasteActive] = useState(false);
   const [error, setError] = useState('');
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -2300,13 +2297,42 @@ export default function TradingPlatformShell() {
                 {/* Affichage des signaux */}
                 {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream'].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
+                    {/* Bouton Voir plus fixe en haut */}
+                    <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
+                      <button
+                        onClick={async () => {
+                          const more = await getSignals(selectedChannel.id, signals.filter(s => s.channel_id === selectedChannel.id).length + 10);
+                          const formatted = more.map(signal => ({
+                            id: signal.id || '',
+                            type: signal.type,
+                            symbol: signal.symbol,
+                            timeframe: signal.timeframe,
+                            entry: signal.entry?.toString() || 'N/A',
+                            takeProfit: signal.takeProfit?.toString() || 'N/A',
+                            stopLoss: signal.stopLoss?.toString() || 'N/A',
+                            description: signal.description || '',
+                            image: null,
+                            timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                            status: signal.status || 'ACTIVE' as const,
+                            channel_id: signal.channel_id,
+                            reactions: signal.reactions || [], // Garder les réactions existantes
+                            pnl: signal.pnl,
+                            closeMessage: signal.closeMessage
+                          }));
+                          setSignals(prev => [...prev, ...formatted]); // Ajouter au lieu de remplacer
+                        }}
+                        className="px-4 py-2 text-sm rounded bg-gray-700 hover:bg-gray-600 text-white"
+                      >
+                        Voir plus (+10)
+                      </button>
+                    </div>
                     {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                       <div className="text-center py-8">
                         <div className="text-gray-400 text-sm">Aucun signal pour le moment</div>
                         <div className="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
                       </div>
                     ) : (
-                      signals.filter(signal => signal.channel_id === selectedChannel.id).map((signal) => (
+                      signals.filter(signal => signal.channel_id === selectedChannel.id).reverse().map((signal) => (
                         <div key={signal.id} className="flex items-start gap-3">
                           <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
                             {profileImage ? (
@@ -2361,6 +2387,16 @@ export default function TradingPlatformShell() {
                                       Ratio R:R : ≈ {calculateRiskReward(signal.entry, signal.takeProfit, signal.stopLoss)}
                                     </span>
                                 </div>
+                                )}
+
+                                {/* Message de fermeture */}
+                                {signal.closeMessage && (
+                                  <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
+                                    <span className="text-yellow-400 text-sm">🔒</span>
+                                    <span className="text-yellow-400 text-sm font-medium">
+                                      {signal.closeMessage}
+                                    </span>
+                                  </div>
                                 )}
                               </div>
                             </div>
@@ -3045,6 +3081,16 @@ export default function TradingPlatformShell() {
                                   </span>
                               </div>
                               )}
+
+                              {/* Message de fermeture */}
+                              {signal.closeMessage && (
+                                <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
+                                  <span className="text-yellow-400 text-sm">🔒</span>
+                                  <span className="text-yellow-400 text-sm font-medium">
+                                    {signal.closeMessage}
+                                  </span>
+                                </div>
+                              )}
                             </div>
                           </div>
 
@@ -3253,6 +3299,40 @@ export default function TradingPlatformShell() {
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}
                   <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
+                    {/* Bouton Voir plus pour les salons de chat */}
+                    {['general-chat', 'profit-loss'].includes(selectedChannel.id) && (messages[selectedChannel.id] || []).length >= 20 && (
+                      <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
+                        <button
+                          onClick={async () => {
+                            const more = await getMessages(selectedChannel.id);
+                            const formatted = more.map(msg => ({
+                              id: msg.id || '',
+                              text: msg.content,
+                              timestamp: new Date(msg.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                              author: msg.author,
+                              author_avatar: msg.author_avatar,
+                              attachment: undefined,
+                              attachment_data: msg.attachment_data
+                            }));
+                            setMessages(prev => ({
+                              ...prev,
+                              [selectedChannel.id]: formatted.map(msg => ({
+                                id: msg.id,
+                                text: msg.text,
+                                user: msg.author,
+                                author: msg.author,
+                                author_avatar: msg.author_avatar,
+                                timestamp: msg.timestamp,
+                                attachment_data: msg.attachment_data
+                              }))
+                            }));
+                          }}
+                          className="px-4 py-2 text-sm rounded bg-gray-700 hover:bg-gray-600 text-white"
+                        >
+                          Voir plus de messages
+                        </button>
+                      </div>
+                    )}
                     {(messages[selectedChannel.id] || []).length > 0 && (
                       (messages[selectedChannel.id] || []).map((message) => (
                         <div key={message.id} className="flex items-start gap-3">

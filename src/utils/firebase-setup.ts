@@ -1,11 +1,13 @@
 import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, push, onValue, query, orderByChild, limitToLast, serverTimestamp, update } from 'firebase/database';
+import { getDatabase, ref, push, onValue, query, orderByChild, limitToLast, serverTimestamp, update, get, equalTo } from 'firebase/database';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { firebaseConfig } from '../config/firebase-config';
 
 const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
+const database = getDatabase(app, firebaseConfig.databaseURL);
 const storage = getStorage(app);
+
+
 
 export interface Message {
   id?: string;
@@ -35,6 +37,7 @@ export interface Signal {
   channel_id: string;
   reactions?: string[];
   pnl?: string;
+  closeMessage?: string;
 }
 
 // Ajouter un message à Firebase
@@ -61,27 +64,23 @@ export const addMessage = async (message: Omit<Message, 'id' | 'timestamp'>): Pr
 export const getMessages = async (channelId: string): Promise<Message[]> => {
   try {
     const messagesRef = ref(database, 'messages');
-    const channelQuery = query(
-      messagesRef,
-      orderByChild('channel_id'),
-      limitToLast(50)
-    );
-    
-    return new Promise((resolve) => {
-      onValue(channelQuery, (snapshot) => {
-        const messages: Message[] = [];
-        snapshot.forEach((childSnapshot) => {
-          const data = childSnapshot.val();
-          if (data.channel_id === channelId) {
-            messages.push({
-              id: childSnapshot.key,
-              ...data
-            });
-          }
-        });
-        resolve(messages);
-      }, { onlyOnce: true });
-    });
+    // Filtrage côté serveur + limite (plus rapide)
+    const q = query(messagesRef, orderByChild('channel_id'), equalTo(channelId), limitToLast(50));
+
+    const snapshot = await get(q);
+    const messages: Message[] = [];
+
+    if (snapshot.exists()) {
+      snapshot.forEach((childSnapshot) => {
+        const data = childSnapshot.val();
+        messages.push({ id: childSnapshot.key, ...data });
+      });
+    }
+
+    // Trier par timestamp croissant pour l’affichage
+    messages.sort((a, b) => Number(a.timestamp) - Number(b.timestamp));
+    console.log(`✅ Messages chargés depuis Firebase pour ${channelId}:`, messages.length);
+    return messages;
   } catch (error) {
     console.error('Erreur récupération messages Firebase:', error);
     return [];
@@ -91,30 +90,22 @@ export const getMessages = async (channelId: string): Promise<Message[]> => {
 // Subscription temps réel pour les messages
 export const subscribeToMessages = (channelId: string, callback: (message: Message) => void) => {
   const messagesRef = ref(database, 'messages');
-  
+  const q = query(messagesRef, orderByChild('channel_id'), equalTo(channelId), limitToLast(3));
+
   // Garder une trace des messages déjà traités
-  const processedMessages = new Set();
-  
-  const unsubscribe = onValue(messagesRef, (snapshot) => {
+  const processedMessages = new Set<string>();
+
+  const unsubscribe = onValue(q, (snapshot) => {
     snapshot.forEach((childSnapshot) => {
       const data = childSnapshot.val();
-      if (data.channel_id === channelId) {
-        const messageId = childSnapshot.key;
-        
-        // Éviter les messages déjà traités
-        if (!processedMessages.has(messageId)) {
-          processedMessages.add(messageId);
-          
-          // Appeler le callback seulement pour les nouveaux messages
-          callback({
-            id: messageId,
-            ...data
-          });
-        }
+      const messageId = childSnapshot.key as string;
+      if (!processedMessages.has(messageId)) {
+        processedMessages.add(messageId);
+        callback({ id: messageId, ...data });
       }
     });
   });
-  
+
   return { unsubscribe };
 };
 
@@ -159,57 +150,65 @@ export const addSignal = async (signal: Omit<Signal, 'id' | 'timestamp'>): Promi
   }
 };
 
-export const getSignals = async (channelId: string): Promise<Signal[]> => {
+// Cache local pour éviter de recharger les mêmes données
+const signalsCache = new Map<string, { data: Signal[], timestamp: number }>();
+const CACHE_DURATION = 30000; // 30 secondes
+
+export const getSignals = async (channelId?: string, limit: number = 3): Promise<Signal[]> => {
   try {
+    console.log('🚀 getSignals appelé avec channelId:', channelId);
     const signalsRef = ref(database, 'signals');
-    const channelQuery = query(
-      signalsRef,
-      orderByChild('channel_id'),
-      limitToLast(50)
-    );
     
-    return new Promise((resolve) => {
-      onValue(channelQuery, (snapshot) => {
-        const signals: Signal[] = [];
-        snapshot.forEach((childSnapshot) => {
-          const data = childSnapshot.val();
-          if (data.channel_id === channelId) {
-            signals.push({
-              id: childSnapshot.key,
-              ...data
-            });
-          }
-        });
-        resolve(signals);
-      }, { onlyOnce: true });
-    });
+    // Filtrage côté serveur (indexOn: channel_id requis dans les règles)
+    const filteredQuery = channelId && channelId !== 'all'
+      ? query(signalsRef, orderByChild('channel_id'), equalTo(channelId), limitToLast(limit))
+      : query(signalsRef, limitToLast(limit));
+
+    const snapshot = await get(filteredQuery);
+    const signals: Signal[] = [];
+
+    if (snapshot.exists()) {
+      snapshot.forEach((childSnapshot) => {
+        const data = childSnapshot.val();
+        signals.push({ id: childSnapshot.key, ...data });
+      });
+    }
+
+    // Plus récents en premier si timestamp disponible
+    signals.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    console.log(`✅ Signaux chargés (filtrés):`, signals.length);
+    return signals;
   } catch (error) {
-    console.error('Erreur récupération signaux Firebase:', error);
+    console.error('❌ Erreur récupération signaux Firebase:', error);
     return [];
   }
 };
 
-// Subscription temps réel pour les signaux
+// Subscription temps réel pour les signaux (optimisée)
 export const subscribeToSignals = (channelId: string, callback: (signal: Signal) => void) => {
   const signalsRef = ref(database, 'signals');
-  
-  const unsubscribe = onValue(signalsRef, (snapshot) => {
+  const q = query(signalsRef, orderByChild('channel_id'), equalTo(channelId), limitToLast(5));
+
+  // Garder une trace des signaux déjà traités pour éviter les doublons
+  const processedSignals = new Set();
+
+  const unsubscribe = onValue(q, (snapshot) => {
     snapshot.forEach((childSnapshot) => {
       const data = childSnapshot.val();
-      if (data.channel_id === channelId) {
-        const signalId = childSnapshot.key;
-        callback({
-          id: signalId,
-          ...data
-        });
+      const signalId = childSnapshot.key;
+
+      const signalKey = `${signalId}-${data.status}-${data.timestamp}`;
+      if (!processedSignals.has(signalKey)) {
+        processedSignals.add(signalKey);
+        callback({ id: signalId, ...data });
       }
     });
   });
-  
+
   return { unsubscribe };
 };
 
-export const updateSignalStatus = async (signalId: string, status: 'WIN' | 'LOSS' | 'BE', pnl?: string): Promise<boolean> => {
+export const updateSignalStatus = async (signalId: string, status: 'WIN' | 'LOSS' | 'BE' | 'ACTIVE', pnl?: string): Promise<boolean> => {
   try {
     const signalRef = ref(database, `signals/${signalId}`);
     await update(signalRef, { status, pnl });
