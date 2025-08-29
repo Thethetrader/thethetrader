@@ -12,7 +12,6 @@ export default function TradingPlatformShell() {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showGifPicker, setShowGifPicker] = useState(false);
   const [showFileUpload, setShowFileUpload] = useState(false);
-  const [showSignalModal, setShowSignalModal] = useState(false);
   const [showTradesModal, setShowTradesModal] = useState(false);
   const [showSignalsModal, setShowSignalsModal] = useState(false);
   const [selectedTradesDate, setSelectedTradesDate] = useState<Date | null>(null);
@@ -1060,9 +1059,7 @@ export default function TradingPlatformShell() {
     { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Trading Journal' }
   ];
 
-  const handleCreateSignal = () => {
-    setShowSignalModal(true);
-  };
+  // Fonction supprimée - seul admin peut créer des signaux
 
   // Fonctions pour le journal de trading personnalisé
   const handleAddTrade = () => {
@@ -1341,7 +1338,7 @@ export default function TradingPlatformShell() {
       description: '',
       image: null
     });
-    setShowSignalModal(false);
+    // Modal supprimée
   };
 
   const handleSendMessage = async () => {
@@ -2958,12 +2955,7 @@ export default function TradingPlatformShell() {
             getTradingCalendar()
           ) : (
             <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '80px' }}>
-              {/* Bouton + Signal pour les canaux de signaux */}
-              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream'].includes(selectedChannel.id) && (
-                <div className="flex justify-end mb-4">
-                  <button onClick={handleCreateSignal} className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm">+ Signal</button>
-                </div>
-              )}
+              {/* Bouton + Signal supprimé - seul admin peut créer des signaux */}
 
               {/* Affichage des signaux */}
               {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream'].includes(selectedChannel.id) ? (
@@ -3352,201 +3344,7 @@ export default function TradingPlatformShell() {
       </div>
 
       {/* Modal de création de signal */}
-      {showSignalModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-white">Créer un signal</h2>
-                <button 
-                  onClick={() => setShowSignalModal(false)}
-                  className="text-gray-400 hover:text-white"
-                >
-                  ✕
-                </button>
-              </div>
-              
-              <div className="space-y-4">
-                {/* Zone de collage TradingView */}
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <label className="block text-sm font-medium text-gray-300">📋 Coller données TradingView</label>
-                    <button
-                      onClick={() => setDebugMode(!debugMode)}
-                      className={`text-xs px-2 py-1 rounded ${debugMode ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300'}`}
-                    >
-                      {debugMode ? '🔧 Debug ON' : '🔧 Debug OFF'}
-                    </button>
-                  </div>
-                  <div
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 min-h-[80px] flex items-center justify-center cursor-pointer"
-                    onPaste={handleTradingViewPaste}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      const text = e.dataTransfer.getData('text');
-                      if (text) {
-                        // Simuler un événement de collage
-                        const fakeEvent = {
-                          preventDefault: () => {},
-                          clipboardData: {
-                            getData: (type: string) => {
-                              if (type === 'text/html') return '';
-                              if (type === 'text') return text;
-                              return '';
-                            }
-                          }
-                        } as React.ClipboardEvent<HTMLDivElement>;
-                        handleTradingViewPaste(fakeEvent);
-                      }
-                    }}
-                    onDragOver={(e) => e.preventDefault()}
-                  >
-                    {isPasteActive ? (
-                      <div className="text-blue-400">🔄 Traitement en cours...</div>
-                    ) : (
-                      <div className="text-center">
-                        <div className="text-gray-400 mb-1">📋 Cliquez ici et collez (Ctrl+V)</div>
-                        <div className="text-xs text-gray-500">ou glissez-déposez du texte</div>
-                      </div>
-                    )}
-                  </div>
-                  {error && (
-                    <p className="text-xs text-red-400 mt-1">{error}</p>
-                  )}
-                  {debugMode && pasteDebug && (
-                    <div className="text-xs text-gray-400 mt-1 bg-gray-900 p-2 rounded">
-                      <div className="font-semibold">Debug:</div>
-                      <pre className="whitespace-pre-wrap text-xs">{pasteDebug}</pre>
-                    </div>
-                  )}
-                  <p className="text-xs text-gray-400 mt-1">Collez directement depuis TradingView (Risk/Reward tool)</p>
-                </div>
-
-                {/* Type de signal */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Type</label>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setSignalData({...signalData, type: 'BUY'})}
-                      className={`px-3 py-2 rounded text-sm ${signalData.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-300'}`}
-                    >
-                      📈 BUY
-                    </button>
-                    <button
-                      onClick={() => setSignalData({...signalData, type: 'SELL'})}
-                      className={`px-3 py-2 rounded text-sm ${signalData.type === 'SELL' ? 'bg-red-600 text-white' : 'bg-gray-600 text-gray-300'}`}
-                    >
-                      📉 SELL
-                    </button>
-                  </div>
-                </div>
-
-                {/* Symbol */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Symbole</label>
-                  <input
-                    type="text"
-                    value={signalData.symbol}
-                    onChange={(e) => setSignalData({...signalData, symbol: e.target.value})}
-                    placeholder="BTCUSD, EURUSD, etc."
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
-                  />
-                </div>
-
-                {/* Timeframe */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Timeframe</label>
-                  <input
-                    type="text"
-                    value={signalData.timeframe}
-                    onChange={(e) => setSignalData({...signalData, timeframe: e.target.value})}
-                    placeholder="1 min, 5 min, 1H, etc."
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
-                  />
-                </div>
-
-                {/* Entry */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Prix d'entrée</label>
-                  <input
-                    type="text"
-                    value={signalData.entry}
-                    onChange={(e) => setSignalData({...signalData, entry: e.target.value})}
-                    placeholder="103474.00 USD"
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
-                  />
-                </div>
-
-                {/* Take Profit */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Take Profit</label>
-                  <input
-                    type="text"
-                    value={signalData.takeProfit}
-                    onChange={(e) => setSignalData({...signalData, takeProfit: e.target.value})}
-                    placeholder="104626.00 USD"
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
-                  />
-                </div>
-
-                {/* Stop Loss */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Stop Loss</label>
-                  <input
-                    type="text"
-                    value={signalData.stopLoss}
-                    onChange={(e) => setSignalData({...signalData, stopLoss: e.target.value})}
-                    placeholder="102862.00 USD"
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
-                  />
-                </div>
-
-                {/* Description */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
-                  <textarea
-                    value={signalData.description}
-                    onChange={(e) => setSignalData({...signalData, description: e.target.value})}
-                    placeholder="Notes supplémentaires..."
-                    rows={3}
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
-                  />
-                </div>
-                
-                {/* Image */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Capture d'écran</label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) setSignalData({...signalData, image: file});
-                    }}
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
-                  />
-                </div>
-               
-                {/* Boutons */}
-                <div className="flex gap-3 pt-4">
-                  <button
-                    onClick={() => setShowSignalModal(false)}
-                    className="flex-1 bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
-                  >
-                    Annuler
-                  </button>
-                  <button
-                    onClick={handleSignalSubmit}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white"
-                  >
-                    Créer le signal
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Modal de signal supprimée - seul admin peut créer des signaux */}
 
       {/* Modal pour ajouter un trade */}
       {showTradeModal && (
