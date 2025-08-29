@@ -272,6 +272,7 @@ export default function TradingPlatformShell() {
   // Subscription globale pour les nouveaux signaux
   useEffect(() => {
     console.log('🔄 Initialisation de la subscription globale aux signaux');
+    console.log('📊 Canals surveillés:', ['crypto', 'futur', 'forex', 'fondamentaux', 'letsgooo-model']);
     const signalChannels = ['crypto', 'futur', 'forex', 'fondamentaux', 'letsgooo-model'];
     
     const signalSubscriptions = signalChannels.map(channelId => {
@@ -280,8 +281,10 @@ export default function TradingPlatformShell() {
         
         // Envoyer une notification pour tous les nouveaux signaux
         if (newSignal.status === 'ACTIVE') {
-          console.log('🆕 Notification envoyée pour le nouveau signal');
+          console.log('🆕 Notification envoyée pour le nouveau signal:', newSignal.symbol, newSignal.type);
           notifyNewSignal(newSignal);
+        } else {
+          console.log('📱 Signal non actif - pas de notification:', newSignal.status);
         }
         
         // Mettre à jour les signaux en temps réel pour tous les canaux

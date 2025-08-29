@@ -155,7 +155,8 @@ export const notifyNewSignal = (signal: any): void => {
   // Essayer d'envoyer une notification push, sinon fallback local
   if (messaging) {
     console.log('📱 Tentative notification push...');
-    // Ici tu peux envoyer une notification push via ton serveur
+    // Envoyer la notification locale comme fallback immédiat
+    sendLocalNotification(notification);
   } else {
     console.log('📱 Fallback notification locale');
     sendLocalNotification(notification);
