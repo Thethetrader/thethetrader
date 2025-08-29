@@ -1375,6 +1375,7 @@ export default function TradingPlatformShell() {
       console.log('🚀 Début envoi message côté:', window.matchMedia('(display-mode: standalone)').matches ? 'PWA' : 'Desktop');
       console.log('📝 Message à envoyer:', chatMessage);
       console.log('📺 Canal sélectionné:', selectedChannel.id);
+      console.log('📊 Messages actuels avant envoi:', messages[selectedChannel.id]?.length || 0);
       
       try {
         // Créer le message local immédiatement pour l'affichage instantané
@@ -1392,13 +1393,18 @@ export default function TradingPlatformShell() {
 
         // Ajouter le message localement immédiatement
         setMessages(prev => {
+          const currentChannelMessages = prev[selectedChannel.id] || [];
           const newMessages = {
             ...prev,
-            [selectedChannel.id]: [...(prev[selectedChannel.id] || []), localMessage]
+            [selectedChannel.id]: [...currentChannelMessages, localMessage]
           };
           console.log('✅ Messages mis à jour localement:', newMessages[selectedChannel.id]);
+          console.log('📊 Nombre de messages après ajout local:', newMessages[selectedChannel.id].length);
           return newMessages;
         });
+
+        // Attendre un peu pour que le message local soit affiché
+        await new Promise(resolve => setTimeout(resolve, 100));
 
         // Envoyer vers Firebase avec avatar utilisateur
         const messageData = {
@@ -1426,18 +1432,22 @@ export default function TradingPlatformShell() {
               ) || []
             };
             console.log('🔄 Messages mis à jour avec Firebase:', updatedMessages[selectedChannel.id]);
+            console.log('📊 Nombre de messages après Firebase:', updatedMessages[selectedChannel.id].length);
             return updatedMessages;
           });
         } else {
           console.error('❌ Erreur envoi message Firebase');
           // En cas d'erreur, garder le message local
+          console.log('💾 Message local conservé en cas d\'erreur Firebase');
         }
       } catch (error) {
         console.error('💥 ERREUR envoi message:', error);
         // En cas d'erreur, garder le message local
+        console.log('💾 Message local conservé en cas d\'erreur');
       }
 
-      setChatMessage('');
+      // Ne pas vider le champ de message immédiatement
+      // setChatMessage('');
       
       // Scroll automatique après envoi
       setTimeout(() => {
