@@ -39,6 +39,9 @@ export default function TradingPlatformShell() {
     closeMessage?: string;
   }>>([]);
 
+  // État pour suivre le nombre de signaux chargés par canal (pour éviter les doublons)
+  const [signalsLoadedCount, setSignalsLoadedCount] = useState<{[channelId: string]: number}>({});
+
   // Fonction pour charger les messages depuis Firebase (max 20)
   const loadMessages = async (channelId: string) => {
     try {
@@ -99,9 +102,17 @@ export default function TradingPlatformShell() {
       }));
       
       setSignals(formattedSignals);
+
+      // Initialiser le compteur de signaux chargés pour ce canal
+      setSignalsLoadedCount(prev => ({
+        ...prev,
+        [channelId]: formattedSignals.length
+      }));
+
       console.log(`✅ Signaux chargés pour ${channelId}:`, formattedSignals.length);
       console.log('🔍 Signaux formatés utilisateur:', formattedSignals);
       console.log('🎯 État signals utilisateur après setSignals:', formattedSignals);
+      console.log(`📊 Compteur mis à jour pour ${channelId}:`, formattedSignals.length);
       
       // Envoyer des notifications pour les nouveaux signaux
       if (formattedSignals.length > 0) {
@@ -294,12 +305,23 @@ export default function TradingPlatformShell() {
         
         // Mettre à jour les signaux en temps réel pour tous les canaux
         setSignals(prev => {
+          // Vérifier d'abord si on a des signaux pour ce canal (éviter les doublons pendant le chargement)
+          const channelSignals = prev.filter(s => s.channel_id === newSignal.channel_id);
+          const hasSignalsForChannel = channelSignals.length > 0;
+
+          // Si on n'a pas encore de signaux pour ce canal, attendre que loadSignals se termine
+          if (!hasSignalsForChannel && newSignal.channel_id === selectedChannel.id) {
+            console.log('⏳ Attente du chargement initial pour', newSignal.channel_id);
+            return prev;
+          }
+
           // Vérification plus stricte des doublons (par ID et par contenu)
           const exists = prev.some(s =>
             s.id === newSignal.id ||
             (s.symbol === newSignal.symbol &&
              s.type === newSignal.type &&
-             s.timestamp === new Date(newSignal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }))
+             s.channel_id === newSignal.channel_id &&
+             Math.abs(new Date(s.timestamp).getTime() - (newSignal.timestamp || Date.now())) < 60000) // Même minute
           );
 
           if (!exists) {
@@ -320,11 +342,11 @@ export default function TradingPlatformShell() {
               pnl: newSignal.pnl,
               closeMessage: newSignal.closeMessage
             };
-            console.log('✅ Signal ajouté à la liste:', formattedSignal.symbol, formattedSignal.type);
+            console.log('✅ Signal ajouté à la liste (temps réel):', formattedSignal.symbol, formattedSignal.type);
             // Ajouter à la fin (les signaux sont déjà dans l'ordre chronologique)
             return [...prev, formattedSignal];
           } else {
-            console.log('🚫 Signal déjà existant - ignoré:', newSignal.symbol, newSignal.type);
+            console.log('🚫 Signal déjà existant (temps réel) - ignoré:', newSignal.symbol, newSignal.type);
             return prev;
           }
         });
@@ -366,7 +388,13 @@ export default function TradingPlatformShell() {
     if (selectedChannel.id === 'trading-journal' && channelId !== 'trading-journal') {
       setSelectedDate(null);
     }
-    
+
+    // Nettoyer les signaux du canal précédent pour éviter les mélanges
+    if (selectedChannel.id !== channelId) {
+      setSignals(prev => prev.filter(signal => signal.channel_id !== selectedChannel.id));
+      console.log(`🧹 Signaux nettoyés pour l'ancien canal: ${selectedChannel.id}`);
+    }
+
     setSelectedChannel({id: channelId, name: channelName});
     setView('signals');
     scrollToTop();
@@ -2416,8 +2444,24 @@ export default function TradingPlatformShell() {
                     <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
                       <button
                         onClick={async () => {
-                          const more = await getSignals(selectedChannel.id, signals.filter(s => s.channel_id === selectedChannel.id).length + 10);
-                          const formatted = more.map(signal => ({
+                          const currentCount = signalsLoadedCount[selectedChannel.id] || 3;
+                          const newLimit = currentCount + 10;
+
+                          console.log(`🔄 Chargement de +10 signaux pour ${selectedChannel.id} (actuellement ${currentCount}, demandé ${newLimit})`);
+
+                          const more = await getSignals(selectedChannel.id, newLimit);
+                          const currentSignalsForChannel = signals.filter(s => s.channel_id === selectedChannel.id);
+                          const existingIds = new Set(currentSignalsForChannel.map(s => s.id));
+
+                          // Filtrer seulement les nouveaux signaux (éviter les doublons)
+                          const newSignals = more.filter(signal => !existingIds.has(signal.id || ''));
+
+                          if (newSignals.length === 0) {
+                            console.log('ℹ️ Aucun nouveau signal à charger');
+                            return;
+                          }
+
+                          const formatted = newSignals.map(signal => ({
                             id: signal.id || '',
                             type: signal.type,
                             symbol: signal.symbol,
@@ -2434,7 +2478,15 @@ export default function TradingPlatformShell() {
                             pnl: signal.pnl,
                             closeMessage: signal.closeMessage
                           }));
-                          setSignals(prev => [...prev, ...formatted]); // Ajouter au lieu de remplacer
+
+                          console.log(`✅ Ajout de ${formatted.length} nouveaux signaux`);
+                          setSignals(prev => [...prev, ...formatted]);
+
+                          // Mettre à jour le compteur
+                          setSignalsLoadedCount(prev => ({
+                            ...prev,
+                            [selectedChannel.id]: newLimit
+                          }));
                         }}
                         className="px-4 py-2 text-sm rounded bg-gray-700 hover:bg-gray-600 text-white"
                       >
