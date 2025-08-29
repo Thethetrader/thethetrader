@@ -1054,35 +1054,7 @@ export default function TradingPlatformShell() {
     }
   };
 
-  const handleSignalStatus = (signalId: string, newStatus: 'WIN' | 'LOSS' | 'BE' | 'ACTIVE') => {
-    const signal = signals.find(s => s.id === signalId);
-    if (!signal) return;
-
-    if (signal.status === newStatus) {
-      // Si on clique sur le même statut, on remet en ACTIVE
-      setSignals(prev => prev.map(s => 
-        s.id === signalId ? { ...s, status: 'ACTIVE', pnl: undefined } : s
-      ));
-    } else if (newStatus === 'ACTIVE') {
-      // Si on veut remettre en ACTIVE directement
-      setSignals(prev => prev.map(s => 
-        s.id === signalId ? { ...s, status: 'ACTIVE', pnl: undefined } : s
-      ));
-    } else {
-      // Sinon on demande le P&L
-      const pnl = prompt(`Entrez le P&L final pour ce signal (ex: +$150 ou -$50):`);
-      if (pnl !== null) {
-        setSignals(prev => prev.map(s => 
-          s.id === signalId ? { ...s, status: newStatus, pnl } : s
-        ));
-      }
-    }
-
-    // Scroll automatique après changement de statut
-    setTimeout(() => {
-      scrollToBottom();
-    }, 5);
-  };
+  // Fonction handleSignalStatus supprimée - seul admin peut changer le statut des signaux
 
   // Scroll automatique vers le bas quand de nouveaux messages arrivent, quand on change de canal, ou quand les signaux changent
   useEffect(() => {
@@ -2390,38 +2362,7 @@ export default function TradingPlatformShell() {
                               </div>
                             )}
 
-                            <div className="flex items-center gap-2 flex-wrap mt-2">
-                              <button 
-                                onClick={() => handleSignalStatus(signal.id, signal.status === 'WIN' ? 'ACTIVE' : 'WIN')}
-                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
-                                  signal.status === 'WIN' 
-                                    ? 'bg-green-500 text-white shadow-lg shadow-green-500/20' 
-                                    : 'bg-gray-600 hover:bg-green-500 text-gray-300 hover:text-white'
-                                }`}
-                              >
-                                ✅ WIN
-                              </button>
-                              <button 
-                                onClick={() => handleSignalStatus(signal.id, signal.status === 'LOSS' ? 'ACTIVE' : 'LOSS')}
-                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
-                                  signal.status === 'LOSS' 
-                                    ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' 
-                                    : 'bg-gray-600 hover:bg-red-500 text-gray-300 hover:text-white'
-                                }`}
-                              >
-                                ❌ LOSS
-                              </button>
-                              <button 
-                                onClick={() => handleSignalStatus(signal.id, signal.status === 'BE' ? 'ACTIVE' : 'BE')}
-                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
-                                  signal.status === 'BE' 
-                                    ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
-                                    : 'bg-gray-600 hover:bg-blue-500 text-gray-300 hover:text-white'
-                                }`}
-                              >
-                                ⚖️ BE
-                              </button>
-                            </div>
+                            {/* Boutons de statut supprimés - seul admin peut changer WIN/LOSS/BE */}
 
 
 
@@ -3082,38 +3023,7 @@ export default function TradingPlatformShell() {
                             </div>
                           )}
 
-                          <div className="flex items-center gap-2 flex-wrap mt-2">
-                            <button 
-                              onClick={() => handleSignalStatus(signal.id, signal.status === 'WIN' ? 'ACTIVE' : 'WIN')}
-                              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
-                                signal.status === 'WIN' 
-                                  ? 'bg-green-500 text-white shadow-lg shadow-green-500/20' 
-                                  : 'bg-gray-600 hover:bg-green-500 text-gray-300 hover:text-white'
-                              }`}
-                            >
-                              ✅ WIN
-                            </button>
-                            <button 
-                              onClick={() => handleSignalStatus(signal.id, signal.status === 'LOSS' ? 'ACTIVE' : 'LOSS')}
-                              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
-                                signal.status === 'LOSS' 
-                                  ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' 
-                                  : 'bg-gray-600 hover:bg-red-500 text-gray-300 hover:text-white'
-                              }`}
-                            >
-                              ❌ LOSS
-                            </button>
-                            <button 
-                              onClick={() => handleSignalStatus(signal.id, signal.status === 'BE' ? 'ACTIVE' : 'BE')}
-                              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
-                                signal.status === 'BE' 
-                                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
-                                  : 'bg-gray-600 hover:bg-blue-500 text-gray-300 hover:text-white'
-                              }`}
-                            >
-                              ⚖️ BE
-                            </button>
-                          </div>
+                          {/* Boutons de statut supprimés - seul admin peut changer WIN/LOSS/BE */}
 
                           {/* Réactions emoji */}
                           <div className="flex items-center gap-2 mt-3">
