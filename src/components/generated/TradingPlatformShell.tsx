@@ -101,14 +101,15 @@ export default function TradingPlatformShell() {
   const loadSignals = async (channelId: string) => {
     try {
       const signals = await getSignals(channelId);
+      console.log('🔍 Signaux bruts utilisateur:', signals);
       const formattedSignals = signals.map(signal => ({
         id: signal.id || '',
         type: signal.type,
         symbol: signal.symbol,
         timeframe: signal.timeframe,
-        entry: signal.entry_price?.toString() || 'N/A',
-        takeProfit: signal.take_profit?.toString() || 'N/A',
-        stopLoss: signal.stop_loss?.toString() || 'N/A',
+        entry: signal.entry?.toString() || 'N/A',
+        takeProfit: signal.takeProfit?.toString() || 'N/A',
+        stopLoss: signal.stopLoss?.toString() || 'N/A',
         description: signal.description || '',
         image: null,
         timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
@@ -119,6 +120,7 @@ export default function TradingPlatformShell() {
       
       setSignals(formattedSignals);
       console.log(`✅ Signaux chargés pour ${channelId}:`, formattedSignals.length);
+      console.log('🔍 Signaux formatés utilisateur:', formattedSignals);
     } catch (error) {
       console.error('❌ Erreur chargement signaux:', error);
     }
