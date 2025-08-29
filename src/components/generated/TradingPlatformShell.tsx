@@ -2388,12 +2388,6 @@ export default function TradingPlatformShell() {
                     ) : (
                       signals
                         .filter(signal => signal.channel_id === selectedChannel.id)
-                        .sort((a, b) => {
-                          // Trier par timestamp : plus ancien en haut
-                          const timeA = new Date(a.timestamp || Date.now()).getTime();
-                          const timeB = new Date(b.timestamp || Date.now()).getTime();
-                          return timeA - timeB;
-                        })
                         .map((signal) => (
                         <div key={signal.id} className="flex items-start gap-3">
                           <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
