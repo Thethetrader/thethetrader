@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getMessages, getSignals, subscribeToMessages, subscribeToSignals, addMessage } from '../../utils/supabase-setup';
+import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage } from '../../utils/firebase-setup';
 import { initializeDatabase } from '../../utils/init-database';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../../utils/profile-manager';
 
@@ -62,7 +62,7 @@ export default function TradingPlatformShell() {
     reactions: []
   }]);
 
-  // Fonction pour charger les messages depuis Supabase
+  // Fonction pour charger les messages depuis Firebase
   const loadMessages = async (channelId: string) => {
     try {
       const messages = await getMessages(channelId);
@@ -72,11 +72,7 @@ export default function TradingPlatformShell() {
         timestamp: new Date(msg.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         author: msg.author,
         author_avatar: msg.author_avatar, // CONSERVER l'avatar de l'auteur !
-        attachment: msg.attachment_data ? {
-          type: msg.attachment_type || 'image/jpeg',
-          name: msg.attachment_name || 'image.jpg'
-        } : undefined,
-        attachment_data: msg.attachment_data
+        attachment: undefined
       }));
       
       setMessages(prev => ({
@@ -92,18 +88,12 @@ export default function TradingPlatformShell() {
       }));
       
       console.log(`✅ Messages chargés pour ${channelId}:`, formattedMessages.length);
-      console.log('📋 Messages actuels:', formattedMessages);
-      
-      // Scroller vers le bas après le chargement des messages
-      setTimeout(() => {
-        scrollToBottom();
-      }, 5);
     } catch (error) {
       console.error('❌ Erreur chargement messages:', error);
     }
   };
 
-  // Fonction pour charger les signaux depuis Supabase
+  // Fonction pour charger les signaux depuis Firebase
   const loadSignals = async (channelId: string) => {
     try {
       const signals = await getSignals(channelId);
@@ -130,7 +120,7 @@ export default function TradingPlatformShell() {
     }
   };
 
-  // Initialiser l'app avec Supabase
+  // Initialiser l'app avec Firebase
   useEffect(() => {
     const initApp = async () => {
       await initializeDatabase();
@@ -144,16 +134,8 @@ export default function TradingPlatformShell() {
   useEffect(() => {
     loadMessages(selectedChannel.id);
     loadSignals(selectedChannel.id);
-    // Scroller vers le bas quand on entre dans un salon
-    setTimeout(() => {
-      scrollToBottom();
-    }, 50);
-  }, [selectedChannel.id]);
-
-  // Subscription temps réel pour les messages
-  useEffect(() => {
-    console.log('🔄 Initialisation subscription utilisateur pour:', selectedChannel.id);
     
+    // Subscription aux messages temps réel
     const subscription = subscribeToMessages(selectedChannel.id, (newMessage) => {
       console.log('🔄 Nouveau message reçu utilisateur:', newMessage);
       
@@ -161,7 +143,6 @@ export default function TradingPlatformShell() {
         id: newMessage.id || '',
         text: newMessage.content,
         timestamp: new Date(newMessage.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-        user: newMessage.author,
         author: newMessage.author,
         author_avatar: newMessage.author_avatar,
         attachment: newMessage.attachment_data ? {
@@ -173,7 +154,15 @@ export default function TradingPlatformShell() {
       
       setMessages(prev => ({
         ...prev,
-        [selectedChannel.id]: [...(prev[selectedChannel.id] || []), formattedMessage]
+        [selectedChannel.id]: [...(prev[selectedChannel.id] || []), {
+          id: formattedMessage.id,
+          text: formattedMessage.text,
+          user: formattedMessage.author,
+          author: formattedMessage.author,
+          author_avatar: formattedMessage.author_avatar,
+          timestamp: formattedMessage.timestamp,
+          attachment_data: formattedMessage.attachment_data
+        }]
       }));
       
       // Scroll vers le bas pour voir le nouveau message
@@ -182,15 +171,8 @@ export default function TradingPlatformShell() {
       }, 5);
     });
 
-    // Fallback: recharger les messages toutes les 2 secondes
-    const interval = setInterval(() => {
-      console.log('🔄 Rechargement automatique utilisateur pour:', selectedChannel.id);
-      loadMessages(selectedChannel.id);
-    }, 2000);
-
     return () => {
       subscription.unsubscribe();
-      clearInterval(interval);
     };
   }, [selectedChannel.id]);
   const [chatMessage, setChatMessage] = useState('');
@@ -1302,7 +1284,7 @@ export default function TradingPlatformShell() {
   const handleSendMessage = async () => {
     if (chatMessage.trim()) {
       try {
-        // Envoyer vers Supabase avec avatar utilisateur
+        // Envoyer vers Firebase avec avatar utilisateur
         const messageData = {
           channel_id: selectedChannel.id,
           content: chatMessage,
@@ -1313,24 +1295,11 @@ export default function TradingPlatformShell() {
 
         const savedMessage = await addMessage(messageData);
 
-        if (savedMessage) {
-      const newMessage = {
-            id: savedMessage.id || Date.now().toString(),
-            text: savedMessage.content,
-            timestamp: new Date(savedMessage.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-            user: savedMessage.author,
-            author: savedMessage.author, // CONSERVER le nom de l'auteur !
-            author_avatar: savedMessage.author_avatar // CONSERVER l'avatar de l'auteur !
-          };
-
-          setMessages(prev => ({
-            ...prev,
-            [selectedChannel.id]: [...(prev[selectedChannel.id] || []), newMessage]
-          }));
-
-          console.log('✅ Message envoyé à Supabase:', savedMessage);
+                if (savedMessage) {
+          console.log('✅ Message envoyé à Firebase:', savedMessage);
+          // La subscription temps réel ajoutera le message automatiquement
         } else {
-          console.error('❌ Erreur envoi message Supabase');
+          console.error('❌ Erreur envoi message Firebase');
         }
       } catch (error) {
         console.error('💥 ERREUR envoi message:', error);
@@ -1339,72 +1308,54 @@ export default function TradingPlatformShell() {
       setChatMessage('');
       
       // Scroll automatique après envoi
-      scrollToBottom();
+      setTimeout(() => {
+        scrollToBottom();
+      }, 50);
     }
   };
 
-                  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-                  const file = event.target.files?.[0];
-                  if (file) {
-                    try {
-                      // Convertir le fichier en base64
-                      const reader = new FileReader();
-                      reader.onload = async (e) => {
-                        const base64Image = e.target?.result as string;
-                        
-                        // Envoyer à Supabase avec l'image en base64
+                                    const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+                    const file = event.target.files?.[0];
+                    if (file) {
+                      // Upload image vers Firebase Storage
+                      const imageURL = await uploadImage(file);
+                      
+                      try {
+                        // Envoyer à Firebase avec l'URL de l'image
                         const messageData = {
                           channel_id: selectedChannel.id,
-                          content: `📎 Image: ${file.name}`,
-                      author: 'TheTheTrader',
+                          content: '',
+                          author: 'TheTheTrader',
                           author_type: 'user' as const,
                           author_avatar: profileImage || undefined,
-                          attachment_data: base64Image,
+                          attachment_data: imageURL,
                           attachment_type: file.type,
                           attachment_name: file.name
                         };
-                        
-                        const savedMessage = await addMessage(messageData);
-                        
-                        if (savedMessage) {
-                          const newMessage = {
-                            id: savedMessage.id || Date.now().toString(),
-                            text: savedMessage.content,
-                            timestamp: new Date(savedMessage.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                            user: savedMessage.author,
-                            author: savedMessage.author,
-                            author_avatar: savedMessage.author_avatar,
-                            attachment: savedMessage.attachment_data ? {
-                              type: savedMessage.attachment_type || 'image/jpeg',
-                              name: savedMessage.attachment_name || 'image.jpg'
-                            } : undefined,
-                            attachment_data: savedMessage.attachment_data
-                          };
                           
-                          setMessages(prev => ({
-                            ...prev,
-                            [selectedChannel.id]: [...(prev[selectedChannel.id] || []), newMessage]
-                          }));
+                          console.log('📤 Message data envoyé utilisateur:', messageData);
+                          const savedMessage = await addMessage(messageData);
+                          console.log('✅ Message sauvegardé utilisateur:', savedMessage);
                           
-                          console.log('✅ Image envoyée à Supabase:', savedMessage);
+                                                  if (savedMessage) {
+                          console.log('✅ Image envoyée utilisateur à Firebase:', savedMessage);
+                          // La subscription temps réel ajoutera le message automatiquement
                         } else {
-                          console.error('❌ Erreur envoi image Supabase');
+                          console.error('❌ Erreur envoi image utilisateur Firebase');
                         }
-                      };
-                      reader.readAsDataURL(file);
+                      } catch (error) {
+                        console.error('💥 ERREUR upload image utilisateur:', error);
+                      }
                       
-                    // Reset the input
-                    event.target.value = '';
+                      // Reset the input
+                      event.target.value = '';
                       
                       // Scroll automatique après upload
                       setTimeout(() => {
                         scrollToBottom();
-                      }, 10);
-                    } catch (error) {
-                      console.error('💥 ERREUR upload image:', error);
+                      }, 50);
                     }
-                  }
-                };
+                  };
 
   const parseSignalData = (text: string) => {
     // Chercher tous les nombres
@@ -2704,21 +2655,22 @@ export default function TradingPlatformShell() {
                                 <span className="text-xs text-gray-400">{message.timestamp}</span>
                               </div>
                               <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
-                                <p className="text-white">{message.text}</p>
+                                {message.text && <p className="text-white">{message.text}</p>}
                                 {message.attachment_data && (
                                   <div className="mt-2">
-                                    {true ? (
+                                    <div className="relative">
                                       <img 
                                         src={message.attachment_data} 
                                         alt="Attachment"
-                                        className="mt-2 max-w-full rounded-lg border border-gray-600"
+                                        className="mt-2 max-w-xs max-h-48 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                                        onClick={() => {
+                                          const newWindow = window.open();
+                                          newWindow!.document.write(`<img src="${message.attachment_data}" style="max-width: 100%; height: auto;" />`);
+                                          newWindow!.document.title = 'Image en grand';
+                                        }}
                                       />
-                                    ) : (
-                                      <div className="flex items-center gap-2 text-blue-400">
-                                        <span>📎</span>
-                                        <span className="text-sm">Pièce jointe</span>
-                                      </div>
-                                    )}
+                                      <div className="text-xs text-gray-400 mt-1">Cliquez pour agrandir</div>
+                                    </div>
                                   </div>
                                 )}
                               </div>
@@ -3260,30 +3212,23 @@ export default function TradingPlatformShell() {
                               <span className="font-semibold text-white">{message.author}</span>
                               <span className="text-xs text-gray-400">{message.timestamp}</span>
                             </div>
-                                                          <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
-                                <p className="text-white">{message.text}</p>
+                            <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
+                                {message.text && <p className="text-white">{message.text}</p>}
                                 {message.attachment_data && (
                                   <div className="mt-2">
-                                    {true ? (
-                                      <div className="relative">
+                                    <div className="relative">
                                       <img 
                                         src={message.attachment_data} 
                                         alt="Attachment"
-                                          className="mt-2 max-w-xs max-h-48 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
-                                          onClick={() => {
-                                            const newWindow = window.open();
-                                            newWindow!.document.write(`<img src="${message.attachment_data}" style="max-width: 100%; height: auto;" />`);
-                                            newWindow!.document.title = 'Image en grand';
-                                          }}
-                                        />
-                                        <div className="text-xs text-gray-400 mt-1">Cliquez pour agrandir</div>
-                                      </div>
-                                    ) : (
-                                      <div className="flex items-center gap-2 text-blue-400">
-                                        <span>📎</span>
-                                        <span className="text-sm">Pièce jointe</span>
-                                      </div>
-                                    )}
+                                        className="mt-2 max-w-xs max-h-48 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                                        onClick={() => {
+                                          const newWindow = window.open();
+                                          newWindow!.document.write(`<img src="${message.attachment_data}" style="max-width: 100%; height: auto;" />`);
+                                          newWindow!.document.title = 'Image en grand';
+                                        }}
+                                      />
+                                      <div className="text-xs text-gray-400 mt-1">Cliquez pour agrandir</div>
+                                    </div>
                                   </div>
                                 )}
                               </div>
