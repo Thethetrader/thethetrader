@@ -826,9 +826,24 @@ export default function AdminInterface() {
     console.log('🔍 [ADMIN] getTodaySignals - allSignalsForStats:', allSignalsForStats.length);
     console.log('📅 [ADMIN] Date actuelle:', today.toDateString());
     
+    // Les signaux n'ont que l'heure (HH:MM), pas de vraie date
+    // On considère tous les signaux comme "aujourd'hui" pour l'instant
     const todaySignals = allSignalsForStats.filter(s => {
       console.log('🔍 [ADMIN] Signal timestamp:', s.timestamp, 'Type:', typeof s.timestamp);
+      
+      // Si le timestamp est au format HH:MM, on considère que c'est aujourd'hui
+      if (typeof s.timestamp === 'string' && s.timestamp.includes(':')) {
+        console.log('🔍 [ADMIN] Timestamp au format HH:MM, considéré comme aujourd\'hui');
+        return true;
+      }
+      
+      // Sinon, on essaie de parser la date
       const signalDate = new Date(s.timestamp);
+      if (isNaN(signalDate.getTime())) {
+        console.log('🔍 [ADMIN] Date invalide, considéré comme aujourd\'hui');
+        return true;
+      }
+      
       console.log('🔍 [ADMIN] Signal date parsée:', signalDate.toDateString());
       
       const isToday = signalDate.getDate() === today.getDate() &&
@@ -848,9 +863,24 @@ export default function AdminInterface() {
     console.log('🔍 [ADMIN] getThisMonthSignals - allSignalsForStats:', allSignalsForStats.length);
     console.log('📅 [ADMIN] Mois actuel:', today.getMonth() + 1, today.getFullYear());
     
+    // Les signaux n'ont que l'heure (HH:MM), pas de vraie date
+    // On considère tous les signaux comme "ce mois" pour l'instant
     const monthSignals = allSignalsForStats.filter(s => {
       console.log('🔍 [ADMIN] Signal timestamp:', s.timestamp, 'Type:', typeof s.timestamp);
+      
+      // Si le timestamp est au format HH:MM, on considère que c'est ce mois
+      if (typeof s.timestamp === 'string' && s.timestamp.includes(':')) {
+        console.log('🔍 [ADMIN] Timestamp au format HH:MM, considéré comme ce mois');
+        return true;
+      }
+      
+      // Sinon, on essaie de parser la date
       const signalDate = new Date(s.timestamp);
+      if (isNaN(signalDate.getTime())) {
+        console.log('🔍 [ADMIN] Date invalide, considéré comme ce mois');
+        return true;
+      }
+      
       console.log('🔍 [ADMIN] Signal date parsée:', signalDate.toDateString());
       
       const isThisMonth = signalDate.getMonth() === today.getMonth() &&
