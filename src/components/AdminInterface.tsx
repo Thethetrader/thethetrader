@@ -2197,6 +2197,14 @@ export default function AdminInterface() {
                   console.log('🔍 [ADMIN] Toutes les dates des trades:', personalTrades.map(t => ({ date: t.date, status: t.status })));
                 }
                 
+                // Debug pour le jour 30 (calendrier normal)
+                if (selectedChannel.id !== 'trading-journal' && dayNumber === 30) {
+                  console.log('🔍 [ADMIN] === DEBUG JOUR 30 ===');
+                  console.log('🔍 [ADMIN] allSignalsForStats total:', allSignalsForStats.length);
+                  console.log('🔍 [ADMIN] Signaux avec timestamp HH:MM:', allSignalsForStats.filter(s => typeof s.timestamp === 'string' && s.timestamp.includes(':')).length);
+                  console.log('🔍 [ADMIN] Signaux avec vraie date:', allSignalsForStats.filter(s => !(typeof s.timestamp === 'string' && s.timestamp.includes(':'))).length);
+                }
+                
                 const dayTrades = selectedChannel.id === 'trading-journal' ? 
                   personalTrades.filter(trade => {
                     console.log('🔍 [ADMIN] Filtrage trade pour jour', dayNumber, 'Trade date:', trade.date, 'Type:', typeof trade.date);
@@ -2213,12 +2221,23 @@ export default function AdminInterface() {
 
                 const daySignals = selectedChannel.id !== 'trading-journal' ? 
                   allSignalsForStats.filter(signal => {
+                    // Debug pour le jour 30
+                    if (dayNumber === 30) {
+                      console.log('🔍 [ADMIN] Filtrage signal pour jour 30:', signal.symbol, 'Timestamp:', signal.timestamp, 'Type:', typeof signal.timestamp);
+                    }
+                    
                     // Si le timestamp est au format HH:MM, on considère que c'est le jour actuel
                     if (typeof signal.timestamp === 'string' && signal.timestamp.includes(':')) {
                       const today = new Date();
-                      return today.getDate() === dayNumber && 
-                             today.getMonth() === currentDate.getMonth() && 
-                             today.getFullYear() === currentDate.getFullYear();
+                      const isMatch = today.getDate() === dayNumber && 
+                                    today.getMonth() === currentDate.getMonth() && 
+                                    today.getFullYear() === currentDate.getFullYear();
+                      
+                      if (dayNumber === 30) {
+                        console.log('🔍 [ADMIN] Timestamp HH:MM, considéré comme aujourd\'hui, match:', isMatch);
+                      }
+                      
+                      return isMatch;
                     }
                     
                     // Sinon, on utilise la vraie date du signal
@@ -2226,14 +2245,26 @@ export default function AdminInterface() {
                     if (isNaN(signalDate.getTime())) {
                       // Date invalide, on considère que c'est le jour actuel
                       const today = new Date();
-                      return today.getDate() === dayNumber && 
-                             today.getMonth() === currentDate.getMonth() && 
-                             today.getFullYear() === currentDate.getFullYear();
+                      const isMatch = today.getDate() === dayNumber && 
+                                    today.getMonth() === currentDate.getMonth() && 
+                                    today.getFullYear() === currentDate.getFullYear();
+                      
+                      if (dayNumber === 30) {
+                        console.log('🔍 [ADMIN] Date invalide, considéré comme aujourd\'hui, match:', isMatch);
+                      }
+                      
+                      return isMatch;
                     }
                     
-                    return signalDate.getDate() === dayNumber && 
-                           signalDate.getMonth() === currentDate.getMonth() && 
-                           signalDate.getFullYear() === currentDate.getFullYear();
+                    const isMatch = signalDate.getDate() === dayNumber && 
+                                  signalDate.getMonth() === currentDate.getMonth() && 
+                                  signalDate.getFullYear() === currentDate.getFullYear();
+                    
+                    if (dayNumber === 30) {
+                      console.log('🔍 [ADMIN] Vraie date du signal:', signalDate.toDateString(), 'Match jour 30:', isMatch);
+                    }
+                    
+                    return isMatch;
                   }) : [];
 
                 // Déterminer la couleur selon les trades ou signaux
