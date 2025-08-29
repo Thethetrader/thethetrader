@@ -994,7 +994,7 @@ export default function AdminInterface() {
       weeks.push({
         week: `Week ${weekNum}`,
         trades: weekSignals.length,
-        pnl: weekPnL,
+        pnl: 0, // Pas de PnL affiché
         wins,
         losses,
         isCurrentWeek
