@@ -678,32 +678,126 @@ export default function AdminInterface() {
     return parseFloat(cleanStr) || 0;
   };
 
-  // Fonctions pour les statistiques des signaux
+  // Fonction pour récupérer TOUS les signaux depuis Firebase (indépendant du fil)
+  const [allSignalsForStats, setAllSignalsForStats] = useState<Array<{
+    id: string;
+    type: string;
+    symbol: string;
+    timeframe: string;
+    entry: string;
+    takeProfit: string;
+    stopLoss: string;
+    description: string;
+    image: File | null;
+    timestamp: string;
+    status: 'ACTIVE' | 'WIN' | 'LOSS' | 'BE';
+    channel_id: string;
+    reactions?: string[];
+    pnl?: string;
+    closeMessage?: string;
+  }>>([]);
+
+  // Charger TOUS les signaux pour les statistiques et le calendrier
+  useEffect(() => {
+    const loadAllSignalsForStats = async () => {
+      try {
+        console.log('📊 [ADMIN] Chargement de TOUS les signaux pour statistiques et calendrier...');
+        
+        // Charger les signaux de tous les canaux individuellement
+        const channels = ['fondamentaux', 'letsgooo-model', 'crypto', 'futur', 'forex', 'livestream'];
+        let allSignals: any[] = [];
+        
+        for (const channelId of channels) {
+          try {
+            console.log(`🔍 [ADMIN] Chargement signaux pour ${channelId}...`);
+            const channelSignals = await getSignals(channelId, 100); // 100 signaux par canal
+            if (channelSignals && channelSignals.length > 0) {
+              allSignals = [...allSignals, ...channelSignals];
+              console.log(`✅ [ADMIN] ${channelSignals.length} signaux chargés pour ${channelId}`);
+            }
+          } catch (error) {
+            console.error(`❌ [ADMIN] Erreur chargement signaux pour ${channelId}:`, error);
+          }
+        }
+        
+        if (allSignals.length > 0) {
+          // Formater les signaux pour correspondre au type attendu
+          const formattedSignals = allSignals.map(signal => ({
+            id: signal.id || '',
+            type: signal.type,
+            symbol: signal.symbol,
+            timeframe: signal.timeframe,
+            entry: signal.entry?.toString() || 'N/A',
+            takeProfit: signal.takeProfit?.toString() || 'N/A',
+            stopLoss: signal.stopLoss?.toString() || 'N/A',
+            description: signal.description || '',
+            image: null,
+            timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+            status: signal.status || 'ACTIVE' as const,
+            channel_id: signal.channel_id,
+            reactions: signal.reactions || [],
+            pnl: signal.pnl,
+            closeMessage: signal.closeMessage
+          }));
+          
+          setAllSignalsForStats(formattedSignals);
+          console.log(`✅ [ADMIN] ${formattedSignals.length} signaux formatés chargés pour statistiques au total`);
+          console.log('📊 [ADMIN] Signaux par canal:', channels.map(ch => ({
+            channel: ch,
+            count: formattedSignals.filter(s => s.channel_id === ch).length
+          })));
+        } else {
+          console.log('⚠️ [ADMIN] Aucun signal trouvé pour les statistiques');
+        }
+      } catch (error) {
+        console.error('❌ [ADMIN] Erreur chargement signaux pour statistiques:', error);
+      }
+    };
+
+    loadAllSignalsForStats();
+  }, []);
+
+  // Fonctions pour les statistiques des signaux (utilisent TOUS les signaux)
   const calculateTotalPnL = (): number => {
-    return signals
-      .filter(s => s.pnl && s.status !== 'ACTIVE')
-      .reduce((total, signal) => total + parsePnL(signal.pnl), 0);
+    console.log('🔍 [ADMIN] calculateTotalPnL - allSignalsForStats:', allSignalsForStats.length);
+    const filteredSignals = allSignalsForStats.filter(s => s.pnl && s.status !== 'ACTIVE');
+    console.log('🔍 [ADMIN] Signaux avec PnL et fermés:', filteredSignals.length);
+    const total = filteredSignals.reduce((total, signal) => total + parsePnL(signal.pnl), 0);
+    console.log('💰 [ADMIN] Total PnL calculé:', total);
+    return total;
   };
 
   const calculateWinRate = (): number => {
-    const closedSignals = signals.filter(s => s.status !== 'ACTIVE');
+    console.log('🔍 [ADMIN] calculateWinRate - allSignalsForStats:', allSignalsForStats.length);
+    const closedSignals = allSignalsForStats.filter(s => s.status !== 'ACTIVE');
+    console.log('🔍 [ADMIN] Signaux fermés:', closedSignals.length);
     if (closedSignals.length === 0) return 0;
     const wins = closedSignals.filter(s => s.status === 'WIN').length;
-    return Math.round((wins / closedSignals.length) * 100);
+    const winRate = Math.round((wins / closedSignals.length) * 100);
+    console.log('🏆 [ADMIN] Win Rate calculé:', winRate + '%');
+    return winRate;
   };
 
   const calculateAvgWin = (): number => {
-    const winSignals = signals.filter(s => s.status === 'WIN' && s.pnl);
+    console.log('🔍 [ADMIN] calculateAvgWin - allSignalsForStats:', allSignalsForStats.length);
+    const winSignals = allSignalsForStats.filter(s => s.status === 'WIN' && s.pnl);
+    console.log('🔍 [ADMIN] Signaux gagnants avec PnL:', winSignals.length);
     if (winSignals.length === 0) return 0;
     const totalWinPnL = winSignals.reduce((total, signal) => total + parsePnL(signal.pnl), 0);
-    return Math.round(totalWinPnL / winSignals.length);
+    const avgWin = Math.round(totalWinPnL / winSignals.length);
+    console.log('💚 [ADMIN] Moyenne gains calculée:', avgWin);
+    return avgWin;
   };
 
   const calculateAvgLoss = (): number => {
-    const lossSignals = signals.filter(s => s.status === 'LOSS' && s.pnl);
+    console.log('🔍 [ADMIN] calculateAvgLoss - allSignalsForStats:', allSignalsForStats.length);
+    const lossSignals = allSignalsForStats.filter(s => s.status === 'LOSS' && s.pnl);
+    console.log('🔍 [ADMIN] Signaux perdants avec PnL:', lossSignals.length);
     if (lossSignals.length === 0) return 0;
     const totalLossPnL = lossSignals.reduce((total, signal) => total + Math.abs(parsePnL(signal.pnl)), 0);
-    return Math.round(totalLossPnL / lossSignals.length);
+    const avgLoss = Math.round(totalLossPnL / lossSignals.length);
+    console.log('💔 [ADMIN] Moyenne pertes calculée:', avgLoss);
+    return avgLoss;
   };
 
   const getTodaySignals = () => {
