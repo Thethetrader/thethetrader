@@ -144,17 +144,12 @@ export default function TradingPlatformShell() {
         console.log(`🔄 Nouveau message reçu dans ${channelId}:`, newMessage);
         
         // Compter les nouveaux messages seulement si on n'est pas dans ce canal
-        // et si le message est plus récent que le dernier vu
         if (selectedChannel.id !== channelId) {
-          const lastSeen = lastSeenMessages[channelId];
-          const newMessageTime = new Date(newMessage.timestamp || Date.now()).getTime();
-          
-          if (!lastSeen || newMessageTime > new Date(lastSeen).getTime()) {
-            setUnreadMessages(prev => ({
-              ...prev,
-              [channelId]: (prev[channelId] || 0) + 1
-            }));
-          }
+          console.log(`📊 Incrementing unread count for ${channelId}`);
+          setUnreadMessages(prev => ({
+            ...prev,
+            [channelId]: (prev[channelId] || 0) + 1
+          }));
         }
       });
     });
@@ -273,20 +268,8 @@ export default function TradingPlatformShell() {
       [channelId]: 0
     }));
     
-    // Enregistrer le timestamp du dernier message vu pour ce canal
-    const currentMessages = messages[channelId] || [];
-    if (currentMessages.length > 0) {
-      const lastMessage = currentMessages[currentMessages.length - 1];
-      setLastSeenMessages(prev => ({
-        ...prev,
-        [channelId]: lastMessage.timestamp || new Date().toISOString()
-      }));
-    } else {
-      setLastSeenMessages(prev => ({
-        ...prev,
-        [channelId]: new Date().toISOString()
-      }));
-    }
+    // Marquer tous les messages comme lus pour ce canal
+    console.log(`📊 Clearing unread count for ${channelId}`);
   };
   const [personalTrades, setPersonalTrades] = useState<Array<{
     id: string;
@@ -354,6 +337,11 @@ export default function TradingPlatformShell() {
   useEffect(() => {
     console.log('Trades chargés:', personalTrades);
   }, [personalTrades]);
+
+  // Debug: Afficher les messages non lus
+  useEffect(() => {
+    console.log('📊 Unread messages state:', unreadMessages);
+  }, [unreadMessages]);
 
   const [signalData, setSignalData] = useState({
     type: 'BUY',
@@ -1992,7 +1980,7 @@ export default function TradingPlatformShell() {
                         handleChannelChange(channel.id, channel.name);
                         setMobileView('content');
                       }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors relative"
                     >
                       <div className="flex items-center gap-3">
                         <span className="text-lg">{channel.emoji}</span>
@@ -2001,6 +1989,11 @@ export default function TradingPlatformShell() {
                           <p className="text-sm text-gray-400">Contenu éducatif</p>
                         </div>
                       </div>
+                      {unreadMessages[channel.id] > 0 && (
+                        <span className="absolute top-2 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                          {unreadMessages[channel.id]}
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -2016,7 +2009,7 @@ export default function TradingPlatformShell() {
                         handleChannelChange(channel.id, channel.name);
                         setMobileView('content');
                       }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors relative"
                     >
                       <div className="flex items-center gap-3">
                         <span className="text-lg">{channel.emoji}</span>
@@ -2025,6 +2018,11 @@ export default function TradingPlatformShell() {
                           <p className="text-sm text-gray-400">Canal de signaux</p>
                         </div>
                       </div>
+                      {unreadMessages[channel.id] > 0 && (
+                        <span className="absolute top-2 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                          {unreadMessages[channel.id]}
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -2040,7 +2038,7 @@ export default function TradingPlatformShell() {
                         handleChannelChange(channel.id, channel.name);
                         setMobileView('content');
                       }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors relative"
                     >
                       <div className="flex items-center gap-3">
                         <span className="text-lg">{channel.emoji}</span>
@@ -2049,6 +2047,11 @@ export default function TradingPlatformShell() {
                           <p className="text-sm text-gray-400">Hub de trading</p>
                         </div>
                       </div>
+                      {unreadMessages[channel.id] > 0 && (
+                        <span className="absolute top-2 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                          {unreadMessages[channel.id]}
+                        </span>
+                      )}
                     </button>
                   ))}
                   

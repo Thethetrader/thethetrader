@@ -108,17 +108,12 @@ export default function AdminInterface() {
         console.log(`🔄 Nouveau message reçu dans ${channelId}:`, newMessage);
         
         // Compter les nouveaux messages seulement si on n'est pas dans ce canal
-        // et si le message est plus récent que le dernier vu
         if (selectedChannel.id !== channelId) {
-          const lastSeen = lastSeenMessages[channelId];
-          const newMessageTime = new Date(newMessage.timestamp || Date.now()).getTime();
-          
-          if (!lastSeen || newMessageTime > new Date(lastSeen).getTime()) {
-            setUnreadMessages(prev => ({
-              ...prev,
-              [channelId]: (prev[channelId] || 0) + 1
-            }));
-          }
+          console.log(`📊 Incrementing unread count for ${channelId}`);
+          setUnreadMessages(prev => ({
+            ...prev,
+            [channelId]: (prev[channelId] || 0) + 1
+          }));
         }
       });
     });
@@ -273,7 +268,11 @@ export default function AdminInterface() {
     text: string;
     timestamp: string;
     author: string;
-    attachment?: File;
+    author_avatar?: string;
+    attachment?: any;
+    attachment_data?: string;
+    attachment_type?: string;
+    attachment_name?: string;
   }>}>({});
 
   // Initialiser la base de données au chargement
@@ -315,20 +314,8 @@ export default function AdminInterface() {
       [channelId]: 0
     }));
     
-    // Enregistrer le timestamp du dernier message vu pour ce canal
-    const currentMessages = chatMessages[channelId] || [];
-    if (currentMessages.length > 0) {
-      const lastMessage = currentMessages[currentMessages.length - 1];
-      setLastSeenMessages(prev => ({
-        ...prev,
-        [channelId]: lastMessage.timestamp || new Date().toISOString()
-      }));
-    } else {
-      setLastSeenMessages(prev => ({
-        ...prev,
-        [channelId]: new Date().toISOString()
-      }));
-    }
+    // Marquer tous les messages comme lus pour ce canal
+    console.log(`📊 Clearing unread count for ${channelId}`);
   };
   const [personalTrades, setPersonalTrades] = useState<Array<{
     id: string;
@@ -1240,68 +1227,21 @@ export default function AdminInterface() {
   };
 
   const loadUsers = async () => {
-    try {
-      const { data, error } = await supabase.auth.admin.listUsers();
-      if (error) {
-        console.error('Erreur chargement utilisateurs:', error);
-        return;
-      }
-      
-      if (data.users) {
-        const formattedUsers = data.users.map(user => ({
-          id: user.id,
-          email: user.email || '',
-          created_at: user.created_at,
-          last_sign_in_at: user.last_sign_in_at,
-          status: user.confirmed_at ? 'active' : 'inactive'
-        }));
-        setUsers(formattedUsers);
-      }
-    } catch (error) {
-      console.error('Erreur chargement utilisateurs:', error);
-    }
+    // TODO: Implement Firebase user management
+    console.log('⚠️ User management not implemented with Firebase yet');
+    setUsers([]);
   };
 
   const createUser = async () => {
-    try {
-              const { data, error } = await supabase.auth.admin.createUser({
-        email: newUserData.email,
-        password: newUserData.password,
-        email_confirm: true
-      });
-
-      if (error) {
-        alert(`Erreur création utilisateur: ${error.message}`);
-        return;
-      }
-
-      alert('Utilisateur créé avec succès !');
-      setNewUserData({ email: '', password: '' });
-      setShowUserModal(false);
-      loadUsers(); // Recharger la liste
-    } catch (error) {
-      alert('Erreur création utilisateur');
-      console.error('Erreur création:', error);
-    }
+    // TODO: Implement Firebase user creation
+    alert('⚠️ User creation not implemented with Firebase yet');
+    console.log('⚠️ User creation not implemented with Firebase yet');
   };
 
   const deleteUser = async (userId: string) => {
-    try {
-              const { error } = await supabase.auth.admin.deleteUser(userId);
-      
-      if (error) {
-        alert(`Erreur suppression: ${error.message}`);
-        return;
-      }
-
-      alert('Utilisateur supprimé avec succès !');
-      setShowDeleteUserModal(false);
-      setSelectedUser(null);
-      loadUsers(); // Recharger la liste
-    } catch (error) {
-      alert('Erreur suppression utilisateur');
-      console.error('Erreur suppression:', error);
-    }
+    // TODO: Implement Firebase user deletion
+    alert('⚠️ User deletion not implemented with Firebase yet');
+    console.log('⚠️ User deletion not implemented with Firebase yet');
   };
 
   const handleTradingViewPasteTrade = (e: React.ClipboardEvent<HTMLDivElement>) => {
@@ -1483,21 +1423,23 @@ export default function AdminInterface() {
       return;
     }
 
-    // Préparer les données pour Supabase
-    const signalForSupabase = {
+    // Préparer les données pour Firebase
+    const signalForFirebase = {
       channel_id: selectedChannel.id,
       type: signalData.type as 'BUY' | 'SELL',
       symbol: signalData.symbol || 'N/A',
       timeframe: signalData.timeframe || '1 min',
-      entry_price: parseFloat(signalData.entry) || 0,
-      take_profit: signalData.takeProfit ? parseFloat(signalData.takeProfit) : undefined,
-      stop_loss: signalData.stopLoss ? parseFloat(signalData.stopLoss) : undefined,
+      entry: signalData.entry || '0',
+      takeProfit: signalData.takeProfit || '0',
+      stopLoss: signalData.stopLoss || '0',
       description: signalData.description || '',
-      author: 'Admin'
+      author: 'Admin',
+      image: signalData.image,
+      status: 'ACTIVE' as const
     };
 
-    // Sauvegarder en Supabase
-    const savedSignal = await addSignal(signalForSupabase);
+    // Sauvegarder en Firebase
+    const savedSignal = await addSignal(signalForFirebase);
     
     if (savedSignal) {
       // Ajouter aussi localement pour l'affichage immédiat
@@ -1506,9 +1448,9 @@ export default function AdminInterface() {
         type: savedSignal.type,
         symbol: savedSignal.symbol,
         timeframe: savedSignal.timeframe,
-        entry: savedSignal.entry_price?.toString() || 'N/A',
-        takeProfit: savedSignal.take_profit?.toString() || 'N/A',
-        stopLoss: savedSignal.stop_loss?.toString() || 'N/A',
+        entry: savedSignal.entry || 'N/A',
+        takeProfit: savedSignal.takeProfit || 'N/A',
+        stopLoss: savedSignal.stopLoss || 'N/A',
         description: savedSignal.description || '',
       image: signalData.image,
         timestamp: new Date(savedSignal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
