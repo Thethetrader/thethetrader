@@ -297,34 +297,32 @@ export default function TradingPlatformShell() {
           console.log('📱 Signal ancien - pas de notification');
         }
         
-        // Si on est dans le canal du signal, l'ajouter à la liste
-        if (selectedChannel.id === channelId) {
-          setSignals(prev => {
-            // Vérifier si le signal existe déjà
-            const exists = prev.some(s => s.id === newSignal.id);
-            if (!exists) {
-              const formattedSignal = {
-                id: newSignal.id || '',
-                type: newSignal.type,
-                symbol: newSignal.symbol,
-                timeframe: newSignal.timeframe,
-                entry: newSignal.entry?.toString() || 'N/A',
-                takeProfit: newSignal.takeProfit?.toString() || 'N/A',
-                stopLoss: newSignal.stopLoss?.toString() || 'N/A',
-                description: newSignal.description || '',
-                image: null,
-                timestamp: new Date(newSignal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                status: newSignal.status || 'ACTIVE' as const,
-                channel_id: newSignal.channel_id,
-                reactions: newSignal.reactions || [],
-                pnl: newSignal.pnl,
-                closeMessage: newSignal.closeMessage
-              };
-              return [...prev, formattedSignal]; // Ajouter à la fin
-            }
-            return prev;
-          });
-        }
+        // Mettre à jour les signaux en temps réel pour tous les canaux
+        setSignals(prev => {
+          // Vérifier si le signal existe déjà
+          const exists = prev.some(s => s.id === newSignal.id);
+          if (!exists) {
+            const formattedSignal = {
+              id: newSignal.id || '',
+              type: newSignal.type,
+              symbol: newSignal.symbol,
+              timeframe: newSignal.timeframe,
+              entry: newSignal.entry?.toString() || 'N/A',
+              takeProfit: newSignal.takeProfit?.toString() || 'N/A',
+              stopLoss: newSignal.stopLoss?.toString() || 'N/A',
+              description: newSignal.description || '',
+              image: null,
+              timestamp: new Date(newSignal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+              status: newSignal.status || 'ACTIVE' as const,
+              channel_id: newSignal.channel_id,
+              reactions: newSignal.reactions || [],
+              pnl: newSignal.pnl,
+              closeMessage: newSignal.closeMessage
+            };
+            return [...prev, formattedSignal]; // Ajouter à la fin
+          }
+          return prev;
+        });
       });
     });
 
