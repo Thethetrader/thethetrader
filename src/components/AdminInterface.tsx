@@ -77,7 +77,7 @@ export default function AdminInterface() {
 
   // Subscription globale pour tous les canaux
   useEffect(() => {
-    const channels = ['crypto', 'futur', 'forex', 'fondamentaux', 'letsgooo-model', 'livestream', 'general-chat', 'profit-loss', 'crypto-chat'];
+    const channels = ['crypto', 'futur', 'forex', 'fondamentaux', 'letsgooo-model', 'livestream', 'general-chat', 'general-chat-2', 'profit-loss', 'crypto-chat'];
     
     const subscriptions = channels.map(channelId => {
       return subscribeToMessages(channelId, (newMessage) => {
@@ -712,7 +712,7 @@ export default function AdminInterface() {
         console.log('📊 [ADMIN] Chargement de TOUS les signaux pour statistiques et calendrier...');
         
         // Charger les signaux de tous les canaux individuellement
-        const channels = ['fondamentaux', 'letsgooo-model', 'crypto', 'futur', 'forex', 'livestream'];
+        const channels = ['fondamentaux', 'letsgooo-model', 'crypto', 'futur', 'forex', 'livestream', 'general-chat-2'];
         let allSignals: any[] = [];
         
         for (const channelId of channels) {
@@ -1096,7 +1096,7 @@ export default function AdminInterface() {
 
   const scrollToTop = () => {
     // Pour les salons de chat, scroller dans le conteneur de messages
-    if (messagesContainerRef.current && ['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'crypto-chat'].includes(selectedChannel.id)) {
+    if (messagesContainerRef.current && ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'profit-loss', 'crypto-chat'].includes(selectedChannel.id)) {
       messagesContainerRef.current.scrollTop = 0;
     } else {
       // Pour les autres vues, scroller la page
@@ -1377,6 +1377,7 @@ export default function AdminInterface() {
     { id: 'letsgooo-model', name: 'letsgooo-model', emoji: '🚀', fullName: 'Letsgooo model' },
     { id: 'livestream', name: 'livestream', emoji: '📺', fullName: 'Livestream' },
     { id: 'general-chat', name: 'general-chat', emoji: '💬', fullName: 'Général chat' },
+    { id: 'general-chat-2', name: 'general-chat-2', emoji: '💭', fullName: 'Général chat 2' },
     { id: 'profit-loss', name: 'profit-loss', emoji: '💰', fullName: 'Profit loss' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Calendrier' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Trading Journal' },
@@ -1726,7 +1727,51 @@ export default function AdminInterface() {
       // Envoyer une notification pour le nouveau signal
       notifyNewSignal(savedSignal);
       
-      alert('Signal créé et sauvé en base ! ✅');
+      // Si c'est le salon general-chat-2, envoyer aussi un message dans le chat
+      if (selectedChannel.id === 'general-chat-2') {
+        const signalMessage = `🚀 **NOUVEAU SIGNAL** 🚀\n\n` +
+          `**Type:** ${signalData.type}\n` +
+          `**Symbole:** ${signalData.symbol || 'N/A'}\n` +
+          `**Timeframe:** ${signalData.timeframe || '1 min'}\n` +
+          `**Entrée:** ${signalData.entry || 'N/A'} USD\n` +
+          `**Take Profit:** ${signalData.takeProfit || 'N/A'} USD\n` +
+          `**Stop Loss:** ${signalData.stopLoss || 'N/A'} USD\n` +
+          `**Description:** ${signalData.description || 'Aucune description'}\n\n` +
+          `[SIGNAL_ID:${savedSignal.id}]`;
+        
+        try {
+          // Convertir l'image en base64 pour la persistance
+          let imageBase64: string | undefined;
+          if (signalData.image) {
+            const reader = new FileReader();
+            imageBase64 = await new Promise((resolve) => {
+              reader.onload = () => resolve(reader.result as string);
+              reader.readAsDataURL(signalData.image!);
+            });
+          }
+          
+          const messageData = {
+            channel_id: 'general-chat-2',
+            content: signalMessage,
+            author: 'Admin',
+            author_type: 'admin' as const,
+            author_avatar: profileImage || undefined,
+            attachment_data: imageBase64,
+            attachment_type: signalData.image ? signalData.image.type : undefined,
+            attachment_name: signalData.image ? signalData.image.name : undefined
+          };
+          
+          await addMessage(messageData);
+          console.log('✅ Message signal avec image envoyé dans general-chat-2');
+        } catch (error) {
+          console.error('❌ Erreur envoi message signal:', error);
+        }
+      }
+      
+      // Pas d'alerte pour general-chat-2, le message apparaît directement dans le chat
+      if (selectedChannel.id !== 'general-chat-2') {
+        alert('Signal créé et sauvé en base ! ✅');
+      }
     } else {
       console.error('❌ Erreur sauvegarde signal');
       alert('Erreur lors de la sauvegarde du signal');
@@ -1745,6 +1790,235 @@ export default function AdminInterface() {
       image: null
     });
     setShowSignalModal(false);
+  };
+
+  // Fonction pour gérer le statut des signaux depuis les messages
+  const handleSignalStatusFromMessage = async (messageText: string, newStatus: 'WIN' | 'LOSS' | 'BE') => {
+    try {
+      // Extraire l'ID du signal du message
+      const signalIdMatch = messageText.match(/\[SIGNAL_ID:([^\]]+)\]/);
+      if (!signalIdMatch) {
+        console.error('❌ ID du signal non trouvé dans le message');
+        return;
+      }
+      
+      const signalId = signalIdMatch[1];
+      console.log(`🔄 [ADMIN] Changement statut signal ${signalId} vers ${newStatus}`);
+      
+      // Créer un popup personnalisé pour PnL et photo
+      let pnl: string | undefined;
+      let conclusionImage: File | null = null;
+      
+      if (newStatus !== 'BE') {
+        // Créer le popup HTML
+        const popup = document.createElement('div');
+        popup.style.cssText = `
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.8);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 10000;
+        `;
+        
+        popup.innerHTML = `
+          <div style="
+            background: #1f2937;
+            padding: 24px;
+            border-radius: 12px;
+            min-width: 400px;
+            border: 1px solid #374151;
+            color: white;
+          ">
+            <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600;">
+              📊 Fermer le signal ${newStatus === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
+            </h3>
+            
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 8px; color: #d1d5db;">
+                P&L Final (ex: +$150 ou -$50):
+              </label>
+              <input 
+                id="pnlInput"
+                type="text" 
+                placeholder="+$150"
+                style="
+                  width: 100%;
+                  padding: 8px 12px;
+                  border: 1px solid #4b5563;
+                  border-radius: 6px;
+                  background: #374151;
+                  color: white;
+                  font-size: 14px;
+                "
+              />
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 8px; color: #d1d5db;">
+                📸 Photo de conclusion (optionnel):
+              </label>
+              <input 
+                id="photoInput"
+                type="file" 
+                accept="image/*"
+                style="
+                  width: 100%;
+                  padding: 8px 12px;
+                  border: 1px solid #4b5563;
+                  border-radius: 6px;
+                  background: #374151;
+                  color: white;
+                  font-size: 14px;
+                "
+              />
+            </div>
+            
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+              <button 
+                id="cancelBtn"
+                style="
+                  padding: 8px 16px;
+                  border: 1px solid #6b7280;
+                  border-radius: 6px;
+                  background: #374151;
+                  color: #d1d5db;
+                  cursor: pointer;
+                  font-size: 14px;
+                "
+              >
+                Annuler
+              </button>
+              <button 
+                id="confirmBtn"
+                style="
+                  padding: 8px 16px;
+                  border: none;
+                  border-radius: 6px;
+                  background: #3b82f6;
+                  color: white;
+                  cursor: pointer;
+                  font-size: 14px;
+                  font-weight: 500;
+                "
+              >
+                Confirmer
+              </button>
+            </div>
+          </div>
+        `;
+        
+        document.body.appendChild(popup);
+        
+        // Gérer les événements
+        const pnlInput = popup.querySelector('#pnlInput') as HTMLInputElement;
+        const photoInput = popup.querySelector('#photoInput') as HTMLInputElement;
+        const cancelBtn = popup.querySelector('#cancelBtn') as HTMLButtonElement;
+        const confirmBtn = popup.querySelector('#confirmBtn') as HTMLButtonElement;
+        
+        // Attendre la réponse de l'utilisateur
+        const result = await new Promise<{pnl: string, photo: File | null}>((resolve, reject) => {
+          cancelBtn.onclick = () => {
+            document.body.removeChild(popup);
+            reject(new Error('Annulé par l\'utilisateur'));
+          };
+          
+          confirmBtn.onclick = () => {
+            const pnlValue = pnlInput.value.trim();
+            if (!pnlValue) {
+              alert('Veuillez entrer le P&L');
+              return;
+            }
+            
+            const photoValue = photoInput.files?.[0] || null;
+            document.body.removeChild(popup);
+            resolve({pnl: pnlValue, photo: photoValue});
+          };
+        });
+        
+        pnl = result.pnl;
+        conclusionImage = result.photo;
+      }
+      
+      // Générer la phrase de fermeture
+      const statusText = newStatus === 'WIN' ? 'gagnante' : newStatus === 'LOSS' ? 'perdante' : 'break-even';
+      const closeMessage = newStatus === 'BE' 
+        ? `Position ${statusText} fermée - Break-even`
+        : `Position ${statusText} fermée - P&L: ${pnl}`;
+      
+      // Mettre à jour le signal local
+      const updatedSignal = { 
+        id: signalId,
+        status: newStatus, 
+        pnl, 
+        closeMessage 
+      };
+      
+      // Mettre à jour les signaux locaux
+      setSignals(prev => prev.map(s => 
+        s.id === signalId ? { ...s, ...updatedSignal } : s
+      ));
+      
+      // Mettre à jour allSignalsForStats pour les statistiques
+      setAllSignalsForStats(prev => prev.map(s => 
+        s.id === signalId ? { ...s, ...updatedSignal } : s
+      ));
+      
+      // Sauvegarder dans Firebase
+      const firebaseSuccess = await updateSignalStatus(signalId, newStatus, pnl);
+      console.log('🔄 [ADMIN] Firebase mise à jour:', firebaseSuccess ? 'SUCCÈS' : 'ÉCHEC');
+      
+      // Sauvegarder le message de fermeture dans Firebase
+      const signalRef = ref(database, `signals/${signalId}`);
+      await update(signalRef, { closeMessage });
+      
+      // Envoyer une notification pour le signal fermé
+      notifySignalClosed({ ...updatedSignal, channel_id: 'general-chat-2' });
+      
+      // Envoyer un message de conclusion dans le chat
+      const conclusionMessage = `📊 **SIGNAL FERMÉ** 📊\n\n` +
+        `**Résultat:** ${newStatus === 'WIN' ? '🟢 GAGNANT' : newStatus === 'LOSS' ? '🔴 PERDANT' : '🔵 BREAK-EVEN'}\n` +
+        `${newStatus !== 'BE' ? `**P&L:** ${pnl}\n` : ''}` +
+        `**Message:** ${closeMessage}`;
+      
+      try {
+        // Convertir l'image de conclusion en base64 si elle existe
+        let conclusionImageBase64: string | undefined;
+        if (conclusionImage) {
+          const reader = new FileReader();
+          conclusionImageBase64 = await new Promise((resolve) => {
+            reader.onload = () => resolve(reader.result as string);
+            reader.readAsDataURL(conclusionImage!);
+          });
+        }
+        
+        const messageData = {
+          channel_id: 'general-chat-2',
+          content: conclusionMessage,
+          author: 'Admin',
+          author_type: 'admin' as const,
+          author_avatar: profileImage || undefined,
+          attachment_data: conclusionImageBase64,
+          attachment_type: conclusionImage ? conclusionImage.type : undefined,
+          attachment_name: conclusionImage ? conclusionImage.name : undefined
+        };
+        
+        await addMessage(messageData);
+        console.log('✅ Message de conclusion avec image envoyé dans general-chat-2');
+      } catch (error) {
+        console.error('❌ Erreur envoi message conclusion:', error);
+      }
+      
+      console.log(`✅ [ADMIN] Signal ${signalId} fermé avec succès - Statut: ${newStatus}, P&L: ${pnl}`);
+      
+    } catch (error) {
+      console.error('❌ [ADMIN] Erreur handleSignalStatusFromMessage:', error);
+      alert('Erreur lors de la mise à jour du statut');
+    }
   };
 
   const handleSendMessage = async () => {
@@ -2547,6 +2821,7 @@ export default function AdminInterface() {
             <div className="space-y-1">
               <button onClick={() => handleChannelChange('livestream', 'livestream')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📺 Livestream</button>
               <button onClick={() => handleChannelChange('general-chat', 'general-chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 General-chat</button>
+              <button onClick={() => handleChannelChange('general-chat-2', 'general-chat-2')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat-2' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💭 General-chat-2</button>
               <button onClick={() => handleChannelChange('crypto-chat', 'crypto-chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'crypto-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 Crypto-chat</button>
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💰 Profit-loss</button>
               <button onClick={() => {
@@ -2714,7 +2989,7 @@ export default function AdminInterface() {
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">TRADING HUB</h3>
                 <div className="space-y-2">
-                  {channels.filter(c => ['livestream', 'general-chat', 'profit-loss', 'crypto-chat'].includes(c.id)).map(channel => (
+                  {channels.filter(c => ['livestream', 'general-chat', 'general-chat-2', 'profit-loss', 'crypto-chat'].includes(c.id)).map(channel => (
                     <button
                       key={channel.id}
                       onClick={() => {
@@ -3021,7 +3296,7 @@ export default function AdminInterface() {
 
 
                 {/* Affichage des signaux */}
-                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream', 'crypto-chat'].includes(selectedChannel.id) ? (
+                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'profit-loss', 'livestream', 'crypto-chat'].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
                     {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                       <div className="text-center py-8">
@@ -3328,7 +3603,7 @@ export default function AdminInterface() {
                       </div>
                     </div>
                   </div>
-                ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'crypto-chat'].includes(selectedChannel.id) ? (
+                ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'profit-loss', 'crypto-chat'].includes(selectedChannel.id) ? (
                   <div className="flex flex-col h-full">
                                         {/* Messages de chat */}
                     <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
@@ -3748,7 +4023,7 @@ export default function AdminInterface() {
           ) : (
             <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '80px' }}>
               {/* Boutons en haut fixe */}
-              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream', 'crypto-chat'].includes(selectedChannel.id) && (
+              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'profit-loss', 'livestream', 'crypto-chat'].includes(selectedChannel.id) && (
                 <div className="flex justify-between items-center mb-4 sticky top-0 bg-gray-900 p-2 rounded z-10">
                   <button
                     onClick={async () => {
@@ -3781,7 +4056,7 @@ Voir plus (+10)
               )}
 
               {/* Affichage des signaux */}
-              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream', 'crypto-chat'].includes(selectedChannel.id) ? (
+              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'profit-loss', 'livestream', 'crypto-chat'].includes(selectedChannel.id) ? (
                 <div className="space-y-4">
                   {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                     <div className="text-center py-8">
@@ -4080,12 +4355,12 @@ Voir plus (+10)
                     </div>
                   </div>
                 </div>
-              ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'crypto-chat'].includes(selectedChannel.id) ? (
+              ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'profit-loss', 'crypto-chat'].includes(selectedChannel.id) ? (
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}
                   <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
                     {/* Bouton Voir plus pour les messages */}
-                    {['general-chat', 'profit-loss', 'crypto-chat'].includes(selectedChannel.id) && (chatMessages[selectedChannel.id] || []).length >= 50 && (
+                    {['general-chat', 'general-chat-2', 'profit-loss', 'crypto-chat'].includes(selectedChannel.id) && (chatMessages[selectedChannel.id] || []).length >= 50 && (
                       <div className="flex justify-center pt-2">
                         <button
                           onClick={async () => {
@@ -4152,6 +4427,33 @@ Voir plus (+10)
                                     )}
                                   </div>
                                 )}
+                                
+                                {/* Boutons WIN/LOSS/BE pour les messages de signal */}
+                                {message.text.includes('[SIGNAL_ID:') && (
+                                  <div className="mt-3 pt-3 border-t border-gray-600">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-xs text-gray-400">Résultat du signal:</span>
+                                      <button
+                                        onClick={() => handleSignalStatusFromMessage(message.text, 'WIN')}
+                                        className="px-3 py-1.5 rounded-lg text-xs font-medium bg-green-400/20 hover:bg-green-400/30 text-green-300 border border-green-400/30 transition-colors"
+                                      >
+                                        🟢 WIN
+                                      </button>
+                                      <button
+                                        onClick={() => handleSignalStatusFromMessage(message.text, 'LOSS')}
+                                        className="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-400/20 hover:bg-red-400/30 text-red-300 border border-red-400/30 transition-colors"
+                                      >
+                                        🔴 LOSS
+                                      </button>
+                                      <button
+                                        onClick={() => handleSignalStatusFromMessage(message.text, 'BE')}
+                                        className="px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-400/20 hover:bg-blue-400/30 text-blue-300 border border-blue-400/30 transition-colors"
+                                      >
+                                        🔵 BE
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
                               </div>
                           </div>
                         </div>
@@ -4182,6 +4484,14 @@ Voir plus (+10)
                           📎
                         </span>
                       </label>
+                      {selectedChannel.id === 'general-chat-2' && (
+                        <button
+                          onClick={handleCreateSignal}
+                          className="bg-green-600 hover:bg-green-700 px-3 py-2 rounded-lg text-white text-sm font-medium"
+                        >
+                          + Signal
+                        </button>
+                      )}
                       <button
                         onClick={handleSendMessage}
                         className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white"
@@ -4912,7 +5222,7 @@ Voir plus (+10)
       )}
 
       {/* Bouton + Signal fixe */}
-      {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream', 'crypto-chat'].includes(selectedChannel.id) && (
+      {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'profit-loss', 'livestream', 'crypto-chat'].includes(selectedChannel.id) && (
         <div className="fixed bottom-6 right-6 z-50">
           <button 
             onClick={handleCreateSignal}
