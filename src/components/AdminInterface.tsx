@@ -85,11 +85,7 @@ export default function AdminInterface() {
         
         // Compter les nouveaux messages seulement si on n'est pas dans ce canal
         if (selectedChannel.id !== channelId) {
-          console.log(`📊 Incrementing unread count for ${channelId}`);
-          setUnreadMessages(prev => ({
-            ...prev,
-            [channelId]: (prev[channelId] || 0) + 1
-          }));
+          console.log(`📊 Message reçu dans ${channelId} (canal non actif)`);
         }
       });
     });
@@ -313,11 +309,7 @@ export default function AdminInterface() {
     // Les signaux seront chargés automatiquement par le useEffect qui écoute selectedChannel.id
     // Pas besoin d'appeler loadSignals ici
     
-    // Réinitialiser les messages non lus pour ce canal
-    setUnreadMessages(prev => ({
-      ...prev,
-      [channelId]: 0
-    }));
+    // Canal changé
     
     console.log(`📊 Channel changed to ${channelId}`);
   };
