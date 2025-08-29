@@ -2444,20 +2444,39 @@ export default function TradingPlatformShell() {
                     <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
                       <button
                         onClick={async () => {
-                          const currentCount = signalsLoadedCount[selectedChannel.id] || 3;
-                          const newLimit = currentCount + 10;
-
-                          console.log(`🔄 Chargement de +10 signaux pour ${selectedChannel.id} (actuellement ${currentCount}, demandé ${newLimit})`);
-
-                          const more = await getSignals(selectedChannel.id, newLimit);
                           const currentSignalsForChannel = signals.filter(s => s.channel_id === selectedChannel.id);
+
+                          if (currentSignalsForChannel.length === 0) {
+                            console.log('ℹ️ Aucun signal chargé pour ce canal');
+                            return;
+                          }
+
+                          // Trouver le timestamp du signal le plus ancien pour charger les suivants
+                          const oldestSignal = currentSignalsForChannel[currentSignalsForChannel.length - 1];
+                          const beforeTimestamp = new Date(oldestSignal.timestamp).getTime();
+
+                          console.log(`🔄 Chargement de signaux plus anciens pour ${selectedChannel.id} (avant ${beforeTimestamp})`);
+
+                          const more = await getSignals(selectedChannel.id, 10, beforeTimestamp);
                           const existingIds = new Set(currentSignalsForChannel.map(s => s.id));
 
-                          // Filtrer seulement les nouveaux signaux (éviter les doublons)
-                          const newSignals = more.filter(signal => !existingIds.has(signal.id || ''));
+                          console.log('🔍 Signaux existants:', currentSignalsForChannel.length, 'IDs:', Array.from(existingIds));
+                          console.log('🔍 Signaux reçus de Firebase:', more.length, 'IDs:', more.map(s => s.id));
+
+                          // Tous les signaux reçus devraient être nouveaux car on charge avant le plus ancien
+                          const newSignals = more.filter(signal => {
+                            const signalId = signal.id || '';
+                            const exists = existingIds.has(signalId);
+                            if (exists) {
+                              console.log('🚫 Signal déjà existant - ignoré:', signal.symbol, signal.type, signalId);
+                            } else {
+                              console.log('✅ Nouveau signal détecté:', signal.symbol, signal.type, signalId);
+                            }
+                            return !exists;
+                          });
 
                           if (newSignals.length === 0) {
-                            console.log('ℹ️ Aucun nouveau signal à charger');
+                            console.log('ℹ️ Aucun nouveau signal à charger (fin de la liste atteinte)');
                             return;
                           }
 
@@ -2479,14 +2498,8 @@ export default function TradingPlatformShell() {
                             closeMessage: signal.closeMessage
                           }));
 
-                          console.log(`✅ Ajout de ${formatted.length} nouveaux signaux`);
+                          console.log(`✅ Ajout de ${formatted.length} nouveaux signaux plus anciens`);
                           setSignals(prev => [...prev, ...formatted]);
-
-                          // Mettre à jour le compteur
-                          setSignalsLoadedCount(prev => ({
-                            ...prev,
-                            [selectedChannel.id]: newLimit
-                          }));
                         }}
                         className="px-4 py-2 text-sm rounded bg-gray-700 hover:bg-gray-600 text-white"
                       >

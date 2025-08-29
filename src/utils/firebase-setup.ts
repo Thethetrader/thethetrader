@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, push, onValue, query, orderByChild, limitToLast, serverTimestamp, update, get, equalTo } from 'firebase/database';
+import { getDatabase, ref, push, onValue, query, orderByChild, limitToLast, serverTimestamp, update, get, equalTo, endBefore } from 'firebase/database';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { firebaseConfig } from '../config/firebase-config';
 
@@ -154,30 +154,55 @@ export const addSignal = async (signal: Omit<Signal, 'id' | 'timestamp'>): Promi
 const signalsCache = new Map<string, { data: Signal[], timestamp: number }>();
 const CACHE_DURATION = 30000; // 30 secondes
 
-export const getSignals = async (channelId?: string, limit: number = 3): Promise<Signal[]> => {
+export const getSignals = async (channelId?: string, limit: number = 3, beforeTimestamp?: number): Promise<Signal[]> => {
   try {
-    console.log('🚀 getSignals appelé avec channelId:', channelId);
+    console.log('🚀 getSignals appelé avec channelId:', channelId, 'limit:', limit, 'beforeTimestamp:', beforeTimestamp);
     const signalsRef = ref(database, 'signals');
-    
-    // Filtrage côté serveur (indexOn: channel_id requis dans les règles)
-    const filteredQuery = channelId && channelId !== 'all'
-      ? query(signalsRef, orderByChild('channel_id'), equalTo(channelId), limitToLast(limit))
-      : query(signalsRef, limitToLast(limit));
 
-    const snapshot = await get(filteredQuery);
-    const signals: Signal[] = [];
-
-    if (snapshot.exists()) {
-      snapshot.forEach((childSnapshot) => {
-        const data = childSnapshot.val();
-        signals.push({ id: childSnapshot.key, ...data });
-      });
+    let queryConstraints = [];
+    if (channelId && channelId !== 'all') {
+      queryConstraints.push(orderByChild('channel_id'), equalTo(channelId));
     }
 
-    // Plus anciens en premier (chronologique)
-    signals.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-    console.log(`✅ Signaux chargés (filtrés):`, signals.length);
-    return signals;
+    // Si on a un timestamp de référence, charger seulement les signaux plus anciens
+    if (beforeTimestamp) {
+      // Pour charger les signaux plus anciens, on utilise endBefore avec le timestamp
+      const timestampQuery = query(signalsRef, ...queryConstraints, orderByChild('timestamp'), endBefore(beforeTimestamp), limitToLast(limit));
+      const snapshot = await get(timestampQuery);
+      const signals: Signal[] = [];
+
+      if (snapshot.exists()) {
+        snapshot.forEach((childSnapshot) => {
+          const data = childSnapshot.val();
+          signals.push({ id: childSnapshot.key, ...data });
+        });
+      }
+
+      // Plus anciens en premier (chronologique)
+      signals.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+      console.log(`✅ Signaux chargés (avant ${beforeTimestamp}):`, signals.length);
+      return signals;
+    } else {
+      // Premier chargement : récupérer les derniers signaux
+      const filteredQuery = channelId && channelId !== 'all'
+        ? query(signalsRef, ...queryConstraints, limitToLast(limit))
+        : query(signalsRef, limitToLast(limit));
+
+      const snapshot = await get(filteredQuery);
+      const signals: Signal[] = [];
+
+      if (snapshot.exists()) {
+        snapshot.forEach((childSnapshot) => {
+          const data = childSnapshot.val();
+          signals.push({ id: childSnapshot.key, ...data });
+        });
+      }
+
+      // Plus anciens en premier (chronologique)
+      signals.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+      console.log(`✅ Signaux chargés (filtrés):`, signals.length);
+      return signals;
+    }
   } catch (error) {
     console.error('❌ Erreur récupération signaux Firebase:', error);
     return [];
