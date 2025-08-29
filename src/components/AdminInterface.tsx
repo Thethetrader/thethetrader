@@ -824,12 +824,21 @@ export default function AdminInterface() {
   const getTodaySignals = () => {
     const today = new Date();
     console.log('🔍 [ADMIN] getTodaySignals - allSignalsForStats:', allSignalsForStats.length);
+    console.log('📅 [ADMIN] Date actuelle:', today.toDateString());
+    
     const todaySignals = allSignalsForStats.filter(s => {
+      console.log('🔍 [ADMIN] Signal timestamp:', s.timestamp, 'Type:', typeof s.timestamp);
       const signalDate = new Date(s.timestamp);
-      return signalDate.getDate() === today.getDate() &&
+      console.log('🔍 [ADMIN] Signal date parsée:', signalDate.toDateString());
+      
+      const isToday = signalDate.getDate() === today.getDate() &&
              signalDate.getMonth() === today.getMonth() &&
              signalDate.getFullYear() === today.getFullYear();
+      
+      console.log('🔍 [ADMIN] Est-ce aujourd\'hui?', isToday);
+      return isToday;
     });
+    
     console.log('📅 [ADMIN] Signaux aujourd\'hui:', todaySignals.length);
     return todaySignals;
   };
@@ -837,11 +846,20 @@ export default function AdminInterface() {
   const getThisMonthSignals = () => {
     const today = new Date();
     console.log('🔍 [ADMIN] getThisMonthSignals - allSignalsForStats:', allSignalsForStats.length);
+    console.log('📅 [ADMIN] Mois actuel:', today.getMonth() + 1, today.getFullYear());
+    
     const monthSignals = allSignalsForStats.filter(s => {
+      console.log('🔍 [ADMIN] Signal timestamp:', s.timestamp, 'Type:', typeof s.timestamp);
       const signalDate = new Date(s.timestamp);
-      return signalDate.getMonth() === today.getMonth() &&
+      console.log('🔍 [ADMIN] Signal date parsée:', signalDate.toDateString());
+      
+      const isThisMonth = signalDate.getMonth() === today.getMonth() &&
              signalDate.getFullYear() === today.getFullYear();
+      
+      console.log('🔍 [ADMIN] Est-ce ce mois?', isThisMonth);
+      return isThisMonth;
     });
+    
     console.log('📅 [ADMIN] Signaux ce mois:', monthSignals.length);
     return monthSignals;
   };
