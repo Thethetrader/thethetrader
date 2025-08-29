@@ -174,8 +174,8 @@ export const getSignals = async (channelId?: string, limit: number = 3): Promise
       });
     }
 
-    // Plus récents en premier si timestamp disponible
-    signals.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    // Plus anciens en premier (chronologique)
+    signals.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
     console.log(`✅ Signaux chargés (filtrés):`, signals.length);
     return signals;
   } catch (error) {
@@ -187,12 +187,13 @@ export const getSignals = async (channelId?: string, limit: number = 3): Promise
 // Subscription temps réel pour les signaux (optimisée)
 export const subscribeToSignals = (channelId: string, callback: (signal: Signal) => void) => {
   const signalsRef = ref(database, 'signals');
-  const q = query(signalsRef, orderByChild('channel_id'), equalTo(channelId), limitToLast(5));
+  const q = query(signalsRef, orderByChild('channel_id'), equalTo(channelId));
 
   // Garder une trace des signaux déjà traités pour éviter les doublons
   const processedSignals = new Set();
 
   const unsubscribe = onValue(q, (snapshot) => {
+    console.log(`🔄 Snapshot reçu pour canal ${channelId}, ${snapshot.size} signaux`);
     snapshot.forEach((childSnapshot) => {
       const data = childSnapshot.val();
       const signalId = childSnapshot.key;
@@ -200,6 +201,7 @@ export const subscribeToSignals = (channelId: string, callback: (signal: Signal)
       const signalKey = `${signalId}-${data.status}-${data.timestamp}`;
       if (!processedSignals.has(signalKey)) {
         processedSignals.add(signalKey);
+        console.log(`🆕 Nouveau signal détecté dans ${channelId}:`, signalId);
         callback({ id: signalId, ...data });
       }
     });
