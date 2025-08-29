@@ -77,7 +77,7 @@ export default function AdminInterface() {
 
   // Subscription globale pour tous les canaux
   useEffect(() => {
-    const channels = ['crypto', 'futur', 'forex', 'fondamentaux', 'letsgooo-model', 'livestream', 'general-chat', 'profit-loss'];
+    const channels = ['crypto', 'futur', 'forex', 'fondamentaux', 'letsgooo-model', 'livestream', 'general-chat', 'profit-loss', 'crypto-chat'];
     
     const subscriptions = channels.map(channelId => {
       return subscribeToMessages(channelId, (newMessage) => {
@@ -1096,7 +1096,7 @@ export default function AdminInterface() {
 
   const scrollToTop = () => {
     // Pour les salons de chat, scroller dans le conteneur de messages
-    if (messagesContainerRef.current && ['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id)) {
+    if (messagesContainerRef.current && ['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'crypto-chat'].includes(selectedChannel.id)) {
       messagesContainerRef.current.scrollTop = 0;
     } else {
       // Pour les autres vues, scroller la page
@@ -2547,6 +2547,7 @@ export default function AdminInterface() {
             <div className="space-y-1">
               <button onClick={() => handleChannelChange('livestream', 'livestream')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📺 Livestream</button>
               <button onClick={() => handleChannelChange('general-chat', 'general-chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 General-chat</button>
+              <button onClick={() => handleChannelChange('crypto-chat', 'crypto-chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'crypto-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 Crypto-chat</button>
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💰 Profit-loss</button>
               <button onClick={() => {
                 // Réinitialiser selectedDate si on quitte le Trading Journal
@@ -2713,7 +2714,7 @@ export default function AdminInterface() {
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">TRADING HUB</h3>
                 <div className="space-y-2">
-                  {channels.filter(c => ['livestream', 'general-chat', 'profit-loss'].includes(c.id)).map(channel => (
+                  {channels.filter(c => ['livestream', 'general-chat', 'profit-loss', 'crypto-chat'].includes(c.id)).map(channel => (
                     <button
                       key={channel.id}
                       onClick={() => {
@@ -3020,7 +3021,7 @@ export default function AdminInterface() {
 
 
                 {/* Affichage des signaux */}
-                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream'].includes(selectedChannel.id) ? (
+                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream', 'crypto-chat'].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
                     {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                       <div className="text-center py-8">
@@ -3327,7 +3328,7 @@ export default function AdminInterface() {
                       </div>
                     </div>
                   </div>
-                ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) ? (
+                ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'crypto-chat'].includes(selectedChannel.id) ? (
                   <div className="flex flex-col h-full">
                                         {/* Messages de chat */}
                     <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
@@ -3747,7 +3748,7 @@ export default function AdminInterface() {
           ) : (
             <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '80px' }}>
               {/* Boutons en haut fixe */}
-              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream'].includes(selectedChannel.id) && (
+              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream', 'crypto-chat'].includes(selectedChannel.id) && (
                 <div className="flex justify-between items-center mb-4 sticky top-0 bg-gray-900 p-2 rounded z-10">
                   <button
                     onClick={async () => {
@@ -3780,7 +3781,7 @@ Voir plus (+10)
               )}
 
               {/* Affichage des signaux */}
-              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream'].includes(selectedChannel.id) ? (
+              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream', 'crypto-chat'].includes(selectedChannel.id) ? (
                 <div className="space-y-4">
                   {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                     <div className="text-center py-8">
@@ -4079,12 +4080,12 @@ Voir plus (+10)
                     </div>
                   </div>
                 </div>
-              ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss'].includes(selectedChannel.id) ? (
+              ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'crypto-chat'].includes(selectedChannel.id) ? (
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}
                   <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
                     {/* Bouton Voir plus pour les messages */}
-                    {(chatMessages[selectedChannel.id] || []).length >= 50 && (
+                    {['general-chat', 'profit-loss', 'crypto-chat'].includes(selectedChannel.id) && (chatMessages[selectedChannel.id] || []).length >= 50 && (
                       <div className="flex justify-center pt-2">
                         <button
                           onClick={async () => {
@@ -4911,7 +4912,7 @@ Voir plus (+10)
       )}
 
       {/* Bouton + Signal fixe */}
-      {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream'].includes(selectedChannel.id) && (
+      {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream', 'crypto-chat'].includes(selectedChannel.id) && (
         <div className="fixed bottom-6 right-6 z-50">
           <button 
             onClick={handleCreateSignal}
