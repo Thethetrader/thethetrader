@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage } from '../utils/firebase-setup';
+import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions } from '../utils/firebase-setup';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 
 export default function AdminInterface() {
@@ -897,7 +897,8 @@ export default function AdminInterface() {
   };
 
   // Fonctions pour gérer les statuts des signaux
-  const handleReaction = (signalId: string, emoji: string) => {
+  const handleReaction = async (signalId: string, emoji: string) => {
+    // Mettre à jour localement d'abord
     setSignals(prev => prev.map(signal => {
       if (signal.id === signalId) {
         const currentReactions = signal.reactions || [];
@@ -905,15 +906,21 @@ export default function AdminInterface() {
         
         if (hasReaction) {
           // Retirer la réaction
+          const newReactions = currentReactions.filter(r => r !== emoji);
+          // Sauvegarder dans Firebase
+          updateSignalReactions(signalId, newReactions);
           return {
             ...signal,
-            reactions: currentReactions.filter(r => r !== emoji)
+            reactions: newReactions
           };
         } else {
           // Ajouter la réaction
+          const newReactions = [...currentReactions, emoji];
+          // Sauvegarder dans Firebase
+          updateSignalReactions(signalId, newReactions);
           return {
             ...signal,
-            reactions: [...currentReactions, emoji]
+            reactions: newReactions
           };
         }
       }

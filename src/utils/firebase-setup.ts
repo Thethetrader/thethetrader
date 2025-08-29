@@ -220,5 +220,16 @@ export const updateSignalStatus = async (signalId: string, status: 'WIN' | 'LOSS
   }
 };
 
+export const updateSignalReactions = async (signalId: string, reactions: string[]): Promise<boolean> => {
+  try {
+    const signalRef = ref(database, `signals/${signalId}`);
+    await update(signalRef, { reactions });
+    return true;
+  } catch (error) {
+    console.error('Erreur mise à jour réactions Firebase:', error);
+    return false;
+  }
+};
+
 // Export du client Firebase pour utilisation directe
 export { database, storage }; 
