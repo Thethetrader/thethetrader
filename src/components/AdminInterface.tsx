@@ -1262,14 +1262,21 @@ export default function AdminInterface() {
     const signal = signals.find(s => s.id === signalId);
     if (!signal) return;
 
+    console.log('🔄 [ADMIN] === CHANGEMENT STATUT SIGNAL ===');
+    console.log('🔄 [ADMIN] Signal ID:', signalId, 'Ancien statut:', signal.status, 'Nouveau statut:', newStatus);
+
     if (signal.status === newStatus) {
       // Si on clique sur le même statut, on remet en ACTIVE
       const updatedSignal = { ...signal, status: 'ACTIVE', pnl: undefined, closeMessage: undefined };
+      
+      // Mettre à jour l'état local
       setSignals(prev => prev.map(s => 
         s.id === signalId ? updatedSignal : s
       ));
+      
       // Sauvegarder dans Firebase
-      updateSignalStatus(signalId, 'ACTIVE');
+      const firebaseSuccess = await updateSignalStatus(signalId, 'ACTIVE');
+      console.log('🔄 [ADMIN] Firebase mise à jour:', firebaseSuccess ? 'SUCCÈS' : 'ÉCHEC');
       
       // Mettre à jour allSignalsForStats pour que les stats se mettent à jour
       setAllSignalsForStats(prev => prev.map(s => 
@@ -1277,14 +1284,21 @@ export default function AdminInterface() {
       ));
       
       console.log('🔄 [ADMIN] Signal remis en ACTIVE - allSignalsForStats mis à jour pour les stats');
+      
+      // Les stats seront mises à jour automatiquement via allSignalsForStats
+      
     } else if (newStatus === 'ACTIVE') {
       // Si on veut remettre en ACTIVE directement
       const updatedSignal = { ...signal, status: 'ACTIVE', pnl: undefined, closeMessage: undefined };
+      
+      // Mettre à jour l'état local
       setSignals(prev => prev.map(s => 
         s.id === signalId ? updatedSignal : s
       ));
+      
       // Sauvegarder dans Firebase
-      updateSignalStatus(signalId, 'ACTIVE');
+      const firebaseSuccess = await updateSignalStatus(signalId, 'ACTIVE');
+      console.log('🔄 [ADMIN] Firebase mise à jour:', firebaseSuccess ? 'SUCCÈS' : 'ÉCHEC');
       
       // Mettre à jour allSignalsForStats pour que les stats se mettent à jour
       setAllSignalsForStats(prev => prev.map(s => 
@@ -1292,6 +1306,9 @@ export default function AdminInterface() {
       ));
       
       console.log('🔄 [ADMIN] Signal remis en ACTIVE - allSignalsForStats mis à jour pour les stats');
+      
+      // Les stats seront mises à jour automatiquement via allSignalsForStats
+      
     } else {
       // Sinon on demande le P&L
       const pnl = prompt(`Entrez le P&L final pour ce signal (ex: +$150 ou -$50):`);
@@ -1301,12 +1318,15 @@ export default function AdminInterface() {
         const closeMessage = `Position ${statusText} fermée - P&L: ${pnl}`;
         
         const updatedSignal = { ...signal, status: newStatus, pnl, closeMessage };
+        
+        // Mettre à jour l'état local
         setSignals(prev => prev.map(s => 
           s.id === signalId ? updatedSignal : s
         ));
         
         // Sauvegarder dans Firebase
-        updateSignalStatus(signalId, newStatus, pnl);
+        const firebaseSuccess = await updateSignalStatus(signalId, newStatus, pnl);
+        console.log('🔄 [ADMIN] Firebase mise à jour:', firebaseSuccess ? 'SUCCÈS' : 'ÉCHEC');
         
         // Sauvegarder le message de fermeture dans Firebase
         const signalRef = ref(database, `signals/${signalId}`);
@@ -1321,8 +1341,12 @@ export default function AdminInterface() {
         ));
         
         console.log('🔄 [ADMIN] Signal fermé - allSignalsForStats mis à jour pour les stats');
+        
+        // Les stats seront mises à jour automatiquement via allSignalsForStats
       }
     }
+    
+    console.log('🔄 [ADMIN] === FIN CHANGEMENT STATUT ===');
   };
 
   // Scroll automatique vers le bas quand de nouveaux messages arrivent ou quand on change de canal
