@@ -693,6 +693,7 @@ export default function TradingPlatformShell() {
     description: string;
     image: any;
     timestamp: string;
+    originalTimestamp: number;
     status: 'ACTIVE' | 'WIN' | 'LOSS' | 'BE';
     channel_id: string;
     reactions?: string[];
@@ -736,6 +737,7 @@ export default function TradingPlatformShell() {
             description: signal.description || '',
             image: null,
             timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+            originalTimestamp: signal.timestamp || Date.now(),
             status: signal.status || 'ACTIVE' as const,
             channel_id: signal.channel_id,
             reactions: signal.reactions || [],
@@ -1751,8 +1753,8 @@ export default function TradingPlatformShell() {
 
                 const daySignals = selectedChannel.id !== 'trading-journal' ? 
                   allSignalsForStats.filter(signal => {
-                    const signalDate = new Date();
-                    // Pour l'instant, on utilise la date actuelle car les signaux n'ont pas de date spécifique
+                    // Utiliser la vraie date du signal basée sur le timestamp original
+                    const signalDate = new Date(signal.originalTimestamp);
                     return signalDate.getDate() === dayNumber && 
                            signalDate.getMonth() === currentDate.getMonth() && 
                            signalDate.getFullYear() === currentDate.getFullYear();
@@ -1781,23 +1783,34 @@ export default function TradingPlatformShell() {
                     }
                   }
                 } else {
-                  // Logique pour les signaux (calendrier normal)
+                  // Logique pour les signaux (calendrier normal) - basée sur PnL
                   if (daySignals.length > 0) {
                     tradeCount = daySignals.length;
                     
-                    // Déterminer la couleur selon les statuts des signaux
-                    const hasWin = daySignals.some(s => s.status === 'WIN');
-                    const hasLoss = daySignals.some(s => s.status === 'LOSS');
-                    const hasBE = daySignals.some(s => s.status === 'BE');
+                    // Calculer le PnL total pour ce jour
+                    const totalPnL = daySignals.reduce((total, signal) => {
+                      if (signal.pnl) {
+                        return total + parsePnL(signal.pnl);
+                      }
+                      return total;
+                    }, 0);
                     
-                    if (hasWin && !hasLoss) {
-                      bgColor = 'bg-green-500/60 border-green-400/50 text-white'; // WIN
-                    } else if (hasLoss && !hasWin) {
-                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // LOSS
-                    } else if (hasBE || (hasWin && hasLoss)) {
-                      bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // BE ou mixte
+                    // Debug pour le jour 30
+                    if (dayNumber === 30) {
+                      console.log('🔍 Jour 30 - Signaux:', daySignals.length);
+                      console.log('🔍 Jour 30 - PnL total:', totalPnL);
+                      daySignals.forEach(signal => {
+                        console.log('🔍 Signal:', signal.symbol, 'PnL:', signal.pnl, 'Parsed:', parsePnL(signal.pnl));
+                      });
+                    }
+                    
+                    // Déterminer la couleur selon le PnL total
+                    if (totalPnL > 0) {
+                      bgColor = 'bg-green-500/60 border-green-400/50 text-white'; // PnL positif
+                    } else if (totalPnL < 0) {
+                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif
                     } else {
-                      bgColor = 'bg-yellow-500/60 border-yellow-400/50 text-white'; // ACTIVE
+                      bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
                     }
                   }
                 }

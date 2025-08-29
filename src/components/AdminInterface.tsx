@@ -697,6 +697,7 @@ export default function AdminInterface() {
     description: string;
     image: File | null;
     timestamp: string;
+    originalTimestamp: number;
     status: 'ACTIVE' | 'WIN' | 'LOSS' | 'BE';
     channel_id: string;
     reactions?: string[];
@@ -748,6 +749,7 @@ export default function AdminInterface() {
               description: signal.description || '',
               image: null,
               timestamp: timestamp,
+              originalTimestamp: signal.timestamp || Date.now(),
               status: signal.status || 'ACTIVE' as const,
               channel_id: signal.channel_id,
               reactions: signal.reactions || [],
@@ -786,7 +788,14 @@ export default function AdminInterface() {
         
         if (newSignals.length > 0) {
           console.log(`✅ [ADMIN] ${newSignals.length} nouveaux signaux ajoutés aux stats`);
-          return [...prev, ...newSignals];
+          
+          // Formater les nouveaux signaux avec originalTimestamp
+          const formattedNewSignals = newSignals.map(signal => ({
+            ...signal,
+            originalTimestamp: signal.timestamp || Date.now()
+          }));
+          
+          return [...prev, ...formattedNewSignals];
         }
         
         return prev;
@@ -794,10 +803,11 @@ export default function AdminInterface() {
     }
   }, [signals]);
 
-  // Fonctions pour les statistiques des signaux (utilisent TOUS les signaux)
+  // Fonctions pour les statistiques des signaux (utilisent TOUS les signaux du mois sélectionné)
   const calculateTotalPnL = (): number => {
     console.log('🔍 [ADMIN] calculateTotalPnL - allSignalsForStats:', allSignalsForStats.length);
-    const filteredSignals = allSignalsForStats.filter(s => s.pnl && s.status !== 'ACTIVE');
+    const monthSignals = getThisMonthSignals();
+    const filteredSignals = monthSignals.filter(s => s.pnl && s.status !== 'ACTIVE');
     console.log('🔍 [ADMIN] Signaux avec PnL et fermés:', filteredSignals.length);
     const total = filteredSignals.reduce((total, signal) => total + parsePnL(signal.pnl), 0);
     console.log('💰 [ADMIN] Total PnL calculé:', total);
@@ -806,7 +816,8 @@ export default function AdminInterface() {
 
   const calculateWinRate = (): number => {
     console.log('🔍 [ADMIN] calculateWinRate - allSignalsForStats:', allSignalsForStats.length);
-    const closedSignals = allSignalsForStats.filter(s => s.status !== 'ACTIVE');
+    const monthSignals = getThisMonthSignals();
+    const closedSignals = monthSignals.filter(s => s.status !== 'ACTIVE');
     console.log('🔍 [ADMIN] Signaux fermés:', closedSignals.length);
     if (closedSignals.length === 0) return 0;
     const wins = closedSignals.filter(s => s.status === 'WIN').length;
@@ -817,7 +828,8 @@ export default function AdminInterface() {
 
   const calculateAvgWin = (): number => {
     console.log('🔍 [ADMIN] calculateAvgWin - allSignalsForStats:', allSignalsForStats.length);
-    const winSignals = allSignalsForStats.filter(s => s.status === 'WIN' && s.pnl);
+    const monthSignals = getThisMonthSignals();
+    const winSignals = monthSignals.filter(s => s.status === 'WIN' && s.pnl);
     console.log('🔍 [ADMIN] Signaux gagnants avec PnL:', winSignals.length);
     if (winSignals.length === 0) return 0;
     const totalWinPnL = winSignals.reduce((total, signal) => total + parsePnL(signal.pnl), 0);
@@ -828,7 +840,8 @@ export default function AdminInterface() {
 
   const calculateAvgLoss = (): number => {
     console.log('🔍 [ADMIN] calculateAvgLoss - allSignalsForStats:', allSignalsForStats.length);
-    const lossSignals = allSignalsForStats.filter(s => s.status === 'LOSS' && s.pnl);
+    const monthSignals = getThisMonthSignals();
+    const lossSignals = monthSignals.filter(s => s.status === 'LOSS' && s.pnl);
     console.log('🔍 [ADMIN] Signaux perdants avec PnL:', lossSignals.length);
     if (lossSignals.length === 0) return 0;
     const totalLossPnL = lossSignals.reduce((total, signal) => total + Math.abs(parsePnL(signal.pnl)), 0);
@@ -838,75 +851,51 @@ export default function AdminInterface() {
   };
 
   const getTodaySignals = () => {
-    const today = new Date();
     console.log('🔍 [ADMIN] getTodaySignals - allSignalsForStats:', allSignalsForStats.length);
-    console.log('📅 [ADMIN] Date actuelle:', today.toDateString());
+    console.log('📅 [ADMIN] Date sélectionnée:', currentDate.toDateString());
     
-    // Les signaux n'ont que l'heure (HH:MM), pas de vraie date
-    // On considère tous les signaux comme "aujourd'hui" pour l'instant
+    // Utiliser currentDate au lieu de today
     const todaySignals = allSignalsForStats.filter(s => {
-      console.log('🔍 [ADMIN] Signal timestamp:', s.timestamp, 'Type:', typeof s.timestamp);
+      // Utiliser le timestamp original pour déterminer la vraie date
+      const signalDate = new Date(s.originalTimestamp || s.timestamp);
       
-      // Si le timestamp est au format HH:MM, on considère que c'est aujourd'hui
-      if (typeof s.timestamp === 'string' && s.timestamp.includes(':')) {
-        console.log('🔍 [ADMIN] Timestamp au format HH:MM, considéré comme aujourd\'hui');
-        return true;
-      }
-      
-      // Sinon, on essaie de parser la date
-      const signalDate = new Date(s.timestamp);
+      // Si la date est invalide, ignorer ce signal
       if (isNaN(signalDate.getTime())) {
-        console.log('🔍 [ADMIN] Date invalide, considéré comme aujourd\'hui');
-        return true;
+        return false;
       }
       
-      console.log('🔍 [ADMIN] Signal date parsée:', signalDate.toDateString());
+      const isToday = signalDate.getDate() === currentDate.getDate() &&
+             signalDate.getMonth() === currentDate.getMonth() &&
+             signalDate.getFullYear() === currentDate.getFullYear();
       
-      const isToday = signalDate.getDate() === today.getDate() &&
-             signalDate.getMonth() === today.getMonth() &&
-             signalDate.getFullYear() === today.getFullYear();
-      
-      console.log('🔍 [ADMIN] Est-ce aujourd\'hui?', isToday);
       return isToday;
     });
     
-    console.log('📅 [ADMIN] Signaux aujourd\'hui:', todaySignals.length);
+    console.log('📅 [ADMIN] Signaux pour la date sélectionnée:', todaySignals.length);
     return todaySignals;
   };
 
   const getThisMonthSignals = () => {
-    const today = new Date();
     console.log('🔍 [ADMIN] getThisMonthSignals - allSignalsForStats:', allSignalsForStats.length);
-    console.log('📅 [ADMIN] Mois actuel:', today.getMonth() + 1, today.getFullYear());
+    console.log('📅 [ADMIN] Mois sélectionné:', currentDate.getMonth() + 1, currentDate.getFullYear());
     
-    // Les signaux n'ont que l'heure (HH:MM), pas de vraie date
-    // On considère tous les signaux comme "ce mois" pour l'instant
+    // Utiliser currentDate au lieu de today
     const monthSignals = allSignalsForStats.filter(s => {
-      console.log('🔍 [ADMIN] Signal timestamp:', s.timestamp, 'Type:', typeof s.timestamp);
+      // Utiliser le timestamp original pour déterminer la vraie date
+      const signalDate = new Date(s.originalTimestamp || s.timestamp);
       
-      // Si le timestamp est au format HH:MM, on considère que c'est ce mois
-      if (typeof s.timestamp === 'string' && s.timestamp.includes(':')) {
-        console.log('🔍 [ADMIN] Timestamp au format HH:MM, considéré comme ce mois');
-        return true;
-      }
-      
-      // Sinon, on essaie de parser la date
-      const signalDate = new Date(s.timestamp);
+      // Si la date est invalide, ignorer ce signal
       if (isNaN(signalDate.getTime())) {
-        console.log('🔍 [ADMIN] Date invalide, considéré comme ce mois');
-        return true;
+        return false;
       }
       
-      console.log('🔍 [ADMIN] Signal date parsée:', signalDate.toDateString());
+      const isThisMonth = signalDate.getMonth() === currentDate.getMonth() &&
+             signalDate.getFullYear() === currentDate.getFullYear();
       
-      const isThisMonth = signalDate.getMonth() === today.getMonth() &&
-             signalDate.getFullYear() === today.getFullYear();
-      
-      console.log('🔍 [ADMIN] Est-ce ce mois?', isThisMonth);
       return isThisMonth;
     });
     
-    console.log('📅 [ADMIN] Signaux ce mois:', monthSignals.length);
+    console.log('📅 [ADMIN] Signaux pour le mois sélectionné:', monthSignals.length);
     return monthSignals;
   };
 
@@ -965,34 +954,43 @@ export default function AdminInterface() {
   };
 
   const getWeeklyBreakdown = () => {
-    const today = new Date();
-    const currentMonth = today.getMonth();
-    const currentYear = today.getFullYear();
+    // Utiliser currentDate au lieu de today
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
     
-    // Créer 4 semaines du mois en cours
+    // Calculer le nombre de semaines nécessaires pour ce mois
+    const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+    const totalWeeks = Math.ceil(lastDayOfMonth.getDate() / 7);
+    
+    console.log(`🔍 [ADMIN] Mois ${currentMonth + 1}/${currentYear} - ${lastDayOfMonth.getDate()} jours - ${totalWeeks} semaines`);
+    
+    // Créer les semaines nécessaires pour ce mois
     const weeks = [];
-    for (let weekNum = 1; weekNum <= 4; weekNum++) {
+    for (let weekNum = 1; weekNum <= totalWeeks; weekNum++) {
       const weekStart = new Date(currentYear, currentMonth, (weekNum - 1) * 7 + 1);
-      const weekEnd = new Date(currentYear, currentMonth, weekNum * 7);
+      const weekEnd = new Date(currentYear, currentMonth, Math.min(weekNum * 7, lastDayOfMonth.getDate()));
+      
+      console.log(`🔍 [ADMIN] Week ${weekNum} - Début:`, weekStart.toDateString(), 'Fin:', weekEnd.toDateString());
       
       const weekSignals = allSignalsForStats.filter(s => {
-        // Si le timestamp est au format HH:MM, on considère que c'est cette semaine
-        if (typeof s.timestamp === 'string' && s.timestamp.includes(':')) {
-          console.log('🔍 [ADMIN] Weekly - Timestamp HH:MM, considéré comme cette semaine');
-          return true;
-        }
+        // Utiliser le timestamp original pour déterminer la vraie date
+        const signalDate = new Date(s.originalTimestamp || s.timestamp);
         
-        // Sinon, on essaie de parser la date
-        const signalDate = new Date(s.timestamp);
+        // Si la date est invalide, ignorer ce signal
         if (isNaN(signalDate.getTime())) {
-          console.log('🔍 [ADMIN] Weekly - Date invalide, considéré comme cette semaine');
-          return true;
+          console.log('🔍 [ADMIN] Weekly - Date invalide, signal ignoré');
+          return false;
         }
         
         const isInWeek = signalDate >= weekStart && 
                signalDate <= weekEnd &&
                signalDate.getMonth() === currentMonth &&
                signalDate.getFullYear() === currentYear;
+        
+        // Debug pour la semaine 4
+        if (weekNum === 4) {
+          console.log('🔍 [ADMIN] Week 4 - Signal:', s.symbol, 'Date:', signalDate.toDateString(), 'Dans semaine 4?', isInWeek);
+        }
         
         console.log('🔍 [ADMIN] Weekly - Signal date:', signalDate.toDateString(), 'Dans semaine', weekNum, '?', isInWeek);
         return isInWeek;
@@ -1004,7 +1002,7 @@ export default function AdminInterface() {
       const losses = closedSignals.filter(s => s.status === 'LOSS').length;
       
       // Vérifier si c'est la semaine actuelle
-      const todayWeek = Math.ceil(today.getDate() / 7);
+      const todayWeek = Math.ceil(currentDate.getDate() / 7);
       const isCurrentWeek = weekNum === todayWeek;
       
       weeks.push({
@@ -1021,15 +1019,19 @@ export default function AdminInterface() {
   };
 
   const getWeeklyBreakdownTrades = () => {
-    const today = new Date();
-    const currentMonth = today.getMonth();
-    const currentYear = today.getFullYear();
+    // Utiliser currentDate au lieu de today
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
     
-    // Créer 4 semaines du mois en cours
+    // Calculer le nombre de semaines nécessaires pour ce mois
+    const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+    const totalWeeks = Math.ceil(lastDayOfMonth.getDate() / 7);
+    
+    // Créer les semaines nécessaires pour ce mois
     const weeks = [];
-    for (let weekNum = 1; weekNum <= 4; weekNum++) {
+    for (let weekNum = 1; weekNum <= totalWeeks; weekNum++) {
       const weekStart = new Date(currentYear, currentMonth, (weekNum - 1) * 7 + 1);
-      const weekEnd = new Date(currentYear, currentMonth, weekNum * 7);
+      const weekEnd = new Date(currentYear, currentMonth, Math.min(weekNum * 7, lastDayOfMonth.getDate()));
       
       const weekTrades = personalTrades.filter(t => {
         const tradeDate = new Date(t.date);
@@ -1044,7 +1046,7 @@ export default function AdminInterface() {
       const losses = weekTrades.filter(t => t.status === 'LOSS').length;
       
       // Vérifier si c'est la semaine actuelle
-      const todayWeek = Math.ceil(today.getDate() / 7);
+      const todayWeek = Math.ceil(currentDate.getDate() / 7);
       const isCurrentWeek = weekNum === todayWeek;
       
       weeks.push({
@@ -1676,22 +1678,21 @@ export default function AdminInterface() {
   };
 
   const getSignalsForDate = (date: Date) => {
-    // Pour les signaux, on utilise une logique simple basée sur le jour actuel
-    // car les signaux n'ont pas de date stockée, seulement un timestamp
-    const today = new Date();
-    const clickedDay = date.getDate();
-    const clickedMonth = date.getMonth();
-    const clickedYear = date.getFullYear();
-    
-    // Si c'est aujourd'hui, retourner tous les signaux
-    if (clickedDay === today.getDate() && 
-        clickedMonth === today.getMonth() && 
-        clickedYear === today.getFullYear()) {
-      return signals;
-    }
-    
-    // Sinon, retourner un tableau vide (pas de signaux pour les autres jours)
-    return [];
+    // Utiliser allSignalsForStats avec originalTimestamp pour filtrer par date
+    return allSignalsForStats.filter(signal => {
+      // Utiliser le timestamp original pour déterminer la vraie date
+      const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
+      
+      // Si la date est invalide, ignorer ce signal
+      if (isNaN(signalDate.getTime())) {
+        return false;
+      }
+      
+      // Vérifier si le signal correspond à la date demandée
+      return signalDate.getDate() === date.getDate() && 
+             signalDate.getMonth() === date.getMonth() && 
+             signalDate.getFullYear() === date.getFullYear();
+    });
   };
 
   const handleSignalSubmit = async () => {
@@ -2230,47 +2231,21 @@ export default function AdminInterface() {
 
                 const daySignals = selectedChannel.id !== 'trading-journal' ? 
                   allSignalsForStats.filter(signal => {
-                    // Debug pour le jour 30
-                    if (dayNumber === 30) {
-                      console.log('🔍 [ADMIN] Filtrage signal pour jour 30:', signal.symbol, 'Timestamp:', signal.timestamp, 'Type:', typeof signal.timestamp);
-                    }
+                    // Utiliser le timestamp original pour déterminer la vraie date
+                    const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
                     
-                    // Si le timestamp est au format HH:MM, on considère que c'est le jour actuel
-                    if (typeof signal.timestamp === 'string' && signal.timestamp.includes(':')) {
-                      const today = new Date();
-                      const isMatch = today.getDate() === dayNumber && 
-                                    today.getMonth() === currentDate.getMonth() && 
-                                    today.getFullYear() === currentDate.getFullYear();
-                      
-                      if (dayNumber === 30) {
-                        console.log('🔍 [ADMIN] Timestamp HH:MM, considéré comme aujourd\'hui, match:', isMatch);
-                      }
-                      
-                      return isMatch;
-                    }
-                    
-                    // Sinon, on utilise la vraie date du signal
-                    const signalDate = new Date(signal.timestamp);
+                    // Si la date est invalide, ignorer ce signal
                     if (isNaN(signalDate.getTime())) {
-                      // Date invalide, on considère que c'est le jour actuel
-                      const today = new Date();
-                      const isMatch = today.getDate() === dayNumber && 
-                                    today.getMonth() === currentDate.getMonth() && 
-                                    today.getFullYear() === currentDate.getFullYear();
-                      
-                      if (dayNumber === 30) {
-                        console.log('🔍 [ADMIN] Date invalide, considéré comme aujourd\'hui, match:', isMatch);
-                      }
-                      
-                      return isMatch;
+                      return false;
                     }
                     
                     const isMatch = signalDate.getDate() === dayNumber && 
                                   signalDate.getMonth() === currentDate.getMonth() && 
                                   signalDate.getFullYear() === currentDate.getFullYear();
                     
-                    if (dayNumber === 30) {
-                      console.log('🔍 [ADMIN] Vraie date du signal:', signalDate.toDateString(), 'Match jour 30:', isMatch);
+                    // Debug pour les jours 29 et 30
+                    if (dayNumber === 29 || dayNumber === 30) {
+                      console.log('🔍 [ADMIN] Jour', dayNumber, '- Signal:', signal.symbol, 'originalTimestamp:', signal.originalTimestamp, 'date parsée:', signalDate.toDateString(), 'match:', isMatch);
                     }
                     
                     return isMatch;
@@ -2299,37 +2274,40 @@ export default function AdminInterface() {
                     }
                   }
                 } else {
-                                  // Logique pour les signaux (calendrier normal)
-                if (daySignals.length > 0) {
-                  tradeCount = daySignals.length;
-                  
-                  // Déterminer la couleur selon les statuts des signaux
-                  const hasWin = daySignals.some(s => s.status === 'WIN');
-                  const hasLoss = daySignals.some(s => s.status === 'LOSS');
-                  const hasBE = daySignals.some(s => s.status === 'BE');
-                  
-                  // Debug pour le jour 30
-                  if (dayNumber === 30) {
-                    console.log('🔍 [ADMIN] === DEBUG JOUR 30 ===');
-                    console.log('🔍 [ADMIN] daySignals:', daySignals.length);
-                    console.log('🔍 [ADMIN] Statuts des signaux:', daySignals.map(s => ({ status: s.status, symbol: s.symbol })));
-                    console.log('🔍 [ADMIN] hasWin:', hasWin, 'hasLoss:', hasLoss, 'hasBE:', hasBE);
+                  // Logique pour les signaux (calendrier normal) - basée sur PnL
+                  if (daySignals.length > 0) {
+                    tradeCount = daySignals.length;
+                    
+                    // Calculer le PnL total pour ce jour
+                    const totalPnL = daySignals.reduce((total, signal) => {
+                      if (signal.pnl) {
+                        return total + parsePnL(signal.pnl);
+                      }
+                      return total;
+                    }, 0);
+                    
+                    // Debug pour le jour 30
+                    if (dayNumber === 30) {
+                      console.log('🔍 [ADMIN] === DEBUG JOUR 30 ===');
+                      console.log('🔍 [ADMIN] daySignals:', daySignals.length);
+                      console.log('🔍 [ADMIN] PnL total:', totalPnL);
+                      daySignals.forEach(signal => {
+                        console.log('🔍 [ADMIN] Signal:', signal.symbol, 'PnL:', signal.pnl, 'Parsed:', parsePnL(signal.pnl));
+                      });
+                    }
+                    
+                    // Déterminer la couleur selon le PnL total
+                    if (totalPnL > 0) {
+                      bgColor = 'bg-green-400/40 border-green-300/30 text-white'; // PnL positif - vert plus pale
+                      if (dayNumber === 30) console.log('🎨 [ADMIN] Jour 30: Couleur VERTE (PnL positif)');
+                    } else if (totalPnL < 0) {
+                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif
+                      if (dayNumber === 30) console.log('🎨 [ADMIN] Jour 30: Couleur ROUGE (PnL négatif)');
+                    } else {
+                      bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
+                      if (dayNumber === 30) console.log('🎨 [ADMIN] Jour 30: Couleur BLEUE (PnL = 0)');
+                    }
                   }
-                  
-                  if (hasWin && !hasLoss) {
-                    bgColor = 'bg-green-500/60 border-green-400/50 text-white'; // WIN
-                    if (dayNumber === 30) console.log('🎨 [ADMIN] Jour 30: Couleur VERTE (WIN)');
-                  } else if (hasLoss && !hasWin) {
-                    bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // LOSS
-                    if (dayNumber === 30) console.log('🎨 [ADMIN] Jour 30: Couleur ROUGE (LOSS)');
-                  } else if (hasBE || (hasWin && hasLoss)) {
-                    bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // BE ou mixte
-                    if (dayNumber === 30) console.log('🎨 [ADMIN] Jour 30: Couleur BLEUE (BE/MIXTE)');
-                  } else {
-                    bgColor = 'bg-yellow-500/60 border-yellow-400/50 text-white'; // ACTIVE
-                    if (dayNumber === 30) console.log('🎨 [ADMIN] Jour 30: Couleur JAUNE (ACTIVE)');
-                  }
-                }
                 }
 
                 return (
@@ -2348,13 +2326,12 @@ export default function AdminInterface() {
                           // Ouvrir le popup des trades si il y en a
                           const tradesForDate = getTradesForDate(clickedDate);
                           console.log('Clic sur jour:', dayNumber, 'Trades trouvés:', tradesForDate.length);
-                                                  // Désactivé temporairement pour éviter les bugs
-                        // if (tradesForDate.length > 0) {
-                        //   console.log('Trades trouvés, ouverture modal...');
-                        //   setSelectedTradesDate(clickedDate);
-                        //   setShowTradesModal(true);
-                        // }
-                        console.log('Clic sur jour:', dayNumber, 'Trades trouvés:', tradesForDate.length);
+                          
+                          if (tradesForDate.length > 0) {
+                            console.log('Trades trouvés, ouverture modal...');
+                            setSelectedTradesDate(clickedDate);
+                            setShowTradesModal(true);
+                          }
                         } else {
                           // Ouvrir le popup des signaux si il y en a
                           const signalsForDate = getSignalsForDate(clickedDate);
