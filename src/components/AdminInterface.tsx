@@ -802,21 +802,27 @@ export default function AdminInterface() {
 
   const getTodaySignals = () => {
     const today = new Date();
-    return signals.filter(s => {
+    console.log('🔍 [ADMIN] getTodaySignals - allSignalsForStats:', allSignalsForStats.length);
+    const todaySignals = allSignalsForStats.filter(s => {
       const signalDate = new Date(s.timestamp);
       return signalDate.getDate() === today.getDate() &&
              signalDate.getMonth() === today.getMonth() &&
              signalDate.getFullYear() === today.getFullYear();
     });
+    console.log('📅 [ADMIN] Signaux aujourd\'hui:', todaySignals.length);
+    return todaySignals;
   };
 
   const getThisMonthSignals = () => {
     const today = new Date();
-    return signals.filter(s => {
+    console.log('🔍 [ADMIN] getThisMonthSignals - allSignalsForStats:', allSignalsForStats.length);
+    const monthSignals = allSignalsForStats.filter(s => {
       const signalDate = new Date(s.timestamp);
       return signalDate.getMonth() === today.getMonth() &&
              signalDate.getFullYear() === today.getFullYear();
     });
+    console.log('📅 [ADMIN] Signaux ce mois:', monthSignals.length);
+    return monthSignals;
   };
 
   // Fonctions pour les statistiques des trades personnels
@@ -884,7 +890,7 @@ export default function AdminInterface() {
       const weekStart = new Date(currentYear, currentMonth, (weekNum - 1) * 7 + 1);
       const weekEnd = new Date(currentYear, currentMonth, weekNum * 7);
       
-      const weekSignals = signals.filter(s => {
+      const weekSignals = allSignalsForStats.filter(s => {
         const signalDate = new Date(s.timestamp);
         return signalDate >= weekStart && 
                signalDate <= weekEnd &&
@@ -2058,7 +2064,7 @@ export default function AdminInterface() {
                   }) : [];
 
                 const daySignals = selectedChannel.id !== 'trading-journal' ? 
-                  signals.filter(signal => {
+                  allSignalsForStats.filter(signal => {
                     const signalDate = new Date();
                     // Pour l'instant, on utilise la date actuelle car les signaux n'ont pas de date spécifique
                     return signalDate.getDate() === dayNumber && 
