@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getMessages, getSignals, subscribeToMessages, addMessage } from '../../utils/supabase-setup';
-import { initializeDatabase } from '../../utils/init-database';
+import { getMessages, getSignals, subscribeToMessages, subscribeToSignals, addMessage } from '../../utils/firebase-setup';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../../utils/profile-manager';
+import { initializeNotifications, notifyNewSignal, notifySignalClosed } from '../../utils/push-notifications';
 
 export default function TradingPlatformShell() {
   const [selectedChannel, setSelectedChannel] = useState({ id: 'crypto', name: 'crypto' });
@@ -33,36 +33,10 @@ export default function TradingPlatformShell() {
     channel_id: string;
     reactions?: string[];
     pnl?: string;
-  }>>([{
-    id: 'test-1',
-    type: 'BUY',
-    symbol: 'BTC',
-    timeframe: '1 min',
-    entry: '45000',
-    takeProfit: '46000',
-    stopLoss: '44000',
-    description: 'Signal de test avec boutons WIN/LOSS/BE',
-    image: null,
-    timestamp: '22:30',
-    status: 'ACTIVE',
-    channel_id: 'crypto'
-  }, {
-    id: 'test-2',
-    type: 'SELL',
-    symbol: 'ETH',
-    timeframe: '5 min',
-    entry: '2800',
-    takeProfit: '2750',
-    stopLoss: '2850',
-    description: 'Signal ETH avec boutons visibles',
-    image: null,
-    timestamp: '22:35',
-    status: 'ACTIVE',
-    channel_id: 'forex',
-    reactions: []
-  }]);
+    closeMessage?: string;
+  }>>([]);
 
-  // Fonction pour charger les messages depuis Supabase
+  // Fonction pour charger les messages depuis Firebase
   const loadMessages = async (channelId: string) => {
     try {
       const messages = await getMessages(channelId);
@@ -103,37 +77,115 @@ export default function TradingPlatformShell() {
     }
   };
 
-  // Fonction pour charger les signaux depuis Supabase
+  // Fonction pour charger les signaux depuis Firebase
   const loadSignals = async (channelId: string) => {
     try {
-      const signals = await getSignals(channelId);
+      console.log('🚀 DÉBUT CHARGEMENT SIGNAUX PWA pour canal:', channelId);
+      const signals = await getSignals(channelId, 3); // Limiter à 3 signaux
+      console.log('🔍 SIGNAUX BRUTS RÉCUPÉRÉS DEPUIS FIREBASE pour', channelId, ':', signals.map(s => ({symbol: s.symbol, type: s.type, id: s.id})));
+      
       const formattedSignals = signals.map(signal => ({
         id: signal.id || '',
         type: signal.type,
         symbol: signal.symbol,
         timeframe: signal.timeframe,
-        entry: signal.entry_price?.toString() || 'N/A',
-        takeProfit: signal.take_profit?.toString() || 'N/A',
-        stopLoss: signal.stop_loss?.toString() || 'N/A',
+        entry: signal.entry?.toString() || 'N/A',
+        takeProfit: signal.takeProfit?.toString() || 'N/A',
+        stopLoss: signal.stopLoss?.toString() || 'N/A',
         description: signal.description || '',
         image: null,
         timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         status: signal.status || 'ACTIVE' as const,
         channel_id: signal.channel_id,
-        reactions: []
+        reactions: signal.reactions || [],
+        pnl: signal.pnl,
+        closeMessage: signal.closeMessage
       }));
       
       setSignals(formattedSignals);
-      console.log(`✅ Signaux chargés pour ${channelId}:`, formattedSignals.length);
+      console.log(`✅ SIGNAUX CHARGÉS ET AFFICHÉS DANS PWA pour ${channelId}:`, formattedSignals.length);
+      console.log('🔍 DÉTAIL DES SIGNAUX AFFICHÉS:', formattedSignals.map(s => ({symbol: s.symbol, type: s.type, id: s.id, timestamp: s.timestamp})));
     } catch (error) {
       console.error('❌ Erreur chargement signaux:', error);
     }
   };
 
-  // Initialiser l'app avec Supabase
+  // Fonctions pour les statistiques fixes
+  const getFixedStats = () => {
+    return JSON.parse(localStorage.getItem('tradingStats') || JSON.stringify({
+      totalPnL: 0,
+      winRate: 0,
+      avgWin: 0,
+      avgLoss: 0,
+      totalTrades: 0
+    }));
+  };
+
+  const updateFixedStats = (signal: any) => {
+    const currentStats = getFixedStats();
+    const pnlValue = parseFloat(signal.pnl?.replace(/[^\d.-]/g, '') || '0');
+    
+    const newStats = {
+      totalPnL: currentStats.totalPnL + pnlValue,
+      winRate: 0, // Sera recalculé
+      avgWin: currentStats.avgWin,
+      avgLoss: currentStats.avgLoss,
+      totalTrades: currentStats.totalTrades + 1
+    };
+
+    const allSignals = JSON.parse(localStorage.getItem('allSignals') || '[]');
+    allSignals.push(signal);
+    const closedSignals = allSignals.filter((s: any) => s.status !== 'ACTIVE');
+    const wins = closedSignals.filter((s: any) => s.status === 'WIN');
+    const losses = closedSignals.filter((s: any) => s.status === 'LOSS');
+
+    newStats.winRate = closedSignals.length > 0 ? Math.round((wins.length / closedSignals.length) * 100) : 0;
+    
+    if (wins.length > 0) {
+      newStats.avgWin = Math.round(wins.reduce((total: number, s: any) => total + (parseFloat(s.pnl?.replace(/[^\d.-]/g, '') || '0')), 0) / wins.length);
+    }
+    
+    if (losses.length > 0) {
+      newStats.avgLoss = Math.round(losses.reduce((total: number, s: any) => total + Math.abs(parseFloat(s.pnl?.replace(/[^\d.-]/g, '') || '0')), 0) / losses.length);
+    }
+
+    localStorage.setItem('tradingStats', JSON.stringify(newStats));
+    localStorage.setItem('allSignals', JSON.stringify(allSignals));
+  };
+
+  const calculateTotalPnL = (): number => {
+    return getFixedStats().totalPnL;
+  };
+
+  const calculateWinRate = (): number => {
+    return getFixedStats().winRate;
+  };
+
+  const calculateAvgWin = (): number => {
+    return getFixedStats().avgWin;
+  };
+
+  const calculateAvgLoss = (): number => {
+    return getFixedStats().avgLoss;
+  };
+
+  // Fonction de debug pour voir les signaux actuels
+  const debugSignals = () => {
+    const currentSignals = signals.filter(s => s.channel_id === selectedChannel.id);
+    console.log('🔍 DEBUG - SIGNAUX ACTUELS DANS PWA pour canal', selectedChannel.id, ':');
+    currentSignals.forEach((signal, index) => {
+      console.log(`${index + 1}. ${signal.symbol} ${signal.type} - ID: ${signal.id} - Timestamp: ${signal.timestamp}`);
+    });
+    console.log(`📊 Total: ${currentSignals.length} signaux`);
+    alert(`Debug: ${currentSignals.length} signaux dans le canal ${selectedChannel.id}. Regarde la console pour les détails.`);
+  };
+
+  // Initialiser l'app avec Firebase
   useEffect(() => {
     const initApp = async () => {
-      await initializeDatabase();
+      // Initialiser les notifications
+      await initializeNotifications();
+      
       await loadMessages(selectedChannel.id);
       await loadSignals(selectedChannel.id);
     };
@@ -193,6 +245,62 @@ export default function TradingPlatformShell() {
       clearInterval(interval);
     };
   }, [selectedChannel.id]);
+
+  // Subscription temps réel pour les signaux (globale)
+  useEffect(() => {
+    console.log('🔄 Initialisation subscription signaux globale...');
+    
+    const timeoutId = setTimeout(() => {
+      const signalSubscription = subscribeToSignals('all', (newSignal) => {
+        console.log('🆕 NOUVEAU SIGNAL REÇU DANS PWA - Canal:', newSignal.channel_id, 'Signal:', newSignal.symbol, newSignal.type, 'ID:', newSignal.id);
+        
+        // Vérifier si le signal existe déjà
+        const exists = signals.some(s => 
+          s.id === newSignal.id ||
+          (s.symbol === newSignal.symbol &&
+           s.type === newSignal.type &&
+           s.channel_id === newSignal.channel_id &&
+           Math.abs(new Date(s.timestamp).getTime() - (typeof newSignal.timestamp === 'number' ? newSignal.timestamp : Date.now())) < 60000) // Même minute
+        );
+
+        if (!exists) {
+          const formattedSignal = {
+            id: newSignal.id || '',
+            type: newSignal.type,
+            symbol: newSignal.symbol,
+            timeframe: newSignal.timeframe,
+            entry: newSignal.entry?.toString() || 'N/A',
+            takeProfit: newSignal.takeProfit?.toString() || 'N/A',
+            stopLoss: newSignal.stopLoss?.toString() || 'N/A',
+            description: newSignal.description || '',
+            image: null,
+            timestamp: new Date(newSignal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+            status: newSignal.status || 'ACTIVE' as const,
+            channel_id: newSignal.channel_id,
+            reactions: newSignal.reactions || [],
+            pnl: newSignal.pnl,
+            closeMessage: newSignal.closeMessage
+          };
+          console.log('✅ Signal ajouté à la liste (temps réel):', formattedSignal.symbol, formattedSignal.type);
+          // Ajouter à la fin (les signaux sont déjà dans l'ordre chronologique)
+          setSignals(prev => [...prev, formattedSignal]);
+          
+          // Notifier pour les nouveaux signaux
+          notifyNewSignal(formattedSignal);
+        } else {
+          console.log('🚫 Signal déjà existant (temps réel) - ignoré:', newSignal.symbol, newSignal.type);
+        }
+      });
+
+      return () => {
+        signalSubscription.unsubscribe();
+      };
+    }, 2000); // Délai de 2 secondes pour éviter les doublons avec le chargement initial
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, []); // Subscription globale - pas de dépendance
   const [chatMessage, setChatMessage] = useState('');
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
@@ -603,33 +711,7 @@ export default function TradingPlatformShell() {
     return parseFloat(cleanStr) || 0;
   };
 
-  // Fonctions pour les statistiques des signaux
-  const calculateTotalPnL = (): number => {
-    return signals
-      .filter(s => s.pnl && s.status !== 'ACTIVE')
-      .reduce((total, signal) => total + parsePnL(signal.pnl), 0);
-  };
 
-  const calculateWinRate = (): number => {
-    const closedSignals = signals.filter(s => s.status !== 'ACTIVE');
-    if (closedSignals.length === 0) return 0;
-    const wins = closedSignals.filter(s => s.status === 'WIN').length;
-    return Math.round((wins / closedSignals.length) * 100);
-  };
-
-  const calculateAvgWin = (): number => {
-    const winSignals = signals.filter(s => s.status === 'WIN' && s.pnl);
-    if (winSignals.length === 0) return 0;
-    const totalWinPnL = winSignals.reduce((total, signal) => total + parsePnL(signal.pnl), 0);
-    return Math.round(totalWinPnL / winSignals.length);
-  };
-
-  const calculateAvgLoss = (): number => {
-    const lossSignals = signals.filter(s => s.status === 'LOSS' && s.pnl);
-    if (lossSignals.length === 0) return 0;
-    const totalLossPnL = lossSignals.reduce((total, signal) => total + Math.abs(parsePnL(signal.pnl)), 0);
-    return Math.round(totalLossPnL / lossSignals.length);
-  };
 
   const getTodaySignals = () => {
     const today = new Date();
@@ -2242,6 +2324,31 @@ export default function TradingPlatformShell() {
                 {/* Affichage des signaux */}
                 {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream'].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
+                    {/* Bouton Voir plus fixé en haut */}
+                    <div className="sticky top-0 z-10 bg-gray-900 p-2 rounded-lg border border-gray-700">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => {
+                            const currentSignals = signals.filter(s => s.channel_id === selectedChannel.id);
+                            if (currentSignals.length > 0) {
+                              const oldestSignal = currentSignals[0];
+                              const beforeTimestamp = new Date(oldestSignal.timestamp).getTime();
+                              loadSignals(selectedChannel.id);
+                            }
+                          }}
+                          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors"
+                        >
+                          📊 Voir plus
+                        </button>
+                        <button
+                          onClick={debugSignals}
+                          className="px-3 py-2 text-xs rounded bg-blue-600 hover:bg-blue-500 text-white"
+                          title="Voir les signaux actuels dans la console"
+                        >
+                          🔍 Debug
+                        </button>
+                      </div>
+                    </div>
                     {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                       <div className="text-center py-8">
                         <div className="text-gray-400 text-sm">Aucun signal pour le moment</div>
@@ -2519,6 +2626,24 @@ export default function TradingPlatformShell() {
                   <div className="flex flex-col h-full">
                     {/* Messages de chat */}
                     <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
+                      {/* Bouton Voir plus pour les messages (desktop) */}
+                      {['general-chat', 'profit-loss'].includes(selectedChannel.id) && (
+                        <div className="sticky top-0 z-10 bg-gray-900 p-2 rounded-lg border border-gray-700 mb-4">
+                          <button
+                            onClick={() => {
+                              const currentMessages = messages[selectedChannel.id] || [];
+                              if (currentMessages.length > 0) {
+                                // Charger plus de messages
+                                loadMessages(selectedChannel.id);
+                              }
+                            }}
+                            className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium transition-colors"
+                          >
+                            💬 Voir plus de messages
+                          </button>
+                        </div>
+                      )}
+                      
                       {/* Cours Scalping pour le salon Fondamentaux */}
                       {selectedChannel.id === 'fondamentaux' && (
                         <div className="bg-gray-800 rounded-lg p-6 mb-6">
@@ -2683,6 +2808,24 @@ export default function TradingPlatformShell() {
                               <p className="text-sm">Ce document est fourni à des fins éducatives uniquement. Le trading comporte des risques significatifs de perte financière. Il est essentiel de bien comprendre les risques avant de trader et ne jamais risquer plus que ce que vous pouvez vous permettre de perdre.</p>
                             </div>
                           </div>
+                        </div>
+                      )}
+                      
+                      {/* Bouton Voir plus pour les messages */}
+                      {['general-chat', 'profit-loss'].includes(selectedChannel.id) && (
+                        <div className="sticky top-0 z-10 bg-gray-900 p-2 rounded-lg border border-gray-700 mb-4">
+                          <button
+                            onClick={() => {
+                              const currentMessages = messages[selectedChannel.id] || [];
+                              if (currentMessages.length > 0) {
+                                // Charger plus de messages
+                                loadMessages(selectedChannel.id);
+                              }
+                            }}
+                            className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium transition-colors"
+                          >
+                            💬 Voir plus de messages
+                          </button>
                         </div>
                       )}
                       
@@ -2942,6 +3085,31 @@ export default function TradingPlatformShell() {
               {/* Affichage des signaux */}
               {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'profit-loss', 'livestream'].includes(selectedChannel.id) ? (
                 <div className="space-y-4">
+                  {/* Bouton Voir plus fixé en haut (desktop) */}
+                  <div className="sticky top-0 z-10 bg-gray-900 p-2 rounded-lg border border-gray-700">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          const currentSignals = signals.filter(s => s.channel_id === selectedChannel.id);
+                          if (currentSignals.length > 0) {
+                            const oldestSignal = currentSignals[0];
+                            const beforeTimestamp = new Date(oldestSignal.timestamp).getTime();
+                            loadSignals(selectedChannel.id);
+                          }
+                        }}
+                        className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors"
+                      >
+                        📊 Voir plus
+                      </button>
+                      <button
+                        onClick={debugSignals}
+                        className="px-3 py-2 text-xs rounded bg-blue-600 hover:bg-blue-500 text-white"
+                        title="Voir les signaux actuels dans la console"
+                      >
+                        🔍 Debug
+                      </button>
+                    </div>
+                  </div>
                   {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                     <div className="text-center py-8">
                       <div className="text-gray-400 text-sm">Aucun signal pour le moment</div>
@@ -3243,6 +3411,24 @@ export default function TradingPlatformShell() {
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}
                   <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
+                    {/* Bouton Voir plus pour les messages (mobile) */}
+                    {['general-chat', 'profit-loss'].includes(selectedChannel.id) && (
+                      <div className="sticky top-0 z-10 bg-gray-900 p-2 rounded-lg border border-gray-700 mb-4">
+                        <button
+                          onClick={() => {
+                            const currentMessages = messages[selectedChannel.id] || [];
+                            if (currentMessages.length > 0) {
+                              // Charger plus de messages
+                              loadMessages(selectedChannel.id);
+                            }
+                          }}
+                          className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium transition-colors w-full"
+                        >
+                          💬 Voir plus de messages
+                        </button>
+                      </div>
+                    )}
+                    
                     {(messages[selectedChannel.id] || []).length > 0 && (
                       (messages[selectedChannel.id] || []).map((message) => (
                         <div key={message.id} className="flex items-start gap-3">
