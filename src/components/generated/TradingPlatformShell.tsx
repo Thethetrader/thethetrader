@@ -3,8 +3,12 @@ import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, 
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
 
 import { syncProfileImage, getProfileImage, initializeProfile } from '../../utils/profile-manager';
+import { useStatsSync } from '../../hooks/useStatsSync';
 
 export default function TradingPlatformShell() {
+  // Hook pour les stats en temps réel synchronisées avec l'admin
+  const { stats, allSignalsForStats: realTimeSignals } = useStatsSync();
+  
   const [selectedChannel, setSelectedChannel] = useState({ id: 'general-chat', name: 'general-chat' });
   const [view, setView] = useState<'signals' | 'calendar'>('signals');
   const [mobileView, setMobileView] = useState<'channels' | 'content'>('channels');
@@ -833,48 +837,11 @@ export default function TradingPlatformShell() {
     loadAllSignalsForStats();
   }, []);
 
-  // Fonctions pour les statistiques des signaux (utilisent TOUS les signaux)
-  const calculateTotalPnL = (): number => {
-    console.log('🔍 calculateTotalPnL - allSignalsForStats:', allSignalsForStats.length);
-    const filteredSignals = allSignalsForStats.filter(s => s.pnl && s.status !== 'ACTIVE');
-    console.log('🔍 Signaux avec PnL et fermés:', filteredSignals.length);
-    const total = filteredSignals.reduce((total, signal) => total + parsePnL(signal.pnl), 0);
-    console.log('💰 Total PnL calculé:', total);
-    return total;
-  };
-
-  const calculateWinRate = (): number => {
-    console.log('🔍 calculateWinRate - allSignalsForStats:', allSignalsForStats.length);
-    const closedSignals = allSignalsForStats.filter(s => s.status !== 'ACTIVE');
-    console.log('🔍 Signaux fermés:', closedSignals.length);
-    if (closedSignals.length === 0) return 0;
-    const wins = closedSignals.filter(s => s.status === 'WIN').length;
-    const winRate = Math.round((wins / closedSignals.length) * 100);
-    console.log('🏆 Win Rate calculé:', winRate + '%');
-    return winRate;
-  };
-
-  const calculateAvgWin = (): number => {
-    console.log('🔍 calculateAvgWin - allSignalsForStats:', allSignalsForStats.length);
-    const winSignals = allSignalsForStats.filter(s => s.status === 'WIN' && s.pnl);
-    console.log('🔍 Signaux gagnants avec PnL:', winSignals.length);
-    if (winSignals.length === 0) return 0;
-    const totalWinPnL = winSignals.reduce((total, signal) => total + parsePnL(signal.pnl), 0);
-    const avgWin = Math.round(totalWinPnL / winSignals.length);
-    console.log('💚 Moyenne gains calculée:', avgWin);
-    return avgWin;
-  };
-
-  const calculateAvgLoss = (): number => {
-    console.log('🔍 calculateAvgLoss - allSignalsForStats:', allSignalsForStats.length);
-    const lossSignals = allSignalsForStats.filter(s => s.status === 'LOSS' && s.pnl);
-    console.log('🔍 Signaux perdants avec PnL:', lossSignals.length);
-    if (lossSignals.length === 0) return 0;
-    const totalLossPnL = lossSignals.reduce((total, signal) => total + Math.abs(parsePnL(signal.pnl)), 0);
-    const avgLoss = Math.round(totalLossPnL / lossSignals.length);
-    console.log('💔 Moyenne pertes calculée:', avgLoss);
-    return avgLoss;
-  };
+  // Stats synchronisées en temps réel avec l'admin (plus besoin de calculer)
+  const calculateTotalPnL = (): number => stats.totalPnL;
+  const calculateWinRate = (): number => stats.winRate;
+  const calculateAvgWin = (): number => stats.avgWin;
+  const calculateAvgLoss = (): number => stats.avgLoss;
 
   const getTodaySignals = () => {
     const today = new Date();
@@ -2170,19 +2137,24 @@ export default function TradingPlatformShell() {
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Win Rate:</span>
-                <span className="text-blue-400">{calculateWinRate()}%</span>
+                <span className="text-blue-400">{stats.winRate}%</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Signaux actifs:</span>
-                <span className="text-yellow-400">{signals.filter(s => s.status === 'ACTIVE').length}</span>
+                <span className="text-yellow-400">{stats.activeSignals}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">P&L Total:</span>
-                <span className={calculateTotalPnL() >= 0 ? 'text-green-400' : 'text-red-400'}>
-                  {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
+                <span className={stats.totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}>
+                  {stats.totalPnL >= 0 ? '+' : ''}${stats.totalPnL}
                 </span>
               </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Total Trades:</span>
+                <span className="text-purple-400">{stats.totalTrades}</span>
+              </div>
             </div>
+            <div className="text-xs text-green-500 text-center mt-2">🔄 Stats synchronisées en temps réel</div>
           </div>
         </div>
       </div>
@@ -2376,19 +2348,24 @@ export default function TradingPlatformShell() {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Win Rate:</span>
-                    <span className="text-blue-400">{calculateWinRate()}%</span>
+                    <span className="text-blue-400">{stats.winRate}%</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Signaux actifs:</span>
-                    <span className="text-yellow-400">{signals.filter(s => s.status === 'ACTIVE').length}</span>
+                    <span className="text-yellow-400">{stats.activeSignals}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">P&L Total:</span>
-                    <span className={calculateTotalPnL() >= 0 ? 'text-green-400' : 'text-red-400'}>
-                      {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
+                    <span className={stats.totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}>
+                      {stats.totalPnL >= 0 ? '+' : ''}${stats.totalPnL}
                     </span>
                   </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Total Trades:</span>
+                    <span className="text-purple-400">{stats.totalTrades}</span>
+                  </div>
                 </div>
+                <div className="text-xs text-green-500 text-center mt-2">🔄 Stats synchronisées</div>
               </div>
             </div>
           </div>
