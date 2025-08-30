@@ -1525,7 +1525,7 @@ export default function TradingPlatformShell() {
       console.log('📊 Messages actuels avant envoi:', messages[selectedChannel.id]?.length || 0);
       
       try {
-        // Créer le message local immédiatement pour l'affichage instantané
+        // Créer le message local pour référence
         const localMessage = {
           id: `local-${Date.now()}`,
           text: chatMessage,
@@ -1536,22 +1536,7 @@ export default function TradingPlatformShell() {
           attachment_data: undefined
         };
 
-        console.log('📱 Message local créé:', localMessage);
-
-        // Ajouter le message localement immédiatement
-        setMessages(prev => {
-          const currentChannelMessages = prev[selectedChannel.id] || [];
-          const newMessages = {
-            ...prev,
-            [selectedChannel.id]: [...currentChannelMessages, localMessage]
-          };
-          console.log('✅ Messages mis à jour localement:', newMessages[selectedChannel.id]);
-          console.log('📊 Nombre de messages après ajout local:', newMessages[selectedChannel.id].length);
-          return newMessages;
-        });
-
-        // Attendre un peu pour que le message local soit affiché
-        await new Promise(resolve => setTimeout(resolve, 100));
+        console.log('📱 Message local créé (pas encore affiché):', localMessage);
 
         // Envoyer vers Firebase avec avatar utilisateur
         const messageData = {
@@ -1567,25 +1552,45 @@ export default function TradingPlatformShell() {
 
         if (savedMessage) {
           console.log('✅ Message envoyé à Firebase:', savedMessage);
-          // Remplacer le message local par le message Firebase avec le bon ID
+          // Le message sera automatiquement ajouté via la subscription Firebase
+          // Pas besoin de manipulation manuelle des messages
+          
+          // Ajouter un indicateur temporaire "Message envoyé"
+          const tempMessage = {
+            id: `temp-${Date.now()}`,
+            text: '✓ Message envoyé',
+            user: 'System',
+            author: 'System',
+            author_avatar: undefined,
+            timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+            attachment_data: undefined
+          };
+          
           setMessages(prev => {
-            const updatedMessages = {
+            const currentChannelMessages = prev[selectedChannel.id] || [];
+            return {
               ...prev,
-              [selectedChannel.id]: prev[selectedChannel.id]?.map(msg => 
-                msg.id === localMessage.id ? {
-                  ...msg,
-                  id: savedMessage.id || msg.id
-                } : msg
-              ) || []
+              [selectedChannel.id]: [...currentChannelMessages, tempMessage]
             };
-            console.log('🔄 Messages mis à jour avec Firebase:', updatedMessages[selectedChannel.id]);
-            console.log('📊 Nombre de messages après Firebase:', updatedMessages[selectedChannel.id].length);
-            return updatedMessages;
           });
+          
+          // Supprimer l'indicateur après 2 secondes
+          setTimeout(() => {
+            setMessages(prev => ({
+              ...prev,
+              [selectedChannel.id]: prev[selectedChannel.id]?.filter(msg => msg.id !== tempMessage.id) || []
+            }));
+          }, 2000);
         } else {
           console.error('❌ Erreur envoi message Firebase');
-          // En cas d'erreur, garder le message local
-          console.log('💾 Message local conservé en cas d\'erreur Firebase');
+          // En cas d'erreur, on peut ajouter le message local
+          setMessages(prev => {
+            const currentChannelMessages = prev[selectedChannel.id] || [];
+            return {
+              ...prev,
+              [selectedChannel.id]: [...currentChannelMessages, localMessage]
+            };
+          });
         }
       } catch (error) {
         console.error('💥 ERREUR envoi message:', error);
