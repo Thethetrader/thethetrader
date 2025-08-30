@@ -233,13 +233,25 @@ export function useCalendarSync() {
       const todayWeek = Math.ceil(today.getDate() / 7);
       const isCurrentWeek = weekNum === todayWeek && today.getMonth() === month && today.getFullYear() === year;
       
+      // Récupérer tous les signaux de cette semaine
+      const weekSignalsList: any[] = [];
+      Object.entries(calendarStats.dailyData).forEach(([dateKey, dayData]) => {
+        const dayDate = new Date(dateKey);
+        if (dayDate >= weekStart && dayDate <= weekEnd && 
+            dayDate.getMonth() === month && dayDate.getFullYear() === year) {
+          weekSignalsList.push(...dayData.signals);
+        }
+      });
+
       weeks.push({
         week: `Week ${weekNum}`,
+        weekNum: weekNum,
         trades: weekSignals,
         pnl: weekPnL,
         wins: weekWins,
         losses: weekLosses,
-        isCurrentWeek
+        isCurrentWeek,
+        signals: weekSignalsList
       });
     }
     
