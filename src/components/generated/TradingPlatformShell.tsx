@@ -3244,7 +3244,11 @@ export default function TradingPlatformShell() {
                                 <span className="text-xs text-gray-400">{message.timestamp}</span>
                               </div>
                               <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
-                                {message.text && <p className="text-white">{message.text}</p>}
+                                {message.text && (
+                                  <p className="text-white">
+                                    {message.text.replace(/\[SIGNAL_ID:[^\]]+\]/g, '')}
+                                  </p>
+                                )}
                                 
                                 {/* Boutons WIN/LOSS/BE pour les messages de signal (lecture seule côté utilisateur) */}
                                 {message.text.includes('[SIGNAL_ID:') && (() => {
@@ -3898,7 +3902,11 @@ export default function TradingPlatformShell() {
                               <span className="text-xs text-gray-400">{message.timestamp}</span>
                             </div>
                             <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
-                                {message.text && <p className="text-white">{message.text}</p>}
+                                {message.text && (
+                                  <p className="text-white">
+                                    {message.text.replace(/\[SIGNAL_ID:[^\]]+\]/g, '')}
+                                  </p>
+                                )}
                                 
                                 {message.attachment_data && (
                                   <div className="mt-2">
