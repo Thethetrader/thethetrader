@@ -77,7 +77,7 @@ export default function AdminInterface() {
 
   // Subscription globale pour tous les canaux
   useEffect(() => {
-    const channels = ['crypto', 'futur', 'forex', 'fondamentaux', 'letsgooo-model', 'livestream', 'general-chat', 'general-chat-2', 'profit-loss', 'crypto-chat'];
+    const channels = ['fondamentaux', 'letsgooo-model', 'livestream', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'];
     
     const subscriptions = channels.map(channelId => {
       return subscribeToMessages(channelId, (newMessage) => {
@@ -712,7 +712,7 @@ export default function AdminInterface() {
         console.log('📊 [ADMIN] Chargement de TOUS les signaux pour statistiques et calendrier...');
         
         // Charger les signaux de tous les canaux individuellement
-        const channels = ['fondamentaux', 'letsgooo-model', 'crypto', 'futur', 'forex', 'livestream', 'general-chat-2'];
+        const channels = ['fondamentaux', 'letsgooo-model', 'livestream', 'general-chat-2', 'general-chat-3', 'general-chat-4'];
         let allSignals: any[] = [];
         
         for (const channelId of channels) {
@@ -1096,7 +1096,7 @@ export default function AdminInterface() {
 
   const scrollToTop = () => {
     // Pour les salons de chat, scroller dans le conteneur de messages
-    if (messagesContainerRef.current && ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'profit-loss', 'crypto-chat'].includes(selectedChannel.id)) {
+    if (messagesContainerRef.current && ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(selectedChannel.id)) {
       messagesContainerRef.current.scrollTop = 0;
     } else {
       // Pour les autres vues, scroller la page
@@ -1370,10 +1370,9 @@ export default function AdminInterface() {
   }, [chatMessages, selectedChannel.id]);
 
   const channels = [
-    { id: 'crypto', name: 'crypto', emoji: '🪙', fullName: 'Crypto' },
-    { id: 'general-chat-2', name: 'general-chat-2', emoji: '💭', fullName: 'Général chat 2' },
-    { id: 'futur', name: 'futur', emoji: '📈', fullName: 'Futur' },
-    { id: 'forex', name: 'forex', emoji: '💱', fullName: 'Forex' },
+    { id: 'general-chat-2', name: 'general-chat-2', emoji: '📊', fullName: 'Indices' },
+    { id: 'general-chat-3', name: 'general-chat-3', emoji: '🪙', fullName: 'Crypto' },
+    { id: 'general-chat-4', name: 'general-chat-4', emoji: '💱', fullName: 'Forex' },
     { id: 'fondamentaux', name: 'fondamentaux', emoji: '📚', fullName: 'Fondamentaux' },
     { id: 'letsgooo-model', name: 'letsgooo-model', emoji: '🚀', fullName: 'Letsgooo model' },
     { id: 'livestream', name: 'livestream', emoji: '📺', fullName: 'Livestream' },
@@ -1727,8 +1726,8 @@ export default function AdminInterface() {
       // Envoyer une notification pour le nouveau signal
       notifyNewSignal(savedSignal);
       
-      // Si c'est le salon general-chat-2, envoyer aussi un message dans le chat
-      if (selectedChannel.id === 'general-chat-2') {
+              // Si c'est un salon general-chat, envoyer aussi un message dans le chat
+        if (['general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id)) {
         // Calculer le ratio R:R
         const entry = parseFloat(signalData.entry) || 0;
         const tp = parseFloat(signalData.takeProfit) || 0;
@@ -1765,7 +1764,7 @@ export default function AdminInterface() {
           }
           
           const messageData = {
-            channel_id: 'general-chat-2',
+            channel_id: selectedChannel.id,
             content: signalMessage,
             author: 'Admin',
             author_type: 'admin' as const,
@@ -2823,10 +2822,9 @@ export default function AdminInterface() {
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">SIGNAUX</h3>
             <div className="space-y-1">
-              <button onClick={() => handleChannelChange('crypto', 'crypto')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'crypto' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>🪙 Crypto</button>
-              <button onClick={() => handleChannelChange('general-chat-2', 'general-chat-2')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat-2' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💭 General-chat-2</button>
-              <button onClick={() => handleChannelChange('futur', 'futur')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'futur' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📈 Futur</button>
-              <button onClick={() => handleChannelChange('forex', 'forex')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'forex' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💱 Forex</button>
+              <button onClick={() => handleChannelChange('general-chat-2', 'general-chat-2')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat-2' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📊 Indices</button>
+              <button onClick={() => handleChannelChange('general-chat-3', 'general-chat-3')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat-3' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>🪙 Crypto</button>
+              <button onClick={() => handleChannelChange('general-chat-4', 'general-chat-4')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat-4' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💱 Forex</button>
             </div>
           </div>
 
@@ -2835,7 +2833,6 @@ export default function AdminInterface() {
             <div className="space-y-1">
               <button onClick={() => handleChannelChange('livestream', 'livestream')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📺 Livestream</button>
               <button onClick={() => handleChannelChange('general-chat', 'general-chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 General-chat</button>
-              <button onClick={() => handleChannelChange('crypto-chat', 'crypto-chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'crypto-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 Crypto-chat</button>
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💰 Profit-loss</button>
               <button onClick={() => {
                 // Réinitialiser selectedDate si on quitte le Trading Journal
@@ -2975,34 +2972,12 @@ export default function AdminInterface() {
                 </div>
               </div>
 
-              <div>
-                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">SIGNAUX</h3>
-                <div className="space-y-2">
-                  {channels.filter(c => ['crypto', 'futur', 'forex'].includes(c.id)).map(channel => (
-                    <button
-                      key={channel.id}
-                      onClick={() => {
-                        handleChannelChange(channel.id, channel.name);
-                        setMobileView('content');
-                      }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="text-lg">{channel.emoji}</span>
-                        <div>
-                          <p className="font-medium text-white">{channel.fullName}</p>
-                          <p className="text-sm text-gray-400">Canal de signaux</p>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
+
 
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">TRADING HUB</h3>
                 <div className="space-y-2">
-                  {channels.filter(c => ['livestream', 'general-chat', 'general-chat-2', 'profit-loss', 'crypto-chat'].includes(c.id)).map(channel => (
+                  {channels.filter(c => ['livestream', 'general-chat', 'profit-loss'].includes(c.id)).map(channel => (
                     <button
                       key={channel.id}
                       onClick={() => {
@@ -3309,7 +3284,7 @@ export default function AdminInterface() {
 
 
                 {/* Affichage des signaux */}
-                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'profit-loss', 'livestream', 'crypto-chat'].includes(selectedChannel.id) ? (
+                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'livestream'].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
                     {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                       <div className="text-center py-8">
@@ -3338,7 +3313,7 @@ export default function AdminInterface() {
                                 <div className="flex items-center gap-2">
                                   <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-500' : 'bg-gray-500'}`}></div>
                                   <h3 className="font-bold text-white text-lg">
-                                    Signal {signal.type} {signal.symbol} {selectedChannel.id === 'futur' ? 'Futures' : ''} – {signal.timeframe}
+                                    Signal {signal.type} {signal.symbol} – {signal.timeframe}
                                   </h3>
                                 </div>
                                 
@@ -3616,7 +3591,7 @@ export default function AdminInterface() {
                       </div>
                     </div>
                   </div>
-                ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'profit-loss', 'crypto-chat'].includes(selectedChannel.id) ? (
+                ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(selectedChannel.id) ? (
                   <div className="flex flex-col h-full">
                                         {/* Messages de chat */}
                     <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
@@ -4036,7 +4011,7 @@ export default function AdminInterface() {
           ) : (
             <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '80px' }}>
               {/* Boutons en haut fixe */}
-              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'profit-loss', 'livestream', 'crypto-chat'].includes(selectedChannel.id) && (
+              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'livestream'].includes(selectedChannel.id) && (
                 <div className="flex justify-between items-center mb-4 sticky top-0 bg-gray-900 p-2 rounded z-10">
                   <button
                     onClick={async () => {
@@ -4069,7 +4044,7 @@ Voir plus (+10)
               )}
 
               {/* Affichage des signaux */}
-              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'profit-loss', 'livestream', 'crypto-chat'].includes(selectedChannel.id) ? (
+              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'livestream'].includes(selectedChannel.id) ? (
                 <div className="space-y-4">
                   {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                     <div className="text-center py-8">
@@ -4095,7 +4070,7 @@ Voir plus (+10)
                               <div className="flex items-center gap-2">
                                 <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-500' : 'bg-gray-500'}`}></div>
                                 <h3 className="font-bold text-white text-lg">
-                                  Signal {signal.type} {signal.symbol} {selectedChannel.id === 'futur' ? 'Futures' : ''} – {signal.timeframe}
+                                  Signal {signal.type} {signal.symbol} – {signal.timeframe}
                                 </h3>
                               </div>
                               
@@ -4368,12 +4343,12 @@ Voir plus (+10)
                     </div>
                   </div>
                 </div>
-              ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'profit-loss', 'crypto-chat'].includes(selectedChannel.id) ? (
+                              ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(selectedChannel.id) ? (
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}
                   <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
                     {/* Bouton Voir plus pour les messages */}
-                    {['general-chat', 'general-chat-2', 'profit-loss', 'crypto-chat'].includes(selectedChannel.id) && (chatMessages[selectedChannel.id] || []).length >= 50 && (
+                    {['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(selectedChannel.id) && (chatMessages[selectedChannel.id] || []).length >= 50 && (
                       <div className="flex justify-center pt-2">
                         <button
                           onClick={async () => {
@@ -4541,7 +4516,7 @@ Voir plus (+10)
                           📎
                         </span>
                       </label>
-                      {selectedChannel.id === 'general-chat-2' && (
+                      {['general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) && (
                         <button
                           onClick={handleCreateSignal}
                           className="bg-green-600 hover:bg-green-700 px-3 py-2 rounded-lg text-white text-sm font-medium"
@@ -5279,7 +5254,7 @@ Voir plus (+10)
       )}
 
       {/* Bouton + Signal fixe */}
-      {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'profit-loss', 'livestream', 'crypto-chat'].includes(selectedChannel.id) && (
+                      {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'livestream'].includes(selectedChannel.id) && (
         <div className="fixed bottom-6 right-6 z-50">
           <button 
             onClick={handleCreateSignal}

@@ -5,7 +5,7 @@ import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotifi
 import { syncProfileImage, getProfileImage, initializeProfile } from '../../utils/profile-manager';
 
 export default function TradingPlatformShell() {
-  const [selectedChannel, setSelectedChannel] = useState({ id: 'crypto', name: 'crypto' });
+  const [selectedChannel, setSelectedChannel] = useState({ id: 'general-chat', name: 'general-chat' });
   const [view, setView] = useState<'signals' | 'calendar'>('signals');
   const [mobileView, setMobileView] = useState<'channels' | 'content'>('channels');
   const [message, setMessage] = useState('');
@@ -44,7 +44,7 @@ export default function TradingPlatformShell() {
     try {
       const messages = await getMessages(channelId);
       // Limiter à 20 messages pour les salons de chat (plus récents en bas) et inverser l'ordre pour les autres
-      const limitedMessages = ['general-chat', 'general-chat-2', 'profit-loss', 'crypto-chat'].includes(channelId) ? messages.slice(-20) : messages.reverse();
+      const limitedMessages = ['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(channelId) ? messages.slice(-20) : messages.reverse();
       const formattedMessages = limitedMessages.map(msg => ({
         id: msg.id || '',
         text: msg.content,
@@ -138,7 +138,7 @@ export default function TradingPlatformShell() {
 
   // Subscription globale pour tous les canaux
   useEffect(() => {
-    const channels = ['crypto', 'futur', 'forex', 'fondamentaux', 'letsgooo-model', 'livestream', 'general-chat', 'general-chat-2', 'profit-loss', 'crypto-chat'];
+    const channels = ['fondamentaux', 'letsgooo-model', 'livestream', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'];
     
     const subscriptions = channels.map(channelId => {
       return subscribeToMessages(channelId, (newMessage) => {
@@ -255,7 +255,7 @@ export default function TradingPlatformShell() {
         
         // Pour les canaux de chat, ajouter à la fin (messages récents en bas)
         // Pour les autres canaux, ajouter au début (messages récents en haut)
-        if (['general-chat', 'general-chat-2', 'profit-loss', 'crypto-chat'].includes(selectedChannel.id)) {
+        if (['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(selectedChannel.id)) {
           return {
             ...prev,
             [selectedChannel.id]: [...currentMessages, newMessage]
@@ -308,7 +308,7 @@ export default function TradingPlatformShell() {
 
   // Subscription globale pour compter les messages non lus
   useEffect(() => {
-    const allChannels = ['fondamentaux', 'letsgooo-model', 'crypto', 'futur', 'forex', 'livestream', 'general-chat', 'general-chat-2', 'profit-loss', 'trading-journal', 'crypto-chat'];
+    const allChannels = ['fondamentaux', 'letsgooo-model', 'livestream', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'trading-journal'];
     
     const subscriptions = allChannels.map(channelId => {
       return subscribeToMessages(channelId, (newMessage) => {
@@ -383,7 +383,7 @@ export default function TradingPlatformShell() {
     
     // Scroll intelligent : bas pour les canaux de chat, haut pour les autres
     setTimeout(() => {
-      if (['general-chat', 'general-chat-2', 'profit-loss', 'crypto-chat'].includes(channelId)) {
+      if (['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(channelId)) {
         scrollToBottom();
       } else {
         scrollToTop();
@@ -779,7 +779,7 @@ export default function TradingPlatformShell() {
         console.log('📊 Chargement de TOUS les signaux pour statistiques et calendrier...');
         
         // Charger les signaux de tous les canaux individuellement
-        const channels = ['fondamentaux', 'letsgooo-model', 'crypto', 'futur', 'forex', 'livestream'];
+                  const channels = ['fondamentaux', 'letsgooo-model', 'livestream'];
         let allSignals: any[] = [];
         
         for (const channelId of channels) {
@@ -1064,7 +1064,7 @@ export default function TradingPlatformShell() {
 
   const scrollToTop = () => {
     // Pour les salons de chat, scroller dans le conteneur de messages
-          if (messagesContainerRef.current && ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'profit-loss', 'crypto-chat'].includes(selectedChannel.id)) {
+          if (messagesContainerRef.current && ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(selectedChannel.id)) {
       messagesContainerRef.current.scrollTop = 0;
     } else {
       // Pour les autres vues, scroller la page
@@ -1243,10 +1243,12 @@ export default function TradingPlatformShell() {
   }, [messages, selectedChannel.id, signals]);
 
   const channels = [
-    { id: 'crypto', name: 'crypto', emoji: '🪙', fullName: 'Crypto' },
-    { id: 'general-chat-2', name: 'general-chat-2', emoji: '💭', fullName: 'Général chat 2' },
-    { id: 'futur', name: 'futur', emoji: '📈', fullName: 'Futur' },
-    { id: 'forex', name: 'forex', emoji: '💱', fullName: 'Forex' },
+
+    { id: 'general-chat-2', name: 'general-chat-2', emoji: '📊', fullName: 'Indices' },
+    { id: 'general-chat-3', name: 'general-chat-3', emoji: '🪙', fullName: 'Crypto' },
+    { id: 'general-chat-4', name: 'general-chat-4', emoji: '💱', fullName: 'Forex' },
+
+
     { id: 'fondamentaux', name: 'fondamentaux', emoji: '📚', fullName: 'Fondamentaux' },
     { id: 'letsgooo-model', name: 'letsgooo-model', emoji: '🚀', fullName: 'Letsgooo model' },
     { id: 'livestream', name: 'livestream', emoji: '📺', fullName: 'Livestream' },
@@ -2136,10 +2138,9 @@ export default function TradingPlatformShell() {
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">SIGNAUX</h3>
             <div className="space-y-1">
-              <button onClick={() => handleChannelChange('crypto', 'crypto')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'crypto' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>🪙 Crypto {unreadMessages['crypto'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['crypto']}</span>}</button>
               <button onClick={() => handleChannelChange('general-chat-2', 'general-chat-2')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat-2' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💭 General-chat-2 {unreadMessages['general-chat-2'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['general-chat-2']}</span>}</button>
-              <button onClick={() => handleChannelChange('futur', 'futur')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'futur' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📈 Futur {unreadMessages['futur'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['futur']}</span>}</button>
-              <button onClick={() => handleChannelChange('forex', 'forex')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'forex' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💱 Forex {unreadMessages['forex'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['forex']}</span>}</button>
+              <button onClick={() => handleChannelChange('general-chat-3', 'general-chat-3')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat-3' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💭 General-chat-3 {unreadMessages['general-chat-3'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['general-chat-3']}</span>}</button>
+              <button onClick={() => handleChannelChange('general-chat-4', 'general-chat-4')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat-4' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💭 General-chat-4 {unreadMessages['general-chat-4'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['general-chat-4']}</span>}</button>
             </div>
           </div>
 
@@ -2148,7 +2149,7 @@ export default function TradingPlatformShell() {
             <div className="space-y-1">
               <button onClick={() => handleChannelChange('livestream', 'livestream')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📺 Livestream {unreadMessages['livestream'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['livestream']}</span>}</button>
               <button onClick={() => handleChannelChange('general-chat', 'general-chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 General-chat {unreadMessages['general-chat'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['general-chat']}</span>}</button>
-              <button onClick={() => handleChannelChange('crypto-chat', 'crypto-chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'crypto-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 Crypto-chat {unreadMessages['crypto-chat'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['crypto-chat']}</span>}</button>
+
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💰 Profit-loss {unreadMessages['profit-loss'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['profit-loss']}</span>}</button>
               <button onClick={() => {
                 // Réinitialiser selectedDate si on quitte le Trading Journal
@@ -2278,7 +2279,7 @@ export default function TradingPlatformShell() {
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">SIGNAUX</h3>
                 <div className="space-y-2">
-                  {channels.filter(c => ['crypto', 'general-chat-2', 'futur', 'forex'].includes(c.id)).map(channel => (
+                  {channels.filter(c => ['general-chat-2', 'general-chat-3', 'general-chat-4'].includes(c.id)).map(channel => (
                     <button
                       key={channel.id}
                       onClick={() => {
@@ -2307,7 +2308,7 @@ export default function TradingPlatformShell() {
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">TRADING HUB</h3>
                 <div className="space-y-2">
-                  {channels.filter(c => ['livestream', 'general-chat', 'profit-loss', 'crypto-chat'].includes(c.id)).map(channel => (
+                  {channels.filter(c => ['livestream', 'general-chat', 'profit-loss'].includes(c.id)).map(channel => (
                     <button
                       key={channel.id}
                       onClick={() => {
@@ -2529,7 +2530,7 @@ export default function TradingPlatformShell() {
 
 
                 {/* Affichage des signaux */}
-                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'profit-loss', 'livestream', 'crypto-chat'].includes(selectedChannel.id) ? (
+                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'livestream'].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
                     {/* Bouton Voir plus fixe en haut */}
                     <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
@@ -2616,7 +2617,7 @@ export default function TradingPlatformShell() {
                                   <div className="flex items-center gap-2">
                                   <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-500' : 'bg-gray-500'}`}></div>
                                   <h3 className="font-bold text-white text-lg">
-                                    Signal {signal.type} {signal.symbol} {selectedChannel.id === 'futur' ? 'Futures' : ''} – {signal.timeframe}
+                                    Signal {signal.type} {signal.symbol} – {signal.timeframe}
                                   </h3>
                                 </div>
                                 
@@ -2863,7 +2864,7 @@ export default function TradingPlatformShell() {
                       </div>
                     </div>
                   </div>
-                ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'profit-loss', 'crypto-chat'].includes(selectedChannel.id) ? (
+                ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(selectedChannel.id) ? (
                   <div className="flex flex-col h-full">
                     {/* Messages de chat */}
                     <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
@@ -3053,6 +3054,42 @@ export default function TradingPlatformShell() {
                               </div>
                               <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
                                 {message.text && <p className="text-white">{message.text}</p>}
+                                
+                                {/* Boutons WIN/LOSS/BE pour les messages de signal (lecture seule côté utilisateur) */}
+                                {message.text.includes('[SIGNAL_ID:') && (() => {
+                                  // Extraire l'ID du signal pour vérifier son statut
+                                  const signalIdMatch = message.text.match(/\[SIGNAL_ID:([^\]]+)\]/);
+                                  const signalId = signalIdMatch ? signalIdMatch[1] : '';
+                                  const currentSignal = signals.find(s => s.id === signalId);
+                                  const isClosed = currentSignal && ['WIN', 'LOSS', 'BE'].includes(currentSignal.status);
+                                  
+                                  return (
+                                    <div className="mt-3 pt-3 border-t border-gray-600">
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-xs text-gray-400">Résultat du signal:</span>
+                                        <div className={`px-3 py-1.5 rounded-lg text-xs font-medium ${
+                                          isClosed && currentSignal?.status === 'WIN'
+                                            ? 'bg-green-500 text-white border-2 border-green-400 shadow-lg' // Bouton WIN actif
+                                            : isClosed && currentSignal?.status === 'LOSS'
+                                            ? 'bg-red-500 text-white border-2 border-red-400 shadow-lg' // Bouton LOSS actif
+                                            : isClosed && currentSignal?.status === 'BE'
+                                            ? 'bg-blue-500 text-white border-2 border-blue-400 shadow-lg' // Bouton BE actif
+                                            : 'bg-gray-500/30 text-gray-400 border border-gray-500/30' // Bouton neutre
+                                        }`}>
+                                          {isClosed && currentSignal?.status === 'WIN' ? '🟢 WIN' :
+                                           isClosed && currentSignal?.status === 'LOSS' ? '🔴 LOSS' :
+                                           isClosed && currentSignal?.status === 'BE' ? '🔵 BE' : '⏳ EN ATTENTE'}
+                                        </div>
+                                      </div>
+                                      {isClosed && (
+                                        <div className="mt-2 text-xs text-gray-400">
+                                          Signal fermé avec {currentSignal?.pnl ? `P&L: ${currentSignal.pnl}` : 'aucun P&L'}
+                                        </div>
+                                      )}
+                                    </div>
+                                  );
+                                })()}
+                                
                                 {message.attachment_data && (
                                   <div className="mt-2">
                                     <div className="relative">
@@ -3280,7 +3317,7 @@ export default function TradingPlatformShell() {
               {/* Bouton + Signal supprimé - seul admin peut créer des signaux */}
 
               {/* Affichage des signaux */}
-                              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'profit-loss', 'livestream', 'crypto-chat'].includes(selectedChannel.id) ? (
+                              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'livestream'].includes(selectedChannel.id) ? (
                 <div className="space-y-4">
                   {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                     <div className="text-center py-8">
@@ -3309,7 +3346,7 @@ export default function TradingPlatformShell() {
                                 <div className="flex items-center gap-2">
                                 <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-500' : 'bg-gray-500'}`}></div>
                                 <h3 className="font-bold text-white text-lg">
-                                  Signal {signal.type} {signal.symbol} {selectedChannel.id === 'futur' ? 'Futures' : ''} – {signal.timeframe}
+                                  Signal {signal.type} {signal.symbol} – {signal.timeframe}
                                 </h3>
                               </div>
                               
@@ -3558,19 +3595,19 @@ export default function TradingPlatformShell() {
                     </div>
                   </div>
                 </div>
-              ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'profit-loss', 'crypto-chat'].includes(selectedChannel.id) ? (
+              ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(selectedChannel.id) ? (
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}
                   <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
                     {/* Bouton Voir plus pour les salons de chat */}
-                    {['general-chat', 'general-chat-2', 'profit-loss'].includes(selectedChannel.id) && (messages[selectedChannel.id] || []).length >= 20 && (
+                    {['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(selectedChannel.id) && (messages[selectedChannel.id] || []).length >= 20 && (
                       <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
                         <button
                           onClick={async () => {
                             const more = await getMessages(selectedChannel.id);
                             // Pour les canaux de chat, garder l'ordre chronologique (plus récents en bas)
                             // Pour les autres canaux, inverser l'ordre
-                            const orderedMessages = ['general-chat', 'general-chat-2', 'profit-loss', 'crypto-chat'].includes(selectedChannel.id) ? more : more.reverse();
+                            const orderedMessages = ['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(selectedChannel.id) ? more : more.reverse();
                             
                             const formatted = orderedMessages.map(msg => ({
                               id: msg.id || '',
