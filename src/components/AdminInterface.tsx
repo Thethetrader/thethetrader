@@ -1371,13 +1371,13 @@ export default function AdminInterface() {
 
   const channels = [
     { id: 'crypto', name: 'crypto', emoji: '🪙', fullName: 'Crypto' },
+    { id: 'general-chat-2', name: 'general-chat-2', emoji: '💭', fullName: 'Général chat 2' },
     { id: 'futur', name: 'futur', emoji: '📈', fullName: 'Futur' },
     { id: 'forex', name: 'forex', emoji: '💱', fullName: 'Forex' },
     { id: 'fondamentaux', name: 'fondamentaux', emoji: '📚', fullName: 'Fondamentaux' },
     { id: 'letsgooo-model', name: 'letsgooo-model', emoji: '🚀', fullName: 'Letsgooo model' },
     { id: 'livestream', name: 'livestream', emoji: '📺', fullName: 'Livestream' },
     { id: 'general-chat', name: 'general-chat', emoji: '💬', fullName: 'Général chat' },
-    { id: 'general-chat-2', name: 'general-chat-2', emoji: '💭', fullName: 'Général chat 2' },
     { id: 'profit-loss', name: 'profit-loss', emoji: '💰', fullName: 'Profit loss' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Calendrier' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Trading Journal' },
@@ -1729,14 +1729,28 @@ export default function AdminInterface() {
       
       // Si c'est le salon general-chat-2, envoyer aussi un message dans le chat
       if (selectedChannel.id === 'general-chat-2') {
-        const signalMessage = `🚀 **NOUVEAU SIGNAL** 🚀\n\n` +
-          `**Type:** ${signalData.type}\n` +
-          `**Symbole:** ${signalData.symbol || 'N/A'}\n` +
-          `**Timeframe:** ${signalData.timeframe || '1 min'}\n` +
-          `**Entrée:** ${signalData.entry || 'N/A'} USD\n` +
-          `**Take Profit:** ${signalData.takeProfit || 'N/A'} USD\n` +
-          `**Stop Loss:** ${signalData.stopLoss || 'N/A'} USD\n` +
-          `**Description:** ${signalData.description || 'Aucune description'}\n\n` +
+        // Calculer le ratio R:R
+        const entry = parseFloat(signalData.entry) || 0;
+        const tp = parseFloat(signalData.takeProfit) || 0;
+        const sl = parseFloat(signalData.stopLoss) || 0;
+        
+        let rr = 'N/A';
+        if (entry > 0 && tp > 0 && sl > 0) {
+          if (signalData.type === 'BUY') {
+            const reward = Math.abs(tp - entry);
+            const risk = Math.abs(entry - sl);
+            rr = reward > 0 && risk > 0 ? (reward / risk).toFixed(2) : 'N/A';
+          } else { // SELL
+            const reward = Math.abs(entry - tp);
+            const risk = Math.abs(sl - entry);
+            rr = reward > 0 && risk > 0 ? (reward / risk).toFixed(2) : 'N/A';
+          }
+        }
+        
+        const signalMessage = `🚀 **${signalData.type} ${signalData.symbol || 'N/A'}**\n` +
+          `📊 Entry: ${signalData.entry || 'N/A'} TP: ${signalData.takeProfit || 'N/A'} SL: ${signalData.stopLoss || 'N/A'}\n` +
+          `🎯 R:R ≈ ${rr}\n` +
+          `⏰ ${signalData.timeframe || '1 min'}\n` +
           `[SIGNAL_ID:${savedSignal.id}]`;
         
         try {
@@ -1980,10 +1994,9 @@ export default function AdminInterface() {
       notifySignalClosed({ ...updatedSignal, channel_id: 'general-chat-2' });
       
       // Envoyer un message de conclusion dans le chat
-      const conclusionMessage = `📊 **SIGNAL FERMÉ** 📊\n\n` +
-        `**Résultat:** ${newStatus === 'WIN' ? '🟢 GAGNANT' : newStatus === 'LOSS' ? '🔴 PERDANT' : '🔵 BREAK-EVEN'}\n` +
-        `${newStatus !== 'BE' ? `**P&L:** ${pnl}\n` : ''}` +
-        `**Message:** ${closeMessage}`;
+      const conclusionMessage = `📊 SIGNAL FERMÉ 📊\n\n` +
+        `Résultat: ${newStatus === 'WIN' ? '🟢 GAGNANT' : newStatus === 'LOSS' ? '🔴 PERDANT' : '🔵 BREAK-EVEN'}\n` +
+        `${newStatus !== 'BE' ? `P&L: ${pnl}` : ''}`;
       
       try {
         // Convertir l'image de conclusion en base64 si elle existe
@@ -2811,6 +2824,7 @@ export default function AdminInterface() {
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">SIGNAUX</h3>
             <div className="space-y-1">
               <button onClick={() => handleChannelChange('crypto', 'crypto')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'crypto' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>🪙 Crypto</button>
+              <button onClick={() => handleChannelChange('general-chat-2', 'general-chat-2')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat-2' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💭 General-chat-2</button>
               <button onClick={() => handleChannelChange('futur', 'futur')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'futur' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📈 Futur</button>
               <button onClick={() => handleChannelChange('forex', 'forex')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'forex' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💱 Forex</button>
             </div>
@@ -2821,7 +2835,6 @@ export default function AdminInterface() {
             <div className="space-y-1">
               <button onClick={() => handleChannelChange('livestream', 'livestream')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📺 Livestream</button>
               <button onClick={() => handleChannelChange('general-chat', 'general-chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 General-chat</button>
-              <button onClick={() => handleChannelChange('general-chat-2', 'general-chat-2')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat-2' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💭 General-chat-2</button>
               <button onClick={() => handleChannelChange('crypto-chat', 'crypto-chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'crypto-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 Crypto-chat</button>
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💰 Profit-loss</button>
               <button onClick={() => {
@@ -4406,7 +4419,17 @@ Voir plus (+10)
                               <span className="text-xs text-gray-400">{message.timestamp}</span>
                             </div>
                             <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
-                                <p className="text-white">{message.text}</p>
+                                <div className="text-white">
+                                  {message.text.includes('[SIGNAL_ID:') ? (
+                                    <>
+                                      {message.text.split('[SIGNAL_ID:')[0]}
+                                      <span className="text-gray-700 text-xs">[SIGNAL_ID:{message.text.split('[SIGNAL_ID:')[1].split(']')[0]}]</span>
+                                      {message.text.split(']').slice(1).join(']')}
+                                    </>
+                                  ) : (
+                                    message.text
+                                  )}
+                                </div>
                                 {message.attachment_data && (
                                   <div className="mt-2">
                                     {true ? (
@@ -4429,31 +4452,65 @@ Voir plus (+10)
                                 )}
                                 
                                 {/* Boutons WIN/LOSS/BE pour les messages de signal */}
-                                {message.text.includes('[SIGNAL_ID:') && (
-                                  <div className="mt-3 pt-3 border-t border-gray-600">
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-xs text-gray-400">Résultat du signal:</span>
-                                      <button
-                                        onClick={() => handleSignalStatusFromMessage(message.text, 'WIN')}
-                                        className="px-3 py-1.5 rounded-lg text-xs font-medium bg-green-400/20 hover:bg-green-400/30 text-green-300 border border-green-400/30 transition-colors"
-                                      >
-                                        🟢 WIN
-                                      </button>
-                                      <button
-                                        onClick={() => handleSignalStatusFromMessage(message.text, 'LOSS')}
-                                        className="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-400/20 hover:bg-red-400/30 text-red-300 border border-red-400/30 transition-colors"
-                                      >
-                                        🔴 LOSS
-                                      </button>
-                                      <button
-                                        onClick={() => handleSignalStatusFromMessage(message.text, 'BE')}
-                                        className="px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-400/20 hover:bg-blue-400/30 text-blue-300 border border-blue-400/30 transition-colors"
-                                      >
-                                        🔵 BE
-                                      </button>
+                                {message.text.includes('[SIGNAL_ID:') && (() => {
+                                  // Extraire l'ID du signal pour vérifier son statut
+                                  const signalIdMatch = message.text.match(/\[SIGNAL_ID:([^\]]+)\]/);
+                                  const signalId = signalIdMatch ? signalIdMatch[1] : '';
+                                  const currentSignal = signals.find(s => s.id === signalId);
+                                  const isClosed = currentSignal && ['WIN', 'LOSS', 'BE'].includes(currentSignal.status);
+                                  
+                                  return (
+                                    <div className="mt-3 pt-3 border-t border-gray-600">
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-xs text-gray-400">Résultat du signal:</span>
+                                        <button
+                                          onClick={() => handleSignalStatusFromMessage(message.text, 'WIN')}
+                                          disabled={isClosed}
+                                          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                                            isClosed && currentSignal?.status === 'WIN'
+                                              ? 'bg-green-500 text-white border-2 border-green-400 shadow-lg scale-105' // Bouton WIN actif
+                                              : isClosed
+                                              ? 'bg-gray-500/30 text-gray-400 border border-gray-500/30 cursor-not-allowed opacity-50' // Boutons désactivés
+                                              : 'bg-green-400/20 hover:bg-green-400/30 text-green-300 border border-green-400/30 hover:scale-105' // Bouton WIN normal
+                                          }`}
+                                        >
+                                          🟢 WIN
+                                        </button>
+                                        <button
+                                          onClick={() => handleSignalStatusFromMessage(message.text, 'LOSS')}
+                                          disabled={isClosed}
+                                          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                                            isClosed && currentSignal?.status === 'LOSS'
+                                              ? 'bg-red-500 text-white border-2 border-red-400 shadow-lg scale-105' // Bouton LOSS actif
+                                              : isClosed
+                                              ? 'bg-gray-500/30 text-gray-400 border border-gray-500/30 cursor-not-allowed opacity-50' // Boutons désactivés
+                                              : 'bg-red-400/20 hover:bg-red-400/30 text-red-300 border border-red-400/30 hover:scale-105' // Bouton LOSS normal
+                                          }`}
+                                        >
+                                          🔴 LOSS
+                                        </button>
+                                        <button
+                                          onClick={() => handleSignalStatusFromMessage(message.text, 'BE')}
+                                          disabled={isClosed}
+                                          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                                            isClosed && currentSignal?.status === 'BE'
+                                              ? 'bg-blue-500 text-white border-2 border-blue-400 shadow-lg scale-105' // Bouton BE actif
+                                              : isClosed
+                                              ? 'bg-gray-500/30 text-gray-400 border border-gray-500/30 cursor-not-allowed opacity-50' // Boutons désactivés
+                                              : 'bg-blue-400/20 hover:bg-blue-400/30 text-blue-300 border border-blue-400/30 hover:scale-105' // Bouton BE normal
+                                          }`}
+                                        >
+                                          🔵 BE
+                                        </button>
+                                      </div>
+                                      {isClosed && (
+                                        <div className="mt-2 text-xs text-gray-400">
+                                          Signal fermé avec {currentSignal?.pnl ? `P&L: ${currentSignal.pnl}` : 'aucun P&L'}
+                                        </div>
+                                      )}
                                     </div>
-                                  </div>
-                                )}
+                                  );
+                                })()}
                               </div>
                           </div>
                         </div>
