@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateSignalReactions } from '../../utils/firebase-setup';
+import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateSignalReactions, updateMessageReactions, getMessageReactions, subscribeToMessageReactions } from '../../utils/firebase-setup';
 import { createClient } from '@supabase/supabase-js';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
 
@@ -143,6 +143,63 @@ export default function TradingPlatformShell() {
       console.error('❌ Erreur chargement messages:', error);
     }
   };
+  
+  // Charger les réactions des messages depuis Firebase et s'abonner aux changements
+  useEffect(() => {
+    const loadAndSubscribeToReactions = async () => {
+      try {
+        // Charger les réactions existantes pour tous les messages
+        const allMessages = Object.values(messages).flat();
+        const reactionsPromises = allMessages.map(async (message) => {
+          const reactions = await getMessageReactions(message.id);
+          if (reactions) {
+            return { messageId: message.id, reactions };
+          }
+          return null;
+        });
+        
+        const reactionsResults = await Promise.all(reactionsPromises);
+        const newReactions: {[messageId: string]: {fire: number, users: string[]}} = {};
+        
+        reactionsResults.forEach((result) => {
+          if (result) {
+            newReactions[result.messageId] = result.reactions;
+          }
+        });
+        
+        setMessageReactions(newReactions);
+        console.log('✅ Réactions messages chargées depuis Firebase:', Object.keys(newReactions).length);
+        
+        // S'abonner aux changements de réactions pour tous les messages
+        const subscriptions = allMessages.map((message) => {
+          return subscribeToMessageReactions(message.id, (reactions) => {
+            if (reactions) {
+              setMessageReactions(prev => ({
+                ...prev,
+                [message.id]: reactions
+              }));
+            }
+          });
+        });
+        
+        // Nettoyer les abonnements
+        return () => {
+          subscriptions.forEach(subscription => {
+            if (subscription && typeof subscription === 'function') {
+              subscription();
+            }
+          });
+        };
+        
+      } catch (error) {
+        console.error('❌ Erreur chargement réactions messages Firebase:', error);
+      }
+    };
+    
+    if (Object.keys(messages).length > 0) {
+      loadAndSubscribeToReactions();
+    }
+  }, [messages]);
 
   // Fonction pour charger les signaux depuis Firebase (optimisé - max 3)
   const loadSignals = async (channelId: string) => {
@@ -1059,39 +1116,71 @@ export default function TradingPlatformShell() {
   };
 
   // Fonction pour ajouter une réaction flamme à un message (côté utilisateur)
-  const handleAddReaction = (messageId: string) => {
+  const handleAddReaction = async (messageId: string) => {
     const currentUser = user?.email || 'Anonymous'; // Utiliser l'email de l'utilisateur connecté
     
-    setMessageReactions(prev => {
-      const current = prev[messageId] || { fire: 0, users: [] };
+    try {
+      // Mettre à jour localement d'abord pour une réponse immédiate
+      setMessageReactions(prev => {
+        const current = prev[messageId] || { fire: 0, users: [] };
+        const userIndex = current.users.indexOf(currentUser);
+        
+        if (userIndex === -1) {
+          // Ajouter la réaction
+          const newReactions = {
+            ...prev,
+            [messageId]: {
+              fire: current.fire + 1,
+              users: [...current.users, currentUser]
+            }
+          };
+          return newReactions;
+        } else {
+          // Retirer la réaction
+          const newReactions = {
+            ...prev,
+            [messageId]: {
+              fire: current.fire - 1,
+              users: current.users.filter((_, index) => index !== userIndex)
+            }
+          };
+          return newReactions;
+        }
+      });
+      
+      // Sauvegarder dans Firebase
+      const current = messageReactions[messageId] || { fire: 0, users: [] };
       const userIndex = current.users.indexOf(currentUser);
       
+      let newReactions;
       if (userIndex === -1) {
         // Ajouter la réaction
-        const newReactions = {
-          ...prev,
-          [messageId]: {
-            fire: current.fire + 1,
-            users: [...current.users, currentUser]
-          }
+        newReactions = {
+          fire: current.fire + 1,
+          users: [...current.users, currentUser]
         };
-        // Sauvegarder dans localStorage
-        localStorage.setItem('messageReactions', JSON.stringify(newReactions));
-        return newReactions;
       } else {
         // Retirer la réaction
-        const newReactions = {
-          ...prev,
-          [messageId]: {
-            fire: current.fire - 1,
-            users: current.users.filter((_, index) => index !== userIndex)
-          }
+        newReactions = {
+          fire: current.fire - 1,
+          users: current.users.filter((_, index) => index !== userIndex)
         };
-        // Sauvegarder dans localStorage
-        localStorage.setItem('messageReactions', JSON.stringify(newReactions));
-        return newReactions;
       }
-    });
+      
+      await updateMessageReactions(messageId, newReactions);
+      console.log('✅ Réaction message synchronisée avec Firebase:', messageId, newReactions);
+      
+    } catch (error) {
+      console.error('❌ Erreur synchronisation réaction Firebase:', error);
+      // En cas d'erreur, revenir à l'état précédent
+      setMessageReactions(prev => {
+        const current = prev[messageId] || { fire: 0, users: [] };
+        return {
+          ...prev,
+          [messageId]: current
+        };
+      });
+    }
   };
 
   // Fonctions pour gérer les statuts des signaux

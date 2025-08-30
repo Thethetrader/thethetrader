@@ -22,6 +22,11 @@ export interface Message {
   attachment_name?: string;
 }
 
+export interface MessageReaction {
+  fire: number;
+  users: string[];
+}
+
 export interface Signal {
   id?: string;
   type: string;
@@ -268,6 +273,48 @@ export const updateSignalReactions = async (signalId: string, reactions: string[
     console.error('Erreur mise à jour réactions Firebase:', error);
     return false;
   }
+};
+
+// Mettre à jour les réactions d'un message
+export const updateMessageReactions = async (messageId: string, reactions: MessageReaction): Promise<boolean> => {
+  try {
+    const messageReactionsRef = ref(database, `messageReactions/${messageId}`);
+    await update(messageReactionsRef, reactions);
+    console.log('✅ Réactions message mises à jour dans Firebase:', messageId, reactions);
+    return true;
+  } catch (error) {
+    console.error('❌ Erreur mise à jour réactions message Firebase:', error);
+    return false;
+  }
+};
+
+// Récupérer les réactions d'un message
+export const getMessageReactions = async (messageId: string): Promise<MessageReaction | null> => {
+  try {
+    const messageReactionsRef = ref(database, `messageReactions/${messageId}`);
+    const snapshot = await get(messageReactionsRef);
+    
+    if (snapshot.exists()) {
+      return snapshot.val();
+    }
+    return null;
+  } catch (error) {
+    console.error('❌ Erreur récupération réactions message Firebase:', error);
+    return null;
+  }
+};
+
+// S'abonner aux réactions d'un message
+export const subscribeToMessageReactions = (messageId: string, callback: (reactions: MessageReaction | null) => void) => {
+  const messageReactionsRef = ref(database, `messageReactions/${messageId}`);
+  
+  return onValue(messageReactionsRef, (snapshot) => {
+    if (snapshot.exists()) {
+      callback(snapshot.val());
+    } else {
+      callback(null);
+    }
+  });
 };
 
 // Export du client Firebase pour utilisation directe

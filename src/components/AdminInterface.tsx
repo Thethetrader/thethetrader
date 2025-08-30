@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database } from '../utils/firebase-setup';
+import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database, updateMessageReactions, getMessageReactions, subscribeToMessageReactions } from '../utils/firebase-setup';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed } from '../utils/push-notifications';
 import { ref, update } from 'firebase/database';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
@@ -26,47 +26,128 @@ export default function AdminInterface() {
   // État pour les réactions aux messages (côté admin)
   const [messageReactions, setMessageReactions] = useState<{[messageId: string]: {fire: number, users: string[]}}>({});
 
-  // Charger les réactions depuis localStorage au montage du composant
+  // Charger les réactions depuis Firebase et s'abonner aux changements
   useEffect(() => {
-    const savedReactions = localStorage.getItem('messageReactions');
-    if (savedReactions) {
+    const loadAndSubscribeToReactions = async () => {
       try {
-        setMessageReactions(JSON.parse(savedReactions));
+        // Charger les réactions existantes pour tous les messages
+        const allMessages = Object.values(messages).flat();
+        const reactionsPromises = allMessages.map(async (message) => {
+          const reactions = await getMessageReactions(message.id);
+          if (reactions) {
+            return { messageId: message.id, reactions };
+          }
+          return null;
+        });
+        
+        const reactionsResults = await Promise.all(reactionsPromises);
+        const newReactions: {[messageId: string]: {fire: number, users: string[]}} = {};
+        
+        reactionsResults.forEach((result) => {
+          if (result) {
+            newReactions[result.messageId] = result.reactions;
+          }
+        });
+        
+        setMessageReactions(newReactions);
+        console.log('✅ Réactions messages admin chargées depuis Firebase:', Object.keys(newReactions).length);
+        
+        // S'abonner aux changements de réactions pour tous les messages
+        const subscriptions = allMessages.map((message) => {
+          return subscribeToMessageReactions(message.id, (reactions) => {
+            if (reactions) {
+              setMessageReactions(prev => ({
+                ...prev,
+                [message.id]: reactions
+              }));
+            }
+          });
+        });
+        
+        // Nettoyer les abonnements
+        return () => {
+          subscriptions.forEach(subscription => {
+            if (subscription && typeof subscription === 'function') {
+              subscription();
+            }
+          });
+        };
+        
       } catch (error) {
-        console.error('Erreur lors du chargement des réactions:', error);
+        console.error('❌ Erreur chargement réactions messages admin Firebase:', error);
       }
+    };
+    
+    if (Object.keys(messages).length > 0) {
+      loadAndSubscribeToReactions();
     }
-  }, []);
+  }, [messages]);
 
   // Fonction pour ajouter une réaction flamme à un message (côté admin)
-  const handleAddReaction = (messageId: string) => {
+  const handleAddReaction = async (messageId: string) => {
     const currentUser = 'Admin'; // Toujours Admin dans l'interface admin
     
-    setMessageReactions(prev => {
-      const current = prev[messageId] || { fire: 0, users: [] };
+    try {
+      // Mettre à jour localement d'abord pour une réponse immédiate
+      setMessageReactions(prev => {
+        const current = prev[messageId] || { fire: 0, users: [] };
+        const userIndex = current.users.indexOf(currentUser);
+        
+        if (userIndex === -1) {
+          // Ajouter la réaction
+          return {
+            ...prev,
+            [messageId]: {
+              fire: current.fire + 1,
+              users: [...current.users, currentUser]
+            }
+          };
+        } else {
+          // Retirer la réaction
+          const newUsers = current.users.filter((_, index) => index !== userIndex);
+          return {
+            ...prev,
+            [messageId]: {
+              fire: current.fire - 1,
+              users: newUsers
+            }
+          };
+        }
+      });
+      
+      // Sauvegarder dans Firebase
+      const current = messageReactions[messageId] || { fire: 0, users: [] };
       const userIndex = current.users.indexOf(currentUser);
       
+      let newReactions;
       if (userIndex === -1) {
         // Ajouter la réaction
-        return {
-          ...prev,
-          [messageId]: {
-            fire: current.fire + 1,
-            users: [...current.users, currentUser]
-          }
+        newReactions = {
+          fire: current.fire + 1,
+          users: [...current.users, currentUser]
         };
       } else {
         // Retirer la réaction
-        const newUsers = current.users.filter((_, index) => index !== userIndex);
-        return {
-          ...prev,
-          [messageId]: {
-            fire: current.fire - 1,
-            users: newUsers
-          }
+        newReactions = {
+          fire: current.fire - 1,
+          users: current.users.filter((_, index) => index !== userIndex)
         };
       }
-    });
+      
+      await updateMessageReactions(messageId, newReactions);
+      console.log('✅ Réaction message admin synchronisée avec Firebase:', messageId, newReactions);
+      
+    } catch (error) {
+      console.error('❌ Erreur synchronisation réaction admin Firebase:', error);
+      // En cas d'erreur, revenir à l'état précédent
+      setMessageReactions(prev => {
+        const current = prev[messageId] || { fire: 0, users: [] };
+        return {
+          ...prev,
+          [messageId]: current
+        };
+      });
+    }
   };
 
   const [lastSeenMessages, setLastSeenMessages] = useState<{[channelId: string]: string}>({});
