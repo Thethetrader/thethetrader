@@ -593,33 +593,7 @@ const App = () => {
         }
       ]
     },
-    'livestream': {
-      title: '#livestream',
-      messages: [
-        { 
-          id: 1, 
-          user: 'TheTheTrader', 
-          time: '14:30:00', 
-          type: 'message', 
-          content: '📺 Live Trading en cours !\n\n🎯 Session: Analyse technique en direct\n⏰ Durée: 2h\n👥 Participants: 156\n\n💬 Posez vos questions dans le chat !', 
-          reactions: [
-            { emoji: '📺', count: 45 },
-            { emoji: '🎯', count: 32 }
-          ]
-        },
-        { 
-          id: 2, 
-          user: 'TheTheTrader', 
-          time: '14:45:30', 
-          type: 'message', 
-          content: '📊 Signal en direct: BUY BTCUSD\n\n🔹 Entrée: 103,200\n🔹 Stop: 102,800\n🔹 Target: 103,800\n\n🎯 Suivez en direct !', 
-          reactions: [
-            { emoji: '🔥', count: 28 },
-            { emoji: '🚀', count: 19 }
-          ]
-        }
-      ]
-    },
+
     'general-chat': {
       title: '#general-chat',
       messages: [

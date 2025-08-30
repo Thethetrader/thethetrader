@@ -260,7 +260,7 @@ export default function TradingPlatformShell() {
 
   // Subscription globale pour tous les canaux
   useEffect(() => {
-    const channels = ['fondamentaux', 'letsgooo-model', 'livestream', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'];
+    const channels = ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'];
     
     const subscriptions = channels.map(channelId => {
       return subscribeToMessages(channelId, (newMessage) => {
@@ -430,7 +430,7 @@ export default function TradingPlatformShell() {
 
   // Subscription globale pour compter les messages non lus
   useEffect(() => {
-    const allChannels = ['fondamentaux', 'letsgooo-model', 'livestream', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'trading-journal'];
+    const allChannels = ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'trading-journal'];
     
     const subscriptions = allChannels.map(channelId => {
       return subscribeToMessages(channelId, (newMessage) => {
@@ -901,7 +901,7 @@ export default function TradingPlatformShell() {
         console.log('📊 Chargement de TOUS les signaux pour statistiques et calendrier...');
         
         // Charger les signaux de tous les canaux individuellement
-                  const channels = ['fondamentaux', 'letsgooo-model', 'livestream'];
+                  const channels = ['fondamentaux', 'letsgooo-model'];
         let allSignals: any[] = [];
         
         for (const channelId of channels) {
@@ -1332,11 +1332,11 @@ export default function TradingPlatformShell() {
           video.playsInline = true;
           video.srcObject = stream;
           
-          // Trouver spécifiquement les conteneurs de livestream
-          const livestreamContainers = document.querySelectorAll('.bg-gray-900 .bg-black.flex.items-center.justify-center');
-          console.log('Conteneurs livestream trouvés:', livestreamContainers.length);
+          // Trouver spécifiquement les conteneurs de 
+          const Containers = document.querySelectorAll('.bg-gray-900 .bg-black.flex.items-center.justify-center');
+          console.log('Conteneurs  trouvés:', Containers.length);
           
-          if (livestreamContainers.length === 0) {
+          if (Containers.length === 0) {
             // Fallback: chercher tous les conteneurs noirs
             const allContainers = document.querySelectorAll('.bg-black.flex.items-center.justify-center');
             console.log('Tous les conteneurs trouvés:', allContainers.length);
@@ -1355,18 +1355,18 @@ export default function TradingPlatformShell() {
               });
             });
           } else {
-            // Utiliser les conteneurs de livestream spécifiques
-            livestreamContainers.forEach((container, index) => {
-              console.log(`Remplacer conteneur livestream ${index}`);
+            // Utiliser les conteneurs de  spécifiques
+            Containers.forEach((container, index) => {
+              console.log(`Remplacer conteneur  ${index}`);
               container.innerHTML = '';
               const videoClone = video.cloneNode(true) as HTMLVideoElement;
               container.appendChild(videoClone);
               
               // Lancer la lecture pour chaque clone
               videoClone.play().then(() => {
-                console.log(`Vidéo livestream ${index} en cours de lecture`);
+                console.log(`Vidéo  ${index} en cours de lecture`);
               }).catch(err => {
-                console.error(`Erreur lecture vidéo livestream ${index}:`, err);
+                console.error(`Erreur lecture vidéo  ${index}:`, err);
               });
             });
           }
@@ -1404,7 +1404,7 @@ export default function TradingPlatformShell() {
 
     { id: 'fondamentaux', name: 'fondamentaux', emoji: '📚', fullName: 'Fondamentaux' },
     { id: 'letsgooo-model', name: 'letsgooo-model', emoji: '🚀', fullName: 'Letsgooo model' },
-    { id: 'livestream', name: 'livestream', emoji: '📺', fullName: 'Livestream' },
+
     { id: 'general-chat', name: 'general-chat', emoji: '💬', fullName: 'Général chat' },
     { id: 'profit-loss', name: 'profit-loss', emoji: '💰', fullName: 'Profit loss' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Calendrier' },
@@ -2328,7 +2328,7 @@ export default function TradingPlatformShell() {
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">TRADING HUB</h3>
             <div className="space-y-1">
-              <button onClick={() => handleChannelChange('livestream', 'livestream')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📺 Livestream {unreadMessages['livestream'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['livestream']}</span>}</button>
+              <button onClick={() => handleChannelChange('', '')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === '' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📺 Livestream {unreadMessages[''] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['']}</span>}</button>
               <button onClick={() => handleChannelChange('general-chat', 'general-chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 General-chat {unreadMessages['general-chat'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['general-chat']}</span>}</button>
 
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💰 Profit-loss {unreadMessages['profit-loss'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['profit-loss']}</span>}</button>
@@ -2494,7 +2494,7 @@ export default function TradingPlatformShell() {
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">TRADING HUB</h3>
                 <div className="space-y-2">
-                  {channels.filter(c => ['livestream', 'general-chat', 'profit-loss'].includes(c.id)).map(channel => (
+                  {channels.filter(c => ['', 'general-chat', 'profit-loss'].includes(c.id)).map(channel => (
                     <button
                       key={channel.id}
                       onClick={() => {
@@ -2721,7 +2721,7 @@ export default function TradingPlatformShell() {
 
 
                 {/* Affichage des signaux */}
-                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'livestream'].includes(selectedChannel.id) ? (
+                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', ''].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
                     {/* Bouton Voir plus fixe en haut */}
                     <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
@@ -2900,7 +2900,7 @@ export default function TradingPlatformShell() {
                       ))
                     )}
                   </div>
-                                ) : selectedChannel.id === 'livestream' ? (
+                                ) : selectedChannel.id === '' ? (
                   <div className="flex flex-col h-full">
                     {/* Interface Livestream */}
                     <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
@@ -3004,13 +3004,13 @@ export default function TradingPlatformShell() {
                         </div>
                         
                         <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                          {(messages['livestream'] || []).length === 0 ? (
+                          {(messages[''] || []).length === 0 ? (
                         <div className="text-center py-8">
                               <div className="text-gray-400 text-sm">Aucun message</div>
                               <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
                         </div>
                       ) : (
-                            (messages['livestream'] || []).map((message) => (
+                            (messages[''] || []).map((message) => (
                               <div key={message.id} className="flex items-start gap-2">
                                 <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs overflow-hidden">
                                   {message.author === 'TheTheTrader' && profileImage ? (
@@ -3354,7 +3354,7 @@ export default function TradingPlatformShell() {
                       </div>
                     </div>
                   </div>
-                ) : selectedChannel.id === 'livestream' ? (
+                ) : selectedChannel.id === '' ? (
                   <div className="flex flex-col h-full">
                     {/* Interface Livestream Desktop */}
                     <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
@@ -3458,13 +3458,13 @@ export default function TradingPlatformShell() {
                         </div>
                         
                         <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                          {(messages['livestream'] || []).length === 0 ? (
+                          {(messages[''] || []).length === 0 ? (
                             <div className="text-center py-8">
                               <div className="text-gray-400 text-sm">Aucun message</div>
                               <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
                             </div>
                           ) : (
-                            (messages['livestream'] || []).map((message) => (
+                            (messages[''] || []).map((message) => (
                               <div key={message.id} className="flex items-start gap-2">
                                 <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs overflow-hidden">
                                   {message.author === 'TheTheTrader' && profileImage ? (
@@ -3546,7 +3546,7 @@ export default function TradingPlatformShell() {
               {/* Bouton + Signal supprimé - seul admin peut créer des signaux */}
 
               {/* Affichage des signaux */}
-                              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'livestream'].includes(selectedChannel.id) ? (
+                              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', ''].includes(selectedChannel.id) ? (
                 <div className="space-y-4">
                   {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                     <div className="text-center py-8">
@@ -3667,7 +3667,7 @@ export default function TradingPlatformShell() {
                     ))
                   )}
                 </div>
-              ) : selectedChannel.id === 'livestream' ? (
+              ) : selectedChannel.id === '' ? (
                 <div className="flex flex-col h-full">
                   {/* Interface Livestream Desktop */}
                   <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
@@ -3771,13 +3771,13 @@ export default function TradingPlatformShell() {
                       </div>
                       
                       <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                        {(messages['livestream'] || []).length === 0 ? (
+                        {(messages[''] || []).length === 0 ? (
                       <div className="text-center py-8">
                             <div className="text-gray-400 text-sm">Aucun message</div>
                             <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
                       </div>
                     ) : (
-                          (messages['livestream'] || []).map((message) => (
+                          (messages[''] || []).map((message) => (
                             <div key={message.id} className="flex items-start gap-2">
                               <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs overflow-hidden">
                                 {message.author_avatar ? (

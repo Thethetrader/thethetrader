@@ -45,7 +45,7 @@ export function useCalendarSync() {
     try {
       console.log('📅 [CALENDAR-SYNC] Chargement des données du calendrier...');
       
-      const channels = ['fondamentaux', 'letsgooo-model', 'livestream', 'general-chat-2', 'general-chat-3', 'general-chat-4'];
+      const channels = ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'];
       let allSignals: any[] = [];
       
       for (const channelId of channels) {

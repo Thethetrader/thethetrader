@@ -368,10 +368,7 @@ export default function AdminInterface() {
     
     initProfile();
   }, []);
-  const [isLiveStreaming, setIsLiveStreaming] = useState(false);
-  const [streamTitle, setStreamTitle] = useState('');
-  const [streamDescription, setStreamDescription] = useState('');
-  const [viewerCount, setViewerCount] = useState(0);
+
   // États pour la gestion des utilisateurs
   const [users, setUsers] = useState<Array<{
     id: string;
@@ -1366,85 +1363,7 @@ export default function AdminInterface() {
     }
   };
 
-  const handleStartStream = () => {
-    if (!streamTitle.trim()) {
-      alert('Veuillez entrer un titre pour votre stream');
-      return;
-    }
-    setIsLiveStreaming(true);
-    setViewerCount(Math.floor(Math.random() * 50) + 10); // Simuler des viewers
-  };
 
-  const handleStopStream = () => {
-    setIsLiveStreaming(false);
-    setViewerCount(0);
-  };
-
-  const handleShareScreen = () => {
-    if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
-      navigator.mediaDevices.getDisplayMedia({ video: true })
-        .then(stream => {
-          console.log('Stream obtenu:', stream);
-          
-          // Créer un élément vidéo simple
-          const video = document.createElement('video');
-          video.className = 'w-full h-full object-contain';
-          video.autoplay = true;
-          video.muted = true;
-          video.playsInline = true;
-          video.srcObject = stream;
-          
-          // Trouver spécifiquement les conteneurs de 
-          const Containers = document.querySelectorAll('.bg-gray-900 .bg-black.flex.items-center.justify-center');
-          console.log('Conteneurs  trouvés:', Containers.length);
-          
-          if (Containers.length === 0) {
-            // Fallback: chercher tous les conteneurs noirs
-            const allContainers = document.querySelectorAll('.bg-black.flex.items-center.justify-center');
-            console.log('Tous les conteneurs trouvés:', allContainers.length);
-            
-            allContainers.forEach((container, index) => {
-              console.log(`Remplacer conteneur ${index}`);
-              container.innerHTML = '';
-              const videoClone = video.cloneNode(true) as HTMLVideoElement;
-              container.appendChild(videoClone);
-              
-              // Lancer la lecture pour chaque clone
-              videoClone.play().then(() => {
-                console.log(`Vidéo ${index} en cours de lecture`);
-              }).catch(err => {
-                console.error(`Erreur lecture vidéo ${index}:`, err);
-              });
-            });
-          } else {
-            // Utiliser les conteneurs de  spécifiques
-            Containers.forEach((container, index) => {
-              console.log(`Remplacer conteneur  ${index}`);
-              container.innerHTML = '';
-              const videoClone = video.cloneNode(true) as HTMLVideoElement;
-              container.appendChild(videoClone);
-              
-              // Lancer la lecture pour chaque clone
-              videoClone.play().then(() => {
-                console.log(`Vidéo  ${index} en cours de lecture`);
-              }).catch(err => {
-                console.error(`Erreur lecture vidéo  ${index}:`, err);
-              });
-            });
-          }
-          
-          // Mettre à jour l'état
-          setIsLiveStreaming(true);
-          setViewerCount(15);
-        })
-        .catch(err => {
-          console.error('Erreur partage d\'écran:', err);
-          alert('Erreur lors du partage d\'écran: ' + err.message);
-        });
-    } else {
-      alert('Partage d\'écran non supporté sur ce navigateur');
-    }
-  };
 
   const handleSignalStatus = async (signalId: string, newStatus: 'WIN' | 'LOSS' | 'BE' | 'ACTIVE') => {
     const signal = signals.find(s => s.id === signalId);
@@ -1552,7 +1471,7 @@ export default function AdminInterface() {
     { id: 'general-chat-4', name: 'general-chat-4', emoji: '💱', fullName: 'Forex' },
     { id: 'fondamentaux', name: 'fondamentaux', emoji: '📚', fullName: 'Fondamentaux' },
     { id: 'letsgooo-model', name: 'letsgooo-model', emoji: '🚀', fullName: 'Letsgooo model' },
-
+    
     { id: 'general-chat', name: 'general-chat', emoji: '💬', fullName: 'Général chat' },
     { id: 'profit-loss', name: 'profit-loss', emoji: '💰', fullName: 'Profit loss' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Calendrier' },
@@ -3008,7 +2927,7 @@ export default function AdminInterface() {
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">TRADING HUB</h3>
             <div className="space-y-1">
-
+              
               <button onClick={() => handleChannelChange('general-chat', 'general-chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 General-chat</button>
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💰 Profit-loss</button>
               <button onClick={() => {
@@ -3461,7 +3380,7 @@ export default function AdminInterface() {
 
 
                 {/* Affichage des signaux */}
-                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', ''].includes(selectedChannel.id) ? (
+                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'livestream'].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
                     {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                       <div className="text-center py-8">
@@ -3619,7 +3538,172 @@ export default function AdminInterface() {
                       ))
                     )}
                   </div>
-                
+                                ) : selectedChannel.id === 'livestream' ? (
+                  <div className="flex flex-col h-full">
+                    {/* Interface Livestream */}
+                    <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
+                      {/* Zone de stream */}
+                      <div className="flex-1 bg-gray-900 rounded-lg overflow-hidden">
+                        {!isLiveStreaming ? (
+                          <div className="h-full flex flex-col items-center justify-center p-8">
+                            <div className="text-center space-y-4">
+                              <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto">
+                                <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M8 5v14l11-7z"/>
+                                </svg>
+                              </div>
+                              <h2 className="text-xl font-bold text-white">Aucun stream en cours</h2>
+                              <p className="text-gray-400">Commencez votre session de trading en direct</p>
+                              
+                              {/* Formulaire de démarrage */}
+                              <div className="space-y-3 max-w-md mx-auto">
+                                <input
+                                  type="text"
+                                  placeholder="Titre du stream (ex: Session TradingView - EURUSD)"
+                                  value={streamTitle}
+                                  onChange={(e) => setStreamTitle(e.target.value)}
+                                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                                />
+                                <textarea
+                                  placeholder="Description (optionnel)"
+                                  value={streamDescription}
+                                  onChange={(e) => setStreamDescription(e.target.value)}
+                                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                                  rows={2}
+                                />
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={handleStartStream}
+                                    className="flex-1 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-white font-medium"
+                                  >
+                                    🎥 Démarrer Stream
+                                  </button>
+                                  <button
+                                    onClick={handleShareScreen}
+                                    className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white"
+                                  >
+                                    📺 Partager Écran
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="h-full flex flex-col">
+                            {/* Header du stream */}
+                            <div className="bg-gray-800 p-4 border-b border-gray-700">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <h3 className="text-lg font-bold text-white">{streamTitle}</h3>
+                                  <p className="text-sm text-gray-400">{streamDescription}</p>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                  <div className="flex items-center gap-2 text-red-400">
+                                    <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+                                    <span className="text-sm font-medium">EN DIRECT</span>
+                                  </div>
+                                  <div className="flex items-center gap-1 text-gray-400">
+                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                    </svg>
+                                    <span className="text-sm">{viewerCount} spectateurs</span>
+                                  </div>
+                                  <button
+                                    onClick={handleStopStream}
+                                    className="bg-gray-600 hover:bg-gray-500 px-3 py-1 rounded text-sm text-white"
+                                  >
+                                    Arrêter
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Zone de vidéo */}
+                            <div className="flex-1 bg-black flex items-center justify-center">
+                              <div className="text-center text-gray-400">
+                                <div className="w-16 h-16 bg-gray-800 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+                                  </svg>
+                                </div>
+                                <p className="text-sm">Stream en cours...</p>
+                                <p className="text-xs mt-1">Partagez votre écran TradingView</p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Chat live */}
+                      <div className="w-full lg:w-80 bg-gray-800 rounded-lg flex flex-col">
+                        <div className="p-4 border-b border-gray-700">
+                          <h3 className="font-semibold text-white">💬 Chat Live</h3>
+                          <p className="text-xs text-gray-400">{viewerCount} spectateurs en ligne</p>
+                        </div>
+                        
+                        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                          {(chatMessages['livestream'] || []).length === 0 ? (
+                            <div className="text-center py-8">
+                              <div className="text-gray-400 text-sm">Aucun message</div>
+                              <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
+                            </div>
+                          ) : (
+                            (chatMessages['livestream'] || []).map((message) => (
+                              <div key={message.id} className="flex items-start gap-2">
+                                <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs">T</div>
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className="font-medium text-white text-sm">{message.author}</span>
+                                    <span className="text-xs text-gray-400">{message.timestamp}</span>
+                                  </div>
+                                  <div className="bg-gray-700 rounded-lg p-2">
+                                    <p className="text-white text-sm">{message.text}</p>
+                                  </div>
+                                  
+                                  {/* Réactions aux messages - HORS du cadre gris */}
+                                  <div className="mt-2 flex items-center gap-2">
+                                    <button
+                                      onClick={() => handleAddReaction(message.id)}
+                                      className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-all duration-200 ${
+                                        (messageReactions[message.id]?.users || []).includes('Admin')
+                                          ? 'bg-orange-500 text-white'
+                                          : 'bg-gray-600 hover:bg-gray-500 text-gray-300 hover:text-white'
+                                      }`}
+                                    >
+                                      🔥
+                                      <span className="ml-1">
+                                        {messageReactions[message.id]?.fire || 0}
+                                      </span>
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                        
+                        {/* Barre de message pour le chat live */}
+                        <div className="p-4 border-t border-gray-700">
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="text"
+                              value={chatMessage}
+                              onChange={(e) => setChatMessage(e.target.value)}
+                              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                              placeholder="Commenter le stream..."
+                              className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
+                            />
+                            <button
+                              onClick={handleSendMessage}
+                              className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-white text-sm"
+                            >
+                              Envoyer
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(selectedChannel.id) ? (
                   <div className="flex flex-col h-full">
                                         {/* Messages de chat */}
@@ -3890,7 +3974,7 @@ export default function AdminInterface() {
                       </div>
                     </div>
                   </div>
-                ) : selectedChannel.id === '' ? (
+                ) : selectedChannel.id === 'livestream' ? (
                   <div className="flex flex-col h-full">
                     {/* Interface Livestream Desktop */}
                     <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
@@ -3994,13 +4078,13 @@ export default function AdminInterface() {
                         </div>
                         
                         <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                          {(chatMessages[''] || []).length === 0 ? (
+                          {(chatMessages['livestream'] || []).length === 0 ? (
                             <div className="text-center py-8">
                               <div className="text-gray-400 text-sm">Aucun message</div>
                               <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
                             </div>
                           ) : (
-                            (chatMessages[''] || []).map((message) => (
+                            (chatMessages['livestream'] || []).map((message) => (
                               <div key={message.id} className="flex items-start gap-2">
                                 <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs">T</div>
                                 <div className="flex-1">
@@ -4057,7 +4141,7 @@ export default function AdminInterface() {
           ) : (
             <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '80px' }}>
               {/* Boutons en haut fixe */}
-              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', ''].includes(selectedChannel.id) && (
+              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'livestream'].includes(selectedChannel.id) && (
                 <div className="flex justify-between items-center mb-4 sticky top-0 bg-gray-900 p-2 rounded z-10">
                   <button
                     onClick={async () => {
@@ -4090,7 +4174,7 @@ Voir plus (+10)
               )}
 
               {/* Affichage des signaux */}
-              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', ''].includes(selectedChannel.id) ? (
+              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'livestream'].includes(selectedChannel.id) ? (
                 <div className="space-y-4">
                   {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                     <div className="text-center py-8">
@@ -4240,7 +4324,7 @@ Voir plus (+10)
                   )}
 
                 </div>
-              ) : selectedChannel.id === '' ? (
+              ) : selectedChannel.id === 'livestream' ? (
                 <div className="flex flex-col h-full">
                   {/* Interface Livestream Desktop */}
                   <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
@@ -4344,13 +4428,13 @@ Voir plus (+10)
                       </div>
                       
                       <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                        {(chatMessages[''] || []).length === 0 ? (
+                        {(chatMessages['livestream'] || []).length === 0 ? (
                           <div className="text-center py-8">
                             <div className="text-gray-400 text-sm">Aucun message</div>
                             <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
                           </div>
                         ) : (
-                          (chatMessages[''] || []).map((message) => (
+                          (chatMessages['livestream'] || []).map((message) => (
                             <div key={message.id} className="flex items-start gap-2">
                               <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs">T</div>
                               <div className="flex-1">
@@ -5317,7 +5401,7 @@ Voir plus (+10)
       )}
 
       {/* Bouton + Signal fixe */}
-                      {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', ''].includes(selectedChannel.id) && (
+                      {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'livestream'].includes(selectedChannel.id) && (
         <div className="fixed bottom-6 right-6 z-50">
           <button 
             onClick={handleCreateSignal}

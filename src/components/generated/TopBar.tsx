@@ -13,8 +13,7 @@ export interface TopBarProps {
   channelName: string;
   winRate?: number;
   className?: string;
-  onLiveStreamClick?: () => void;
-  isLiveStreaming?: boolean;
+
 }
 function SearchInput({
   className
@@ -83,8 +82,7 @@ export default function TopBar({
   channelName,
   winRate,
   className,
-  onLiveStreamClick,
-  isLiveStreaming = false
+
 }: TopBarProps) {
   return <header className={cn("flex items-center justify-between px-4 py-3 bg-[#2f3136] border-b border-white/10", "min-h-[60px]", className)}>
       {/* Left: Channel Name and Win Rate */}
@@ -119,29 +117,7 @@ export default function TopBar({
           <MobileSearchSheet />
         </div>
         
-        {/* Live Stream Button */}
-        <motion.div whileHover={{
-          scale: 1.05
-        }} whileTap={{
-          scale: 0.95
-        }} transition={{
-          duration: 0.15
-        }}>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={onLiveStreamClick}
-            className={cn(
-              "h-9 w-9 transition-all duration-200",
-              isLiveStreaming 
-                ? "text-red-400 hover:text-red-300 hover:bg-red-900/20" 
-                : "text-white/70 hover:text-white hover:bg-[#36393f]/50"
-            )}
-            aria-label={isLiveStreaming ? "Arrêter le live" : "Démarrer le live"}
-          >
-            <Video className="h-4 w-4" />
-          </Button>
-        </motion.div>
+
         
         {/* Notification Button */}
         <IconButton icon={Bell} label="Notifications" onClick={() => console.log('Notifications clicked')} />
