@@ -60,6 +60,7 @@ export default function AdminInterface() {
                 ...prev,
                 [message.id]: reactions
               }));
+              console.log('🔥 Réaction message mise à jour en temps réel:', message.id, reactions);
             }
           });
         });
