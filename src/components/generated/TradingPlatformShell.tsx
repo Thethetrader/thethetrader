@@ -1442,21 +1442,16 @@ export default function TradingPlatformShell() {
   };
 
   const getSignalsForDate = (date: Date) => {
-    // Pour les signaux, on utilise une logique simple basée sur le jour actuel
-    // car les signaux n'ont pas de date stockée, seulement un timestamp
-    const today = new Date();
-    const clickedDay = date.getDate();
-    const clickedMonth = date.getMonth();
-    const clickedYear = date.getFullYear();
+    // Utiliser les données synchronisées du calendrier
+    const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    const dayData = calendarStats.dailyData[dateKey];
     
-    // Si c'est aujourd'hui, retourner tous les signaux
-    if (clickedDay === today.getDate() && 
-        clickedMonth === today.getMonth() && 
-        clickedYear === today.getFullYear()) {
-      return signals;
+    if (dayData && dayData.signals.length > 0) {
+      console.log(`🔍 Signaux trouvés pour ${dateKey}:`, dayData.signals.length);
+      return dayData.signals;
     }
     
-    // Sinon, retourner un tableau vide (pas de signaux pour les autres jours)
+    console.log(`🔍 Aucun signal trouvé pour ${dateKey}`);
     return [];
   };
 
@@ -1901,12 +1896,14 @@ export default function TradingPlatformShell() {
                         // }
                         console.log('Clic sur jour:', dayNumber, 'Trades trouvés:', tradesForDate.length);
                         } else {
-                          // Ouvrir le popup des signaux si il y en a
+                          // Ouvrir le popup des signaux (même s'il n'y en a pas)
                           const signalsForDate = getSignalsForDate(clickedDate);
-                          if (signalsForDate.length > 0) {
-                            setSelectedSignalsDate(clickedDate);
-                            setShowSignalsModal(true);
-                          }
+                          console.log('Clic sur jour:', dayNumber, 'Signaux trouvés:', signalsForDate.length);
+                          
+                          // Toujours ouvrir le popup, même s'il n'y a pas de signaux
+                          console.log('Ouverture du popup des signaux...');
+                          setSelectedSignalsDate(clickedDate);
+                          setShowSignalsModal(true);
                         }
                       } catch (error) {
                         console.error('Erreur lors du clic sur le jour:', error);
@@ -2081,6 +2078,9 @@ export default function TradingPlatformShell() {
               ))}
             </div>
           </div>
+          
+          {/* Espace supplémentaire en bas pour éviter que la dernière ligne soit cachée */}
+          <div className="h-24 md:h-32"></div>
         </div>
       </div>
     </div>
@@ -4089,59 +4089,107 @@ export default function TradingPlatformShell() {
               </div>
 
               <div className="space-y-4">
-                {getSignalsForDate(selectedSignalsDate).map((signal) => (
-                  <div key={signal.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <span className={`px-2 py-1 rounded text-xs font-bold ${
-                          signal.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
-                        }`}>
-                          {signal.type}
-                        </span>
-                        <span className="text-lg font-bold text-white">{signal.symbol}</span>
-                        <span className="text-sm text-gray-400">{signal.timeframe}</span>
-                      </div>
-                      <span className={`px-2 py-1 rounded text-xs ${
-                        signal.status === 'WIN' ? 'bg-green-600 text-white' :
-                        signal.status === 'LOSS' ? 'bg-red-600 text-white' :
-                        signal.status === 'BE' ? 'bg-blue-600 text-white' :
-                        'bg-yellow-600 text-white'
-                      }`}>
-                        {signal.status}
-                      </span>
-                    </div>
+                {getSignalsForDate(selectedSignalsDate).length > 0 ? (
+                  (() => {
+                    const signals = getSignalsForDate(selectedSignalsDate);
+                    console.log('🔍 [POPUP] Signaux reçus dans le popup:', signals);
+                    signals.forEach(signal => {
+                      console.log('🔍 [POPUP] Signal individuel:', {
+                        id: signal.id,
+                        symbol: signal.symbol,
+                        image: signal.image,
+                        attachment_data: signal.attachment_data,
+                        attachment_type: signal.attachment_type,
+                        attachment_name: signal.attachment_name
+                      });
+                    });
+                    
+                    return signals.map((signal) => (
+                      <div key={signal.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <span className={`px-2 py-1 rounded text-xs font-bold ${
+                              signal.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+                            }`}>
+                              {signal.type}
+                            </span>
+                            <span className="text-lg font-bold text-white">{signal.symbol}</span>
+                            <span className="text-sm text-gray-400">{signal.timeframe}</span>
+                          </div>
+                          <span className={`px-2 py-1 rounded text-xs ${
+                            signal.status === 'WIN' ? 'bg-green-600 text-white' :
+                            signal.status === 'LOSS' ? 'bg-red-600 text-white' :
+                            signal.status === 'BE' ? 'bg-blue-600 text-white' :
+                            'bg-yellow-600 text-white'
+                          }`}>
+                            {signal.status}
+                          </span>
+                        </div>
 
-                    <div className="grid grid-cols-2 gap-4 mb-3">
-                      <div>
-                        <span className="text-sm text-gray-400">Entry:</span>
-                        <span className="text-white ml-2">{signal.entry}</span>
-                      </div>
-                      <div>
-                        <span className="text-sm text-gray-400">Take Profit:</span>
-                        <span className="text-white ml-2">{signal.takeProfit}</span>
-                      </div>
-                      <div>
-                        <span className="text-sm text-gray-400">Stop Loss:</span>
-                        <span className="text-white ml-2">{signal.stopLoss}</span>
-                      </div>
-                      <div>
-                        <span className="text-sm text-gray-400">Channel:</span>
-                        <span className="text-white ml-2">{signal.channel_id}</span>
-                      </div>
-                    </div>
+                        <div className="grid grid-cols-2 gap-4 mb-3">
+                          <div>
+                            <span className="text-sm text-gray-400">Entry:</span>
+                            <span className="text-white ml-2">{signal.entry}</span>
+                          </div>
+                          <div>
+                            <span className="text-sm text-gray-400">Take Profit:</span>
+                            <span className="text-white ml-2">{signal.takeProfit}</span>
+                          </div>
+                          <div>
+                            <span className="text-sm text-gray-400">Stop Loss:</span>
+                            <span className="text-white ml-2">{signal.stopLoss}</span>
+                          </div>
+                          <div>
+                            <span className="text-sm text-gray-400">Channel:</span>
+                            <span className="text-white ml-2">{signal.channel_id}</span>
+                          </div>
+                        </div>
 
-                    {signal.description && (
-                      <div className="mb-3">
-                        <span className="text-sm text-gray-400">Description:</span>
-                        <p className="text-white mt-1">{signal.description}</p>
-                      </div>
-                    )}
+                        {signal.description && (
+                          <div className="mb-3">
+                            <span className="text-sm text-gray-400">Description:</span>
+                            <p className="text-white mt-1">{signal.description}</p>
+                          </div>
+                        )}
 
-                    <div className="flex items-center justify-between text-sm text-gray-400">
-                      <span>Créé le {signal.timestamp}</span>
-                    </div>
+                        {/* Affichage des images */}
+                        {(signal.image || signal.attachment_data) && (
+                          <div className="mb-3">
+                            <span className="text-sm text-gray-400">Images:</span>
+                            <div className="flex gap-2 mt-2">
+                              {signal.image && (
+                                <img 
+                                  src={typeof signal.image === 'string' ? signal.image : URL.createObjectURL(signal.image)}
+                                  alt="Signal image"
+                                  className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80"
+                                  onClick={() => setSelectedImage(typeof signal.image === 'string' ? signal.image : URL.createObjectURL(signal.image))}
+                                />
+                              )}
+                              {signal.attachment_data && (
+                                <img 
+                                  src={signal.attachment_data}
+                                  alt="Signal attachment"
+                                  className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80"
+                                  onClick={() => setSelectedImage(signal.attachment_data)}
+                                />
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="flex items-center justify-between text-sm text-gray-400">
+                          <span>Créé le {signal.timestamp}</span>
+                        </div>
+                      </div>
+                    ));
+                  })()
+                ) : (
+                  <div className="text-center py-8">
+                    <div className="text-gray-400 text-lg mb-2">📅</div>
+                    <div className="text-gray-300 text-lg font-medium">Aucun signal pour ce jour</div>
+                    <div className="text-gray-500 text-sm mt-1">Les signaux apparaîtront ici quand ils seront créés</div>
                   </div>
-                ))}
+                )}
               </div>
 
               <div className="mt-6 pt-4 border-t border-gray-600">

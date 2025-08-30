@@ -15,6 +15,10 @@ interface CalendarSignal {
   channel_id: string;
   pnl?: string;
   closeMessage?: string;
+  image?: any;
+  attachment_data?: string;
+  attachment_type?: string;
+  attachment_name?: string;
 }
 
 interface CalendarStats {
@@ -55,22 +59,39 @@ export function useCalendarSync() {
         }
       }
       
-      if (allSignals.length > 0) {
-        const formattedSignals: CalendarSignal[] = allSignals.map(signal => ({
-          id: signal.id || '',
-          type: signal.type,
-          symbol: signal.symbol,
-          timeframe: signal.timeframe,
-          entry: signal.entry?.toString() || 'N/A',
-          takeProfit: signal.takeProfit?.toString() || 'N/A',
-          stopLoss: signal.stopLoss?.toString() || 'N/A',
-          description: signal.description || '',
-          timestamp: signal.timestamp || Date.now(),
-          status: signal.status || 'ACTIVE' as const,
-          channel_id: signal.channel_id,
-          pnl: signal.pnl,
-          closeMessage: signal.closeMessage
-        }));
+              if (allSignals.length > 0) {
+          console.log('🔍 [CALENDAR-SYNC] Signaux bruts reçus:', allSignals);
+          
+          const formattedSignals: CalendarSignal[] = allSignals.map(signal => {
+            console.log('🔍 [CALENDAR-SYNC] Signal individuel:', {
+              id: signal.id,
+              symbol: signal.symbol,
+              image: signal.image,
+              attachment_data: signal.attachment_data,
+              attachment_type: signal.attachment_type,
+              attachment_name: signal.attachment_name
+            });
+            
+            return {
+              id: signal.id || '',
+              type: signal.type,
+              symbol: signal.symbol,
+              timeframe: signal.timeframe,
+              entry: signal.entry?.toString() || 'N/A',
+              takeProfit: signal.takeProfit?.toString() || 'N/A',
+              stopLoss: signal.stopLoss?.toString() || 'N/A',
+              description: signal.description || '',
+              timestamp: signal.timestamp || Date.now(),
+              status: signal.status || 'ACTIVE' as const,
+              channel_id: signal.channel_id,
+              pnl: signal.pnl,
+              closeMessage: signal.closeMessage,
+              image: signal.image,
+              attachment_data: signal.attachment_data,
+              attachment_type: signal.attachment_type,
+              attachment_name: signal.attachment_name
+            };
+          });
         
         // Organiser par date
         const dailyData: { [date: string]: { signals: CalendarSignal[]; pnl: number; trades: number } } = {};
