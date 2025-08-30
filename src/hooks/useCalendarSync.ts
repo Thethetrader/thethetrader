@@ -63,13 +63,16 @@ export function useCalendarSync() {
           console.log('🔍 [CALENDAR-SYNC] Signaux bruts reçus:', allSignals);
           
           const formattedSignals: CalendarSignal[] = allSignals.map(signal => {
-            console.log('🔍 [CALENDAR-SYNC] Signal individuel:', {
+            console.log('🔍 [CALENDAR-SYNC] Signal individuel COMPLET:', {
               id: signal.id,
               symbol: signal.symbol,
               image: signal.image,
               attachment_data: signal.attachment_data,
               attachment_type: signal.attachment_type,
-              attachment_name: signal.attachment_name
+              attachment_name: signal.attachment_name,
+              status: signal.status,
+              timestamp: signal.timestamp,
+              ALL_KEYS: Object.keys(signal)
             });
             
             return {

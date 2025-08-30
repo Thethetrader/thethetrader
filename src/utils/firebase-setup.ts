@@ -31,13 +31,16 @@ export interface Signal {
   takeProfit: string;
   stopLoss: string;
   description: string;
-  image: any;
+  image?: any;
   timestamp: string;
   status: 'ACTIVE' | 'WIN' | 'LOSS' | 'BE';
   channel_id: string;
   reactions?: string[];
   pnl?: string;
   closeMessage?: string;
+  attachment_data?: string;
+  attachment_type?: string;
+  attachment_name?: string;
 }
 
 // Ajouter un message à Firebase

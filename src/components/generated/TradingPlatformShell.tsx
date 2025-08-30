@@ -4094,13 +4094,16 @@ export default function TradingPlatformShell() {
                     const signals = getSignalsForDate(selectedSignalsDate);
                     console.log('🔍 [POPUP] Signaux reçus dans le popup:', signals);
                     signals.forEach(signal => {
-                      console.log('🔍 [POPUP] Signal individuel:', {
+                      console.log('🔍 [POPUP] Signal individuel COMPLET:', {
                         id: signal.id,
                         symbol: signal.symbol,
                         image: signal.image,
                         attachment_data: signal.attachment_data,
                         attachment_type: signal.attachment_type,
-                        attachment_name: signal.attachment_name
+                        attachment_name: signal.attachment_name,
+                        status: signal.status,
+                        timestamp: signal.timestamp,
+                        ALL_KEYS: Object.keys(signal)
                       });
                     });
                     
@@ -4140,17 +4143,14 @@ export default function TradingPlatformShell() {
                             <span className="text-white ml-2">{signal.stopLoss}</span>
                           </div>
                           <div>
-                            <span className="text-sm text-gray-400">Channel:</span>
-                            <span className="text-white ml-2">{signal.channel_id}</span>
+                            <span className="text-sm text-gray-400">PnL:</span>
+                            <span className={`ml-2 font-bold ${
+                              signal.pnl && signal.pnl.includes('-') ? 'text-red-400' : 'text-green-400'
+                            }`}>
+                              {signal.pnl || 'N/A'}
+                            </span>
                           </div>
                         </div>
-
-                        {signal.description && (
-                          <div className="mb-3">
-                            <span className="text-sm text-gray-400">Description:</span>
-                            <p className="text-white mt-1">{signal.description}</p>
-                          </div>
-                        )}
 
                         {/* Affichage des images */}
                         {(signal.image || signal.attachment_data) && (
@@ -4177,9 +4177,7 @@ export default function TradingPlatformShell() {
                           </div>
                         )}
 
-                        <div className="flex items-center justify-between text-sm text-gray-400">
-                          <span>Créé le {signal.timestamp}</span>
-                        </div>
+
                       </div>
                     ));
                   })()
