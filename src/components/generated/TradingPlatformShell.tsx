@@ -4,10 +4,14 @@ import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotifi
 
 import { syncProfileImage, getProfileImage, initializeProfile } from '../../utils/profile-manager';
 import { useStatsSync } from '../../hooks/useStatsSync';
+import { useCalendarSync } from '../../hooks/useCalendarSync';
 
 export default function TradingPlatformShell() {
   // Hook pour les stats en temps réel synchronisées avec l'admin
-  const { stats, allSignalsForStats: realTimeSignals } = useStatsSync();
+  const { stats, allSignalsForStats: realTimeSignals, getWeeklyBreakdown: getCalendarWeeklyBreakdown, getTodaySignals: getCalendarTodaySignals, getThisMonthSignals: getCalendarThisMonthSignals } = useStatsSync();
+  
+  // Hook pour la synchronisation du calendrier
+  const { calendarStats, getMonthlyStats: getCalendarMonthlyStats, getWeeklyBreakdown: getCalendarWeeklyBreakdownFromHook } = useCalendarSync();
   
   // État pour éviter les envois multiples
   const [isSendingMessage, setIsSendingMessage] = useState(false);
@@ -924,9 +928,9 @@ export default function TradingPlatformShell() {
     const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();
     
-    // Créer 4 semaines du mois en cours
+    // Créer 5 semaines du mois en cours
     const weeks = [];
-    for (let weekNum = 1; weekNum <= 4; weekNum++) {
+    for (let weekNum = 1; weekNum <= 5; weekNum++) {
       const weekStart = new Date(currentYear, currentMonth, (weekNum - 1) * 7 + 1);
       const weekEnd = new Date(currentYear, currentMonth, weekNum * 7);
       
@@ -965,9 +969,9 @@ export default function TradingPlatformShell() {
     const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();
     
-    // Créer 4 semaines du mois en cours
+    // Créer 5 semaines du mois en cours
     const weeks = [];
-    for (let weekNum = 1; weekNum <= 4; weekNum++) {
+    for (let weekNum = 1; weekNum <= 5; weekNum++) {
       const weekStart = new Date(currentYear, currentMonth, (weekNum - 1) * 7 + 1);
       const weekEnd = new Date(currentYear, currentMonth, weekNum * 7);
       
@@ -1814,13 +1818,13 @@ export default function TradingPlatformShell() {
                   }) : [];
 
                 const daySignals = selectedChannel.id !== 'trading-journal' ? 
-                  allSignalsForStats.filter(signal => {
-                    // Utiliser la vraie date du signal basée sur le timestamp original
-                    const signalDate = new Date(signal.originalTimestamp);
-                    return signalDate.getDate() === dayNumber && 
-                           signalDate.getMonth() === currentDate.getMonth() && 
-                           signalDate.getFullYear() === currentDate.getFullYear();
-                  }) : [];
+                  (() => {
+                    // Utiliser les données synchronisées du calendrier
+                    // Éviter le décalage de timezone en utilisant la date locale
+                    const dateKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
+                    const dayData = calendarStats.dailyData[dateKey];
+                    return dayData ? dayData.signals : [];
+                  })() : [];
 
                 // Déterminer la couleur selon les trades ou signaux
                 let bgColor = 'bg-gray-700 border-gray-600 text-gray-400'; // No trade par défaut
@@ -1849,21 +1853,17 @@ export default function TradingPlatformShell() {
                   if (daySignals.length > 0) {
                     tradeCount = daySignals.length;
                     
-                    // Calculer le PnL total pour ce jour
-                    const totalPnL = daySignals.reduce((total, signal) => {
-                      if (signal.pnl) {
-                        return total + parsePnL(signal.pnl);
-                      }
-                      return total;
-                    }, 0);
+                    // Utiliser le PnL déjà calculé par le hook synchronisé
+                    // Éviter le décalage de timezone en utilisant la date locale
+                    const dateKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
+                    const dayData = calendarStats.dailyData[dateKey];
+                    const totalPnL = dayData ? dayData.pnl : 0;
                     
                     // Debug pour le jour 30
                     if (dayNumber === 30) {
                       console.log('🔍 Jour 30 - Signaux:', daySignals.length);
-                      console.log('🔍 Jour 30 - PnL total:', totalPnL);
-                      daySignals.forEach(signal => {
-                        console.log('🔍 Signal:', signal.symbol, 'PnL:', signal.pnl, 'Parsed:', parsePnL(signal.pnl));
-                      });
+                      console.log('🔍 Jour 30 - PnL total (synchro):', totalPnL);
+                      console.log('🔍 Jour 30 - Données jour:', dayData);
                     }
                     
                     // Déterminer la couleur selon le PnL total
@@ -1998,13 +1998,13 @@ export default function TradingPlatformShell() {
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Aujourd'hui</div>
                 <div className="text-lg font-bold text-blue-400">
-                  {selectedChannel.id === 'trading-journal' ? getTodayTrades().length : getTodaySignals().length}
+                  {selectedChannel.id === 'trading-journal' ? getTodayTrades().length : getCalendarTodaySignals().length}
                 </div>
               </div>
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Ce mois</div>
                 <div className="text-lg font-bold text-white">
-                  {selectedChannel.id === 'trading-journal' ? getThisMonthTrades().length : getThisMonthSignals().length}
+                  {selectedChannel.id === 'trading-journal' ? getThisMonthTrades().length : getCalendarThisMonthSignals().length}
                 </div>
               </div>
             </div>
@@ -2015,7 +2015,7 @@ export default function TradingPlatformShell() {
                 <div className="text-lg font-bold text-green-400">
                   {selectedChannel.id === 'trading-journal' ? 
                     (calculateAvgWinTrades() > 0 ? `+$${calculateAvgWinTrades()}` : '-') :
-                    (calculateAvgWin() > 0 ? `+$${calculateAvgWin()}` : '-')
+                    (getCalendarMonthlyStats(currentDate).avgWin > 0 ? `+$${getCalendarMonthlyStats(currentDate).avgWin}` : '-')
                   }
                 </div>
               </div>
@@ -2024,7 +2024,7 @@ export default function TradingPlatformShell() {
                 <div className="text-lg font-bold text-red-400">
                   {selectedChannel.id === 'trading-journal' ? 
                     (calculateAvgLossTrades() > 0 ? `-$${calculateAvgLossTrades()}` : '-') :
-                    (calculateAvgLoss() > 0 ? `-$${calculateAvgLoss()}` : '-')
+                    (getCalendarMonthlyStats(currentDate).avgLoss > 0 ? `-$${getCalendarMonthlyStats(currentDate).avgLoss}` : '-')
                   }
                 </div>
               </div>
@@ -2035,7 +2035,7 @@ export default function TradingPlatformShell() {
           <div>
             <h4 className="text-sm font-semibold text-gray-300 mb-4">Weekly Breakdown</h4>
             <div className="space-y-2">
-              {(selectedChannel.id === 'trading-journal' ? getWeeklyBreakdownTrades() : getWeeklyBreakdown()).map((weekData, index) => (
+              {(selectedChannel.id === 'trading-journal' ? getWeeklyBreakdownTrades() : getCalendarWeeklyBreakdownFromHook()).map((weekData, index) => (
                 <div key={index} className={`flex items-center justify-between p-3 rounded-lg border ${
                   weekData.isCurrentWeek 
                     ? 'bg-blue-600/20 border-blue-500/30' 

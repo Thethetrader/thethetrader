@@ -155,9 +155,79 @@ export function useStatsSync() {
     return () => clearInterval(interval);
   }, []);
 
+  // Fonction pour obtenir le breakdown hebdomadaire synchronisé avec l'admin
+  const getWeeklyBreakdown = () => {
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+    
+    // Créer 5 semaines du mois en cours
+    const weeks = [];
+    for (let weekNum = 1; weekNum <= 5; weekNum++) {
+      const weekStart = new Date(currentYear, currentMonth, (weekNum - 1) * 7 + 1);
+      const weekEnd = new Date(currentYear, currentMonth, weekNum * 7);
+      
+      const weekSignals = allSignalsForStats.filter(s => {
+        const signalDate = new Date(s.originalTimestamp);
+        return signalDate >= weekStart && 
+               signalDate <= weekEnd &&
+               signalDate.getMonth() === currentMonth &&
+               signalDate.getFullYear() === currentYear;
+      });
+      
+      const closedSignals = weekSignals.filter(s => s.status !== 'ACTIVE');
+      const weekPnL = closedSignals.reduce((total, signal) => {
+        if (!signal.pnl) return total;
+        const cleanPnL = signal.pnl.replace(/[$,]/g, '').trim();
+        const num = Number(cleanPnL);
+        return total + (isNaN(num) ? 0 : num);
+      }, 0);
+      const wins = closedSignals.filter(s => s.status === 'WIN').length;
+      const losses = closedSignals.filter(s => s.status === 'LOSS').length;
+      
+      // Vérifier si c'est la semaine actuelle
+      const todayWeek = Math.ceil(today.getDate() / 7);
+      const isCurrentWeek = weekNum === todayWeek;
+      
+      weeks.push({
+        week: `Week ${weekNum}`,
+        trades: weekSignals.length,
+        pnl: weekPnL,
+        wins,
+        losses,
+        isCurrentWeek
+      });
+    }
+    
+    return weeks;
+  };
+
+  // Fonctions pour "Aujourd'hui" et "Ce mois" synchronisées avec l'admin
+  const getTodaySignals = () => {
+    const today = new Date();
+    return allSignalsForStats.filter(s => {
+      const signalDate = new Date(s.originalTimestamp);
+      return signalDate.getDate() === today.getDate() &&
+             signalDate.getMonth() === today.getMonth() &&
+             signalDate.getFullYear() === today.getFullYear();
+    });
+  };
+
+  const getThisMonthSignals = () => {
+    const today = new Date();
+    return allSignalsForStats.filter(s => {
+      const signalDate = new Date(s.originalTimestamp);
+      return signalDate.getMonth() === today.getMonth() &&
+             signalDate.getFullYear() === today.getFullYear();
+    });
+  };
+
   return {
     allSignalsForStats,
     stats,
-    refreshStats: loadAllSignalsForStats
+    refreshStats: loadAllSignalsForStats,
+    getWeeklyBreakdown,
+    getTodaySignals,
+    getThisMonthSignals
   };
 } 
