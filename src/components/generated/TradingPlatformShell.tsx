@@ -9,6 +9,9 @@ export default function TradingPlatformShell() {
   // Hook pour les stats en temps réel synchronisées avec l'admin
   const { stats, allSignalsForStats: realTimeSignals } = useStatsSync();
   
+  // État pour éviter les envois multiples
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
+  
   const [selectedChannel, setSelectedChannel] = useState({ id: 'general-chat', name: 'general-chat' });
   const [view, setView] = useState<'signals' | 'calendar'>('signals');
   const [mobileView, setMobileView] = useState<'channels' | 'content'>('channels');
@@ -1508,7 +1511,14 @@ export default function TradingPlatformShell() {
   };
 
   const handleSendMessage = async () => {
+    // Protection contre les envois multiples
+    if (isSendingMessage) {
+      console.log('⚠️ Message déjà en cours d\'envoi, ignoré');
+      return;
+    }
+    
     if (chatMessage.trim()) {
+      setIsSendingMessage(true); // Bloquer les envois multiples
       console.log('🚀 Début envoi message côté:', window.matchMedia('(display-mode: standalone)').matches ? 'PWA' : 'Desktop');
       console.log('📝 Message à envoyer:', chatMessage);
       console.log('📺 Canal sélectionné:', selectedChannel.id);
@@ -1590,7 +1600,13 @@ export default function TradingPlatformShell() {
       setTimeout(() => {
         scrollToBottom();
       }, 50);
+      
+      // Vider le champ de message
+      setChatMessage('');
     }
+    
+    // Réactiver l'envoi (même en cas d'erreur)
+    setIsSendingMessage(false);
   };
 
                                     const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -2826,7 +2842,7 @@ export default function TradingPlatformShell() {
                               type="text"
                               value={chatMessage}
                               onChange={(e) => setChatMessage(e.target.value)}
-                              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                              onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                               placeholder="Commenter le stream..."
                               className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
                             />
@@ -3095,7 +3111,7 @@ export default function TradingPlatformShell() {
                           type="text"
                           value={chatMessage}
                           onChange={(e) => setChatMessage(e.target.value)}
-                          onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                          onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                           placeholder="Tapez votre message..."
                           className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                         />
@@ -3259,7 +3275,7 @@ export default function TradingPlatformShell() {
                               type="text"
                               value={chatMessage}
                               onChange={(e) => setChatMessage(e.target.value)}
-                              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                              onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                               placeholder="Commenter le stream..."
                               className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
                             />
@@ -3557,7 +3573,7 @@ export default function TradingPlatformShell() {
                             type="text"
                             value={chatMessage}
                             onChange={(e) => setChatMessage(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                             placeholder="Commenter le stream..."
                             className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
                           />
@@ -3662,7 +3678,7 @@ export default function TradingPlatformShell() {
                         type="text"
                         value={chatMessage}
                         onChange={(e) => setChatMessage(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                         placeholder="Tapez votre message..."
                         className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                       />
