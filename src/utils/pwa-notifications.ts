@@ -154,7 +154,7 @@ export const sendTestNotification = async (): Promise<void> => {
 
   try {
     const registration = await navigator.serviceWorker.ready;
-    await registration.showNotification('🎯 Test PWA Notification', {
+    const options: NotificationOptions = {
       body: 'Cette notification fonctionne même écran verrouillé !',
       icon: '/favicon.png',
       badge: '/favicon.png',
@@ -166,7 +166,9 @@ export const sendTestNotification = async (): Promise<void> => {
           title: 'Ouvrir l\'app'
         }
       ]
-    });
+    };
+    
+    await registration.showNotification('🎯 Test PWA Notification', options);
     
     console.log('✅ Notification test envoyée');
   } catch (error) {
