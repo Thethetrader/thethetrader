@@ -82,6 +82,32 @@ export default function AdminInterface() {
       loadAndSubscribeToReactions();
     }
   }, [messages]);
+  
+  // S'abonner aux changements des signaux pour synchroniser les réactions
+  useEffect(() => {
+    const channels = ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'];
+    
+    const subscriptions = channels.map(channelId => {
+      return subscribeToSignals(channelId, (updatedSignal) => {
+        console.log('🔄 Signal mis à jour reçu:', updatedSignal);
+        
+        // Mettre à jour le signal dans l'état local
+        setSignals(prev => prev.map(signal => 
+          signal.id === updatedSignal.id 
+            ? { ...signal, reactions: updatedSignal.reactions || [] }
+            : signal
+        ));
+      });
+    });
+
+    return () => {
+      subscriptions.forEach(subscription => {
+        if (subscription && typeof subscription.unsubscribe === 'function') {
+          subscription.unsubscribe();
+        }
+      });
+    };
+  }, []);
 
   // Fonction pour ajouter une réaction flamme à un message (côté admin)
   const handleAddReaction = async (messageId: string) => {
