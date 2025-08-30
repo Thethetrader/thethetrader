@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database, updateMessageReactions, getMessageReactions, subscribeToMessageReactions } from '../utils/firebase-setup';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed } from '../utils/push-notifications';
-import { ref, update } from 'firebase/database';
+import { ref, update, onValue } from 'firebase/database';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 
 export default function AdminInterface() {
@@ -83,6 +83,29 @@ export default function AdminInterface() {
       loadAndSubscribeToReactions();
     }
   }, [messages]);
+  
+  // S'abonner aux changements de réactions de manière globale (pour tous les messages)
+  useEffect(() => {
+    console.log('🔄 Admin: Abonnement global aux changements de réactions');
+    
+    // Créer un nœud de référence pour toutes les réactions aux messages
+    const messageReactionsRef = ref(database, 'messageReactions');
+    
+    const unsubscribe = onValue(messageReactionsRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const allReactions = snapshot.val();
+        console.log('🔥 Admin: Réactions reçues en temps réel:', allReactions);
+        
+        // Mettre à jour l'état local avec toutes les réactions
+        setMessageReactions(allReactions);
+      }
+    });
+    
+    return () => {
+      console.log('🔄 Admin: Désabonnement global des réactions');
+      unsubscribe();
+    };
+  }, []);
   
   // S'abonner aux changements des signaux pour synchroniser les réactions
   useEffect(() => {
