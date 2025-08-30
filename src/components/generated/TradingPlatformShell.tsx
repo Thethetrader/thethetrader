@@ -1,10 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateSignalReactions } from '../../utils/firebase-setup';
+import { createClient } from '@supabase/supabase-js';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
 
 import { syncProfileImage, getProfileImage, initializeProfile } from '../../utils/profile-manager';
 import { useStatsSync } from '../../hooks/useStatsSync';
 import { useCalendarSync } from '../../hooks/useCalendarSync';
+
+// Configuration Supabase
+const supabaseUrl = 'https://bamwcozzfshuozsfmjah.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhbXdjb3p6ZnNodW96c2ZtamFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDM0ODcsImV4cCI6MjA2NTY3OTQ4N30.NWSUKoYLl0oGS-dXf4jhtmLRiSuBSk-0lV3NRHJLvrs';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default function TradingPlatformShell() {
   // Hook pour les stats en temps réel synchronisées avec l'admin
@@ -13,8 +19,54 @@ export default function TradingPlatformShell() {
   // Hook pour la synchronisation du calendrier
   const { calendarStats, getMonthlyStats: getCalendarMonthlyStats, getWeeklyBreakdown: getCalendarWeeklyBreakdownFromHook } = useCalendarSync();
   
+  // Charger les réactions depuis localStorage au montage du composant
+  useEffect(() => {
+    const savedReactions = localStorage.getItem('messageReactions');
+    if (savedReactions) {
+      try {
+        setMessageReactions(JSON.parse(savedReactions));
+      } catch (error) {
+        console.error('Erreur lors du chargement des réactions:', error);
+      }
+    }
+  }, []);
+  
+  // Vérifier session Supabase au chargement
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser({ 
+          id: session.user.id, 
+          email: session.user.email || '' 
+        });
+      }
+    });
+
+    // Écouter les changements d'auth
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser({ 
+          id: session.user.id, 
+          email: session.user.email || '' 
+        });
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+  
   // État pour éviter les envois multiples
   const [isSendingMessage, setIsSendingMessage] = useState(false);
+  
+  // État pour les réactions aux messages (côté utilisateur)
+  const [messageReactions, setMessageReactions] = useState<{[messageId: string]: {fire: number, users: string[]}}>({});
+  
+  // État pour l'utilisateur connecté
+  const [user, setUser] = useState<{id: string, email: string} | null>(null);
   
   const [selectedChannel, setSelectedChannel] = useState({ id: 'general-chat', name: 'general-chat' });
   const [view, setView] = useState<'signals' | 'calendar'>('signals');
@@ -1004,6 +1056,42 @@ export default function TradingPlatformShell() {
     }
     
     return weeks;
+  };
+
+  // Fonction pour ajouter une réaction flamme à un message (côté utilisateur)
+  const handleAddReaction = (messageId: string) => {
+    const currentUser = user?.email || 'Anonymous'; // Utiliser l'email de l'utilisateur connecté
+    
+    setMessageReactions(prev => {
+      const current = prev[messageId] || { fire: 0, users: [] };
+      const userIndex = current.users.indexOf(currentUser);
+      
+      if (userIndex === -1) {
+        // Ajouter la réaction
+        const newReactions = {
+          ...prev,
+          [messageId]: {
+            fire: current.fire + 1,
+            users: [...current.users, currentUser]
+          }
+        };
+        // Sauvegarder dans localStorage
+        localStorage.setItem('messageReactions', JSON.stringify(newReactions));
+        return newReactions;
+      } else {
+        // Retirer la réaction
+        const newReactions = {
+          ...prev,
+          [messageId]: {
+            fire: current.fire - 1,
+            users: current.users.filter((_, index) => index !== userIndex)
+          }
+        };
+        // Sauvegarder dans localStorage
+        localStorage.setItem('messageReactions', JSON.stringify(newReactions));
+        return newReactions;
+      }
+    });
   };
 
   // Fonctions pour gérer les statuts des signaux
@@ -3118,6 +3206,23 @@ export default function TradingPlatformShell() {
                                   </div>
                                 )}
                               </div>
+                              
+                              {/* Bouton de réaction flamme pour les messages (en dehors du conteneur gris) */}
+                              <div className="mt-2 flex justify-start">
+                                <button
+                                  onClick={() => handleAddReaction(message.id)}
+                                  className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
+                                    (messageReactions[message.id]?.users || []).includes(user?.email || 'Anonymous')
+                                      ? 'bg-orange-500 text-white hover:bg-orange-600'
+                                      : 'bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white'
+                                  }`}
+                                >
+                                  🔥
+                                  <span className="text-xs">
+                                    {messageReactions[message.id]?.fire || 0}
+                                  </span>
+                                </button>
+                              </div>
                             </div>
                           </div>
                         ))
@@ -3283,6 +3388,23 @@ export default function TradingPlatformShell() {
                                   <div className="bg-gray-700 rounded-lg p-2">
                                     <p className="text-white text-sm">{message.text}</p>
                                   </div>
+                                </div>
+                                
+                                {/* Bouton de réaction flamme pour les messages (en dehors du conteneur gris) */}
+                                <div className="mt-2 flex justify-start">
+                                  <button
+                                    onClick={() => handleAddReaction(message.id)}
+                                    className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
+                                      (messageReactions[message.id]?.users || []).includes(user?.email || 'Anonymous')
+                                        ? 'bg-orange-500 text-white hover:bg-orange-600'
+                                        : 'bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white'
+                                    }`}
+                                  >
+                                    🔥
+                                    <span className="text-xs">
+                                      {messageReactions[message.id]?.fire || 0}
+                                    </span>
+                                  </button>
                                 </div>
                               </div>
                             ))
@@ -3580,6 +3702,23 @@ export default function TradingPlatformShell() {
                                 </div>
                                 <div className="bg-gray-700 rounded-lg p-2">
                                   <p className="text-white text-sm">{message.text}</p>
+                                  
+                                  {/* Bouton de réaction flamme pour les messages */}
+                                  <div className="mt-2 pt-2 border-t border-gray-600">
+                                    <button
+                                      onClick={() => handleAddReaction(message.id)}
+                                      className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
+                                        (messageReactions[message.id]?.users || []).includes(user?.email || 'Anonymous')
+                                          ? 'bg-orange-500 text-white hover:bg-orange-600'
+                                          : 'bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white'
+                                      }`}
+                                    >
+                                      🔥
+                                      <span className="text-xs">
+                                        {messageReactions[message.id]?.fire || 0}
+                                      </span>
+                                    </button>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -3671,6 +3810,7 @@ export default function TradingPlatformShell() {
                             </div>
                             <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
                                 {message.text && <p className="text-white">{message.text}</p>}
+                                
                                 {message.attachment_data && (
                                   <div className="mt-2">
                                     <div className="relative">
@@ -3684,6 +3824,23 @@ export default function TradingPlatformShell() {
                                     </div>
                                   </div>
                                 )}
+                              </div>
+                              
+                              {/* Bouton de réaction flamme pour les messages (en dehors du conteneur gris) */}
+                              <div className="mt-2 flex justify-start">
+                                <button
+                                  onClick={() => handleAddReaction(message.id)}
+                                  className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
+                                    (messageReactions[message.id]?.users || []).includes(user?.email || 'Anonymous')
+                                      ? 'bg-orange-500 text-white hover:bg-orange-600'
+                                      : 'bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white'
+                                  }`}
+                                >
+                                  🔥
+                                  <span className="text-xs">
+                                    {messageReactions[message.id]?.fire || 0}
+                                  </span>
+                                </button>
                               </div>
                           </div>
                         </div>

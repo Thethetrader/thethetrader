@@ -23,6 +23,52 @@ export default function AdminInterface() {
   const [pasteArea, setPasteArea] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
+  // État pour les réactions aux messages (côté admin)
+  const [messageReactions, setMessageReactions] = useState<{[messageId: string]: {fire: number, users: string[]}}>({});
+
+  // Charger les réactions depuis localStorage au montage du composant
+  useEffect(() => {
+    const savedReactions = localStorage.getItem('messageReactions');
+    if (savedReactions) {
+      try {
+        setMessageReactions(JSON.parse(savedReactions));
+      } catch (error) {
+        console.error('Erreur lors du chargement des réactions:', error);
+      }
+    }
+  }, []);
+
+  // Fonction pour ajouter une réaction flamme à un message (côté admin)
+  const handleAddReaction = (messageId: string) => {
+    const currentUser = 'Admin'; // Toujours Admin dans l'interface admin
+    
+    setMessageReactions(prev => {
+      const current = prev[messageId] || { fire: 0, users: [] };
+      const userIndex = current.users.indexOf(currentUser);
+      
+      if (userIndex === -1) {
+        // Ajouter la réaction
+        return {
+          ...prev,
+          [messageId]: {
+            fire: current.fire + 1,
+            users: [...current.users, currentUser]
+          }
+        };
+      } else {
+        // Retirer la réaction
+        const newUsers = current.users.filter((_, index) => index !== userIndex);
+        return {
+          ...prev,
+          [messageId]: {
+            fire: current.fire - 1,
+            users: newUsers
+          }
+        };
+      }
+    });
+  };
+
   const [lastSeenMessages, setLastSeenMessages] = useState<{[channelId: string]: string}>({});
   const [signals, setSignals] = useState<Array<{
     id: string;
@@ -3169,7 +3215,7 @@ export default function AdminInterface() {
                                     }}
                                     className="text-red-400 hover:text-red-300"
                                   >
-                                    🗑️ Supprimer
+                                    🗑️
                                   </button>
                                 </td>
                               </tr>
@@ -3563,6 +3609,23 @@ export default function AdminInterface() {
                                   <div className="bg-gray-700 rounded-lg p-2">
                                     <p className="text-white text-sm">{message.text}</p>
                                   </div>
+                                  
+                                  {/* Réactions aux messages - HORS du cadre gris */}
+                                  <div className="mt-2 flex items-center gap-2">
+                                    <button
+                                      onClick={() => handleAddReaction(message.id)}
+                                      className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-all duration-200 ${
+                                        (messageReactions[message.id]?.users || []).includes('Admin')
+                                          ? 'bg-orange-500 text-white'
+                                          : 'bg-gray-600 hover:bg-gray-500 text-gray-300 hover:text-white'
+                                      }`}
+                                    >
+                                      🔥
+                                      <span className="ml-1">
+                                        {messageReactions[message.id]?.fire || 0}
+                                      </span>
+                                    </button>
+                                  </div>
                                 </div>
                               </div>
                             ))
@@ -3805,6 +3868,23 @@ export default function AdminInterface() {
                                     )}
                                   </div>
                                 )}
+                              </div>
+                              
+                              {/* Réactions aux messages - HORS du cadre gris */}
+                              <div className="mt-2 flex items-center gap-2">
+                                <button
+                                  onClick={() => handleAddReaction(message.id)}
+                                  className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-all duration-200 ${
+                                    (messageReactions[message.id]?.users || []).includes('Admin')
+                                      ? 'bg-orange-500 text-white'
+                                      : 'bg-gray-600 hover:bg-gray-500 text-gray-300 hover:text-white'
+                                  }`}
+                                >
+                                  🔥
+                                  <span className="ml-1">
+                                    {messageReactions[message.id]?.fire || 0}
+                                  </span>
+                                </button>
                               </div>
                             </div>
                           </div>
@@ -4487,8 +4567,25 @@ Voir plus (+10)
                                   );
                                 })()}
                               </div>
+                              
+                              {/* Réactions aux messages - HORS du cadre gris */}
+                              <div className="mt-2 flex items-center gap-2">
+                                <button
+                                  onClick={() => handleAddReaction(message.id)}
+                                  className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-all duration-200 ${
+                                    (messageReactions[message.id]?.users || []).includes('Admin')
+                                      ? 'bg-orange-500 text-white'
+                                      : 'bg-gray-600 hover:bg-gray-500 text-gray-300 hover:text-white'
+                                  }`}
+                                >
+                                  🔥
+                                  <span className="ml-1">
+                                    {messageReactions[message.id]?.fire || 0}
+                                  </span>
+                                </button>
+                              </div>
+                            </div>
                           </div>
-                        </div>
                       ))
                     )}
                     <div ref={messagesEndRef} />
