@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './index.css';
+import { initializePWANotifications, sendTestNotification } from './utils/pwa-notifications';
 import TradingPlatformShell from './components/generated/TradingPlatformShell';
 import AdminLogin from './components/AdminLogin';
 import AdminInterface from './components/AdminInterface';
@@ -30,6 +31,27 @@ declare global {
 
 const App = () => {
   const [user, setUser] = useState<User | null>(null);
+
+  // Initialiser les notifications PWA au démarrage
+  useEffect(() => {
+    const initPWA = async () => {
+      try {
+        const success = await initializePWANotifications();
+        if (success) {
+          console.log('✅ PWA Notifications prêtes - Écran verrouillé OK !');
+          
+          // Test automatique après 3 secondes
+          setTimeout(() => {
+            sendTestNotification();
+          }, 3000);
+        }
+      } catch (error) {
+        console.error('❌ Erreur init PWA:', error);
+      }
+    };
+    
+    initPWA();
+  }, []);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [currentPage, setCurrentPage] = useState<string>('home');
   

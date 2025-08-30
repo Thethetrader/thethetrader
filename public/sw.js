@@ -24,26 +24,49 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// Gestion des notifications push
+// Gestion des notifications push PWA - Fonctionne écran verrouillé !
 self.addEventListener('push', (event) => {
-  const options = {
-    body: event.data ? event.data.text() : 'Nouveau signal disponible !',
+  console.log('📬 Notification Push reçue:', event);
+  
+  let notificationData = {
+    title: 'TheTheTrader',
+    body: 'Nouveau signal disponible !',
     icon: '/favicon.png',
-    badge: '/favicon.png',
-    vibrate: [100, 50, 100],
+    badge: '/favicon.png'
+  };
+
+  // Parse les données si elles existent
+  if (event.data) {
+    try {
+      const data = event.data.json();
+      notificationData = { ...notificationData, ...data };
+    } catch (error) {
+      console.error('Erreur parsing notification data:', error);
+      notificationData.body = event.data.text() || notificationData.body;
+    }
+  }
+
+  const options = {
+    body: notificationData.body,
+    icon: notificationData.icon,
+    badge: notificationData.badge,
+    vibrate: [200, 100, 200], // Vibration plus forte
     data: {
       dateOfArrival: Date.now(),
-      primaryKey: 1
+      url: notificationData.url || '/',
+      type: notificationData.type || 'signal'
     },
+    requireInteraction: true, // Reste visible jusqu'à interaction
+    tag: notificationData.tag || 'thethetrader-notification',
     actions: [
       {
-        action: 'explore',
-        title: 'Voir le signal',
+        action: 'open',
+        title: '🚀 Ouvrir l\'app',
         icon: '/favicon.png'
       },
       {
         action: 'close',
-        title: 'Fermer',
+        title: '❌ Fermer',
         icon: '/favicon.png'
       }
     ]
