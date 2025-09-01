@@ -62,6 +62,9 @@ export default function TradingPlatformShell() {
   // État pour éviter les envois multiples
   const [isSendingMessage, setIsSendingMessage] = useState(false);
   
+  // État pour éviter les clics multiples sur le calendrier
+  const [isCalendarClicking, setIsCalendarClicking] = useState(false);
+  
   // État pour les réactions aux messages (côté utilisateur)
   const [messageReactions, setMessageReactions] = useState<{[messageId: string]: {fire: number, users: string[]}}>({});
   
@@ -2030,39 +2033,35 @@ export default function TradingPlatformShell() {
               return (
                   <div 
                     key={i} 
-                    onClick={(e) => {
+                    onClick={() => {
+                      if (isCalendarClicking) return; // Éviter les clics multiples
+                      
                       try {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
+                        setIsCalendarClicking(true);
                         const clickedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNumber);
                         
                         if (selectedChannel.id === 'trading-journal') {
                           setSelectedDate(clickedDate);
-                          
-                          // Ouvrir le popup des trades si il y en a
                           const tradesForDate = getTradesForDate(clickedDate);
                           console.log('Clic sur jour:', dayNumber, 'Trades trouvés:', tradesForDate.length);
-                                                  // Désactivé temporairement pour éviter les bugs
-                        // if (tradesForDate.length > 0) {
-                        //   console.log('Trades trouvés, ouverture modal...');
-                        //   setSelectedTradesDate(clickedDate);
-                        //   setShowTradesModal(true);
-                        // }
-                        console.log('Clic sur jour:', dayNumber, 'Trades trouvés:', tradesForDate.length);
+                          
+                          // Ouvrir le popup des trades
+                          setSelectedTradesDate(clickedDate);
+                          setShowTradesModal(true);
                         } else {
-                          // Ouvrir le popup des signaux (même s'il n'y en a pas)
+                          // Ouvrir le popup des signaux
                           const signalsForDate = getSignalsForDate(clickedDate);
                           console.log('Clic sur jour:', dayNumber, 'Signaux trouvés:', signalsForDate.length);
                           
-                          // Toujours ouvrir le popup, même s'il n'y a pas de signaux
-                          console.log('Ouverture du popup des signaux...');
                           setSelectedSignalsDate(clickedDate);
                           setShowSignalsModal(true);
                         }
+                        
+                        // Réactiver les clics après un court délai
+                        setTimeout(() => setIsCalendarClicking(false), 300);
                       } catch (error) {
                         console.error('Erreur lors du clic sur le jour:', error);
-                        alert('Erreur lors du clic sur le jour. Vérifiez la console.');
+                        setIsCalendarClicking(false);
                       }
                     }}
                     className={`
@@ -4138,7 +4137,7 @@ export default function TradingPlatformShell() {
       )}
 
       {/* Modal des Trades */}
-      {showTradesModal && selectedTradesDate && getTradesForDate(selectedTradesDate).length > 0 && (
+      {showTradesModal && selectedTradesDate && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-gray-800 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
             <div className="p-6">
