@@ -2386,381 +2386,7 @@ export default function TradingPlatformShell() {
     </div>
   );
 
-  // Fonction pour le Calendrier 2 avec contenu identique
-  const getTradingCalendar2 = () => (
-    <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: selectedChannel.id === 'trading-journal' ? '60px' : '20px' }}>
-      {/* Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-gray-600 pb-4 gap-4 md:gap-0">
-        <div className="hidden md:block">
-          <h1 className="text-2xl font-bold text-white">
-            {selectedChannel.id === 'trading-journal' ? 'Mon Trading Journal' : 'Calendrier des Signaux 2'}
-          </h1>
-          <p className="text-sm text-gray-400 mt-1">
-            {selectedChannel.id === 'trading-journal' ? 'Journal tous tes trades' : 'Suivi des performances des signaux'}
-          </p>
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3 text-white">
-            <button 
-              onClick={goToPreviousMonth}
-              className="p-2 hover:bg-gray-700 rounded-lg text-lg font-bold"
-            >
-              ‹
-            </button>
-            <span className="px-4 text-lg font-semibold min-w-[120px] text-center">
-              {getMonthName(currentDate)} {currentDate.getFullYear()}
-            </span>
-            <button 
-              onClick={goToNextMonth}
-              className="p-2 hover:bg-gray-700 rounded-lg text-lg font-bold"
-            >
-              ›
-            </button>
-          </div>
-          {selectedChannel.id === 'trading-journal' && (
-            <button 
-              onClick={handleAddTrade}
-              className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
-            >
-              + Ajouter Trade
-            </button>
-          )}
-        </div>
-      </div>
 
-      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
-        {/* Calendrier principal */}
-        <div className="flex-1 w-full">
-          {/* Jours de la semaine */}
-          <div className="grid grid-cols-7 gap-0.5 md:gap-1 mb-4 w-full">
-            {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
-              <div key={day} className="text-center text-gray-400 font-semibold py-3 text-sm uppercase tracking-wide">
-                {day.substring(0, 3)}
-              </div>
-            ))}
-          </div>
-
-          {/* Grille du calendrier */}
-          <div className="grid grid-cols-7 gap-0.5 md:gap-1 w-full" key={`calendar-${selectedChannel.id}-${personalTrades.length}-${currentDate.getMonth()}-${currentDate.getFullYear()}`}>
-            {(() => {
-              const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-              const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-              const daysInMonth = lastDayOfMonth.getDate();
-              const firstDayWeekday = firstDayOfMonth.getDay(); // 0 = dimanche, 1 = lundi, etc.
-              
-              // Ajuster pour que lundi soit 0
-              const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
-              
-              const totalCells = Math.ceil((adjustedFirstDay + daysInMonth) / 7) * 7;
-              
-              return Array.from({ length: totalCells }, (_, i) => {
-                const dayNumber = i - adjustedFirstDay + 1;
-                const today = new Date();
-                const isToday = dayNumber === today.getDate() && 
-                               currentDate.getMonth() === today.getMonth() && 
-                               currentDate.getFullYear() === today.getFullYear();
-                
-                // Celles vides au début
-                if (dayNumber < 1) {
-                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700" style={{minHeight: '64px'}}></div>;
-                }
-                
-                // Celles vides à la fin
-                if (dayNumber > daysInMonth) {
-                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700" style={{minHeight: '64px'}}></div>;
-                }
-              
-                              // Vérifier s'il y a des trades personnels ou des signaux pour ce jour
-                const dayTrades = selectedChannel.id === 'trading-journal' ? 
-                  personalTrades.filter(trade => {
-                    const tradeDate = new Date(trade.date);
-                    return tradeDate.getDate() === dayNumber && 
-                           tradeDate.getMonth() === currentDate.getMonth() && 
-                           tradeDate.getFullYear() === currentDate.getFullYear();
-                  }) : [];
-
-                const daySignals = selectedChannel.id !== 'trading-journal' ? 
-                  realTimeSignals.filter(signal => {
-                    // Utiliser le timestamp original pour déterminer la vraie date
-                    const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
-                    
-                    // Si la date est invalide, ignorer ce signal
-                    if (isNaN(signalDate.getTime())) {
-                      return false;
-                    }
-                    
-                    const isMatch = signalDate.getDate() === dayNumber && 
-                                  signalDate.getMonth() === currentDate.getMonth() && 
-                                  signalDate.getFullYear() === currentDate.getFullYear();
-                    
-                    return isMatch;
-                  }) : [];
-
-                // Déterminer la couleur selon les trades ou signaux
-                let bgColor = 'bg-gray-700 border-gray-600 text-gray-400'; // No trade par défaut
-                let tradeCount = 0;
-
-                if (selectedChannel.id === 'trading-journal') {
-                  // Logique pour les trades personnels
-                  if (dayTrades.length > 0) {
-                    tradeCount = dayTrades.length;
-                    
-                    // Déterminer la couleur selon les statuts des trades
-                    const hasWin = dayTrades.some(t => t.status === 'WIN');
-                    const hasLoss = dayTrades.some(t => t.status === 'LOSS');
-                    const hasBE = dayTrades.some(t => t.status === 'BE');
-                    
-                    if (hasWin && !hasLoss) {
-                      bgColor = 'bg-green-500/60 border-green-400/50 text-white'; // WIN
-                    } else if (hasLoss && !hasWin) {
-                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // LOSS
-                    } else if (hasBE || (hasWin && hasLoss)) {
-                      bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // BE ou mixte
-                    }
-                  }
-                } else {
-                  // Logique pour les signaux (calendrier normal) - basée sur PnL
-                  if (daySignals.length > 0) {
-                    tradeCount = daySignals.length;
-                    
-                    // Calculer le PnL total pour ce jour
-                    const totalPnL = daySignals.reduce((total, signal) => {
-                      if (signal.pnl) {
-                        return total + parsePnL(signal.pnl);
-                      }
-                      return total;
-                    }, 0);
-                    
-                    // Déterminer la couleur selon le PnL total
-                    if (totalPnL > 0) {
-                      bgColor = 'bg-green-400/40 border-green-300/30 text-white'; // PnL positif - vert plus pale
-                    } else if (totalPnL < 0) {
-                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif
-                    } else {
-                      bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
-                    }
-                  }
-                }
-              
-              return (
-                  <div 
-                    key={i} 
-                    onClick={(e) => {
-                      try {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        const clickedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNumber);
-                        
-                        if (selectedChannel.id === 'trading-journal') {
-                          setSelectedDate(clickedDate);
-                          
-                          // Ouvrir le popup des trades si il y en a
-                          const tradesForDate = getTradesForDate(clickedDate);
-                          console.log('Clic sur jour:', dayNumber, 'Trades trouvés:', tradesForDate.length);
-                          
-                          if (tradesForDate.length > 0) {
-                            console.log('Trades trouvés, ouverture modal...');
-                            setSelectedTradesDate(clickedDate);
-                            setShowTradesModal(true);
-                          }
-                        } else {
-                          // Ouvrir le popup des signaux si il y en a
-                          const signalsForDate = getSignalsForDate(clickedDate);
-                          if (signalsForDate.length > 0) {
-                            setSelectedSignalsDate(clickedDate);
-                            setShowSignalsModal(true);
-                          }
-                        }
-                      } catch (error) {
-                        console.error('Erreur lors du clic sur le jour:', error);
-                        console.error('Erreur lors du clic sur le jour:', error);
-                      }
-                    }}
-                    className={`
-                    border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 cursor-pointer transition-all hover:shadow-md
-                      ${bgColor}
-                    ${isToday ? 'ring-2 ring-blue-400' : ''}
-                      ${selectedChannel.id === 'trading-journal' && selectedDate && 
-                        selectedDate.getDate() === dayNumber && 
-                        selectedDate.getMonth() === currentDate.getMonth() && 
-                        selectedDate.getFullYear() === currentDate.getFullYear() 
-                        ? 'ring-2 ring-purple-400' : ''}
-                  `}
-                    style={{minHeight: '64px'}}>
-                  <div className="flex flex-col h-full justify-between">
-                      <div className="text-xs md:text-sm font-semibold">{dayNumber}</div>
-                      {tradeCount > 0 && (
-                      <div className="text-xs font-bold text-center hidden md:block">
-                          {tradeCount} {selectedChannel.id === 'trading-journal' ? 'trade' : 'signal'}{tradeCount > 1 ? 's' : ''}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-              });
-            })()}
-            </div>
-
-          {/* Légende */}
-          <div className="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-gray-600">
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-3 bg-green-500/60 border border-green-400/50 rounded"></div>
-              <span className="text-xs text-gray-300">WIN</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-3 bg-red-500/60 border border-red-400/50 rounded"></div>
-              <span className="text-xs text-gray-300">LOSS</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-3 bg-blue-500/60 border border-blue-400/50 rounded"></div>
-              <span className="text-xs text-gray-300">BREAK</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-3 bg-gray-700 border border-gray-600 rounded"></div>
-              <span className="text-xs text-gray-300">NO TRADE</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-3 border-2 border-blue-400 rounded"></div>
-              <span className="text-xs text-gray-300">Today</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Panneau des statistiques */}
-        <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6">
-          <h3 className="text-lg font-bold text-white mb-6">
-            {selectedChannel.id === 'trading-journal' ? 'Mon Trading Journal' : 'Statistiques Signaux'}
-          </h3>
-          
-          {/* Métriques principales */}
-          <div className="space-y-4 mb-8">
-            {/* P&L Total */}
-            <div className={`border rounded-lg p-4 border ${
-              (selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnLForMonth()) >= 0 
-                ? 'bg-green-600/20 border-green-500/30' 
-                : 'bg-red-600/20 border-red-500/30'
-            }`}>
-              <div className={`text-sm mb-1 ${
-                (selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-300' : 'text-red-300'
-              }`}>P&L Total</div>
-              <div className={`text-2xl font-bold ${
-                (selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-200' : 'text-red-200'
-              }`}>
-                {(selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnLForMonth()) >= 0 ? '+' : ''}${selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnLForMonth()}
-              </div>
-            </div>
-
-            {/* Win Rate */}
-            <div className="bg-blue-600/20 border-blue-500/30 rounded-lg p-4 border">
-              <div className="text-sm text-blue-300 mb-1">Win Rate</div>
-              <div className="text-2xl font-bold text-blue-200">
-                {selectedChannel.id === 'trading-journal' ? calculateWinRateTrades() : calculateWinRateForMonth()}%
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
-                <div className="text-xs text-gray-400 mb-1">Aujourd'hui</div>
-                <div className="text-lg font-bold text-blue-400">
-                  {selectedChannel.id === 'trading-journal' ? getTodayTrades().length : getTodaySignalsForMonth()}
-                </div>
-              </div>
-              <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
-                <div className="text-xs text-gray-400 mb-1">Ce mois</div>
-                <div className="text-lg font-bold text-white">
-                  {selectedChannel.id === 'trading-journal' ? getThisMonthTrades().length : getThisMonthSignalsForMonth()}
-                </div>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
-                <div className="text-xs text-gray-400 mb-1">Avg Win</div>
-                <div className="text-lg font-bold text-green-400">
-                  {selectedChannel.id === 'trading-journal' ? 
-                    (calculateAvgWinTrades() > 0 ? `+$${calculateAvgWinTrades()}` : '-') :
-                    (getCalendarMonthlyStats(currentDate).avgWin > 0 ? `+$${getCalendarMonthlyStats(currentDate).avgWin}` : '-')
-                  }
-                </div>
-              </div>
-              <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
-                <div className="text-xs text-gray-400 mb-1">Avg Loss</div>
-                <div className="text-lg font-bold text-red-400">
-                  {selectedChannel.id === 'trading-journal' ? 
-                    (calculateAvgLossTrades() > 0 ? `-$${calculateAvgLossTrades()}` : '-') :
-                    (getCalendarMonthlyStats(currentDate).avgLoss > 0 ? `-$${getCalendarMonthlyStats(currentDate).avgLoss}` : '-')
-                  }
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Résumé hebdomadaire */}
-          <div>
-            <h4 className="text-sm font-semibold text-gray-300 mb-4">Weekly Breakdown</h4>
-            <div className="space-y-2">
-              {(selectedChannel.id === 'trading-journal' ? getWeeklyBreakdownTrades() : getWeeklyBreakdownForMonth()).map((weekData, index) => (
-                <div 
-                  key={index} 
-                  className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer hover:bg-gray-600/50 transition-colors ${
-                    weekData.isCurrentWeek 
-                      ? 'bg-blue-600/20 border-blue-500/30' 
-                      : 'bg-gray-700/50 border-gray-600'
-                  }`}
-                  onClick={() => {
-                    setSelectedWeek(weekData.weekNum);
-                    setShowWeekSignalsModal(true);
-                  }}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`text-sm font-medium ${
-                      weekData.isCurrentWeek ? 'text-blue-300' : 'text-gray-300'
-                    }`}>
-                      {weekData.week}
-                    </div>
-                    <div className="text-xs text-gray-400">
-                      {weekData.trades} trade{weekData.trades !== 1 ? 's' : ''}
-                  </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {(weekData.wins > 0 || weekData.losses > 0) ? (
-                      <div className="flex items-center gap-1">
-                        {weekData.wins > 0 && (
-                          <div className="text-sm bg-green-500 text-white px-3 py-1 rounded-lg font-bold shadow-lg">
-                            {weekData.wins}W
-                          </div>
-                        )}
-                        {weekData.losses > 0 && (
-                          <div className="text-sm bg-red-500 text-white px-3 py-1 rounded-lg font-bold shadow-lg">
-                            {weekData.losses}L
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="text-sm text-gray-500 px-3 py-1">
-                        -
-                      </div>
-                    )}
-                    <div className={`text-xs ${
-                      weekData.pnl > 0 ? 'text-green-400' : 
-                      weekData.pnl < 0 ? 'text-red-400' : 'text-gray-500'
-                    }`}>
-                      {weekData.pnl !== 0 ? `${weekData.pnl > 0 ? '+' : ''}$${weekData.pnl}` : ''}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          {/* Espace supplémentaire en bas pour éviter que la dernière ligne soit cachée */}
-          <div className="h-24 md:h-32"></div>
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div className="h-screen w-full bg-gray-900 text-white overflow-hidden flex" style={{ paddingTop: '0px' }}>
@@ -2822,7 +2448,6 @@ export default function TradingPlatformShell() {
 
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
               <button onClick={() => handleChannelChange('calendrier', 'calendrier')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Calendrier</button>
-              <button onClick={() => handleChannelChange('calendrier-2', 'calendrier-2')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier-2' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Calendrier 2</button>
               <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Trading Journal</button>
             </div>
           </div>
@@ -3005,22 +2630,6 @@ export default function TradingPlatformShell() {
                   
                   <button
                     onClick={() => {
-                      handleChannelChange('calendrier-2', 'calendrier-2');
-                      setMobileView('content');
-                    }}
-                    className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">📅</span>
-                      <div>
-                        <p className="font-medium text-white">Calendrier 2</p>
-                        <p className="text-sm text-gray-400">Second calendrier</p>
-                      </div>
-                    </div>
-                  </button>
-                  
-                  <button
-                    onClick={() => {
                       handleChannelChange('trading-journal', 'trading-journal');
                       setMobileView('content');
                     }}
@@ -3070,7 +2679,7 @@ export default function TradingPlatformShell() {
               mobileView === 'content' ? 'translate-x-0' : 'translate-x-full'
             }`}
           >
-            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendrier-2') ? (
+            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier') ? (
               <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '0px' }}>
                 {/* Header avec bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
                 {selectedChannel.id === 'trading-journal' && (
@@ -3089,21 +2698,17 @@ export default function TradingPlatformShell() {
                 )}
                 
                   {/* Header pour le calendrier normal */}
-                {(view === 'calendar' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendrier-2') && selectedChannel.id !== 'trading-journal' && (
+                {(view === 'calendar' || selectedChannel.id === 'calendrier') && selectedChannel.id !== 'trading-journal' && (
                   <div className="flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
                     <div>
-                      <h1 className="text-2xl font-bold text-white">
-                        {selectedChannel.id === 'calendrier-2' ? 'Calendrier des Signaux 2' : 'Calendrier des Signaux'}
-                      </h1>
+                      <h1 className="text-2xl font-bold text-white">Calendrier des Signaux</h1>
                       <p className="text-sm text-gray-400 mt-1">Suivi des performances des signaux</p>
                     </div>
                   </div>
                 )}
                 
-                {/* Affichage du calendrier approprié */}
-                {(selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendrier-2') && (
-                  selectedChannel.id === 'calendrier-2' ? getTradingCalendar2() : getTradingCalendar()
-                )}
+                {/* Affichage du calendrier */}
+                {selectedChannel.id === 'calendrier' && getTradingCalendar()}
                 
                 {/* Affichage des trades pour la date sélectionnée - SEULEMENT pour Trading Journal */}
                 {(() => {
