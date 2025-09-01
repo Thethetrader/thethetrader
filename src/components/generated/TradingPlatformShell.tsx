@@ -3100,7 +3100,10 @@ export default function TradingPlatformShell() {
                   </div>
                 )}
                 
-                {selectedChannel.id === 'calendrier-2' ? getTradingCalendar2() : getTradingCalendar()}
+                {/* Affichage du calendrier approprié */}
+                {(selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendrier-2') && (
+                  selectedChannel.id === 'calendrier-2' ? getTradingCalendar2() : getTradingCalendar()
+                )}
                 
                 {/* Affichage des trades pour la date sélectionnée - SEULEMENT pour Trading Journal */}
                 {(() => {
