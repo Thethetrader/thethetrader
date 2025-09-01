@@ -1077,42 +1077,61 @@ export default function AdminInterface() {
     return monthSignals;
   };
 
-  // Fonctions pour les statistiques des trades personnels
+  // Fonctions pour les statistiques des trades personnels - DYNAMIQUES selon mois sélectionné
   const calculateTotalPnLTrades = (): number => {
-    return personalTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0);
+    const monthTrades = personalTrades.filter(t => {
+      const tradeDate = new Date(t.date);
+      return tradeDate.getMonth() === currentDate.getMonth() &&
+             tradeDate.getFullYear() === currentDate.getFullYear();
+    });
+    return monthTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0);
   };
 
   const calculateWinRateTrades = (): number => {
-    if (personalTrades.length === 0) return 0;
-    const wins = personalTrades.filter(t => t.status === 'WIN').length;
-    return Math.round((wins / personalTrades.length) * 100);
+    const monthTrades = personalTrades.filter(t => {
+      const tradeDate = new Date(t.date);
+      return tradeDate.getMonth() === currentDate.getMonth() &&
+             tradeDate.getFullYear() === currentDate.getFullYear();
+    });
+    if (monthTrades.length === 0) return 0;
+    const wins = monthTrades.filter(t => t.status === 'WIN').length;
+    return Math.round((wins / monthTrades.length) * 100);
   };
 
   const calculateAvgWinTrades = (): number => {
-    const winTrades = personalTrades.filter(t => t.status === 'WIN');
+    const monthTrades = personalTrades.filter(t => {
+      const tradeDate = new Date(t.date);
+      return tradeDate.getMonth() === currentDate.getMonth() &&
+             tradeDate.getFullYear() === currentDate.getFullYear();
+    });
+    const winTrades = monthTrades.filter(t => t.status === 'WIN');
     if (winTrades.length === 0) return 0;
     const totalWinPnL = winTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0);
     return Math.round(totalWinPnL / winTrades.length);
   };
 
   const calculateAvgLossTrades = (): number => {
-    const lossTrades = personalTrades.filter(t => t.status === 'LOSS');
+    const monthTrades = personalTrades.filter(t => {
+      const tradeDate = new Date(t.date);
+      return tradeDate.getMonth() === currentDate.getMonth() &&
+             tradeDate.getFullYear() === currentDate.getFullYear();
+    });
+    const lossTrades = monthTrades.filter(t => t.status === 'LOSS');
     if (lossTrades.length === 0) return 0;
     const totalLossPnL = lossTrades.reduce((total, trade) => total + Math.abs(parsePnL(trade.pnl)), 0);
     return Math.round(totalLossPnL / lossTrades.length);
   };
 
   const getTodayTrades = () => {
-    const today = new Date().toISOString().split('T')[0];
-    return personalTrades.filter(t => t.date === today);
+    const currentDateStr = currentDate.toISOString().split('T')[0];
+    return personalTrades.filter(t => t.date === currentDateStr);
   };
 
   const getThisMonthTrades = () => {
-    const today = new Date();
     return personalTrades.filter(t => {
       const tradeDate = new Date(t.date);
-      return tradeDate.getMonth() === today.getMonth() &&
-             tradeDate.getFullYear() === today.getFullYear();
+      return tradeDate.getMonth() === currentDate.getMonth() &&
+             tradeDate.getFullYear() === currentDate.getFullYear();
     });
   };
 
@@ -2683,12 +2702,12 @@ export default function AdminInterface() {
                 
                 // Celles vides au début
                 if (dayNumber < 1) {
-                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700"></div>;
+                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700" style={{minHeight: '64px'}}></div>;
                 }
                 
                 // Celles vides à la fin
                 if (dayNumber > daysInMonth) {
-                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700"></div>;
+                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700" style={{minHeight: '64px'}}></div>;
                 }
               
                               // Vérifier s'il y a des trades personnels ou des signaux pour ce jour
@@ -2845,7 +2864,8 @@ export default function AdminInterface() {
                         selectedDate.getMonth() === currentDate.getMonth() && 
                         selectedDate.getFullYear() === currentDate.getFullYear() 
                         ? 'ring-2 ring-purple-400' : ''}
-                    `}>
+                    `}
+                    style={{minHeight: '64px'}}>
                     <div className="flex flex-col h-full justify-between">
                       <div className="text-xs md:text-sm font-semibold">{dayNumber}</div>
                       {tradeCount > 0 && (
