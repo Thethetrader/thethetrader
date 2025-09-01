@@ -152,13 +152,40 @@ export const notifyNewSignal = (signal: any): void => {
     }
   };
 
-  // Essayer d'envoyer une notification push, sinon fallback local
-  if (messaging) {
-    console.log('📱 Tentative notification push...');
-    // Envoyer la notification locale comme fallback immédiat
-    sendLocalNotification(notification);
+  // Utiliser le Service Worker pour afficher la notification
+  console.log('🔍 Debug notifications:', {
+    serviceWorker: 'serviceWorker' in navigator,
+    notification: 'Notification' in window,
+    permission: Notification.permission
+  });
+  
+  if ('serviceWorker' in navigator && 'Notification' in window && Notification.permission === 'granted') {
+    console.log('📱 Envoi notification via Service Worker...');
+    
+    navigator.serviceWorker.ready.then((registration) => {
+      registration.showNotification(notification.title, {
+        body: notification.body,
+        icon: notification.icon,
+        badge: notification.badge,
+        tag: notification.tag,
+        data: notification.data,
+        requireInteraction: true,
+        actions: [
+          {
+            action: 'view',
+            title: 'Voir le signal',
+            icon: '/logo.png'
+          }
+        ]
+      });
+      console.log('✅ Notification envoyée via Service Worker');
+    }).catch((error) => {
+      console.error('❌ Erreur Service Worker notification:', error);
+      // Fallback vers notification locale
+      sendLocalNotification(notification);
+    });
   } else {
-    console.log('📱 Fallback notification locale');
+    console.log('📱 Fallback notification locale (Service Worker non disponible)');
     sendLocalNotification(notification);
   }
 };
@@ -201,6 +228,18 @@ export const initializeNotifications = async (): Promise<void> => {
     
     if (hasPermission) {
       console.log('✅ Notifications activées');
+      
+      // Enregistrer pour les notifications push
+      try {
+        const token = await requestFCMToken();
+        if (token) {
+          console.log('✅ Token FCM obtenu pour notifications push:', token);
+          // Ici tu peux envoyer le token à ton serveur pour l'associer à l'utilisateur
+          localStorage.setItem('fcmToken', token);
+        }
+      } catch (error) {
+        console.error('❌ Erreur enregistrement FCM:', error);
+      }
       
       // Écouter les messages FCM quand l'app est ouverte
       onMessage(messaging, (payload) => {

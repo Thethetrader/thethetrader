@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database, updateMessageReactions, getMessageReactions, subscribeToMessageReactions } from '../utils/firebase-setup';
-import { initializeNotifications, notifyNewSignal, notifySignalClosed } from '../utils/push-notifications';
+import { initializeNotifications, notifyNewSignal, notifySignalClosed, sendLocalNotification } from '../utils/push-notifications';
 import { ref, update, onValue } from 'firebase/database';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 
@@ -1379,6 +1379,18 @@ export default function AdminInterface() {
   const handleStopStream = () => {
     setIsLiveStreaming(false);
     setViewerCount(0);
+  };
+
+  const handleTestNotification = () => {
+    console.log('🧪 Test notification...');
+    sendLocalNotification({
+      title: '🧪 Test Notification Admin',
+      body: 'Ceci est un test de notification depuis l\'admin !',
+      icon: '/logo.png',
+      badge: '/logo.png',
+      tag: 'test-notification',
+      data: { type: 'test' }
+    });
   };
 
   const handleShareScreen = () => {
@@ -3940,6 +3952,12 @@ export default function AdminInterface() {
                                     className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white"
                                   >
                                     📺 Partager Écran
+                                  </button>
+                                  <button
+                                    onClick={handleTestNotification}
+                                    className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-white"
+                                  >
+                                    🧪 Test Notif
                                   </button>
                                 </div>
                               </div>
