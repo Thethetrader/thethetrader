@@ -138,10 +138,12 @@ export default function TradingPlatformShell() {
       
       console.log(`✅ Messages chargés pour ${channelId}:`, formattedMessages.length);
       
-      // Scroll vers le bas après chargement des messages
-      setTimeout(() => {
-        scrollToBottom();
-      }, 100);
+      // Scroll vers le bas après chargement des messages (sauf pour calendrier et journal perso)
+      if (!['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux'].includes(channelId)) {
+        setTimeout(() => {
+          scrollToBottom();
+        }, 100);
+      }
     } catch (error) {
       console.error('❌ Erreur chargement messages:', error);
     }
@@ -240,10 +242,12 @@ export default function TradingPlatformShell() {
         notifyNewSignal(latestSignal);
       }
       
-      // Scroll automatique après chargement des signaux
-      setTimeout(() => {
-        scrollToBottom();
-      }, 100);
+      // Scroll automatique après chargement des signaux (sauf pour calendrier et journal perso)
+      if (!['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux'].includes(channelId)) {
+        setTimeout(() => {
+          scrollToBottom();
+        }, 100);
+      }
     } catch (error) {
       console.error('❌ Erreur chargement signaux:', error);
     }
@@ -343,10 +347,12 @@ export default function TradingPlatformShell() {
       // Notifier le nouveau signal
       notifyNewSignal(formattedSignal);
       
-      // Scroll automatique
-      setTimeout(() => {
-        scrollToBottom();
-      }, 100);
+      // Scroll automatique (sauf pour calendrier et journal perso)
+      if (!['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux'].includes(selectedChannel.id)) {
+        setTimeout(() => {
+          scrollToBottom();
+        }, 100);
+      }
     });
     
     // Subscription aux messages temps réel pour le canal actuel
@@ -397,10 +403,12 @@ export default function TradingPlatformShell() {
       // (car on va voir le message immédiatement)
       // Cette logique sera gérée par la subscription globale
       
-      // Scroll vers le bas pour voir le nouveau message
-      setTimeout(() => {
-        scrollToBottom();
-      }, 5);
+      // Scroll vers le bas pour voir le nouveau message (sauf pour calendrier et journal perso)
+      if (!['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux'].includes(selectedChannel.id)) {
+        setTimeout(() => {
+          scrollToBottom();
+        }, 5);
+      }
     });
 
     return () => {
