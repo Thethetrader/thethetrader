@@ -2682,8 +2682,13 @@ export default function TradingPlatformShell() {
 
 
 
+                {/* Affichage du calendrier pour le canal calendrier */}
+                {view === 'signals' && selectedChannel.id === 'calendrier' ? (
+                  getTradingCalendar()
+                ) : null}
+                
                 {/* Affichage des signaux */}
-                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', ''].includes(selectedChannel.id) ? (
+                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', '', 'calendrier'].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
                     {/* Bouton Voir plus fixe en haut */}
                     <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
@@ -3499,8 +3504,13 @@ export default function TradingPlatformShell() {
             <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '80px' }}>
               {/* Bouton + Signal supprimé - seul admin peut créer des signaux */}
 
+              {/* Affichage du calendrier pour le canal calendrier */}
+              {view === 'signals' && selectedChannel.id === 'calendrier' ? (
+                getTradingCalendar()
+              ) : null}
+              
               {/* Affichage des signaux */}
-                              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', ''].includes(selectedChannel.id) ? (
+                              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', '', 'calendrier'].includes(selectedChannel.id) ? (
                 <div className="space-y-4">
                   {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                     <div className="text-center py-8">
