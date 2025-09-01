@@ -1621,17 +1621,29 @@ export default function TradingPlatformShell() {
   };
 
   const getSignalsForDate = (date: Date) => {
-    // Utiliser les données synchronisées du calendrier
-    const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    const dayData = calendarStats.dailyData[dateKey];
+    // Utiliser realTimeSignals directement (avec les images complètes)
+    const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     
-    if (dayData && dayData.signals.length > 0) {
-      console.log(`🔍 Signaux trouvés pour ${dateKey}:`, dayData.signals.length);
-      return dayData.signals;
-    }
+    const signalsForDate = realTimeSignals.filter(signal => {
+      const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
+      const signalDateOnly = new Date(signalDate.getFullYear(), signalDate.getMonth(), signalDate.getDate());
+      
+      return signalDateOnly.getTime() === targetDate.getTime();
+    });
     
-    console.log(`🔍 Aucun signal trouvé pour ${dateKey}`);
-    return [];
+    console.log(`🔍 [CALENDAR] Signaux trouvés pour ${targetDate.toDateString()}:`, signalsForDate.length);
+    signalsForDate.forEach(signal => {
+      console.log(`🔍 [CALENDAR] Signal avec image:`, {
+        id: signal.id,
+        symbol: signal.symbol,
+        hasImage: !!signal.image,
+        hasAttachment: !!signal.attachment_data,
+        image: signal.image,
+        attachment_data: signal.attachment_data
+      });
+    });
+    
+    return signalsForDate;
   };
 
   // Fonction pour récupérer les signaux d'une semaine spécifique
