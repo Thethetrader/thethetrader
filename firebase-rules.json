@@ -13,6 +13,10 @@
     "user_profiles": {
       ".read": true,
       ".write": true
+    },
+    "fcm_tokens": {
+      ".read": true,
+      ".write": true
     }
   }
 } 
