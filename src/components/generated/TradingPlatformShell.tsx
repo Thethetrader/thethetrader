@@ -1043,6 +1043,57 @@ export default function TradingPlatformShell() {
     return Math.round(totalLossPnL / lossSignals.length);
   };
 
+  // Fonction pour calculer le Weekly Breakdown dynamique (même pattern que Avg Win)
+  const getWeeklyBreakdownForMonth = () => {
+    const monthSignals = realTimeSignals.filter(signal => {
+      const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
+      return signalDate.getMonth() === currentDate.getMonth() && 
+             signalDate.getFullYear() === currentDate.getFullYear();
+    });
+
+    // Créer 5 semaines pour le mois courant
+    const weeks = [];
+    const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const today = new Date();
+    
+    for (let weekNum = 1; weekNum <= 5; weekNum++) {
+      const weekStart = new Date(startOfMonth);
+      weekStart.setDate(1 + (weekNum - 1) * 7);
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 6);
+      
+      // Filtrer les signaux de cette semaine
+      const weekSignals = monthSignals.filter(signal => {
+        const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
+        return signalDate >= weekStart && signalDate <= weekEnd;
+      });
+      
+      const wins = weekSignals.filter(s => s.status === 'WIN').length;
+      const losses = weekSignals.filter(s => s.status === 'LOSS').length;
+      const pnl = weekSignals.reduce((total, signal) => {
+        if (signal.pnl) {
+          return total + parsePnL(signal.pnl);
+        }
+        return total;
+      }, 0);
+      
+      // Vérifier si c'est la semaine courante
+      const isCurrentWeek = today >= weekStart && today <= weekEnd;
+      
+      weeks.push({
+        week: `Week ${weekNum}`,
+        weekNum,
+        trades: weekSignals.length,
+        wins,
+        losses,
+        pnl: Math.round(pnl),
+        isCurrentWeek
+      });
+    }
+    
+    return weeks;
+  };
+
   // Stats synchronisées en temps réel avec l'admin (plus besoin de calculer)
   const calculateTotalPnL = (): number => stats.totalPnL;
   const calculateWinRate = (): number => stats.winRate;
@@ -2273,7 +2324,7 @@ export default function TradingPlatformShell() {
           <div>
             <h4 className="text-sm font-semibold text-gray-300 mb-4">Weekly Breakdown</h4>
             <div className="space-y-2">
-              {(selectedChannel.id === 'trading-journal' ? getWeeklyBreakdownTrades() : getCalendarWeeklyBreakdownFromHook()).map((weekData, index) => (
+              {(selectedChannel.id === 'trading-journal' ? getWeeklyBreakdownTrades() : getWeeklyBreakdownForMonth()).map((weekData, index) => (
                 <div 
                   key={index} 
                   className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer hover:bg-gray-600/50 transition-colors ${
