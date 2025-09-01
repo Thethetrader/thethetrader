@@ -2315,7 +2315,7 @@ export default function TradingPlatformShell() {
                 }
                 // Réinitialiser selectedChannel pour le calendrier
                 setSelectedChannel({id: 'calendrier', name: 'calendrier'});
-                setView('calendar');
+                setView('signals');
                 scrollToTop();
               }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Calendrier</button>
               <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Trading Journal</button>
