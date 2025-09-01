@@ -229,10 +229,14 @@ export const initializeNotifications = async (): Promise<void> => {
           console.log('✅ Token FCM obtenu pour notifications push:', token);
           // Sauvegarder le token dans Firebase Database
           try {
-            const { ref, set, get } = await import('firebase/database');
+            console.log('🔄 Tentative sauvegarde token FCM dans Firebase...');
+            const { ref, set } = await import('firebase/database');
             const { database } = await import('../utils/firebase-setup');
             
+            console.log('✅ Imports Firebase réussis');
             const tokenRef = ref(database, `fcm_tokens/${token.replace(/[.#$[\]]/g, '_')}`);
+            console.log('✅ Référence Firebase créée:', tokenRef.key);
+            
             await set(tokenRef, {
               token: token,
               timestamp: Date.now(),
@@ -241,6 +245,7 @@ export const initializeNotifications = async (): Promise<void> => {
             console.log('💾 Token FCM sauvegardé dans Firebase Database');
           } catch (error) {
             console.error('❌ Erreur sauvegarde token FCM:', error);
+            console.error('❌ Détails erreur:', error.message);
           }
         }
       } catch (error) {
