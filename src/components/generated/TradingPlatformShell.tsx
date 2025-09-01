@@ -4287,7 +4287,7 @@ export default function TradingPlatformShell() {
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-white">
-                  Signaux du {selectedSignalsDate.toLocaleDateString('fr-FR', { 
+                  {selectedChannel.id === 'trading-journal' ? 'Trades du' : 'Signaux du'} {selectedSignalsDate.toLocaleDateString('fr-FR', { 
                     weekday: 'long', 
                     year: 'numeric', 
                     month: 'long', 
@@ -4303,10 +4303,14 @@ export default function TradingPlatformShell() {
               </div>
 
               <div className="space-y-4">
-                {getSignalsForDate(selectedSignalsDate).length > 0 ? (
+                {(selectedChannel.id === 'trading-journal' ? 
+                  getTradesForDate(selectedSignalsDate).length > 0 : 
+                  getSignalsForDate(selectedSignalsDate).length > 0) ? (
                   (() => {
-                    const signals = getSignalsForDate(selectedSignalsDate);
-                    console.log('🔍 [POPUP] Signaux reçus dans le popup:', signals);
+                    const signals = selectedChannel.id === 'trading-journal' ? 
+                      getTradesForDate(selectedSignalsDate) : 
+                      getSignalsForDate(selectedSignalsDate);
+                    console.log('🔍 [POPUP] Données reçues dans le popup:', signals);
                     signals.forEach(signal => {
                       console.log('🔍 [POPUP] Signal individuel COMPLET:', {
                         id: signal.id,
@@ -4398,8 +4402,14 @@ export default function TradingPlatformShell() {
                 ) : (
                   <div className="text-center py-8">
                     <div className="text-gray-400 text-lg mb-2">📅</div>
-                    <div className="text-gray-300 text-lg font-medium">Aucun signal pour ce jour</div>
-                    <div className="text-gray-500 text-sm mt-1">Les signaux apparaîtront ici quand ils seront créés</div>
+                    <div className="text-gray-300 text-lg font-medium">
+                      {selectedChannel.id === 'trading-journal' ? 'Aucun trade pour ce jour' : 'Aucun signal pour ce jour'}
+                    </div>
+                    <div className="text-gray-500 text-sm mt-1">
+                      {selectedChannel.id === 'trading-journal' ? 
+                        'Ajoute tes trades avec le bouton "+" pour les voir ici' : 
+                        'Les signaux apparaîtront ici quand ils seront créés'}
+                    </div>
                   </div>
                 )}
               </div>
