@@ -2602,7 +2602,7 @@ export default function AdminInterface() {
         {/* Calendrier principal */}
         <div className="flex-1 w-full">
           {/* Jours de la semaine */}
-          <div className="grid grid-cols-7 gap-1 md:gap-2 mb-4 w-full">
+          <div className="grid grid-cols-7 gap-0.5 md:gap-1 mb-4 w-full">
             {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
               <div key={day} className="text-center text-gray-400 font-semibold py-3 text-sm uppercase tracking-wide">
                 {day.substring(0, 3)}
@@ -2611,7 +2611,7 @@ export default function AdminInterface() {
           </div>
 
           {/* Grille du calendrier */}
-          <div className="grid grid-cols-7 gap-1 md:gap-2 w-full">
+          <div className="grid grid-cols-7 gap-0.5 md:gap-1 w-full">
             {(() => {
               const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
               const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
