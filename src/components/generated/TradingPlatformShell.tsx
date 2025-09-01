@@ -2386,6 +2386,201 @@ export default function TradingPlatformShell() {
     </div>
   );
 
+  // Fonction pour le Calendrier 2 avec contenu différent
+  const getTradingCalendar2 = () => (
+    <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '20px' }}>
+      {/* Header différent pour Calendrier 2 */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-purple-600 pb-4 gap-4 md:gap-0">
+        <div className="hidden md:block">
+          <h1 className="text-2xl font-bold text-purple-300">
+            Calendrier des Performances 2
+          </h1>
+          <p className="text-sm text-purple-400 mt-1">
+            Vue alternative du suivi des signaux
+          </p>
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 text-white">
+            <button 
+              onClick={goToPreviousMonth}
+              className="p-2 hover:bg-purple-700 rounded-lg text-lg font-bold"
+            >
+              ‹
+            </button>
+            <span className="px-4 text-lg font-semibold min-w-[120px] text-center text-purple-300">
+              {getMonthName(currentDate)} {currentDate.getFullYear()}
+            </span>
+            <button 
+              onClick={goToNextMonth}
+              className="p-2 hover:bg-purple-700 rounded-lg text-lg font-bold"
+            >
+              ›
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+        {/* Calendrier principal avec style différent */}
+        <div className="flex-1 w-full">
+          {/* Jours de la semaine avec style purple */}
+          <div className="grid grid-cols-7 gap-0.5 md:gap-1 mb-4 w-full">
+            {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
+              <div key={day} className="text-center text-purple-400 font-semibold py-3 text-sm uppercase tracking-wide">
+                {day.substring(0, 3)}
+              </div>
+            ))}
+          </div>
+
+          {/* Grille du calendrier avec style différent */}
+          <div className="grid grid-cols-7 gap-0.5 md:gap-1 w-full">
+            {(() => {
+              const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+              const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+              const daysInMonth = lastDayOfMonth.getDate();
+              const firstDayWeekday = firstDayOfMonth.getDay();
+              
+              const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
+              const totalCells = Math.ceil((adjustedFirstDay + daysInMonth) / 7) * 7;
+              
+              return Array.from({ length: totalCells }, (_, i) => {
+                const dayNumber = i - adjustedFirstDay + 1;
+                const today = new Date();
+                const isToday = dayNumber === today.getDate() && 
+                               currentDate.getMonth() === today.getMonth() && 
+                               currentDate.getFullYear() === today.getFullYear();
+                
+                if (dayNumber < 1 || dayNumber > daysInMonth) {
+                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700" style={{minHeight: '64px'}}></div>;
+                }
+
+                const daySignals = realTimeSignals.filter(signal => {
+                  const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
+                  if (isNaN(signalDate.getTime())) return false;
+                  
+                  return signalDate.getDate() === dayNumber && 
+                         signalDate.getMonth() === currentDate.getMonth() && 
+                         signalDate.getFullYear() === currentDate.getFullYear();
+                });
+
+                // Style différent pour Calendrier 2 - couleurs purple/orange
+                let bgColor = 'bg-gray-800 border-gray-600 text-gray-400';
+                let signalCount = daySignals.length;
+
+                if (signalCount > 0) {
+                  const totalPnL = daySignals.reduce((total, signal) => {
+                    return signal.pnl ? total + parsePnL(signal.pnl) : total;
+                  }, 0);
+                  
+                  if (totalPnL > 0) {
+                    bgColor = 'bg-purple-500/60 border-purple-400/50 text-white'; // Profitable = purple
+                  } else if (totalPnL < 0) {
+                    bgColor = 'bg-orange-500/60 border-orange-400/50 text-white'; // Loss = orange
+                  } else {
+                    bgColor = 'bg-cyan-500/60 border-cyan-400/50 text-white'; // Break-even = cyan
+                  }
+                }
+              
+                return (
+                  <div 
+                    key={i} 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const clickedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNumber);
+                      const signalsForDate = getSignalsForDate(clickedDate);
+                      if (signalsForDate.length > 0) {
+                        setSelectedSignalsDate(clickedDate);
+                        setShowSignalsModal(true);
+                      }
+                    }}
+                    className={`
+                      border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 cursor-pointer transition-all hover:shadow-lg
+                      ${bgColor}
+                      ${isToday ? 'ring-2 ring-purple-400' : ''}
+                    `}
+                    style={{minHeight: '64px'}}>
+                    <div className="flex flex-col h-full justify-between">
+                      <div className="text-xs md:text-sm font-semibold">{dayNumber}</div>
+                      {signalCount > 0 && (
+                        <div className="text-xs font-bold text-center hidden md:block">
+                          {signalCount} signal{signalCount > 1 ? 's' : ''}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              });
+            })()}
+          </div>
+
+          {/* Légende avec couleurs différentes */}
+          <div className="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-purple-600">
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-purple-500/60 border border-purple-400/50 rounded"></div>
+              <span className="text-xs text-gray-300">PROFIT</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-orange-500/60 border border-orange-400/50 rounded"></div>
+              <span className="text-xs text-gray-300">LOSS</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-cyan-500/60 border border-cyan-400/50 rounded"></div>
+              <span className="text-xs text-gray-300">BREAK</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-gray-800 border border-gray-600 rounded"></div>
+              <span className="text-xs text-gray-300">NO TRADE</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 border-2 border-purple-400 rounded"></div>
+              <span className="text-xs text-gray-300">Today</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Panneau des statistiques avec style différent */}
+        <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6 border border-purple-500/30">
+          <h3 className="text-lg font-bold text-purple-300 mb-6">
+            Analytics Alternatifs
+          </h3>
+          
+          {/* Message informatif pour différencier */}
+          <div className="bg-purple-600/20 border-purple-500/30 rounded-lg p-4 border mb-6">
+            <div className="text-sm text-purple-300 mb-1">Mode Calendrier 2</div>
+            <div className="text-xs text-purple-400">
+              Vue alternative avec couleurs purple/orange pour une analyse différente des performances
+            </div>
+          </div>
+
+          {/* Métriques simplifiées pour différencier */}
+          <div className="space-y-4">
+            <div className="bg-purple-600/20 border-purple-500/30 rounded-lg p-4 border">
+              <div className="text-sm text-purple-300 mb-1">Total Signaux</div>
+              <div className="text-2xl font-bold text-purple-200">
+                {realTimeSignals.length}
+              </div>
+            </div>
+
+            <div className="bg-gray-700 rounded-lg p-4 border border-gray-600">
+              <div className="text-sm text-gray-300 mb-1">Signaux Actifs</div>
+              <div className="text-lg font-bold text-cyan-400">
+                {realTimeSignals.filter(s => s.status === 'ACTIVE').length}
+              </div>
+            </div>
+
+            <div className="bg-gray-700 rounded-lg p-4 border border-gray-600">
+              <div className="text-sm text-gray-300 mb-1">Signaux Fermés</div>
+              <div className="text-lg font-bold text-orange-400">
+                {realTimeSignals.filter(s => s.status !== 'ACTIVE').length}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="h-screen w-full bg-gray-900 text-white overflow-hidden flex" style={{ paddingTop: '0px' }}>
       {/* Desktop Sidebar */}
@@ -2446,6 +2641,7 @@ export default function TradingPlatformShell() {
 
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
               <button onClick={() => handleChannelChange('calendrier', 'calendrier')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Calendrier</button>
+              <button onClick={() => handleChannelChange('calendrier-2', 'calendrier-2')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier-2' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Calendrier 2</button>
               <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Trading Journal</button>
             </div>
           </div>
@@ -2628,6 +2824,22 @@ export default function TradingPlatformShell() {
                   
                   <button
                     onClick={() => {
+                      handleChannelChange('calendrier-2', 'calendrier-2');
+                      setMobileView('content');
+                    }}
+                    className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg">📅</span>
+                      <div>
+                        <p className="font-medium text-white">Calendrier 2</p>
+                        <p className="text-sm text-gray-400">Second calendrier</p>
+                      </div>
+                    </div>
+                  </button>
+                  
+                  <button
+                    onClick={() => {
                       handleChannelChange('trading-journal', 'trading-journal');
                       setMobileView('content');
                     }}
@@ -2677,7 +2889,7 @@ export default function TradingPlatformShell() {
               mobileView === 'content' ? 'translate-x-0' : 'translate-x-full'
             }`}
           >
-            {(view === 'calendar' || selectedChannel.id === 'trading-journal') ? (
+            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendrier-2') ? (
               <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '0px' }}>
                 {/* Header avec bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
                 {selectedChannel.id === 'trading-journal' && (
@@ -2696,16 +2908,18 @@ export default function TradingPlatformShell() {
                 )}
                 
                   {/* Header pour le calendrier normal */}
-                {view === 'calendar' && selectedChannel.id !== 'trading-journal' && (
+                {(view === 'calendar' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendrier-2') && selectedChannel.id !== 'trading-journal' && (
                   <div className="flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
                     <div>
-                      <h1 className="text-2xl font-bold text-white">Calendrier des Signaux</h1>
+                      <h1 className="text-2xl font-bold text-white">
+                        {selectedChannel.id === 'calendrier-2' ? 'Calendrier des Signaux 2' : 'Calendrier des Signaux'}
+                      </h1>
                       <p className="text-sm text-gray-400 mt-1">Suivi des performances des signaux</p>
                     </div>
                   </div>
                 )}
                 
-                {getTradingCalendar()}
+                {selectedChannel.id === 'calendrier-2' ? getTradingCalendar2() : getTradingCalendar()}
                 
                 {/* Affichage des trades pour la date sélectionnée - SEULEMENT pour Trading Journal */}
                 {(() => {

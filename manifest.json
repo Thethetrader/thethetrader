@@ -1,6 +1,6 @@
 {
-  "name": "TheTheTrader",
-  "short_name": "TheTheTrader",
+  "name": "Signal Trade",
+  "short_name": "Signal Trade",
   "description": "Plateforme de trading avec signaux en temps réel",
   "start_url": "/",
   "display": "standalone",

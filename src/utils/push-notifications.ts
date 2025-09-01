@@ -141,7 +141,7 @@ export const notifyNewSignal = (signal: any): void => {
   
   const notification: PushNotificationData = {
     title: `Signal Trade`,
-    body: `Entrée: ${signal.entry} | TP: ${signal.takeProfit} | SL: ${signal.stopLoss}`,
+    body: `${signal.type} ${signal.symbol} - Entrée: ${signal.entry} | TP: ${signal.takeProfit} | SL: ${signal.stopLoss}`,
     icon: '/logo.png',
     badge: '/logo.png',
     tag: `signal-${signal.id}`,
