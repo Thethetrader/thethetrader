@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateSignalReactions, updateMessageReactions, getMessageReactions, subscribeToMessageReactions } from '../../utils/firebase-setup';
+import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateMessageReactions, getMessageReactions, subscribeToMessageReactions } from '../../utils/firebase-setup';
 import { createClient } from '@supabase/supabase-js';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
 
@@ -1183,59 +1183,7 @@ export default function TradingPlatformShell() {
     }
   };
 
-  // Fonctions pour gérer les statuts des signaux
-  const handleReaction = async (signalId: string, emoji: string) => {
-    try {
-      console.log('🔥 handleReaction called:', { signalId, emoji });
-      
-      // Vérifier que signalId et emoji sont valides
-      if (!signalId || !emoji) {
-        console.error('❌ signalId ou emoji invalide:', { signalId, emoji });
-        return;
-      }
-      
-      // Mettre à jour localement d'abord
-      setSignals(prev => {
-        if (!Array.isArray(prev)) {
-          console.error('❌ signals n\'est pas un array:', prev);
-          return prev;
-        }
-        
-        return prev.map(signal => {
-          if (signal?.id === signalId) {
-            const currentReactions = Array.isArray(signal.reactions) ? signal.reactions : [];
-            const hasReaction = currentReactions.includes(emoji);
-            
-            if (hasReaction) {
-              // Retirer la réaction
-              const newReactions = currentReactions.filter(r => r !== emoji);
-              console.log('➖ Retirer réaction:', { signalId, emoji, newReactions });
-              // Sauvegarder dans Firebase
-              updateSignalReactions(signalId, newReactions);
-              return {
-                ...signal,
-                reactions: newReactions
-              };
-            } else {
-              // Ajouter la réaction
-              const newReactions = [...currentReactions, emoji];
-              console.log('➕ Ajouter réaction:', { signalId, emoji, newReactions });
-              // Sauvegarder dans Firebase
-              updateSignalReactions(signalId, newReactions);
-              return {
-                ...signal,
-                reactions: newReactions
-              };
-            }
-          }
-          return signal;
-        });
-      });
-    } catch (error) {
-      console.error('❌ Erreur dans handleReaction:', error);
-      alert('Erreur lors de l\'ajout de la réaction. Vérifiez la console.');
-    }
-  };
+  // Fonction handleReaction supprimée - les réactions sont désactivées côté utilisateur
 
   const scrollToTop = () => {
     // Pour les salons de chat, scroller dans le conteneur de messages
@@ -2913,33 +2861,7 @@ export default function TradingPlatformShell() {
 
                             {/* Boutons de statut supprimés - seul admin peut changer WIN/LOSS/BE */}
 
-                            {/* Réactions emoji */}
-                            <div className="flex items-center gap-2 mt-3">
-                              <button 
-                                onClick={() => handleReaction(signal.id, '🔥')}
-                                className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
-                              >
-                                🔥 {signal.reactions?.filter(r => r === '🔥').length || 0}
-                              </button>
-                              <button 
-                                onClick={() => handleReaction(signal.id, '💎')}
-                                className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
-                              >
-                                💎 {signal.reactions?.filter(r => r === '💎').length || 0}
-                              </button>
-                              <button 
-                                onClick={() => handleReaction(signal.id, '🚀')}
-                                className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
-                              >
-                                🚀 {signal.reactions?.filter(r => r === '🚀').length || 0}
-                              </button>
-                              <button 
-                                onClick={() => handleReaction(signal.id, '👏')}
-                                className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
-                              >
-                                👏 {signal.reactions?.filter(r => r === '👏').length || 0}
-                              </button>
-                            </div>
+
                           </div>
                         </div>
                       ))
