@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database, updateMessageReactions, getMessageReactions, subscribeToMessageReactions } from '../utils/firebase-setup';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, sendLocalNotification } from '../utils/push-notifications';
 import { ref, update, onValue } from 'firebase/database';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 
 export default function AdminInterface() {
@@ -1913,8 +1914,33 @@ export default function AdminInterface() {
     if (savedSignal) {
       console.log('✅ Signal sauvé en Firebase:', savedSignal);
       
-      // Envoyer une notification pour le nouveau signal
-      notifyNewSignal(savedSignal);
+      // Envoyer une notification push via Firebase Function
+      try {
+        const functions = getFunctions();
+        const sendNotification = httpsCallable(functions, 'sendNotification');
+        
+        // Récupérer tous les tokens FCM des utilisateurs
+        const tokens = [];
+        const fcmTokens = localStorage.getItem('fcmTokens') || '[]';
+        const parsedTokens = JSON.parse(fcmTokens);
+        tokens.push(...parsedTokens);
+        
+        if (tokens.length > 0) {
+          console.log('📱 Envoi notification push via Firebase Function...');
+          const result = await sendNotification({
+            signal: savedSignal,
+            tokens: tokens
+          });
+          console.log('✅ Notification push envoyée:', result.data);
+        } else {
+          console.log('⚠️ Aucun token FCM trouvé, notification locale seulement');
+          notifyNewSignal(savedSignal);
+        }
+      } catch (error) {
+        console.error('❌ Erreur envoi notification push:', error);
+        // Fallback vers notification locale
+        notifyNewSignal(savedSignal);
+      }
       
               // Si c'est un salon general-chat, envoyer aussi un message dans le chat
         if (['general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id)) {

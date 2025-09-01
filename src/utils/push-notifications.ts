@@ -227,8 +227,13 @@ export const initializeNotifications = async (): Promise<void> => {
         const token = await requestFCMToken();
         if (token) {
           console.log('✅ Token FCM obtenu pour notifications push:', token);
-          // Ici tu peux envoyer le token à ton serveur pour l'associer à l'utilisateur
-          localStorage.setItem('fcmToken', token);
+          // Sauvegarder le token dans un array de tokens
+          const existingTokens = JSON.parse(localStorage.getItem('fcmTokens') || '[]');
+          if (!existingTokens.includes(token)) {
+            existingTokens.push(token);
+            localStorage.setItem('fcmTokens', JSON.stringify(existingTokens));
+            console.log('💾 Token FCM ajouté à la liste:', existingTokens.length, 'tokens');
+          }
         }
       } catch (error) {
         console.error('❌ Erreur enregistrement FCM:', error);
