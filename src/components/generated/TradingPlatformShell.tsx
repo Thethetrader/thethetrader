@@ -958,6 +958,70 @@ export default function TradingPlatformShell() {
     loadAllSignalsForStats();
   }, []);
 
+  // Fonctions pour calculer les statistiques du mois courant
+  const calculateTotalPnLForMonth = (): number => {
+    const monthSignals = allSignalsForStats.filter(signal => {
+      const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
+      return signalDate.getMonth() === currentDate.getMonth() && 
+             signalDate.getFullYear() === currentDate.getFullYear();
+    });
+    
+    return monthSignals.reduce((total, signal) => {
+      if (signal.pnl) {
+        return total + parsePnL(signal.pnl);
+      }
+      return total;
+    }, 0);
+  };
+
+  const calculateWinRateForMonth = (): number => {
+    const monthSignals = allSignalsForStats.filter(signal => {
+      const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
+      return signalDate.getMonth() === currentDate.getMonth() && 
+             signalDate.getFullYear() === currentDate.getFullYear();
+    });
+    
+    if (monthSignals.length === 0) return 0;
+    const wins = monthSignals.filter(s => s.status === 'WIN').length;
+    return Math.round((wins / monthSignals.length) * 100);
+  };
+
+  const calculateAvgWinForMonth = (): number => {
+    const monthSignals = allSignalsForStats.filter(signal => {
+      const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
+      return signalDate.getMonth() === currentDate.getMonth() && 
+             signalDate.getFullYear() === currentDate.getFullYear();
+    });
+    
+    const winSignals = monthSignals.filter(s => s.status === 'WIN');
+    if (winSignals.length === 0) return 0;
+    const totalWinPnL = winSignals.reduce((total, signal) => {
+      if (signal.pnl) {
+        return total + parsePnL(signal.pnl);
+      }
+      return total;
+    }, 0);
+    return Math.round(totalWinPnL / winSignals.length);
+  };
+
+  const calculateAvgLossForMonth = (): number => {
+    const monthSignals = allSignalsForStats.filter(signal => {
+      const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
+      return signalDate.getMonth() === currentDate.getMonth() && 
+             signalDate.getFullYear() === currentDate.getFullYear();
+    });
+    
+    const lossSignals = monthSignals.filter(s => s.status === 'LOSS');
+    if (lossSignals.length === 0) return 0;
+    const totalLossPnL = lossSignals.reduce((total, signal) => {
+      if (signal.pnl) {
+        return total + Math.abs(parsePnL(signal.pnl));
+      }
+      return total;
+    }, 0);
+    return Math.round(totalLossPnL / lossSignals.length);
+  };
+
   // Stats synchronisées en temps réel avec l'admin (plus besoin de calculer)
   const calculateTotalPnL = (): number => stats.totalPnL;
   const calculateWinRate = (): number => stats.winRate;
@@ -2318,7 +2382,7 @@ export default function TradingPlatformShell() {
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Win Rate:</span>
-                <span className="text-blue-400">{stats.winRate}%</span>
+                <span className="text-blue-400">{calculateWinRateForMonth()}%</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Total Trades:</span>
@@ -2330,8 +2394,8 @@ export default function TradingPlatformShell() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">P&L Total:</span>
-                <span className={stats.totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}>
-                  {stats.totalPnL >= 0 ? '+' : ''}${stats.totalPnL}
+                <span className={calculateTotalPnLForMonth() >= 0 ? 'text-green-400' : 'text-red-400'}>
+                  {calculateTotalPnLForMonth() >= 0 ? '+' : ''}${calculateTotalPnLForMonth()}
                 </span>
               </div>
             </div>
@@ -2512,7 +2576,7 @@ export default function TradingPlatformShell() {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Win Rate:</span>
-                    <span className="text-blue-400">{stats.winRate}%</span>
+                    <span className="text-blue-400">{calculateWinRateForMonth()}%</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Signaux actifs:</span>
@@ -2520,8 +2584,8 @@ export default function TradingPlatformShell() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">P&L Total:</span>
-                    <span className={stats.totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}>
-                      {stats.totalPnL >= 0 ? '+' : ''}${stats.totalPnL}
+                    <span className={calculateTotalPnLForMonth() >= 0 ? 'text-green-400' : 'text-red-400'}>
+                      {calculateTotalPnLForMonth() >= 0 ? '+' : ''}${calculateTotalPnLForMonth()}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
