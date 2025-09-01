@@ -506,14 +506,14 @@ export default function TradingPlatformShell() {
     
     console.log(`📊 Channel opened: ${channelId} at ${new Date().toLocaleTimeString()}`);
     
-    // Scroll intelligent : bas pour les canaux de chat, pas de scroll pour calendrier/trading journal
+    // Scroll intelligent : bas pour les canaux de chat, pas de scroll pour signaux/calendrier/trading journal
     setTimeout(() => {
       if (['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(channelId)) {
         scrollToBottom();
-      } else if (!['calendrier', 'trading-journal'].includes(channelId)) {
+      } else if (!['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux'].includes(channelId)) {
         scrollToTop();
       }
-      // Pas de scroll pour calendrier et trading journal
+      // Pas de scroll pour signaux, calendrier et trading journal
     }, 200);
   };
   const [personalTrades, setPersonalTrades] = useState<Array<{
