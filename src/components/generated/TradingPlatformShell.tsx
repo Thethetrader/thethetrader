@@ -1876,17 +1876,15 @@ export default function TradingPlatformShell() {
   };
 
   const getTradingCalendar = () => (
-    <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '20px' }}>
+    <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-gray-600 pb-4 gap-4 md:gap-0">
         <div className="hidden md:block">
           <h1 className="text-2xl font-bold text-white">
-            {selectedChannel.id === 'trading-journal' ? 'Mon Trading Journal' : 
-             selectedChannel.id === 'calendrier' ? 'Calendrier des Signaux' : 'Calendrier des Signaux'}
+            {selectedChannel.id === 'trading-journal' ? 'Mon Trading Journal' : 'Calendrier des Signaux'}
           </h1>
           <p className="text-sm text-gray-400 mt-1">
-            {selectedChannel.id === 'trading-journal' ? 'Journal tous tes trades' : 
-             selectedChannel.id === 'calendrier' ? 'Suivi des performances des signaux' : 'Suivi des performances des signaux'}
+            {selectedChannel.id === 'trading-journal' ? 'Journal tous tes trades' : 'Suivi des performances des signaux'}
           </p>
         </div>
         
@@ -1919,9 +1917,9 @@ export default function TradingPlatformShell() {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 h-full">
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
         {/* Calendrier principal */}
-        <div className="flex-1 w-full flex flex-col">
+        <div className="flex-1 w-full">
           {/* Jours de la semaine */}
           <div className="grid grid-cols-7 gap-0.5 md:gap-1 mb-4 w-full">
             {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
@@ -1932,7 +1930,7 @@ export default function TradingPlatformShell() {
           </div>
 
           {/* Grille du calendrier */}
-          <div className="grid grid-cols-7 gap-0.5 md:gap-1 w-full flex-1" key={`calendar-${selectedChannel.id}-${personalTrades.length}-${currentDate.getMonth()}-${currentDate.getFullYear()}`}>
+          <div className="grid grid-cols-7 gap-0.5 md:gap-1 w-full" key={`calendar-${selectedChannel.id}-${personalTrades.length}-${currentDate.getMonth()}-${currentDate.getFullYear()}`}>
             {(() => {
               const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
               const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
@@ -1971,13 +1969,21 @@ export default function TradingPlatformShell() {
                   }) : [];
 
                 const daySignals = selectedChannel.id !== 'trading-journal' ? 
-                  (() => {
-                    // Utiliser les données synchronisées du calendrier
-                    // Éviter le décalage de timezone en utilisant la date locale
-                    const dateKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
-                    const dayData = calendarStats.dailyData[dateKey];
-                    return dayData ? dayData.signals : [];
-                  })() : [];
+                  allSignalsForStats.filter(signal => {
+                    // Utiliser le timestamp original pour déterminer la vraie date
+                    const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
+                    
+                    // Si la date est invalide, ignorer ce signal
+                    if (isNaN(signalDate.getTime())) {
+                      return false;
+                    }
+                    
+                    const isMatch = signalDate.getDate() === dayNumber && 
+                                  signalDate.getMonth() === currentDate.getMonth() && 
+                                  signalDate.getFullYear() === currentDate.getFullYear();
+                    
+                    return isMatch;
+                  }) : [];
 
                 // Déterminer la couleur selon les trades ou signaux
                 let bgColor = 'bg-gray-700 border-gray-600 text-gray-400'; // No trade par défaut
@@ -2006,22 +2012,17 @@ export default function TradingPlatformShell() {
                   if (daySignals.length > 0) {
                     tradeCount = daySignals.length;
                     
-                    // Utiliser le PnL déjà calculé par le hook synchronisé
-                    // Éviter le décalage de timezone en utilisant la date locale
-                    const dateKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
-                    const dayData = calendarStats.dailyData[dateKey];
-                    const totalPnL = dayData ? dayData.pnl : 0;
-                    
-                    // Debug pour le jour 30
-                    if (dayNumber === 30) {
-                      console.log('🔍 Jour 30 - Signaux:', daySignals.length);
-                      console.log('🔍 Jour 30 - PnL total (synchro):', totalPnL);
-                      console.log('🔍 Jour 30 - Données jour:', dayData);
-                    }
+                    // Calculer le PnL total pour ce jour
+                    const totalPnL = daySignals.reduce((total, signal) => {
+                      if (signal.pnl) {
+                        return total + parsePnL(signal.pnl);
+                      }
+                      return total;
+                    }, 0);
                     
                     // Déterminer la couleur selon le PnL total
                     if (totalPnL > 0) {
-                      bgColor = 'bg-green-500/60 border-green-400/50 text-white'; // PnL positif
+                      bgColor = 'bg-green-400/40 border-green-300/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
                       bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif
                     } else {
@@ -2033,35 +2034,36 @@ export default function TradingPlatformShell() {
               return (
                   <div 
                     key={i} 
-                    onClick={() => {
-                      if (isCalendarClicking) return; // Éviter les clics multiples
-                      
+                    onClick={(e) => {
                       try {
-                        setIsCalendarClicking(true);
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
                         const clickedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNumber);
                         
                         if (selectedChannel.id === 'trading-journal') {
                           setSelectedDate(clickedDate);
+                          
+                          // Ouvrir le popup des trades si il y en a
                           const tradesForDate = getTradesForDate(clickedDate);
                           console.log('Clic sur jour:', dayNumber, 'Trades trouvés:', tradesForDate.length);
                           
-                          // Ouvrir le popup des trades
-                          setSelectedTradesDate(clickedDate);
-                          setShowTradesModal(true);
+                          if (tradesForDate.length > 0) {
+                            console.log('Trades trouvés, ouverture modal...');
+                            setSelectedTradesDate(clickedDate);
+                            setShowTradesModal(true);
+                          }
                         } else {
-                          // Ouvrir le popup des signaux
+                          // Ouvrir le popup des signaux si il y en a
                           const signalsForDate = getSignalsForDate(clickedDate);
-                          console.log('Clic sur jour:', dayNumber, 'Signaux trouvés:', signalsForDate.length);
-                          
-                          setSelectedSignalsDate(clickedDate);
-                          setShowSignalsModal(true);
+                          if (signalsForDate.length > 0) {
+                            setSelectedSignalsDate(clickedDate);
+                            setShowSignalsModal(true);
+                          }
                         }
-                        
-                        // Réactiver les clics après un court délai
-                        setTimeout(() => setIsCalendarClicking(false), 300);
                       } catch (error) {
                         console.error('Erreur lors du clic sur le jour:', error);
-                        setIsCalendarClicking(false);
+                        alert('Erreur lors du clic sur le jour. Vérifiez la console.');
                       }
                     }}
                     className={`
@@ -2086,7 +2088,7 @@ export default function TradingPlatformShell() {
               );
               });
             })()}
-          </div>
+            </div>
 
           {/* Légende */}
           <div className="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-gray-600">
