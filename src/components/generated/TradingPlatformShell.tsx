@@ -1728,32 +1728,7 @@ export default function TradingPlatformShell() {
           // Le message sera automatiquement ajouté via la subscription Firebase
           // Pas besoin de manipulation manuelle des messages
           
-          // Ajouter un indicateur temporaire "Message envoyé"
-          const tempMessage = {
-            id: `temp-${Date.now()}`,
-            text: '✓ Message envoyé',
-            user: 'System',
-            author: 'System',
-            author_avatar: undefined,
-            timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-            attachment_data: undefined
-          };
-          
-          setMessages(prev => {
-            const currentChannelMessages = prev[selectedChannel.id] || [];
-            return {
-              ...prev,
-              [selectedChannel.id]: [...currentChannelMessages, tempMessage]
-            };
-          });
-          
-          // Supprimer l'indicateur après 2 secondes
-          setTimeout(() => {
-            setMessages(prev => ({
-              ...prev,
-              [selectedChannel.id]: prev[selectedChannel.id]?.filter(msg => msg.id !== tempMessage.id) || []
-            }));
-          }, 2000);
+
         } else {
           console.error('❌ Erreur envoi message Firebase');
           // En cas d'erreur, on peut ajouter le message local
