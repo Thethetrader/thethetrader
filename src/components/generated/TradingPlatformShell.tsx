@@ -3489,12 +3489,7 @@ export default function TradingPlatformShell() {
                       </div>
                     </div>
                   </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <div className="text-gray-400 text-sm">Bienvenue sur TheTheTrader</div>
-                    <div className="text-gray-500 text-xs mt-1">Plateforme de trading en cours de développement</div>
-                  </div>
-                )}
+                ) : null}
               </div>
             )}
           </div>
@@ -3920,12 +3915,7 @@ export default function TradingPlatformShell() {
                     </div>
                   </div>
                 </div>
-              ) : (
-                <div className="text-center py-8">
-                  <div className="text-gray-400 text-sm">Bienvenue sur TheTheTrader</div>
-                  <div className="text-gray-500 text-xs mt-1">Plateforme de trading en cours de développement</div>
-                </div>
-              )}
+              ) : null}
             </div>
           )}
         </div>
