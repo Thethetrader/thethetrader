@@ -535,26 +535,68 @@ export default function TradingPlatformShell() {
     const saved = localStorage.getItem('personalTrades');
     const existingTrades = saved ? JSON.parse(saved) : [];
     
-    // Supprimer toutes les données de test pour éviter les bugs
-    // const testTradeExists = existingTrades.some((trade: any) => trade.date === '2024-08-04');
-    // if (!testTradeExists) {
-    //   const testTrade = {
-    //     id: 'test-4-aout',
-    //     date: '2024-08-04',
-    //     symbol: 'BTCUSD',
-    //     type: 'BUY' as const,
-    //     entry: '45000',
-    //     exit: '46000',
-    //     stopLoss: '44000',
-    //     pnl: '1000',
-    //     status: 'WIN' as const,
-    //     notes: 'Trade de test pour le 4 août',
-    //     image1: null,
-    //     image2: null,
-    //     timestamp: '2024-08-04T10:30:00'
-    //   };
-    //   existingTrades.push(testTrade);
-    // }
+    // Ajouter quelques trades de test pour debug
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    const lastWeek = new Date(today);
+    lastWeek.setDate(today.getDate() - 7);
+    
+    const testTrades = [
+      {
+        id: 'test-today',
+        date: today.toISOString().split('T')[0],
+        symbol: 'BTCUSD',
+        type: 'BUY' as const,
+        entry: '45000',
+        exit: '46000',
+        stopLoss: '44000',
+        pnl: '1000',
+        status: 'WIN' as const,
+        notes: 'Trade WIN aujourd\'hui',
+        image1: null,
+        image2: null,
+        timestamp: today.toISOString()
+      },
+      {
+        id: 'test-yesterday',
+        date: yesterday.toISOString().split('T')[0],
+        symbol: 'EURUSD',
+        type: 'SELL' as const,
+        entry: '1.0850',
+        exit: '1.0800',
+        stopLoss: '1.0900',
+        pnl: '500',
+        status: 'WIN' as const,
+        notes: 'Trade WIN hier',
+        image1: null,
+        image2: null,
+        timestamp: yesterday.toISOString()
+      },
+      {
+        id: 'test-lastweek',
+        date: lastWeek.toISOString().split('T')[0],
+        symbol: 'GBPUSD',
+        type: 'BUY' as const,
+        entry: '1.2500',
+        exit: '1.2400',
+        stopLoss: '1.2450',
+        pnl: '-300',
+        status: 'LOSS' as const,
+        notes: 'Trade LOSS la semaine dernière',
+        image1: null,
+        image2: null,
+        timestamp: lastWeek.toISOString()
+      }
+    ];
+    
+    // Ajouter les trades de test seulement s'ils n'existent pas déjà
+    testTrades.forEach(testTrade => {
+      const exists = existingTrades.some((trade: any) => trade.id === testTrade.id);
+      if (!exists) {
+        existingTrades.push(testTrade);
+      }
+    });
     
     return existingTrades;
   });
@@ -1119,61 +1161,42 @@ export default function TradingPlatformShell() {
     });
   };
 
-  // Fonctions pour les statistiques des trades personnels - DYNAMIQUES selon mois sélectionné
+  // Fonctions pour les statistiques des trades personnels
   const calculateTotalPnLTrades = (): number => {
-    const monthTrades = personalTrades.filter(t => {
-      const tradeDate = new Date(t.date);
-      return tradeDate.getMonth() === currentDate.getMonth() &&
-             tradeDate.getFullYear() === currentDate.getFullYear();
-    });
-    return monthTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0);
+    return personalTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0);
   };
 
   const calculateWinRateTrades = (): number => {
-    const monthTrades = personalTrades.filter(t => {
-      const tradeDate = new Date(t.date);
-      return tradeDate.getMonth() === currentDate.getMonth() &&
-             tradeDate.getFullYear() === currentDate.getFullYear();
-    });
-    if (monthTrades.length === 0) return 0;
-    const wins = monthTrades.filter(t => t.status === 'WIN').length;
-    return Math.round((wins / monthTrades.length) * 100);
+    if (personalTrades.length === 0) return 0;
+    const wins = personalTrades.filter(t => t.status === 'WIN').length;
+    return Math.round((wins / personalTrades.length) * 100);
   };
 
   const calculateAvgWinTrades = (): number => {
-    const monthTrades = personalTrades.filter(t => {
-      const tradeDate = new Date(t.date);
-      return tradeDate.getMonth() === currentDate.getMonth() &&
-             tradeDate.getFullYear() === currentDate.getFullYear();
-    });
-    const winTrades = monthTrades.filter(t => t.status === 'WIN');
+    const winTrades = personalTrades.filter(t => t.status === 'WIN');
     if (winTrades.length === 0) return 0;
     const totalWinPnL = winTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0);
     return Math.round(totalWinPnL / winTrades.length);
   };
 
   const calculateAvgLossTrades = (): number => {
-    const monthTrades = personalTrades.filter(t => {
-      const tradeDate = new Date(t.date);
-      return tradeDate.getMonth() === currentDate.getMonth() &&
-             tradeDate.getFullYear() === currentDate.getFullYear();
-    });
-    const lossTrades = monthTrades.filter(t => t.status === 'LOSS');
+    const lossTrades = personalTrades.filter(t => t.status === 'LOSS');
     if (lossTrades.length === 0) return 0;
     const totalLossPnL = lossTrades.reduce((total, trade) => total + Math.abs(parsePnL(trade.pnl)), 0);
     return Math.round(totalLossPnL / lossTrades.length);
   };
 
   const getTodayTrades = () => {
-    const currentDateStr = currentDate.toISOString().split('T')[0];
-    return personalTrades.filter(t => t.date === currentDateStr);
+    const today = new Date().toISOString().split('T')[0];
+    return personalTrades.filter(t => t.date === today);
   };
 
   const getThisMonthTrades = () => {
+    const today = new Date();
     return personalTrades.filter(t => {
       const tradeDate = new Date(t.date);
-      return tradeDate.getMonth() === currentDate.getMonth() &&
-             tradeDate.getFullYear() === currentDate.getFullYear();
+      return tradeDate.getMonth() === today.getMonth() &&
+             tradeDate.getFullYear() === today.getFullYear();
     });
   };
 
@@ -1234,10 +1257,11 @@ export default function TradingPlatformShell() {
   };
 
   const getWeeklyBreakdownTrades = () => {
-    const currentMonth = currentDate.getMonth();
-    const currentYear = currentDate.getFullYear();
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
     
-    // Créer 5 semaines du mois sélectionné
+    // Créer 5 semaines du mois en cours
     const weeks = [];
     for (let weekNum = 1; weekNum <= 5; weekNum++) {
       const weekStart = new Date(currentYear, currentMonth, (weekNum - 1) * 7 + 1);
@@ -1255,11 +1279,9 @@ export default function TradingPlatformShell() {
       const wins = weekTrades.filter(t => t.status === 'WIN').length;
       const losses = weekTrades.filter(t => t.status === 'LOSS').length;
       
-      // Vérifier si c'est la semaine actuelle (dans le mois sélectionné)
-      const today = new Date();
-      const isCurrentMonth = today.getMonth() === currentMonth && today.getFullYear() === currentYear;
-      const todayWeek = isCurrentMonth ? Math.ceil(today.getDate() / 7) : 0;
-      const isCurrentWeek = isCurrentMonth && weekNum === todayWeek;
+      // Vérifier si c'est la semaine actuelle
+      const todayWeek = Math.ceil(today.getDate() / 7);
+      const isCurrentWeek = weekNum === todayWeek;
       
       weeks.push({
         week: `Week ${weekNum}`,
