@@ -3602,33 +3602,7 @@ export default function TradingPlatformShell() {
 
                           {/* Boutons de statut supprimés - seul admin peut changer WIN/LOSS/BE */}
 
-                          {/* Réactions emoji */}
-                          <div className="flex items-center gap-2 mt-3">
-                            <button 
-                              onClick={() => handleReaction(signal.id, '🔥')}
-                              className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
-                            >
-                              🔥 {signal.reactions?.filter(r => r === '🔥').length || 0}
-                            </button>
-                            <button 
-                              onClick={() => handleReaction(signal.id, '💎')}
-                              className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
-                            >
-                              💎 {signal.reactions?.filter(r => r === '💎').length || 0}
-                            </button>
-                            <button 
-                              onClick={() => handleReaction(signal.id, '🚀')}
-                              className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
-                            >
-                              🚀 {signal.reactions?.filter(r => r === '🚀').length || 0}
-                            </button>
-                            <button 
-                              onClick={() => handleReaction(signal.id, '👏')}
-                              className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
-                            >
-                              👏 {signal.reactions?.filter(r => r === '👏').length || 0}
-                            </button>
-                          </div>
+
                         </div>
                       </div>
                     ))
