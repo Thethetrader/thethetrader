@@ -958,6 +958,27 @@ export default function TradingPlatformShell() {
     loadAllSignalsForStats();
   }, []);
 
+  // Fonctions pour calculer les statistiques du jour et mois courant (utilisant realTimeSignals de Firebase)
+  const getTodaySignalsForMonth = (): number => {
+    const todaySignals = realTimeSignals.filter(signal => {
+      const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
+      const today = new Date(currentDate);
+      return signalDate.getDate() === today.getDate() && 
+             signalDate.getMonth() === today.getMonth() && 
+             signalDate.getFullYear() === today.getFullYear();
+    });
+    return todaySignals.length;
+  };
+
+  const getThisMonthSignalsForMonth = (): number => {
+    const monthSignals = realTimeSignals.filter(signal => {
+      const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
+      return signalDate.getMonth() === currentDate.getMonth() && 
+             signalDate.getFullYear() === currentDate.getFullYear();
+    });
+    return monthSignals.length;
+  };
+
   // Fonctions pour calculer les statistiques du mois courant (utilisant realTimeSignals de Firebase)
   const calculateTotalPnLForMonth = (): number => {
     const monthSignals = realTimeSignals.filter(signal => {
@@ -2215,13 +2236,13 @@ export default function TradingPlatformShell() {
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Aujourd'hui</div>
                 <div className="text-lg font-bold text-blue-400">
-                  {selectedChannel.id === 'trading-journal' ? getTodayTrades().length : getCalendarTodaySignals().length}
+                  {selectedChannel.id === 'trading-journal' ? getTodayTrades().length : getTodaySignalsForMonth()}
                 </div>
               </div>
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Ce mois</div>
                 <div className="text-lg font-bold text-white">
-                  {selectedChannel.id === 'trading-journal' ? getThisMonthTrades().length : getCalendarThisMonthSignals().length}
+                  {selectedChannel.id === 'trading-journal' ? getThisMonthTrades().length : getThisMonthSignalsForMonth()}
                 </div>
               </div>
             </div>
