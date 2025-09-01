@@ -621,8 +621,11 @@ export default function TradingPlatformShell() {
 
   // Debug: Afficher les trades au chargement
   useEffect(() => {
-    console.log('Trades chargés:', personalTrades);
-  }, [personalTrades]);
+    console.log('🔥 DEBUG TRADES:', personalTrades);
+    console.log('🔥 Nombre de trades:', personalTrades.length);
+    console.log('🔥 Channel actuel:', selectedChannel.id);
+    console.log('🔥 View actuel:', view);
+  }, [personalTrades, selectedChannel.id, view]);
 
   // Debug: Afficher les messages non lus
   useEffect(() => {
@@ -2053,7 +2056,10 @@ export default function TradingPlatformShell() {
     return false;
   };
 
-  const getTradingCalendar = () => (
+  const getTradingCalendar = () => {
+    console.log('🔥 getTradingCalendar appelé pour channel:', selectedChannel.id);
+    console.log('🔥 personalTrades dans calendrier:', personalTrades.length);
+    return (
     <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: selectedChannel.id === 'trading-journal' ? '60px' : '20px' }}>
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-gray-600 pb-4 gap-4 md:gap-0">
@@ -2427,6 +2433,7 @@ export default function TradingPlatformShell() {
       </div>
     </div>
   );
+  };
 
 
 
