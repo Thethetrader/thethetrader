@@ -1874,10 +1874,12 @@ export default function TradingPlatformShell() {
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-gray-600 pb-4 gap-4 md:gap-0">
         <div className="hidden md:block">
           <h1 className="text-2xl font-bold text-white">
-            {selectedChannel.id === 'trading-journal' ? 'Mon Trading Journal' : 'Calendrier des Signaux'}
+            {selectedChannel.id === 'trading-journal' ? 'Mon Trading Journal' : 
+             selectedChannel.id === 'calendrier' ? 'Calendrier des Signaux' : 'Calendrier des Signaux'}
           </h1>
           <p className="text-sm text-gray-400 mt-1">
-            {selectedChannel.id === 'trading-journal' ? 'Journal tous tes trades' : 'Suivi des performances des signaux'}
+            {selectedChannel.id === 'trading-journal' ? 'Journal tous tes trades' : 
+             selectedChannel.id === 'calendrier' ? 'Suivi des performances des signaux' : 'Suivi des performances des signaux'}
           </p>
         </div>
         
@@ -2312,10 +2314,10 @@ export default function TradingPlatformShell() {
                   setSelectedDate(null);
                 }
                 // Réinitialiser selectedChannel pour le calendrier
-                setSelectedChannel({id: 'calendar', name: 'calendar'});
+                setSelectedChannel({id: 'calendrier', name: 'calendrier'});
                 setView('calendar');
                 scrollToTop();
-              }} className={`w-full text-left px-3 py-2 rounded text-sm ${view === 'calendar' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Calendrier</button>
+              }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Calendrier</button>
               <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Trading Journal</button>
             </div>
           </div>
