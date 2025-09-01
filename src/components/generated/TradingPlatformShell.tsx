@@ -1526,7 +1526,7 @@ export default function TradingPlatformShell() {
 
     { id: 'general-chat', name: 'general-chat', emoji: '💬', fullName: 'Général chat' },
     { id: 'profit-loss', name: 'profit-loss', emoji: '💰', fullName: 'Profit loss' },
-    { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Calendrier' },
+    { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' }
   ];
 
@@ -2017,7 +2017,7 @@ export default function TradingPlatformShell() {
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-gray-600 pb-4 gap-4 md:gap-0">
         <div className="hidden md:block">
           <h1 className="text-2xl font-bold text-white">
-            {selectedChannel.id === 'trading-journal' ? 'Mon Journal Perso' : 'Calendrier des Signaux'}
+            {selectedChannel.id === 'trading-journal' ? 'Mon Journal Perso' : 'Journal des Signaux'}
           </h1>
           <p className="text-sm text-gray-400 mt-1">
             {selectedChannel.id === 'trading-journal' ? 'Journal tous tes trades' : 'Suivi des performances des signaux'}
@@ -2447,7 +2447,7 @@ export default function TradingPlatformShell() {
               <button onClick={() => handleChannelChange('general-chat', 'general-chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 General-chat</button>
 
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
-              <button onClick={() => handleChannelChange('calendrier', 'calendrier')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Calendrier</button>
+              <button onClick={() => handleChannelChange('calendrier', 'calendrier')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Journal Perso</button>
             </div>
           </div>
@@ -2521,7 +2521,7 @@ export default function TradingPlatformShell() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
                 <span className="text-sm font-medium">
-                  {view === 'calendar' ? '📅 Calendrier' : 
+                  {view === 'calendar' ? '📅 Journal Signaux' : 
                    channels.find(c => c.id === selectedChannel.id)?.fullName || selectedChannel.name}
                 </span>
               </button>
@@ -2622,7 +2622,7 @@ export default function TradingPlatformShell() {
                     <div className="flex items-center gap-3">
                       <span className="text-lg">📅</span>
                       <div>
-                        <p className="font-medium text-white">Calendrier</p>
+                        <p className="font-medium text-white">Journal Signaux</p>
                         <p className="text-sm text-gray-400">Suivi des performances</p>
                       </div>
                     </div>
@@ -2701,7 +2701,7 @@ export default function TradingPlatformShell() {
                 {(view === 'calendar' || selectedChannel.id === 'calendrier') && selectedChannel.id !== 'trading-journal' && (
                   <div className="flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
                     <div>
-                      <h1 className="text-2xl font-bold text-white">Calendrier des Signaux</h1>
+                      <h1 className="text-2xl font-bold text-white">Journal des Signaux</h1>
                       <p className="text-sm text-gray-400 mt-1">Suivi des performances des signaux</p>
                     </div>
                   </div>
