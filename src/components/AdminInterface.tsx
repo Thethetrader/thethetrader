@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database, updateMessageReactions, getMessageReactions, subscribeToMessageReactions } from '../utils/firebase-setup';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, sendLocalNotification } from '../utils/push-notifications';
-import { ref, update, onValue } from 'firebase/database';
+import { ref, update, onValue, get } from 'firebase/database';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 
@@ -1919,11 +1919,23 @@ export default function AdminInterface() {
         const functions = getFunctions();
         const sendNotification = httpsCallable(functions, 'sendNotification');
         
-        // Récupérer tous les tokens FCM des utilisateurs
+        // Récupérer tous les tokens FCM depuis Firebase Database
         const tokens = [];
-        const fcmTokens = localStorage.getItem('fcmTokens') || '[]';
-        const parsedTokens = JSON.parse(fcmTokens);
-        tokens.push(...parsedTokens);
+        try {
+          const fcmTokensRef = ref(database, 'fcm_tokens');
+          const snapshot = await get(fcmTokensRef);
+          if (snapshot.exists()) {
+            const tokensData = snapshot.val();
+            Object.values(tokensData).forEach((tokenData: any) => {
+              if (tokenData.token) {
+                tokens.push(tokenData.token);
+              }
+            });
+            console.log('📱 Tokens FCM récupérés depuis Firebase:', tokens.length);
+          }
+        } catch (error) {
+          console.error('❌ Erreur récupération tokens FCM:', error);
+        }
         
         if (tokens.length > 0) {
           console.log('📱 Envoi notification push via Firebase Function...');

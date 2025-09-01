@@ -227,12 +227,20 @@ export const initializeNotifications = async (): Promise<void> => {
         const token = await requestFCMToken();
         if (token) {
           console.log('✅ Token FCM obtenu pour notifications push:', token);
-          // Sauvegarder le token dans un array de tokens
-          const existingTokens = JSON.parse(localStorage.getItem('fcmTokens') || '[]');
-          if (!existingTokens.includes(token)) {
-            existingTokens.push(token);
-            localStorage.setItem('fcmTokens', JSON.stringify(existingTokens));
-            console.log('💾 Token FCM ajouté à la liste:', existingTokens.length, 'tokens');
+          // Sauvegarder le token dans Firebase Database
+          try {
+            const { ref, set, get } = await import('firebase/database');
+            const { database } = await import('../utils/firebase-setup');
+            
+            const tokenRef = ref(database, `fcm_tokens/${token.replace(/[.#$[\]]/g, '_')}`);
+            await set(tokenRef, {
+              token: token,
+              timestamp: Date.now(),
+              userAgent: navigator.userAgent
+            });
+            console.log('💾 Token FCM sauvegardé dans Firebase Database');
+          } catch (error) {
+            console.error('❌ Erreur sauvegarde token FCM:', error);
           }
         }
       } catch (error) {
