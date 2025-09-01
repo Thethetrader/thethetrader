@@ -2487,13 +2487,8 @@ export default function TradingPlatformShell() {
                   
                   <button
                     onClick={() => {
-                      // Réinitialiser selectedDate si on quitte le Trading Journal
-                      if (selectedChannel.id === 'trading-journal') {
-                        setSelectedDate(null);
-                      }
-                      setView('calendar');
+                      handleChannelChange('calendrier', 'calendrier');
                       setMobileView('content');
-                      scrollToTop();
                     }}
                     className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                   >
