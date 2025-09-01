@@ -73,16 +73,39 @@ exports.sendNotification = onCall(async (request) => {
       }
     };
 
-    // Envoyer la notification
-    const response = await messaging.sendMulticast(message);
+    // Envoyer les notifications une par une pour éviter l'API batch
+    const responses = [];
+    let successCount = 0;
+    let failureCount = 0;
     
-    logger.info(`Notification envoyée: ${response.successCount} succès, ${response.failureCount} échecs`);
+    for (const token of tokens) {
+      try {
+        const singleMessage = {
+          notification: message.notification,
+          data: message.data,
+          token: token,
+          android: message.android,
+          apns: message.apns
+        };
+        
+        const response = await messaging.send(singleMessage);
+        responses.push({ success: true, messageId: response });
+        successCount++;
+        
+      } catch (error) {
+        logger.error(`Erreur envoi notification pour token ${token}:`, error);
+        responses.push({ success: false, error: error.message });
+        failureCount++;
+      }
+    }
+    
+    logger.info(`Notification envoyée: ${successCount} succès, ${failureCount} échecs`);
     
     return {
       success: true,
-      successCount: response.successCount,
-      failureCount: response.failureCount,
-      responses: response.responses
+      successCount,
+      failureCount,
+      responses
     };
     
   } catch (error) {
