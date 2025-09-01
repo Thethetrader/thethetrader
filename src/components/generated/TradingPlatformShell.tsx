@@ -2757,7 +2757,7 @@ export default function TradingPlatformShell() {
                 )}
                 
                 {/* Affichage du calendrier */}
-                {selectedChannel.id === 'calendrier' && getTradingCalendar()}
+                {(selectedChannel.id === 'calendrier' || selectedChannel.id === 'trading-journal') && getTradingCalendar()}
                 
                 {/* Affichage des trades pour la date sélectionnée - SEULEMENT pour Trading Journal */}
                 {(() => {
