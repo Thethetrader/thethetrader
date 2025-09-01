@@ -1919,9 +1919,9 @@ export default function TradingPlatformShell() {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 h-full">
         {/* Calendrier principal */}
-        <div className="flex-1 w-full">
+        <div className="flex-1 w-full flex flex-col">
           {/* Jours de la semaine */}
           <div className="grid grid-cols-7 gap-1 md:gap-2 mb-4 w-full">
             {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
@@ -1932,7 +1932,7 @@ export default function TradingPlatformShell() {
           </div>
 
           {/* Grille du calendrier */}
-          <div className="grid grid-cols-7 gap-1 md:gap-2 w-full" key={`calendar-${selectedChannel.id}-${personalTrades.length}-${currentDate.getMonth()}-${currentDate.getFullYear()}`}>
+          <div className="grid grid-cols-7 gap-1 md:gap-2 w-full flex-1" key={`calendar-${selectedChannel.id}-${personalTrades.length}-${currentDate.getMonth()}-${currentDate.getFullYear()}`}>
             {(() => {
               const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
               const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
@@ -1953,12 +1953,12 @@ export default function TradingPlatformShell() {
                 
                 // Celles vides au début
                 if (dayNumber < 1) {
-                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700"></div>;
+                  return <div key={i} className="border-2 rounded-lg min-h-[4rem] md:min-h-[6rem] p-1 md:p-2 bg-gray-800 border-gray-700"></div>;
                 }
                 
                 // Celles vides à la fin
                 if (dayNumber > daysInMonth) {
-                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700"></div>;
+                  return <div key={i} className="border-2 rounded-lg min-h-[4rem] md:min-h-[6rem] p-1 md:p-2 bg-gray-800 border-gray-700"></div>;
                 }
               
                               // Vérifier s'il y a des trades personnels ou des signaux pour ce jour
@@ -2065,7 +2065,7 @@ export default function TradingPlatformShell() {
                       }
                     }}
                     className={`
-                    border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 cursor-pointer transition-all hover:shadow-md
+                    border-2 rounded-lg min-h-[4rem] md:min-h-[6rem] p-1 md:p-2 cursor-pointer transition-all hover:shadow-md
                       ${bgColor}
                     ${isToday ? 'ring-2 ring-blue-400' : ''}
                       ${selectedChannel.id === 'trading-journal' && selectedDate && 
