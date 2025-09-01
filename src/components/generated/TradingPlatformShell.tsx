@@ -2279,7 +2279,7 @@ export default function TradingPlatformShell() {
             <div className="bg-blue-600/20 border-blue-500/30 rounded-lg p-4 border">
               <div className="text-sm text-blue-300 mb-1">Win Rate</div>
               <div className="text-2xl font-bold text-blue-200">
-                {selectedChannel.id === 'trading-journal' ? calculateWinRateTrades() : calculateWinRate()}%
+                {selectedChannel.id === 'trading-journal' ? calculateWinRateTrades() : calculateWinRateForMonth()}%
               </div>
             </div>
             
