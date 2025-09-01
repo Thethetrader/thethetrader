@@ -2261,17 +2261,17 @@ export default function TradingPlatformShell() {
           <div className="space-y-4 mb-8">
             {/* P&L Total */}
             <div className={`border rounded-lg p-4 border ${
-              (selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnL()) >= 0 
+              (selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnLForMonth()) >= 0 
                 ? 'bg-green-600/20 border-green-500/30' 
                 : 'bg-red-600/20 border-red-500/30'
             }`}>
               <div className={`text-sm mb-1 ${
-                (selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnL()) >= 0 ? 'text-green-300' : 'text-red-300'
+                (selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-300' : 'text-red-300'
               }`}>P&L Total</div>
               <div className={`text-2xl font-bold ${
-                (selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnL()) >= 0 ? 'text-green-200' : 'text-red-200'
+                (selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-200' : 'text-red-200'
               }`}>
-                {(selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnL()) >= 0 ? '+' : ''}${selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnL()}
+                {(selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnLForMonth()) >= 0 ? '+' : ''}${selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnLForMonth()}
               </div>
             </div>
 
