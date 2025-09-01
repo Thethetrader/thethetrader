@@ -18,6 +18,9 @@ interface Signal {
   reactions?: string[];
   pnl?: string;
   closeMessage?: string;
+  attachment_data?: string;
+  attachment_type?: string;
+  attachment_name?: string;
 }
 
 interface Stats {
