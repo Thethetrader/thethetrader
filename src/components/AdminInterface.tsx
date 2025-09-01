@@ -1328,13 +1328,14 @@ export default function AdminInterface() {
     const adminProfileImageBackup = localStorage.getItem('adminProfileImage');
     console.log('💾 ADMIN Sauvegarde photo avant déconnexion:', adminProfileImageBackup ? 'TROUVÉE' : 'PAS TROUVÉE');
     
-    // Nettoyer le localStorage
-    localStorage.clear();
+    // Au lieu de localStorage.clear(), supprimer seulement les clés nécessaires
+    const keysToRemove = ['signals', 'chat_messages', 'trading_stats', 'user_session'];
+    keysToRemove.forEach(key => localStorage.removeItem(key));
+    console.log('🧹 Nettoyage sélectif du localStorage (avatar préservé)');
     
-    // RESTAURER la photo de profil admin après nettoyage
+    // GARDER la photo de profil admin - pas besoin de restaurer car elle n'a jamais été supprimée
     if (adminProfileImageBackup) {
-      localStorage.setItem('adminProfileImage', adminProfileImageBackup);
-      console.log('✅ ADMIN Photo de profil restaurée après déconnexion');
+      console.log('✅ ADMIN Photo de profil préservée pendant la déconnexion');
     }
     
     // Rediriger vers la landing page

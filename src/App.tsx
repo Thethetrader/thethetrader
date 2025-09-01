@@ -7,6 +7,7 @@ import { createClient } from '@supabase/supabase-js';
 
 import { useNotifications } from './hooks/use-notifications';
 import { usePWA } from './hooks/use-pwa';
+import { initializeNotifications } from './utils/push-notifications';
 
 // FORCE DEPLOYMENT: 2025-01-13 04:25:00 - FIX OLD CONTENT
 
@@ -70,6 +71,13 @@ const App = () => {
       } else {
         setUser(null);
       }
+    });
+
+    // Initialiser les notifications push
+    initializeNotifications().then(() => {
+      console.log('✅ Notifications push initialisées');
+    }).catch((error) => {
+      console.error('❌ Erreur initialisation notifications:', error);
     });
 
     return () => subscription.unsubscribe();
@@ -147,7 +155,7 @@ const App = () => {
     crypto: [],
     futur: [],
     forex: [],
-    livestream: [],
+
     'general-chat': [],
     'profit-loss': [],
     'calendar': [],
@@ -1345,7 +1353,7 @@ const App = () => {
                             mobileActiveChannel === 'crypto' ? '🪙 Crypto' :
                             mobileActiveChannel === 'futur' ? '📈 Futur' :
                             mobileActiveChannel === 'forex' ? '💱 Forex' :
-                            mobileActiveChannel === 'livestream' ? '📺 Livestream' :
+
                             mobileActiveChannel === 'general-chat' ? '💬 General-chat' :
                             mobileActiveChannel === 'profit-loss' ? '💰 Profit-loss' :
                             mobileActiveChannel === 'calendar' ? '📅 Journal Signaux' :
@@ -1479,19 +1487,7 @@ const App = () => {
                     <div>
                       <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-3 font-medium">TRADING HUB</h3>
                       <div className="space-y-2">
-                        <div 
-                          className="bg-slate-700 rounded-lg p-3 flex items-center gap-3 cursor-pointer hover:bg-slate-600 transition-colors"
-                          onClick={() => {
-                            setMobileActiveChannel('livestream');
-                            setShowMobileChannel(true);
-                          }}
-                        >
-                          <div className="text-xl">📺</div>
-                          <div>
-                            <div className="text-white font-medium text-sm">Livestream</div>
-                            <div className="text-gray-400 text-xs">Hub de trading</div>
-                          </div>
-                        </div>
+
                         <div 
                           className="bg-slate-700 rounded-lg p-3 flex items-center gap-3 cursor-pointer hover:bg-slate-600 transition-colors"
                           onClick={() => {
@@ -2078,34 +2074,7 @@ const App = () => {
                           </div>
                         )}
 
-                        {/* Vue Livestream */}
-                        {mobileActiveChannel === 'livestream' && (
-                          <>
-                            <div className="bg-red-600/20 border border-red-500/30 rounded-lg p-3">
-                              <div className="flex items-center gap-2 mb-2">
-                                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                                <span className="text-red-400 font-bold text-sm">LIVE - Session Trading</span>
-                              </div>
-                              <div className="text-gray-300 text-xs mb-2">
-                                🎥 En direct maintenant | 👥 124 viewers
-                              </div>
-                              <div className="text-gray-400 text-xs">
-                                Analyse des marchés et signaux en temps réel.
-                              </div>
-                            </div>
 
-                            <div className="bg-gray-700 rounded-lg p-3">
-                              <div className="flex items-center gap-2 mb-1">
-                                <div className="w-5 h-5 bg-purple-500 rounded-full flex items-center justify-center text-xs text-white">M</div>
-                                <span className="text-white font-medium text-xs">Member_Pro</span>
-                                <span className="text-gray-400 text-xs">14:23</span>
-                              </div>
-                              <p className="text-gray-300 text-xs">
-                                Excellent setup sur EURUSD ! 🔥
-                              </p>
-                            </div>
-                          </>
-                        )}
 
                         {/* Vue General Chat */}
                         {mobileActiveChannel === 'general-chat' && (
@@ -2455,12 +2424,7 @@ const App = () => {
                         <div>
                           <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">TRADING HUB</h3>
                           <div className="space-y-1">
-                            <button 
-                              className={`w-full text-left px-3 py-2 rounded text-sm ${previewChannel === 'livestream' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
-                              onClick={() => setPreviewChannel('livestream')}
-                            >
-                              📺 Livestream
-                            </button>
+
                             <button 
                               className={`w-full text-left px-3 py-2 rounded text-sm ${previewChannel === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
                               onClick={() => setPreviewChannel('general-chat')}
@@ -2519,7 +2483,7 @@ const App = () => {
                              previewChannel === 'forex' ? '# forex' : 
                              previewChannel === 'fondamentaux' ? '📚 Fondamentaux' : 
                              previewChannel === 'letsgooo-model' ? '🚀 Letsgooo-model' : 
-                             previewChannel === 'livestream' ? '📺 Livestream' : 
+    
                              previewChannel === 'general-chat' ? '💬 General-chat' : 
                              previewChannel === 'profit-loss' ? '💰 Profit-loss' : 
                              previewChannel === 'calendar' ? '📅 Journal Signaux' : 
@@ -2832,136 +2796,7 @@ const App = () => {
                           </>
                         )}
 
-                        {/* Vue Livestream */}
-                        {previewChannel === 'livestream' && (
-                          <>
-                            {/* Statut Live */}
-                            <div className="bg-red-600/20 border border-red-500/30 rounded-lg p-4">
-                              <div className="flex items-center gap-3 mb-3">
-                                <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                                <span className="text-red-400 font-bold text-lg">LIVE - Session Trading</span>
-                              </div>
-                              <div className="text-gray-300 text-sm mb-3">
-                                🎥 En direct maintenant | 👥 156 viewers | ⏰ Durée: 1h23
-                              </div>
-                              <div className="text-gray-400 text-sm">
-                                Analyse des marchés et signaux en temps réel. Posez vos questions dans le chat !
-                              </div>
-                            </div>
 
-                            {/* Signal en direct */}
-                            <div className="bg-gray-700 rounded-lg p-4">
-                              <div className="flex items-center gap-2 mb-3">
-                                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                                <span className="text-white font-bold text-lg">Signal BUY BTCUSD – LIVE</span>
-                              </div>
-                              <div className="space-y-2 text-sm text-gray-300 mb-3">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-blue-400">🔹</span>
-                                  <span>Entrée : 103,200 USD</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-blue-400">🔹</span>
-                                  <span>SL : 102,800 USD</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-blue-400">🔹</span>
-                                  <span>TP : 103,800 USD</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-red-400">🎯</span>
-                                  <span>Ratio R:R : ≈ 1.5</span>
-                                </div>
-                              </div>
-
-                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
-                              <div className="flex items-center gap-2">
-                                <span className="text-gray-400 text-xs">🔥 45</span>
-                                <span className="text-gray-400 text-xs">🚀 32</span>
-                                <span className="text-gray-400 text-xs">💎 28</span>
-                              </div>
-                            </div>
-
-                            {/* Messages du chat live */}
-                            <div className="bg-gray-700 rounded-lg p-4">
-                              <div className="flex items-center gap-3 mb-2">
-                                <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-xs text-white">M</div>
-                                <span className="text-white font-medium text-sm">Member_Pro</span>
-                                <span className="text-gray-400 text-xs">14:23</span>
-                              </div>
-                              <p className="text-gray-300 text-sm">
-                                Excellent setup sur BTC ! 🔥
-                              </p>
-                            </div>
-
-                            <div className="bg-gray-700 rounded-lg p-4">
-                              <div className="flex items-center gap-3 mb-2">
-                                <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center text-xs text-white">S</div>
-                                <span className="text-white font-medium text-sm">Sarah_FX</span>
-                                <span className="text-gray-400 text-xs">14:25</span>
-                              </div>
-                              <p className="text-gray-300 text-sm">
-                                @TheTheTrader Quelle est la prochaine zone à surveiller ?
-                              </p>
-                            </div>
-
-                            {/* Messages de TheTheTrader */}
-                            <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-4">
-                              <div className="flex items-center gap-3 mb-2">
-                                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white">TT</div>
-                                <span className="text-white font-medium text-sm">TheTheTrader</span>
-                                <span className="text-gray-400 text-xs">14:30</span>
-                              </div>
-                              <p className="text-gray-300 text-sm">
-                                📺 STREAM dans 10 min - NY PM session ! 🚀
-                              </p>
-                            </div>
-
-                            <div className="bg-gray-700 rounded-lg p-4">
-                              <div className="flex items-center gap-3 mb-2">
-                                <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-xs text-white">A</div>
-                                <span className="text-white font-medium text-sm">AlexTrader</span>
-                                <span className="text-gray-400 text-xs">14:32</span>
-                              </div>
-                              <p className="text-gray-300 text-sm">
-                                Prêt pour le stream ! 🎯
-                              </p>
-                            </div>
-
-                            <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-4">
-                              <div className="flex items-center gap-3 mb-2">
-                                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white">TT</div>
-                                <span className="text-white font-medium text-sm">TheTheTrader</span>
-                                <span className="text-gray-400 text-xs">14:35</span>
-                              </div>
-                              <p className="text-gray-300 text-sm">
-                                ⏰ 5 min avant le stream - Préparez vos questions ! 💬
-                              </p>
-                            </div>
-
-                            <div className="bg-gray-700 rounded-lg p-4">
-                              <div className="flex items-center gap-3 mb-2">
-                                <div className="w-6 h-6 bg-pink-500 rounded-full flex items-center justify-center text-xs text-white">L</div>
-                                <span className="text-white font-medium text-sm">Lisa_FX</span>
-                                <span className="text-gray-400 text-xs">14:37</span>
-                              </div>
-                              <p className="text-gray-300 text-sm">
-                                J'ai une question sur EURUSD ! 📈
-                              </p>
-                            </div>
-
-                            <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-4">
-                              <div className="flex items-center gap-3 mb-2">
-                                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white">TT</div>
-                                <span className="text-white font-medium text-sm">TheTheTrader</span>
-                                <span className="text-gray-400 text-xs">14:38</span>
-                              </div>
-                              <p className="text-gray-300 text-sm">
-                                🎥 STREAM LIVE dans 2 min - NY PM session ! Préparez-vous ! 🔥
-                              </p>
-                            </div>
-                          </>
-                        )}
 
                         {/* Vue Forex - Signaux devises */}
                         {previewChannel === 'forex' && (
@@ -4071,14 +3906,7 @@ const App = () => {
                         >
                           💱 Forex
                         </div>
-                        <div 
-                          className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[100px] ${
-                            activeChannel === 'livestream' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
-                          }`}
-                          onClick={() => setActiveChannel('livestream')}
-                        >
-                          📺 Livestream
-                        </div>
+
                         <div 
                           className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[100px] ${
                             activeChannel === 'general-chat' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
@@ -4165,14 +3993,7 @@ const App = () => {
                         <div className="mb-4">
                           <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-4">TRADING HUB</h3>
                           <div className="space-y-1">
-                            <div 
-                              className={`px-4 py-3 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
-                                activeChannel === 'livestream' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
-                              }`}
-                              onClick={() => setActiveChannel('livestream')}
-                            >
-                              📺 Livestream
-                            </div>
+
                             <div 
                               className={`px-4 py-3 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
                                 activeChannel === 'general-chat' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'

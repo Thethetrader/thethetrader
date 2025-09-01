@@ -2441,7 +2441,7 @@ export default function TradingPlatformShell() {
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">TRADING HUB</h3>
             <div className="space-y-1">
-              <button onClick={() => handleChannelChange('', '')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === '' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
+
               <button onClick={() => handleChannelChange('general-chat', 'general-chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 General-chat</button>
 
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
@@ -2966,7 +2966,7 @@ export default function TradingPlatformShell() {
                       ))
                     )}
                   </div>
-                                ) : selectedChannel.id === '' ? (
+                                ) : false ? (
                   <div className="flex flex-col h-full">
                     {/* Interface Livestream */}
                     <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
@@ -3438,7 +3438,7 @@ export default function TradingPlatformShell() {
                       </div>
                     </div>
                   </div>
-                ) : selectedChannel.id === '' ? (
+                ) : false ? (
                   <div className="flex flex-col h-full">
                     {/* Interface Livestream Desktop */}
                     <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
@@ -3725,7 +3725,7 @@ export default function TradingPlatformShell() {
                     ))
                   )}
                 </div>
-              ) : selectedChannel.id === '' ? (
+              ) : false ? (
                 <div className="flex flex-col h-full">
                   {/* Interface Livestream Desktop */}
                   <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
