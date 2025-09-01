@@ -1527,7 +1527,7 @@ export default function TradingPlatformShell() {
     { id: 'general-chat', name: 'general-chat', emoji: '💬', fullName: 'Général chat' },
     { id: 'profit-loss', name: 'profit-loss', emoji: '💰', fullName: 'Profit loss' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Calendrier' },
-    { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Trading Journal' }
+    { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' }
   ];
 
   // Fonction supprimée - seul admin peut créer des signaux
@@ -2017,7 +2017,7 @@ export default function TradingPlatformShell() {
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-gray-600 pb-4 gap-4 md:gap-0">
         <div className="hidden md:block">
           <h1 className="text-2xl font-bold text-white">
-            {selectedChannel.id === 'trading-journal' ? 'Mon Trading Journal' : 'Calendrier des Signaux'}
+            {selectedChannel.id === 'trading-journal' ? 'Mon Journal Perso' : 'Calendrier des Signaux'}
           </h1>
           <p className="text-sm text-gray-400 mt-1">
             {selectedChannel.id === 'trading-journal' ? 'Journal tous tes trades' : 'Suivi des performances des signaux'}
@@ -2255,7 +2255,7 @@ export default function TradingPlatformShell() {
         {/* Panneau des statistiques */}
         <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6">
           <h3 className="text-lg font-bold text-white mb-6">
-            {selectedChannel.id === 'trading-journal' ? 'Mon Trading Journal' : 'Statistiques Signaux'}
+            {selectedChannel.id === 'trading-journal' ? 'Mon Journal Perso' : 'Statistiques Signaux'}
           </h3>
           
           {/* Métriques principales */}
@@ -2448,7 +2448,7 @@ export default function TradingPlatformShell() {
 
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
               <button onClick={() => handleChannelChange('calendrier', 'calendrier')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Calendrier</button>
-              <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Trading Journal</button>
+              <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Journal Perso</button>
             </div>
           </div>
 
@@ -2638,8 +2638,8 @@ export default function TradingPlatformShell() {
                     <div className="flex items-center gap-3">
                       <span className="text-lg">📊</span>
                       <div>
-                        <p className="font-medium text-white">Trading Journal</p>
-                        <p className="text-sm text-gray-400">Journal de trading</p>
+                        <p className="font-medium text-white">Journal Perso</p>
+                        <p className="text-sm text-gray-400">Journal personnel</p>
                       </div>
                     </div>
                   </button>
@@ -2685,7 +2685,7 @@ export default function TradingPlatformShell() {
                 {selectedChannel.id === 'trading-journal' && (
                   <div className="hidden md:flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
                     <div>
-                      <h1 className="text-2xl font-bold text-white">Mon Trading Journal</h1>
+                      <h1 className="text-2xl font-bold text-white">Mon Journal Perso</h1>
                       <p className="text-sm text-gray-400 mt-1">Journal tous tes trades</p>
                     </div>
                     <button 
