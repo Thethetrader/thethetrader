@@ -45,7 +45,7 @@ exports.sendNotification = onCall(async (request) => {
     // Préparer le message de notification
     const message = {
       notification: {
-        title: `🚀 Nouveau Signal ${signal.type} ${signal.symbol}`,
+        title: `Signal Trade`,
         body: `Entrée: ${signal.entry} | TP: ${signal.takeProfit} | SL: ${signal.stopLoss}`,
       },
       data: {

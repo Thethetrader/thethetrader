@@ -140,7 +140,7 @@ export const notifyNewSignal = (signal: any): void => {
   console.log('📱 Notification nouveau signal:', signal);
   
   const notification: PushNotificationData = {
-    title: `🚀 Nouveau Signal ${signal.type} ${signal.symbol}`,
+    title: `Signal Trade`,
     body: `Entrée: ${signal.entry} | TP: ${signal.takeProfit} | SL: ${signal.stopLoss}`,
     icon: '/logo.png',
     badge: '/logo.png',
