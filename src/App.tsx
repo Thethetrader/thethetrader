@@ -689,34 +689,15 @@ const App = () => {
         return;
       }
       
-      // Authentification Supabase pour utilisateurs normaux
-      try {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: email,
-          password: password,
-        });
-
-        if (error) {
-          console.error(`Erreur de connexion: ${error.message}`);
-          return;
-        }
-
-        if (data.user) {
-          // Connexion réussie
-          setUser({ id: data.user.id, email: data.user.email || email });
-          setShowAuthModal(false);
-        }
-      } catch (error) {
-        console.error('Erreur de connexion');
-        console.error('Erreur login:', error);
-      }
+      // Authentification simple (pas de serveur)
+      console.log('Connexion utilisateur:', email);
+      setUser({ id: 'user_' + Date.now(), email: email });
+      setShowAuthModal(false);
     }
   };
 
   const handleLogout = async () => {
-    // Déconnexion Supabase
-    await supabase.auth.signOut();
-    
+    // Déconnexion simple
     setUser(null);
     setEmail('');
     setPassword('');

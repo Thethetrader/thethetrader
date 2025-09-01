@@ -169,14 +169,7 @@ export const notifyNewSignal = (signal: any): void => {
         badge: notification.badge,
         tag: notification.tag,
         data: notification.data,
-        requireInteraction: true,
-        actions: [
-          {
-            action: 'view',
-            title: 'Voir le signal',
-            icon: '/logo.png'
-          }
-        ]
+        requireInteraction: true
       });
       console.log('✅ Notification envoyée via Service Worker');
     }).catch((error) => {
