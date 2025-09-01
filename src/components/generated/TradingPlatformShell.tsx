@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals } from '../../utils/firebase-setup';
+import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateMessageReactions, getMessageReactions, subscribeToMessageReactions } from '../../utils/firebase-setup';
 import { createClient } from '@supabase/supabase-js';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
 
@@ -1115,7 +1115,61 @@ export default function TradingPlatformShell() {
     return weeks;
   };
 
-  // Fonction handleAddReaction supprimée - les réactions sur messages sont désactivées côté utilisateur
+  // Fonction pour ajouter une réaction flamme à un message (côté utilisateur)
+  const handleAddReaction = async (messageId: string) => {
+    const currentUser = user?.email || 'Anonymous';
+    
+    try {
+      // Mettre à jour localement d'abord
+      setMessageReactions(prev => {
+        const current = prev[messageId] || { fire: 0, users: [] };
+        const userIndex = current.users.indexOf(currentUser);
+        
+        if (userIndex === -1) {
+          // Ajouter la réaction
+          return {
+            ...prev,
+            [messageId]: {
+              fire: current.fire + 1,
+              users: [...current.users, currentUser]
+            }
+          };
+        } else {
+          // Retirer la réaction
+          return {
+            ...prev,
+            [messageId]: {
+              fire: current.fire - 1,
+              users: current.users.filter((_, index) => index !== userIndex)
+            }
+          };
+        }
+      });
+      
+      // Sauvegarder dans Firebase
+      const current = messageReactions[messageId] || { fire: 0, users: [] };
+      const userIndex = current.users.indexOf(currentUser);
+      
+      let newReactions;
+      if (userIndex === -1) {
+        newReactions = {
+          fire: current.fire + 1,
+          users: [...current.users, currentUser]
+        };
+      } else {
+        newReactions = {
+          fire: current.fire - 1,
+          users: current.users.filter((_, index) => index !== userIndex)
+        };
+      }
+      
+      await updateMessageReactions(messageId, newReactions);
+      console.log('✅ Réaction message synchronisée:', messageId, newReactions);
+      
+    } catch (error) {
+      console.error('❌ Erreur réaction message:', error);
+    }
+  };
 
   // Fonction handleReaction supprimée - les réactions sont désactivées côté utilisateur
 
@@ -2928,6 +2982,23 @@ export default function TradingPlatformShell() {
                                   <div className="bg-gray-700 rounded-lg p-2">
                                     <p className="text-white text-sm">{message.text}</p>
                                   </div>
+                                  
+                                  {/* Bouton de réaction flamme */}
+                                  <div className="mt-2 flex justify-start">
+                                    <button
+                                      onClick={() => handleAddReaction(message.id)}
+                                      className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
+                                        (messageReactions[message.id]?.users || []).includes(user?.email || 'Anonymous')
+                                          ? 'bg-orange-500 text-white hover:bg-orange-600'
+                                          : 'bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white'
+                                      }`}
+                                    >
+                                      🔥
+                                      <span className="text-xs">
+                                        {messageReactions[message.id]?.fire || 0}
+                                      </span>
+                                    </button>
+                                  </div>
                                 </div>
                               </div>
                             ))
@@ -3201,6 +3272,22 @@ export default function TradingPlatformShell() {
                                 )}
                               </div>
                               
+                              {/* Bouton de réaction flamme */}
+                              <div className="mt-2 flex justify-start">
+                                <button
+                                  onClick={() => handleAddReaction(message.id)}
+                                  className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
+                                    (messageReactions[message.id]?.users || []).includes(user?.email || 'Anonymous')
+                                      ? 'bg-orange-500 text-white hover:bg-orange-600'
+                                      : 'bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white'
+                                  }`}
+                                >
+                                  🔥
+                                  <span className="text-xs">
+                                    {messageReactions[message.id]?.fire || 0}
+                                  </span>
+                                </button>
+                              </div>
 
                             </div>
                           </div>
@@ -3783,6 +3870,22 @@ export default function TradingPlatformShell() {
                                 )}
                               </div>
                               
+                              {/* Bouton de réaction flamme */}
+                              <div className="mt-2 flex justify-start">
+                                <button
+                                  onClick={() => handleAddReaction(message.id)}
+                                  className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
+                                    (messageReactions[message.id]?.users || []).includes(user?.email || 'Anonymous')
+                                      ? 'bg-orange-500 text-white hover:bg-orange-600'
+                                      : 'bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white'
+                                  }`}
+                                >
+                                  🔥
+                                  <span className="text-xs">
+                                    {messageReactions[message.id]?.fire || 0}
+                                  </span>
+                                </button>
+                              </div>
 
                           </div>
                         </div>
