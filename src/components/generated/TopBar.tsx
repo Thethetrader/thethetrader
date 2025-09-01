@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Bell, Settings, Search, Video } from "lucide-react";
+import { Settings, Search, Video } from "lucide-react";
 import { motion } from "framer-motion";
 export interface TopBarProps {
   channelName: string;
@@ -119,8 +119,7 @@ export default function TopBar({
         
 
         
-        {/* Notification Button */}
-        <IconButton icon={Bell} label="Notifications" onClick={() => console.log('Notifications clicked')} />
+
         
         {/* Settings Button */}
         <IconButton icon={Settings} label="Paramètres" onClick={() => console.log('Settings clicked')} />
