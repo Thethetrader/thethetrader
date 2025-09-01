@@ -2378,7 +2378,7 @@ export default function AdminInterface() {
       const filteredUsers = getFilteredUsers();
       
       return (
-        <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '80px' }}>
+        <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
           <div className="space-y-6">
             {/* Header avec statistiques */}
             <div className="border-b border-gray-600 pb-6">
@@ -2557,7 +2557,7 @@ export default function AdminInterface() {
 
     // Sinon, afficher le calendrier normal
     return (
-    <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '80px' }}>
+            <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-gray-600 pb-4 gap-4 md:gap-0">
         <div className="hidden md:block">
@@ -2598,11 +2598,11 @@ export default function AdminInterface() {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 overflow-x-hidden">
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
         {/* Calendrier principal */}
-        <div className="flex-1 min-w-0 max-w-full overflow-x-hidden">
+        <div className="flex-1 w-full">
           {/* Jours de la semaine */}
-          <div className="grid grid-cols-7 gap-1 md:gap-2 mb-4 min-w-0 max-w-full">
+          <div className="grid grid-cols-7 gap-1 md:gap-2 mb-4 w-full">
             {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
               <div key={day} className="text-center text-gray-400 font-semibold py-3 text-sm uppercase tracking-wide">
                 {day.substring(0, 3)}
@@ -2611,7 +2611,7 @@ export default function AdminInterface() {
           </div>
 
           {/* Grille du calendrier */}
-          <div className="grid grid-cols-7 gap-1 md:gap-2 min-w-0 max-w-full overflow-x-hidden">
+          <div className="grid grid-cols-7 gap-1 md:gap-2 w-full">
             {(() => {
               const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
               const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
@@ -3265,7 +3265,7 @@ export default function AdminInterface() {
             }`}
           >
             {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'user-management') ? (
-              <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '0px' }}>
+              <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '0px' }}>
                 {/* Header avec bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
                 {selectedChannel.id === 'trading-journal' && (
                   <div className="hidden md:flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
