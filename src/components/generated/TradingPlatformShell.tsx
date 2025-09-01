@@ -1953,12 +1953,12 @@ export default function TradingPlatformShell() {
                 
                 // Celles vides au début
                 if (dayNumber < 1) {
-                  return <div key={i} className="border-2 rounded-lg min-h-[4rem] md:min-h-[6rem] p-1 md:p-2 bg-gray-800 border-gray-700"></div>;
+                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700"></div>;
                 }
                 
                 // Celles vides à la fin
                 if (dayNumber > daysInMonth) {
-                  return <div key={i} className="border-2 rounded-lg min-h-[4rem] md:min-h-[6rem] p-1 md:p-2 bg-gray-800 border-gray-700"></div>;
+                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700"></div>;
                 }
               
                               // Vérifier s'il y a des trades personnels ou des signaux pour ce jour
@@ -2065,7 +2065,7 @@ export default function TradingPlatformShell() {
                       }
                     }}
                     className={`
-                    border-2 rounded-lg min-h-[4rem] md:min-h-[6rem] p-1 md:p-2 cursor-pointer transition-all hover:shadow-md
+                    border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 cursor-pointer transition-all hover:shadow-md
                       ${bgColor}
                     ${isToday ? 'ring-2 ring-blue-400' : ''}
                       ${selectedChannel.id === 'trading-journal' && selectedDate && 
