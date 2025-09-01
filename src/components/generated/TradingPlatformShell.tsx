@@ -528,10 +528,9 @@ export default function TradingPlatformShell() {
     image2: File | null;
     timestamp: string;
   }>>(() => {
-    // Forcer le localStorage à être vide pour éviter les bugs
-    // const saved = localStorage.getItem('personalTrades');
-    // const existingTrades = saved ? JSON.parse(saved) : [];
-    const existingTrades: any[] = [];
+    // Charger les trades depuis localStorage
+    const saved = localStorage.getItem('personalTrades');
+    const existingTrades = saved ? JSON.parse(saved) : [];
     
     // Supprimer toutes les données de test pour éviter les bugs
     // const testTradeExists = existingTrades.some((trade: any) => trade.date === '2024-08-04');
@@ -570,10 +569,10 @@ export default function TradingPlatformShell() {
     image2: null as File | null
   });
   
-  // Désactiver la sauvegarde pour éviter les bugs
-  // useEffect(() => {
-  //   localStorage.setItem('personalTrades', JSON.stringify(personalTrades));
-  // }, [personalTrades]);
+  // Sauvegarder automatiquement les trades dans localStorage
+  useEffect(() => {
+    localStorage.setItem('personalTrades', JSON.stringify(personalTrades));
+  }, [personalTrades]);
 
   // Debug: Afficher les trades au chargement
   useEffect(() => {
@@ -1930,7 +1929,7 @@ export default function TradingPlatformShell() {
           </div>
 
           {/* Grille du calendrier */}
-          <div className="grid grid-cols-7 gap-1 md:gap-2 w-full">
+          <div className="grid grid-cols-7 gap-1 md:gap-2 w-full" key={`calendar-${selectedChannel.id}-${personalTrades.length}-${currentDate.getMonth()}-${currentDate.getFullYear()}`}>
             {(() => {
               const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
               const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
