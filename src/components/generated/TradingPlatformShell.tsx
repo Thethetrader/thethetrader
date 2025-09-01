@@ -1117,30 +1117,46 @@ export default function TradingPlatformShell() {
 
   // Fonction pour ajouter une réaction flamme à un message (côté utilisateur)
   const handleAddReaction = async (messageId: string) => {
-    const currentUser = user?.email || 'Anonymous';
-    
     try {
+      console.log('🔥 handleAddReaction called:', { messageId });
+      
+      // Vérifier que messageId est valide
+      if (!messageId) {
+        console.error('❌ messageId invalide:', messageId);
+        return;
+      }
+      
+      const currentUser = user?.email || 'Anonymous';
+      console.log('👤 Utilisateur actuel:', currentUser);
+      
       // Mettre à jour localement d'abord
       setMessageReactions(prev => {
+        if (!prev || typeof prev !== 'object') {
+          console.error('❌ messageReactions n\'est pas un objet:', prev);
+          return prev;
+        }
+        
         const current = prev[messageId] || { fire: 0, users: [] };
-        const userIndex = current.users.indexOf(currentUser);
+        const userIndex = Array.isArray(current.users) ? current.users.indexOf(currentUser) : -1;
         
         if (userIndex === -1) {
           // Ajouter la réaction
+          console.log('➕ Ajouter réaction pour:', messageId);
           return {
             ...prev,
             [messageId]: {
-              fire: current.fire + 1,
-              users: [...current.users, currentUser]
+              fire: (current.fire || 0) + 1,
+              users: [...(current.users || []), currentUser]
             }
           };
         } else {
           // Retirer la réaction
+          console.log('➖ Retirer réaction pour:', messageId);
           return {
             ...prev,
             [messageId]: {
-              fire: current.fire - 1,
-              users: current.users.filter((_, index) => index !== userIndex)
+              fire: Math.max(0, (current.fire || 0) - 1),
+              users: (current.users || []).filter((_, index) => index !== userIndex)
             }
           };
         }
@@ -1148,26 +1164,28 @@ export default function TradingPlatformShell() {
       
       // Sauvegarder dans Firebase
       const current = messageReactions[messageId] || { fire: 0, users: [] };
-      const userIndex = current.users.indexOf(currentUser);
+      const userIndex = Array.isArray(current.users) ? current.users.indexOf(currentUser) : -1;
       
       let newReactions;
       if (userIndex === -1) {
         newReactions = {
-          fire: current.fire + 1,
-          users: [...current.users, currentUser]
+          fire: (current.fire || 0) + 1,
+          users: [...(current.users || []), currentUser]
         };
       } else {
         newReactions = {
-          fire: current.fire - 1,
-          users: current.users.filter((_, index) => index !== userIndex)
+          fire: Math.max(0, (current.fire || 0) - 1),
+          users: (current.users || []).filter((_, index) => index !== userIndex)
         };
       }
       
+      console.log('💾 Sauvegarde Firebase:', { messageId, newReactions });
       await updateMessageReactions(messageId, newReactions);
       console.log('✅ Réaction message synchronisée:', messageId, newReactions);
       
     } catch (error) {
       console.error('❌ Erreur réaction message:', error);
+      alert('Erreur lors de l\'ajout de la réaction. Vérifiez la console.');
     }
   };
 
