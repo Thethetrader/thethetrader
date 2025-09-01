@@ -1211,6 +1211,102 @@ export default function TradingPlatformShell() {
     });
   };
 
+  // Fonctions pour calculer les stats du mois affiché dans le calendrier (trades personnels)
+  const getTradesForMonth = (date: Date) => {
+    return personalTrades.filter(t => {
+      const tradeDate = new Date(t.date);
+      return tradeDate.getMonth() === date.getMonth() &&
+             tradeDate.getFullYear() === date.getFullYear();
+    });
+  };
+
+  const calculateTotalPnLTradesForMonth = (): number => {
+    const monthTrades = getTradesForMonth(currentDate);
+    return monthTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0);
+  };
+
+  const calculateWinRateTradesForMonth = (): number => {
+    const monthTrades = getTradesForMonth(currentDate);
+    if (monthTrades.length === 0) return 0;
+    const wins = monthTrades.filter(t => t.status === 'WIN').length;
+    return Math.round((wins / monthTrades.length) * 100);
+  };
+
+  const calculateAvgWinTradesForMonth = (): number => {
+    const monthTrades = getTradesForMonth(currentDate);
+    const winTrades = monthTrades.filter(t => t.status === 'WIN');
+    if (winTrades.length === 0) return 0;
+    const totalWinPnL = winTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0);
+    return Math.round(totalWinPnL / winTrades.length);
+  };
+
+  const calculateAvgLossTradesForMonth = (): number => {
+    const monthTrades = getTradesForMonth(currentDate);
+    const lossTrades = monthTrades.filter(t => t.status === 'LOSS');
+    if (lossTrades.length === 0) return 0;
+    const totalLossPnL = lossTrades.reduce((total, trade) => total + Math.abs(parsePnL(trade.pnl)), 0);
+    return Math.round(totalLossPnL / lossTrades.length);
+  };
+
+  const getTodayTradesForMonth = () => {
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    const monthTrades = getTradesForMonth(currentDate);
+    
+    // Si c'est le mois actuel, retourner les trades d'aujourd'hui
+    if (currentDate.getMonth() === today.getMonth() && currentDate.getFullYear() === today.getFullYear()) {
+      return monthTrades.filter(t => t.date === todayStr);
+    }
+    
+    // Sinon retourner 0 car ce n'est pas le mois actuel
+    return [];
+  };
+
+  const getThisMonthTradesForMonth = () => {
+    return getTradesForMonth(currentDate);
+  };
+
+  const getWeeklyBreakdownTradesForMonth = () => {
+    const month = currentDate.getMonth();
+    const year = currentDate.getFullYear();
+    
+    // Créer 4 semaines du mois affiché
+    const weeks = [];
+    for (let weekNum = 1; weekNum <= 4; weekNum++) {
+      const weekStart = new Date(year, month, (weekNum - 1) * 7 + 1);
+      const weekEnd = new Date(year, month, weekNum * 7);
+      
+      const weekTrades = personalTrades.filter(t => {
+        const tradeDate = new Date(t.date);
+        return tradeDate >= weekStart && 
+               tradeDate <= weekEnd &&
+               tradeDate.getMonth() === month &&
+               tradeDate.getFullYear() === year;
+      });
+      
+      const weekPnL = weekTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0);
+      const wins = weekTrades.filter(t => t.status === 'WIN').length;
+      const losses = weekTrades.filter(t => t.status === 'LOSS').length;
+      
+      // Vérifier si c'est la semaine actuelle (seulement si c'est le mois actuel)
+      const today = new Date();
+      const isCurrentMonth = month === today.getMonth() && year === today.getFullYear();
+      const todayWeek = Math.ceil(today.getDate() / 7);
+      const isCurrentWeek = isCurrentMonth && weekNum === todayWeek;
+      
+      weeks.push({
+        week: `Week ${weekNum}`,
+        trades: weekTrades.length,
+        pnl: weekPnL,
+        wins,
+        losses,
+        isCurrentWeek
+      });
+    }
+    
+    return weeks;
+  };
+
   const calculateRiskReward = (entry: string, takeProfit: string, stopLoss: string): string => {
     const entryNum = parseFloat(entry);
     const tpNum = parseFloat(takeProfit);
@@ -2318,17 +2414,17 @@ export default function TradingPlatformShell() {
           <div className="space-y-4 mb-8">
             {/* P&L Total */}
             <div className={`border rounded-lg p-4 border ${
-              (selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnLForMonth()) >= 0 
+              (selectedChannel.id === 'trading-journal' ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 
                 ? 'bg-green-600/20 border-green-500/30' 
                 : 'bg-red-600/20 border-red-500/30'
             }`}>
               <div className={`text-sm mb-1 ${
-                (selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-300' : 'text-red-300'
+                (selectedChannel.id === 'trading-journal' ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-300' : 'text-red-300'
               }`}>P&L Total</div>
               <div className={`text-2xl font-bold ${
-                (selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-200' : 'text-red-200'
+                (selectedChannel.id === 'trading-journal' ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-200' : 'text-red-200'
               }`}>
-                {(selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnLForMonth()) >= 0 ? '+' : ''}${selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnLForMonth()}
+                {(selectedChannel.id === 'trading-journal' ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 ? '+' : ''}${selectedChannel.id === 'trading-journal' ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()}
               </div>
             </div>
 
@@ -2336,7 +2432,7 @@ export default function TradingPlatformShell() {
             <div className="bg-blue-600/20 border-blue-500/30 rounded-lg p-4 border">
               <div className="text-sm text-blue-300 mb-1">Win Rate</div>
               <div className="text-2xl font-bold text-blue-200">
-                {selectedChannel.id === 'trading-journal' ? calculateWinRateTrades() : calculateWinRateForMonth()}%
+                {selectedChannel.id === 'trading-journal' ? calculateWinRateTradesForMonth() : calculateWinRateForMonth()}%
               </div>
             </div>
             
@@ -2344,13 +2440,13 @@ export default function TradingPlatformShell() {
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Aujourd'hui</div>
                 <div className="text-lg font-bold text-blue-400">
-                  {selectedChannel.id === 'trading-journal' ? getTodayTrades().length : getTodaySignalsForMonth()}
+                  {selectedChannel.id === 'trading-journal' ? getTodayTradesForMonth().length : getTodaySignalsForMonth()}
                 </div>
               </div>
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Ce mois</div>
                 <div className="text-lg font-bold text-white">
-                  {selectedChannel.id === 'trading-journal' ? getThisMonthTrades().length : getThisMonthSignalsForMonth()}
+                  {selectedChannel.id === 'trading-journal' ? getThisMonthTradesForMonth().length : getThisMonthSignalsForMonth()}
                 </div>
               </div>
             </div>
@@ -2360,7 +2456,7 @@ export default function TradingPlatformShell() {
                 <div className="text-xs text-gray-400 mb-1">Avg Win</div>
                 <div className="text-lg font-bold text-green-400">
                   {selectedChannel.id === 'trading-journal' ? 
-                    (calculateAvgWinTrades() > 0 ? `+$${calculateAvgWinTrades()}` : '-') :
+                    (calculateAvgWinTradesForMonth() > 0 ? `+$${calculateAvgWinTradesForMonth()}` : '-') :
                     (getCalendarMonthlyStats(currentDate).avgWin > 0 ? `+$${getCalendarMonthlyStats(currentDate).avgWin}` : '-')
                   }
                 </div>
@@ -2369,7 +2465,7 @@ export default function TradingPlatformShell() {
                 <div className="text-xs text-gray-400 mb-1">Avg Loss</div>
                 <div className="text-lg font-bold text-red-400">
                   {selectedChannel.id === 'trading-journal' ? 
-                    (calculateAvgLossTrades() > 0 ? `-$${calculateAvgLossTrades()}` : '-') :
+                    (calculateAvgLossTradesForMonth() > 0 ? `-$${calculateAvgLossTradesForMonth()}` : '-') :
                     (getCalendarMonthlyStats(currentDate).avgLoss > 0 ? `-$${getCalendarMonthlyStats(currentDate).avgLoss}` : '-')
                   }
                 </div>
@@ -2381,7 +2477,7 @@ export default function TradingPlatformShell() {
           <div>
             <h4 className="text-sm font-semibold text-gray-300 mb-4">Weekly Breakdown</h4>
             <div className="space-y-2">
-              {(selectedChannel.id === 'trading-journal' ? getWeeklyBreakdownTrades() : getWeeklyBreakdownForMonth()).map((weekData, index) => (
+              {(selectedChannel.id === 'trading-journal' ? getWeeklyBreakdownTradesForMonth() : getWeeklyBreakdownForMonth()).map((weekData, index) => (
                 <div 
                   key={index} 
                   className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer hover:bg-gray-600/50 transition-colors ${
