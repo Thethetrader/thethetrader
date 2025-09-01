@@ -2308,16 +2308,7 @@ export default function TradingPlatformShell() {
               <button onClick={() => handleChannelChange('general-chat', 'general-chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 General-chat {unreadMessages['general-chat'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['general-chat']}</span>}</button>
 
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💰 Profit-loss {unreadMessages['profit-loss'] > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadMessages['profit-loss']}</span>}</button>
-              <button onClick={() => {
-                // Réinitialiser selectedDate si on quitte le Trading Journal
-                if (selectedChannel.id === 'trading-journal') {
-                  setSelectedDate(null);
-                }
-                // Réinitialiser selectedChannel pour le calendrier
-                setSelectedChannel({id: 'calendrier', name: 'calendrier'});
-                setView('signals');
-                scrollToTop();
-              }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Calendrier</button>
+              <button onClick={() => handleChannelChange('calendrier', 'calendrier')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Calendrier</button>
               <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Trading Journal</button>
             </div>
           </div>
