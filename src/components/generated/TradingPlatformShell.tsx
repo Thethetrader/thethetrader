@@ -2335,7 +2335,7 @@ export default function TradingPlatformShell() {
                 <span className="text-purple-400">{stats.totalTrades}</span>
               </div>
             </div>
-            <div className="text-xs text-green-500 text-center mt-2">🔄 Stats synchronisées en temps réel</div>
+            
           </div>
         </div>
       </div>
