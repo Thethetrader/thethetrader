@@ -1185,34 +1185,56 @@ export default function TradingPlatformShell() {
 
   // Fonctions pour gérer les statuts des signaux
   const handleReaction = async (signalId: string, emoji: string) => {
-    // Mettre à jour localement d'abord
-    setSignals(prev => prev.map(signal => {
-      if (signal.id === signalId) {
-        const currentReactions = signal.reactions || [];
-        const hasReaction = currentReactions.includes(emoji);
-        
-        if (hasReaction) {
-          // Retirer la réaction
-          const newReactions = currentReactions.filter(r => r !== emoji);
-          // Sauvegarder dans Firebase
-          updateSignalReactions(signalId, newReactions);
-          return {
-            ...signal,
-            reactions: newReactions
-          };
-        } else {
-          // Ajouter la réaction
-          const newReactions = [...currentReactions, emoji];
-          // Sauvegarder dans Firebase
-          updateSignalReactions(signalId, newReactions);
-          return {
-            ...signal,
-            reactions: newReactions
-          };
-        }
+    try {
+      console.log('🔥 handleReaction called:', { signalId, emoji });
+      
+      // Vérifier que signalId et emoji sont valides
+      if (!signalId || !emoji) {
+        console.error('❌ signalId ou emoji invalide:', { signalId, emoji });
+        return;
       }
-      return signal;
-    }));
+      
+      // Mettre à jour localement d'abord
+      setSignals(prev => {
+        if (!Array.isArray(prev)) {
+          console.error('❌ signals n\'est pas un array:', prev);
+          return prev;
+        }
+        
+        return prev.map(signal => {
+          if (signal?.id === signalId) {
+            const currentReactions = Array.isArray(signal.reactions) ? signal.reactions : [];
+            const hasReaction = currentReactions.includes(emoji);
+            
+            if (hasReaction) {
+              // Retirer la réaction
+              const newReactions = currentReactions.filter(r => r !== emoji);
+              console.log('➖ Retirer réaction:', { signalId, emoji, newReactions });
+              // Sauvegarder dans Firebase
+              updateSignalReactions(signalId, newReactions);
+              return {
+                ...signal,
+                reactions: newReactions
+              };
+            } else {
+              // Ajouter la réaction
+              const newReactions = [...currentReactions, emoji];
+              console.log('➕ Ajouter réaction:', { signalId, emoji, newReactions });
+              // Sauvegarder dans Firebase
+              updateSignalReactions(signalId, newReactions);
+              return {
+                ...signal,
+                reactions: newReactions
+              };
+            }
+          }
+          return signal;
+        });
+      });
+    } catch (error) {
+      console.error('❌ Erreur dans handleReaction:', error);
+      alert('Erreur lors de l\'ajout de la réaction. Vérifiez la console.');
+    }
   };
 
   const scrollToTop = () => {
