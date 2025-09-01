@@ -958,9 +958,9 @@ export default function TradingPlatformShell() {
     loadAllSignalsForStats();
   }, []);
 
-  // Fonctions pour calculer les statistiques du mois courant
+  // Fonctions pour calculer les statistiques du mois courant (utilisant realTimeSignals de Firebase)
   const calculateTotalPnLForMonth = (): number => {
-    const monthSignals = allSignalsForStats.filter(signal => {
+    const monthSignals = realTimeSignals.filter(signal => {
       const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
       return signalDate.getMonth() === currentDate.getMonth() && 
              signalDate.getFullYear() === currentDate.getFullYear();
@@ -975,7 +975,7 @@ export default function TradingPlatformShell() {
   };
 
   const calculateWinRateForMonth = (): number => {
-    const monthSignals = allSignalsForStats.filter(signal => {
+    const monthSignals = realTimeSignals.filter(signal => {
       const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
       return signalDate.getMonth() === currentDate.getMonth() && 
              signalDate.getFullYear() === currentDate.getFullYear();
@@ -987,7 +987,7 @@ export default function TradingPlatformShell() {
   };
 
   const calculateAvgWinForMonth = (): number => {
-    const monthSignals = allSignalsForStats.filter(signal => {
+    const monthSignals = realTimeSignals.filter(signal => {
       const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
       return signalDate.getMonth() === currentDate.getMonth() && 
              signalDate.getFullYear() === currentDate.getFullYear();
@@ -1005,7 +1005,7 @@ export default function TradingPlatformShell() {
   };
 
   const calculateAvgLossForMonth = (): number => {
-    const monthSignals = allSignalsForStats.filter(signal => {
+    const monthSignals = realTimeSignals.filter(signal => {
       const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
       return signalDate.getMonth() === currentDate.getMonth() && 
              signalDate.getFullYear() === currentDate.getFullYear();
@@ -2033,7 +2033,7 @@ export default function TradingPlatformShell() {
                   }) : [];
 
                 const daySignals = selectedChannel.id !== 'trading-journal' ? 
-                  allSignalsForStats.filter(signal => {
+                  realTimeSignals.filter(signal => {
                     // Utiliser le timestamp original pour déterminer la vraie date
                     const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
                     
@@ -2386,11 +2386,11 @@ export default function TradingPlatformShell() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Total Trades:</span>
-                <span className="text-purple-400">{stats.totalTrades}</span>
+                <span className="text-purple-400">{realTimeSignals.length}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Signaux actifs:</span>
-                <span className="text-yellow-400">{stats.activeSignals}</span>
+                <span className="text-yellow-400">{realTimeSignals.filter(s => s.status === 'ACTIVE').length}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">P&L Total:</span>
@@ -2580,7 +2580,7 @@ export default function TradingPlatformShell() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Signaux actifs:</span>
-                    <span className="text-yellow-400">{stats.activeSignals}</span>
+                    <span className="text-yellow-400">{realTimeSignals.filter(s => s.status === 'ACTIVE').length}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">P&L Total:</span>
@@ -2590,7 +2590,7 @@ export default function TradingPlatformShell() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Total Trades:</span>
-                    <span className="text-purple-400">{stats.totalTrades}</span>
+                    <span className="text-purple-400">{realTimeSignals.length}</span>
                   </div>
                 </div>
                 <div className="text-xs text-green-500 text-center mt-2">🔄 Stats synchronisées</div>
