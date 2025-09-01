@@ -2321,6 +2321,10 @@ export default function TradingPlatformShell() {
                 <span className="text-blue-400">{stats.winRate}%</span>
               </div>
               <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Total Trades:</span>
+                <span className="text-purple-400">{stats.totalTrades}</span>
+              </div>
+              <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Signaux actifs:</span>
                 <span className="text-yellow-400">{stats.activeSignals}</span>
               </div>
@@ -2329,10 +2333,6 @@ export default function TradingPlatformShell() {
                 <span className={stats.totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}>
                   {stats.totalPnL >= 0 ? '+' : ''}${stats.totalPnL}
                 </span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Total Trades:</span>
-                <span className="text-purple-400">{stats.totalTrades}</span>
               </div>
             </div>
             

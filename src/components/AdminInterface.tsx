@@ -3033,6 +3033,10 @@ export default function AdminInterface() {
                 <span className="text-blue-400">{calculateWinRate()}%</span>
               </div>
               <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Total Trades:</span>
+                <span className="text-purple-400">{allSignalsForStats.length}</span>
+              </div>
+              <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Signaux actifs:</span>
                 <span className="text-yellow-400">{allSignalsForStats.filter(s => s.status === 'ACTIVE').length}</span>
               </div>
