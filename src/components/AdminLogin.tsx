@@ -14,7 +14,7 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
       localStorage.setItem('adminAuthenticated', 'true');
       onLogin();
     } else {
-      alert('Identifiants incorrects');
+      console.warn('Identifiants incorrects');
     }
   };
 

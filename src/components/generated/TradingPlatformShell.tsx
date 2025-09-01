@@ -1324,7 +1324,7 @@ export default function TradingPlatformShell() {
       
     } catch (error) {
       console.error('❌ Erreur réaction message:', error);
-      alert('Erreur lors de l\'ajout de la réaction. Vérifiez la console.');
+              console.error('Erreur lors de l\'ajout de la réaction');
     }
   };
 
@@ -1421,7 +1421,7 @@ export default function TradingPlatformShell() {
 
   const handleStartStream = () => {
     if (!streamTitle.trim()) {
-      alert('Veuillez entrer un titre pour votre stream');
+      console.warn('Veuillez entrer un titre pour votre stream');
       return;
     }
     setIsLiveStreaming(true);
@@ -1492,10 +1492,10 @@ export default function TradingPlatformShell() {
         })
         .catch(err => {
           console.error('Erreur partage d\'écran:', err);
-          alert('Erreur lors du partage d\'écran: ' + err.message);
+          console.error('Erreur lors du partage d\'écran:', err.message);
         });
     } else {
-      alert('Partage d\'écran non supporté sur ce navigateur');
+      console.error('Partage d\'écran non supporté sur ce navigateur');
     }
   };
 
@@ -1539,7 +1539,7 @@ export default function TradingPlatformShell() {
 
   const handleTradeSubmit = () => {
     if (!tradeData.symbol || !tradeData.entry || !tradeData.exit || !tradeData.pnl) {
-      alert('Veuillez remplir les champs obligatoires (Symbol, Entry, Exit, PnL)');
+      console.warn('Veuillez remplir les champs obligatoires (Symbol, Entry, Exit, PnL)');
       return;
     }
 
@@ -1583,7 +1583,7 @@ export default function TradingPlatformShell() {
       image2: null
     });
     setShowTradeModal(false);
-    alert('Trade ajouté avec succès !');
+    console.log('Trade ajouté avec succès !');
   };
 
   const handleTradingViewPasteTrade = (e: React.ClipboardEvent<HTMLDivElement>) => {
@@ -1703,9 +1703,9 @@ export default function TradingPlatformShell() {
     
     // Show success message
     if (found || Object.keys(extracted).length > 0) {
-      alert(`✅ Données importées !\nSymbole: ${extracted.symbol}\nEntrée: ${extracted.entryPrice}\nSortie: ${extracted.exitPrice}\nStop Loss: ${extracted.stopLoss}`);
+      console.log(`✅ Données importées - Symbole: ${extracted.symbol}, Entrée: ${extracted.entryPrice}, Sortie: ${extracted.exitPrice}, Stop Loss: ${extracted.stopLoss}`);
     } else {
-      alert('❌ Aucune donnée détectée. Essayez de coller depuis TradingView (Risk/Reward tool)');
+      console.warn('❌ Aucune donnée détectée. Essayez de coller depuis TradingView (Risk/Reward tool)');
     }
   };
 
@@ -1775,7 +1775,7 @@ export default function TradingPlatformShell() {
   const handleSignalSubmit = async () => {
     // Validation minimale - juste besoin d'au moins un champ rempli
     if (!signalData.symbol && !signalData.entry && !signalData.takeProfit && !signalData.stopLoss && !signalData.description) {
-      alert('Veuillez remplir au moins un champ pour créer le signal');
+      console.warn('Veuillez remplir au moins un champ pour créer le signal');
       return;
     }
 
@@ -1800,15 +1800,15 @@ export default function TradingPlatformShell() {
       
       if (savedSignal) {
         console.log('✅ Signal sauvé en Firebase:', savedSignal);
-        alert('Signal créé et sauvé en base ! ✅');
+        console.log('Signal créé et sauvé en base ! ✅');
       } else {
         console.error('❌ Erreur sauvegarde signal');
-        alert('Erreur lors de la sauvegarde du signal');
+        console.error('Erreur lors de la sauvegarde du signal');
         return;
       }
     } catch (error) {
       console.error('❌ Erreur création signal:', error);
-      alert('Erreur lors de la création du signal');
+      console.error('Erreur lors de la création du signal');
       return;
     }
     
@@ -1999,15 +1999,15 @@ export default function TradingPlatformShell() {
       }));
       
       if (numbers.length >= 3) {
-        alert(`✅ Données importées !\nSymbole: ${newData.symbol}\nEntrée: ${newData.entry}\nTP: ${newData.takeProfit}\nSL: ${newData.stopLoss}`);
+        console.log(`✅ Données importées - Symbole: ${newData.symbol}, Entrée: ${newData.entry}, TP: ${newData.takeProfit}, SL: ${newData.stopLoss}`);
       } else {
-        alert(`⚠️ Données partielles importées !\nSymbole: ${newData.symbol}\nEntrée: ${newData.entry}\nComplétez les champs manquants`);
+        console.warn(`⚠️ Données partielles importées - Symbole: ${newData.symbol}, Entrée: ${newData.entry}. Complétez les champs manquants`);
       }
       
       return true;
     }
     
-    alert('❌ Aucun nombre détecté. Exemple : "NQ1! 22950 23004 22896"');
+    console.warn('❌ Aucun nombre détecté. Exemple : "NQ1! 22950 23004 22896"');
     return false;
   };
 
@@ -2087,12 +2087,12 @@ export default function TradingPlatformShell() {
                 
                 // Celles vides au début
                 if (dayNumber < 1) {
-                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700"></div>;
+                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700" style={{minHeight: '64px'}}></div>;
                 }
                 
                 // Celles vides à la fin
                 if (dayNumber > daysInMonth) {
-                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700"></div>;
+                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700" style={{minHeight: '64px'}}></div>;
                 }
               
                               // Vérifier s'il y a des trades personnels ou des signaux pour ce jour
@@ -2199,7 +2199,7 @@ export default function TradingPlatformShell() {
                         }
                       } catch (error) {
                         console.error('Erreur lors du clic sur le jour:', error);
-                        alert('Erreur lors du clic sur le jour. Vérifiez la console.');
+                        console.error('Erreur lors du clic sur le jour:', error);
                       }
                     }}
                     className={`
@@ -2211,7 +2211,8 @@ export default function TradingPlatformShell() {
                         selectedDate.getMonth() === currentDate.getMonth() && 
                         selectedDate.getFullYear() === currentDate.getFullYear() 
                         ? 'ring-2 ring-purple-400' : ''}
-                  `}>
+                  `}
+                    style={{minHeight: '64px'}}>
                   <div className="flex flex-col h-full justify-between">
                       <div className="text-xs md:text-sm font-semibold">{dayNumber}</div>
                       {tradeCount > 0 && (
@@ -2454,7 +2455,7 @@ export default function TradingPlatformShell() {
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Win Rate:</span>
-                <span className="text-blue-400">{calculateWinRateForMonth()}%</span>
+                <span className="text-blue-400">{calculateWinRate()}%</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Total Trades:</span>
@@ -2466,8 +2467,8 @@ export default function TradingPlatformShell() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">P&L Total:</span>
-                <span className={calculateTotalPnLForMonth() >= 0 ? 'text-green-400' : 'text-red-400'}>
-                  {calculateTotalPnLForMonth() >= 0 ? '+' : ''}${calculateTotalPnLForMonth()}
+                <span className={calculateTotalPnL() >= 0 ? 'text-green-400' : 'text-red-400'}>
+                  {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
                 </span>
               </div>
             </div>

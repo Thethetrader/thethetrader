@@ -1368,7 +1368,7 @@ export default function AdminInterface() {
 
   const handleStartStream = () => {
     if (!streamTitle.trim()) {
-      alert('Veuillez entrer un titre pour votre stream');
+      console.warn('Veuillez entrer un titre pour votre stream');
       return;
     }
     setIsLiveStreaming(true);
@@ -1439,10 +1439,10 @@ export default function AdminInterface() {
         })
         .catch(err => {
           console.error('Erreur partage d\'écran:', err);
-          alert('Erreur lors du partage d\'écran: ' + err.message);
+          console.error('Erreur lors du partage d\'écran:', err.message);
         });
     } else {
-      alert('Partage d\'écran non supporté sur ce navigateur');
+      console.error('Partage d\'écran non supporté sur ce navigateur');
     }
   };
 
@@ -1571,7 +1571,7 @@ export default function AdminInterface() {
 
   const handleTradeSubmit = () => {
     if (!tradeData.symbol || !tradeData.entry || !tradeData.exit || !tradeData.pnl) {
-      alert('Veuillez remplir les champs obligatoires (Symbol, Entry, Exit, PnL)');
+      console.warn('Veuillez remplir les champs obligatoires (Symbol, Entry, Exit, PnL)');
       return;
     }
 
@@ -1615,7 +1615,7 @@ export default function AdminInterface() {
       image2: null
     });
     setShowTradeModal(false);
-    alert('Trade ajouté avec succès !');
+    console.log('Trade ajouté avec succès !');
   };
 
   // Fonctions pour la gestion des utilisateurs
@@ -1691,13 +1691,13 @@ export default function AdminInterface() {
 
   const createUser = async () => {
     // TODO: Implement Firebase user creation
-    alert('⚠️ User creation not implemented with Firebase yet');
+    console.warn('⚠️ User creation not implemented with Firebase yet');
     console.log('⚠️ User creation not implemented with Firebase yet');
   };
 
   const deleteUser = async (userId: string) => {
     // TODO: Implement Firebase user deletion
-    alert('⚠️ User deletion not implemented with Firebase yet');
+    console.warn('⚠️ User deletion not implemented with Firebase yet');
     console.log('⚠️ User deletion not implemented with Firebase yet');
   };
 
@@ -1818,9 +1818,9 @@ export default function AdminInterface() {
     
     // Show success message
     if (found || Object.keys(extracted).length > 0) {
-      alert(`✅ Données importées !\nSymbole: ${extracted.symbol}\nEntrée: ${extracted.entryPrice}\nSortie: ${extracted.exitPrice}\nStop Loss: ${extracted.stopLoss}`);
+      console.log(`✅ Données importées - Symbole: ${extracted.symbol}, Entrée: ${extracted.entryPrice}, Sortie: ${extracted.exitPrice}, Stop Loss: ${extracted.stopLoss}`);
     } else {
-      alert('❌ Aucune donnée détectée. Essayez de coller depuis TradingView (Risk/Reward tool)');
+      console.warn('❌ Aucune donnée détectée. Essayez de coller depuis TradingView (Risk/Reward tool)');
     }
   };
 
@@ -1875,7 +1875,7 @@ export default function AdminInterface() {
   const handleSignalSubmit = async () => {
     // Validation minimale - juste besoin d'au moins un champ rempli
     if (!signalData.symbol && !signalData.entry && !signalData.takeProfit && !signalData.stopLoss && !signalData.description) {
-      alert('Veuillez remplir au moins un champ pour créer le signal');
+      console.warn('Veuillez remplir au moins un champ pour créer le signal');
       return;
     }
 
@@ -1960,11 +1960,11 @@ export default function AdminInterface() {
       
       // Pas d'alerte pour general-chat-2, le message apparaît directement dans le chat
       if (selectedChannel.id !== 'general-chat-2') {
-        alert('Signal créé et sauvé en base ! ✅');
+        console.log('Signal créé et sauvé en base ! ✅');
       }
     } else {
       console.error('❌ Erreur sauvegarde signal');
-      alert('Erreur lors de la sauvegarde du signal');
+      console.error('Erreur lors de la sauvegarde du signal');
       return;
     }
     
@@ -2120,7 +2120,7 @@ export default function AdminInterface() {
           confirmBtn.onclick = () => {
             const pnlValue = pnlInput.value.trim();
             if (!pnlValue) {
-              alert('Veuillez entrer le P&L');
+              console.warn('Veuillez entrer le P&L');
               return;
             }
             
@@ -2206,7 +2206,7 @@ export default function AdminInterface() {
       
     } catch (error) {
       console.error('❌ [ADMIN] Erreur handleSignalStatusFromMessage:', error);
-      alert('Erreur lors de la mise à jour du statut');
+              console.error('Erreur lors de la mise à jour du statut');
     }
   };
 
@@ -2359,15 +2359,15 @@ export default function AdminInterface() {
       }));
       
       if (numbers.length >= 3) {
-        alert(`✅ Données importées !\nSymbole: ${newData.symbol}\nEntrée: ${newData.entry}\nTP: ${newData.takeProfit}\nSL: ${newData.stopLoss}`);
+        console.log(`✅ Données importées - Symbole: ${newData.symbol}, Entrée: ${newData.entry}, TP: ${newData.takeProfit}, SL: ${newData.stopLoss}`);
       } else {
-        alert(`⚠️ Données partielles importées !\nSymbole: ${newData.symbol}\nEntrée: ${newData.entry}\nComplétez les champs manquants`);
+        console.warn(`⚠️ Données partielles importées - Symbole: ${newData.symbol}, Entrée: ${newData.entry}. Complétez les champs manquants`);
       }
       
       return true;
     }
     
-    alert('❌ Aucun nombre détecté. Exemple : "NQ1! 22950 23004 22896"');
+    console.warn('❌ Aucun nombre détecté. Exemple : "NQ1! 22950 23004 22896"');
     return false;
   };
 
@@ -2515,7 +2515,7 @@ export default function AdminInterface() {
                             <div className="flex gap-2">
                               <button 
                                 onClick={() => {
-                                  alert('Fonctionnalité de réinitialisation du mot de passe à venir');
+                                  console.log('Fonctionnalité de réinitialisation du mot de passe à venir');
                                 }}
                                 className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-xs"
                                 title="Réinitialiser mot de passe"
@@ -2524,7 +2524,7 @@ export default function AdminInterface() {
                               </button>
                               <button 
                                 onClick={() => {
-                                  alert('Fonctionnalité de désactivation/réactivation à venir');
+                                  console.log('Fonctionnalité de désactivation/réactivation à venir');
                                 }}
                                 className="bg-yellow-600 hover:bg-yellow-700 px-3 py-1 rounded text-xs"
                                 title={user.status === 'active' ? 'Désactiver' : 'Réactiver'}
@@ -2782,7 +2782,7 @@ export default function AdminInterface() {
                         }
                       } catch (error) {
                         console.error('Erreur lors du clic sur le jour:', error);
-                        alert('Erreur lors du clic sur le jour. Vérifiez la console.');
+                        console.error('Erreur lors du clic sur le jour:', error);
                       }
                     }}
                     className={`

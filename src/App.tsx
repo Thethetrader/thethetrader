@@ -717,7 +717,7 @@ const App = () => {
         });
 
         if (error) {
-          alert(`Erreur de connexion: ${error.message}`);
+          console.error(`Erreur de connexion: ${error.message}`);
           return;
         }
 
@@ -727,7 +727,7 @@ const App = () => {
           setShowAuthModal(false);
         }
       } catch (error) {
-        alert('Erreur de connexion');
+        console.error('Erreur de connexion');
         console.error('Erreur login:', error);
       }
     }
@@ -1154,13 +1154,13 @@ const App = () => {
                   if ('serviceWorker' in navigator) {
                     // Montrer les instructions d'installation PWA pour iOS
                     if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-                      alert('Pour installer l\'app:\n1. Appuyez sur le bouton Partager 📤\n2. Sélectionnez "Sur l\'écran d\'accueil"\n3. Confirmez l\'installation');
+                      console.log('Pour installer l\'app: Appuyez sur le bouton Partager 📤, puis "Sur l\'écran d\'accueil"');
                     } else {
                       // Pour autres navigateurs, essayer le prompt d'installation
                       if (window.deferredPrompt) {
                         window.deferredPrompt.prompt();
                       } else {
-                        alert('Utilisez le menu de votre navigateur pour "Ajouter à l\'écran d\'accueil" ou "Installer l\'application"');
+                        console.log('Utilisez le menu de votre navigateur pour "Ajouter à l\'écran d\'accueil" ou "Installer l\'application"');
                       }
                     }
                   }
