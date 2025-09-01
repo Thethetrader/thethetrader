@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateMessageReactions, getMessageReactions, subscribeToMessageReactions } from '../../utils/firebase-setup';
+import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals } from '../../utils/firebase-setup';
 import { createClient } from '@supabase/supabase-js';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
 
@@ -1115,73 +1115,7 @@ export default function TradingPlatformShell() {
     return weeks;
   };
 
-  // Fonction pour ajouter une réaction flamme à un message (côté utilisateur)
-  const handleAddReaction = async (messageId: string) => {
-    const currentUser = user?.email || 'Anonymous'; // Utiliser l'email de l'utilisateur connecté
-    
-    try {
-      // Mettre à jour localement d'abord pour une réponse immédiate
-      setMessageReactions(prev => {
-        const current = prev[messageId] || { fire: 0, users: [] };
-        const userIndex = current.users.indexOf(currentUser);
-        
-        if (userIndex === -1) {
-          // Ajouter la réaction
-          const newReactions = {
-            ...prev,
-            [messageId]: {
-              fire: current.fire + 1,
-              users: [...current.users, currentUser]
-            }
-          };
-          return newReactions;
-        } else {
-          // Retirer la réaction
-          const newReactions = {
-            ...prev,
-            [messageId]: {
-              fire: current.fire - 1,
-              users: current.users.filter((_, index) => index !== userIndex)
-            }
-          };
-          return newReactions;
-        }
-      });
-      
-      // Sauvegarder dans Firebase
-      const current = messageReactions[messageId] || { fire: 0, users: [] };
-      const userIndex = current.users.indexOf(currentUser);
-      
-      let newReactions;
-      if (userIndex === -1) {
-        // Ajouter la réaction
-        newReactions = {
-          fire: current.fire + 1,
-          users: [...current.users, currentUser]
-        };
-      } else {
-        // Retirer la réaction
-        newReactions = {
-          fire: current.fire - 1,
-          users: current.users.filter((_, index) => index !== userIndex)
-        };
-      }
-      
-      await updateMessageReactions(messageId, newReactions);
-      console.log('✅ Réaction message synchronisée avec Firebase:', messageId, newReactions);
-      
-    } catch (error) {
-      console.error('❌ Erreur synchronisation réaction Firebase:', error);
-      // En cas d'erreur, revenir à l'état précédent
-      setMessageReactions(prev => {
-        const current = prev[messageId] || { fire: 0, users: [] };
-        return {
-          ...prev,
-          [messageId]: current
-        };
-      });
-    }
-  };
+  // Fonction handleAddReaction supprimée - les réactions sur messages sont désactivées côté utilisateur
 
   // Fonction handleReaction supprimée - les réactions sont désactivées côté utilisateur
 
@@ -3267,22 +3201,7 @@ export default function TradingPlatformShell() {
                                 )}
                               </div>
                               
-                              {/* Bouton de réaction flamme pour les messages (en dehors du conteneur gris) */}
-                              <div className="mt-2 flex justify-start">
-                                <button
-                                  onClick={() => handleAddReaction(message.id)}
-                                  className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
-                                    (messageReactions[message.id]?.users || []).includes(user?.email || 'Anonymous')
-                                      ? 'bg-orange-500 text-white hover:bg-orange-600'
-                                      : 'bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white'
-                                  }`}
-                                >
-                                  🔥
-                                  <span className="text-xs">
-                                    {messageReactions[message.id]?.fire || 0}
-                                  </span>
-                                </button>
-                              </div>
+
                             </div>
                           </div>
                         ))
@@ -3864,22 +3783,7 @@ export default function TradingPlatformShell() {
                                 )}
                               </div>
                               
-                              {/* Bouton de réaction flamme pour les messages (en dehors du conteneur gris) */}
-                              <div className="mt-2 flex justify-start">
-                                <button
-                                  onClick={() => handleAddReaction(message.id)}
-                                  className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
-                                    (messageReactions[message.id]?.users || []).includes(user?.email || 'Anonymous')
-                                      ? 'bg-orange-500 text-white hover:bg-orange-600'
-                                      : 'bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white'
-                                  }`}
-                                >
-                                  🔥
-                                  <span className="text-xs">
-                                    {messageReactions[message.id]?.fire || 0}
-                                  </span>
-                                </button>
-                              </div>
+
                           </div>
                         </div>
                       ))
