@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, Signal } from '../../utils/firebase-setup';
+import Parlons from '../Parlons';
+import ProfitLoss from '../ProfitLoss';
 import { createClient } from '@supabase/supabase-js';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
 
@@ -267,7 +269,7 @@ export default function TradingPlatformShell() {
 
   // Subscription globale pour tous les canaux
   useEffect(() => {
-    const channels = ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'];
+    const channels = ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'parlons', 'profit-loss'];
     
     const subscriptions = channels.map(channelId => {
       return subscribeToMessages(channelId, (newMessage) => {
@@ -1674,6 +1676,7 @@ export default function TradingPlatformShell() {
     { id: 'letsgooo-model', name: 'letsgooo-model', emoji: '🚀', fullName: 'Letsgooo model' },
 
     { id: 'general-chat', name: 'general-chat', emoji: '💬', fullName: 'Général chat' },
+    { id: 'parlons', name: 'parlons', emoji: '💭', fullName: 'Parlons' },
     { id: 'profit-loss', name: 'profit-loss', emoji: '💰', fullName: 'Profit loss' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' }
@@ -2598,7 +2601,7 @@ export default function TradingPlatformShell() {
             <div className="space-y-1">
 
               <button onClick={() => handleChannelChange('general-chat', 'general-chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 General-chat</button>
-
+              <button onClick={() => handleChannelChange('parlons', 'parlons')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'parlons' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💭 Parlons</button>
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
               <button onClick={() => handleChannelChange('calendrier', 'calendrier')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Journal Perso</button>
@@ -2745,7 +2748,7 @@ export default function TradingPlatformShell() {
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">TRADING HUB</h3>
                 <div className="space-y-2">
-                  {channels.filter(c => ['', 'general-chat', 'profit-loss'].includes(c.id)).map(channel => (
+                  {channels.filter(c => ['', 'general-chat', 'parlons', 'profit-loss'].includes(c.id)).map(channel => (
                     <button
                       key={channel.id}
                       onClick={() => {
@@ -3294,7 +3297,11 @@ export default function TradingPlatformShell() {
                       </div>
                     </div>
                   </div>
-                ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(selectedChannel.id) ? (
+                ) : selectedChannel.id === 'parlons' ? (
+                  <Parlons />
+                ) : selectedChannel.id === 'profit-loss' ? (
+                  <ProfitLoss />
+                ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
                   <div className="flex flex-col h-full">
                     {/* Messages de chat */}
                     <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
@@ -4055,7 +4062,11 @@ export default function TradingPlatformShell() {
                     </div>
                   </div>
                 </div>
-              ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(selectedChannel.id) ? (
+              ) : selectedChannel.id === 'parlons' ? (
+                <Parlons />
+              ) : selectedChannel.id === 'profit-loss' ? (
+                <ProfitLoss />
+              ) : ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}
                   <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
