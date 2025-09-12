@@ -136,8 +136,8 @@ const Chat = () => {
         }]);
 
       if (error) {
-        console.error('Erreur envoi image:', error);
-        alert('Erreur lors de l\'envoi de l\'image');
+        console.error('Erreur Supabase envoi image:', error);
+        alert(`Erreur Supabase: ${error.message}`);
       } else {
         console.log('Image envoyée avec succès');
         fetchMessages();
@@ -148,7 +148,7 @@ const Chat = () => {
       }
     } catch (error) {
       console.error('Erreur upload image:', error);
-      alert('Erreur lors de l\'upload de l\'image');
+      alert(`Erreur upload: ${error.message}`);
     } finally {
       setUploadingImage(false);
       // Reset l'input file
