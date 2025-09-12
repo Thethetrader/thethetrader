@@ -600,8 +600,7 @@ const Chat = () => {
               style={{ display: "none" }}
               disabled={uploadingImage}
             />
-            <button
-              type="button"
+            <div
               style={{
                 padding: "12px 20px",
                 borderRadius: "25px",
@@ -615,10 +614,9 @@ const Chat = () => {
                 justifyContent: "center",
                 minWidth: "48px"
               }}
-              disabled={uploadingImage}
             >
               {uploadingImage ? "⏳" : "📷"}
-            </button>
+            </div>
           </label>
           <button
             style={{
