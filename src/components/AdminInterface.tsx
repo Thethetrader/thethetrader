@@ -5,6 +5,26 @@ import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, sub
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, sendLocalNotification } from '../utils/push-notifications';
 import { ref, update, onValue, get } from 'firebase/database';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+
+// Fonction pour récupérer les tokens FCM
+const getFCMTokens = async (): Promise<string[]> => {
+  const tokens = [];
+  try {
+    const fcmTokensRef = ref(database, 'fcm_tokens');
+    const snapshot = await get(fcmTokensRef);
+    if (snapshot.exists()) {
+      const tokensData = snapshot.val();
+      Object.values(tokensData).forEach((tokenData: any) => {
+        if (tokenData.token) {
+          tokens.push(tokenData.token);
+        }
+      });
+    }
+  } catch (error) {
+    console.error('❌ Erreur récupération tokens FCM:', error);
+  }
+  return tokens;
+};
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 
 export default function AdminInterface() {
@@ -1559,6 +1579,7 @@ export default function AdminInterface() {
         try {
           const tokens = await getFCMTokens();
           if (tokens.length > 0) {
+            const functions = getFunctions();
             const sendNotification = httpsCallable(functions, 'sendNotification');
             await sendNotification({
               signal: { ...signal, status: newStatus, pnl, closeMessage },
@@ -2253,6 +2274,7 @@ export default function AdminInterface() {
       try {
         const tokens = await getFCMTokens();
         if (tokens.length > 0) {
+          const functions = getFunctions();
           const sendNotification = httpsCallable(functions, 'sendNotification');
           await sendNotification({
             signal: { ...updatedSignal, channel_id: 'general-chat-2' },
