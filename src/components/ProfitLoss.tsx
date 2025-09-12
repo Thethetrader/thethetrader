@@ -65,10 +65,7 @@ const Chat = () => {
   }, [fetchMessages]);
 
   useEffect(() => {
-    // Scroll automatique vers le bas à chaque nouveau message
-    if (endRef.current) {
-      endRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    // Pas de scroll automatique - l'utilisateur peut remonter librement
   }, [messages]);
 
   const addMessage = async () => {
