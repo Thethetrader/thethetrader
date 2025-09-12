@@ -69,6 +69,7 @@ const Chat = () => {
   const [lastMessageCount, setLastMessageCount] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   // Marquer le composant comme monté
   useEffect(() => {
@@ -435,6 +436,7 @@ const Chat = () => {
                               borderRadius: "8px",
                               cursor: "pointer"
                             }}
+                            onClick={() => setSelectedImage(msg.text.replace('[IMAGE:', '').replace(']', ''))}
                           />
                         </div>
                       ) : (
@@ -632,6 +634,59 @@ const Chat = () => {
           </button>
         </div>
       </div>
+
+      {/* Modal pour afficher l'image en plein écran */}
+      {selectedImage && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.9)",
+            zIndex: 10001,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px"
+          }}
+          onClick={() => setSelectedImage(null)}
+        >
+          <img
+            src={selectedImage}
+            alt="Image agrandie"
+            style={{
+              maxWidth: "100%",
+              maxHeight: "100%",
+              borderRadius: "8px",
+              objectFit: "contain"
+            }}
+            onClick={(e) => e.stopPropagation()}
+          />
+          <button
+            style={{
+              position: "absolute",
+              top: "20px",
+              right: "20px",
+              background: "rgba(0, 0, 0, 0.7)",
+              color: "white",
+              border: "none",
+              borderRadius: "50%",
+              width: "40px",
+              height: "40px",
+              fontSize: "20px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}
+            onClick={() => setSelectedImage(null)}
+          >
+            ✕
+          </button>
+        </div>
+      )}
     </div>
   );
 };
