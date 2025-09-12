@@ -3,6 +3,8 @@ import './index.css';
 import TradingPlatformShell from './components/generated/TradingPlatformShell';
 import AdminLogin from './components/AdminLogin';
 import AdminInterface from './components/AdminInterface';
+import UserChat from './components/UserChat';
+import ProfitLoss from './components/ProfitLoss';
 
 
 import { useNotifications } from './hooks/use-notifications';
@@ -2031,72 +2033,12 @@ const App = () => {
 
                         {/* Vue General Chat */}
                         {mobileActiveChannel === 'general-chat' && (
-                          <>
-                            <div className="bg-gray-700 rounded-lg p-3">
-                              <div className="flex items-center gap-2 mb-1">
-                                <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-xs text-white">A</div>
-                                <span className="text-white font-medium text-xs">AlexTrader</span>
-                                <span className="text-gray-400 text-xs">15:42</span>
-                              </div>
-                              <p className="text-gray-300 text-xs mb-1">
-                                Salut la team ! Quelqu'un a des infos sur les NFP de demain ? 🤔
-                              </p>
-                              <div className="flex items-center gap-2 text-xs">
-                                <span className="text-gray-400">💬 3</span>
-                                <span className="text-gray-400">👍 8</span>
-                              </div>
-                            </div>
-
-                            <div className="bg-gray-700 rounded-lg p-3">
-                              <div className="flex items-center gap-2 mb-1">
-                                <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white">S</div>
-                                <span className="text-white font-medium text-xs">Sarah_FX</span>
-                                <span className="text-gray-400 text-xs">15:45</span>
-                              </div>
-                              <p className="text-gray-300 text-xs mb-1">
-                                @AlexTrader Prévu à 14h30 demain ! Normalement impact fort sur USD 📈
-                              </p>
-                              <div className="flex items-center gap-2 text-xs">
-                                <span className="text-gray-400">👍 12</span>
-                                <span className="text-gray-400">🙏 4</span>
-                              </div>
-                            </div>
-                          </>
+                          <UserChat channelId="general-chat" />
                         )}
 
                         {/* Vue Profit Loss */}
                         {mobileActiveChannel === 'profit-loss' && (
-                          <>
-                            <div className="bg-green-600/20 border border-green-500/30 rounded-lg p-3">
-                              <div className="flex items-center gap-2 mb-2">
-                                <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-xs text-white">J</div>
-                                <span className="text-white font-medium text-xs">JulienPro</span>
-                                <span className="text-green-400 font-bold text-sm">+$2,340</span>
-                              </div>
-                              <div className="text-gray-300 text-xs mb-2">
-                                💰 Trade GBPUSD fermé ! Entry: 1.2650 | Exit: 1.2720
-                              </div>
-                              <div className="flex items-center gap-2 text-xs">
-                                <span className="text-gray-400">🔥 18</span>
-                                <span className="text-gray-400">💎 22</span>
-                              </div>
-                            </div>
-
-                            <div className="bg-red-600/20 border border-red-500/30 rounded-lg p-3">
-                              <div className="flex items-center gap-2 mb-2">
-                                <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-xs text-white">M</div>
-                                <span className="text-white font-medium text-xs">MaxTrading</span>
-                                <span className="text-red-400 font-bold text-sm">-$180</span>
-                              </div>
-                              <div className="text-gray-300 text-xs mb-2">
-                                📉 Stop Loss touché sur BTCUSD. Pas grave, on continue !
-                              </div>
-                              <div className="flex items-center gap-2 text-xs">
-                                <span className="text-gray-400">💪 9</span>
-                                <span className="text-gray-400">🙏 5</span>
-                              </div>
-                            </div>
-                          </>
+                          <ProfitLoss />
                         )}
 
                         {/* Vue Journal Signaux (Calendar) */}
@@ -2290,21 +2232,6 @@ const App = () => {
                       </div>
                       </div>
                       
-                      {/* Zone de saisie en bas - seulement pour general-chat et profit-loss */}
-                      {(mobileActiveChannel === 'general-chat' || mobileActiveChannel === 'profit-loss') && (
-                      <div className="fixed bottom-20 left-4 right-4 border-t border-gray-700 p-3 bg-gray-900 z-50 rounded-lg shadow-lg">
-                          <div className="flex items-center gap-2">
-                            <input 
-                              type="text" 
-                              placeholder="Tapez votre message..."
-                              className="flex-1 bg-gray-700 text-white text-xs px-3 py-2 rounded border-none outline-none"
-                            />
-                            <button className="bg-blue-600 text-white px-3 py-2 rounded text-xs">
-                              Envoyer
-                            </button>
-                          </div>
-                        </div>
-                      )}
                   </div>
                 </div>
               </div>

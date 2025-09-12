@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
+import { db } from '../config/firebase-config';
+import { collection, addDoc, onSnapshot, doc, updateDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
 
-const Chat = () => {
+const UserChat = ({ channelId = 'general-chat' }) => {
   const [messages, setMessages] = useState([]);
   const [newMsg, setNewMsg] = useState("");
   const [replyTo, setReplyTo] = useState(null);
@@ -8,40 +10,76 @@ const Chat = () => {
   const [editText, setEditText] = useState("");
   const [menu, setMenu] = useState(null);
   const [pressTimer, setPressTimer] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [updating, setUpdating] = useState(false);
   const endRef = useRef(null);
 
-  // Messages de démo
+  // Firebase listener avec cleanup
   useEffect(() => {
-    setMessages([
-      { id: 1, text: "Salut ! Comment ça va ?", sender: "Alice", senderId: "2", time: "19:46", replyTo: null, edited: false, deleted: false },
-      { id: 2, text: "Ça va bien merci ! Et toi ?", sender: "Moi", senderId: "1", time: "19:47", replyTo: null, edited: false, deleted: false },
-      { id: 3, text: "Super ! Tu fais quoi ce weekend ?", sender: "Alice", senderId: "2", time: "19:48", replyTo: null, edited: false, deleted: false }
-    ]);
-  }, []);
+    setLoading(true);
+    const messagesRef = collection(db, `chat-${channelId}`);
+    const q = query(messagesRef, orderBy('createdAt', 'asc'));
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const firebaseMessages = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        time: doc.data().createdAt?.toDate?.()?.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) || "00:00"
+      }));
+      setMessages(firebaseMessages);
+      setLoading(false);
+    }, (error) => {
+      console.error('Erreur Firebase:', error);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [channelId]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const addMessage = () => {
-    if (!newMsg.trim()) return;
-    const msg = {
-      id: Date.now(),
-      text: newMsg,
-      sender: "Moi",
-      senderId: "1",
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      replyTo: replyTo?.id || null,
-      edited: false,
-      deleted: false
-    };
-    setMessages(prev => [...prev, msg]);
-    setNewMsg("");
-    setReplyTo(null);
+  const addMessage = async () => {
+    if (!newMsg.trim() || updating) return;
+    
+    setUpdating(true);
+    try {
+      const messagesRef = collection(db, `chat-${channelId}`);
+      await addDoc(messagesRef, {
+        text: newMsg.trim(),
+        sender: "Utilisateur",
+        senderId: "user_1",
+        replyTo: replyTo?.id || null,
+        edited: false,
+        deleted: false,
+        createdAt: serverTimestamp()
+      });
+      
+      setNewMsg("");
+      setReplyTo(null);
+    } catch (error) {
+      console.error('Erreur ajout message:', error);
+    } finally {
+      setUpdating(false);
+    }
   };
 
-  const updateMessage = (id, changes) => {
-    setMessages(prev => prev.map(m => m.id === id ? { ...m, ...changes } : m));
+  const updateMessage = async (id, changes) => {
+    if (updating) return;
+    
+    setUpdating(true);
+    try {
+      const messageRef = doc(db, `chat-${channelId}`, id);
+      await updateDoc(messageRef, {
+        ...changes,
+        updatedAt: serverTimestamp()
+      });
+    } catch (error) {
+      console.error('Erreur modification message:', error);
+    } finally {
+      setUpdating(false);
+    }
   };
 
   const startEdit = (msg) => {
@@ -58,9 +96,23 @@ const Chat = () => {
     setEditText("");
   };
 
-  const deleteMsg = (id) => {
-    updateMessage(id, { deleted: true, text: "Message supprimé" });
-    setMenu(null);
+  const deleteMsg = async (id) => {
+    if (updating) return;
+    
+    setUpdating(true);
+    try {
+      const messageRef = doc(db, `chat-${channelId}`, id);
+      await updateDoc(messageRef, { 
+        deleted: true, 
+        text: "Message supprimé",
+        deletedAt: serverTimestamp()
+      });
+      setMenu(null);
+    } catch (error) {
+      console.error('Erreur suppression message:', error);
+    } finally {
+      setUpdating(false);
+    }
   };
 
   const showMenu = (e, msg) => {
@@ -92,24 +144,18 @@ const Chat = () => {
     closeMenu();
   };
 
-  const isMyMessage = (msg) => msg.senderId === "1";
+  const isMyMessage = (msg) => msg.senderId === "user_1";
   const getReplyMessage = (msg) => messages.find(m => m.id === msg.replyTo);
 
   return (
     <div 
       style={{ 
-        position: "fixed",
-        top: 0,
-        left: window.innerWidth > 768 ? "254px" : "0px",
-        width: window.innerWidth > 768 ? "calc(100vw - 254px)" : "100vw",
-        margin: 0,
-        padding: 0, 
+        width: "100%", 
         height: "100vh", 
         display: "flex", 
         flexDirection: "column",
         fontFamily: "Arial, sans-serif",
-        background: "#1a202c",
-        zIndex: 1000
+        background: "#1a202c"
       }}
       onClick={closeMenu}
     >
@@ -120,6 +166,16 @@ const Chat = () => {
         background: "#2d3748", 
         padding: "15px" 
       }}>
+        {loading && (
+          <div style={{ 
+            textAlign: "center", 
+            color: "#a0aec0", 
+            padding: "20px",
+            fontSize: "14px"
+          }}>
+            🔄 Chargement des messages...
+          </div>
+        )}
         {messages.map(msg => {
           const isMe = isMyMessage(msg);
           const reply = getReplyMessage(msg);
@@ -264,7 +320,7 @@ const Chat = () => {
             ↩️ Répondre
           </div>
           
-          {menu.msg.senderId === "1" && (
+          {menu.msg.senderId === "user_1" && (
             <>
               <div
                 style={{
@@ -355,17 +411,18 @@ const Chat = () => {
             style={{
               padding: "12px 20px",
               borderRadius: "25px",
-              backgroundColor: "#4299e1",
+              backgroundColor: updating ? "#718096" : "#4299e1",
               color: "#fff",
               border: "none",
               fontSize: "14px",
-              cursor: "pointer",
-              fontWeight: "bold"
+              cursor: updating ? "not-allowed" : "pointer",
+              fontWeight: "bold",
+              opacity: updating ? 0.7 : 1
             }}
             onClick={addMessage}
-            disabled={!newMsg.trim()}
+            disabled={!newMsg.trim() || updating}
           >
-            📤 Envoyer
+            {updating ? "⏳ Envoi..." : "📤 Envoyer"}
           </button>
         </div>
       </div>
@@ -373,4 +430,4 @@ const Chat = () => {
   );
 };
 
-export default Chat;
+export default UserChat;

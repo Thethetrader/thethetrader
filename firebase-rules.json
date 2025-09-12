@@ -17,6 +17,11 @@
     "fcm_tokens": {
       ".read": true,
       ".write": true
+    },
+    "profit-loss-chat": {
+      ".read": true,
+      ".write": true,
+      ".indexOn": ["createdAt", "senderId"]
     }
   }
 } 
