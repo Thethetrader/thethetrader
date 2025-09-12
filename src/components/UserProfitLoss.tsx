@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { createClient } from '@supabase/supabase-js';
 import { supabaseConfig } from '../config/supabase-config';
+import { uploadImage } from '../utils/firebase-setup';
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
@@ -67,6 +68,7 @@ const Chat = () => {
   const [isUserScrolling, setIsUserScrolling] = useState(false);
   const [lastMessageCount, setLastMessageCount] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Marquer le composant comme monté
   useEffect(() => {
@@ -102,6 +104,55 @@ const Chat = () => {
         const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100;
         setIsUserScrolling(!isNearBottom);
       }
+    }
+  };
+
+  // Fonction pour gérer l'upload d'images
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('Veuillez sélectionner une image');
+      return;
+    }
+
+    setUploadingImage(true);
+    try {
+      // Upload vers Firebase Storage
+      const imageURL = await uploadImage(file);
+      
+      // Envoyer le message avec l'image
+      const { data, error } = await supabase
+        .from('profit_loss_chat')
+        .insert([{
+          content: '',
+          author: 'Utilisateur',
+          author_type: 'user',
+          attachment_data: imageURL,
+          attachment_type: file.type,
+          attachment_name: file.name,
+          created_at: new Date().toISOString()
+        }]);
+
+      if (error) {
+        console.error('Erreur envoi image:', error);
+        alert('Erreur lors de l\'envoi de l\'image');
+      } else {
+        console.log('Image envoyée avec succès');
+        fetchMessages();
+        // Scroll vers le bas après envoi
+        setTimeout(() => {
+          endRef.current?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      }
+    } catch (error) {
+      console.error('Erreur upload image:', error);
+      alert('Erreur lors de l\'upload de l\'image');
+    } finally {
+      setUploadingImage(false);
+      // Reset l'input file
+      event.target.value = '';
     }
   };
 
@@ -375,7 +426,28 @@ const Chat = () => {
                       </div>
                     </div>
                   ) : (
-                    msg.text
+                    <div>
+                      {msg.text && (
+                        <div style={{ marginBottom: msg.attachment_data ? "8px" : "0" }}>
+                          {msg.text}
+                        </div>
+                      )}
+                      {msg.attachment_data && (
+                        <div style={{ marginTop: "8px" }}>
+                          <img 
+                            src={msg.attachment_data} 
+                            alt={msg.attachment_name || "Image"} 
+                            style={{
+                              maxWidth: "100%",
+                              maxHeight: "300px",
+                              borderRadius: "8px",
+                              cursor: "pointer"
+                            }}
+                            onClick={() => window.open(msg.attachment_data, '_blank')}
+                          />
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
 
@@ -520,6 +592,34 @@ const Chat = () => {
             placeholder="Écrire un message..."
             disabled={updating}
           />
+          <label style={{ cursor: "pointer" }}>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              style={{ display: "none" }}
+              disabled={uploadingImage}
+            />
+            <button
+              type="button"
+              style={{
+                padding: "12px",
+                borderRadius: "25px",
+                backgroundColor: uploadingImage ? "#718096" : "#4a5568",
+                border: "1px solid #4a5568",
+                color: "#e2e8f0",
+                cursor: uploadingImage ? "not-allowed" : "pointer",
+                fontSize: "16px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                minWidth: "48px"
+              }}
+              disabled={uploadingImage}
+            >
+              {uploadingImage ? "⏳" : "📷"}
+            </button>
+          </label>
           <button
             style={{
               padding: "12px 20px",
