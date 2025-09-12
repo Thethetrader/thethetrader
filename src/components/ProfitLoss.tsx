@@ -613,8 +613,7 @@ const Chat = () => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                minWidth: "48px",
-                height: "48px"
+                minWidth: "48px"
               }}
               disabled={uploadingImage}
             >
