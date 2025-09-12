@@ -2167,7 +2167,7 @@ export default function TradingPlatformShell() {
     return (
     <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: selectedChannel.id === 'trading-journal' ? '60px' : '20px' }}>
       {/* Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-gray-600 pb-4 gap-4 md:gap-0">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 gap-4 md:gap-0">
         <div className="hidden md:block">
           <h1 className="text-2xl font-bold text-white">
             {selectedChannel.id === 'trading-journal' ? 'Mon Journal Perso' : 'Journal des Signaux'}
@@ -2835,7 +2835,7 @@ export default function TradingPlatformShell() {
               <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '0px' }}>
                 {/* Header avec bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
                 {selectedChannel.id === 'trading-journal' && (
-                  <div className="hidden md:flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
+                  <div className="hidden md:flex justify-between items-center mb-6">
                     <div>
                       <h1 className="text-2xl font-bold text-white">Mon Journal Perso</h1>
                       <p className="text-sm text-gray-400 mt-1">Journal tous tes trades</p>
@@ -2851,7 +2851,7 @@ export default function TradingPlatformShell() {
                 
                   {/* Header pour le calendrier normal */}
                 {(view === 'calendar' || selectedChannel.id === 'calendrier') && selectedChannel.id !== 'trading-journal' && (
-                  <div className="flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
+                  <div className="flex justify-between items-center mb-6">
                     <div>
                       <h1 className="text-2xl font-bold text-white">Journal des Signaux</h1>
                       <p className="text-sm text-gray-400 mt-1">Suivi des performances des signaux</p>
