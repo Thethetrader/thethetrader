@@ -65,12 +65,7 @@ const Chat = () => {
   }, [fetchMessages]);
 
   useEffect(() => {
-    // Scroll automatique à la réception de message
-    if (messages.length > 0) {
-      setTimeout(() => {
-        endRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-    }
+    // Pas de scroll automatique à la réception
   }, [messages]);
 
   const addMessage = async () => {
@@ -220,14 +215,12 @@ const Chat = () => {
   return (
     <div 
       style={{ 
-        position: "relative",
         width: "100%", 
-        height: "100vh", 
+        height: "100%", 
         display: "flex", 
         flexDirection: "column",
         fontFamily: "Arial, sans-serif",
-        background: "#111827",
-        zIndex: 1
+        background: "#111827"
       }}
       onClick={closeMenu}
     >
@@ -236,7 +229,8 @@ const Chat = () => {
         flex: 1, 
         overflowY: "auto", 
         background: "#111827", 
-        padding: "15px" 
+        padding: "15px",
+        paddingBottom: "100px"
       }}>
         {loading && (
           <div style={{ 
@@ -266,7 +260,7 @@ const Chat = () => {
                   background: isMe ? "#4299e1" : "#4a5568",
                   color: isMe ? "#ffffff" : "#e2e8f0",
                   boxShadow: "0px 1px 3px rgba(0,0,0,0.3)",
-                  fontSize: "14px",
+                  fontSize: "24px",
                   cursor: "pointer",
                   userSelect: "none"
                 }}
@@ -279,7 +273,7 @@ const Chat = () => {
                   <div style={{ 
                     fontWeight: "bold", 
                     color: "#4299e1", 
-                    fontSize: "13px", 
+                    fontSize: "20px", 
                     marginBottom: "3px" 
                   }}>
                     {msg.sender}
@@ -288,7 +282,7 @@ const Chat = () => {
 
                 {reply && (
                   <div style={{
-                    fontSize: "12px",
+                    fontSize: "14px",
                     color: "#a0aec0",
                     borderLeft: "3px solid #4299e1",
                     margin: "4px 0 8px 0",
@@ -297,7 +291,7 @@ const Chat = () => {
                     borderRadius: "8px",
                     minHeight: "auto"
                   }}>
-                    <div style={{ fontWeight: "bold", fontSize: "11px", marginBottom: "3px" }}>
+                    <div style={{ fontWeight: "bold", fontSize: "13px", marginBottom: "3px" }}>
                       ↪ {reply.sender}
                     </div>
                     <div style={{ 
@@ -346,7 +340,7 @@ const Chat = () => {
                 </div>
 
                 <div style={{ 
-                  fontSize: "11px", 
+                  fontSize: "20px", 
                   color: "#a0aec0", 
                   textAlign: "right", 
                   marginTop: "4px" 
@@ -428,7 +422,13 @@ const Chat = () => {
       <div style={{ 
         padding: "15px", 
         background: "#1a202c", 
-        borderTop: "1px solid #2d3748" 
+        borderTop: "1px solid #2d3748",
+        position: "fixed",
+        bottom: 0,
+        left: "250px", // Réduit un peu à gauche
+        right: 0, // Collé à droite
+        zIndex: 10000,
+        paddingBottom: "env(safe-area-inset-bottom, 15px)"
       }}>
         {replyTo && (
           <div style={{ 

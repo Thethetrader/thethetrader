@@ -65,12 +65,7 @@ const Chat = () => {
   }, [fetchMessages]);
 
   useEffect(() => {
-    // Scroll automatique à la réception de message
-    if (messages.length > 0) {
-      setTimeout(() => {
-        endRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-    }
+    // Pas de scroll automatique à la réception
   }, [messages]);
 
   const addMessage = async () => {
@@ -220,18 +215,12 @@ const Chat = () => {
   return (
     <div 
       style={{ 
-        position: "fixed !important",
-        top: "0 !important",
-        left: "0 !important",
-        right: "0 !important",
-        bottom: "0 !important",
-        width: "100vw !important",
-        height: "100vh !important", 
+        width: "100%",
+        height: "100%", 
         display: "flex", 
         flexDirection: "column",
         fontFamily: "Arial, sans-serif",
-        background: "#111827",
-        zIndex: "9999 !important"
+        background: "#111827"
       }}
       onClick={closeMenu}
     >
@@ -265,7 +254,7 @@ const Chat = () => {
             }}>
               <div 
                 style={{
-                  maxWidth: "70%",
+                  maxWidth: "60%",
                   padding: "8px 12px",
                   borderRadius: "18px",
                   background: isMe ? "#4299e1" : "#4a5568",
@@ -434,11 +423,12 @@ const Chat = () => {
         padding: "15px", 
         background: "#1a202c", 
         borderTop: "1px solid #2d3748",
-        position: "fixed !important",
-        bottom: "0 !important",
-        left: "0 !important",
-        right: "0 !important",
-        zIndex: "10000 !important"
+        position: "fixed",
+        bottom: 0,
+        left: "250px", // Réduit un peu à gauche
+        right: 0, // Collé à droite
+        zIndex: 10000,
+        paddingBottom: "env(safe-area-inset-bottom, 15px)"
       }}>
         {replyTo && (
           <div style={{ 
