@@ -603,7 +603,7 @@ const Chat = () => {
             <button
               type="button"
               style={{
-                padding: "12px",
+                padding: "12px 20px",
                 borderRadius: "25px",
                 backgroundColor: uploadingImage ? "#718096" : "#4a5568",
                 border: "1px solid #4a5568",
@@ -613,7 +613,8 @@ const Chat = () => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                minWidth: "48px"
+                minWidth: "48px",
+                height: "48px"
               }}
               disabled={uploadingImage}
             >
