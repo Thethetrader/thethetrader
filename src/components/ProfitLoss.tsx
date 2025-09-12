@@ -536,8 +536,7 @@ const Chat = () => {
         bottom: 0,
         left: 0, // Collé à gauche
         right: 0, // Collé à droite
-        zIndex: 10000,
-        paddingBottom: "env(safe-area-inset-bottom, 15px)"
+        zIndex: 10000
       }}>
         {replyTo && (
           <div style={{ 
