@@ -64,9 +64,35 @@ const Chat = () => {
     };
   }, [fetchMessages]);
 
+  const [isUserScrolling, setIsUserScrolling] = useState(false);
+  const [lastMessageCount, setLastMessageCount] = useState(0);
+
   useEffect(() => {
-    // Pas de scroll automatique - l'utilisateur peut remonter librement
-  }, [messages]);
+    // 1. Scroll auto vers les messages récents quand on arrive dans le salon
+    if (messages.length > 0 && lastMessageCount === 0) {
+      setTimeout(() => {
+        endRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+    // 3. Scroll auto en bas seulement quand on reçoit un nouveau message (pas quand on remonte)
+    else if (messages.length > lastMessageCount && !isUserScrolling) {
+      setTimeout(() => {
+        endRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+    setLastMessageCount(messages.length);
+  }, [messages, isUserScrolling, lastMessageCount]);
+
+  // Détecter si l'utilisateur scroll manuellement
+  const handleScroll = () => {
+    if (endRef.current) {
+      const container = endRef.current.parentElement;
+      if (container) {
+        const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100;
+        setIsUserScrolling(!isNearBottom);
+      }
+    }
+  };
 
   const addMessage = async () => {
     console.log('addMessage appelé avec:', newMsg);
@@ -225,13 +251,16 @@ const Chat = () => {
       onClick={closeMenu}
     >
       {/* Messages */}
-      <div style={{ 
-        flex: 1, 
-        overflowY: "auto", 
-        background: "#111827", 
-        padding: "15px",
-        paddingBottom: "40px"
-      }}>
+      <div 
+        style={{ 
+          flex: 1, 
+          overflowY: "auto", 
+          background: "#111827", 
+          padding: "15px",
+          paddingBottom: "40px"
+        }}
+        onScroll={handleScroll}
+      >
         {loading && (
           <div style={{ 
             textAlign: "center", 
