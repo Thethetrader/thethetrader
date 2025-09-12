@@ -65,7 +65,16 @@ const Chat = () => {
   }, [fetchMessages]);
 
   useEffect(() => {
-    // Pas de scroll automatique à la réception
+    // Scroll automatique seulement si on est déjà en bas
+    if (endRef.current) {
+      const container = endRef.current.parentElement;
+      if (container) {
+        const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100;
+        if (isNearBottom) {
+          endRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    }
   }, [messages]);
 
   const addMessage = async () => {
