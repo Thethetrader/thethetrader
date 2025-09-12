@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ProfitLoss from './ProfitLoss';
+import UserProfitLoss from './UserProfitLoss';
 import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database, updateMessageReactions, getMessageReactions, subscribeToMessageReactions } from '../utils/firebase-setup';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, sendLocalNotification } from '../utils/push-notifications';
 import { ref, update, onValue, get } from 'firebase/database';
@@ -4493,7 +4494,7 @@ Voir plus (+10)
                   </div>
                 </div>
                               ) : selectedChannel.id === 'profit-loss' ? (
-                  <ProfitLoss />
+                  <UserProfitLoss />
                 ) : ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}

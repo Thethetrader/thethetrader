@@ -89,8 +89,8 @@ const Chat = () => {
         .from('profit_loss_chat')
         .insert({
           text: newMsg.trim(),
-          sender: "Admin", // Nom affiché pour admin
-          sender_id: "admin", // ID unique pour admin
+          sender: "Utilisateur", // Nom affiché pour utilisateur
+          sender_id: "user", // ID unique pour utilisateur
           reply_to: replyTo?.id || null,
           edited: false,
           deleted: false
@@ -213,21 +213,25 @@ const Chat = () => {
     closeMenu();
   };
 
-  // L'admin voit ses messages à droite, les autres à gauche
-  const isMyMessage = (msg) => msg.sender_id === "admin";
+  // L'utilisateur voit ses messages à droite, les autres à gauche
+  const isMyMessage = (msg) => msg.sender_id === "user";
   const getReplyMessage = (msg) => messages.find(m => m.id === msg.reply_to);
 
   return (
     <div 
       style={{ 
-        position: "relative",
-        width: "100%", 
-        height: "100vh", 
+        position: "fixed !important",
+        top: "0 !important",
+        left: "0 !important",
+        right: "0 !important",
+        bottom: "0 !important",
+        width: "100vw !important",
+        height: "100vh !important", 
         display: "flex", 
         flexDirection: "column",
         fontFamily: "Arial, sans-serif",
         background: "#111827",
-        zIndex: 1
+        zIndex: "9999 !important"
       }}
       onClick={closeMenu}
     >
@@ -236,7 +240,8 @@ const Chat = () => {
         flex: 1, 
         overflowY: "auto", 
         background: "#111827", 
-        padding: "15px" 
+        padding: "15px",
+        paddingBottom: "100px"
       }}>
         {loading && (
           <div style={{ 
@@ -392,7 +397,7 @@ const Chat = () => {
             ↩️ Répondre
           </div>
           
-          {menu.msg.sender_id === "1" && (
+          {menu.msg.sender_id === "user" && (
             <>
               <div
                 style={{
@@ -428,7 +433,12 @@ const Chat = () => {
       <div style={{ 
         padding: "15px", 
         background: "#1a202c", 
-        borderTop: "1px solid #2d3748" 
+        borderTop: "1px solid #2d3748",
+        position: "fixed !important",
+        bottom: "0 !important",
+        left: "0 !important",
+        right: "0 !important",
+        zIndex: "10000 !important"
       }}>
         {replyTo && (
           <div style={{ 
