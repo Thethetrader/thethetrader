@@ -66,22 +66,33 @@ const Chat = () => {
 
   const [isUserScrolling, setIsUserScrolling] = useState(false);
   const [lastMessageCount, setLastMessageCount] = useState(0);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Marquer le composant comme monté
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     // 1. Scroll auto vers les messages récents quand on arrive dans le salon
-    if (messages.length > 0 && lastMessageCount === 0) {
+    if (messages.length > 0 && lastMessageCount === 0 && isMounted) {
+      // Délai plus long sur PWA pour éviter les bugs de rendu
       setTimeout(() => {
-        endRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, 100);
+        if (endRef.current) {
+          endRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 500);
     }
     // 3. Scroll auto en bas seulement quand on reçoit un nouveau message (pas quand on remonte)
-    else if (messages.length > lastMessageCount && !isUserScrolling) {
+    else if (messages.length > lastMessageCount && !isUserScrolling && isMounted) {
       setTimeout(() => {
-        endRef.current?.scrollIntoView({ behavior: "smooth" });
+        if (endRef.current) {
+          endRef.current.scrollIntoView({ behavior: "smooth" });
+        }
       }, 100);
     }
     setLastMessageCount(messages.length);
-  }, [messages, isUserScrolling, lastMessageCount]);
+  }, [messages, isUserScrolling, lastMessageCount, isMounted]);
 
   // Détecter si l'utilisateur scroll manuellement
   const handleScroll = () => {
