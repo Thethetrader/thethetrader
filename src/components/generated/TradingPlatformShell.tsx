@@ -1922,6 +1922,23 @@ export default function TradingPlatformShell() {
     return weekData?.signals || [];
   };
 
+  // Fonction pour récupérer les trades d'une semaine spécifique
+  const getTradesForWeek = (weekNum: number): any[] => {
+    const month = currentDate.getMonth();
+    const year = currentDate.getFullYear();
+    
+    const weekStart = new Date(year, month, (weekNum - 1) * 7 + 1);
+    const weekEnd = new Date(year, month, weekNum * 7);
+    
+    return personalTrades.filter(t => {
+      const tradeDate = new Date(t.date);
+      return tradeDate >= weekStart && 
+             tradeDate <= weekEnd &&
+             tradeDate.getMonth() === month &&
+             tradeDate.getFullYear() === year;
+    });
+  };
+
   const handleSignalSubmit = async () => {
     // Validation minimale - juste besoin d'au moins un champ rempli
     if (!signalData.symbol && !signalData.entry && !signalData.takeProfit && !signalData.stopLoss && !signalData.description) {
@@ -4703,7 +4720,7 @@ export default function TradingPlatformShell() {
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-white">
-                  Signaux de la Semaine {selectedWeek}
+                  {selectedChannel.id === 'trading-journal' ? `Trades de la Semaine ${selectedWeek}` : `Signaux de la Semaine ${selectedWeek}`}
                 </h2>
                 <button
                   onClick={() => setShowWeekSignalsModal(false)}
@@ -4714,71 +4731,75 @@ export default function TradingPlatformShell() {
               </div>
 
               <div className="space-y-4">
-                {getSignalsForWeek(selectedWeek).length > 0 ? (
-                  getSignalsForWeek(selectedWeek).map((signal) => (
-                    <div key={signal.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
+                {(selectedChannel.id === 'trading-journal' ? getTradesForWeek(selectedWeek) : getSignalsForWeek(selectedWeek)).length > 0 ? (
+                  (selectedChannel.id === 'trading-journal' ? getTradesForWeek(selectedWeek) : getSignalsForWeek(selectedWeek)).map((item) => (
+                    <div key={item.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
                           <span className={`px-2 py-1 rounded text-xs font-bold ${
-                            signal.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+                            item.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
                           }`}>
-                            {signal.type}
+                            {item.type}
                           </span>
-                          <span className="text-lg font-bold text-white">{signal.symbol}</span>
-                          <span className="text-sm text-gray-400">{signal.timeframe}</span>
+                          <span className="text-lg font-bold text-white">{item.symbol}</span>
+                          {selectedChannel.id === 'trading-journal' ? (
+                            <span className="text-sm text-gray-400">{item.date}</span>
+                          ) : (
+                            <span className="text-sm text-gray-400">{item.timeframe}</span>
+                          )}
                         </div>
                         <span className={`px-2 py-1 rounded text-xs ${
-                          signal.status === 'WIN' ? 'bg-green-600 text-white' :
-                          signal.status === 'LOSS' ? 'bg-red-600 text-white' :
-                          signal.status === 'BE' ? 'bg-blue-600 text-white' :
+                          item.status === 'WIN' ? 'bg-green-600 text-white' :
+                          item.status === 'LOSS' ? 'bg-red-600 text-white' :
+                          item.status === 'BE' ? 'bg-blue-600 text-white' :
                           'bg-yellow-600 text-white'
                         }`}>
-                          {signal.status}
+                          {item.status}
                         </span>
                       </div>
 
                       <div className="grid grid-cols-2 gap-4 mb-3">
                         <div>
                           <span className="text-sm text-gray-400">Entry:</span>
-                          <span className="text-white ml-2">{signal.entry}</span>
+                          <span className="text-white ml-2">{item.entry}</span>
                         </div>
                         <div>
                           <span className="text-sm text-gray-400">Take Profit:</span>
-                          <span className="text-white ml-2">{signal.takeProfit}</span>
+                          <span className="text-white ml-2">{item.takeProfit}</span>
                         </div>
                         <div>
                           <span className="text-sm text-gray-400">Stop Loss:</span>
-                          <span className="text-white ml-2">{signal.stopLoss}</span>
+                          <span className="text-white ml-2">{item.stopLoss}</span>
                         </div>
                         <div>
                           <span className="text-sm text-gray-400">PnL:</span>
                           <span className={`ml-2 font-bold ${
-                            signal.pnl && signal.pnl.includes('-') ? 'text-red-400' : 'text-green-400'
+                            item.pnl && item.pnl.includes('-') ? 'text-red-400' : 'text-green-400'
                           }`}>
-                            {signal.pnl || 'N/A'}
+                            {item.pnl || 'N/A'}
                           </span>
                         </div>
                       </div>
 
                       {/* Affichage des images */}
-                      {(signal.image || signal.attachment_data) && (
+                      {(item.image || item.attachment_data) && (
                         <div className="mb-3">
                           <span className="text-sm text-gray-400">Images:</span>
                           <div className="flex gap-2 mt-2">
-                            {signal.image && (
+                            {item.image && (
                               <img 
-                                src={typeof signal.image === 'string' ? signal.image : URL.createObjectURL(signal.image)}
-                                alt="Signal image"
+                                src={typeof item.image === 'string' ? item.image : URL.createObjectURL(item.image)}
+                                alt="Trade image"
                                 className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80"
-                                onClick={() => setSelectedImage(typeof signal.image === 'string' ? signal.image : URL.createObjectURL(signal.image))}
+                                onClick={() => setSelectedImage(typeof item.image === 'string' ? item.image : URL.createObjectURL(item.image))}
                               />
                             )}
-                            {signal.attachment_data && (
+                            {item.attachment_data && (
                               <img 
-                                src={signal.attachment_data}
-                                alt="Signal attachment"
+                                src={item.attachment_data}
+                                alt="Trade attachment"
                                 className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80"
-                                onClick={() => setSelectedImage(signal.attachment_data)}
+                                onClick={() => setSelectedImage(item.attachment_data)}
                               />
                             )}
                           </div>
@@ -4789,8 +4810,12 @@ export default function TradingPlatformShell() {
                 ) : (
                   <div className="text-center py-8">
                     <div className="text-gray-400 text-lg mb-2">📅</div>
-                    <div className="text-gray-300 text-lg font-medium">Aucun signal pour cette semaine</div>
-                    <div className="text-gray-500 text-sm mt-1">Les signaux apparaîtront ici quand ils seront créés</div>
+                    <div className="text-gray-300 text-lg font-medium">
+                      {selectedChannel.id === 'trading-journal' ? 'Aucun trade pour cette semaine' : 'Aucun signal pour cette semaine'}
+                    </div>
+                    <div className="text-gray-500 text-sm mt-1">
+                      {selectedChannel.id === 'trading-journal' ? 'Les trades apparaîtront ici quand ils seront créés' : 'Les signaux apparaîtront ici quand ils seront créés'}
+                    </div>
                   </div>
                 )}
               </div>
