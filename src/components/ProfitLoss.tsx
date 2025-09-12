@@ -230,7 +230,7 @@ const Chat = () => {
         overflowY: "auto", 
         background: "#111827", 
         padding: "15px",
-        paddingBottom: "100px"
+        paddingBottom: "40px"
       }}>
         {loading && (
           <div style={{ 
@@ -254,13 +254,13 @@ const Chat = () => {
             }}>
               <div 
                 style={{
-                  maxWidth: "70%",
+                  maxWidth: "60%",
                   padding: "8px 12px",
                   borderRadius: "18px",
                   background: isMe ? "#4299e1" : "#4a5568",
                   color: isMe ? "#ffffff" : "#e2e8f0",
                   boxShadow: "0px 1px 3px rgba(0,0,0,0.3)",
-                  fontSize: "24px",
+                  fontSize: "14px",
                   cursor: "pointer",
                   userSelect: "none"
                 }}
@@ -273,7 +273,7 @@ const Chat = () => {
                   <div style={{ 
                     fontWeight: "bold", 
                     color: "#4299e1", 
-                    fontSize: "20px", 
+                    fontSize: "13px", 
                     marginBottom: "3px" 
                   }}>
                     {msg.sender}
@@ -282,7 +282,7 @@ const Chat = () => {
 
                 {reply && (
                   <div style={{
-                    fontSize: "14px",
+                    fontSize: "12px",
                     color: "#a0aec0",
                     borderLeft: "3px solid #4299e1",
                     margin: "4px 0 8px 0",
@@ -291,7 +291,7 @@ const Chat = () => {
                     borderRadius: "8px",
                     minHeight: "auto"
                   }}>
-                    <div style={{ fontWeight: "bold", fontSize: "13px", marginBottom: "3px" }}>
+                    <div style={{ fontWeight: "bold", fontSize: "11px", marginBottom: "3px" }}>
                       ↪ {reply.sender}
                     </div>
                     <div style={{ 
@@ -340,7 +340,7 @@ const Chat = () => {
                 </div>
 
                 <div style={{ 
-                  fontSize: "20px", 
+                  fontSize: "11px", 
                   color: "#a0aec0", 
                   textAlign: "right", 
                   marginTop: "4px" 
@@ -425,7 +425,7 @@ const Chat = () => {
         borderTop: "1px solid #2d3748",
         position: "fixed",
         bottom: 0,
-        left: "250px", // Réduit un peu à gauche
+        left: 0, // Collé à gauche
         right: 0, // Collé à droite
         zIndex: 10000,
         paddingBottom: "env(safe-area-inset-bottom, 15px)"

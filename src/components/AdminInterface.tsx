@@ -1556,7 +1556,20 @@ export default function AdminInterface() {
         await update(signalRef, { closeMessage });
         
         // Envoyer une notification pour le signal fermé
-        notifySignalClosed({ ...signal, status: newStatus, pnl, closeMessage });
+        try {
+          const tokens = await getFCMTokens();
+          if (tokens.length > 0) {
+            const sendNotification = httpsCallable(functions, 'sendNotification');
+            await sendNotification({
+              signal: { ...signal, status: newStatus, pnl, closeMessage },
+              tokens: tokens
+            });
+          } else {
+            console.log('⚠️ Aucun token FCM trouvé pour signal fermé');
+          }
+        } catch (error) {
+          console.error('❌ Erreur notification signal fermé:', error);
+        }
         
         // Mettre à jour allSignalsForStats pour que les stats se mettent à jour
         setAllSignalsForStats(prev => prev.map(s => 
@@ -1966,13 +1979,11 @@ export default function AdminInterface() {
           });
           console.log('✅ Notification push envoyée:', result.data);
         } else {
-          console.log('⚠️ Aucun token FCM trouvé, notification locale seulement');
-          notifyNewSignal(savedSignal);
+          console.log('⚠️ Aucun token FCM trouvé, pas de notification');
         }
       } catch (error) {
         console.error('❌ Erreur envoi notification push:', error);
-        // Fallback vers notification locale
-        notifyNewSignal(savedSignal);
+        // Pas de fallback local
       }
       
               // Si c'est un salon general-chat, envoyer aussi un message dans le chat
@@ -2239,7 +2250,20 @@ export default function AdminInterface() {
       await update(signalRef, { closeMessage });
       
       // Envoyer une notification pour le signal fermé
-      notifySignalClosed({ ...updatedSignal, channel_id: 'general-chat-2' });
+      try {
+        const tokens = await getFCMTokens();
+        if (tokens.length > 0) {
+          const sendNotification = httpsCallable(functions, 'sendNotification');
+          await sendNotification({
+            signal: { ...updatedSignal, channel_id: 'general-chat-2' },
+            tokens: tokens
+          });
+        } else {
+          console.log('⚠️ Aucun token FCM trouvé pour signal fermé');
+        }
+      } catch (error) {
+        console.error('❌ Erreur notification signal fermé:', error);
+      }
       
       // Envoyer un message de conclusion dans le chat
       const conclusionMessage = `📊 SIGNAL FERMÉ 📊\n\n` +

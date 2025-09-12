@@ -230,7 +230,7 @@ const Chat = () => {
         overflowY: "auto", 
         background: "#111827", 
         padding: "15px",
-        paddingBottom: "100px"
+        paddingBottom: "40px"
       }}>
         {loading && (
           <div style={{ 
@@ -425,7 +425,7 @@ const Chat = () => {
         borderTop: "1px solid #2d3748",
         position: "fixed",
         bottom: 0,
-        left: "250px", // Réduit un peu à gauche
+        left: 0, // Collé à gauche
         right: 0, // Collé à droite
         zIndex: 10000,
         paddingBottom: "env(safe-area-inset-bottom, 15px)"
