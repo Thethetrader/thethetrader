@@ -126,12 +126,9 @@ const Chat = () => {
       const { data, error } = await supabase
         .from('profit_loss_chat')
         .insert([{
-          content: '',
-          author: 'Admin',
-          author_type: 'admin',
-          attachment_data: imageURL,
-          attachment_type: file.type,
-          attachment_name: file.name,
+          text: `[IMAGE:${imageURL}]`,
+          sender: 'Admin',
+          sender_id: 'admin',
           created_at: new Date().toISOString()
         }]);
 
@@ -427,24 +424,23 @@ const Chat = () => {
                     </div>
                   ) : (
                     <div>
-                      {msg.text && (
-                        <div style={{ marginBottom: msg.attachment_data ? "8px" : "0" }}>
-                          {msg.text}
-                        </div>
-                      )}
-                      {msg.attachment_data && (
+                      {msg.text && msg.text.startsWith('[IMAGE:') ? (
                         <div style={{ marginTop: "8px" }}>
                           <img 
-                            src={msg.attachment_data} 
-                            alt={msg.attachment_name || "Image"} 
+                            src={msg.text.replace('[IMAGE:', '').replace(']', '')} 
+                            alt="Image" 
                             style={{
                               maxWidth: "100%",
                               maxHeight: "300px",
                               borderRadius: "8px",
                               cursor: "pointer"
                             }}
-                            onClick={() => window.open(msg.attachment_data, '_blank')}
+                            onClick={() => window.open(msg.text.replace('[IMAGE:', '').replace(']', ''), '_blank')}
                           />
+                        </div>
+                      ) : (
+                        <div>
+                          {msg.text}
                         </div>
                       )}
                     </div>
