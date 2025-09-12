@@ -431,11 +431,10 @@ const Chat = () => {
                             alt="Image" 
                             style={{
                               maxWidth: "100%",
-                              maxHeight: "300px",
+                              maxHeight: "500px",
                               borderRadius: "8px",
                               cursor: "pointer"
                             }}
-                            onClick={() => window.open(msg.text.replace('[IMAGE:', '').replace(']', ''), '_blank')}
                           />
                         </div>
                       ) : (
