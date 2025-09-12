@@ -65,15 +65,9 @@ const Chat = () => {
   }, [fetchMessages]);
 
   useEffect(() => {
-    // Scroll automatique seulement si on est déjà en bas
+    // Scroll automatique vers le bas à chaque nouveau message
     if (endRef.current) {
-      const container = endRef.current.parentElement;
-      if (container) {
-        const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100;
-        if (isNearBottom) {
-          endRef.current.scrollIntoView({ behavior: "smooth" });
-        }
-      }
+      endRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
 
