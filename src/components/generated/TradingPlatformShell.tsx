@@ -544,68 +544,7 @@ export default function TradingPlatformShell() {
     const saved = localStorage.getItem('personalTrades');
     const existingTrades = saved ? JSON.parse(saved) : [];
     
-    // Ajouter quelques trades de test pour debug
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-    const lastWeek = new Date(today);
-    lastWeek.setDate(today.getDate() - 7);
-    
-    const testTrades = [
-      {
-        id: 'test-today',
-        date: today.toISOString().split('T')[0],
-        symbol: 'BTCUSD',
-        type: 'BUY' as const,
-        entry: '45000',
-        exit: '46000',
-        stopLoss: '44000',
-        pnl: '1000',
-        status: 'WIN' as const,
-        notes: 'Trade WIN aujourd\'hui',
-        image1: null,
-        image2: null,
-        timestamp: today.toISOString()
-      },
-      {
-        id: 'test-yesterday',
-        date: yesterday.toISOString().split('T')[0],
-        symbol: 'EURUSD',
-        type: 'SELL' as const,
-        entry: '1.0850',
-        exit: '1.0800',
-        stopLoss: '1.0900',
-        pnl: '500',
-        status: 'WIN' as const,
-        notes: 'Trade WIN hier',
-        image1: null,
-        image2: null,
-        timestamp: yesterday.toISOString()
-      },
-      {
-        id: 'test-lastweek',
-        date: lastWeek.toISOString().split('T')[0],
-        symbol: 'GBPUSD',
-        type: 'BUY' as const,
-        entry: '1.2500',
-        exit: '1.2400',
-        stopLoss: '1.2450',
-        pnl: '-300',
-        status: 'LOSS' as const,
-        notes: 'Trade LOSS la semaine dernière',
-        image1: null,
-        image2: null,
-        timestamp: lastWeek.toISOString()
-      }
-    ];
-    
-    // Ajouter les trades de test seulement s'ils n'existent pas déjà
-    testTrades.forEach(testTrade => {
-      const exists = existingTrades.some((trade: any) => trade.id === testTrade.id);
-      if (!exists) {
-        existingTrades.push(testTrade);
-      }
-    });
+    // Trades de démonstration supprimés
     
     return existingTrades;
   });
