@@ -5,6 +5,8 @@ import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, sub
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, sendLocalNotification } from '../utils/push-notifications';
 import { ref, update, onValue, get } from 'firebase/database';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../config/firebase-config';
 
 // Fonction pour récupérer les tokens FCM
 const getFCMTokens = async (): Promise<string[]> => {
@@ -2338,9 +2340,6 @@ export default function AdminInterface() {
         
         // Si c'est le salon profit-loss, utiliser Firebase directement
         if (selectedChannel.id === 'profit-loss') {
-          const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
-          const { db } = await import('../config/firebase-config');
-          
           const messagesRef = collection(db, 'profit-loss-chat');
           await addDoc(messagesRef, {
             text: chatMessage.trim(),
