@@ -3695,7 +3695,7 @@ export default function AdminInterface() {
                 
                 ) : selectedChannel.id === 'profit-loss' ? (
                   (() => {
-                    console.log('AdminInterface: Rendering ProfitLoss component, selectedChannel:', selectedChannel);
+                    console.log('AdminInterface: Rendering ProfitLoss component, selectedChannel:', selectedChannel, 'view:', view);
                     return <ProfitLoss channelId="profit-loss" currentUserId="admin" />;
                   })()
                 ) : ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
