@@ -19,11 +19,15 @@ const ProfitLoss = ({ channelId, currentUserId, supabase }: { channelId?: string
 
   // Charger les messages depuis localStorage (mode démo)
   useEffect(() => {
+    console.log('ProfitLoss useEffect - channelId:', channelId, 'currentUserId:', currentUserId, 'isDemo:', isDemo);
     setLoading(true);
     try {
       const savedMessages = localStorage.getItem('profit-loss-messages');
+      console.log('Saved messages from localStorage:', savedMessages);
+      
       if (savedMessages) {
         const parsedMessages = JSON.parse(savedMessages);
+        console.log('Parsed messages:', parsedMessages);
         setMessages(parsedMessages);
         
         // Simuler des messages non lus en mode démo
@@ -34,6 +38,27 @@ const ProfitLoss = ({ channelId, currentUserId, supabase }: { channelId?: string
           ).length;
           setUnreadCount(unread);
         }
+      } else {
+        // Créer des messages de test si aucun message n'existe
+        console.log('No messages found, creating test messages');
+        const testMessages = [
+          {
+            id: '1',
+            text: 'Bienvenue dans le salon Profit-Loss !',
+            sender_id: 'admin',
+            created_at: new Date().toISOString(),
+            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+          },
+          {
+            id: '2',
+            text: 'Vous pouvez discuter de vos trades ici.',
+            sender_id: 'admin',
+            created_at: new Date().toISOString(),
+            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+          }
+        ];
+        setMessages(testMessages);
+        localStorage.setItem('profit-loss-messages', JSON.stringify(testMessages));
       }
     } catch (error) {
       console.error('Erreur chargement messages:', error);
