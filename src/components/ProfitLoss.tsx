@@ -204,11 +204,13 @@ const Chat = () => {
     <div 
       style={{ 
         width: "100%", 
-        height: "100vh", 
+        height: "100%", 
         display: "flex", 
         flexDirection: "column",
         fontFamily: "Arial, sans-serif",
-        background: "#1a202c"
+        background: "#1a202c",
+        position: "relative",
+        overflow: "hidden"
       }}
       onClick={closeMenu}
     >
@@ -346,7 +348,7 @@ const Chat = () => {
       {menu && (
         <div
           style={{
-            position: "fixed",
+            position: "absolute",
             left: menu.x,
             top: menu.y,
             background: "#4a5568",
