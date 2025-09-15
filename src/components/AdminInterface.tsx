@@ -4137,37 +4137,6 @@ export default function AdminInterface() {
             getTradingCalendar()
           ) : (
             <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '80px' }}>
-              {/* Boutons en haut fixe */}
-              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', ''].includes(selectedChannel.id) && (
-                <div className="flex justify-between items-center mb-4 sticky top-0 bg-gray-900 p-2 rounded z-10">
-                  <button
-                    onClick={async () => {
-                      const more = await getSignals(selectedChannel.id, signals.filter(s => s.channel_id === selectedChannel.id).length + 10);
-                      const formatted = more.map(signal => ({
-                        id: signal.id || '',
-                        type: signal.type,
-                        symbol: signal.symbol,
-                        timeframe: signal.timeframe,
-                        entry: signal.entry?.toString() || 'N/A',
-                        takeProfit: signal.takeProfit?.toString() || 'N/A',
-                        stopLoss: signal.stopLoss?.toString() || 'N/A',
-                        description: signal.description || '',
-                        image: null,
-                        timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                        status: signal.status || 'ACTIVE' as const,
-                        channel_id: signal.channel_id,
-                        reactions: signal.reactions || [],
-                        pnl: signal.pnl,
-                        closeMessage: signal.closeMessage
-                      }));
-                      setSignals(formatted);
-                    }}
-                    className="px-4 py-2 text-sm rounded bg-gray-700 hover:bg-gray-600 text-white"
-                  >
-                    Voir plus (+10)
-                  </button>
-                </div>
-              )}
 
               {/* Affichage des signaux */}
               {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', ''].includes(selectedChannel.id) ? (
@@ -4472,35 +4441,6 @@ export default function AdminInterface() {
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}
                   <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
-                    {/* Bouton Voir plus pour les messages */}
-                    {['general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) && (chatMessages[selectedChannel.id] || []).length >= 50 && (
-                      <div className="flex justify-center pt-2">
-                        <button
-                          onClick={async () => {
-                            const more = await getMessages(selectedChannel.id);
-                            const formatted = more.map(msg => ({
-                              id: msg.id || '',
-                              text: msg.content,
-                              timestamp: new Date(msg.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                              author: msg.author,
-                              author_avatar: msg.author_avatar,
-                              attachment: msg.attachment_data ? {
-                                type: msg.attachment_type || 'image/jpeg',
-                                name: msg.attachment_name || 'image.jpg'
-                              } : undefined,
-                              attachment_data: msg.attachment_data
-                            }));
-                            setChatMessages(prev => ({
-                              ...prev,
-                              [selectedChannel.id]: [...formatted, ...(prev[selectedChannel.id] || [])]
-                            }));
-                          }}
-                          className="px-4 py-2 text-sm rounded bg-gray-700 hover:bg-gray-600 text-white"
-                        >
-                          Voir plus de messages
-                        </button>
-                      </div>
-                    )}
                     {(chatMessages[selectedChannel.id] || []).length > 0 && (
                       (chatMessages[selectedChannel.id] || []).map((message) => (
                         <div key={message.id} className="flex items-start gap-3">
