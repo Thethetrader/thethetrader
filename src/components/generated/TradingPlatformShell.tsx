@@ -3294,7 +3294,7 @@ export default function TradingPlatformShell() {
                     </div>
                   </div>
                 ) : selectedChannel.id === 'profit-loss' ? (
-                  <ProfitLoss channelId="profit-loss" currentUserId="admin" />
+                  <ProfitLoss channelId="profit-loss" currentUserId="user" />
                 ) : ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
                   <div className="flex flex-col h-full">
                     {/* Messages de chat */}
