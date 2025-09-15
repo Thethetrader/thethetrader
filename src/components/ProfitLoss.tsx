@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 
-const Chat = ({ channelId, currentUserId, supabase }: { channelId?: string; currentUserId?: string; supabase?: any }) => {
+const ProfitLoss = ({ channelId, currentUserId, supabase }: { channelId?: string; currentUserId?: string; supabase?: any }) => {
   const [messages, setMessages] = useState([]);
   const [newMsg, setNewMsg] = useState("");
   const [replyTo, setReplyTo] = useState(null);
@@ -515,4 +515,4 @@ const Chat = ({ channelId, currentUserId, supabase }: { channelId?: string; curr
   );
 };
 
-export default Chat;
+export default ProfitLoss;
