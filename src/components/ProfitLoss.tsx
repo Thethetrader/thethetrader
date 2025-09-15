@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 
 const ProfitLoss = ({ channelId, currentUserId, supabase }: { channelId?: string; currentUserId?: string; supabase?: any }) => {
+  console.log('ProfitLoss component rendering with props:', { channelId, currentUserId, supabase });
   const [messages, setMessages] = useState([]);
   const [newMsg, setNewMsg] = useState("");
   const [replyTo, setReplyTo] = useState(null);
@@ -213,6 +214,19 @@ const ProfitLoss = ({ channelId, currentUserId, supabase }: { channelId?: string
       }}
       onClick={closeMenu}
     >
+      {/* Test div pour vérifier le rendu */}
+      <div style={{ 
+        position: "absolute", 
+        top: 0, 
+        left: 0, 
+        background: "red", 
+        color: "white", 
+        padding: "5px", 
+        zIndex: 9999,
+        fontSize: "12px"
+      }}>
+        PROFIT-LOSS COMPONENT LOADED
+      </div>
       {/* Header avec pastille de messages non lus */}
       <div style={{
         padding: "10px 15px",
