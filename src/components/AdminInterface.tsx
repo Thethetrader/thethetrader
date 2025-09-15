@@ -1589,6 +1589,7 @@ export default function AdminInterface() {
 
     { id: 'general-chat', name: 'general-chat', emoji: '💬', fullName: 'Général chat' },
     { id: 'profit-loss', name: 'profit-loss', emoji: '💰', fullName: 'Profit loss' },
+    { id: 'chat', name: 'chat', emoji: '💬', fullName: 'Chat' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' },
     { id: 'user-management', name: 'user-management', emoji: '👥', fullName: 'Gestion Utilisateurs' }
@@ -3083,6 +3084,7 @@ export default function AdminInterface() {
             <div className="space-y-1">
 
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💰 Profit-loss</button>
+              <button onClick={() => handleChannelChange('chat', 'chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 Chat</button>
               <button onClick={() => {
                 // Réinitialiser selectedDate si on quitte le Trading Journal
                 if (selectedChannel.id === 'trading-journal') {
@@ -3230,7 +3232,7 @@ export default function AdminInterface() {
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">TRADING HUB</h3>
                 <div className="space-y-2">
-                  {channels.filter(c => ['profit-loss'].includes(c.id)).map(channel => (
+                  {channels.filter(c => ['profit-loss', 'chat'].includes(c.id)).map(channel => (
                     <button
                       key={channel.id}
                       onClick={() => {
@@ -3694,10 +3696,13 @@ export default function AdminInterface() {
                   </div>
                 
                 ) : selectedChannel.id === 'profit-loss' ? (
-                  (() => {
-                    console.log('AdminInterface: Rendering ProfitLoss component, selectedChannel:', selectedChannel, 'view:', view);
-                    return <ProfitLoss channelId="profit-loss" currentUserId="admin" />;
-                  })()
+                  <div className="flex flex-col h-full w-full">
+                    <ProfitLoss channelId="profit-loss" currentUserId="admin" />
+                  </div>
+                ) : selectedChannel.id === 'chat' ? (
+                  <div className="flex flex-col h-full w-full">
+                    <ProfitLoss channelId="chat" currentUserId="admin" />
+                  </div>
                 ) : ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
                   <div className="flex flex-col h-full">
                                         {/* Messages de chat */}
@@ -4439,7 +4444,13 @@ export default function AdminInterface() {
                   </div>
                 </div>
                               ) : selectedChannel.id === 'profit-loss' ? (
-                  <ProfitLoss channelId="profit-loss" currentUserId="admin" />
+                  <div className="flex flex-col h-full w-full">
+                    <ProfitLoss channelId="profit-loss" currentUserId="admin" />
+                  </div>
+                ) : selectedChannel.id === 'chat' ? (
+                  <div className="flex flex-col h-full w-full">
+                    <ProfitLoss channelId="chat" currentUserId="admin" />
+                  </div>
                 ) : ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}
