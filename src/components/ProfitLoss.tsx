@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
-import { db } from '../config/firebase-config';
-import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
+import { createClient } from '@supabase/supabase-js';
+import { supabaseConfig } from '../config/supabase-config';
+
+// Initialiser Supabase
+const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
@@ -14,26 +17,55 @@ const Chat = () => {
   const [updating, setUpdating] = useState(false);
   const endRef = useRef(null);
 
-  // Firebase listener avec cleanup
+  // Supabase listener avec cleanup
   useEffect(() => {
     setLoading(true);
-    const messagesRef = collection(db, 'profit-loss-chat');
-    const q = query(messagesRef, orderBy('createdAt', 'asc'));
     
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const firebaseMessages = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        time: doc.data().createdAt?.toDate?.()?.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) || "00:00"
-      }));
-      setMessages(firebaseMessages);
-      setLoading(false);
-    }, (error) => {
-      console.error('Erreur Firebase:', error);
-      setLoading(false);
-    });
+    // Charger les messages initiaux
+    const fetchMessages = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('profit_loss_chat')
+          .select('*')
+          .order('created_at', { ascending: true });
+        
+        if (error) {
+          console.error('Erreur Supabase:', error);
+          setMessages([]);
+        } else {
+          const formattedMessages = data.map(msg => ({
+            ...msg,
+            id: msg.id,
+            time: new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+          }));
+          setMessages(formattedMessages);
+        }
+      } catch (error) {
+        console.error('Erreur fetch messages:', error);
+        setMessages([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    return () => unsubscribe();
+    fetchMessages();
+
+    // Écouter les nouveaux messages en temps réel
+    const subscription = supabase
+      .channel('profit_loss_chat')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'profit_loss_chat'
+      }, (payload) => {
+        console.log('Nouveau message reçu:', payload);
+        fetchMessages(); // Recharger tous les messages
+      })
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -45,19 +77,22 @@ const Chat = () => {
     
     setUpdating(true);
     try {
-      const messagesRef = collection(db, 'profit-loss-chat');
-      await addDoc(messagesRef, {
-        text: newMsg.trim(),
-        sender: "Moi",
-        senderId: "1",
-        replyTo: replyTo?.id || null,
-        edited: false,
-        deleted: false,
-        createdAt: serverTimestamp()
-      });
+      const { data, error } = await supabase
+        .from('profit_loss_chat')
+        .insert({
+          text: newMsg.trim(),
+          sender_id: "admin",
+          reply_to: replyTo?.id || null
+        })
+        .select();
       
-      setNewMsg("");
-      setReplyTo(null);
+      if (error) {
+        console.error('Erreur ajout message:', error);
+      } else {
+        console.log('Message ajouté:', data);
+        setNewMsg("");
+        setReplyTo(null);
+      }
     } catch (error) {
       console.error('Erreur ajout message:', error);
     } finally {
@@ -70,11 +105,20 @@ const Chat = () => {
     
     setUpdating(true);
     try {
-      const messageRef = doc(db, 'profit-loss-chat', id);
-      await updateDoc(messageRef, {
-        ...changes,
-        updatedAt: serverTimestamp()
-      });
+      const { data, error } = await supabase
+        .from('profit_loss_chat')
+        .update({
+          ...changes,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', id)
+        .select();
+      
+      if (error) {
+        console.error('Erreur modification message:', error);
+      } else {
+        console.log('Message modifié:', data);
+      }
     } catch (error) {
       console.error('Erreur modification message:', error);
     } finally {
@@ -101,13 +145,22 @@ const Chat = () => {
     
     setUpdating(true);
     try {
-      const messageRef = doc(db, 'profit-loss-chat', id);
-      await updateDoc(messageRef, { 
-        deleted: true, 
-        text: "Message supprimé",
-        deletedAt: serverTimestamp()
-      });
-      setMenu(null);
+      const { data, error } = await supabase
+        .from('profit_loss_chat')
+        .update({ 
+          deleted: true, 
+          text: "Message supprimé",
+          deleted_at: new Date().toISOString()
+        })
+        .eq('id', id)
+        .select();
+      
+      if (error) {
+        console.error('Erreur suppression message:', error);
+      } else {
+        console.log('Message supprimé:', data);
+        setMenu(null);
+      }
     } catch (error) {
       console.error('Erreur suppression message:', error);
     } finally {
@@ -144,8 +197,8 @@ const Chat = () => {
     closeMenu();
   };
 
-  const isMyMessage = (msg) => msg.senderId === "1";
-  const getReplyMessage = (msg) => messages.find(m => m.id === msg.replyTo);
+  const isMyMessage = (msg) => msg.sender_id === "admin";
+  const getReplyMessage = (msg) => messages.find(m => m.id === msg.reply_to);
 
   return (
     <div 
