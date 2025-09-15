@@ -2038,7 +2038,7 @@ const App = () => {
 
                         {/* Vue Profit Loss */}
                         {mobileActiveChannel === 'profit-loss' && (
-                          <ProfitLoss />
+                          <ProfitLoss channelId="profit-loss" currentUserId="admin" />
                         )}
 
                         {/* Vue Journal Signaux (Calendar) */}
