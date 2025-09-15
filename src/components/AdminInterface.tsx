@@ -111,7 +111,7 @@ export default function AdminInterface() {
   
   // S'abonner aux changements des signaux pour synchroniser les réactions
   useEffect(() => {
-    const channels = ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'];
+    const channels = ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4'];
     
     const subscriptions = channels.map(channelId => {
       return subscribeToSignals(channelId, (updatedSignal) => {
@@ -256,7 +256,7 @@ export default function AdminInterface() {
 
   // Subscription globale pour tous les canaux
   useEffect(() => {
-    const channels = ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'];
+    const channels = ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4'];
     
     const subscriptions = channels.map(channelId => {
       return subscribeToMessages(channelId, (newMessage) => {
@@ -1294,7 +1294,7 @@ export default function AdminInterface() {
 
   const scrollToTop = () => {
     // Pour les salons de chat, scroller dans le conteneur de messages
-    if (messagesContainerRef.current && ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(selectedChannel.id)) {
+    if (messagesContainerRef.current && ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id)) {
       messagesContainerRef.current.scrollTop = 0;
     } else {
       // Pour les autres vues, scroller la page
@@ -2289,25 +2289,6 @@ export default function AdminInterface() {
           content: chatMessage
         });
         
-        // Si c'est le salon profit-loss, utiliser Firebase directement
-        if (selectedChannel.id === 'profit-loss') {
-          const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
-          const { db } = await import('../config/firebase-config');
-          
-          const messagesRef = collection(db, 'profit-loss-chat');
-          await addDoc(messagesRef, {
-            text: chatMessage.trim(),
-            sender: "Admin",
-            senderId: "admin_1",
-            edited: false,
-            deleted: false,
-            createdAt: serverTimestamp()
-          });
-          
-          console.log('✅ Message envoyé à Firebase profit-loss-chat');
-          setChatMessage('');
-          return;
-        }
         
         // Pour les autres salons, utiliser Supabase avec avatar admin
         const messageData = {
@@ -3556,13 +3537,10 @@ export default function AdminInterface() {
 
 
                 {/* Affichage des signaux */}
-                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', ''].includes(selectedChannel.id) ? (
+                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', ''].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
                     {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
-                      <div className="text-center py-8">
-                        <div className="text-gray-400 text-sm">Aucun signal pour le moment</div>
-                        <div className="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
-                      </div>
+                      <div></div>
                                           ) : (
                         signals.filter(signal => signal.channel_id === selectedChannel.id).map((signal) => (
                         <div key={signal.id} className="flex items-start gap-3">
@@ -4160,7 +4138,7 @@ export default function AdminInterface() {
           ) : (
             <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '80px' }}>
               {/* Boutons en haut fixe */}
-              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', ''].includes(selectedChannel.id) && (
+              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', ''].includes(selectedChannel.id) && (
                 <div className="flex justify-between items-center mb-4 sticky top-0 bg-gray-900 p-2 rounded z-10">
                   <button
                     onClick={async () => {
@@ -4182,18 +4160,17 @@ export default function AdminInterface() {
                         pnl: signal.pnl,
                         closeMessage: signal.closeMessage
                       }));
-                                                  setSignals(formatted);
+                      setSignals(formatted);
                     }}
                     className="px-4 py-2 text-sm rounded bg-gray-700 hover:bg-gray-600 text-white"
                   >
-Voir plus (+10)
+                    Voir plus (+10)
                   </button>
-                  <button onClick={handleCreateSignal} className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm">+ Signal</button>
                 </div>
               )}
 
               {/* Affichage des signaux */}
-              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', ''].includes(selectedChannel.id) ? (
+              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', ''].includes(selectedChannel.id) ? (
                 <div className="space-y-4">
                   {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                     <div className="text-center py-8">
@@ -4499,7 +4476,7 @@ Voir plus (+10)
                   {/* Messages de chat */}
                   <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
                     {/* Bouton Voir plus pour les messages */}
-                    {['general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(selectedChannel.id) && (chatMessages[selectedChannel.id] || []).length >= 50 && (
+                    {['general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) && (chatMessages[selectedChannel.id] || []).length >= 50 && (
                       <div className="flex justify-center pt-2">
                         <button
                           onClick={async () => {
@@ -4684,14 +4661,6 @@ Voir plus (+10)
                           📎
                         </span>
                       </label>
-                      {['general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) && (
-                        <button
-                          onClick={handleCreateSignal}
-                          className="bg-green-600 hover:bg-green-700 px-3 py-2 rounded-lg text-white text-sm font-medium"
-                        >
-                          + Signal
-                        </button>
-                      )}
                       <button
                         onClick={handleSendMessage}
                         className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white"
@@ -5421,18 +5390,6 @@ Voir plus (+10)
         </div>
       )}
 
-      {/* Bouton + Signal fixe */}
-                      {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', ''].includes(selectedChannel.id) && (
-        <div className="fixed bottom-6 right-6 z-50">
-          <button 
-            onClick={handleCreateSignal}
-            className="bg-blue-600 hover:bg-blue-700 px-4 py-3 rounded-full text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2"
-          >
-            <span className="text-xl">+</span>
-            <span className="text-sm font-medium">Signal</span>
-          </button>
-        </div>
-      )}
 
       {/* Popup Image */}
       {selectedImage && (
