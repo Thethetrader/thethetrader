@@ -1,6 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import { db } from '../config/firebase-config';
-import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
@@ -14,48 +12,52 @@ const Chat = () => {
   const [updating, setUpdating] = useState(false);
   const endRef = useRef(null);
 
-  // Firebase listener avec cleanup
+  // Charger les messages depuis localStorage
   useEffect(() => {
     setLoading(true);
-    const messagesRef = collection(db, 'profit-loss-chat');
-    const q = query(messagesRef, orderBy('createdAt', 'asc'));
-    
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const firebaseMessages = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        time: doc.data().createdAt?.toDate?.()?.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) || "00:00"
-      }));
-      setMessages(firebaseMessages);
+    try {
+      const savedMessages = localStorage.getItem('profit-loss-messages');
+      if (savedMessages) {
+        const parsedMessages = JSON.parse(savedMessages);
+        setMessages(parsedMessages);
+      }
+    } catch (error) {
+      console.error('Erreur chargement messages:', error);
+      setMessages([]);
+    } finally {
       setLoading(false);
-    }, (error) => {
-      console.error('Erreur Firebase:', error);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
+    }
   }, []);
+
+  // Sauvegarder les messages dans localStorage
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem('profit-loss-messages', JSON.stringify(messages));
+    }
+  }, [messages]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const addMessage = async () => {
+  const addMessage = () => {
     if (!newMsg.trim() || updating) return;
     
     setUpdating(true);
     try {
-      const messagesRef = collection(db, 'profit-loss-chat');
-      await addDoc(messagesRef, {
+      const newMessage = {
+        id: Date.now().toString(),
         text: newMsg.trim(),
         sender: "Moi",
         senderId: "1",
         replyTo: replyTo?.id || null,
         edited: false,
         deleted: false,
-        createdAt: serverTimestamp()
-      });
+        createdAt: new Date(),
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      };
       
+      setMessages(prev => [...prev, newMessage]);
       setNewMsg("");
       setReplyTo(null);
     } catch (error) {
@@ -65,16 +67,16 @@ const Chat = () => {
     }
   };
 
-  const updateMessage = async (id, changes) => {
+  const updateMessage = (id, changes) => {
     if (updating) return;
     
     setUpdating(true);
     try {
-      const messageRef = doc(db, 'profit-loss-chat', id);
-      await updateDoc(messageRef, {
-        ...changes,
-        updatedAt: serverTimestamp()
-      });
+      setMessages(prev => prev.map(msg => 
+        msg.id === id 
+          ? { ...msg, ...changes, updatedAt: new Date() }
+          : msg
+      ));
     } catch (error) {
       console.error('Erreur modification message:', error);
     } finally {
@@ -96,17 +98,16 @@ const Chat = () => {
     setEditText("");
   };
 
-  const deleteMsg = async (id) => {
+  const deleteMsg = (id) => {
     if (updating) return;
     
     setUpdating(true);
     try {
-      const messageRef = doc(db, 'profit-loss-chat', id);
-      await updateDoc(messageRef, { 
-        deleted: true, 
-        text: "Message supprimé",
-        deletedAt: serverTimestamp()
-      });
+      setMessages(prev => prev.map(msg => 
+        msg.id === id 
+          ? { ...msg, deleted: true, text: "Message supprimé", deletedAt: new Date() }
+          : msg
+      ));
       setMenu(null);
     } catch (error) {
       console.error('Erreur suppression message:', error);
