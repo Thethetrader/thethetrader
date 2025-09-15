@@ -4173,10 +4173,7 @@ export default function AdminInterface() {
               {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', ''].includes(selectedChannel.id) ? (
                 <div className="space-y-4">
                   {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
-                    <div className="text-center py-8">
-                      <div className="text-gray-400 text-sm">Aucun signal pour le moment</div>
-                      <div className="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
-                    </div>
+                    <div></div>
                   ) : (
                     signals
                       .filter(signal => signal.channel_id === selectedChannel.id)
