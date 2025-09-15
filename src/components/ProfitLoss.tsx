@@ -12,29 +12,13 @@ const Chat = () => {
   const [updating, setUpdating] = useState(false);
   const endRef = useRef(null);
 
-  // Charger les messages depuis localStorage
+  // Vider le salon profit-loss
   useEffect(() => {
-    setLoading(true);
-    try {
-      const savedMessages = localStorage.getItem('profit-loss-messages');
-      if (savedMessages) {
-        const parsedMessages = JSON.parse(savedMessages);
-        setMessages(parsedMessages);
-      }
-    } catch (error) {
-      console.error('Erreur chargement messages:', error);
-      setMessages([]);
-    } finally {
-      setLoading(false);
-    }
+    setLoading(false);
+    setMessages([]);
+    localStorage.removeItem('profit-loss-messages');
   }, []);
 
-  // Sauvegarder les messages dans localStorage
-  useEffect(() => {
-    if (messages.length > 0) {
-      localStorage.setItem('profit-loss-messages', JSON.stringify(messages));
-    }
-  }, [messages]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
