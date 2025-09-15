@@ -214,19 +214,6 @@ const ProfitLoss = ({ channelId, currentUserId, supabase }: { channelId?: string
       }}
       onClick={closeMenu}
     >
-      {/* Test div pour vérifier le rendu */}
-      <div style={{ 
-        position: "absolute", 
-        top: 0, 
-        left: 0, 
-        background: "red", 
-        color: "white", 
-        padding: "5px", 
-        zIndex: 9999,
-        fontSize: "12px"
-      }}>
-        PROFIT-LOSS COMPONENT LOADED
-      </div>
       {/* Header avec pastille de messages non lus */}
       <div style={{
         padding: "10px 15px",
