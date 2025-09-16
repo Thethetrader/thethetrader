@@ -5,6 +5,8 @@ import AdminLogin from './components/AdminLogin';
 import AdminInterface from './components/AdminInterface';
 import UserChat from './components/UserChat';
 import ProfitLoss from './components/ProfitLoss';
+import LivestreamPage from './components/LivestreamPage';
+import UserLivestreamPage from './components/UserLivestreamPage';
 
 
 import { useNotifications } from './hooks/use-notifications';
@@ -43,6 +45,26 @@ const App = () => {
       setCurrentPage('admin');
       console.log('🔍 Admin auth check:', localStorage.getItem('adminAuthenticated'));
     }
+  }, []);
+
+  // Détecter les changements d'URL avec hash
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.substring(1); // Enlever le #
+      if (hash === 'livestream') {
+        setCurrentPage('livestream');
+      }
+    };
+
+    // Vérifier le hash au chargement
+    handleHashChange();
+
+    // Écouter les changements de hash
+    window.addEventListener('hashchange', handleHashChange);
+
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
   }, []);
 
 
@@ -926,6 +948,14 @@ const App = () => {
               </div>
             </div>
           </div>
+        )
+      },
+      'livestream': {
+        title: 'Livestream Trading',
+        content: user ? (
+          <LivestreamPage />
+        ) : (
+          <UserLivestreamPage />
         )
       }
     };
@@ -4163,6 +4193,14 @@ const App = () => {
                       <button onClick={() => setCurrentPage('support-client')} className="block text-gray-300 hover:text-white transition-colors text-sm text-left">Support client</button>
                       <button onClick={() => setCurrentPage('signalement-incident')} className="block text-gray-300 hover:text-white transition-colors text-sm text-left">Signalement d'incident</button>
                       <button onClick={() => setCurrentPage('nous-contacter')} className="block text-gray-300 hover:text-white transition-colors text-sm text-left">Nous contacter</button>
+                    </div>
+                  </div>
+
+                  {/* Services */}
+                  <div>
+                    <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Services</h4>
+                    <div className="space-y-3">
+                      <button onClick={() => setCurrentPage('livestream')} className="block text-gray-300 hover:text-white transition-colors text-sm text-left">Livestream Trading</button>
                     </div>
                   </div>
                 </div>

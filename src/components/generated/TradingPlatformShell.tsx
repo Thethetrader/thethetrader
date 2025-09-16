@@ -2601,6 +2601,13 @@ export default function TradingPlatformShell() {
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
               <button onClick={() => handleChannelChange('calendrier', 'calendrier')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Journal Perso</button>
+              <button onClick={() => {
+                // Forcer la navigation vers livestream
+                window.location.href = window.location.origin + window.location.pathname + '#livestream';
+                setTimeout(() => {
+                  window.location.reload();
+                }, 100);
+              }} className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📺 Livestream</button>
             </div>
           </div>
 
@@ -2795,6 +2802,7 @@ export default function TradingPlatformShell() {
                       </div>
                     </div>
                   </button>
+                  
                 </div>
               </div>
 
