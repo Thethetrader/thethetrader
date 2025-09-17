@@ -254,7 +254,7 @@ export default function AdminInterface() {
     }
   };
 
-  // Subscription globale pour tous les canaux
+  // Subscription globale pour tous les canaux (ne se recrée pas à chaque changement de canal)
   useEffect(() => {
     const channels = ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4'];
     
@@ -272,7 +272,7 @@ export default function AdminInterface() {
     return () => {
       subscriptions.forEach(sub => sub.unsubscribe());
     };
-  }, [selectedChannel.id]);
+  }, []); // Supprimer selectedChannel.id de la dépendance
 
   // Charger les signaux et initialiser les notifications au montage du composant
   useEffect(() => {
@@ -297,45 +297,7 @@ export default function AdminInterface() {
 
 
 
-  // Subscription temps réel pour les messages
-  useEffect(() => {
-    console.log('🔄 Initialisation subscription admin pour:', selectedChannel.id);
-    
-    const subscription = subscribeToMessages(selectedChannel.id, (newMessage) => {
-      console.log('🔄 Nouveau message reçu admin:', newMessage);
-      
-      const formattedMessage = {
-        id: newMessage.id || '',
-        text: newMessage.content,
-        timestamp: new Date(newMessage.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-        author: newMessage.author,
-        author_avatar: newMessage.author_avatar,
-        attachment: newMessage.attachment_data ? {
-          type: newMessage.attachment_type || 'image/jpeg',
-          name: newMessage.attachment_name || 'image.jpg'
-        } : undefined,
-        attachment_data: newMessage.attachment_data
-      };
-      
-      setChatMessages(prev => ({
-        ...prev,
-        [selectedChannel.id]: [...(prev[selectedChannel.id] || []), formattedMessage]
-      }));
-      
-      // Scroll vers le bas pour voir le nouveau message
-      setTimeout(() => {
-        scrollToBottom();
-      }, 5);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [selectedChannel.id]);
+  // Les messages temps réel sont gérés par les subscriptions globales
 
   // Initialiser les signaux existants avec le statut ACTIVE
   useEffect(() => {
@@ -3136,6 +3098,9 @@ export default function AdminInterface() {
                   (window as any).setCurrentPage('livestream');
                 }
               }} className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📺 Livestream</button>
+              <button onClick={() => {
+                window.open('/trading-live.html', '_blank');
+              }} className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">🎥 Formation Live</button>
             </div>
           </div>
 
@@ -4075,7 +4040,7 @@ export default function AdminInterface() {
                     </div>
                   </div>
                 ) : selectedChannel.id === 'livestream' ? (
-                  <div className="flex flex-col h-full">
+                  <div className="flex flex-col h-full bg-gray-900">
                     {/* Interface Livestream Desktop */}
                     <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
                       {/* Zone de stream */}
@@ -4091,13 +4056,25 @@ export default function AdminInterface() {
                             <p className="text-gray-400">Session de trading en direct</p>
                             
                             {/* Iframe 100ms */}
-                            <div className="w-full max-w-4xl">
+                            <div className="w-full max-w-7xl relative">
+                              <button
+                                onClick={() => {
+                                  const iframe = document.querySelector('iframe[src*="100ms.live"]') as HTMLIFrameElement;
+                                  if (iframe && iframe.requestFullscreen) {
+                                    iframe.requestFullscreen();
+                                  }
+                                }}
+                                className="absolute top-4 right-4 z-10 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                              >
+                                📺 Plein écran
+                              </button>
                               <iframe
                                 src="https://admintrading.app.100ms.live/meeting/kor-inbw-yiz"
                                 width="100%"
-                                height="600px"
+                                height="1200px"
                                 style={{ border: 'none', borderRadius: '8px' }}
-                                allow="camera; microphone; display-capture"
+                                allow="camera; microphone; display-capture; fullscreen"
+                                allowFullScreen
                               />
                             </div>
                           </div>

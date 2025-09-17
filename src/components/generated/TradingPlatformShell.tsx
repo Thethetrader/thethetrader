@@ -266,7 +266,7 @@ export default function TradingPlatformShell() {
     initApp();
   }, []);
 
-  // Subscription globale pour tous les canaux
+  // Subscription globale pour tous les canaux (ne se recrée pas à chaque changement de canal)
   useEffect(() => {
     const channels = ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'];
     
@@ -288,7 +288,7 @@ export default function TradingPlatformShell() {
     return () => {
       subscriptions.forEach(sub => sub.unsubscribe());
     };
-  }, [selectedChannel.id]);
+  }, []); // Supprimer selectedChannel.id de la dépendance
 
   // Charger les données quand on change de canal
   useEffect(() => {
@@ -356,64 +356,9 @@ export default function TradingPlatformShell() {
       }
     });
     
-    // Subscription aux messages temps réel pour le canal actuel
-    const subscription = subscribeToMessages(selectedChannel.id, (newMessage) => {
-      console.log('🔄 Nouveau message reçu utilisateur:', newMessage);
-      
-      const formattedMessage = {
-        id: newMessage.id || '',
-        text: newMessage.content,
-        timestamp: new Date(newMessage.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-        author: newMessage.author,
-        author_avatar: newMessage.author_avatar,
-        attachment: newMessage.attachment_data ? {
-          type: newMessage.attachment_type || 'image/jpeg',
-          name: newMessage.attachment_name || 'image.jpg'
-        } : undefined,
-        attachment_data: newMessage.attachment_data
-      };
-      
-      setMessages(prev => {
-        const currentMessages = prev[selectedChannel.id] || [];
-        const newMessage = {
-          id: formattedMessage.id,
-          text: formattedMessage.text,
-          user: formattedMessage.author,
-          author: formattedMessage.author,
-          author_avatar: formattedMessage.author_avatar,
-          timestamp: formattedMessage.timestamp,
-          attachment_data: formattedMessage.attachment_data
-        };
-        
-        // Pour les canaux de chat, ajouter à la fin (messages récents en bas)
-        // Pour les autres canaux, ajouter au début (messages récents en haut)
-        if (['general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(selectedChannel.id)) {
-          return {
-            ...prev,
-            [selectedChannel.id]: [...currentMessages, newMessage]
-          };
-        } else {
-          return {
-            ...prev,
-            [selectedChannel.id]: [newMessage, ...currentMessages]
-          };
-        }
-      });
-      
-      // Compter les nouveaux messages seulement si on n'est pas dans le canal actuel
-      // (car on va voir le message immédiatement)
-      // Cette logique sera gérée par la subscription globale
-      
-      // Scroll vers le bas pour voir le nouveau message (sauf pour calendrier et journal perso)
-      if (!['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux'].includes(selectedChannel.id)) {
-        setTimeout(() => {
-          scrollToBottom();
-        }, 5);
-      }
-    });
+    // Les messages temps réel sont gérés par les subscriptions globales
 
     return () => {
-      subscription.unsubscribe();
       signalSubscription.unsubscribe();
       newSignalSubscription.unsubscribe();
     };
@@ -2602,6 +2547,9 @@ export default function TradingPlatformShell() {
               <button onClick={() => handleChannelChange('calendrier', 'calendrier')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Journal Perso</button>
               <button onClick={() => handleChannelChange('livestream', 'livestream')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
+              <button onClick={() => {
+                window.open('/trading-live.html', '_blank');
+              }} className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">🎥 Formation Live</button>
             </div>
           </div>
 
@@ -2794,6 +2742,37 @@ export default function TradingPlatformShell() {
                       <div>
                         <p className="font-medium text-white">Journal Perso</p>
                         <p className="text-sm text-gray-400">Journal personnel</p>
+                      </div>
+                    </div>
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      handleChannelChange('livestream', 'livestream');
+                      setMobileView('content');
+                    }}
+                    className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg">📺</span>
+                      <div>
+                        <p className="font-medium text-white">Livestream</p>
+                        <p className="text-sm text-gray-400">Trading en direct</p>
+                      </div>
+                    </div>
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      window.open('/trading-live.html', '_blank');
+                    }}
+                    className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg">🎥</span>
+                      <div>
+                        <p className="font-medium text-white">Formation Live</p>
+                        <p className="text-sm text-gray-400">Formation en direct</p>
                       </div>
                     </div>
                   </button>
@@ -4062,7 +4041,7 @@ export default function TradingPlatformShell() {
               ) : selectedChannel.id === 'profit-loss' ? (
                 <ProfitLoss />
               ) : selectedChannel.id === 'livestream' ? (
-                <div className="flex flex-col h-full">
+                <div className="flex flex-col h-full bg-gray-900">
                   {/* Interface Livestream avec Sidebar Visible */}
                   <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
                     {/* Zone de stream */}
@@ -4078,13 +4057,25 @@ export default function TradingPlatformShell() {
                           <p className="text-gray-400">Session de trading en direct</p>
                           
                           {/* Iframe 100ms */}
-                          <div className="w-full max-w-4xl">
+                          <div className="w-full max-w-7xl relative">
+                            <button
+                              onClick={() => {
+                                const iframe = document.querySelector('iframe[src*="100ms.live"]') as HTMLIFrameElement;
+                                if (iframe && iframe.requestFullscreen) {
+                                  iframe.requestFullscreen();
+                                }
+                              }}
+                              className="absolute top-4 right-4 z-10 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                            >
+                              📺 Plein écran
+                            </button>
                             <iframe
                               src="https://admintrading.app.100ms.live/meeting/kor-inbw-yiz"
                               width="100%"
-                              height="600px"
+                              height="1200px"
                               style={{ border: 'none', borderRadius: '8px' }}
-                              allow="camera; microphone; display-capture"
+                              allow="camera; microphone; display-capture; fullscreen"
+                              allowFullScreen
                             />
                           </div>
                         </div>
