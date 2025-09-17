@@ -1416,17 +1416,49 @@ export default function AdminInterface() {
 
   const handleShareScreen = () => {
     if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
-      navigator.mediaDevices.getDisplayMedia({ video: true })
+      // Configuration haute qualité pour le partage d'écran
+      navigator.mediaDevices.getDisplayMedia({ 
+        video: {
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+          frameRate: { ideal: 30, max: 60 }
+        },
+        audio: true
+      })
         .then(stream => {
           console.log('Stream obtenu:', stream);
           
-          // Créer un élément vidéo simple
+          // Créer un élément vidéo haute qualité
           const video = document.createElement('video');
           video.className = 'w-full h-full object-contain';
           video.autoplay = true;
           video.muted = true;
           video.playsInline = true;
           video.srcObject = stream;
+          
+          // Configuration haute qualité pour la vidéo
+          video.style.imageRendering = 'crisp-edges';
+          video.style.imageRendering = '-webkit-optimize-contrast';
+          
+          // Optimiser les paramètres de qualité
+          const videoTrack = stream.getVideoTracks()[0];
+          if (videoTrack) {
+            const settings = videoTrack.getSettings();
+            console.log('📊 Paramètres vidéo:', settings);
+            
+            // Appliquer les contraintes de qualité
+            videoTrack.applyConstraints({
+              width: { ideal: 1920 },
+              height: { ideal: 1080 },
+              frameRate: { ideal: 30 }
+            }).then(() => {
+              console.log('✅ Qualité vidéo optimisée:', {
+                width: videoTrack.getSettings().width,
+                height: videoTrack.getSettings().height,
+                frameRate: videoTrack.getSettings().frameRate
+              });
+            }).catch(err => console.log('❌ Contraintes non appliquées:', err));
+          }
           
           // Trouver spécifiquement les conteneurs de 
           const Containers = document.querySelectorAll('.bg-gray-900 .bg-black.flex.items-center.justify-center');
@@ -2282,6 +2314,7 @@ export default function AdminInterface() {
               console.error('Erreur lors de la mise à jour du statut');
     }
   };
+
 
   const handleSendMessage = async () => {
     if (chatMessage.trim()) {
@@ -3258,6 +3291,7 @@ export default function AdminInterface() {
                     </button>
                   ))}
                   
+                  
                   <button
                     onClick={() => {
                       // Réinitialiser selectedDate si on quitte le Trading Journal
@@ -3297,10 +3331,8 @@ export default function AdminInterface() {
                   
                   <button
                     onClick={() => {
-                      // Utiliser la fonction globale pour naviguer vers livestream
-                      if ((window as any).setCurrentPage) {
-                        (window as any).setCurrentPage('livestream');
-                      }
+                      handleChannelChange('livestream', 'livestream');
+                      setMobileView('content');
                     }}
                     className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                   >
@@ -3917,7 +3949,51 @@ export default function AdminInterface() {
                                 <span className="text-xs text-gray-400">{message.timestamp}</span>
                               </div>
                               <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
-                                {message.text && <p className="text-white">{message.text}</p>}
+                                {message.text && (
+                                  <div className="text-white">
+                                    {message.text.includes('🎥 **Session Trading Live') ? (
+                                      <div className="bg-purple-900/30 border border-purple-500 rounded-lg p-3">
+                                        <div className="flex items-center gap-2 mb-2">
+                                          <span className="text-purple-400">🎥</span>
+                                          <span className="font-semibold text-purple-300">Session Trading Live - QUALITÉ HAUTE</span>
+                                        </div>
+                                        <div className="text-sm space-y-1">
+                                          <div className="flex items-center gap-2">
+                                            <span className="text-blue-400">🔗</span>
+                                            <a 
+                                              href="https://admintrading.app.100ms.live/meeting/kor-inbw-yiz"
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              className="text-blue-400 hover:text-blue-300 underline"
+                                            >
+                                              Rejoignez la room
+                                            </a>
+                                          </div>
+                                          <div className="flex items-center gap-2">
+                                            <span className="text-green-400">⏱️</span>
+                                            <span className="text-green-300">Latence: ~100ms</span>
+                                          </div>
+                                          <div className="flex items-center gap-2">
+                                            <span className="text-orange-400">📊</span>
+                                            <span className="text-orange-300">Partage d'écran 1080p activé</span>
+                                          </div>
+                                          <div className="flex items-center gap-2">
+                                            <span className="text-yellow-400">🎯</span>
+                                            <span className="text-yellow-300">Qualité optimisée pour le trading</span>
+                                          </div>
+                                        </div>
+                                        <button 
+                                          onClick={() => window.open('https://admintrading.app.100ms.live/meeting/kor-inbw-yiz', '_blank')}
+                                          className="mt-3 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-white text-sm font-medium w-full"
+                                        >
+                                          👆 Cliquez pour rejoindre instantanément
+                                        </button>
+                                      </div>
+                                    ) : (
+                                      <p>{message.text}</p>
+                                    )}
+                                  </div>
+                                )}
                                 {message.attachment_data && (
                                   <div className="mt-2">
                                     {true ? (
@@ -3998,123 +4074,51 @@ export default function AdminInterface() {
                       </div>
                     </div>
                   </div>
-                ) : selectedChannel.id === '' ? (
+                ) : selectedChannel.id === 'livestream' ? (
                   <div className="flex flex-col h-full">
                     {/* Interface Livestream Desktop */}
                     <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
                       {/* Zone de stream */}
                       <div className="flex-1 bg-gray-900 rounded-lg overflow-hidden">
-                        {!isLiveStreaming ? (
-                          <div className="h-full flex flex-col items-center justify-center p-8">
-                            <div className="text-center space-y-4">
-                              <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto">
-                                <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                  <path d="M8 5v14l11-7z"/>
-                                </svg>
-                              </div>
-                              <h2 className="text-xl font-bold text-white">Aucun stream en cours</h2>
-                              <p className="text-gray-400">Commencez votre session de trading en direct</p>
-                              
-                              {/* Formulaire de démarrage */}
-                              <div className="space-y-3 max-w-md mx-auto">
-                                <input
-                                  type="text"
-                                  placeholder="Titre du stream (ex: Session TradingView - EURUSD)"
-                                  value={streamTitle}
-                                  onChange={(e) => setStreamTitle(e.target.value)}
-                                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-                                />
-                                <textarea
-                                  placeholder="Description (optionnel)"
-                                  value={streamDescription}
-                                  onChange={(e) => setStreamDescription(e.target.value)}
-                                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-                                  rows={2}
-                                />
-                                <div className="flex gap-2">
-                                  <button
-                                    onClick={handleStartStream}
-                                    className="flex-1 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-white font-medium"
-                                  >
-                                    🎥 Démarrer Stream
-                                  </button>
-                                  <button
-                                    onClick={handleShareScreen}
-                                    className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white"
-                                  >
-                                    📺 Partager Écran
-                                  </button>
-                                  <button
-                                    onClick={handleTestNotification}
-                                    className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-white"
-                                  >
-                                    🧪 Test Notif
-                                  </button>
-                                </div>
-                              </div>
+                        <div className="h-full flex flex-col items-center justify-center p-8">
+                          <div className="text-center space-y-4">
+                            <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto">
+                              <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z"/>
+                              </svg>
                             </div>
-                          </div>
-                        ) : (
-                          <div className="h-full flex flex-col">
-                            {/* Header du stream */}
-                            <div className="bg-gray-800 p-4 border-b border-gray-700">
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <h3 className="text-lg font-bold text-white">{streamTitle}</h3>
-                                  <p className="text-sm text-gray-400">{streamDescription}</p>
-                                </div>
-                                <div className="flex items-center gap-4">
-                                  <div className="flex items-center gap-2 text-red-400">
-                                    <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
-                                    <span className="text-sm font-medium">EN DIRECT</span>
-                                  </div>
-                                  <div className="flex items-center gap-1 text-gray-400">
-                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                                    </svg>
-                                    <span className="text-sm">{viewerCount} spectateurs</span>
-                                  </div>
-                                  <button
-                                    onClick={handleStopStream}
-                                    className="bg-gray-600 hover:bg-gray-500 px-3 py-1 rounded text-sm text-white"
-                                  >
-                                    Arrêter
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
+                            <h2 className="text-xl font-bold text-white">Livestream Trading</h2>
+                            <p className="text-gray-400">Session de trading en direct</p>
                             
-                            {/* Zone de vidéo */}
-                            <div className="flex-1 bg-black flex items-center justify-center">
-                              <div className="text-center text-gray-400">
-                                <div className="w-16 h-16 bg-gray-800 rounded-lg flex items-center justify-center mx-auto mb-4">
-                                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
-                                  </svg>
-                                </div>
-                                <p className="text-sm">Stream en cours...</p>
-                                <p className="text-xs mt-1">Partagez votre écran TradingView</p>
-                              </div>
+                            {/* Iframe 100ms */}
+                            <div className="w-full max-w-4xl">
+                              <iframe
+                                src="https://admintrading.app.100ms.live/meeting/kor-inbw-yiz"
+                                width="100%"
+                                height="600px"
+                                style={{ border: 'none', borderRadius: '8px' }}
+                                allow="camera; microphone; display-capture"
+                              />
                             </div>
                           </div>
-                        )}
+                        </div>
                       </div>
                       
                       {/* Chat live */}
                       <div className="w-full lg:w-80 bg-gray-800 rounded-lg flex flex-col">
                         <div className="p-4 border-b border-gray-700">
                           <h3 className="font-semibold text-white">💬 Chat Live</h3>
-                          <p className="text-xs text-gray-400">{viewerCount} spectateurs en ligne</p>
+                          <p className="text-xs text-gray-400">Commentaires en direct</p>
                         </div>
                         
                         <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                          {(chatMessages[''] || []).length === 0 ? (
+                          {(chatMessages['livestream'] || []).length === 0 ? (
                             <div className="text-center py-8">
                               <div className="text-gray-400 text-sm">Aucun message</div>
                               <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
                             </div>
                           ) : (
-                            (chatMessages[''] || []).map((message) => (
+                            (chatMessages['livestream'] || []).map((message) => (
                               <div key={message.id} className="flex items-start gap-2">
                                 <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs">T</div>
                                 <div className="flex-1">

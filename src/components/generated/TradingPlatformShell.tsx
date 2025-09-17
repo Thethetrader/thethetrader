@@ -2601,13 +2601,7 @@ export default function TradingPlatformShell() {
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
               <button onClick={() => handleChannelChange('calendrier', 'calendrier')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Journal Perso</button>
-              <button onClick={() => {
-                // Forcer la navigation vers livestream
-                window.location.href = window.location.origin + window.location.pathname + '#livestream';
-                setTimeout(() => {
-                  window.location.reload();
-                }, 100);
-              }} className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📺 Livestream</button>
+              <button onClick={() => handleChannelChange('livestream', 'livestream')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
             </div>
           </div>
 
@@ -2745,6 +2739,7 @@ export default function TradingPlatformShell() {
 
                     </button>
                   ))}
+                  
                 </div>
               </div>
 
@@ -4066,6 +4061,89 @@ export default function TradingPlatformShell() {
                 </div>
               ) : selectedChannel.id === 'profit-loss' ? (
                 <ProfitLoss />
+              ) : selectedChannel.id === 'livestream' ? (
+                <div className="flex flex-col h-full">
+                  {/* Interface Livestream avec Sidebar Visible */}
+                  <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
+                    {/* Zone de stream */}
+                    <div className="flex-1 bg-gray-900 rounded-lg overflow-hidden">
+                      <div className="h-full flex flex-col items-center justify-center p-8">
+                        <div className="text-center space-y-4">
+                          <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto">
+                            <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M8 5v14l11-7z"/>
+                            </svg>
+                          </div>
+                          <h2 className="text-xl font-bold text-white">Livestream Trading</h2>
+                          <p className="text-gray-400">Session de trading en direct</p>
+                          
+                          {/* Iframe 100ms */}
+                          <div className="w-full max-w-4xl">
+                            <iframe
+                              src="https://admintrading.app.100ms.live/meeting/kor-inbw-yiz"
+                              width="100%"
+                              height="600px"
+                              style={{ border: 'none', borderRadius: '8px' }}
+                              allow="camera; microphone; display-capture"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Chat live */}
+                    <div className="w-full lg:w-80 bg-gray-800 rounded-lg flex flex-col">
+                      <div className="p-4 border-b border-gray-700">
+                        <h3 className="font-semibold text-white">💬 Chat Live</h3>
+                        <p className="text-xs text-gray-400">Commentaires en direct</p>
+                      </div>
+                      
+                      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                        {(messages['livestream'] || []).length === 0 ? (
+                          <div className="text-center py-8">
+                            <div className="text-gray-400 text-sm">Aucun message</div>
+                            <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
+                          </div>
+                        ) : (
+                          (messages['livestream'] || []).map((message) => (
+                            <div key={message.id} className="flex items-start gap-2">
+                              <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs">T</div>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="font-medium text-white text-sm">{message.author}</span>
+                                  <span className="text-xs text-gray-400">{message.timestamp}</span>
+                                </div>
+                                <div className="bg-gray-700 rounded-lg p-2">
+                                  <p className="text-white text-sm">{message.text}</p>
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                      
+                      {/* Barre de message pour le chat live */}
+                      <div className="p-4 border-t border-gray-700">
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={chatMessage}
+                            onChange={(e) => setChatMessage(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                            placeholder="Commenter le stream..."
+                            className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
+                          />
+                          <button
+                            onClick={handleSendMessage}
+                            className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-white text-sm"
+                          >
+                            Envoyer
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               ) : ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}
