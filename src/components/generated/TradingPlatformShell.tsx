@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, Signal } from '../../utils/firebase-setup';
+import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, Signal, addPersonalTrade, getPersonalTrades, PersonalTrade, syncUserId } from '../../utils/firebase-setup';
 import ProfitLoss from '../ProfitLoss';
 import { createClient } from '@supabase/supabase-js';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
@@ -470,90 +470,7 @@ export default function TradingPlatformShell() {
       // Pas de scroll pour signaux, calendrier et trading journal
     }, 200);
   };
-  const [personalTrades, setPersonalTrades] = useState<Array<{
-    id: string;
-    date: string;
-    symbol: string;
-    type: 'BUY' | 'SELL';
-    entry: string;
-    exit: string;
-    stopLoss: string;
-    pnl: string;
-    status: 'WIN' | 'LOSS' | 'BE';
-    notes: string;
-    image1: File | null;
-    image2: File | null;
-    timestamp: string;
-  }>>(() => {
-    // Charger les trades depuis localStorage
-    const saved = localStorage.getItem('personalTrades');
-    const existingTrades = saved ? JSON.parse(saved) : [];
-    
-    // Ajouter quelques trades de test pour debug
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-    const lastWeek = new Date(today);
-    lastWeek.setDate(today.getDate() - 7);
-    
-    const testTrades = [
-      {
-        id: 'test-today',
-        date: today.toISOString().split('T')[0],
-        symbol: 'BTCUSD',
-        type: 'BUY' as const,
-        entry: '45000',
-        exit: '46000',
-        stopLoss: '44000',
-        pnl: '1000',
-        status: 'WIN' as const,
-        notes: 'Trade WIN aujourd\'hui',
-        image1: null,
-        image2: null,
-        timestamp: today.toISOString()
-      },
-      {
-        id: 'test-yesterday',
-        date: yesterday.toISOString().split('T')[0],
-        symbol: 'EURUSD',
-        type: 'SELL' as const,
-        entry: '1.0850',
-        exit: '1.0800',
-        stopLoss: '1.0900',
-        pnl: '500',
-        status: 'WIN' as const,
-        notes: 'Trade WIN hier',
-        image1: null,
-        image2: null,
-        timestamp: yesterday.toISOString()
-      },
-      {
-        id: 'test-lastweek',
-        date: lastWeek.toISOString().split('T')[0],
-        symbol: 'GBPUSD',
-        type: 'BUY' as const,
-        entry: '1.2500',
-        exit: '1.2400',
-        stopLoss: '1.2450',
-        pnl: '-300',
-        status: 'LOSS' as const,
-        notes: 'Trade LOSS la semaine dernière',
-        image1: null,
-        image2: null,
-        timestamp: lastWeek.toISOString()
-      }
-    ];
-    
-    // Ajouter les trades de test seulement s'ils n'existent pas déjà
-    testTrades.forEach(testTrade => {
-      const exists = existingTrades.some((trade: any) => trade.id === testTrade.id);
-      if (!exists) {
-        existingTrades.push(testTrade);
-      }
-    });
-    
-    return existingTrades;
-  });
+  const [personalTrades, setPersonalTrades] = useState<PersonalTrade[]>([]);
 
   const [tradeData, setTradeData] = useState({
     symbol: '',
@@ -568,10 +485,42 @@ export default function TradingPlatformShell() {
     image2: null as File | null
   });
   
-  // Sauvegarder automatiquement les trades dans localStorage
+  // Synchroniser l'ID utilisateur au démarrage de l'application
   useEffect(() => {
-    localStorage.setItem('personalTrades', JSON.stringify(personalTrades));
-  }, [personalTrades]);
+    const syncUser = async () => {
+      const userId = await syncUserId();
+      console.log('🔄 ID utilisateur synchronisé au démarrage PWA:', userId);
+    };
+    syncUser();
+  }, []); // Une seule fois au démarrage
+
+  // Charger les trades depuis Firebase au démarrage et quand on change de channel
+  useEffect(() => {
+    const loadTrades = async () => {
+      console.log('📊 Chargement trades personnels depuis Firebase [PWA]...');
+      const trades = await getPersonalTrades();
+      setPersonalTrades(trades);
+      console.log(`✅ ${trades.length} trades chargés depuis Firebase [PWA]`);
+    };
+    
+    loadTrades();
+  }, [selectedChannel.id]); // Recharger quand on change de channel
+
+  // Recharger automatiquement les trades quand on arrive sur "Journal Perso"
+  useEffect(() => {
+    if (selectedChannel.id === 'trading-journal') {
+      const loadTrades = async () => {
+        console.log('🔄 Rechargement automatique trades pour Journal Perso [PWA]...');
+        const userId = localStorage.getItem('user_id');
+        console.log('🆔 ID utilisateur PWA (rechargement):', userId);
+        const trades = await getPersonalTrades();
+        setPersonalTrades(trades);
+        console.log(`✅ ${trades.length} trades rechargés automatiquement [PWA]`);
+      };
+      
+      loadTrades();
+    }
+  }, [selectedChannel.id]);
 
   // Debug: Afficher les trades au chargement
   useEffect(() => {
@@ -1242,6 +1191,7 @@ export default function TradingPlatformShell() {
       
       weeks.push({
         week: `Week ${weekNum}`,
+        weekNum: weekNum,
         trades: weekTrades.length,
         pnl: weekPnL,
         wins,
@@ -1413,9 +1363,9 @@ export default function TradingPlatformShell() {
         };
       }
       
-      console.log('💾 Sauvegarde Firebase:', { messageId, newReactions });
+      console.log('💾 Sauvegarde Firebase:', { messageId, newReactions, currentUser });
       await updateMessageReactions(messageId, newReactions);
-      console.log('✅ Réaction message synchronisée:', messageId, newReactions);
+      console.log('✅ Réaction message synchronisée:', messageId, newReactions, 'par utilisateur:', currentUser);
       
     } catch (error) {
       console.error('❌ Erreur réaction message:', error);
@@ -1633,7 +1583,7 @@ export default function TradingPlatformShell() {
     setShowTradeModal(true);
   };
 
-  const handleTradeSubmit = () => {
+  const handleTradeSubmit = async () => {
     if (!tradeData.symbol || !tradeData.entry || !tradeData.exit || !tradeData.pnl) {
       console.warn('Veuillez remplir les champs obligatoires (Symbol, Entry, Exit, PnL)');
       return;
@@ -1648,7 +1598,6 @@ export default function TradingPlatformShell() {
     };
 
     const newTrade = {
-      id: Date.now().toString(),
       date: selectedDate ? getDateString(selectedDate) : getDateString(new Date()),
       symbol: tradeData.symbol,
       type: tradeData.type,
@@ -1663,23 +1612,31 @@ export default function TradingPlatformShell() {
       timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
     };
 
-    setPersonalTrades(prev => [newTrade, ...prev]);
+    // Sauvegarder dans Firebase
+    const savedTrade = await addPersonalTrade(newTrade as any);
     
-    // Reset form
-    setTradeData({
-      symbol: '',
-      type: 'BUY',
-      entry: '',
-      exit: '',
-      stopLoss: '',
-      pnl: '',
-      status: 'WIN',
-      notes: '',
-      image1: null,
-      image2: null
-    });
-    setShowTradeModal(false);
-    console.log('Trade ajouté avec succès !');
+    if (savedTrade) {
+      // Ajouter à la liste locale
+      setPersonalTrades(prev => [savedTrade, ...prev]);
+      
+      // Reset form
+      setTradeData({
+        symbol: '',
+        type: 'BUY',
+        entry: '',
+        exit: '',
+        stopLoss: '',
+        pnl: '',
+        status: 'WIN',
+        notes: '',
+        image1: null,
+        image2: null
+      });
+      setShowTradeModal(false);
+      console.log('✅ Trade ajouté avec succès dans Firebase !');
+    } else {
+      console.error('❌ Erreur lors de la sauvegarde du trade');
+    }
   };
 
   const handleTradingViewPasteTrade = (e: React.ClipboardEvent<HTMLDivElement>) => {
@@ -1835,6 +1792,53 @@ export default function TradingPlatformShell() {
     }
   };
 
+  const getTradesForWeek = (weekNum: number) => {
+    try {
+      if (!Array.isArray(personalTrades)) {
+        console.error('personalTrades n\'est pas un tableau:', personalTrades);
+        return [];
+      }
+
+      console.log('🔍 DEBUG getTradesForWeek - Tous les trades:', personalTrades);
+      console.log('🔍 DEBUG getTradesForWeek - Semaine demandée:', weekNum);
+
+      // Calculer les dates de début et fin de la semaine
+      const currentDate = new Date();
+      const currentMonth = currentDate.getMonth();
+      const currentYear = currentDate.getFullYear();
+      
+      // Premier jour du mois
+      const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+      const firstDayOfWeek = firstDayOfMonth.getDay(); // 0 = dimanche, 1 = lundi, etc.
+      
+      // Calculer le début de la semaine demandée
+      const weekStart = new Date(currentYear, currentMonth, 1 + (weekNum - 1) * 7 - firstDayOfWeek);
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 6);
+      
+      console.log(`🔍 Recherche trades pour semaine ${weekNum}:`, weekStart.toDateString(), 'à', weekEnd.toDateString());
+      console.log(`🔍 Dates des trades:`, personalTrades.map(t => t.date));
+      
+      const filteredTrades = personalTrades.filter(trade => {
+        if (!trade || !trade.date) {
+          console.log('🔍 Trade invalide:', trade);
+          return false;
+        }
+        
+        const tradeDate = new Date(trade.date);
+        const isInWeek = tradeDate >= weekStart && tradeDate <= weekEnd;
+        console.log(`🔍 Trade ${trade.date} (${tradeDate.toDateString()}) dans semaine ${weekNum}?`, isInWeek);
+        return isInWeek;
+      });
+      
+      console.log(`✅ Trades trouvés pour semaine ${weekNum}:`, filteredTrades.length);
+      return filteredTrades;
+    } catch (error) {
+      console.error('❌ Erreur dans getTradesForWeek:', error);
+      return [];
+    }
+  };
+
   const getSignalsForDate = (date: Date) => {
     // Utiliser realTimeSignals directement (avec les images complètes)
     const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -1854,7 +1858,10 @@ export default function TradingPlatformShell() {
         hasImage: !!signal.image,
         hasAttachment: !!signal.attachment_data,
         image: signal.image,
-        attachment_data: signal.attachment_data
+        attachment_data: signal.attachment_data,
+        attachment_type: signal.attachment_type,
+        attachment_name: signal.attachment_name,
+        ALL_KEYS: Object.keys(signal)
       });
     });
     
@@ -2808,12 +2815,14 @@ export default function TradingPlatformShell() {
                       <h1 className="text-2xl font-bold text-white">Mon Journal Perso</h1>
                       <p className="text-sm text-gray-400 mt-1">Journal tous tes trades</p>
                     </div>
-                    <button 
-                      onClick={handleAddTrade}
-                      className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
-                    >
-                      + Ajouter Trade
-                    </button>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={handleAddTrade}
+                        className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
+                      >
+                        + Ajouter Trade
+                      </button>
+                    </div>
                   </div>
                 )}
                 
@@ -2936,14 +2945,14 @@ export default function TradingPlatformShell() {
                                 <div className="flex gap-2 mt-2">
                                   {trade.image1 && (
                                     <img 
-                                      src={URL.createObjectURL(trade.image1)} 
+                                      src={trade.image1} 
                                       alt="Trade screenshot 1"
                                       className="w-20 h-20 object-cover rounded border border-gray-600"
                                     />
                                   )}
                                   {trade.image2 && (
                                     <img 
-                                      src={URL.createObjectURL(trade.image2)} 
+                                      src={trade.image2} 
                                       alt="Trade screenshot 2"
                                       className="w-20 h-20 object-cover rounded border border-gray-600"
                                     />
@@ -3484,15 +3493,102 @@ export default function TradingPlatformShell() {
                                 <span className="font-semibold text-white">{message.author}</span>
                                 <span className="text-xs text-gray-400">{message.timestamp}</span>
                               </div>
-                              <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
-                                {message.text && (
-                                  <p className="text-white">
-                                    {message.text.replace(/\[SIGNAL_ID:[^\]]+\]/g, '')}
-                                  </p>
-                                )}
+                              <div 
+                                className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words"
+                                data-signal-id={message.text.includes('[SIGNAL_ID:') ? message.text.match(/\[SIGNAL_ID:([^\]]+)\]/)?.[1] : undefined}
+                              >
+                                <div className="text-white">
+                                  {message.text.includes('[SIGNAL_ID:') ? (
+                                    <>
+                                      {message.text.split('[SIGNAL_ID:')[0]}
+                                      <span className="text-gray-700 text-xs">[SIGNAL_ID:{message.text.split('[SIGNAL_ID:')[1].split(']')[0]}]</span>
+                                      {message.text.split(']').slice(1).join(']')}
+                                      
+                                      {/* Flèche cliquable pour les messages de fermeture */}
+                                      {(() => {
+                                        const isClosureMessage = message.text.includes('SIGNAL FERMÉ');
+                                        console.log('🔍 Debug flèche USER - message.text:', message.text);
+                                        console.log('🔍 Debug flèche USER - isClosureMessage:', isClosureMessage);
+                                        if (isClosureMessage) {
+                                          console.log('✅ Flèche USER devrait apparaître !');
+                                        }
+                                        return isClosureMessage;
+                                      })() && (
+                                        <span 
+                                          className="ml-2 text-blue-400 hover:text-blue-300 cursor-pointer text-2xl transition-colors inline-block bg-blue-500/20 px-2 py-1 rounded-lg hover:bg-blue-500/30"
+                                          onClick={() => {
+                                            const signalIdMatch = message.text.match(/\[SIGNAL_ID:([^\]]+)\]/);
+                                            const signalId = signalIdMatch ? signalIdMatch[1] : '';
+                                            console.log('🔍 Debug flèche USER - signalId extrait:', signalId);
+                                            console.log('🔍 Debug flèche USER - message.text:', message.text);
+                                            
+                                            const originalMessage = document.querySelector(`[data-signal-id="${signalId}"]`);
+                                            console.log('🔍 Debug flèche USER - élément trouvé:', originalMessage);
+                                            console.log('🔍 Debug flèche USER - sélecteur utilisé:', `[data-signal-id="${signalId}"]`);
+                                            
+                                            // Chercher tous les éléments avec data-signal-id
+                                            const allSignalElements = document.querySelectorAll('[data-signal-id]');
+                                            console.log('🔍 Debug flèche USER - tous les éléments signal:', allSignalElements);
+                                            
+                                            if (originalMessage && originalMessage.offsetParent !== null) {
+                                              console.log('🔍 Debug flèche USER - scroll vers élément:', originalMessage);
+                                              console.log('🔍 Debug flèche USER - élément visible:', originalMessage.offsetParent !== null);
+                                              console.log('🔍 Debug flèche USER - élément dans viewport:', originalMessage.getBoundingClientRect());
+                                              
+                                              // Forcer le scroll vers le haut de la page d'abord
+                                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                                              
+                                              setTimeout(() => {
+                                                originalMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                originalMessage.classList.add('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
+                                                setTimeout(() => {
+                                                  originalMessage.classList.remove('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
+                                                }, 5000);
+                                              }, 500);
+                                              
+                                              console.log('✅ Navigation USER vers le signal original réussie');
+                                            } else {
+                                              console.log('❌ Signal original USER non trouvé');
+                                              console.log('🔍 Debug flèche USER - recherche alternative...');
+                                              
+                                              // Recherche simple par contenu dans toute la page
+                                              const allDivs = document.querySelectorAll('div');
+                                              let foundMessage = null;
+                                              
+                                              for (let div of allDivs) {
+                                                if (div.textContent && div.textContent.includes(signalId) && div.classList.contains('bg-gray-700')) {
+                                                  foundMessage = div;
+                                                  console.log('🔍 Debug flèche USER - message trouvé par contenu:', foundMessage);
+                                                  break;
+                                                }
+                                              }
+                                              
+                                              if (foundMessage) {
+                                                // Scroll direct vers le message trouvé
+                                                foundMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                foundMessage.classList.add('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
+                                                setTimeout(() => {
+                                                  foundMessage.classList.remove('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
+                                                }, 5000);
+                                                console.log('✅ Navigation USER réussie par contenu');
+                                              } else {
+                                                console.log('❌ Aucun message trouvé avec ce signalId dans toute la page');
+                                              }
+                                            }
+                                          }}
+                                          title="Aller au signal original"
+                                        >
+                                          ⬆️
+                                        </span>
+                                      )}
+                                    </>
+                                  ) : (
+                                    message.text
+                                  )}
+                                </div>
                                 
-                                {/* Boutons WIN/LOSS/BE pour les messages de signal (lecture seule côté utilisateur) */}
-                                {message.text.includes('[SIGNAL_ID:') && (() => {
+                                {/* Boutons WIN/LOSS/BE pour les messages de signal (pas pour les messages de fermeture) */}
+                                {message.text.includes('[SIGNAL_ID:') && !message.text.includes('SIGNAL FERMÉ') && (() => {
                                   // Extraire l'ID du signal pour vérifier son statut
                                   const signalIdMatch = message.text.match(/\[SIGNAL_ID:([^\]]+)\]/);
                                   const signalId = signalIdMatch ? signalIdMatch[1] : '';
@@ -3519,7 +3615,23 @@ export default function TradingPlatformShell() {
                                       </div>
                                       {isClosed && (
                                         <div className="mt-2 text-xs text-gray-400">
-                                          Signal fermé avec {currentSignal?.pnl ? `P&L: ${currentSignal.pnl}` : 'aucun P&L'}
+                                          <span 
+                                            className="cursor-pointer text-blue-400 hover:text-blue-300 underline"
+                                            onClick={() => {
+                                              // Trouver le message original du signal
+                                              const originalMessage = document.querySelector(`[data-signal-id="${signalId}"]`);
+                                              if (originalMessage && originalMessage.offsetParent !== null) {
+                                                originalMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                // Surligner temporairement
+                                                originalMessage.classList.add('ring-2', 'ring-blue-400', 'ring-opacity-50');
+                                                setTimeout(() => {
+                                                  originalMessage.classList.remove('ring-2', 'ring-blue-400', 'ring-opacity-50');
+                                                }, 3000);
+                                              }
+                                            }}
+                                          >
+                                            Signal {currentSignal?.referenceNumber || ''} fermé avec {currentSignal?.pnl ? `P&L: ${currentSignal.pnl}` : 'aucun P&L'}
+                                          </span>
                                         </div>
                                       )}
                                     </div>
@@ -3532,7 +3644,7 @@ export default function TradingPlatformShell() {
                                       <img 
                                         src={message.attachment_data} 
                                         alt="Attachment"
-                                        className="mt-2 w-full h-48 md:h-64 object-cover rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                                        className="mt-2 max-w-3xl max-h-96 object-contain rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
                                         onClick={() => setSelectedImage(message.attachment_data)}
                                       />
                                       <div className="text-xs text-gray-400 mt-1">Cliquez pour agrandir</div>
@@ -4253,14 +4365,98 @@ export default function TradingPlatformShell() {
                               <span className="text-xs text-gray-400">{message.timestamp}</span>
                             </div>
                             <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
-                                {message.text && (
-                                  <p className="text-white">
-                                    {message.text.replace(/\[SIGNAL_ID:[^\]]+\]/g, '')}
-                                  </p>
-                                )}
+                                <div className="text-white">
+                                  {message.text.includes('[SIGNAL_ID:') ? (
+                                    <>
+                                      {message.text.split('[SIGNAL_ID:')[0]}
+                                      <span className="text-gray-700 text-xs">[SIGNAL_ID:{message.text.split('[SIGNAL_ID:')[1].split(']')[0]}]</span>
+                                      {message.text.split(']').slice(1).join(']')}
+                                      
+                                      {/* Flèche cliquable pour les messages de fermeture */}
+                                      {(() => {
+                                        const isClosureMessage = message.text.includes('SIGNAL FERMÉ');
+                                        console.log('🔍 Debug flèche USER - message.text:', message.text);
+                                        console.log('🔍 Debug flèche USER - isClosureMessage:', isClosureMessage);
+                                        if (isClosureMessage) {
+                                          console.log('✅ Flèche USER devrait apparaître !');
+                                        }
+                                        return isClosureMessage;
+                                      })() && (
+                                        <span 
+                                          className="ml-2 text-blue-400 hover:text-blue-300 cursor-pointer text-2xl transition-colors inline-block bg-blue-500/20 px-2 py-1 rounded-lg hover:bg-blue-500/30"
+                                          onClick={() => {
+                                            const signalIdMatch = message.text.match(/\[SIGNAL_ID:([^\]]+)\]/);
+                                            const signalId = signalIdMatch ? signalIdMatch[1] : '';
+                                            console.log('🔍 Debug flèche USER - signalId extrait:', signalId);
+                                            console.log('🔍 Debug flèche USER - message.text:', message.text);
+                                            
+                                            const originalMessage = document.querySelector(`[data-signal-id="${signalId}"]`);
+                                            console.log('🔍 Debug flèche USER - élément trouvé:', originalMessage);
+                                            console.log('🔍 Debug flèche USER - sélecteur utilisé:', `[data-signal-id="${signalId}"]`);
+                                            
+                                            // Chercher tous les éléments avec data-signal-id
+                                            const allSignalElements = document.querySelectorAll('[data-signal-id]');
+                                            console.log('🔍 Debug flèche USER - tous les éléments signal:', allSignalElements);
+                                            
+                                            if (originalMessage && originalMessage.offsetParent !== null) {
+                                              console.log('🔍 Debug flèche USER - scroll vers élément:', originalMessage);
+                                              console.log('🔍 Debug flèche USER - élément visible:', originalMessage.offsetParent !== null);
+                                              console.log('🔍 Debug flèche USER - élément dans viewport:', originalMessage.getBoundingClientRect());
+                                              
+                                              // Forcer le scroll vers le haut de la page d'abord
+                                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                                              
+                                              setTimeout(() => {
+                                                originalMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                originalMessage.classList.add('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
+                                                setTimeout(() => {
+                                                  originalMessage.classList.remove('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
+                                                }, 5000);
+                                              }, 500);
+                                              
+                                              console.log('✅ Navigation USER vers le signal original réussie');
+                                            } else {
+                                              console.log('❌ Signal original USER non trouvé');
+                                              console.log('🔍 Debug flèche USER - recherche alternative...');
+                                              
+                                              // Recherche simple par contenu dans toute la page
+                                              const allDivs = document.querySelectorAll('div');
+                                              let foundMessage = null;
+                                              
+                                              for (let div of allDivs) {
+                                                if (div.textContent && div.textContent.includes(signalId) && div.classList.contains('bg-gray-700')) {
+                                                  foundMessage = div;
+                                                  console.log('🔍 Debug flèche USER - message trouvé par contenu:', foundMessage);
+                                                  break;
+                                                }
+                                              }
+                                              
+                                              if (foundMessage) {
+                                                // Scroll direct vers le message trouvé
+                                                foundMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                foundMessage.classList.add('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
+                                                setTimeout(() => {
+                                                  foundMessage.classList.remove('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
+                                                }, 5000);
+                                                console.log('✅ Navigation USER réussie par contenu');
+                                              } else {
+                                                console.log('❌ Aucun message trouvé avec ce signalId dans toute la page');
+                                              }
+                                            }
+                                          }}
+                                          title="Aller au signal original"
+                                        >
+                                          ⬆️
+                                        </span>
+                                      )}
+                                    </>
+                                  ) : (
+                                    message.text
+                                  )}
+                                </div>
                                 
-                                {/* Boutons WIN/LOSS/BE pour les messages de signal (lecture seule côté utilisateur) */}
-                                {message.text.includes('[SIGNAL_ID:') && (() => {
+                                {/* Boutons WIN/LOSS/BE pour les messages de signal (pas pour les messages de fermeture) */}
+                                {message.text.includes('[SIGNAL_ID:') && !message.text.includes('SIGNAL FERMÉ') && (() => {
                                   // Extraire l'ID du signal pour vérifier son statut
                                   const signalIdMatch = message.text.match(/\[SIGNAL_ID:([^\]]+)\]/);
                                   const signalId = signalIdMatch ? signalIdMatch[1] : '';
@@ -4287,7 +4483,23 @@ export default function TradingPlatformShell() {
                                       </div>
                                       {isClosed && (
                                         <div className="mt-2 text-xs text-gray-400">
-                                          Signal fermé avec {currentSignal?.pnl ? `P&L: ${currentSignal.pnl}` : 'aucun P&L'}
+                                          <span 
+                                            className="cursor-pointer text-blue-400 hover:text-blue-300 underline"
+                                            onClick={() => {
+                                              // Trouver le message original du signal
+                                              const originalMessage = document.querySelector(`[data-signal-id="${signalId}"]`);
+                                              if (originalMessage && originalMessage.offsetParent !== null) {
+                                                originalMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                // Surligner temporairement
+                                                originalMessage.classList.add('ring-2', 'ring-blue-400', 'ring-opacity-50');
+                                                setTimeout(() => {
+                                                  originalMessage.classList.remove('ring-2', 'ring-blue-400', 'ring-opacity-50');
+                                                }, 3000);
+                                              }
+                                            }}
+                                          >
+                                            Signal {currentSignal?.referenceNumber || ''} fermé avec {currentSignal?.pnl ? `P&L: ${currentSignal.pnl}` : 'aucun P&L'}
+                                          </span>
                                         </div>
                                       )}
                                     </div>
@@ -4300,7 +4512,7 @@ export default function TradingPlatformShell() {
                                       <img 
                                         src={message.attachment_data} 
                                         alt="Attachment"
-                                        className="mt-2 w-full h-48 md:h-64 object-cover rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                                        className="mt-2 max-w-3xl max-h-96 object-contain rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
                                         onClick={() => setSelectedImage(message.attachment_data)}
                                       />
                                       <div className="text-xs text-gray-400 mt-1">Cliquez pour agrandir</div>
@@ -4872,7 +5084,7 @@ export default function TradingPlatformShell() {
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-white">
-                  Signaux de la Semaine {selectedWeek}
+                  {selectedChannel.id === 'trading-journal' ? 'Trades de la Semaine' : 'Signaux de la Semaine'} {selectedWeek}
                 </h2>
                 <button
                   onClick={() => setShowWeekSignalsModal(false)}
@@ -4883,84 +5095,179 @@ export default function TradingPlatformShell() {
               </div>
 
               <div className="space-y-4">
-                {getSignalsForWeek(selectedWeek).length > 0 ? (
-                  getSignalsForWeek(selectedWeek).map((signal) => (
-                    <div key={signal.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-3">
-                          <span className={`px-2 py-1 rounded text-xs font-bold ${
-                            signal.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+                {selectedChannel.id === 'trading-journal' ? (
+                  // Affichage des trades pour le journal perso
+                  getTradesForWeek(selectedWeek).length > 0 ? (
+                    getTradesForWeek(selectedWeek).map((trade) => (
+                      <div key={trade.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <span className={`px-2 py-1 rounded text-xs font-bold ${
+                              trade.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+                            }`}>
+                              {trade.type}
+                            </span>
+                            <span className="text-lg font-bold text-white">{trade.symbol}</span>
+                            <span className="text-sm text-gray-400">{trade.date}</span>
+                          </div>
+                          <span className={`px-2 py-1 rounded text-xs ${
+                            trade.status === 'WIN' ? 'bg-green-600 text-white' :
+                            trade.status === 'LOSS' ? 'bg-red-600 text-white' :
+                            trade.status === 'BE' ? 'bg-blue-600 text-white' :
+                            'bg-yellow-600 text-white'
                           }`}>
-                            {signal.type}
-                          </span>
-                          <span className="text-lg font-bold text-white">{signal.symbol}</span>
-                          <span className="text-sm text-gray-400">{signal.timeframe}</span>
-                        </div>
-                        <span className={`px-2 py-1 rounded text-xs ${
-                          signal.status === 'WIN' ? 'bg-green-600 text-white' :
-                          signal.status === 'LOSS' ? 'bg-red-600 text-white' :
-                          signal.status === 'BE' ? 'bg-blue-600 text-white' :
-                          'bg-yellow-600 text-white'
-                        }`}>
-                          {signal.status}
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4 mb-3">
-                        <div>
-                          <span className="text-sm text-gray-400">Entry:</span>
-                          <span className="text-white ml-2">{signal.entry}</span>
-                        </div>
-                        <div>
-                          <span className="text-sm text-gray-400">Take Profit:</span>
-                          <span className="text-white ml-2">{signal.takeProfit}</span>
-                        </div>
-                        <div>
-                          <span className="text-sm text-gray-400">Stop Loss:</span>
-                          <span className="text-white ml-2">{signal.stopLoss}</span>
-                        </div>
-                        <div>
-                          <span className="text-sm text-gray-400">PnL:</span>
-                          <span className={`ml-2 font-bold ${
-                            signal.pnl && signal.pnl.includes('-') ? 'text-red-400' : 'text-green-400'
-                          }`}>
-                            {signal.pnl || 'N/A'}
+                            {trade.status}
                           </span>
                         </div>
-                      </div>
 
-                      {/* Affichage des images */}
-                      {(signal.image || signal.attachment_data) && (
-                        <div className="mb-3">
-                          <span className="text-sm text-gray-400">Images:</span>
-                          <div className="flex gap-2 mt-2">
-                            {signal.image && (
-                              <img 
-                                src={typeof signal.image === 'string' ? signal.image : URL.createObjectURL(signal.image)}
-                                alt="Signal image"
-                                className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80"
-                                onClick={() => setSelectedImage(typeof signal.image === 'string' ? signal.image : URL.createObjectURL(signal.image))}
-                              />
-                            )}
-                            {signal.attachment_data && (
-                              <img 
-                                src={signal.attachment_data}
-                                alt="Signal attachment"
-                                className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80"
-                                onClick={() => setSelectedImage(signal.attachment_data)}
-                              />
-                            )}
+                        <div className="grid grid-cols-2 gap-4 mb-3">
+                          <div>
+                            <span className="text-sm text-gray-400">Entry:</span>
+                            <span className="text-white ml-2">{trade.entry}</span>
+                          </div>
+                          <div>
+                            <span className="text-sm text-gray-400">Exit:</span>
+                            <span className="text-white ml-2">{trade.exit}</span>
+                          </div>
+                          <div>
+                            <span className="text-sm text-gray-400">Stop Loss:</span>
+                            <span className="text-white ml-2">{trade.stopLoss}</span>
+                          </div>
+                          <div>
+                            <span className="text-sm text-gray-400">PnL:</span>
+                            <span className={`ml-2 font-bold ${
+                              trade.pnl && trade.pnl.includes('-') ? 'text-red-400' : 'text-green-400'
+                            }`}>
+                              {trade.pnl || 'N/A'}
+                            </span>
                           </div>
                         </div>
-                      )}
+
+                        {trade.notes && (
+                          <div className="mb-3">
+                            <span className="text-sm text-gray-400">Notes:</span>
+                            <p className="text-white mt-1">{trade.notes}</p>
+                          </div>
+                        )}
+
+                        {/* Affichage des images */}
+                        {(trade.image1 || trade.image2) && (
+                          <div className="mb-3">
+                            <span className="text-sm text-gray-400">Images:</span>
+                            <div className="flex gap-2 mt-2">
+                              {trade.image1 && (
+                                <img 
+                                  src={trade.image1}
+                                  alt="Trade image 1"
+                                  className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80"
+                                  onClick={() => setSelectedImage(trade.image1)}
+                                />
+                              )}
+                              {trade.image2 && (
+                                <img 
+                                  src={trade.image2}
+                                  alt="Trade image 2"
+                                  className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80"
+                                  onClick={() => setSelectedImage(trade.image2)}
+                                />
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="flex items-center justify-between text-sm text-gray-400">
+                          <span>Créé le {trade.timestamp}</span>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8">
+                      <div className="text-gray-400 text-lg mb-2">📊</div>
+                      <div className="text-gray-300 text-lg font-medium">Aucun trade pour cette semaine</div>
+                      <div className="text-gray-500 text-sm mt-1">Tes trades apparaîtront ici quand tu les ajouteras</div>
                     </div>
-                  ))
+                  )
                 ) : (
-                  <div className="text-center py-8">
-                    <div className="text-gray-400 text-lg mb-2">📅</div>
-                    <div className="text-gray-300 text-lg font-medium">Aucun signal pour cette semaine</div>
-                    <div className="text-gray-500 text-sm mt-1">Les signaux apparaîtront ici quand ils seront créés</div>
-                  </div>
+                  // Affichage des signaux pour les autres canaux
+                  getSignalsForWeek(selectedWeek).length > 0 ? (
+                    getSignalsForWeek(selectedWeek).map((signal) => (
+                      <div key={signal.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <span className={`px-2 py-1 rounded text-xs font-bold ${
+                              signal.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+                            }`}>
+                              {signal.type}
+                            </span>
+                            <span className="text-lg font-bold text-white">{signal.symbol}</span>
+                            <span className="text-sm text-gray-400">{signal.timeframe}</span>
+                          </div>
+                          <span className={`px-2 py-1 rounded text-xs ${
+                            signal.status === 'WIN' ? 'bg-green-600 text-white' :
+                            signal.status === 'LOSS' ? 'bg-red-600 text-white' :
+                            signal.status === 'BE' ? 'bg-blue-600 text-white' :
+                            'bg-yellow-600 text-white'
+                          }`}>
+                            {signal.status}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 mb-3">
+                          <div>
+                            <span className="text-sm text-gray-400">Entry:</span>
+                            <span className="text-white ml-2">{signal.entry}</span>
+                          </div>
+                          <div>
+                            <span className="text-sm text-gray-400">Take Profit:</span>
+                            <span className="text-white ml-2">{signal.takeProfit}</span>
+                          </div>
+                          <div>
+                            <span className="text-sm text-gray-400">Stop Loss:</span>
+                            <span className="text-white ml-2">{signal.stopLoss}</span>
+                          </div>
+                          <div>
+                            <span className="text-sm text-gray-400">PnL:</span>
+                            <span className={`ml-2 font-bold ${
+                              signal.pnl && signal.pnl.includes('-') ? 'text-red-400' : 'text-green-400'
+                            }`}>
+                              {signal.pnl || 'N/A'}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Affichage des images */}
+                        {(signal.image || signal.attachment_data) && (
+                          <div className="mb-3">
+                            <span className="text-sm text-gray-400">Images:</span>
+                            <div className="flex gap-2 mt-2">
+                              {signal.image && (
+                                <img 
+                                  src={typeof signal.image === 'string' ? signal.image : URL.createObjectURL(signal.image)}
+                                  alt="Signal image"
+                                  className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80"
+                                  onClick={() => setSelectedImage(typeof signal.image === 'string' ? signal.image : URL.createObjectURL(signal.image))}
+                                />
+                              )}
+                              {signal.attachment_data && (
+                                <img 
+                                  src={signal.attachment_data}
+                                  alt="Signal attachment"
+                                  className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80"
+                                  onClick={() => setSelectedImage(signal.attachment_data)}
+                                />
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8">
+                      <div className="text-gray-400 text-lg mb-2">📅</div>
+                      <div className="text-gray-300 text-lg font-medium">Aucun signal pour cette semaine</div>
+                      <div className="text-gray-500 text-sm mt-1">Les signaux apparaîtront ici quand ils seront créés</div>
+                    </div>
+                  )
                 )}
               </div>
 

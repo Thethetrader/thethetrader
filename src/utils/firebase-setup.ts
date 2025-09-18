@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, push, onValue, query, orderByChild, limitToLast, serverTimestamp, update, get, equalTo, endBefore } from 'firebase/database';
+import { getDatabase, ref, push, onValue, query, orderByChild, limitToLast, serverTimestamp, update, get, equalTo, endBefore, set, remove } from 'firebase/database';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { firebaseConfig } from '../config/firebase-config';
 
@@ -43,9 +43,28 @@ export interface Signal {
   reactions?: string[];
   pnl?: string;
   closeMessage?: string;
+  referenceNumber?: string;
   attachment_data?: string;
   attachment_type?: string;
   attachment_name?: string;
+}
+
+export interface PersonalTrade {
+  id?: string;
+  date: string;
+  symbol: string;
+  type: 'BUY' | 'SELL';
+  entry: string;
+  exit: string;
+  stopLoss: string;
+  pnl: string;
+  status: 'WIN' | 'LOSS' | 'BE';
+  notes: string;
+  image1?: string; // base64
+  image2?: string; // base64
+  timestamp: string;
+  created_at?: string;
+  user_id?: string;
 }
 
 // Ajouter un message à Firebase
@@ -155,15 +174,23 @@ export const uploadImage = async (file: File): Promise<string | null> => {
 // Fonctions pour les signaux
 export const addSignal = async (signal: Omit<Signal, 'id' | 'timestamp'>): Promise<Signal | null> => {
   try {
+    // Récupérer tous les signaux pour générer le prochain numéro de référence
     const signalsRef = ref(database, 'signals');
-    const newSignalRef = push(signalsRef, {
+    const snapshot = await get(signalsRef);
+    const existingSignals = snapshot.exists() ? Object.values(snapshot.val()) : [];
+    const nextReferenceNumber = String(existingSignals.length + 1).padStart(3, '0');
+    
+    const signalsRefPush = ref(database, 'signals');
+    const newSignalRef = push(signalsRefPush, {
       ...signal,
+      referenceNumber: `#${nextReferenceNumber}`,
       timestamp: serverTimestamp()
     });
     
     return {
       id: newSignalRef.key,
       ...signal,
+      referenceNumber: `#${nextReferenceNumber}`,
       timestamp: new Date().toISOString()
     };
   } catch (error) {
@@ -301,6 +328,198 @@ export const getMessageReactions = async (messageId: string): Promise<MessageRea
   } catch (error) {
     console.error('❌ Erreur récupération réactions message Firebase:', error);
     return null;
+  }
+};
+
+// ===== FONCTIONS D'AUTHENTIFICATION =====
+
+// Générer un ID utilisateur unique et synchronisé
+export const generateUserId = (): string => {
+  // Utiliser un ID fixe pour tous les utilisateurs - plus simple et automatique
+  // Tous les utilisateurs partagent le même journal de trades
+  return `user_unified`;
+};
+
+// Synchroniser l'ID utilisateur (sans créer de nouvelle instance Supabase)
+export const syncUserId = async (): Promise<string> => {
+  // Toujours utiliser l'ID unifié pour tous les utilisateurs
+  const userId = generateUserId();
+  localStorage.setItem('user_id', userId);
+  console.log('🔄 ID utilisateur unifié synchronisé:', userId);
+  
+  return userId;
+};
+
+// Connexion utilisateur simple
+export const loginUser = (email: string, pseudo: string): string => {
+  // Créer un ID utilisateur basé sur l'email (plus stable)
+  const emailHash = btoa(email).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20);
+  const userId = `user_${emailHash}`;
+  
+  // Sauvegarder les infos utilisateur
+  localStorage.setItem('user_id', userId);
+  localStorage.setItem('user_email', email);
+  localStorage.setItem('user_pseudo', pseudo);
+  
+  console.log('✅ Utilisateur connecté:', { userId, email, pseudo });
+  return userId;
+};
+
+// Déconnexion utilisateur
+export const logoutUser = () => {
+  localStorage.removeItem('user_id');
+  localStorage.removeItem('user_email');
+  localStorage.removeItem('user_pseudo');
+  console.log('✅ Utilisateur déconnecté');
+};
+
+// Vérifier si l'utilisateur est connecté
+export const isUserLoggedIn = (): boolean => {
+  return !!localStorage.getItem('user_id');
+};
+
+// Obtenir les infos utilisateur
+export const getUserInfo = () => {
+  return {
+    userId: localStorage.getItem('user_id'),
+    email: localStorage.getItem('user_email'),
+    pseudo: localStorage.getItem('user_pseudo')
+  };
+};
+
+// ===== FONCTIONS POUR LES TRADES PERSONNELS =====
+
+// Ajouter un trade personnel à Firebase
+export const addPersonalTrade = async (trade: Omit<PersonalTrade, 'id' | 'created_at' | 'user_id'>): Promise<PersonalTrade | null> => {
+  try {
+    console.log('🚀 Ajout trade personnel Firebase:', trade);
+    
+    // Synchroniser l'ID utilisateur
+    const userId = await syncUserId();
+    
+    // Convertir les images File en base64 si nécessaire
+    let image1Base64: string | undefined;
+    let image2Base64: string | undefined;
+    
+    if (trade.image1 && typeof trade.image1 === 'object' && (trade.image1 as any) instanceof File) {
+      image1Base64 = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsDataURL(trade.image1 as unknown as Blob);
+      });
+    } else if (typeof trade.image1 === 'string') {
+      image1Base64 = trade.image1;
+    }
+    
+    if (trade.image2 && typeof trade.image2 === 'object' && (trade.image2 as any) instanceof File) {
+      image2Base64 = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsDataURL(trade.image2 as unknown as Blob);
+      });
+    } else if (typeof trade.image2 === 'string') {
+      image2Base64 = trade.image2;
+    }
+    
+    const tradeData = {
+      ...trade,
+      image1: image1Base64 || null,
+      image2: image2Base64 || null,
+      user_id: userId,
+      created_at: new Date().toISOString()
+    };
+    
+    // Supprimer les propriétés undefined pour Firebase
+    const cleanTradeData = Object.fromEntries(
+      Object.entries(tradeData).filter(([_, value]) => value !== undefined)
+    );
+    
+    const tradesRef = ref(database, `personal_trades/${userId}`);
+    const newTradeRef = push(tradesRef);
+    
+    await set(newTradeRef, cleanTradeData);
+    
+    const savedTrade: PersonalTrade = {
+      id: newTradeRef.key!,
+      ...cleanTradeData
+    } as PersonalTrade;
+    
+    console.log('✅ Trade personnel sauvegardé Firebase:', savedTrade);
+    return savedTrade;
+  } catch (error) {
+    console.error('❌ Erreur ajout trade personnel Firebase:', error);
+    return null;
+  }
+};
+
+// Récupérer tous les trades personnels depuis Firebase
+export const getPersonalTrades = async (limit: number = 100): Promise<PersonalTrade[]> => {
+  try {
+    console.log('📊 Récupération trades personnels Firebase...');
+    
+    // Synchroniser l'ID utilisateur
+    const userId = await syncUserId();
+    
+    const tradesRef = ref(database, `personal_trades/${userId}`);
+    const q = query(tradesRef, orderByChild('created_at'), limitToLast(limit));
+    const snapshot = await get(q);
+    
+    console.log('🔍 Snapshot Firebase:', snapshot.exists() ? 'EXISTE' : 'VIDE');
+    console.log('🔍 Données snapshot:', snapshot.val());
+    
+    const trades: PersonalTrade[] = [];
+    if (snapshot.exists()) {
+      snapshot.forEach((childSnapshot) => {
+        const data = childSnapshot.val();
+        console.log('📋 Trade trouvé:', childSnapshot.key, data);
+        trades.push({
+          id: childSnapshot.key!,
+          ...data
+        });
+      });
+    }
+    
+    // Trier par date de création (plus récent en premier)
+    trades.sort((a, b) => new Date(b.created_at || b.timestamp).getTime() - new Date(a.created_at || a.timestamp).getTime());
+    
+    console.log(`✅ ${trades.length} trades personnels récupérés Firebase`);
+    console.log('📋 Détail des trades:', trades);
+    return trades;
+  } catch (error) {
+    console.error('❌ Erreur récupération trades personnels Firebase:', error);
+    return [];
+  }
+};
+
+// Mettre à jour un trade personnel
+export const updatePersonalTrade = async (tradeId: string, updates: Partial<PersonalTrade>): Promise<boolean> => {
+  try {
+    console.log('🔄 Mise à jour trade personnel Firebase:', tradeId, updates);
+    
+    const tradeRef = ref(database, `personal_trades/${tradeId}`);
+    await update(tradeRef, updates);
+    
+    console.log('✅ Trade personnel mis à jour Firebase');
+    return true;
+  } catch (error) {
+    console.error('❌ Erreur mise à jour trade personnel Firebase:', error);
+    return false;
+  }
+};
+
+// Supprimer un trade personnel
+export const deletePersonalTrade = async (tradeId: string): Promise<boolean> => {
+  try {
+    console.log('🗑️ Suppression trade personnel Firebase:', tradeId);
+    
+    const tradeRef = ref(database, `personal_trades/${tradeId}`);
+    await remove(tradeRef);
+    
+    console.log('✅ Trade personnel supprimé Firebase');
+    return true;
+  } catch (error) {
+    console.error('❌ Erreur suppression trade personnel Firebase:', error);
+    return false;
   }
 };
 

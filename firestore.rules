@@ -42,5 +42,10 @@ service cloud.firestore {
     match /fcm_tokens/{document} {
       allow read, write: if true;
     }
+    
+    // Règles pour les trades personnels
+    match /personal_trades/{document} {
+      allow read, write: if true;
+    }
   }
 }

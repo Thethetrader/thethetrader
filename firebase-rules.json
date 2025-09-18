@@ -22,6 +22,19 @@
       ".read": true,
       ".write": true,
       ".indexOn": ["createdAt", "senderId"]
+    },
+    "messageReactions": {
+      ".read": true,
+      ".write": true
+    },
+    "personal_trades": {
+      ".read": true,
+      ".write": true,
+      "$userId": {
+        ".read": true,
+        ".write": true,
+        ".indexOn": ["created_at", "date", "timestamp"]
+      }
     }
   }
 } 

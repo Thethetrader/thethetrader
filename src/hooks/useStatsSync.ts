@@ -55,6 +55,14 @@ export function useStatsSync() {
         try {
           const channelSignals = await getSignals(channelId, 100);
           if (channelSignals && channelSignals.length > 0) {
+            console.log(`🔍 [STATS-SYNC] Signaux bruts de ${channelId}:`, channelSignals);
+            channelSignals.forEach(signal => {
+              console.log(`🔍 [STATS-SYNC] Signal ${signal.id} de ${channelId}:`, {
+                image: signal.image,
+                attachment_data: signal.attachment_data,
+                ALL_KEYS: Object.keys(signal)
+              });
+            });
             allSignals = [...allSignals, ...channelSignals];
           }
         } catch (error) {
@@ -78,14 +86,17 @@ export function useStatsSync() {
             takeProfit: signal.takeProfit?.toString() || 'N/A',
             stopLoss: signal.stopLoss?.toString() || 'N/A',
             description: signal.description || '',
-            image: null,
+            image: signal.image,
             timestamp: timestamp,
             originalTimestamp: signal.timestamp || Date.now(),
             status: signal.status || 'ACTIVE' as const,
             channel_id: signal.channel_id,
             reactions: signal.reactions || [],
             pnl: signal.pnl,
-            closeMessage: signal.closeMessage
+            closeMessage: signal.closeMessage,
+            attachment_data: signal.attachment_data,
+            attachment_type: signal.attachment_type,
+            attachment_name: signal.attachment_name
           };
         });
         
