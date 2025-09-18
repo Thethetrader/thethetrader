@@ -1621,7 +1621,7 @@ export default function TradingPlatformShell() {
 
     { id: 'general-chat', name: 'general-chat', emoji: '💬', fullName: 'Général chat' },
     { id: 'profit-loss', name: 'profit-loss', emoji: '💰', fullName: 'Profit loss' },
-    { id: 'video', name: 'video', emoji: '🎥', fullName: 'Livestream' },
+    { id: 'video', name: 'video', emoji: '📺', fullName: 'Video' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' }
   ];
@@ -2547,7 +2547,7 @@ export default function TradingPlatformShell() {
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
               <button onClick={() => handleChannelChange('calendrier', 'calendrier')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Journal Perso</button>
-              <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>🎥 Livestream</button>
+              <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Video</button>
               <button onClick={() => {
                 window.open('/trading-live.html', '_blank');
               }} className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">🎥 Formation Live</button>
@@ -2749,7 +2749,7 @@ export default function TradingPlatformShell() {
                   
                   <button
                     onClick={() => {
-                      handleChannelChange('livestream', 'livestream');
+                      handleChannelChange('video', 'video');
                       setMobileView('content');
                     }}
                     className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
@@ -2814,7 +2814,7 @@ export default function TradingPlatformShell() {
               mobileView === 'content' ? 'translate-x-0' : 'translate-x-full'
             }`}
           >
-            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier') ? (
+            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'video') ? (
               <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '0px' }}>
                 {/* Header avec bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
                 {selectedChannel.id === 'trading-journal' && (
@@ -2844,6 +2844,39 @@ export default function TradingPlatformShell() {
                 
                 {/* Affichage du calendrier */}
                 {(selectedChannel.id === 'calendrier' || selectedChannel.id === 'trading-journal') && getTradingCalendar()}
+                
+                {/* Interface Livestream pour mobile */}
+                {selectedChannel.id === 'video' && (
+                  <div className="flex flex-col h-full bg-gray-900">
+                    <div className="text-center space-y-4 w-full p-4 pt-16">
+                      <h1 className="text-3xl font-bold text-white mb-2">Livestream</h1>
+                      <p className="text-gray-400">Attache ta ceinture cousin</p>
+                      
+                      {/* Iframe 100ms */}
+                      <div className="w-full relative">
+                        <button
+                          onClick={() => {
+                            const iframe = document.querySelector('iframe[src*="100ms.live"]') as HTMLIFrameElement;
+                            if (iframe && iframe.requestFullscreen) {
+                              iframe.requestFullscreen();
+                            }
+                          }}
+                          className="absolute top-4 right-4 z-10 text-white text-4xl font-bold hover:text-gray-300 transition-colors"
+                        >
+                          ⤢
+                        </button>
+                        <iframe
+                          src="https://tote-livestream-033.app.100ms.live/streaming/meeting/hzs-ukns-nts"
+                          width="100%"
+                          height="400px"
+                          style={{ border: 'none', borderRadius: '8px' }}
+                          allow="camera; microphone; display-capture; fullscreen"
+                          allowFullScreen
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
                 
                 {/* Affichage des trades pour la date sélectionnée - SEULEMENT pour Trading Journal */}
                 {(() => {
@@ -4047,7 +4080,7 @@ export default function TradingPlatformShell() {
                   <div className="flex-1 flex flex-col gap-4 p-2">
                     {/* Zone de stream */}
                     <div className="flex-1 bg-gray-900 rounded-lg overflow-hidden">
-                      <div className="h-full flex flex-col items-center justify-center p-4">
+                      <div className="h-full flex flex-col items-center justify-center p-4 pt-16">
                         <div className="text-center space-y-4 w-full">
                           <h1 className="text-3xl font-bold text-white mb-2">Livestream</h1>
                           <p className="text-gray-400">Attache ta ceinture cousin</p>
@@ -4066,7 +4099,7 @@ export default function TradingPlatformShell() {
                               ⤢
                             </button>
                             <iframe
-                              src="https://admintrading.app.100ms.live/meeting/kor-inbw-yiz"
+                              src="https://tote-livestream-033.app.100ms.live/streaming/meeting/hzs-ukns-nts"
                               width="100%"
                               height="600px"
                               style={{ border: 'none', borderRadius: '8px' }}
@@ -4079,7 +4112,7 @@ export default function TradingPlatformShell() {
                     </div>
                   </div>
                 </div>
-              ) : selectedChannel.id === 'livestream' ? (
+              ) : selectedChannel.id === 'video' ? (
                 <div className="flex flex-col h-full bg-gray-900">
                   {/* Interface Livestream avec Sidebar Visible */}
                   <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
@@ -4129,13 +4162,13 @@ export default function TradingPlatformShell() {
                       </div>
                       
                       <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                        {(messages['livestream'] || []).length === 0 ? (
+                        {(messages['video'] || []).length === 0 ? (
                           <div className="text-center py-8">
                             <div className="text-gray-400 text-sm">Aucun message</div>
                             <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
                           </div>
                         ) : (
-                          (messages['livestream'] || []).map((message) => (
+                          (messages['video'] || []).map((message) => (
                             <div key={message.id} className="flex items-start gap-2">
                               <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs">T</div>
                               <div className="flex-1">
