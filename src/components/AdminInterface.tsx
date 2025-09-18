@@ -4031,6 +4031,12 @@ export default function AdminInterface() {
                           </span>
                         </label>
                         <button
+                          onClick={handleCreateSignal}
+                          className="bg-green-600 hover:bg-green-700 px-3 py-2 rounded-lg text-white text-sm font-medium"
+                        >
+                          + Signal
+                        </button>
+                        <button
                           onClick={handleSendMessage}
                           className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white"
                         >
@@ -4618,6 +4624,12 @@ export default function AdminInterface() {
                           📎
                         </span>
                       </label>
+                      <button
+                        onClick={handleCreateSignal}
+                        className="bg-green-600 hover:bg-green-700 px-3 py-2 rounded-lg text-white text-sm font-medium"
+                      >
+                        + Signal
+                      </button>
                       <button
                         onClick={handleSendMessage}
                         className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white"

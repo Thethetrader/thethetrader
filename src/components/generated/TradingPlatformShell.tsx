@@ -1621,9 +1621,9 @@ export default function TradingPlatformShell() {
 
     { id: 'general-chat', name: 'general-chat', emoji: '💬', fullName: 'Général chat' },
     { id: 'profit-loss', name: 'profit-loss', emoji: '💰', fullName: 'Profit loss' },
-    { id: 'video', name: 'video', emoji: '📺', fullName: 'Video' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' },
-    { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' }
+    { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' },
+    { id: 'video', name: 'video', emoji: '📺', fullName: 'Livestream' }
   ];
 
   // Fonction supprimée - seul admin peut créer des signaux
@@ -2547,10 +2547,10 @@ export default function TradingPlatformShell() {
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
               <button onClick={() => handleChannelChange('calendrier', 'calendrier')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Journal Perso</button>
-              <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Video</button>
               <button onClick={() => {
                 window.open('/trading-live.html', '_blank');
               }} className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">🎥 Formation Live</button>
+              <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
             </div>
           </div>
 
@@ -2747,21 +2747,6 @@ export default function TradingPlatformShell() {
                     </div>
                   </button>
                   
-                  <button
-                    onClick={() => {
-                      handleChannelChange('video', 'video');
-                      setMobileView('content');
-                    }}
-                    className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">📺</span>
-                      <div>
-                        <p className="font-medium text-white">Livestream</p>
-                        <p className="text-sm text-gray-400">Trading en direct</p>
-                      </div>
-                    </div>
-                  </button>
                   
                   <button
                     onClick={() => {
@@ -4273,6 +4258,41 @@ export default function TradingPlatformShell() {
                                     {message.text.replace(/\[SIGNAL_ID:[^\]]+\]/g, '')}
                                   </p>
                                 )}
+                                
+                                {/* Boutons WIN/LOSS/BE pour les messages de signal (lecture seule côté utilisateur) */}
+                                {message.text.includes('[SIGNAL_ID:') && (() => {
+                                  // Extraire l'ID du signal pour vérifier son statut
+                                  const signalIdMatch = message.text.match(/\[SIGNAL_ID:([^\]]+)\]/);
+                                  const signalId = signalIdMatch ? signalIdMatch[1] : '';
+                                  const currentSignal = signals.find(s => s.id === signalId);
+                                  const isClosed = currentSignal && ['WIN', 'LOSS', 'BE'].includes(currentSignal.status);
+                                  
+                                  return (
+                                    <div className="mt-3 pt-3 border-t border-gray-600">
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-xs text-gray-400">Résultat du signal:</span>
+                                        <div className={`px-3 py-1.5 rounded-lg text-xs font-medium ${
+                                          isClosed && currentSignal?.status === 'WIN'
+                                            ? 'bg-green-500 text-white border-2 border-green-400 shadow-lg' // Bouton WIN actif
+                                            : isClosed && currentSignal?.status === 'LOSS'
+                                            ? 'bg-red-500 text-white border-2 border-red-400 shadow-lg' // Bouton LOSS actif
+                                            : isClosed && currentSignal?.status === 'BE'
+                                            ? 'bg-blue-500 text-white border-2 border-blue-400 shadow-lg' // Bouton BE actif
+                                            : 'bg-gray-500/30 text-gray-400 border border-gray-500/30' // Bouton neutre
+                                        }`}>
+                                          {isClosed && currentSignal?.status === 'WIN' ? '🟢 WIN' :
+                                           isClosed && currentSignal?.status === 'LOSS' ? '🔴 LOSS' :
+                                           isClosed && currentSignal?.status === 'BE' ? '🔵 BE' : '⏳ EN ATTENTE'}
+                                        </div>
+                                      </div>
+                                      {isClosed && (
+                                        <div className="mt-2 text-xs text-gray-400">
+                                          Signal fermé avec {currentSignal?.pnl ? `P&L: ${currentSignal.pnl}` : 'aucun P&L'}
+                                        </div>
+                                      )}
+                                    </div>
+                                  );
+                                })()}
                                 
                                 {message.attachment_data && (
                                   <div className="mt-2">
