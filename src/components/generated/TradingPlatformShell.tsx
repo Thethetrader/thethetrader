@@ -113,7 +113,7 @@ export default function TradingPlatformShell() {
     try {
       const messages = await getMessages(channelId);
       // Limiter à 20 messages pour les salons de chat (plus récents en bas) et inverser l'ordre pour les autres
-      const limitedMessages = ['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(channelId) ? messages.slice(-20) : messages.reverse();
+      const limitedMessages = ['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video'].includes(channelId) ? messages.slice(-20) : messages.reverse();
       const formattedMessages = limitedMessages.map(msg => ({
         id: msg.id || '',
         text: msg.content,
@@ -462,7 +462,7 @@ export default function TradingPlatformShell() {
     
     // Scroll intelligent : bas pour les canaux de chat, pas de scroll pour signaux/calendrier/trading journal
     setTimeout(() => {
-      if (['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(channelId)) {
+      if (['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video'].includes(channelId)) {
         scrollToBottom();
       } else if (!['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux'].includes(channelId)) {
         scrollToTop();
@@ -1427,7 +1427,7 @@ export default function TradingPlatformShell() {
 
   const scrollToTop = () => {
     // Pour les salons de chat, scroller dans le conteneur de messages
-          if (messagesContainerRef.current && ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(selectedChannel.id)) {
+          if (messagesContainerRef.current && ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video'].includes(selectedChannel.id)) {
       messagesContainerRef.current.scrollTop = 0;
     } else {
       // Pour les autres vues, scroller la page
@@ -2544,6 +2544,7 @@ export default function TradingPlatformShell() {
             <div className="space-y-1">
 
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
+              <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>🎥 Video</button>
               <button onClick={() => handleChannelChange('calendrier', 'calendrier')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Journal Perso</button>
               <button onClick={() => handleChannelChange('livestream', 'livestream')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
@@ -2694,7 +2695,7 @@ export default function TradingPlatformShell() {
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">TRADING HUB</h3>
                 <div className="space-y-2">
-                  {channels.filter(c => ['', 'profit-loss'].includes(c.id)).map(channel => (
+                  {channels.filter(c => ['', 'profit-loss', 'video'].includes(c.id)).map(channel => (
                     <button
                       key={channel.id}
                       onClick={() => {
@@ -2950,7 +2951,7 @@ export default function TradingPlatformShell() {
                 ) : null}
                 
                 {/* Affichage des signaux */}
-                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', '', 'calendrier'].includes(selectedChannel.id) ? (
+                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', '', 'calendrier'].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
                     {/* Bouton Voir plus fixe en haut */}
                     <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
@@ -3769,7 +3770,7 @@ export default function TradingPlatformShell() {
               ) : null}
               
               {/* Affichage des signaux */}
-                              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', '', 'calendrier'].includes(selectedChannel.id) ? (
+                              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', '', 'calendrier'].includes(selectedChannel.id) ? (
                 <div className="space-y-4">
                   {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                     <div className="text-center py-8">
@@ -4040,6 +4041,44 @@ export default function TradingPlatformShell() {
                 </div>
               ) : selectedChannel.id === 'profit-loss' ? (
                 <ProfitLoss />
+              ) : selectedChannel.id === 'video' ? (
+                <div className="flex flex-col h-full bg-gray-900">
+                  {/* Interface Video avec Sidebar Visible */}
+                  <div className="flex-1 flex flex-col gap-4 p-2">
+                    {/* Zone de stream */}
+                    <div className="flex-1 bg-gray-900 rounded-lg overflow-hidden">
+                      <div className="h-full flex flex-col items-center justify-center p-4">
+                        <div className="text-center space-y-4 w-full">
+                          <h2 className="text-xl font-bold text-white">Livestream</h2>
+                          <p className="text-gray-400">Attache ta ceinture cousin</p>
+                          
+                          {/* Iframe 100ms */}
+                          <div className="w-full relative">
+                            <button
+                              onClick={() => {
+                                const iframe = document.querySelector('iframe[src*="100ms.live"]') as HTMLIFrameElement;
+                                if (iframe && iframe.requestFullscreen) {
+                                  iframe.requestFullscreen();
+                                }
+                              }}
+                              className="absolute top-4 right-4 z-10 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                            >
+                              📺 Plein écran
+                            </button>
+                            <iframe
+                              src="https://admintrading.app.100ms.live/meeting/kor-inbw-yiz"
+                              width="100%"
+                              height="600px"
+                              style={{ border: 'none', borderRadius: '8px' }}
+                              allow="camera; microphone; display-capture; fullscreen"
+                              allowFullScreen
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               ) : selectedChannel.id === 'livestream' ? (
                 <div className="flex flex-col h-full bg-gray-900">
                   {/* Interface Livestream avec Sidebar Visible */}
@@ -4140,14 +4179,14 @@ export default function TradingPlatformShell() {
                   {/* Messages de chat */}
                   <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
                     {/* Bouton Voir plus pour les salons de chat */}
-                    {['general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(selectedChannel.id) && (messages[selectedChannel.id] || []).length >= 20 && (
+                    {['general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video'].includes(selectedChannel.id) && (messages[selectedChannel.id] || []).length >= 20 && (
                       <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
                         <button
                           onClick={async () => {
                             const more = await getMessages(selectedChannel.id);
                             // Pour les canaux de chat, garder l'ordre chronologique (plus récents en bas)
                             // Pour les autres canaux, inverser l'ordre
-                            const orderedMessages = ['general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'].includes(selectedChannel.id) ? more : more.reverse();
+                            const orderedMessages = ['general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video'].includes(selectedChannel.id) ? more : more.reverse();
                             
                             const formatted = orderedMessages.map(msg => ({
                               id: msg.id || '',
