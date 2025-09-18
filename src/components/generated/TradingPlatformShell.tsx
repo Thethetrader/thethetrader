@@ -1621,6 +1621,7 @@ export default function TradingPlatformShell() {
 
     { id: 'general-chat', name: 'general-chat', emoji: '💬', fullName: 'Général chat' },
     { id: 'profit-loss', name: 'profit-loss', emoji: '💰', fullName: 'Profit loss' },
+    { id: 'video', name: 'video', emoji: '🎥', fullName: 'Livestream' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' }
   ];
@@ -2544,10 +2545,9 @@ export default function TradingPlatformShell() {
             <div className="space-y-1">
 
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
-              <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>🎥 Video</button>
               <button onClick={() => handleChannelChange('calendrier', 'calendrier')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Journal Perso</button>
-              <button onClick={() => handleChannelChange('livestream', 'livestream')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
+              <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>🎥 Livestream</button>
               <button onClick={() => {
                 window.open('/trading-live.html', '_blank');
               }} className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">🎥 Formation Live</button>
@@ -4049,7 +4049,7 @@ export default function TradingPlatformShell() {
                     <div className="flex-1 bg-gray-900 rounded-lg overflow-hidden">
                       <div className="h-full flex flex-col items-center justify-center p-4">
                         <div className="text-center space-y-4 w-full">
-                          <h2 className="text-xl font-bold text-white">Livestream</h2>
+                          <h1 className="text-3xl font-bold text-white mb-2">Livestream</h1>
                           <p className="text-gray-400">Attache ta ceinture cousin</p>
                           
                           {/* Iframe 100ms */}
@@ -4061,9 +4061,9 @@ export default function TradingPlatformShell() {
                                   iframe.requestFullscreen();
                                 }
                               }}
-                              className="absolute top-4 right-4 z-10 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                              className="absolute top-4 right-4 z-10 text-white text-4xl font-bold hover:text-gray-300 transition-colors"
                             >
-                              📺 Plein écran
+                              ⤢
                             </button>
                             <iframe
                               src="https://admintrading.app.100ms.live/meeting/kor-inbw-yiz"
