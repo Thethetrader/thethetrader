@@ -523,6 +523,68 @@ export const deletePersonalTrade = async (tradeId: string): Promise<boolean> => 
   }
 };
 
+// Écouter les trades personnels en temps réel
+export const listenToPersonalTrades = (
+  onTradesUpdate: (trades: PersonalTrade[]) => void,
+  onError?: (error: Error) => void
+): (() => void) => {
+  let unsubscribe: (() => void) | null = null;
+  
+  const startListening = async () => {
+    try {
+      console.log('👂 Démarrage écoute temps réel trades personnels...');
+      
+      // Synchroniser l'ID utilisateur
+      const userId = await syncUserId();
+      
+      const { ref, onValue } = await import('firebase/database');
+      const { database } = await import('./firebase-setup');
+      
+      const tradesRef = ref(database, `personal_trades/${userId}`);
+      
+      unsubscribe = onValue(tradesRef, (snapshot) => {
+        console.log('🔄 Mise à jour temps réel trades détectée');
+        
+        const trades: PersonalTrade[] = [];
+        if (snapshot.exists()) {
+          snapshot.forEach((childSnapshot) => {
+            const data = childSnapshot.val();
+            trades.push({
+              id: childSnapshot.key!,
+              ...data
+            });
+          });
+        }
+        
+        // Trier par date de création (plus récent en premier)
+        trades.sort((a, b) => new Date(b.created_at || b.timestamp).getTime() - new Date(a.created_at || a.timestamp).getTime());
+        
+        console.log(`✅ ${trades.length} trades synchronisés en temps réel`);
+        onTradesUpdate(trades);
+      }, (error) => {
+        console.error('❌ Erreur écoute temps réel trades:', error);
+        if (onError) onError(error);
+      });
+      
+      console.log('✅ Écoute temps réel trades démarrée');
+    } catch (error) {
+      console.error('❌ Erreur démarrage écoute temps réel:', error);
+      if (onError) onError(error as Error);
+    }
+  };
+  
+  startListening();
+  
+  // Retourner fonction de nettoyage
+  return () => {
+    if (unsubscribe) {
+      console.log('🛑 Arrêt écoute temps réel trades');
+      unsubscribe();
+      unsubscribe = null;
+    }
+  };
+};
+
 // S'abonner aux réactions d'un message
 export const subscribeToMessageReactions = (messageId: string, callback: (reactions: MessageReaction | null) => void) => {
   const messageReactionsRef = ref(database, `messageReactions/${messageId}`);

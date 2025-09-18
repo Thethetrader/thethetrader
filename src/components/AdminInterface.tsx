@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ProfitLoss from './ProfitLoss';
-import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, addPersonalTrade, getPersonalTrades, PersonalTrade, syncUserId } from '../utils/firebase-setup';
+import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, addPersonalTrade, getPersonalTrades, PersonalTrade, syncUserId, listenToPersonalTrades } from '../utils/firebase-setup';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, sendLocalNotification } from '../utils/push-notifications';
 import { ref, update, onValue, get } from 'firebase/database';
 import { getFunctions, httpsCallable } from 'firebase/functions';
@@ -478,31 +478,31 @@ export default function AdminInterface() {
     syncUser();
   }, []); // Une seule fois au démarrage
   
-  // Charger les trades depuis Firebase au démarrage et quand on change de channel
+  // Synchronisation temps réel des trades personnels
   useEffect(() => {
-    const loadTrades = async () => {
-      console.log('📊 Chargement trades personnels depuis Firebase...');
-      const trades = await getPersonalTrades();
-      setPersonalTrades(trades);
-      console.log(`✅ ${trades.length} trades chargés depuis Firebase`);
-    };
+    // Forcer l'initialisation de l'ID utilisateur
+    localStorage.setItem('user_id', 'user_unified');
+    console.log('🔄 ID utilisateur forcé dans Admin:', localStorage.getItem('user_id'));
     
-    loadTrades();
-  }, [selectedChannel.id]); // Recharger quand on change de channel
-
-  // Recharger automatiquement les trades quand on arrive sur "Journal Perso"
-  useEffect(() => {
-    if (selectedChannel.id === 'trading-journal') {
-      const loadTrades = async () => {
-        console.log('🔄 Rechargement automatique trades pour Journal Perso...');
-        const trades = await getPersonalTrades();
+    console.log('👂 Démarrage synchronisation temps réel trades [ADMIN]...');
+    
+    // Démarrer l'écoute temps réel
+    const unsubscribe = listenToPersonalTrades(
+      (trades) => {
+        console.log('🔄 Mise à jour trades reçue [ADMIN]:', trades.length);
         setPersonalTrades(trades);
-        console.log(`✅ ${trades.length} trades rechargés automatiquement`);
-      };
-      
-      loadTrades();
-    }
-  }, [selectedChannel.id]);
+      },
+      (error) => {
+        console.error('❌ Erreur synchronisation temps réel [ADMIN]:', error);
+      }
+    );
+    
+    // Nettoyer l'écoute au démontage du composant
+    return () => {
+      console.log('🛑 Arrêt synchronisation temps réel [ADMIN]');
+      unsubscribe();
+    };
+  }, []); // Une seule fois au démarrage
 
   // Debug: Afficher les trades au chargement
   useEffect(() => {
