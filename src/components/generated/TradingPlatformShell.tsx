@@ -2845,15 +2845,44 @@ export default function TradingPlatformShell() {
                       <p className="text-gray-400">Attache ta ceinture cousin</p>
                       
                       {/* Iframe 100ms */}
-                      <div className="w-full relative">
+                      <div className="w-full relative" id="video-container">
                         <button
                           onClick={() => {
-                            const iframe = document.querySelector('iframe[src*="100ms.live"]') as HTMLIFrameElement;
-                            if (iframe && iframe.requestFullscreen) {
-                              iframe.requestFullscreen();
+                            const container = document.getElementById('video-container');
+                            if (container) {
+                              // Vérifier si on est déjà en plein écran
+                              const isFullscreen = document.fullscreenElement || 
+                                                   (document as any).webkitFullscreenElement || 
+                                                   (document as any).mozFullScreenElement || 
+                                                   (document as any).msFullscreenElement;
+                              
+                              if (isFullscreen) {
+                                // Quitter le plein écran
+                                if (document.exitFullscreen) {
+                                  document.exitFullscreen();
+                                } else if ((document as any).webkitExitFullscreen) {
+                                  (document as any).webkitExitFullscreen();
+                                } else if ((document as any).mozCancelFullScreen) {
+                                  (document as any).mozCancelFullScreen();
+                                } else if ((document as any).msExitFullscreen) {
+                                  (document as any).msExitFullscreen();
+                                }
+                              } else {
+                                // Entrer en plein écran
+                                if (container.requestFullscreen) {
+                                  container.requestFullscreen();
+                                } else if ((container as any).webkitRequestFullscreen) {
+                                  (container as any).webkitRequestFullscreen();
+                                } else if ((container as any).mozRequestFullScreen) {
+                                  (container as any).mozRequestFullScreen();
+                                } else if ((container as any).msRequestFullscreen) {
+                                  (container as any).msRequestFullscreen();
+                                }
+                              }
                             }
                           }}
-                          className="absolute top-4 right-4 z-10 text-white text-4xl font-bold hover:text-gray-300 transition-colors"
+                          className="absolute top-4 right-4 z-10 text-white text-4xl font-bold hover:text-gray-300 transition-colors bg-black bg-opacity-50 px-2 py-1 rounded"
+                          title="Plein écran"
                         >
                           ⤢
                         </button>
