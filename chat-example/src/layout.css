@@ -1,0 +1,39 @@
+@layer base, theme;
+@import 'stream-chat-react/dist/css/v2/index.css' layer(base);
+
+@layer theme {
+  .str-chat__theme-custom {
+    --str-chat__primary-color: #3b82f6;
+    --str-chat__active-primary-color: #1d4ed8;
+    --str-chat__surface-color: #1f2937;
+    --str-chat__secondary-surface-color: #374151;
+    --str-chat__primary-surface-color: #1e40af;
+    --str-chat__primary-surface-color-low-emphasis: #3b82f6;
+    --str-chat__border-radius-circle: 8px;
+    --str-chat__text-high-emphasis: #f9fafb;
+    --str-chat__text-medium-emphasis: #d1d5db;
+    --str-chat__text-low-emphasis: #9ca3af;
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  margin: 0;
+}
+#root {
+  display: flex;
+}
+
+.str-chat__channel-list {
+  width: 30%;
+}
+.str-chat__channel {
+  width: 100%;
+}
+.str-chat__thread {
+  width: 45%;
+}

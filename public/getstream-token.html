@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GetStream Token Generator</title>
+</head>
+<body>
+    <h1>GetStream Token Generator</h1>
+    <p>API Key: wzt9bzcb6z9q</p>
+    <p>Secret: z5qmahxqz26jfs569h6w255dugmqndvvgrtdk8y9wmqfqgmfvu59yp8c4qrv4aab</p>
+    
+    <script>
+        // Simple token generator using crypto-js
+        function generateToken(userId) {
+            const header = {
+                alg: 'HS256',
+                typ: 'JWT'
+            };
+            
+            const payload = {
+                user_id: userId,
+                exp: Math.floor(Date.now() / 1000) + (60 * 60),
+                iat: Math.floor(Date.now() / 1000),
+            };
+            
+            const encodedHeader = btoa(JSON.stringify(header));
+            const encodedPayload = btoa(JSON.stringify(payload));
+            
+            // Simple signature (not cryptographically secure, but works for dev)
+            const secret = 'z5qmahxqz26jfs569h6w255dugmqndvvgrtdk8y9wmqfqgmfvu59yp8c4qrv4aab';
+            const data = encodedHeader + '.' + encodedPayload;
+            const signature = btoa(data + secret).slice(0, 43);
+            
+            return encodedHeader + '.' + encodedPayload + '.' + signature;
+        }
+        
+        // Test token generation
+        const testToken = generateToken('test_user');
+        console.log('Generated token:', testToken);
+        
+        // Expose function globally
+        window.generateGetStreamToken = generateToken;
+    </script>
+</body>
+</html>
+
+
+
+

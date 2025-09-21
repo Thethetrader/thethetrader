@@ -1,0 +1,57 @@
+@layer base, theme;
+@import 'stream-chat-react/dist/css/v2/index.css' layer(base);
+
+@layer theme {
+  .str-chat__theme-trading {
+    --str-chat__primary-color: #3b82f6;
+    --str-chat__active-primary-color: #1d4ed8;
+    --str-chat__surface-color: #1f2937;
+    --str-chat__secondary-surface-color: #374151;
+    --str-chat__primary-surface-color: #1e40af;
+    --str-chat__primary-surface-color-low-emphasis: #3b82f6;
+    --str-chat__border-radius-circle: 8px;
+    --str-chat__text-high-emphasis: #f9fafb;
+    --str-chat__text-medium-emphasis: #d1d5db;
+    --str-chat__text-low-emphasis: #9ca3af;
+    --str-chat__border-color: #4b5563;
+    --str-chat__message-bubble-color: #374151;
+    --str-chat__message-bubble-color-me: #3b82f6;
+    --str-chat__message-bubble-text-color: #f9fafb;
+    --str-chat__message-bubble-text-color-me: #ffffff;
+  }
+}
+
+/* CSS GetStream pour ton app principal */
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  margin: 0;
+}
+
+.str-chat__channel-list {
+  width: 30%;
+}
+.str-chat__channel {
+  width: 100%;
+}
+.str-chat__thread {
+  width: 45%;
+}
+
+/* Styles pour intégrer dans ton app existant */
+.getstream-chat-container {
+  height: 100%;
+  display: flex;
+}
+
+.getstream-chat-container .str-chat__channel-list {
+  width: 300px;
+  min-width: 300px;
+}
+
+.getstream-chat-container .str-chat__channel {
+  flex: 1;
+}
