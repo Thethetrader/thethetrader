@@ -7,6 +7,7 @@ import UserChat from './components/UserChat';
 import ProfitLoss from './components/ProfitLoss';
 import LivestreamPage from './components/LivestreamPage';
 import UserLivestreamPage from './components/UserLivestreamPage';
+import { supabase } from './lib/supabase';
 
 
 import { useNotifications } from './hooks/use-notifications';
@@ -704,28 +705,39 @@ const App = () => {
 
   const handleLogin = async () => {
     if (email && password) {
-      // Vérifier si ce sont les identifiants admin
-      if (email === 'admin' && password === 'admin123') {
-        // Rediriger vers l'admin
-        localStorage.setItem('adminAuthenticated', 'true');
-        setCurrentPage('admin');
-      setShowAuthModal(false);
-        return;
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: email,
+          password: password,
+        });
+        if (error) {
+          console.error('Erreur de connexion:', error.message);
+          alert('Identifiants incorrects. Veuillez vérifier votre email et mot de passe.');
+          return;
+        }
+        if (data.user) {
+          console.log('Connexion réussie:', data.user.email);
+          setUser({ id: data.user.id, email: data.user.email || email });
+          setShowAuthModal(false);
+        }
+      } catch (error) {
+        console.error('Erreur de connexion:', error);
+        alert('Erreur de connexion. Veuillez réessayer.');
       }
-      
-      // Authentification simple (pas de serveur)
-      console.log('Connexion utilisateur:', email);
-      setUser({ id: 'user_' + Date.now(), email: email });
-      setShowAuthModal(false);
     }
   };
 
   const handleLogout = async () => {
-    // Déconnexion simple
-    setUser(null);
-    setEmail('');
-    setPassword('');
-    setCurrentPage('home');
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+      setEmail('');
+      setPassword('');
+      setCurrentPage('home');
+      console.log('Déconnexion réussie');
+    } catch (error) {
+      console.error('Erreur de déconnexion:', error);
+    }
   };
 
   // Function to render legal pages

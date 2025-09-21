@@ -9,13 +9,11 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    // Identifiants spéciaux admin
-    if (username === 'admin' && password === 'admin123') {
-      localStorage.setItem('adminAuthenticated', 'true');
-      onLogin();
-    } else {
-      console.warn('Identifiants incorrects');
-    }
+    // Authentification admin - utilise Supabase
+    console.log('Tentative de connexion admin:', username);
+    // TODO: Implémenter l'authentification Supabase pour admin
+    console.warn('Authentification admin non implémentée');
+    alert('Authentification admin non implémentée');
   };
 
   return (
