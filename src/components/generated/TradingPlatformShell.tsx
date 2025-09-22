@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, Signal, addPersonalTrade, getPersonalTrades, PersonalTrade, syncUserId, listenToPersonalTrades } from '../../utils/firebase-setup';
 import ProfitLoss from '../ProfitLoss';
+import ChatZone from '../ChatZone';
 import { createClient } from '@supabase/supabase-js';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
 
@@ -1568,6 +1569,7 @@ export default function TradingPlatformShell() {
     { id: 'letsgooo-model', name: 'letsgooo-model', emoji: '🚀', fullName: 'Letsgooo model' },
 
     { id: 'general-chat', name: 'general-chat', emoji: '💬', fullName: 'Général chat' },
+    { id: 'chatzone', name: 'chatzone', emoji: '💬', fullName: 'Chat Zone' },
     { id: 'profit-loss', name: 'profit-loss', emoji: '💰', fullName: 'Profit loss' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' },
@@ -2700,7 +2702,7 @@ export default function TradingPlatformShell() {
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">TRADING HUB</h3>
                 <div className="space-y-2">
-                  {channels.filter(c => ['', 'profit-loss', 'video'].includes(c.id)).map(channel => (
+                  {channels.filter(c => ['', 'profit-loss', 'video', 'chatzone'].includes(c.id)).map(channel => (
                     <button
                       key={channel.id}
                       onClick={() => {
@@ -2804,7 +2806,7 @@ export default function TradingPlatformShell() {
               mobileView === 'content' ? 'translate-x-0' : 'translate-x-full'
             }`}
           >
-            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'video') ? (
+            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'video' || selectedChannel.id === 'chatzone') ? (
               <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '0px' }}>
                 {/* Header avec bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
                 {selectedChannel.id === 'trading-journal' && (
@@ -2837,6 +2839,13 @@ export default function TradingPlatformShell() {
                 {/* Affichage du calendrier */}
                 {(selectedChannel.id === 'calendrier' || selectedChannel.id === 'trading-journal') && getTradingCalendar()}
                 
+                {/* Interface ChatZone pour mobile */}
+                {selectedChannel.id === 'chatzone' && (
+                  <div className="flex flex-col h-full w-full">
+                    <ChatZone />
+                  </div>
+                )}
+
                 {/* Interface Livestream pour mobile */}
                 {selectedChannel.id === 'video' && (
                   <div className="flex flex-col h-full bg-gray-900">
@@ -4198,6 +4207,10 @@ export default function TradingPlatformShell() {
                 </div>
               ) : selectedChannel.id === 'profit-loss' ? (
                 <ProfitLoss />
+              ) : selectedChannel.id === 'chatzone' ? (
+                <div className="flex flex-col h-full w-full">
+                  <ChatZone />
+                </div>
               ) : selectedChannel.id === 'video' ? (
                 <div className="flex flex-col h-full bg-gray-900">
                   {/* Interface Video avec Sidebar Visible */}

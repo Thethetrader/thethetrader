@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ProfitLoss from './ProfitLoss';
+import ChatZone from './ChatZone';
 import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, addPersonalTrade, getPersonalTrades, PersonalTrade, syncUserId, listenToPersonalTrades } from '../utils/firebase-setup';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, sendLocalNotification } from '../utils/push-notifications';
 import { ref, update, onValue, get } from 'firebase/database';
@@ -1656,6 +1657,7 @@ export default function AdminInterface() {
     { id: 'general-chat', name: 'general-chat', emoji: '💬', fullName: 'Général chat' },
     { id: 'profit-loss', name: 'profit-loss', emoji: '💰', fullName: 'Profit loss' },
     { id: 'chat', name: 'chat', emoji: '💬', fullName: 'Chat' },
+    { id: 'chatzone', name: 'chatzone', emoji: '💬', fullName: 'Chat Zone' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' },
     { id: 'user-management', name: 'user-management', emoji: '👥', fullName: 'Gestion Utilisateurs' }
@@ -3167,6 +3169,7 @@ export default function AdminInterface() {
 
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💰 Profit-loss</button>
               <button onClick={() => handleChannelChange('chat', 'chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 Chat</button>
+              <button onClick={() => handleChannelChange('chatzone', 'chatzone')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'chatzone' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 Chat Zone</button>
               <button onClick={() => {
                 // Réinitialiser selectedDate si on quitte le Trading Journal
                 if (selectedChannel.id === 'trading-journal') {
@@ -3323,7 +3326,7 @@ export default function AdminInterface() {
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">TRADING HUB</h3>
                 <div className="space-y-2">
-                  {channels.filter(c => ['profit-loss', 'chat'].includes(c.id)).map(channel => (
+                  {channels.filter(c => ['profit-loss', 'chat', 'chatzone'].includes(c.id)).map(channel => (
                     <button
                       key={channel.id}
                       onClick={() => {
@@ -3867,6 +3870,10 @@ export default function AdminInterface() {
                 ) : selectedChannel.id === 'chat' ? (
                   <div className="flex flex-col h-full w-full">
                     <ProfitLoss channelId="chat" currentUserId="admin" />
+                  </div>
+                ) : selectedChannel.id === 'chatzone' ? (
+                  <div className="flex flex-col h-full w-full">
+                    <ChatZone />
                   </div>
                 ) : ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
                   <div className="flex flex-col h-full">
