@@ -3707,7 +3707,7 @@ export default function AdminInterface() {
 
 
                 {/* Affichage des signaux */}
-                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', ''].includes(selectedChannel.id) ? (
+                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'chatzone', ''].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
                     {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                       <div></div>
@@ -4290,6 +4290,10 @@ export default function AdminInterface() {
                       </div>
                     </div>
                   </div>
+                ) : selectedChannel.id === 'chatzone' ? (
+                  <div className="flex flex-col h-full w-full">
+                    <ChatZone />
+                  </div>
                 ) : (
                   <div className="text-center py-8">
                     <div className="text-gray-400 text-sm">Bienvenue sur Admin</div>
@@ -4309,7 +4313,7 @@ export default function AdminInterface() {
             <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '80px' }}>
 
               {/* Affichage des signaux */}
-              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', ''].includes(selectedChannel.id) ? (
+              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'chatzone', ''].includes(selectedChannel.id) ? (
                 <div className="space-y-4">
                   {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                     <div></div>
@@ -4842,6 +4846,10 @@ export default function AdminInterface() {
                       </button>
                     </div>
                   </div>
+                </div>
+              ) : selectedChannel.id === 'chatzone' ? (
+                <div className="flex flex-col h-full w-full">
+                  <ChatZone />
                 </div>
               ) : (
                 <div className="text-center py-8">

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import supabaseClient, { getCurrentUser } from '../lib/supabase';
 import { Send, MoreVertical, Smile, Paperclip, Mic, Reply, Copy, Edit3, Trash2, Forward, Star, Info, Pin, Heart } from 'lucide-react';
 
 const ChatZone = () => {
@@ -7,113 +8,97 @@ const ChatZone = () => {
   const [replyingTo, setReplyingTo] = useState(null);
   const [contextMenu, setContextMenu] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(null);
-  const [unreadCount, setUnreadCount] = useState(4); // Messages non lus au départ
-  const [isActive, setIsActive] = useState(false); // Si le salon est actif
+  const [unreadCount, setUnreadCount] = useState(0); // Messages non lus au départ
+  const [isActive, setIsActive] = useState(true); // Salon actif par défaut
+  
   const [lastReadMessageIndex, setLastReadMessageIndex] = useState(1); // Index du dernier message lu
   const [touchTimeout, setTouchTimeout] = useState(null); // Pour gérer le press long
   const [longPressActive, setLongPressActive] = useState(null); // Pour l'effet visuel
   const contextMenuRef = useRef(null);
+  const messagesEndRef = useRef(null);
   
-  // Profils utilisateurs simulés (données qui viendraient de Supabase)
-  const userProfiles = {
-    'user_001': {
-      id: 'user_001',
-      name: 'Marie Dubois',
-      email: 'marie.dubois@email.com',
-      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b9a78ef4?w=150&h=150&fit=crop&crop=face',
-      initials: 'MD'
-    },
-    'user_002': {
-      id: 'user_002',
-      name: 'Thomas Martin',
-      email: 'thomas.martin@email.com',
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-      initials: 'TM'
-    },
-    'user_003': {
-      id: 'user_003',
-      name: 'Sophie Lambert',
-      email: 'sophie.lambert@email.com',
-      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
-      initials: 'SL'
-    },
-    'admin': {
-      id: 'admin',
-      name: 'Support Client',
-      email: 'support@entreprise.com',
-      avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face',
-      initials: 'S'
+  // Cache des profils utilisateurs réels depuis Supabase
+  const [userProfiles, setUserProfiles] = useState({});
+  
+  // Fonction pour obtenir ou créer un profil utilisateur
+  const getUserProfile = async (userId, userName) => {
+    if (userProfiles[userId]) {
+      return userProfiles[userId];
     }
+    
+    // Essayer de récupérer les vraies données utilisateur depuis Supabase
+    let userData = null;
+    try {
+      const { data, error } = await supabaseClient
+        .from('profiles')
+        .select('avatar_url, full_name, email')
+        .eq('id', userId)
+        .single();
+      
+      if (!error && data) {
+        userData = data;
+        console.log('✅ Profil utilisateur récupéré:', data);
+      }
+    } catch (error) {
+      console.log('⚠️ Erreur récupération profil:', error);
+    }
+    
+    // Créer un profil avec les vraies données ou fallback
+    const profile = {
+      id: userId,
+      name: userData?.full_name || userName || 'Utilisateur',
+      email: userData?.email || '',
+      avatar: userData?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName || 'U')}&background=random`,
+      initials: (userData?.full_name || userName) ? 
+        (userData?.full_name || userName).split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'
+    };
+    
+    // Mettre à jour le cache
+    setUserProfiles(prev => ({
+      ...prev,
+      [userId]: profile
+    }));
+    
+    return profile;
   };
 
-  const [messages, setMessages] = useState([
-    { 
-      id: 1, 
-      text: "Bonjour, j'ai besoin d'aide avec ma commande", 
-      sender: "user_001", 
-      time: "14:30",
-      status: "read",
-      reactions: {},
-      pinned: false,
-      edited: false
-    },
-    { 
-      id: 2, 
-      text: "Bonjour Marie ! Je serais ravi de vous aider. Quel est le numéro de votre commande ?", 
-      sender: "admin", 
-      time: "14:32",
-      status: "read",
-      reactions: {},
-      pinned: false,
-      edited: false
-    },
-    { 
-      id: 3, 
-      text: "C'est la commande #12345", 
-      sender: "user_001", 
-      time: "14:33",
-      status: "read",
-      reactions: { "👍": ["admin"] },
-      pinned: false,
-      edited: false
-    },
-    { 
-      id: 4, 
-      text: "Bonjour, j'ai aussi un problème avec ma facture", 
-      sender: "user_002", 
-      time: "14:35",
-      status: "read",
-      reactions: {},
-      pinned: false,
-      edited: false
-    },
-    { 
-      id: 5, 
-      text: "Parfait Marie, je vais vérifier votre commande. Thomas, je m'occupe de vous après.", 
-      sender: "admin", 
-      time: "14:36",
-      status: "delivered",
-      reactions: {},
-      pinned: true,
-      edited: false
-    },
-    { 
-      id: 6, 
-      text: "Merci beaucoup pour votre réactivité !", 
-      sender: "user_003", 
-      time: "14:37",
-      status: "sent",
-      reactions: { "❤️": ["admin"] },
-      pinned: false,
-      edited: false
-    }
-  ]);
+  const [messages, setMessages] = useState([]);
 
   const emojis = ['❤️', '😂', '😮', '😢', '😡', '👍', '👎', '👏', '🙏', '🔥'];
 
-  // Utilisateur connecté actuellement (l'admin dans ce cas)
-  const currentUserId = 'admin';
-  const currentUser = userProfiles[currentUserId];
+  // Utilisateur connecté Supabase
+  const [currentUserId, setCurrentUserId] = useState(null);
+  const [currentUserName, setCurrentUserName] = useState('Utilisateur');
+  const currentUser = userProfiles['admin'];
+
+  // Channel cible
+  const CHANNEL_ID = 'chatzone';
+
+  // Mapper un auteur vers son vrai ID
+  const mapAuthorToProfileId = (authorId) => {
+    return authorId || 'unknown';
+  };
+
+  // Déterminer si c'est l'utilisateur actuel
+  const isCurrentUser = (senderId) => {
+    console.log('🔍 isCurrentUser check:', { senderId, currentUserId });
+    
+    // Si c'est l'admin (local ou Supabase), toujours à droite
+    if (senderId === 'admin' || senderId === 'admin-local') {
+      console.log('✅ Admin détecté, message à droite');
+      return true;
+    }
+    
+    // Si c'est l'utilisateur Supabase connecté, à droite
+    if (senderId === currentUserId && currentUserId) {
+      console.log('✅ Utilisateur actuel détecté, message à droite');
+      return true;
+    }
+    
+    // Sinon, à gauche
+    console.log('⬅️ Message à gauche');
+    return false;
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -129,15 +114,161 @@ const ChatZone = () => {
     };
   }, []);
 
+  // Charger l'utilisateur courant
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const user = await getCurrentUser();
+        if (mounted && user) {
+          setCurrentUserId(user.id);
+          setCurrentUserName(user.user_metadata?.name || user.email || 'Utilisateur');
+          console.log('✅ Utilisateur connecté:', user.id, user.email);
+        } else {
+          // Vérifier si on est en mode admin (localStorage)
+          const isAdmin = localStorage.getItem('adminAuthenticated') === 'true';
+          if (isAdmin) {
+            setCurrentUserId('admin-local');
+            setCurrentUserName('Admin');
+            console.log('✅ Mode admin détecté');
+          } else {
+            console.log('❌ Aucun utilisateur connecté');
+          }
+        }
+      } catch (error) {
+        // Vérifier si on est en mode admin (localStorage)
+        const isAdmin = localStorage.getItem('adminAuthenticated') === 'true';
+        if (isAdmin) {
+          setCurrentUserId('admin-local');
+          setCurrentUserName('Admin');
+          console.log('✅ Mode admin détecté (fallback)');
+        } else {
+          console.log('❌ Erreur connexion utilisateur:', error);
+        }
+      }
+    })();
+    return () => { mounted = false };
+  }, []);
+
+  // Charger les messages Supabase + abonnement temps réel
+  useEffect(() => {
+    let subscription;
+    const supabase = supabaseClient;
+
+    const loadMessages = async () => {
+      // Attendre que l'utilisateur soit chargé avant d'afficher les messages
+      if (!currentUserId) {
+        console.log('⏳ Attente chargement utilisateur...');
+        return;
+      }
+
+      console.log('🔄 Chargement messages pour channel:', CHANNEL_ID);
+      const { data, error } = await supabase
+        .from('chat_messages')
+        .select('id, content, author_id, author_name, created_at, is_edited')
+        .eq('channel_id', CHANNEL_ID)
+        .order('created_at', { ascending: true })
+        .limit(200);
+      console.log('📨 Messages chargés:', data, 'Erreur:', error);
+      if (!error && Array.isArray(data)) {
+        const mapped = data.map((m) => {
+          const senderId = m.author_id === currentUserId ? currentUserId : mapAuthorToProfileId(m.author_id);
+          // Créer le profil utilisateur pour ce message
+          getUserProfile(senderId, m.author_name);
+          
+          return {
+            id: m.id,
+            text: m.content,
+            sender: senderId,
+            senderName: m.author_name,
+            time: new Date(m.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+            status: 'read',
+            reactions: {},
+            pinned: false,
+            edited: !!m.is_edited
+          };
+        });
+        setMessages(mapped);
+        setLastReadMessageIndex(mapped.length - 1);
+        setUnreadCount(0);
+      }
+    };
+
+    loadMessages();
+
+    // Abonnement realtime INSERT
+    subscription = supabase
+      .channel(`chatzone-${Date.now()}`)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: `channel_id=eq.${CHANNEL_ID}` },
+        (payload) => {
+          console.log('🔄 Nouveau message reçu:', payload);
+          const m = payload.new;
+          setMessages((prev) => {
+            // Éviter les doublons
+            if (prev.find(msg => msg.id === m.id)) {
+              console.log('⚠️ Message déjà présent, ignoré');
+              return prev;
+            }
+            
+            const senderId = m.author_id === currentUserId ? currentUserId : mapAuthorToProfileId(m.author_id);
+            // Créer le profil utilisateur pour ce nouveau message
+            getUserProfile(senderId, m.author_name);
+            
+            const newMessage = {
+              id: m.id,
+              text: m.content,
+              sender: senderId,
+              senderName: m.author_name,
+              time: new Date(m.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+              status: 'sent',
+              reactions: {},
+              pinned: false,
+              edited: !!m.is_edited
+            };
+            
+            console.log('✅ Nouveau message ajouté:', newMessage);
+            return [...prev, newMessage];
+          });
+          
+            if (!isActive) {
+              setUnreadCount((u) => {
+                const newCount = u + 1;
+                // Notifier le parent du changement
+                if (onUnreadCountChange) {
+                  onUnreadCountChange('chatzone', newCount);
+                }
+                return newCount;
+              });
+            }
+        }
+      )
+      .subscribe((status) => {
+        console.log('📡 Statut abonnement:', status);
+      });
+
+    return () => {
+      if (subscription) supabase.removeChannel(subscription);
+    };
+  }, [currentUserId, isActive]); // Recharger quand currentUserId change
+
+  // Scroll automatique vers le bas
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Scroll automatique quand les messages changent
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   // Simuler l'ouverture du salon après 2 secondes
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsActive(true);
-      setLastReadMessageIndex(messages.length - 1); // Marquer tous les messages actuels comme lus
-      setUnreadCount(0); // Marquer tous les messages comme lus
-    }, 2000);
-
-    return () => clearTimeout(timer);
+    setLastReadMessageIndex(messages.length - 1);
+    setUnreadCount(0);
   }, [messages.length]);
 
   // Détecter l'activité utilisateur pour marquer comme lu
@@ -165,7 +296,7 @@ const ChatZone = () => {
     }
   }, [unreadCount, messages.length]);
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (message.trim()) {
       if (editingMessage) {
         // Modifier le message
@@ -180,7 +311,7 @@ const ChatZone = () => {
         const newMessage = {
           id: Date.now(),
           text: message,
-          sender: currentUserId,
+          sender: 'admin', // Force toujours admin
           time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
           status: "sent",
           reactions: {},
@@ -189,36 +320,31 @@ const ChatZone = () => {
           replyTo: replyingTo
         };
 
-        setMessages(prev => [...prev, newMessage]);
-        setReplyingTo(null);
-        
-        // Simuler une réponse automatique d'un autre utilisateur après 3 secondes
-        setTimeout(() => {
-          const responses = [
-            { sender: 'user_001', text: "Merci pour votre aide !" },
-            { sender: 'user_002', text: "C'est parfait, merci beaucoup" },
-            { sender: 'user_003', text: "Excellent service client 👍" }
-          ];
-          const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+        // Envoi Supabase pour tous les utilisateurs
+        try {
+          const { data, error } = await supabaseClient.from('chat_messages').insert({
+            content: message,
+            author_id: currentUserId || '00000000-0000-0000-0000-000000000000', // UUID par défaut
+            author_name: currentUserName || 'Utilisateur',
+            channel_id: CHANNEL_ID,
+            message_type: 'text'
+          }).select();
           
-          const autoMessage = {
-            id: Date.now() + 1,
-            text: randomResponse.text,
-            sender: randomResponse.sender,
-            time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-            status: "sent",
-            reactions: {},
-            pinned: false,
-            edited: false
-          };
-          
-          setMessages(prev => [...prev, autoMessage]);
-          
-          // Incrémenter le compteur de messages non lus si le salon n'est pas actif
-          if (!isActive) {
-            setUnreadCount(prev => prev + 1);
+          if (error) {
+            console.log('❌ Erreur envoi message:', error);
+            // En cas d'erreur, afficher le message localement
+            setMessages(prev => [...prev, newMessage]);
+          } else {
+            console.log('✅ Message envoyé à Supabase');
+            // Le message sera ajouté via l'abonnement temps réel
           }
-        }, 3000);
+        } catch (error) {
+          console.log('❌ Erreur envoi message:', error);
+          // En cas d'erreur, afficher le message localement
+          setMessages(prev => [...prev, newMessage]);
+        }
+        
+        setReplyingTo(null);
       }
       setMessage('');
     }
@@ -403,6 +529,13 @@ const ChatZone = () => {
           </div>
         </div>
         <div className="flex items-center space-x-4">
+          <button 
+            onClick={() => window.location.reload()}
+            className="bg-green-700 hover:bg-green-800 px-3 py-1 rounded text-sm transition-colors"
+            title="Actualiser les messages"
+          >
+            🔄
+          </button>
           <MoreVertical size={20} className="cursor-pointer hover:bg-green-700 rounded p-1 transition-colors" />
         </div>
       </div>
@@ -411,7 +544,7 @@ const ChatZone = () => {
       <div className="flex-1 overflow-y-auto p-8 bg-gradient-to-b from-green-50 to-gray-50">
         <div className="space-y-4 px-4">
           {groupedMessages.map((msg) => {
-            const isCurrentUser = msg.sender === currentUserId;
+            const isCurrentUserMsg = isCurrentUser(msg.sender);
             const userProfile = userProfiles[msg.sender];
             
             return (
@@ -426,12 +559,12 @@ const ChatZone = () => {
                   </div>
                 )}
                 
-                <div className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`flex items-start space-x-3 max-w-2xl ${
-                    isCurrentUser ? 'flex-row-reverse space-x-reverse' : ''
+                <div className={`flex ${isCurrentUserMsg ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`flex items-start max-w-2xl ${
+                    isCurrentUserMsg ? 'flex-row-reverse' : 'space-x-3'
                   }`}>
-                    {/* Avatar seulement pour les autres utilisateurs */}
-                    {msg.showProfile && !isCurrentUser && (
+                    {/* Avatar seulement pour les autres utilisateurs et espacement conditionnel */}
+                    {msg.showProfile && !isCurrentUserMsg && (
                       <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-400 flex-shrink-0">
                         <img 
                           src={userProfile?.avatar} 
@@ -447,11 +580,16 @@ const ChatZone = () => {
                         </div>
                       </div>
                     )}
+                    
+                    {/* Espacement pour les messages sans avatar des autres utilisateurs */}
+                    {!msg.showProfile && !isCurrentUserMsg && (
+                      <div className="w-8 h-8 flex-shrink-0"></div>
+                    )}
 
                     {/* Message Bubble */}
                     <div className="relative group">
                       {/* Nom de l'utilisateur */}
-                      {msg.showProfile && !isCurrentUser && (
+                      {msg.showProfile && !isCurrentUserMsg && (
                         <p className="text-xs text-gray-600 mb-1 ml-2 font-medium">
                           {userProfile?.name}
                         </p>
@@ -459,7 +597,7 @@ const ChatZone = () => {
 
                       <div
                         className={`px-4 py-3 rounded-2xl shadow-sm relative cursor-pointer transition-all hover:shadow-md select-none ${
-                          isCurrentUser
+                          isCurrentUserMsg
                             ? 'bg-green-500 text-white rounded-br-md'
                             : 'bg-white text-gray-800 border border-gray-200 rounded-bl-md'
                         } ${msg.pinned ? 'ring-2 ring-yellow-300' : ''} ${
@@ -482,7 +620,7 @@ const ChatZone = () => {
                         {/* Reply indicator */}
                         {msg.replyTo && (
                           <div className={`mb-2 p-2 rounded border-l-4 ${
-                            isCurrentUser 
+                            isCurrentUserMsg 
                               ? 'bg-green-600 border-green-300 text-green-100'
                               : 'bg-gray-100 border-gray-400 text-gray-600'
                           }`}>
@@ -503,19 +641,19 @@ const ChatZone = () => {
                           <div className="flex items-center space-x-1">
                             {msg.edited && (
                               <span className={`text-xs opacity-75 ${
-                                isCurrentUser ? 'text-green-100' : 'text-gray-500'
+                                isCurrentUserMsg ? 'text-green-100' : 'text-gray-500'
                               }`}>
                                 modifié
                               </span>
                             )}
                             <p className={`text-xs ${
-                              isCurrentUser ? 'text-green-100' : 'text-gray-500'
+                              isCurrentUserMsg ? 'text-green-100' : 'text-gray-500'
                             }`}>
                               {msg.time}
                             </p>
                           </div>
                           
-                          {isCurrentUser && (
+                          {isCurrentUserMsg && (
                             <span className={`text-xs ${getStatusColor(msg.status)}`}>
                               {getStatusIcon(msg.status)}
                             </span>
@@ -527,7 +665,7 @@ const ChatZone = () => {
                         {/* Reactions sous la bulle */}
                         {Object.keys(msg.reactions).length > 0 && (
                           <div className={`flex flex-wrap gap-1 mt-1 ${
-                            isCurrentUser ? 'justify-end' : 'justify-start'
+                            isCurrentUserMsg ? 'justify-end' : 'justify-start'
                           }`}>
                             {Object.entries(msg.reactions).map(([emoji, users]) => (
                               <span
@@ -547,7 +685,7 @@ const ChatZone = () => {
 
                       {/* Quick actions on hover */}
                       <div className={`absolute top-0 opacity-0 group-hover:opacity-100 transition-opacity ${
-                        isCurrentUser ? '-left-16' : '-right-16'
+                        isCurrentUserMsg ? '-left-16' : '-right-16'
                       }`}>
                         <div className="flex space-x-1">
                           <button
@@ -576,6 +714,8 @@ const ChatZone = () => {
               </div>
             );
           })}
+          {/* Element invisible pour le scroll automatique */}
+          <div ref={messagesEndRef} />
         </div>
       </div>
 
@@ -610,7 +750,7 @@ const ChatZone = () => {
           <div className="flex-1 relative">
             <textarea
               placeholder={editingMessage ? "Modifier le message..." : replyingTo ? `Répondre à ${userProfiles[replyingTo.sender]?.name}...` : "Tapez votre message..."}
-              className="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none"
+              className="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none text-black"
               rows="1"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -656,7 +796,7 @@ const ChatZone = () => {
         >
           <button
             onClick={() => handleMenuAction('reply', contextMenu.messageId)}
-            className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
+            className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2 text-black"
           >
             <Reply size={16} />
             <span>Répondre</span>
@@ -665,7 +805,7 @@ const ChatZone = () => {
           {messages.find(m => m.id === contextMenu.messageId)?.sender === currentUserId && (
             <button
               onClick={() => handleMenuAction('edit', contextMenu.messageId)}
-              className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
+              className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2 text-black"
             >
               <Edit3 size={16} />
               <span>Modifier</span>
@@ -674,7 +814,7 @@ const ChatZone = () => {
           
           <button
             onClick={() => handleMenuAction('copy', contextMenu.messageId)}
-            className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
+            className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2 text-black"
           >
             <Copy size={16} />
             <span>Copier</span>
@@ -682,7 +822,7 @@ const ChatZone = () => {
           
           <button
             onClick={() => handleMenuAction('forward', contextMenu.messageId)}
-            className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
+            className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2 text-black"
           >
             <Forward size={16} />
             <span>Transférer</span>
@@ -690,7 +830,7 @@ const ChatZone = () => {
           
           <button
             onClick={() => handleMenuAction('star', contextMenu.messageId)}
-            className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
+            className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2 text-black"
           >
             <Star size={16} />
             <span>Ajouter aux favoris</span>
@@ -698,7 +838,7 @@ const ChatZone = () => {
           
           <button
             onClick={() => handleMenuAction('pin', contextMenu.messageId)}
-            className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
+            className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2 text-black"
           >
             <Pin size={16} />
             <span>{messages.find(m => m.id === contextMenu.messageId)?.pinned ? 'Désépingler' : 'Épingler'}</span>
@@ -706,7 +846,7 @@ const ChatZone = () => {
           
           <button
             onClick={() => handleMenuAction('info', contextMenu.messageId)}
-            className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
+            className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2 text-black"
           >
             <Info size={16} />
             <span>Info message</span>

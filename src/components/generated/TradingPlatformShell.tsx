@@ -15,11 +15,21 @@ const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default function TradingPlatformShell() {
+  console.log('🚀 TradingPlatformShell chargé !');
+  
   // Hook pour les stats en temps réel synchronisées avec l'admin
   const { stats, allSignalsForStats: realTimeSignals, getWeeklyBreakdown: getCalendarWeeklyBreakdown, getTodaySignals: getCalendarTodaySignals, getThisMonthSignals: getCalendarThisMonthSignals } = useStatsSync();
   
   // Hook pour la synchronisation du calendrier
   const { calendarStats, getMonthlyStats: getCalendarMonthlyStats, getWeeklyBreakdown: getCalendarWeeklyBreakdownFromHook } = useCalendarSync();
+  
+  // Définition des channels
+  const channels = [
+    { id: 'general-chat-2', name: 'general-chat-2', emoji: '📈', fullName: 'Indices' },
+    { id: 'general-chat-3', name: 'general-chat-3', emoji: '🪙', fullName: 'Crypto' },
+    { id: 'general-chat-4', name: 'general-chat-4', emoji: '💱', fullName: 'Forex' },
+    { id: 'chatzone', name: 'chatzone', emoji: '💬', fullName: 'Chat Zone' }
+  ];
   
   // Charger les réactions depuis localStorage au montage du composant
   useEffect(() => {
@@ -73,6 +83,9 @@ export default function TradingPlatformShell() {
   // État pour l'utilisateur connecté
   const [user, setUser] = useState<{id: string, email: string} | null>(null);
   
+  // Système de notifications pour les messages non lus
+  const [lastReadTimes, setLastReadTimes] = useState({});
+
   const [selectedChannel, setSelectedChannel] = useState({ id: 'general-chat', name: 'general-chat' });
   const [view, setView] = useState<'signals' | 'calendar'>('signals');
   const [mobileView, setMobileView] = useState<'channels' | 'content'>('channels');
@@ -436,9 +449,43 @@ export default function TradingPlatformShell() {
       localStorage.removeItem('selectedDate');
     }
   }, [selectedDate]);
+
+  // Initialiser les dernières heures de lecture depuis localStorage
+  useEffect(() => {
+    const channels = ['chatzone', 'crypto', 'forex', 'indices', 'fondamentaux', 'letsgooo-model'];
+    const lastReads = {};
+    
+    channels.forEach(channelId => {
+      const lastRead = localStorage.getItem(`lastRead_${channelId}`);
+      if (lastRead) {
+        lastReads[channelId] = lastRead;
+      }
+    });
+    
+    setLastReadTimes(lastReads);
+  }, []);
+
   
+  // Fonction pour mettre à jour les heures de dernière lecture
+  const updateLastReadTime = (channelId: string) => {
+    const now = new Date().toISOString();
+    setLastReadTimes(prev => ({
+      ...prev,
+      [channelId]: now
+    }));
+    // Sauvegarder dans localStorage
+    localStorage.setItem(`lastRead_${channelId}`, now);
+  };
+
+
   // Fonction pour changer de canal et réinitialiser selectedDate si nécessaire
   const handleChannelChange = (channelId: string, channelName: string) => {
+    console.log('🔄 handleChannelChange appelé:', { channelId, channelName });
+    
+    // Marquer le canal comme lu quand l'utilisateur l'ouvre
+    updateLastReadTime(channelId);
+    
+    
     // Réinitialiser selectedDate si on quitte le Trading Journal
     if (selectedChannel.id === 'trading-journal' && channelId !== 'trading-journal') {
       setSelectedDate(null);
@@ -446,6 +493,8 @@ export default function TradingPlatformShell() {
     
     setSelectedChannel({id: channelId, name: channelName});
     setView('signals');
+    
+    console.log('✅ selectedChannel mis à jour:', { id: channelId, name: channelName });
     
     // Enregistrer le timestamp d'ouverture du salon
     setLastChannelOpenTime(prev => ({
@@ -1558,24 +1607,6 @@ export default function TradingPlatformShell() {
     }
   }, [messages, selectedChannel.id, signals]);
 
-  const channels = [
-
-    { id: 'general-chat-2', name: 'general-chat-2', emoji: '📊', fullName: 'Indices' },
-    { id: 'general-chat-3', name: 'general-chat-3', emoji: '🪙', fullName: 'Crypto' },
-    { id: 'general-chat-4', name: 'general-chat-4', emoji: '💱', fullName: 'Forex' },
-
-
-    { id: 'fondamentaux', name: 'fondamentaux', emoji: '📚', fullName: 'Fondamentaux' },
-    { id: 'letsgooo-model', name: 'letsgooo-model', emoji: '🚀', fullName: 'Letsgooo model' },
-
-    { id: 'general-chat', name: 'general-chat', emoji: '💬', fullName: 'Général chat' },
-    { id: 'chatzone', name: 'chatzone', emoji: '💬', fullName: 'Chat Zone' },
-    { id: 'profit-loss', name: 'profit-loss', emoji: '💰', fullName: 'Profit loss' },
-    { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' },
-    { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' },
-    { id: 'video', name: 'video', emoji: '📺', fullName: 'Livestream' }
-  ];
-
   // Fonction supprimée - seul admin peut créer des signaux
 
   // Fonctions pour le journal de trading personnalisé
@@ -2558,6 +2589,7 @@ export default function TradingPlatformShell() {
                 window.open('/trading-live.html', '_blank');
               }} className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">🎥 Formation Live</button>
               <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
+              <button onClick={() => handleChannelChange('chatzone', 'chatzone')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'chatzone' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 Chat Zone</button>
             </div>
           </div>
 
@@ -3014,7 +3046,7 @@ export default function TradingPlatformShell() {
                 ) : null}
                 
                 {/* Affichage des signaux */}
-                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', '', 'calendrier'].includes(selectedChannel.id) ? (
+                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', '', 'calendrier', 'chatzone'].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
                     {/* Bouton Voir plus fixe en haut */}
                     <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
@@ -3340,9 +3372,32 @@ export default function TradingPlatformShell() {
                     </div>
                   </div>
                 ) : selectedChannel.id === 'profit-loss' ? (
-                  <ProfitLoss channelId="profit-loss" currentUserId="user" />
+                  <div className="flex flex-col h-full w-full">
+                    <div className="flex-1 overflow-hidden">
+                      <ProfitLoss channelId="profit-loss" currentUserId="user" />
+                    </div>
+                    <div className="h-[500px] border-t border-gray-600 bg-gray-800">
+                      <ChatZone />
+                    </div>
+                  </div>
+                ) : selectedChannel.id === 'chatzone' ? (
+                  <div className="bg-red-500 text-white p-8 text-center">
+                    <h1 className="text-4xl font-bold">🚨 CHATZONE ACTIF 🚨</h1>
+                    <p className="text-xl mt-4">Si tu vois ce texte, ça marche !</p>
+                    <p className="text-sm mt-2">selectedChannel.id = {selectedChannel.id}</p>
+                    <p className="text-sm">selectedChannel.name = {selectedChannel.name}</p>
+                    <p className="text-sm">selectedChannel.emoji = 💬</p>
+                  </div>
+                ) : selectedChannel.id === 'chatzone' ? (
+                  <div className="flex flex-col h-full w-full">
+                    <ChatZone />
+                  </div>
                 ) : ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
                   <div className="flex flex-col h-full">
+                    {/* Debug visible */}
+                    <div className="bg-red-500 text-white p-4 text-center font-bold">
+                      DEBUG: selectedChannel.id = {selectedChannel.id}
+                    </div>
                     {/* Messages de chat */}
                     <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
                       {/* Cours Scalping pour le salon Fondamentaux */}
@@ -3566,9 +3621,9 @@ export default function TradingPlatformShell() {
                                             const allSignalElements = document.querySelectorAll('[data-signal-id]');
                                             console.log('🔍 Debug flèche USER - tous les éléments signal:', allSignalElements);
                                             
-                                            if (originalMessage && originalMessage.offsetParent !== null) {
+                                            if (originalMessage && (originalMessage as HTMLElement).offsetParent !== null) {
                                               console.log('🔍 Debug flèche USER - scroll vers élément:', originalMessage);
-                                              console.log('🔍 Debug flèche USER - élément visible:', originalMessage.offsetParent !== null);
+                                              console.log('🔍 Debug flèche USER - élément visible:', (originalMessage as HTMLElement).offsetParent !== null);
                                               console.log('🔍 Debug flèche USER - élément dans viewport:', originalMessage.getBoundingClientRect());
                                               
                                               // Forcer le scroll vers le haut de la page d'abord
@@ -3656,7 +3711,7 @@ export default function TradingPlatformShell() {
                                             onClick={() => {
                                               // Trouver le message original du signal
                                               const originalMessage = document.querySelector(`[data-signal-id="${signalId}"]`);
-                                              if (originalMessage && originalMessage.offsetParent !== null) {
+                                              if (originalMessage && (originalMessage as HTMLElement).offsetParent !== null) {
                                                 originalMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
                                                 // Surligner temporairement
                                                 originalMessage.classList.add('ring-2', 'ring-blue-400', 'ring-opacity-50');
@@ -3666,7 +3721,7 @@ export default function TradingPlatformShell() {
                                               }
                                             }}
                                           >
-                                            Signal {currentSignal?.referenceNumber || ''} fermé avec {currentSignal?.pnl ? `P&L: ${currentSignal.pnl}` : 'aucun P&L'}
+                                            Signal {currentSignal?.id || ''} fermé avec {currentSignal?.pnl ? `P&L: ${currentSignal.pnl}` : 'aucun P&L'}
                                           </span>
                                         </div>
                                       )}
@@ -3936,7 +3991,7 @@ export default function TradingPlatformShell() {
               ) : null}
               
               {/* Affichage des signaux */}
-                              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', '', 'calendrier'].includes(selectedChannel.id) ? (
+                              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', '', 'calendrier', 'chatzone'].includes(selectedChannel.id) ? (
                 <div className="space-y-4">
                   {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                     <div className="text-center py-8">
@@ -4438,9 +4493,9 @@ export default function TradingPlatformShell() {
                                             const allSignalElements = document.querySelectorAll('[data-signal-id]');
                                             console.log('🔍 Debug flèche USER - tous les éléments signal:', allSignalElements);
                                             
-                                            if (originalMessage && originalMessage.offsetParent !== null) {
+                                            if (originalMessage && (originalMessage as HTMLElement).offsetParent !== null) {
                                               console.log('🔍 Debug flèche USER - scroll vers élément:', originalMessage);
-                                              console.log('🔍 Debug flèche USER - élément visible:', originalMessage.offsetParent !== null);
+                                              console.log('🔍 Debug flèche USER - élément visible:', (originalMessage as HTMLElement).offsetParent !== null);
                                               console.log('🔍 Debug flèche USER - élément dans viewport:', originalMessage.getBoundingClientRect());
                                               
                                               // Forcer le scroll vers le haut de la page d'abord
@@ -4528,7 +4583,7 @@ export default function TradingPlatformShell() {
                                             onClick={() => {
                                               // Trouver le message original du signal
                                               const originalMessage = document.querySelector(`[data-signal-id="${signalId}"]`);
-                                              if (originalMessage && originalMessage.offsetParent !== null) {
+                                              if (originalMessage && (originalMessage as HTMLElement).offsetParent !== null) {
                                                 originalMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
                                                 // Surligner temporairement
                                                 originalMessage.classList.add('ring-2', 'ring-blue-400', 'ring-opacity-50');
@@ -4538,7 +4593,7 @@ export default function TradingPlatformShell() {
                                               }
                                             }}
                                           >
-                                            Signal {currentSignal?.referenceNumber || ''} fermé avec {currentSignal?.pnl ? `P&L: ${currentSignal.pnl}` : 'aucun P&L'}
+                                            Signal {currentSignal?.id || ''} fermé avec {currentSignal?.pnl ? `P&L: ${currentSignal.pnl}` : 'aucun P&L'}
                                           </span>
                                         </div>
                                       )}
@@ -4787,7 +4842,7 @@ export default function TradingPlatformShell() {
                     placeholder="Notes sur le trade..."
                     rows={3}
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
-                  />
+                  ></textarea>
                 </div>
                 
                 {/* Images */}
