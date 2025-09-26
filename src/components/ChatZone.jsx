@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import supabaseClient, { getCurrentUser } from '../lib/supabase';
 import { Send, MoreVertical, Smile, Paperclip, Mic, Reply, Copy, Edit3, Trash2, Forward, Star, Info, Pin, Heart } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
-const ChatZone = () => {
+const ChatZone = ({ onUnreadCountChange, isActive: parentIsActive }) => {
   const [message, setMessage] = useState('');
   const [editingMessage, setEditingMessage] = useState(null);
   const [replyingTo, setReplyingTo] = useState(null);
@@ -17,48 +17,45 @@ const ChatZone = () => {
   const contextMenuRef = useRef(null);
   const messagesEndRef = useRef(null);
   
-  // Cache des profils utilisateurs réels depuis Supabase
-  const [userProfiles, setUserProfiles] = useState({});
-  
-  // Fonction pour obtenir ou créer un profil utilisateur
-  const getUserProfile = async (userId, userName) => {
+  // Cache des profils utilisateurs locaux
+  const [userProfiles, setUserProfiles] = useState({
+    'admin': {
+      id: 'admin',
+      name: 'Admin',
+      email: 'admin@local.com',
+      avatar: 'https://ui-avatars.com/api/?name=Admin&background=4ade80',
+      initials: 'AD'
+    },
+    'user': {
+      id: 'user',
+      name: 'Utilisateur',
+      email: 'user@local.com',
+      avatar: 'https://ui-avatars.com/api/?name=Utilisateur&background=3b82f6',
+      initials: 'US'
+    }
+  });
+
+  // Fonction pour obtenir un profil utilisateur local
+  const getUserProfile = (userId, userName) => {
     if (userProfiles[userId]) {
       return userProfiles[userId];
     }
-    
-    // Essayer de récupérer les vraies données utilisateur depuis Supabase
-    let userData = null;
-    try {
-      const { data, error } = await supabaseClient
-        .from('profiles')
-        .select('avatar_url, full_name, email')
-        .eq('id', userId)
-        .single();
-      
-      if (!error && data) {
-        userData = data;
-        console.log('✅ Profil utilisateur récupéré:', data);
-      }
-    } catch (error) {
-      console.log('⚠️ Erreur récupération profil:', error);
-    }
-    
-    // Créer un profil avec les vraies données ou fallback
+
+    // Créer un profil local
     const profile = {
       id: userId,
-      name: userData?.full_name || userName || 'Utilisateur',
-      email: userData?.email || '',
-      avatar: userData?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName || 'U')}&background=random`,
-      initials: (userData?.full_name || userName) ? 
-        (userData?.full_name || userName).split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'
+      name: userName || 'Utilisateur',
+      email: `${userId}@local.com`,
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(userName || 'U')}&background=random`,
+      initials: userName ? userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'
     };
-    
+
     // Mettre à jour le cache
     setUserProfiles(prev => ({
       ...prev,
       [userId]: profile
     }));
-    
+
     return profile;
   };
 
@@ -66,9 +63,9 @@ const ChatZone = () => {
 
   const emojis = ['❤️', '😂', '😮', '😢', '😡', '👍', '👎', '👏', '🙏', '🔥'];
 
-  // Utilisateur connecté Supabase
-  const [currentUserId, setCurrentUserId] = useState(null);
-  const [currentUserName, setCurrentUserName] = useState('Utilisateur');
+  // Utilisateur connecté local
+  const [currentUserId, setCurrentUserId] = useState('admin');
+  const [currentUserName, setCurrentUserName] = useState('Admin');
   const currentUser = userProfiles['admin'];
 
   // Channel cible
@@ -79,25 +76,14 @@ const ChatZone = () => {
     return authorId || 'unknown';
   };
 
-  // Déterminer si c'est l'utilisateur actuel
+  // Déterminer si c'est l'utilisateur actuel (version locale)
   const isCurrentUser = (senderId) => {
-    console.log('🔍 isCurrentUser check:', { senderId, currentUserId });
-    
-    // Si c'est l'admin (local ou Supabase), toujours à droite
-    if (senderId === 'admin' || senderId === 'admin-local') {
-      console.log('✅ Admin détecté, message à droite');
-      return true;
-    }
-    
-    // Si c'est l'utilisateur Supabase connecté, à droite
-    if (senderId === currentUserId && currentUserId) {
-      console.log('✅ Utilisateur actuel détecté, message à droite');
-      return true;
-    }
-    
-    // Sinon, à gauche
-    console.log('⬅️ Message à gauche');
-    return false;
+    console.log('🔍 isCurrentUser check (local):', { senderId, currentUserId });
+
+    // Simple comparaison locale
+    const isOwn = senderId === currentUserId;
+    console.log(isOwn ? '✅ Utilisateur actuel' : '⬅️ Autre utilisateur');
+    return isOwn;
   };
 
   useEffect(() => {
@@ -114,144 +100,32 @@ const ChatZone = () => {
     };
   }, []);
 
-  // Charger l'utilisateur courant
+  // Charger l'utilisateur courant (mode local)
   useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        const user = await getCurrentUser();
-        if (mounted && user) {
-          setCurrentUserId(user.id);
-          setCurrentUserName(user.user_metadata?.name || user.email || 'Utilisateur');
-          console.log('✅ Utilisateur connecté:', user.id, user.email);
-        } else {
-          // Vérifier si on est en mode admin (localStorage)
-          const isAdmin = localStorage.getItem('adminAuthenticated') === 'true';
-          if (isAdmin) {
-            setCurrentUserId('admin-local');
-            setCurrentUserName('Admin');
-            console.log('✅ Mode admin détecté');
-          } else {
-            console.log('❌ Aucun utilisateur connecté');
-          }
-        }
-      } catch (error) {
-        // Vérifier si on est en mode admin (localStorage)
-        const isAdmin = localStorage.getItem('adminAuthenticated') === 'true';
-        if (isAdmin) {
-          setCurrentUserId('admin-local');
-          setCurrentUserName('Admin');
-          console.log('✅ Mode admin détecté (fallback)');
-        } else {
-          console.log('❌ Erreur connexion utilisateur:', error);
-        }
-      }
-    })();
-    return () => { mounted = false };
+    // Vérifier si on est en mode admin (localStorage)
+    const adminAuth = localStorage.getItem('adminAuthenticated');
+    const isAdmin = adminAuth === 'true';
+
+    if (isAdmin) {
+      setCurrentUserId('admin');
+      setCurrentUserName('Admin');
+      console.log('✅ Mode admin local détecté');
+    } else {
+      setCurrentUserId('user');
+      setCurrentUserName('Utilisateur');
+      console.log('✅ Mode utilisateur local');
+    }
   }, []);
 
-  // Charger les messages Supabase + abonnement temps réel
+  // Messages locaux d'exemple
   useEffect(() => {
-    let subscription;
-    const supabase = supabaseClient;
+    if (!currentUserId) return;
 
-    const loadMessages = async () => {
-      // Attendre que l'utilisateur soit chargé avant d'afficher les messages
-      if (!currentUserId) {
-        console.log('⏳ Attente chargement utilisateur...');
-        return;
-      }
-
-      console.log('🔄 Chargement messages pour channel:', CHANNEL_ID);
-      const { data, error } = await supabase
-        .from('chat_messages')
-        .select('id, content, author_id, author_name, created_at, is_edited')
-        .eq('channel_id', CHANNEL_ID)
-        .order('created_at', { ascending: true })
-        .limit(200);
-      console.log('📨 Messages chargés:', data, 'Erreur:', error);
-      if (!error && Array.isArray(data)) {
-        const mapped = data.map((m) => {
-          const senderId = m.author_id === currentUserId ? currentUserId : mapAuthorToProfileId(m.author_id);
-          // Créer le profil utilisateur pour ce message
-          getUserProfile(senderId, m.author_name);
-          
-          return {
-            id: m.id,
-            text: m.content,
-            sender: senderId,
-            senderName: m.author_name,
-            time: new Date(m.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-            status: 'read',
-            reactions: {},
-            pinned: false,
-            edited: !!m.is_edited
-          };
-        });
-        setMessages(mapped);
-        setLastReadMessageIndex(mapped.length - 1);
-        setUnreadCount(0);
-      }
-    };
-
-    loadMessages();
-
-    // Abonnement realtime INSERT
-    subscription = supabase
-      .channel(`chatzone-${Date.now()}`)
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: `channel_id=eq.${CHANNEL_ID}` },
-        (payload) => {
-          console.log('🔄 Nouveau message reçu:', payload);
-          const m = payload.new;
-          setMessages((prev) => {
-            // Éviter les doublons
-            if (prev.find(msg => msg.id === m.id)) {
-              console.log('⚠️ Message déjà présent, ignoré');
-              return prev;
-            }
-            
-            const senderId = m.author_id === currentUserId ? currentUserId : mapAuthorToProfileId(m.author_id);
-            // Créer le profil utilisateur pour ce nouveau message
-            getUserProfile(senderId, m.author_name);
-            
-            const newMessage = {
-              id: m.id,
-              text: m.content,
-              sender: senderId,
-              senderName: m.author_name,
-              time: new Date(m.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-              status: 'sent',
-              reactions: {},
-              pinned: false,
-              edited: !!m.is_edited
-            };
-            
-            console.log('✅ Nouveau message ajouté:', newMessage);
-            return [...prev, newMessage];
-          });
-          
-            if (!isActive) {
-              setUnreadCount((u) => {
-                const newCount = u + 1;
-                // Notifier le parent du changement
-                if (onUnreadCountChange) {
-                  onUnreadCountChange('chatzone', newCount);
-                }
-                return newCount;
-              });
-            }
-        }
-      )
-      .subscribe((status) => {
-        console.log('📡 Statut abonnement:', status);
-      });
-
-    return () => {
-      if (subscription) supabase.removeChannel(subscription);
-    };
-  }, [currentUserId, isActive]); // Recharger quand currentUserId change
+    // Charger les messages depuis Supabase uniquement
+    setMessages([]);
+    setLastReadMessageIndex(0);
+    console.log('✅ ChatZone vide - connexion Supabase uniquement');
+  }, [currentUserId]);
 
   // Scroll automatique vers le bas
   const scrollToBottom = () => {
@@ -265,11 +139,27 @@ const ChatZone = () => {
     scrollToBottom();
   }, [messages]);
 
-  // Simuler l'ouverture du salon après 2 secondes
+  // Marquer les messages comme lus quand le salon est actif
   useEffect(() => {
-    setLastReadMessageIndex(messages.length - 1);
-    setUnreadCount(0);
-  }, [messages.length]);
+    if (parentIsActive) {
+      setLastReadMessageIndex(messages.length - 1);
+    }
+  }, [messages.length, parentIsActive]);
+
+  // Réinitialiser le compteur quand le salon devient actif
+  useEffect(() => {
+    if (parentIsActive) {
+      setUnreadCount(0);
+    }
+  }, [parentIsActive]);
+
+  // Notifier le parent du changement de messages non lus
+  useEffect(() => {
+    console.log('🔔 ChatZone: unreadCount changed to:', unreadCount, 'parentIsActive:', parentIsActive);
+    if (onUnreadCountChange) {
+      onUnreadCountChange('chatzone', unreadCount);
+    }
+  }, [unreadCount, onUnreadCountChange]);
 
   // Détecter l'activité utilisateur pour marquer comme lu
   useEffect(() => {
@@ -311,7 +201,8 @@ const ChatZone = () => {
         const newMessage = {
           id: Date.now(),
           text: message,
-          sender: 'admin', // Force toujours admin
+          sender: currentUserId || '00000000-0000-0000-0000-000000000001', // Utiliser l'ID admin fixe
+          senderName: currentUserName || 'Admin',
           time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
           status: "sent",
           reactions: {},
@@ -320,28 +211,43 @@ const ChatZone = () => {
           replyTo: replyingTo
         };
 
-        // Envoi Supabase pour tous les utilisateurs
+        // Envoi Supabase
         try {
-          const { data, error } = await supabaseClient.from('chat_messages').insert({
-            content: message,
-            author_id: currentUserId || '00000000-0000-0000-0000-000000000000', // UUID par défaut
-            author_name: currentUserName || 'Utilisateur',
-            channel_id: CHANNEL_ID,
-            message_type: 'text'
-          }).select();
-          
+          console.log('📤 Envoi message Supabase - currentUserId:', currentUserId, 'currentUserName:', currentUserName);
+
+          // Récupérer l'ID du canal ChatZone
+          const { data: channelData } = await supabase
+            .from('chat_channels')
+            .select('id')
+            .eq('name', 'chatzone')
+            .single();
+
+          if (!channelData) {
+            console.log('❌ Canal chatzone non trouvé dans la base');
+            return;
+          }
+
+          // Envoyer via Supabase
+          const { data, error } = await supabase
+            .from('chat_messages')
+            .insert({
+              channel_id: channelData.id,
+              user_id: currentUserId,
+              user_name: currentUserName || 'Admin',
+              message: message,
+              message_type: 'text',
+              status: 'sent'
+            });
+
           if (error) {
-            console.log('❌ Erreur envoi message:', error);
-            // En cas d'erreur, afficher le message localement
-            setMessages(prev => [...prev, newMessage]);
+            console.log('❌ Erreur envoi Supabase:', error);
           } else {
             console.log('✅ Message envoyé à Supabase');
-            // Le message sera ajouté via l'abonnement temps réel
+            // Ajouter le message localement pour affichage immédiat
+            setMessages(prev => [...prev, newMessage]);
           }
         } catch (error) {
-          console.log('❌ Erreur envoi message:', error);
-          // En cas d'erreur, afficher le message localement
-          setMessages(prev => [...prev, newMessage]);
+          console.log('❌ Erreur envoi message Supabase:', error);
         }
         
         setReplyingTo(null);

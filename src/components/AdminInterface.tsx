@@ -6,6 +6,7 @@ import { initializeNotifications, notifyNewSignal, notifySignalClosed, sendLocal
 import { ref, update, onValue, get } from 'firebase/database';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
+import { signOutAdmin } from '../utils/admin-utils';
 
 export default function AdminInterface() {
 
@@ -1350,23 +1351,42 @@ export default function AdminInterface() {
     console.log('✅ Scroll to bottom admin completed');
   };
 
-  const handleLogout = () => {
-    // PRÉSERVER la photo de profil admin avant déconnexion
-    const adminProfileImageBackup = localStorage.getItem('adminProfileImage');
-    console.log('💾 ADMIN Sauvegarde photo avant déconnexion:', adminProfileImageBackup ? 'TROUVÉE' : 'PAS TROUVÉE');
-    
-    // Au lieu de localStorage.clear(), supprimer seulement les clés nécessaires
-    const keysToRemove = ['signals', 'chat_messages', 'trading_stats', 'user_session'];
-    keysToRemove.forEach(key => localStorage.removeItem(key));
-    console.log('🧹 Nettoyage sélectif du localStorage (avatar préservé)');
-    
-    // GARDER la photo de profil admin - pas besoin de restaurer car elle n'a jamais été supprimée
-    if (adminProfileImageBackup) {
-      console.log('✅ ADMIN Photo de profil préservée pendant la déconnexion');
+  const handleLogout = async () => {
+    console.log('🚪 Déconnexion admin en cours...');
+
+    try {
+      // PRÉSERVER la photo de profil admin avant déconnexion
+      const adminProfileImageBackup = localStorage.getItem('adminProfileImage');
+      console.log('💾 ADMIN Sauvegarde photo avant déconnexion:', adminProfileImageBackup ? 'TROUVÉE' : 'PAS TROUVÉE');
+
+      // Déconnexion Supabase et nettoyage
+      const { error } = await signOutAdmin();
+
+      if (error) {
+        console.error('❌ Erreur déconnexion admin:', error.message);
+        // Continuer quand même le nettoyage local
+      } else {
+        console.log('✅ Déconnexion Supabase admin réussie');
+      }
+
+      // Nettoyage sélectif du localStorage (préserver la photo)
+      const keysToRemove = ['signals', 'chat_messages', 'trading_stats', 'user_session'];
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+      console.log('🧹 Nettoyage sélectif du localStorage (avatar préservé)');
+
+      // GARDER la photo de profil admin - pas besoin de restaurer car elle n'a jamais été supprimée
+      if (adminProfileImageBackup) {
+        console.log('✅ ADMIN Photo de profil préservée pendant la déconnexion');
+      }
+
+      console.log('🏠 Redirection vers la page d\'accueil...');
+      // Rediriger vers la landing page
+      window.location.href = '/';
+    } catch (error) {
+      console.error('❌ Erreur lors de la déconnexion:', error);
+      // En cas d'erreur, forcer quand même la redirection
+      window.location.href = '/';
     }
-    
-    // Rediriger vers la landing page
-    window.location.href = '/';
   };
 
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -1654,10 +1674,8 @@ export default function AdminInterface() {
     { id: 'letsgooo-model', name: 'letsgooo-model', emoji: '🚀', fullName: 'Letsgooo model' },
     { id: 'livestream', name: 'livestream', emoji: '📺', fullName: 'Livestream' },
 
-    { id: 'general-chat', name: 'general-chat', emoji: '💬', fullName: 'Général chat' },
+    { id: 'chatzone', name: 'chatzone', emoji: '💬', fullName: 'ChatZone' },
     { id: 'profit-loss', name: 'profit-loss', emoji: '💰', fullName: 'Profit loss' },
-    { id: 'chat', name: 'chat', emoji: '💬', fullName: 'Chat' },
-    { id: 'chatzone', name: 'chatzone', emoji: '💬', fullName: 'Chat Zone' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' },
     { id: 'user-management', name: 'user-management', emoji: '👥', fullName: 'Gestion Utilisateurs' }
@@ -3168,7 +3186,6 @@ export default function AdminInterface() {
             <div className="space-y-1">
 
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💰 Profit-loss</button>
-              <button onClick={() => handleChannelChange('chat', 'chat')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 Chat</button>
               <button onClick={() => handleChannelChange('chatzone', 'chatzone')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'chatzone' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 Chat Zone</button>
               <button onClick={() => {
                 // Réinitialiser selectedDate si on quitte le Trading Journal
@@ -3326,7 +3343,7 @@ export default function AdminInterface() {
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">TRADING HUB</h3>
                 <div className="space-y-2">
-                  {channels.filter(c => ['profit-loss', 'chat', 'chatzone'].includes(c.id)).map(channel => (
+                  {channels.filter(c => ['profit-loss', 'chatzone'].includes(c.id)).map(channel => (
                     <button
                       key={channel.id}
                       onClick={() => {
@@ -3867,13 +3884,9 @@ export default function AdminInterface() {
                   <div className="flex flex-col h-full w-full">
                     <ProfitLoss channelId="profit-loss" currentUserId="admin" />
                   </div>
-                ) : selectedChannel.id === 'chat' ? (
-                  <div className="flex flex-col h-full w-full">
-                    <ProfitLoss channelId="chat" currentUserId="admin" />
-                  </div>
                 ) : selectedChannel.id === 'chatzone' ? (
                   <div className="flex flex-col h-full w-full">
-                    <ChatZone />
+                    <ChatZone onUnreadCountChange={() => {}} isActive={true} />
                   </div>
                 ) : ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
                   <div className="flex flex-col h-full">
@@ -4292,7 +4305,7 @@ export default function AdminInterface() {
                   </div>
                 ) : selectedChannel.id === 'chatzone' ? (
                   <div className="flex flex-col h-full w-full">
-                    <ChatZone />
+                    <ChatZone onUnreadCountChange={() => {}} isActive={true} />
                   </div>
                 ) : (
                   <div className="text-center py-8">
@@ -4612,10 +4625,6 @@ export default function AdminInterface() {
                               ) : selectedChannel.id === 'profit-loss' ? (
                   <div className="flex flex-col h-full w-full">
                     <ProfitLoss channelId="profit-loss" currentUserId="admin" />
-                  </div>
-                ) : selectedChannel.id === 'chat' ? (
-                  <div className="flex flex-col h-full w-full">
-                    <ProfitLoss channelId="chat" currentUserId="admin" />
                   </div>
                 ) : ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
                 <div className="flex flex-col h-full">

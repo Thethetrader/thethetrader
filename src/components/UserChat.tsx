@@ -1,8 +1,17 @@
 import React, { useEffect, useState, useRef } from "react";
-import { db } from '../config/firebase-config';
-import { collection, addDoc, onSnapshot, doc, updateDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
+import {
+  sendMessage as supabaseSendMessage,
+  getMessages as supabaseGetMessages,
+  subscribeToMessages as supabaseSubscribeToMessages,
+  addReaction as supabaseAddReaction,
+  removeReaction as supabaseRemoveReaction,
+  getCurrentUser,
+  getUserProfile,
+  isUserAdmin,
+  supabase
+} from '../lib/supabase';
 
-const UserChat = ({ channelId = 'general-chat' }) => {
+const UserChat = ({ channelId = 'chatzone' }) => {
   const [messages, setMessages] = useState([]);
   const [newMsg, setNewMsg] = useState("");
   const [replyTo, setReplyTo] = useState(null);
@@ -10,109 +19,175 @@ const UserChat = ({ channelId = 'general-chat' }) => {
   const [editText, setEditText] = useState("");
   const [menu, setMenu] = useState(null);
   const [pressTimer, setPressTimer] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const endRef = useRef(null);
 
-  // Firebase listener avec cleanup
+  // États Supabase
+  const [supabaseUser, setSupabaseUser] = useState(null);
+  const [supabaseProfile, setSupabaseProfile] = useState(null);
+  const [currentChannelId, setCurrentChannelId] = useState('');
+  const [isSupabaseAdmin, setIsSupabaseAdmin] = useState(false);
+
+  // Initialisation Supabase
   useEffect(() => {
-    setLoading(true);
-    const messagesRef = collection(db, `chat-${channelId}`);
-    const q = query(messagesRef, orderBy('createdAt', 'asc'));
-    
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const firebaseMessages = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        time: doc.data().createdAt?.toDate?.()?.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) || "00:00"
-      }));
-      setMessages(firebaseMessages);
-      setLoading(false);
-    }, (error) => {
-      console.error('Erreur Firebase:', error);
-      setLoading(false);
+    const initializeSupabase = async () => {
+      try {
+        console.log('🔄 Initialisation Supabase UserChat...');
+
+        // Nettoyage forcé des messages de démo d'avant
+        setMessages([]);
+        console.log('🧹 Messages de démo forcément éliminés');
+
+        // Charger l'utilisateur actuel
+        const user = await getCurrentUser();
+        if (user) {
+          setSupabaseUser(user);
+          console.log('✅ Utilisateur Supabase chargé:', user.email);
+
+          // Charger le profil utilisateur
+          const { data: profile } = await getUserProfile(user.id);
+          if (profile) {
+            setSupabaseProfile(profile);
+            console.log('✅ Profil utilisateur chargé:', profile);
+          }
+
+          // Vérifier si admin
+          const adminStatus = await isUserAdmin(user.id);
+          setIsSupabaseAdmin(adminStatus);
+          console.log('👑 Status admin côté user:', adminStatus);
+        } else {
+          console.log('❌ Aucun utilisateur Supabase connecté côté user');
+        }
+
+        // Récupérer l'ID du canal
+        const { data: channelData } = await supabase
+          .from('chat_channels')
+          .select('id')
+          .eq('name', channelId)
+          .single();
+
+        if (channelData) {
+          setCurrentChannelId(channelData.id);
+          console.log('✅ Canal trouvé côté user:', channelData.id);
+
+          // Charger SEULEMENT les messages depuis Supabase (pas de fallback)
+          const { data: messagesData } = await supabaseGetMessages(channelData.id);
+          if (messagesData && messagesData.length > 0) {
+            // Convertir les messages Supabase au format local (SEULEMENT SUPABASE)
+            const convertedMessages = messagesData.map((msg) => ({
+              id: msg.id,
+              text: msg.content,
+              user: msg.author?.name || msg.author?.email || 'Utilisateur',
+              userId: msg.author_id,
+              time: new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+              timestamp: msg.created_at,
+              reactions: {}
+            }));
+
+            setMessages(convertedMessages);
+            console.log('✅ Messages SUPABASE chargés côté user:', convertedMessages.length);
+          } else {
+            // AUCUN MESSAGE PAR DÉFAUT sinon; Supabase uniquement
+            setMessages([]);
+            console.log('✅ AUCUN message - ChatZone vide par design');
+          }
+        } else {
+          // Pas de canal → AUCUN MESSAGE
+          setMessages([]);
+          console.log('✅ Aucun canal - ChatZone vide par design');
+        }
+
+      } catch (error) {
+        console.error('❌ Erreur initialisation Supabase côté user:', error);
+      } finally {
+        setLoading(false);
+        console.log('✅ Initialisation UserChat terminée');
+      }
+    };
+
+    initializeSupabase();
+  }, [channelId]);
+
+  // S'abonner aux nouveaux messages en temps réel
+  useEffect(() => {
+    if (!currentChannelId) return;
+
+    console.log('🔔 UserChat - Abonnement temps réel pour canal:', currentChannelId);
+
+    const subscription = supabaseSubscribeToMessages(currentChannelId, (newMessage) => {
+      console.log('📨 UserChat - Nouveau message reçu:', newMessage);
+
+      // Convertir au format local
+      const convertedMessage = {
+        id: newMessage.id,
+        text: newMessage.content,
+        user: newMessage.author?.name || newMessage.author?.email || 'Utilisateur',
+        userId: newMessage.author_id,
+        time: new Date(newMessage.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        timestamp: newMessage.created_at,
+        reactions: {}
+      };
+
+      setMessages(prev => [...prev, convertedMessage]);
     });
 
-    return () => unsubscribe();
-  }, [channelId]);
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe();
+        console.log('🔕 UserChat - Désabonnement temps réel');
+      }
+    };
+  }, [currentChannelId]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const addMessage = async () => {
-    if (!newMsg.trim() || updating) return;
-    
+    if (!newMsg.trim() || updating || !supabaseUser || !currentChannelId) return;
+
     setUpdating(true);
     try {
-      const messagesRef = collection(db, `chat-${channelId}`);
-      await addDoc(messagesRef, {
-        text: newMsg.trim(),
-        sender: "Utilisateur",
-        senderId: "user_1",
-        replyTo: replyTo?.id || null,
-        edited: false,
-        deleted: false,
-        createdAt: serverTimestamp()
-      });
-      
+      console.log('📤 UserChat - Envoi message vers Supabase...', { content: newMsg.trim(), channelId: currentChannelId });
+
+      const { data, error } = await supabaseSendMessage(currentChannelId, newMsg.trim());
+
+      if (error) {
+        console.error('❌ UserChat - Erreur envoi message Supabase:', error);
+      } else {
+        console.log('✅ UserChat - Message envoyé via Supabase:', data);
+        // Le message sera ajouté automatiquement via l'abonnement temps réel
+      }
+
       setNewMsg("");
       setReplyTo(null);
     } catch (error) {
-      console.error('Erreur ajout message:', error);
+      console.error('❌ UserChat - Erreur envoi message:', error);
     } finally {
       setUpdating(false);
     }
   };
 
+  // Fonctions Firebase désactivées - remplacées par Supabase
   const updateMessage = async (id, changes) => {
-    if (updating) return;
-    
-    setUpdating(true);
-    try {
-      const messageRef = doc(db, `chat-${channelId}`, id);
-      await updateDoc(messageRef, {
-        ...changes,
-        updatedAt: serverTimestamp()
-      });
-    } catch (error) {
-      console.error('Erreur modification message:', error);
-    } finally {
-      setUpdating(false);
-    }
+    console.log('⚠️ updateMessage désactivé - Supabase uniquement');
   };
 
   const startEdit = (msg) => {
-    setEditing(msg.id);
-    setEditText(msg.text);
+    console.log('⚠️ startEdit désactivé pour le moment');
     setMenu(null);
   };
 
   const saveEdit = () => {
-    if (editText.trim() && editing) {
-      updateMessage(editing, { text: editText.trim(), edited: true });
-    }
+    console.log('⚠️ saveEdit désactivé pour le moment');
     setEditing(null);
     setEditText("");
   };
 
   const deleteMsg = async (id) => {
-    if (updating) return;
-    
-    setUpdating(true);
-    try {
-      const messageRef = doc(db, `chat-${channelId}`, id);
-      await updateDoc(messageRef, { 
-        deleted: true, 
-        text: "Message supprimé",
-        deletedAt: serverTimestamp()
-      });
-      setMenu(null);
-    } catch (error) {
-      console.error('Erreur suppression message:', error);
-    } finally {
-      setUpdating(false);
-    }
+    console.log('⚠️ deleteMsg désactivé pour le moment');
+    setMenu(null);
   };
 
   const showMenu = (e, msg) => {

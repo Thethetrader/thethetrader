@@ -361,12 +361,362 @@ export const getAvatarColor = (userId: string): string => {
     'bg-indigo-500',
     'bg-teal-500',
   ];
-  
+
   const hash = userId.split('').reduce((acc, char) => {
     return acc + char.charCodeAt(0);
   }, 0);
-  
+
   return colors[hash % colors.length];
+};
+
+// ====== ADMIN MANAGEMENT ======
+
+/**
+ * Vérifie si l'utilisateur actuel est admin
+ */
+export const isUserAdmin = async (userId?: string): Promise<boolean> => {
+  try {
+    const userIdToCheck = userId || (await getCurrentUser())?.id;
+    if (!userIdToCheck) return false;
+
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('role')
+      .eq('id', userIdToCheck)
+      .single();
+
+    if (error) {
+      console.error('Erreur vérification admin:', error);
+      return false;
+    }
+
+    return data?.role === 'admin';
+  } catch (error) {
+    console.error('Erreur vérification admin:', error);
+    return false;
+  }
+};
+
+/**
+ * Connexion admin avec email et mot de passe
+ */
+export const signInAdmin = async (email: string, password: string) => {
+  try {
+    // Connexion Supabase standard
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (authError) throw authError;
+    if (!authData.user) throw new Error('Aucun utilisateur retourné');
+
+    // Vérification du rôle admin
+    const isAdmin = await isUserAdmin(authData.user.id);
+    if (!isAdmin) {
+      // Déconnexion immédiate si pas admin
+      await supabase.auth.signOut();
+      throw new Error('Accès administrateur refusé');
+    }
+
+    return { data: authData, error: null };
+  } catch (error) {
+    console.error('Erreur connexion admin:', error);
+    return {
+      data: null,
+      error: error instanceof Error ? error : new Error('Erreur de connexion admin')
+    };
+  }
+};
+
+/**
+ * Crée un profil admin pour un utilisateur
+ */
+export const createAdminUser = async (email: string, password: string, metadata?: any) => {
+  try {
+    // Inscription Supabase
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { ...metadata, role: 'admin' }
+      }
+    });
+
+    if (authError) throw authError;
+    if (!authData.user) throw new Error('Erreur création utilisateur');
+
+    // Création du profil admin dans la table user_profiles
+    const { error: profileError } = await supabase
+      .from('user_profiles')
+      .insert({
+        id: authData.user.id,
+        email: authData.user.email,
+        role: 'admin',
+        name: metadata?.name || 'Admin',
+        created_at: new Date().toISOString()
+      });
+
+    if (profileError) {
+      console.error('Erreur création profil admin:', profileError);
+    }
+
+    return { data: authData, error: null };
+  } catch (error) {
+    console.error('Erreur création admin:', error);
+    return {
+      data: null,
+      error: error instanceof Error ? error : new Error('Erreur création admin')
+    };
+  }
+};
+
+/**
+ * Met à jour le rôle d'un utilisateur
+ */
+export const updateUserRole = async (userId: string, role: 'admin' | 'user') => {
+  try {
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .upsert({
+        id: userId,
+        role: role,
+        updated_at: new Date().toISOString()
+      })
+      .select();
+
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Erreur mise à jour rôle:', error);
+    return {
+      data: null,
+      error: error instanceof Error ? error : new Error('Erreur mise à jour rôle')
+    };
+  }
+};
+
+/**
+ * Obtient les informations du profil utilisateur
+ */
+export const getUserProfile = async (userId?: string) => {
+  try {
+    const userIdToGet = userId || (await getCurrentUser())?.id;
+    if (!userIdToGet) throw new Error('Aucun utilisateur connecté');
+
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('*')
+      .eq('id', userIdToGet)
+      .single();
+
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Erreur récupération profil:', error);
+    return {
+      data: null,
+      error: error instanceof Error ? error : new Error('Erreur récupération profil')
+    };
+  }
+};
+
+// ====== CHAT FUNCTIONS ======
+
+/**
+ * Envoie un message dans un canal
+ */
+export const sendMessage = async (channelId: string, content: string, messageType: 'text' | 'image' | 'file' = 'text') => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) throw new Error('Utilisateur non connecté');
+
+    const { data, error } = await supabase
+      .from('chat_messages')
+      .insert({
+        content,
+        channel_id: channelId,
+        author_id: user.id,
+        message_type: messageType
+      })
+      .select(`
+        *,
+        author:user_profiles!author_id(id, name, email, avatar_url)
+      `)
+      .single();
+
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Erreur envoi message:', error);
+    return {
+      data: null,
+      error: error instanceof Error ? error : new Error('Erreur envoi message')
+    };
+  }
+};
+
+/**
+ * Récupère les messages d'un canal
+ */
+export const getMessages = async (channelId: string, limit: number = 50) => {
+  try {
+    const { data, error } = await supabase
+      .from('chat_messages')
+      .select(`
+        *,
+        author:user_profiles!author_id(id, name, email, avatar_url),
+        reactions:message_reactions(reaction, user_id)
+      `)
+      .eq('channel_id', channelId)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) throw error;
+    return { data: data?.reverse() || [], error: null };
+  } catch (error) {
+    console.error('Erreur récupération messages:', error);
+    return {
+      data: [],
+      error: error instanceof Error ? error : new Error('Erreur récupération messages')
+    };
+  }
+};
+
+/**
+ * S'abonne aux nouveaux messages en temps réel
+ */
+export const subscribeToMessages = (channelId: string, callback: (message: any) => void) => {
+  return supabase
+    .channel(`messages:${channelId}`)
+    .on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'chat_messages',
+        filter: `channel_id=eq.${channelId}`
+      },
+      async (payload) => {
+        // Récupérer les détails complets du message avec l'auteur
+        const { data } = await supabase
+          .from('chat_messages')
+          .select(`
+            *,
+            author:user_profiles!author_id(id, name, email, avatar_url)
+          `)
+          .eq('id', payload.new.id)
+          .single();
+
+        if (data) callback(data);
+      }
+    )
+    .subscribe();
+};
+
+/**
+ * Ajoute une réaction à un message
+ */
+export const addReaction = async (messageId: string, reaction: string) => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) throw new Error('Utilisateur non connecté');
+
+    const { data, error } = await supabase
+      .from('message_reactions')
+      .upsert({
+        message_id: messageId,
+        user_id: user.id,
+        reaction
+      })
+      .select();
+
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Erreur ajout réaction:', error);
+    return {
+      data: null,
+      error: error instanceof Error ? error : new Error('Erreur ajout réaction')
+    };
+  }
+};
+
+/**
+ * Supprime une réaction
+ */
+export const removeReaction = async (messageId: string, reaction: string) => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) throw new Error('Utilisateur non connecté');
+
+    const { error } = await supabase
+      .from('message_reactions')
+      .delete()
+      .eq('message_id', messageId)
+      .eq('user_id', user.id)
+      .eq('reaction', reaction);
+
+    if (error) throw error;
+    return { error: null };
+  } catch (error) {
+    console.error('Erreur suppression réaction:', error);
+    return {
+      error: error instanceof Error ? error : new Error('Erreur suppression réaction')
+    };
+  }
+};
+
+/**
+ * Récupère la liste des canaux
+ */
+export const getChannels = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('chat_channels')
+      .select('*')
+      .eq('is_public', true)
+      .order('created_at');
+
+    if (error) throw error;
+    return { data: data || [], error: null };
+  } catch (error) {
+    console.error('Erreur récupération canaux:', error);
+    return {
+      data: [],
+      error: error instanceof Error ? error : new Error('Erreur récupération canaux')
+    };
+  }
+};
+
+/**
+ * Crée un nouveau canal
+ */
+export const createChannel = async (name: string, description?: string) => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) throw new Error('Utilisateur non connecté');
+
+    const { data, error } = await supabase
+      .from('chat_channels')
+      .insert({
+        name,
+        description,
+        created_by: user.id,
+        is_public: true
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Erreur création canal:', error);
+    return {
+      data: null,
+      error: error instanceof Error ? error : new Error('Erreur création canal')
+    };
+  }
 };
 
 // Export par défaut du client Supabase

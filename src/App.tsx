@@ -153,7 +153,7 @@ const App = () => {
     futur: [],
     forex: [],
 
-    'general-chat': [],
+    'chatzone': [],
     'profit-loss': [],
     'calendar': [],
     'trading-journal': []
@@ -599,43 +599,9 @@ const App = () => {
       ]
     },
 
-    'general-chat': {
-      title: '#general-chat',
-      messages: [
-        { 
-          id: 1, 
-          user: 'Trader_Pro', 
-          time: '13:20:15', 
-          type: 'message', 
-          content: 'Salut tout le monde ! 👋\n\nQuelqu\'un a des questions sur le module de formation ?', 
-          reactions: [
-            { emoji: '👋', count: 8 },
-            { emoji: '💬', count: 5 }
-          ]
-        },
-        { 
-          id: 2, 
-          user: 'Crypto_Lover', 
-          time: '13:25:42', 
-          type: 'message', 
-          content: 'Oui ! J\'ai un doute sur la gestion du risque...\n\nComment calculer la taille de position ?', 
-          reactions: [
-            { emoji: '🤔', count: 3 },
-            { emoji: '📚', count: 7 }
-          ]
-        },
-        { 
-          id: 3, 
-          user: 'TheTheTrader', 
-          time: '13:30:00', 
-          type: 'message', 
-          content: 'Excellente question ! 📚\n\nRègle simple: Risque max 1-2% par trade\n\nExemple: Compte 10k€ → Risque max 100-200€\n\nJe prépare un guide détaillé !', 
-          reactions: [
-            { emoji: '📚', count: 15 },
-            { emoji: '💡', count: 12 }
-          ]
-        }
-      ]
+    'chatzone': {
+      title: '#chatzone',
+      messages: []
     },
     'profit-loss': {
       title: '#profit-loss',
@@ -1007,11 +973,16 @@ const App = () => {
   // Vérifier accès admin AVANT la vérification user
   if (currentPage === 'admin') {
     const isAdminAuthenticated = localStorage.getItem('adminAuthenticated') === 'true';
-    
+
     if (isAdminAuthenticated) {
       return <AdminInterface />;
     } else {
-      return <AdminLogin onLogin={() => {
+      return <AdminLogin onLogin={(adminData) => {
+        console.log('✅ Admin connecté dans App.tsx:', adminData.user.email);
+        // Marquer comme admin authentifié
+        localStorage.setItem('adminAuthenticated', 'true');
+        localStorage.setItem('adminUser', JSON.stringify(adminData.user));
+        // Recharger la page admin
         setCurrentPage('temp');
         setTimeout(() => setCurrentPage('admin'), 100);
       }} />;
@@ -1351,7 +1322,7 @@ const App = () => {
                             mobileActiveChannel === 'futur' ? '📈 Futur' :
                             mobileActiveChannel === 'forex' ? '💱 Forex' :
 
-                            mobileActiveChannel === 'general-chat' ? '💬 General-chat' :
+                            mobileActiveChannel === 'chatzone' ? '💬 ChatZone' :
                             mobileActiveChannel === 'profit-loss' ? '💰 Profit-loss' :
                             mobileActiveChannel === 'calendar' ? '📅 Journal Signaux' :
                             mobileActiveChannel === 'trading-journal' ? '📊 Journal Perso' : 'TheTheTrader'
@@ -1488,13 +1459,13 @@ const App = () => {
                         <div 
                           className="bg-slate-700 rounded-lg p-3 flex items-center gap-3 cursor-pointer hover:bg-slate-600 transition-colors"
                           onClick={() => {
-                            setMobileActiveChannel('general-chat');
+                            setMobileActiveChannel('chatzone');
                             setShowMobileChannel(true);
                           }}
                         >
                           <div className="text-xl">💬</div>
                           <div>
-                            <div className="text-white font-medium text-sm">General-chat</div>
+                            <div className="text-white font-medium text-sm">ChatZone</div>
                             <div className="text-gray-400 text-xs">Discussion générale</div>
                           </div>
                         </div>
@@ -2073,9 +2044,9 @@ const App = () => {
 
 
 
-                        {/* Vue General Chat */}
-                        {mobileActiveChannel === 'general-chat' && (
-                          <UserChat channelId="general-chat" />
+                        {/* Vue ChatZone */}
+                        {mobileActiveChannel === 'chatzone' && (
+                          <UserChat channelId="chatzone" />
                         )}
 
                         {/* Vue Profit Loss */}
@@ -2348,10 +2319,10 @@ const App = () => {
                           <div className="space-y-1">
 
                             <button 
-                              className={`w-full text-left px-3 py-2 rounded text-sm ${previewChannel === 'general-chat' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
-                              onClick={() => setPreviewChannel('general-chat')}
+                              className={`w-full text-left px-3 py-2 rounded text-sm ${previewChannel === 'chatzone' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
+                              onClick={() => setPreviewChannel('chatzone')}
                             >
-                              💬 General-chat
+                              💬 ChatZone
                             </button>
                             <button 
                               className={`w-full text-left px-3 py-2 rounded text-sm ${previewChannel === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
@@ -2406,7 +2377,7 @@ const App = () => {
                              previewChannel === 'fondamentaux' ? '📚 Fondamentaux' : 
                              previewChannel === 'letsgooo-model' ? '🚀 Letsgooo-model' : 
     
-                             previewChannel === 'general-chat' ? '💬 General-chat' : 
+                             previewChannel === 'chatzone' ? '💬 ChatZone' : 
                              previewChannel === 'profit-loss' ? '💰 Profit-loss' : 
                              previewChannel === 'calendar' ? '📅 Journal Signaux' : 
                              previewChannel === 'trading-journal' ? '📊 Journal Perso' : '# crypto'}
@@ -3105,8 +3076,8 @@ const App = () => {
                           </>
                         )}
 
-                        {/* Vue General-chat - Discussions */}
-                        {previewChannel === 'general-chat' && (
+                        {/* Vue ChatZone - Discussions */}
+                        {previewChannel === 'chatzone' && (
                           <>
                             {/* Message 1 */}
                             <div className="bg-gray-700 rounded-lg p-4">
@@ -3575,8 +3546,8 @@ const App = () => {
 
                       </div>
 
-                      {/* Zone de saisie - seulement pour general-chat et profit-loss */}
-                      {(previewChannel === 'general-chat' || previewChannel === 'profit-loss') && (
+                      {/* Zone de saisie - seulement pour chatzone et profit-loss */}
+                      {(previewChannel === 'chatzone' || previewChannel === 'profit-loss') && (
                         <div className="p-4 border-t border-gray-700">
                           <div className="flex gap-2">
                             <input 
@@ -3831,11 +3802,11 @@ const App = () => {
 
                         <div 
                           className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[100px] ${
-                            activeChannel === 'general-chat' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                            activeChannel === 'chatzone' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                           }`}
-                          onClick={() => setActiveChannel('general-chat')}
+                          onClick={() => setActiveChannel('chatzone')}
                         >
-                          💬 General-chat
+                          💬 ChatZone
                         </div>
                         <div 
                           className={`px-4 py-3 rounded-lg cursor-pointer transition-colors whitespace-nowrap text-sm font-medium min-w-[100px] ${
@@ -3918,11 +3889,11 @@ const App = () => {
 
                             <div 
                               className={`px-4 py-3 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
-                                activeChannel === 'general-chat' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
+                                activeChannel === 'chatzone' ? 'text-white bg-blue-600' : 'text-gray-300 bg-gray-700 hover:text-white hover:bg-gray-600'
                               }`}
-                              onClick={() => setActiveChannel('general-chat')}
+                              onClick={() => setActiveChannel('chatzone')}
                             >
-                              💬 General-chat
+                              💬 ChatZone
                             </div>
                             <div 
                               className={`px-4 py-3 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
@@ -4147,8 +4118,8 @@ const App = () => {
                         ))}
                       </div>
 
-                      {/* Zone de saisie - seulement pour general-chat et profit-loss */}
-                      {(previewChannel === 'general-chat' || previewChannel === 'profit-loss') && (
+                      {/* Zone de saisie - seulement pour chatzone et profit-loss */}
+                      {(previewChannel === 'chatzone' || previewChannel === 'profit-loss') && (
                         <div className="p-4 border-t border-gray-700">
                           <div className="flex gap-2">
                             <input 

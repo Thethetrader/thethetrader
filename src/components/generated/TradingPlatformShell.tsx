@@ -28,7 +28,7 @@ export default function TradingPlatformShell() {
     { id: 'general-chat-2', name: 'general-chat-2', emoji: '📈', fullName: 'Indices' },
     { id: 'general-chat-3', name: 'general-chat-3', emoji: '🪙', fullName: 'Crypto' },
     { id: 'general-chat-4', name: 'general-chat-4', emoji: '💱', fullName: 'Forex' },
-    { id: 'chatzone', name: 'chatzone', emoji: '💬', fullName: 'Chat Zone' }
+    { id: 'chatzone', name: 'chatzone', emoji: '💬', fullName: 'ChatZone' }
   ];
   
   // Charger les réactions depuis localStorage au montage du composant
@@ -86,7 +86,58 @@ export default function TradingPlatformShell() {
   // Système de notifications pour les messages non lus
   const [lastReadTimes, setLastReadTimes] = useState({});
 
+  // État pour les messages non lus par salon
+  const [unreadCounts, setUnreadCounts] = useState<{[channelId: string]: number}>({});
+
+  // Fonction callback pour recevoir les changements de messages non lus
+  const handleUnreadCountChange = (channelId: string, count: number) => {
+    console.log('📊 TradingPlatformShell: Received unread count for', channelId, ':', count);
+    setUnreadCounts(prev => ({
+      ...prev,
+      [channelId]: count
+    }));
+  };
+
   const [selectedChannel, setSelectedChannel] = useState({ id: 'general-chat', name: 'general-chat' });
+
+  // Réinitialiser les messages non lus quand on ouvre un salon
+  useEffect(() => {
+    if (selectedChannel.id === 'chatzone') {
+      setUnreadCounts(prev => ({
+        ...prev,
+        chatzone: 0
+      }));
+    }
+  }, [selectedChannel.id]);
+  
+  // Listener temps réel pour chatzone pour mettre à jour la pastille côté utilisateur
+  useEffect(() => {
+    const channel = supabase
+      .channel('unread-chatzone')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: 'channel_id=eq.chatzone' },
+        (payload: any) => {
+          const newMessage = payload?.new;
+          if (!newMessage) return;
+
+          // Si on est déjà dans le salon, ne pas incrémenter
+          if (selectedChannel.id === 'chatzone') return;
+          // Si l'auteur est l'utilisateur actuel, ne pas incrémenter
+          if (user?.id && newMessage.author_id === user.id) return;
+
+          setUnreadCounts((prev) => ({
+            ...prev,
+            chatzone: (prev.chatzone || 0) + 1,
+          }));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      try { supabase.removeChannel(channel); } catch {}
+    };
+  }, [selectedChannel.id, user?.id]);
   const [view, setView] = useState<'signals' | 'calendar'>('signals');
   const [mobileView, setMobileView] = useState<'channels' | 'content'>('channels');
   const [message, setMessage] = useState('');
@@ -2589,7 +2640,17 @@ export default function TradingPlatformShell() {
                 window.open('/trading-live.html', '_blank');
               }} className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">🎥 Formation Live</button>
               <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
-              <button onClick={() => handleChannelChange('chatzone', 'chatzone')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'chatzone' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 Chat Zone</button>
+              <button onClick={() => {
+                console.log('🔍 Button render: unreadCounts.chatzone =', unreadCounts.chatzone);
+                handleChannelChange('chatzone', 'chatzone');
+              }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'chatzone' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>
+                💬 ChatZone
+                {unreadCounts.chatzone > 0 && (
+                  <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-4 flex items-center justify-center px-1 shadow-lg">
+                    {unreadCounts.chatzone > 99 ? '99+' : unreadCounts.chatzone}
+                  </div>
+                )}
+              </button>
             </div>
           </div>
 
@@ -2874,9 +2935,14 @@ export default function TradingPlatformShell() {
                 {/* Interface ChatZone pour mobile */}
                 {selectedChannel.id === 'chatzone' && (
                   <div className="flex flex-col h-full w-full">
-                    <ChatZone />
+                    <ChatZone onUnreadCountChange={handleUnreadCountChange} isActive={selectedChannel.id === 'chatzone'} />
                   </div>
                 )}
+
+                {/* ChatZone toujours monté pour tracker les messages non lus */}
+                <div className="hidden">
+                  <ChatZone onUnreadCountChange={handleUnreadCountChange} isActive={selectedChannel.id === 'chatzone'} />
+                </div>
 
                 {/* Interface Livestream pour mobile */}
                 {selectedChannel.id === 'video' && (
@@ -3377,7 +3443,7 @@ export default function TradingPlatformShell() {
                       <ProfitLoss channelId="profit-loss" currentUserId="user" />
                     </div>
                     <div className="h-[500px] border-t border-gray-600 bg-gray-800">
-                      <ChatZone />
+                      <ChatZone onUnreadCountChange={handleUnreadCountChange} isActive={false} />
                     </div>
                   </div>
                 ) : selectedChannel.id === 'chatzone' ? (
@@ -3390,7 +3456,7 @@ export default function TradingPlatformShell() {
                   </div>
                 ) : selectedChannel.id === 'chatzone' ? (
                   <div className="flex flex-col h-full w-full">
-                    <ChatZone />
+                    <ChatZone onUnreadCountChange={handleUnreadCountChange} isActive={selectedChannel.id === 'chatzone'} />
                   </div>
                 ) : ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
                   <div className="flex flex-col h-full">
@@ -4264,7 +4330,7 @@ export default function TradingPlatformShell() {
                 <ProfitLoss />
               ) : selectedChannel.id === 'chatzone' ? (
                 <div className="flex flex-col h-full w-full">
-                  <ChatZone />
+                  <ChatZone onUnreadCountChange={handleUnreadCountChange} isActive={selectedChannel.id === 'chatzone'} />
                 </div>
               ) : selectedChannel.id === 'video' ? (
                 <div className="flex flex-col h-full bg-gray-900">
@@ -5398,6 +5464,11 @@ export default function TradingPlatformShell() {
           </div>
         </div>
       )}
+
+      {/* ChatZone toujours monté pour tracker les messages non lus */}
+      <div className="hidden">
+        <ChatZone onUnreadCountChange={handleUnreadCountChange} isActive={selectedChannel.id === 'chatzone'} />
+      </div>
     </div>
   );
 }
