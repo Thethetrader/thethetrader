@@ -32,6 +32,7 @@ import {
   getCurrentUser,
   getUserProfile,
   isUserAdmin,
+  updateUserProfile,
   supabase
 } from '../lib/supabase';
 
@@ -136,6 +137,11 @@ const ChatZone: React.FC<ChatZoneProps> = ({
   const [currentChannelId, setCurrentChannelId] = useState<string>('');
   const [supabaseMessages, setSupabaseMessages] = useState<any[]>([]);
 
+  // États pour l'édition du nom d'utilisateur
+  const [isEditingUsername, setIsEditingUsername] = useState(false);
+  const [usernameInput, setUsernameInput] = useState('');
+  const [currentUsername, setCurrentUsername] = useState('');
+
   // Émojis disponibles
   const emojis = ['❤️', '😂', '😮', '😢', '😡', '👍', '👎', '👏', '🙏', '🔥', '💯', '✨', '🎉', '🚀', '💪'];
 
@@ -180,6 +186,77 @@ const ChatZone: React.FC<ChatZoneProps> = ({
       console.log('Upload terminé');
     }, 2000);
   };
+
+  // Fonctions pour l'édition du nom d'utilisateur
+  const handleUsernameEdit = async () => {
+    if (usernameInput.trim()) {
+      try {
+        const { data, error } = await updateUserProfile(usernameInput.trim());
+        if (!error && data) {
+          setCurrentUsername(usernameInput.trim());
+          setSupabaseProfile(prev => prev ? { ...prev, name: usernameInput.trim() } : prev);
+          console.log('✅ Username updated successfully in Supabase:', usernameInput.trim());
+          
+          // Mettre à jour l'affichage dans les messages existants
+          setUserProfiles(prev => ({
+            ...prev,
+            ...Object.keys(prev).reduce((acc, key) => {
+              const profile = prev[key];
+              if (profile.email === supabaseUser?.email || profile.id === supabaseUser?.id) {
+                acc[key] = { ...profile, name: usernameInput.trim() };
+              } else {
+                acc[key] = profile;
+              }
+              return acc;
+            }, {} as Record<string, UserProfile>)
+          }));
+        } else {
+          console.error('❌ Error updating username in Supabase:', error);
+        }
+      } catch (error) {
+        console.error('❌ Error updating username:', error);
+      }
+      setIsEditingUsername(false);
+      setUsernameInput('');
+    }
+  };
+
+  const handleUsernameCancel = () => {
+    setIsEditingUsername(false);
+    setUsernameInput('');
+  };
+
+  // Initialisation de l'utilisateur Supabase au chargement
+  useEffect(() => {
+    const initializeSupabaseUser = async () => {
+      try {
+        const user = await getCurrentUser();
+        if (user) {
+          setSupabaseUser(user);
+          console.log('✅ Supabase utilisateur chargé:', user.email);
+
+          // Charger le profil utilisateur
+          const { data: profile } = await getUserProfile(user.id);
+          if (profile) {
+            setSupabaseProfile(profile);
+            console.log('✅ Profil utilisateur chargé:', profile);
+          }
+
+          // Charger le nom d'utilisateur
+          if (profile?.name) {
+            setCurrentUsername(profile.name);
+            console.log('✅ Nom d\'utilisateur chargé:', profile.name);
+          }
+        } else {
+          console.log('❌ Aucun utilisateur Supabase connecté');
+        }
+      } catch (error) {
+        console.error('❌ Erreur lors de l\'initialisation Supabase:', error);
+      }
+    };
+
+    initializeSupabaseUser();
+  }, []);
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
@@ -256,7 +333,7 @@ const ChatZone: React.FC<ChatZoneProps> = ({
               id: msg.id,
               text: msg.content,
               sender: msg.author_id,
-              senderName: msg.author?.name || msg.author?.email || 'Utilisateur',
+              senderName: msg.author?.name || (msg as any).author_name || msg.author?.email || 'Utilisateur',
               time: formatMessageTime(new Date(msg.created_at)),
               status: 'delivered',
               reactions: {},
@@ -295,7 +372,7 @@ const ChatZone: React.FC<ChatZoneProps> = ({
         id: newMessage.id,
         text: newMessage.content,
         sender: newMessage.author_id,
-        senderName: newMessage.author?.name || newMessage.author?.email || 'Utilisateur',
+        senderName: newMessage.author?.name || (newMessage as any).author_name || newMessage.author?.email || 'Utilisateur',
         time: formatMessageTime(new Date(newMessage.created_at)),
         status: 'delivered',
         reactions: {},
@@ -712,6 +789,62 @@ const ChatZone: React.FC<ChatZoneProps> = ({
                   ? `${unreadCount} nouveau${unreadCount > 1 ? 'x' : ''} message${unreadCount > 1 ? 's' : ''}`
                   : `${Object.keys(userProfiles).length} utilisateur${Object.keys(userProfiles).length > 1 ? 's' : ''} en ligne`}
               </p>
+            </div>
+
+            {/* Section d'édition du nom d'utilisateur */}
+            <div className="flex items-center gap-2 ml-auto">
+              {isEditingUsername ? (
+                <div className="flex flex-col gap-1">
+                  <input
+                    type="text"
+                    value={usernameInput}
+                    onChange={(e) => setUsernameInput(e.target.value)}
+                    className={`text-sm border border-blue-400 rounded px-1 py-0.5 ${
+                      theme === 'dark' 
+                        ? 'bg-transparent text-white border-blue-400 placeholder-gray-400 focus:border-blue-300' 
+                        : 'bg-white text-gray-900 border-blue-400 placeholder-gray-500 focus:border-blue-500'
+                    }`}
+                    placeholder="Nouveau nom..."
+                    autoFocus
+                    onKeyPress={(e) => e.key === 'Enter' && handleUsernameEdit()}
+                    onKeyDown={(e) => e.key === 'Escape' && handleUsernameCancel()}
+                  />
+                  <div className="flex gap-1">
+                    <button
+                      onClick={handleUsernameEdit}
+                      className="text-xs bg-green-600 hover:bg-green-700 px-2 py-0.5 rounded text-white"
+                    >
+                      ✓
+                    </button>
+                    <button
+                      onClick={handleUsernameCancel}
+                      className="text-xs bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded text-white"
+                    >
+                      ✗
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <span className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-green-100'}`}>
+                    {currentUsername || supabaseProfile?.name || 'Utilisateur'}
+                  </span>
+                  <button
+                    onClick={() => {
+                      setUsernameInput(currentUsername || supabaseProfile?.name || '');
+                      setIsEditingUsername(true);
+                    }}
+                    className={`text-xs px-1 py-0.5 rounded hover:opacity-80 ${
+                      theme === 'dark' 
+                        ? 'text-gray-300 hover:bg-gray-700' 
+                        : 'text-green-100 hover:bg-green-200'
+                    }`}
+                    title="Modifier le nom"
+                  >
+                    ✏️
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Indicateur des utilisateurs en train d'écrire */}

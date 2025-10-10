@@ -7,6 +7,7 @@ import { ref, update, onValue, get } from 'firebase/database';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 import { signOutAdmin } from '../utils/admin-utils';
+import { updateUserProfile, getCurrentUser, getUserProfile } from '../lib/supabase';
 
 export default function AdminInterface() {
 
@@ -26,6 +27,11 @@ export default function AdminInterface() {
   const [selectedSignalsDate, setSelectedSignalsDate] = useState<Date | null>(null);
   const [pasteArea, setPasteArea] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  // États pour l'édition du nom d'utilisateur
+  const [isEditingUsername, setIsEditingUsername] = useState(false);
+  const [usernameInput, setUsernameInput] = useState('');
+  const [currentUsername, setCurrentUsername] = useState('Admin');
 
   // État pour les réactions aux messages (côté admin)
   const [messageReactions, setMessageReactions] = useState<{[messageId: string]: {fire: number, users: string[]}}>({});
@@ -329,6 +335,24 @@ export default function AdminInterface() {
         console.log('✅ Photo de profil admin chargée depuis localStorage:', localImage);
       } else {
         console.log('❌ Aucune photo de profil admin trouvée');
+      }
+
+      // Charger le nom d'utilisateur depuis Supabase (source unique)
+      try {
+        const user = await getCurrentUser();
+        if (user) {
+          const { data } = await getUserProfile(user.id);
+          if (data?.name) {
+            setCurrentUsername(data.name);
+            console.log('✅ Nom d\'utilisateur chargé depuis Supabase:', data.name);
+          } else {
+            console.log('❌ Aucun nom d\'utilisateur trouvé en Supabase, garder "Admin"');
+          }
+        } else {
+          console.log('❌ Aucun utilisateur connecté');
+        }
+      } catch (error) {
+        console.error('❌ Erreur lors du chargement du nom d\'utilisateur:', error);
       }
     };
     
@@ -1412,6 +1436,29 @@ export default function AdminInterface() {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleUsernameEdit = async () => {
+    if (usernameInput.trim()) {
+      try {
+        const { data, error } = await updateUserProfile(usernameInput.trim());
+        if (!error && data) {
+          setCurrentUsername(usernameInput.trim());
+          console.log('✅ Username updated successfully in Supabase:', usernameInput.trim());
+        } else {
+          console.error('❌ Error updating username in Supabase:', error);
+        }
+      } catch (error) {
+        console.error('❌ Error updating username:', error);
+      }
+      setIsEditingUsername(false);
+      setUsernameInput('');
+    }
+  };
+
+  const handleUsernameCancel = () => {
+    setIsEditingUsername(false);
+    setUsernameInput('');
   };
 
   const handleStartStream = () => {
@@ -3157,8 +3204,51 @@ export default function AdminInterface() {
               </div>
             </label>
             <div className="flex-1">
-              <p className="text-sm font-medium">Admin</p>
-              <p className="text-xs text-gray-400">En ligne</p>
+              {isEditingUsername ? (
+                <div className="flex flex-col gap-1">
+                  <input
+                    type="text"
+                    value={usernameInput}
+                    onChange={(e) => setUsernameInput(e.target.value)}
+                    className="text-sm bg-transparent border border-blue-400 rounded px-1 py-0.5 text-white placeholder-gray-400 focus:outline-none focus:border-blue-300"
+                    placeholder="Nouveau nom..."
+                    autoFocus
+                    onKeyPress={(e) => e.key === 'Enter' && handleUsernameEdit()}
+                    onKeyDown={(e) => e.key === 'Escape' && handleUsernameCancel()}
+                  />
+                  <div className="flex gap-1">
+                    <button
+                      onClick={handleUsernameEdit}
+                      className="text-xs bg-green-600 hover:bg-green-700 px-2 py-0.5 rounded text-white"
+                    >
+                      ✓
+                    </button>
+                    <button
+                      onClick={handleUsernameCancel}
+                      className="text-xs bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded text-white"
+                    >
+                      ✗
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <div>
+                    <p className="text-sm font-medium">{currentUsername}</p>
+                    <p className="text-xs text-gray-400">En ligne</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setUsernameInput(currentUsername);
+                      setIsEditingUsername(true);
+                    }}
+                    className="text-xs text-gray-400 hover:text-white px-1 py-0.5 rounded hover:bg-gray-700 flex items-center"
+                    title="Modifier le nom"
+                  >
+                    ✏️
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -3276,8 +3366,20 @@ export default function AdminInterface() {
                     )}
                   </div>
                 </label>
-                <div>
-                  <p className="text-sm font-medium">Admin</p>
+                <div className="flex items-center gap-2">
+                  <div>
+                    <p className="text-sm font-medium">{isEditingUsername ? currentUsername : currentUsername}</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setUsernameInput(currentUsername);
+                      setIsEditingUsername(true);
+                    }}
+                    className="text-xs text-gray-400 hover:text-white px-1 py-0.5 rounded hover:bg-gray-700"
+                    title="Modifier le nom"
+                  >
+                    ✏️
+                  </button>
                 </div>
               </div>
               <button onClick={handleLogout} className="text-gray-400 hover:text-white">

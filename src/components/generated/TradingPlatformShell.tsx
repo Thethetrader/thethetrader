@@ -6,6 +6,7 @@ import { createClient } from '@supabase/supabase-js';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
 
 import { syncProfileImage, getProfileImage, initializeProfile } from '../../utils/profile-manager';
+import { updateUserProfile, getUserProfile } from '../../lib/supabase';
 import { useStatsSync } from '../../hooks/useStatsSync';
 import { useCalendarSync } from '../../hooks/useCalendarSync';
 
@@ -430,6 +431,55 @@ export default function TradingPlatformShell() {
   }, [selectedChannel.id]);
   const [chatMessage, setChatMessage] = useState('');
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  
+  // États pour l'édition du nom d'utilisateur
+  const [isEditingUsername, setIsEditingUsername] = useState(false);
+  const [usernameInput, setUsernameInput] = useState('');
+  const [currentUsername, setCurrentUsername] = useState('');
+  const [supabaseProfile, setSupabaseProfile] = useState<any>(null);
+
+  // Fonctions pour l'édition du nom d'utilisateur
+  const handleUsernameEdit = async () => {
+    if (usernameInput.trim()) {
+      try {
+        const { data, error } = await updateUserProfile(usernameInput.trim());
+        if (!error && data) {
+          setCurrentUsername(usernameInput.trim());
+          setSupabaseProfile(prev => prev ? { ...prev, name: usernameInput.trim() } : prev);
+          console.log('✅ Username updated successfully in Supabase:', usernameInput.trim());
+        } else {
+          console.error('❌ Error updating username in Supabase:', error);
+        }
+      } catch (error) {
+        console.error('❌ Error updating username:', error);
+      }
+      setIsEditingUsername(false);
+      setUsernameInput('');
+    }
+  };
+
+  const handleUsernameCancel = () => {
+    setIsEditingUsername(false);
+    setUsernameInput('');
+  };
+
+  // Charger le profil utilisateur une seule fois au démarrage
+  useEffect(() => {
+    const initializeSupabaseUser = async () => {
+      try {
+        const userSess = supabase.auth.getUser();
+        const session = await supabase.auth.getSession();
+        
+        if (session.data.session?.user) {
+          console.log('✅ Session utilisateur trouvée:', session.data.session.user.email);
+        }
+      } catch (error) {
+        console.error('❌ Pas de session Supabase:', error);
+      }
+    };
+
+    initializeSupabaseUser();
+  }, []);
 
   // Initialiser le profil utilisateur au chargement
   useEffect(() => {
@@ -445,10 +495,29 @@ export default function TradingPlatformShell() {
       } else {
         console.log('❌ Aucune photo de profil utilisateur trouvée');
       }
+
+      // Charger le profil utilisateur Supabase
+      if (user) {
+        try {
+          const { data: profile } = await getUserProfile(user.id);
+          if (profile) {
+            setSupabaseProfile(profile);
+            setCurrentUsername(profile.name || user.email || 'Utilisateur');
+            console.log('✅ Profil utilisateur chargé depuis Supabase:', profile);
+          } else {
+            // Si pas de profil, utiliser l'email
+            setCurrentUsername(user.email || 'Utilisateur');
+            console.log('✅ Username défini depuis email:', user.email);
+          }
+        } catch (error) {
+          console.error('❌ Erreur lors du chargement du profil Supabase:', error);
+          setCurrentUsername(user.email || 'Utilisateur');
+        }
+      }
     };
     
     initProfile();
-  }, []);
+  }, [user]);
 
   // Subscription globale pour compter les messages non lus
   useEffect(() => {
@@ -2703,8 +2772,51 @@ export default function TradingPlatformShell() {
                     )}
                 </div>
                 </label>
-                <div>
-                  <p className="text-sm font-medium">TheTheTrader</p>
+                <div className="flex-1">
+                  {isEditingUsername ? (
+                    <div className="flex flex-col gap-1">
+                      <input
+                        type="text"
+                        value={usernameInput}
+                        onChange={(e) => setUsernameInput(e.target.value)}
+                        className="text-sm bg-transparent border border-blue-400 rounded px-1 py-0.5 text-white placeholder-gray-400 focus:outline-none focus:border-blue-300"
+                        placeholder="Nouveau nom..."
+                        autoFocus
+                        onKeyPress={(e) => e.key === 'Enter' && handleUsernameEdit()}
+                        onKeyDown={(e) => e.key === 'Escape' && handleUsernameCancel()}
+                      />
+                      <div className="flex gap-1">
+                        <button
+                          onClick={handleUsernameEdit}
+                          className="text-xs bg-green-600 hover:bg-green-700 px-2 py-0.5 rounded text-white"
+                        >
+                          ✓
+                        </button>
+                        <button
+                          onClick={handleUsernameCancel}
+                          className="text-xs bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded text-white"
+                        >
+                          ✗
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <div>
+                        <p className="text-sm font-medium">{currentUsername || 'Utilisateur'}</p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setUsernameInput(currentUsername || '');
+                          setIsEditingUsername(true);
+                        }}
+                        className="text-xs text-gray-400 hover:text-white px-1 py-0.5 rounded hover:bg-gray-700 flex items-center"
+                        title="Modifier le nom"
+                      >
+                        ✏️
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
               <button onClick={handleLogout} className="text-gray-400 hover:text-white">

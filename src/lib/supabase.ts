@@ -521,6 +521,36 @@ export const getUserProfile = async (userId?: string) => {
   }
 };
 
+/**
+ * Met à jour le profil utilisateur avec le vrai nom
+ */
+export const updateUserProfile = async (name: string, avatarUrl?: string) => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) throw new Error('Utilisateur non connecté');
+
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .upsert({
+        id: user.id,
+        name: name,
+        avatar_url: avatarUrl,
+        updated_at: new Date().toISOString()
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Erreur mise à jour profil:', error);
+    return {
+      data: null,
+      error: error instanceof Error ? error : new Error('Erreur mise à jour profil')
+    };
+  }
+};
+
 // ====== CHAT FUNCTIONS ======
 
 /**
@@ -531,12 +561,19 @@ export const sendMessage = async (channelId: string, content: string, messageTyp
     const user = await getCurrentUser();
     if (!user) throw new Error('Utilisateur non connecté');
 
+    // Récupérer le profil utilisateur pour obtenir le vrai nom
+    const { data: profile } = await getUserProfile(user.id);
+    const authorName = profile?.name || user.email || 'Utilisateur';
+    const authorAvatar = profile?.avatar_url || null;
+
     const { data, error } = await supabase
       .from('chat_messages')
       .insert({
         content,
         channel_id: channelId,
         author_id: user.id,
+        author_name: authorName,
+        author_avatar: authorAvatar,
         message_type: messageType
       })
       .select(`
@@ -579,6 +616,47 @@ export const getMessages = async (channelId: string, limit: number = 50) => {
     return {
       data: [],
       error: error instanceof Error ? error : new Error('Erreur récupération messages')
+    };
+  }
+};
+
+/**
+ * Récupère la liste des utilisateurs actifs dans un canal
+ */
+export const getChannelUsers = async (channelId: string) => {
+  try {
+    const { data, error } = await supabase
+      .from('chat_messages')
+      .select(`
+        user_profiles!author_id(id, name, email, avatar_url),
+        created_at
+      `)
+      .eq('channel_id', channelId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    
+    // Grouper les utilisateurs uniques par leurs données de profil
+    const uniqueUsers = {};
+    data?.forEach(msg => {
+      const user = msg.user_profiles;
+      if (user && !uniqueUsers[user.id]) {
+        uniqueUsers[user.id] = {
+          id: user.id,
+          name: user.name || user.email,
+          email: user.email,
+          avatar_url: user.avatar_url,
+          status: 'online' // Par défaut en ligne
+        };
+      }
+    });
+    
+    return { data: Object.values(uniqueUsers), error: null };
+  } catch (error) {
+    console.error('Erreur récupération utilisateurs canal:', error);
+    return {
+      data: [],
+      error: error instanceof Error ? error : new Error('Erreur récupération utilisateurs canal')
     };
   }
 };

@@ -294,7 +294,7 @@ export default function ChatZoneSupabase({
                   <div className={`flex gap-3 ${isOwnMessage ? 'flex-row-reverse' : ''}`}>
                     {/* Avatar */}
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
-                      {message.author?.name?.charAt(0) || message.author?.email?.charAt(0) || '?'}
+                      {(message.author?.name || (message as any).author_name || message.author?.email || '?').charAt(0)}
                     </div>
 
                     {/* Message Content */}
@@ -302,7 +302,7 @@ export default function ChatZoneSupabase({
                       {/* Header */}
                       <div className={`flex items-center gap-2 mb-1 ${isOwnMessage ? 'flex-row-reverse' : ''}`}>
                         <span className="font-semibold text-sm">
-                          {message.author?.name || message.author?.email}
+                          {message.author?.name || message.author?.email || (message as any).author_name || 'Utilisateur'}
                         </span>
                         <span className="text-xs text-gray-400">
                           {formatTime(message.created_at)}

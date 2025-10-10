@@ -78,7 +78,7 @@ const UserChat = ({ channelId = 'chatzone' }) => {
             const convertedMessages = messagesData.map((msg) => ({
               id: msg.id,
               text: msg.content,
-              user: msg.author?.name || msg.author?.email || 'Utilisateur',
+              user: msg.author?.name || (msg as any).author_name || msg.author?.email || 'Utilisateur',
               userId: msg.author_id,
               time: new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
               timestamp: msg.created_at,
@@ -122,7 +122,7 @@ const UserChat = ({ channelId = 'chatzone' }) => {
       const convertedMessage = {
         id: newMessage.id,
         text: newMessage.content,
-        user: newMessage.author?.name || newMessage.author?.email || 'Utilisateur',
+        user: newMessage.author?.name || (newMessage as any).author_name || newMessage.author?.email || 'Utilisateur',
         userId: newMessage.author_id,
         time: new Date(newMessage.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         timestamp: newMessage.created_at,
