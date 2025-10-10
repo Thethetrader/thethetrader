@@ -522,28 +522,85 @@ export const getUserProfile = async (userId?: string) => {
 };
 
 /**
- * Met à jour le profil utilisateur avec le vrai nom
+ * Récupère le profil utilisateur selon le type
  */
-export const updateUserProfile = async (name: string, avatarUrl?: string) => {
+export const getUserProfileByType = async (userType: 'user' | 'admin') => {
   try {
     const user = await getCurrentUser();
     if (!user) throw new Error('Utilisateur non connecté');
 
+    console.log('🔍 getUserProfileByType - Recherche profil pour:', {
+      userId: user.id,
+      userEmail: user.email,
+      userType: userType
+    });
+
+    // Utiliser l'ID réel de l'utilisateur Supabase
     const { data, error } = await supabase
       .from('user_profiles')
-      .upsert({
-        id: user.id,
-        name: name,
-        avatar_url: avatarUrl,
-        updated_at: new Date().toISOString()
-      })
+      .select('*')
+      .eq('id', user.id)
+      .single();
+
+    console.log('📊 Résultat de la requête Supabase:', {
+      data: data,
+      error: error,
+      errorCode: error?.code
+    });
+
+    if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows
+    
+    // Retourner les données avec la structure attendue
+    return { data, error: null };
+  } catch (error) {
+    console.error('❌ Erreur getUserProfileByType:', error);
+    return { data: null, error };
+  }
+};
+
+/**
+ * Met à jour le profil utilisateur avec le vrai nom
+ */
+export const updateUserProfile = async (name: string, avatarUrl?: string, userType: 'user' | 'admin' = 'user') => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) throw new Error('Utilisateur non connecté');
+
+    console.log('🔄 updateUserProfile appelé:', {
+      userId: user.id,
+      userEmail: user.email,
+      name: name,
+      avatarUrl: avatarUrl,
+      userType: userType
+    });
+
+    // Utiliser l'ID réel de l'utilisateur Supabase
+    const profileData: any = {
+      id: user.id,
+      name: name,
+      email: user.email,
+      updated_at: new Date().toISOString()
+    };
+
+    // Ajouter l'avatar seulement s'il est fourni
+    if (avatarUrl !== undefined) {
+      profileData.avatar_url = avatarUrl;
+    }
+
+    console.log('📝 Données à envoyer à Supabase:', profileData);
+
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .upsert(profileData)
       .select()
       .single();
 
     if (error) throw error;
+    
+    console.log('✅ Profil mis à jour dans Supabase:', data);
     return { data, error: null };
   } catch (error) {
-    console.error('Erreur mise à jour profil:', error);
+    console.error('❌ Erreur mise à jour profil:', error);
     return {
       data: null,
       error: error instanceof Error ? error : new Error('Erreur mise à jour profil')
@@ -562,7 +619,7 @@ export const sendMessage = async (channelId: string, content: string, messageTyp
     if (!user) throw new Error('Utilisateur non connecté');
 
     // Récupérer le profil utilisateur pour obtenir le vrai nom
-    const { data: profile } = await getUserProfile(user.id);
+    const { data: profile } = await getUserProfileByType('user');
     const authorName = profile?.name || user.email || 'Utilisateur';
     const authorAvatar = profile?.avatar_url || null;
 
@@ -800,6 +857,235 @@ export const createChannel = async (name: string, description?: string) => {
 // Export par défaut du client Supabase
 export default supabase;
 
+// ===== PERSONAL TRADES (JOURNAL DE TRADING) =====
 
+export interface PersonalTrade {
+  id: string;
+  user_id: string;
+  date: string;
+  symbol: string;
+  type: 'BUY' | 'SELL';
+  entry: string;
+  exit: string;
+  stopLoss?: string;
+  pnl: string;
+  status: 'WIN' | 'LOSS' | 'BREAKEVEN';
+  notes?: string;
+  image1?: string | null;
+  image2?: string | null;
+  timestamp?: string;
+  created_at?: string;
+  updated_at?: string;
+}
 
+/**
+ * Ajouter un trade personnel dans Supabase
+ */
+export const addPersonalTrade = async (trade: Omit<PersonalTrade, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<PersonalTrade | null> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      console.error('❌ Utilisateur non connecté');
+      return null;
+    }
 
+    console.log('🚀 Ajout trade personnel Supabase:', trade);
+
+    // Convertir les images File en base64 si nécessaire
+    let image1Base64: string | null = null;
+    let image2Base64: string | null = null;
+
+    if (trade.image1 && typeof trade.image1 === 'object') {
+      image1Base64 = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsDataURL(trade.image1 as any);
+      });
+    } else if (typeof trade.image1 === 'string') {
+      image1Base64 = trade.image1;
+    }
+
+    if (trade.image2 && typeof trade.image2 === 'object') {
+      image2Base64 = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsDataURL(trade.image2 as any);
+      });
+    } else if (typeof trade.image2 === 'string') {
+      image2Base64 = trade.image2;
+    }
+
+    const tradeData = {
+      user_id: user.id,
+      date: trade.date,
+      symbol: trade.symbol,
+      type: trade.type,
+      entry: parseFloat(trade.entry),
+      exit: parseFloat(trade.exit),
+      stop_loss: trade.stopLoss ? parseFloat(trade.stopLoss) : null,
+      pnl: parseFloat(trade.pnl),
+      status: trade.status,
+      notes: trade.notes || null,
+      image1: image1Base64,
+      image2: image2Base64,
+      timestamp: trade.timestamp || new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+    };
+
+    const { data, error } = await supabase
+      .from('personal_trades')
+      .insert(tradeData)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('❌ Erreur ajout trade Supabase:', error);
+      return null;
+    }
+
+    console.log('✅ Trade personnel sauvegardé Supabase:', data);
+    
+    // Convertir les nombres en strings pour la compatibilité avec l'interface
+    const savedTrade: PersonalTrade = {
+      ...data,
+      entry: data.entry.toString(),
+      exit: data.exit.toString(),
+      stopLoss: data.stop_loss ? data.stop_loss.toString() : undefined,
+      pnl: data.pnl.toString()
+    };
+    
+    return savedTrade;
+  } catch (error) {
+    console.error('❌ Erreur ajout trade personnel Supabase:', error);
+    return null;
+  }
+};
+
+/**
+ * Récupérer tous les trades personnels depuis Supabase
+ */
+export const getPersonalTrades = async (limit: number = 100): Promise<PersonalTrade[]> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      console.error('❌ Utilisateur non connecté');
+      return [];
+    }
+
+    console.log('📊 Récupération trades personnels Supabase...');
+
+    const { data, error } = await supabase
+      .from('personal_trades')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('date', { ascending: false })
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.error('❌ Erreur récupération trades Supabase:', error);
+      return [];
+    }
+
+    console.log('✅ Trades personnels récupérés:', data.length);
+
+    // Convertir les nombres en strings pour la compatibilité avec l'interface
+    const trades: PersonalTrade[] = data.map(trade => ({
+      ...trade,
+      entry: trade.entry.toString(),
+      exit: trade.exit.toString(),
+      stopLoss: trade.stop_loss ? trade.stop_loss.toString() : undefined,
+      pnl: trade.pnl.toString()
+    }));
+
+    return trades;
+  } catch (error) {
+    console.error('❌ Erreur récupération trades personnels Supabase:', error);
+    return [];
+  }
+};
+
+/**
+ * Supprimer un trade personnel
+ */
+export const deletePersonalTrade = async (tradeId: string): Promise<boolean> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      console.error('❌ Utilisateur non connecté');
+      return false;
+    }
+
+    const { error } = await supabase
+      .from('personal_trades')
+      .delete()
+      .eq('id', tradeId)
+      .eq('user_id', user.id);
+
+    if (error) {
+      console.error('❌ Erreur suppression trade Supabase:', error);
+      return false;
+    }
+
+    console.log('✅ Trade supprimé avec succès');
+    return true;
+  } catch (error) {
+    console.error('❌ Erreur suppression trade Supabase:', error);
+    return false;
+  }
+};
+
+/**
+ * Écouter les changements de trades personnels en temps réel
+ */
+export const listenToPersonalTrades = (
+  onTradesChange: (trades: PersonalTrade[]) => void,
+  onError?: (error: any) => void
+) => {
+  let userId: string | null = null;
+
+  // Obtenir l'ID utilisateur
+  getCurrentUser().then(user => {
+    if (!user) {
+      console.error('❌ Utilisateur non connecté');
+      if (onError) onError(new Error('Utilisateur non connecté'));
+      return;
+    }
+
+    userId = user.id;
+    console.log('👂 Démarrage écoute temps réel trades Supabase pour user:', userId);
+
+    // Charger les trades initiaux
+    getPersonalTrades().then(trades => {
+      onTradesChange(trades);
+    });
+
+    // S'abonner aux changements
+    const channel = supabase
+      .channel('personal_trades_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'personal_trades',
+          filter: `user_id=eq.${userId}`
+        },
+        (payload) => {
+          console.log('🔄 Changement détecté dans trades:', payload);
+          // Recharger tous les trades
+          getPersonalTrades().then(trades => {
+            onTradesChange(trades);
+          });
+        }
+      )
+      .subscribe();
+
+    console.log('✅ Abonnement temps réel trades actif');
+  });
+
+  // Retourner une fonction pour se désabonner
+  return () => {
+    console.log('🛑 Arrêt écoute temps réel trades Supabase');
+    supabase.channel('personal_trades_changes').unsubscribe();
+  };
+};

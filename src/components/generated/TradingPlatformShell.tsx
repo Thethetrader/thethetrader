@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, Signal, addPersonalTrade, getPersonalTrades, PersonalTrade, syncUserId, listenToPersonalTrades } from '../../utils/firebase-setup';
+import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, Signal, syncUserId } from '../../utils/firebase-setup';
+import { addPersonalTrade, getPersonalTrades, deletePersonalTrade, PersonalTrade, listenToPersonalTrades } from '../../lib/supabase';
 import ProfitLoss from '../ProfitLoss';
 import ChatZone from '../ChatZone';
 import { createClient } from '@supabase/supabase-js';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
 
 import { syncProfileImage, getProfileImage, initializeProfile } from '../../utils/profile-manager';
-import { updateUserProfile, getUserProfile } from '../../lib/supabase';
+import { updateUserProfile, getUserProfile, getUserProfileByType } from '../../lib/supabase';
 import { useStatsSync } from '../../hooks/useStatsSync';
 import { useCalendarSync } from '../../hooks/useCalendarSync';
 
@@ -58,14 +59,37 @@ export default function TradingPlatformShell() {
     // Écouter les changements d'auth
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.user) {
+        // Nettoyer les anciennes données si c'est un nouvel utilisateur
+        if (event === 'SIGNED_IN') {
+          console.log('🔄 Nouvel utilisateur connecté, nettoyage des données...');
+          setCurrentUsername('');
+          setSupabaseProfile(null);
+          setMessages({});
+          setMessageReactions({});
+          
+          // Nettoyer les anciennes clés localStorage des autres utilisateurs
+          Object.keys(localStorage).forEach(key => {
+            if (key.startsWith('userUsername_') && !key.endsWith(`_${session.user.id}`)) {
+              localStorage.removeItem(key);
+              console.log('🧹 Ancienne clé localStorage supprimée:', key);
+            }
+          });
+        }
+        
         setUser({ 
           id: session.user.id, 
           email: session.user.email || '' 
         });
       } else {
         setUser(null);
+        // Nettoyer les états quand l'utilisateur se déconnecte
+        setCurrentUsername('');
+        setSupabaseProfile(null);
+        setMessages({});
+        setMessageReactions({});
+        console.log('🧹 États utilisateur nettoyés après déconnexion');
       }
     });
 
@@ -302,12 +326,8 @@ export default function TradingPlatformShell() {
       console.log('🔍 Signaux formatés utilisateur:', formattedSignals);
       console.log('🎯 État signals utilisateur après setSignals:', formattedSignals);
       
-      // Envoyer des notifications pour les nouveaux signaux
-      if (formattedSignals.length > 0) {
-        // Notifier le signal le plus récent
-        const latestSignal = formattedSignals[0];
-        notifyNewSignal(latestSignal);
-      }
+      // Ne pas envoyer de notifications lors du chargement initial
+      // Les notifications seront envoyées seulement pour les nouveaux signaux en temps réel
       
       // Scroll automatique après chargement des signaux (sauf pour calendrier et journal perso)
       if (!['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux'].includes(channelId)) {
@@ -371,9 +391,14 @@ export default function TradingPlatformShell() {
         signal.id === updatedSignal.id ? { ...signal, reactions: updatedSignal.reactions || [] } : signal
       ));
       
-      // Envoyer une notification pour les signaux fermés (WIN/LOSS/BE)
+      // Envoyer une notification pour les signaux fermés (WIN/LOSS/BE) seulement si c'est un vrai changement
       if (updatedSignal.status !== 'ACTIVE' && (updatedSignal as any).closeMessage) {
-        notifySignalClosed(updatedSignal);
+        // Vérifier si c'est un changement récent (moins de 5 secondes) pour éviter les notifications en batch
+        const now = Date.now();
+        const signalTime = new Date(updatedSignal.timestamp || updatedSignal.created_at).getTime();
+        if (now - signalTime < 5000) {
+          notifySignalClosed(updatedSignal);
+        }
       }
     });
 
@@ -411,8 +436,12 @@ export default function TradingPlatformShell() {
         ];
       });
       
-      // Notifier le nouveau signal
-      notifyNewSignal(formattedSignal);
+      // Notifier le nouveau signal seulement s'il est vraiment récent (moins de 10 secondes)
+      const now = Date.now();
+      const signalTime = new Date(newSignal.timestamp || newSignal.created_at).getTime();
+      if (now - signalTime < 10000) {
+        notifyNewSignal(formattedSignal);
+      }
       
       // Scroll automatique (sauf pour calendrier et journal perso)
       if (!['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux'].includes(selectedChannel.id)) {
@@ -442,16 +471,37 @@ export default function TradingPlatformShell() {
   const handleUsernameEdit = async () => {
     if (usernameInput.trim()) {
       try {
-        const { data, error } = await updateUserProfile(usernameInput.trim());
-        if (!error && data) {
+        // Vérifier si l'utilisateur est connecté
+        if (!user) {
+          console.error('❌ Utilisateur non connecté');
+          // Mode dégradé : sauvegarder en localStorage avec ID générique
+          localStorage.setItem('userUsername', usernameInput.trim());
           setCurrentUsername(usernameInput.trim());
-          setSupabaseProfile(prev => prev ? { ...prev, name: usernameInput.trim() } : prev);
-          console.log('✅ Username updated successfully in Supabase:', usernameInput.trim());
+          console.log('✅ Username sauvegardé en localStorage:', usernameInput.trim());
         } else {
-          console.error('❌ Error updating username in Supabase:', error);
+          const { data, error } = await updateUserProfile(usernameInput.trim(), undefined, 'user');
+          if (!error && data) {
+            setCurrentUsername(usernameInput.trim());
+            setSupabaseProfile(prev => prev ? { ...prev, name: usernameInput.trim() } : prev);
+            console.log('✅ Username updated successfully in Supabase:', usernameInput.trim());
+          } else {
+            console.error('❌ Error updating username in Supabase:', error);
+            // Mode dégradé : sauvegarder en localStorage avec ID utilisateur
+            localStorage.setItem(`userUsername_${user.id}`, usernameInput.trim());
+            setCurrentUsername(usernameInput.trim());
+            console.log('✅ Username sauvegardé en localStorage (fallback):', usernameInput.trim());
+          }
         }
       } catch (error) {
         console.error('❌ Error updating username:', error);
+        // Mode dégradé : sauvegarder en localStorage avec ID utilisateur si disponible
+        if (user) {
+          localStorage.setItem(`userUsername_${user.id}`, usernameInput.trim());
+        } else {
+          localStorage.setItem('userUsername', usernameInput.trim());
+        }
+        setCurrentUsername(usernameInput.trim());
+        console.log('✅ Username sauvegardé en localStorage (fallback):', usernameInput.trim());
       }
       setIsEditingUsername(false);
       setUsernameInput('');
@@ -496,22 +546,61 @@ export default function TradingPlatformShell() {
         console.log('❌ Aucune photo de profil utilisateur trouvée');
       }
 
-      // Charger le profil utilisateur Supabase
+      // Charger le nom d'utilisateur (Supabase d'abord, puis localStorage)
       if (user) {
+        console.log('👤 Utilisateur connecté:', user.id, user.email);
         try {
-          const { data: profile } = await getUserProfile(user.id);
-          if (profile) {
+          const { data: profile } = await getUserProfileByType('user');
+          console.log('📦 Profil récupéré de Supabase:', profile);
+          if (profile?.name) {
             setSupabaseProfile(profile);
-            setCurrentUsername(profile.name || user.email || 'Utilisateur');
+            setCurrentUsername(profile.name);
             console.log('✅ Profil utilisateur chargé depuis Supabase:', profile);
           } else {
-            // Si pas de profil, utiliser l'email
-            setCurrentUsername(user.email || 'Utilisateur');
-            console.log('✅ Username défini depuis email:', user.email);
+            // Profil n'existe pas, créer un profil par défaut avec l'email
+            console.log('⚠️ Pas de profil trouvé, création du profil par défaut...');
+            const defaultName = user.email?.split('@')[0] || 'Utilisateur';
+            
+            // Créer le profil dans Supabase
+            const { data: newProfile } = await updateUserProfile(defaultName, undefined, 'user');
+            
+            if (newProfile) {
+              setSupabaseProfile(newProfile);
+              setCurrentUsername(defaultName);
+              console.log('✅ Nouveau profil créé dans Supabase:', newProfile);
+            } else {
+              // Fallback localStorage avec ID utilisateur
+              const localUsername = localStorage.getItem(`userUsername_${user.id}`);
+              if (localUsername) {
+                setCurrentUsername(localUsername);
+                console.log('✅ Username chargé depuis localStorage:', localUsername);
+              } else {
+                setCurrentUsername(defaultName);
+                console.log('✅ Username défini depuis email:', defaultName);
+              }
+            }
           }
         } catch (error) {
           console.error('❌ Erreur lors du chargement du profil Supabase:', error);
-          setCurrentUsername(user.email || 'Utilisateur');
+          // Mode dégradé : localStorage avec ID utilisateur
+          const localUsername = localStorage.getItem(`userUsername_${user.id}`);
+          if (localUsername) {
+            setCurrentUsername(localUsername);
+            console.log('✅ Username chargé depuis localStorage (fallback):', localUsername);
+          } else {
+            setCurrentUsername(user.email || 'Utilisateur');
+            console.log('✅ Username défini depuis email (fallback):', user.email);
+          }
+        }
+      } else {
+        // Pas connecté : utiliser localStorage
+        const localUsername = localStorage.getItem('userUsername');
+        if (localUsername) {
+          setCurrentUsername(localUsername);
+          console.log('✅ Username chargé depuis localStorage (pas connecté):', localUsername);
+        } else {
+          setCurrentUsername('Utilisateur');
+          console.log('✅ Username par défaut (pas connecté)');
         }
       }
     };
@@ -601,6 +690,9 @@ export default function TradingPlatformShell() {
   // Fonction pour changer de canal et réinitialiser selectedDate si nécessaire
   const handleChannelChange = (channelId: string, channelName: string) => {
     console.log('🔄 handleChannelChange appelé:', { channelId, channelName });
+    
+    // Réinitialiser le flag de scroll pour permettre un nouveau scroll
+    setIsScrolling(false);
     
     // Marquer le canal comme lu quand l'utilisateur l'ouvre
     updateLastReadTime(channelId);
@@ -1553,7 +1645,18 @@ export default function TradingPlatformShell() {
     }
   };
 
+  // État pour éviter les scrolls multiples
+  const [isScrolling, setIsScrolling] = useState(false);
+
   const scrollToBottom = () => {
+    // Éviter les scrolls multiples
+    if (isScrolling) {
+      console.log('⏸️ Scroll déjà en cours, ignoré');
+      return;
+    }
+    
+    setIsScrolling(true);
+    
     // Scroller vers le bas pour voir les messages les plus récents
     console.log('🔄 Scrolling to bottom user...', {
       hasRef: !!messagesContainerRef.current,
@@ -1579,32 +1682,60 @@ export default function TradingPlatformShell() {
       console.log(`📜 Scrolled container ${index}`);
     });
     
-    // Méthode 4: Multiple tentatives avec délais
+    // Réinitialiser le flag après un délai
     setTimeout(() => {
-      if (messagesContainerRef.current) {
-        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-      }
-    }, 50);
-    
-    setTimeout(() => {
-      if (messagesContainerRef.current) {
-        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-      }
-    }, 200);
-    
-    console.log('✅ Scroll to bottom user completed');
+      setIsScrolling(false);
+      console.log('✅ Scroll to bottom user completed');
+    }, 300);
   };
 
-  const handleLogout = () => {
-    // Garder la photo de profil même après déconnexion
-    const profileImageBackup = localStorage.getItem('userProfileImage');
-    // Nettoyer le localStorage
-    localStorage.clear();
-    if (profileImageBackup) {
-      localStorage.setItem('userProfileImage', profileImageBackup);
+  const handleLogout = async () => {
+    console.log('🚪 Déconnexion utilisateur en cours...');
+    
+    try {
+      // Déconnexion Supabase
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('❌ Erreur déconnexion Supabase:', error);
+      } else {
+        console.log('✅ Déconnexion Supabase réussie');
+      }
+      
+      // Nettoyage complet du localStorage (sauf les photos de profil)
+      const keysToRemove = [
+        'signals', 'chat_messages', 'trading_stats', 'user_session',
+        'userUsername', 'adminUsername', 'messageReactions', 'lastReadTimes',
+        'userProfiles', 'supabaseProfile'
+      ];
+      
+      keysToRemove.forEach(key => {
+        localStorage.removeItem(key);
+        console.log(`🧹 Supprimé: ${key}`);
+      });
+      
+      // Nettoyer les clés localStorage spécifiques à l'utilisateur actuel
+      if (user) {
+        const userSpecificKey = `userUsername_${user.id}`;
+        localStorage.removeItem(userSpecificKey);
+        console.log(`🧹 Supprimé clé utilisateur spécifique: ${userSpecificKey}`);
+      }
+      
+      console.log('🧹 Nettoyage localStorage terminé');
+      
+      // Forcer un rechargement complet de la page (hard reload)
+      console.log('🔄 Rechargement complet de la page...');
+      window.location.replace('/');
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
+    } catch (error) {
+      console.error('❌ Erreur lors de la déconnexion:', error);
+      // En cas d'erreur, forcer quand même le rechargement
+      window.location.replace('/');
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     }
-    // Rediriger vers la landing page
-    window.location.href = '/';
   };
 
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -1790,13 +1921,14 @@ export default function TradingPlatformShell() {
     }
   };
 
+  // FIXED: Completely rewritten TradingView paste handler to match Google Apps Script logic
   const handleTradingViewPasteTrade = (e: React.ClipboardEvent<HTMLDivElement>) => {
     e.preventDefault();
     const pastedHtml = e.clipboardData.getData('text/html') || '';
     const pastedText = e.clipboardData.getData('text') || '';
     
-    console.log('Pasted HTML:', pastedHtml);
-    console.log('Pasted Text:', pastedText);
+    console.log('📋 Paste detected - HTML:', pastedHtml.slice(0, 300));
+    console.log('📋 Paste detected - Text:', pastedText.slice(0, 300));
     
     // Store extracted data
     const extracted: Record<string, any> = {};
@@ -1814,7 +1946,7 @@ export default function TradingPlatformShell() {
           const jsonString = match[1].replace(/&(?:quot|#34);/g, '"');
           const data = JSON.parse(jsonString);
           
-          console.log('TradingView data:', data);
+          console.log('📊 TradingView data parsed:', data);
           
           // Extract source and points - similar to Google Apps Script
           const source = data.sources?.[0]?.source;
@@ -1839,9 +1971,11 @@ export default function TradingPlatformShell() {
             // Determine trade type from the tool
             const type = source?.type;
             if (type === "LineToolRiskRewardLong" || /long/i.test(type)) {
-              extracted.tradeType = 'buy';
+              extracted.tradeType = 'BUY';
+              extracted.outcome = 'WIN'; // Default to WIN
             } else if (type === "LineToolRiskRewardShort" || /short/i.test(type)) {
-              extracted.tradeType = 'sell';
+              extracted.tradeType = 'SELL';
+              extracted.outcome = 'WIN'; // Default to WIN
             }
             
             // Extract price information
@@ -1866,9 +2000,9 @@ export default function TradingPlatformShell() {
               // Calculate Stop Loss based on entry price and stopLevel
               if (entryPrice !== undefined) {
                 let slPrice;
-                if (extracted.tradeType === 'buy') {
+                if (extracted.tradeType === 'BUY') {
                   // For Long trades
-                  const stopDistance = stopLevel / 4;
+                  const stopDistance = stopLevel / 4; // Similar to Google Script
                   slPrice = entryPrice - stopDistance;
                 } else {
                   // For Short trades
@@ -1878,38 +2012,134 @@ export default function TradingPlatformShell() {
                 extracted.stopLoss = slPrice.toString();
               }
             }
+            
+            // Extract timestamps for entry/exit if available
+            if (points[0]?.time_t) {
+              const entryTimestamp = points[0].time_t;
+              const entryDate = new Date(entryTimestamp * 1000);
+              
+              // Format entry time for the form
+              const entryTimeStr = entryDate.toTimeString().split(' ')[0].slice(0, 5);
+              extracted.entryTime = entryTimeStr;
+              
+              // If we have exit timestamp
+              if (points.length > 1 && points[1]?.time_t) {
+                const exitTimestamp = points[1].time_t;
+                const exitDate = new Date(exitTimestamp * 1000);
+                const exitTimeStr = exitDate.toTimeString().split(' ')[0].slice(0, 5);
+                extracted.exitTime = exitTimeStr;
+                
+                // Calculate trade duration
+                const durationMs = (exitTimestamp - entryTimestamp) * 1000;
+                const durationMin = Math.round(durationMs / 60000);
+                
+                if (durationMin < 60) {
+                  extracted.tradeDuration = `${durationMin}m`;
+                } else {
+                  const hours = Math.floor(durationMin / 60);
+                  const mins = durationMin % 60;
+                  extracted.tradeDuration = `${hours}h ${mins}m`;
+                }
+              }
+            }
+            
+            // Try to determine session based on entry time
+            if (points[0]?.time_t) {
+              const entryDate = new Date(points[0].time_t * 1000);
+              let entryHour = entryDate.getUTCHours() - 4; // EST offset
+              if (entryHour < 0) entryHour += 24;
+              
+              let session = "";
+              if (entryHour >= 0 && entryHour < 3) session = "Asian Session";
+              else if (entryHour >= 3 && entryHour < 8) session = "London";
+              else if (entryHour >= 8 && entryHour < 12) session = "London/NY Overlap";
+              else if (entryHour >= 12 && entryHour < 17) session = "New York PM";
+              
+              if (session) {
+                extracted.session = session;
+              }
+            }
+            
+            // Calculate PNL if we have entry and exit
+            if (extracted.entryPrice && extracted.exitPrice) {
+              const entry = parseFloat(extracted.entryPrice);
+              const exit = parseFloat(extracted.exitPrice);
+              let pnl = 0;
+              
+              if (extracted.tradeType === 'BUY') {
+                pnl = exit - entry;
+              } else {
+                pnl = entry - exit;
+              }
+              
+              extracted.pnl = pnl.toString();
+            }
           }
         }
-      } catch (error) {
-        console.error('Error parsing TradingView data:', error);
+      } catch (err) {
+        console.error("❌ Error parsing TradingView data:", err);
       }
     }
     
-    // Fallback to text parsing if no TradingView data found
+    // Fallback to plain-text parsing if we didn't find structured data
     if (!found) {
-      const symbolMatch = pastedText.match(/([A-Z]{3,6})/);
-      const typeMatch = pastedText.match(/(BUY|SELL|LONG|SHORT)/i);
-      const numbers = pastedText.match(/\d+(?:\.\d+)?/g);
+      if (/long/i.test(pastedText)) {
+        extracted.tradeType = 'BUY';
+        extracted.outcome = 'WIN';
+        found = true;
+      } else if (/short/i.test(pastedText)) {
+        extracted.tradeType = 'SELL';
+        extracted.outcome = 'WIN';
+        found = true;
+      }
       
-      if (symbolMatch) extracted.symbol = symbolMatch[1];
-      if (typeMatch) extracted.tradeType = typeMatch[1].toLowerCase();
-      if (numbers && numbers.length >= 1) extracted.entryPrice = numbers[0];
-      if (numbers && numbers.length >= 2) extracted.exitPrice = numbers[1];
-      if (numbers && numbers.length >= 3) extracted.stopLoss = numbers[2];
+      // Try to extract symbol
+      const sym = pastedText.match(/\b([A-Z]{1,6}\d*(?:USD|BTC|ETH|EUR)?)\b/);
+      if (sym) {
+        extracted.symbol = sym[1];
+        found = true;
+      }
+      
+      // Try to extract numbers as prices
+      const nums = pastedText.match(/\b\d+(\.\d+)?\b/g) || [];
+      if (nums.length >= 2) {
+        extracted.entryPrice = nums[0];
+        extracted.exitPrice = nums[1];
+        if (nums.length >= 3) {
+          extracted.stopLoss = nums[2];
+        }
+        found = true;
+      }
     }
     
-    // Mise à jour du formulaire
-    if (extracted.symbol) setTradeData(prev => ({ ...prev, symbol: extracted.symbol }));
-    if (extracted.tradeType) setTradeData(prev => ({ ...prev, type: extracted.tradeType === 'buy' || extracted.tradeType === 'long' ? 'BUY' : 'SELL' }));
-    if (extracted.entryPrice) setTradeData(prev => ({ ...prev, entry: extracted.entryPrice }));
-    if (extracted.exitPrice) setTradeData(prev => ({ ...prev, exit: extracted.exitPrice }));
-    if (extracted.stopLoss) setTradeData(prev => ({ ...prev, stopLoss: extracted.stopLoss }));
-    
-    // Show success message
-    if (found || Object.keys(extracted).length > 0) {
-      console.log(`✅ Données importées - Symbole: ${extracted.symbol}, Entrée: ${extracted.entryPrice}, Sortie: ${extracted.exitPrice}, Stop Loss: ${extracted.stopLoss}`);
+    // Apply extracted data to the form
+    if (found) {
+      console.log('✅ Données extraites:', extracted);
+      
+      // Update form data with extracted values
+      if (extracted.symbol) setTradeData(prev => ({ ...prev, symbol: extracted.symbol }));
+      if (extracted.tradeType) setTradeData(prev => ({ ...prev, type: extracted.tradeType }));
+      if (extracted.outcome) setTradeData(prev => ({ ...prev, status: extracted.outcome }));
+      if (extracted.entryPrice) setTradeData(prev => ({ ...prev, entry: extracted.entryPrice }));
+      if (extracted.exitPrice) setTradeData(prev => ({ ...prev, exit: extracted.exitPrice }));
+      if (extracted.stopLoss) setTradeData(prev => ({ ...prev, stopLoss: extracted.stopLoss }));
+      if (extracted.pnl) setTradeData(prev => ({ ...prev, pnl: extracted.pnl }));
+      
+      // Add extracted info to notes
+      if (Object.keys(extracted).length > 0) {
+        const noteAddition = `Importé depuis TradingView:\n${JSON.stringify(extracted, null, 2)}`;
+        setTradeData(prev => ({ 
+          ...prev, 
+          notes: prev.notes ? `${prev.notes}\n\n${noteAddition}` : noteAddition 
+        }));
+      }
     } else {
-      console.warn('❌ Aucune donnée détectée. Essayez de coller depuis TradingView (Risk/Reward tool)');
+      // If nothing parsed, just dump the raw text into notes
+      setTradeData(prev => ({ 
+        ...prev, 
+        notes: `Pasted text:\n${pastedText}\n\n${prev.notes || ''}` 
+      }));
+      console.warn('⚠️ Could not extract structured trade data; added raw text to notes.');
     }
   };
 
@@ -2099,8 +2329,8 @@ export default function TradingPlatformShell() {
         const localMessage = {
           id: `local-${Date.now()}`,
           text: chatMessage,
-          user: 'TheTheTrader',
-          author: 'TheTheTrader',
+          user: currentUsername || 'Utilisateur',
+          author: currentUsername || 'Utilisateur',
           author_avatar: profileImage || undefined,
           timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
           attachment_data: undefined
@@ -2112,7 +2342,7 @@ export default function TradingPlatformShell() {
         const messageData = {
           channel_id: selectedChannel.id,
           content: chatMessage,
-          author: 'TheTheTrader',
+          author: currentUsername || 'Utilisateur',
           author_type: 'user' as const,
           author_avatar: profileImage || undefined // Photo de profil utilisateur
         };
@@ -2170,7 +2400,7 @@ export default function TradingPlatformShell() {
                         const messageData = {
                           channel_id: selectedChannel.id,
                           content: '',
-                      author: 'TheTheTrader',
+                      author: currentUsername || 'Utilisateur',
                           author_type: 'user' as const,
                           author_avatar: profileImage || undefined,
                           attachment_data: imageURL,
@@ -2668,8 +2898,57 @@ export default function TradingPlatformShell() {
             </div>
             </label>
             <div className="flex-1">
-              <p className="text-sm font-medium">TheTheTrader</p>
-              <p className="text-xs text-gray-400">En ligne</p>
+              <div className="flex items-center gap-2">
+                <div>
+                  <p className="text-sm font-medium">{isEditingUsername ? (
+                    <input
+                      type="text"
+                      value={usernameInput}
+                      onChange={(e) => setUsernameInput(e.target.value)}
+                      className="bg-gray-700 text-white text-sm px-2 py-1 rounded border border-gray-600 w-24"
+                      autoFocus
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleUsernameEdit();
+                        } else if (e.key === 'Escape') {
+                          handleUsernameCancel();
+                        }
+                      }}
+                    />
+                  ) : (
+                    currentUsername || 'Utilisateur'
+                  )}</p>
+                  <p className="text-xs text-gray-400">En ligne</p>
+                </div>
+                {!isEditingUsername && (
+                  <button
+                    onClick={() => {
+                      setUsernameInput(currentUsername || '');
+                      setIsEditingUsername(true);
+                    }}
+                    className="text-xs text-gray-400 hover:text-white px-1 py-0.5 rounded hover:bg-gray-700 flex items-center"
+                    title="Modifier le nom"
+                  >
+                    ✏️
+                  </button>
+                )}
+                {isEditingUsername && (
+                  <div className="flex gap-1">
+                    <button
+                      onClick={handleUsernameEdit}
+                      className="text-xs bg-green-600 hover:bg-green-700 px-2 py-0.5 rounded text-white"
+                    >
+                      ✓
+                    </button>
+                    <button
+                      onClick={handleUsernameCancel}
+                      className="text-xs bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded text-white"
+                    >
+                      ✗
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -3490,7 +3769,7 @@ export default function TradingPlatformShell() {
                             (messages[''] || []).map((message) => (
                               <div key={message.id} className="flex items-start gap-2">
                                 <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs overflow-hidden">
-                                  {message.author === 'TheTheTrader' && profileImage ? (
+                                  {message.author === currentUsername && profileImage ? (
                                     <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
                                   ) : (
                                     'T'
@@ -3572,10 +3851,6 @@ export default function TradingPlatformShell() {
                   </div>
                 ) : ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
                   <div className="flex flex-col h-full">
-                    {/* Debug visible */}
-                    <div className="bg-red-500 text-white p-4 text-center font-bold">
-                      DEBUG: selectedChannel.id = {selectedChannel.id}
-                    </div>
                     {/* Messages de chat */}
                     <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
                       {/* Cours Scalping pour le salon Fondamentaux */}
@@ -3753,8 +4028,10 @@ export default function TradingPlatformShell() {
                                 <img src={message.author_avatar} alt="Profile" className="w-full h-full object-cover" />
                               ) : message.author === 'Admin' ? (
                                 'A'
+                              ) : message.author === currentUsername ? (
+                                currentUsername.charAt(0).toUpperCase()
                               ) : (
-                                'TT'
+                                'U'
                               )}
                             </div>
                             <div className="flex-1">
@@ -4090,7 +4367,7 @@ export default function TradingPlatformShell() {
                             (messages[''] || []).map((message) => (
                               <div key={message.id} className="flex items-start gap-2">
                                 <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs overflow-hidden">
-                                  {message.author === 'TheTheTrader' && profileImage ? (
+                                  {message.author === currentUsername && profileImage ? (
                                     <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
                                   ) : (
                                     'T'
@@ -4379,10 +4656,12 @@ export default function TradingPlatformShell() {
                               <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs overflow-hidden">
                                 {message.author_avatar ? (
                                   <img src={message.author_avatar} alt="Profile" className="w-full h-full object-cover" />
-                                ) : message.author === 'Admin' ? (
-                                  'A'
-                                ) : (
-                                  'T'
+                              ) : message.author === 'Admin' ? (
+                                'A'
+                              ) : message.author === currentUsername ? (
+                                currentUsername.charAt(0).toUpperCase()
+                              ) : (
+                                'U'
                                 )}
                               </div>
                               <div className="flex-1">
@@ -4627,9 +4906,11 @@ export default function TradingPlatformShell() {
                             {message.author_avatar ? (
                               <img src={message.author_avatar} alt="Profile" className="w-full h-full object-cover" />
                             ) : message.author === 'Admin' ? (
-                              'A'
+                                'A'
+                            ) : message.author === currentUsername ? (
+                                currentUsername.charAt(0).toUpperCase()
                             ) : (
-                              'TT'
+                                'U'
                             )}
                           </div>
                           <div className="flex-1">

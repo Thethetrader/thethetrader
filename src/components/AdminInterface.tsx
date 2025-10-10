@@ -7,7 +7,7 @@ import { ref, update, onValue, get } from 'firebase/database';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 import { signOutAdmin } from '../utils/admin-utils';
-import { updateUserProfile, getCurrentUser, getUserProfile } from '../lib/supabase';
+import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType } from '../lib/supabase';
 
 export default function AdminInterface() {
 
@@ -337,22 +337,58 @@ export default function AdminInterface() {
         console.log('❌ Aucune photo de profil admin trouvée');
       }
 
-      // Charger le nom d'utilisateur depuis Supabase (source unique)
+      // Charger le nom d'utilisateur admin (Supabase d'abord, puis localStorage)
       try {
         const user = await getCurrentUser();
         if (user) {
-          const { data } = await getUserProfile(user.id);
+          console.log('👤 Utilisateur admin connecté:', user.id, user.email);
+          
+          const { data } = await getUserProfileByType('admin');
+          console.log('📦 Profil admin récupéré de Supabase:', data);
+          
           if (data?.name) {
             setCurrentUsername(data.name);
-            console.log('✅ Nom d\'utilisateur chargé depuis Supabase:', data.name);
+            console.log('✅ Nom d\'utilisateur admin chargé depuis Supabase:', data.name);
           } else {
-            console.log('❌ Aucun nom d\'utilisateur trouvé en Supabase, garder "Admin"');
+            // Profil n'existe pas, créer un profil par défaut
+            console.log('⚠️ Pas de profil admin trouvé, création du profil par défaut...');
+            const defaultName = 'Admin';
+            
+            // Créer le profil dans Supabase
+            const { data: newProfile } = await updateUserProfile(defaultName, undefined, 'admin');
+            
+            if (newProfile) {
+              setCurrentUsername(defaultName);
+              console.log('✅ Nouveau profil admin créé dans Supabase:', newProfile);
+            } else {
+              // Fallback localStorage
+              const localUsername = localStorage.getItem('adminUsername');
+              if (localUsername) {
+                setCurrentUsername(localUsername);
+                console.log('✅ Username admin chargé depuis localStorage:', localUsername);
+              } else {
+                setCurrentUsername(defaultName);
+                console.log('✅ Username admin défini par défaut:', defaultName);
+              }
+            }
           }
         } else {
-          console.log('❌ Aucun utilisateur connecté');
+          console.log('❌ Aucun utilisateur admin connecté');
+          const localUsername = localStorage.getItem('adminUsername');
+          if (localUsername) {
+            setCurrentUsername(localUsername);
+          }
         }
       } catch (error) {
-        console.error('❌ Erreur lors du chargement du nom d\'utilisateur:', error);
+        console.error('❌ Erreur lors du chargement du nom d\'utilisateur admin:', error);
+        // Mode dégradé : localStorage
+        const localUsername = localStorage.getItem('adminUsername');
+        if (localUsername) {
+          setCurrentUsername(localUsername);
+          console.log('✅ Username admin chargé depuis localStorage (fallback):', localUsername);
+        } else {
+          console.log('❌ Aucun nom d\'utilisateur admin trouvé, garder "Admin"');
+        }
       }
     };
     
@@ -1441,15 +1477,23 @@ export default function AdminInterface() {
   const handleUsernameEdit = async () => {
     if (usernameInput.trim()) {
       try {
-        const { data, error } = await updateUserProfile(usernameInput.trim());
+        const { data, error } = await updateUserProfile(usernameInput.trim(), undefined, 'admin');
         if (!error && data) {
           setCurrentUsername(usernameInput.trim());
           console.log('✅ Username updated successfully in Supabase:', usernameInput.trim());
         } else {
           console.error('❌ Error updating username in Supabase:', error);
+          // Mode dégradé : sauvegarder en localStorage
+          localStorage.setItem('adminUsername', usernameInput.trim());
+          setCurrentUsername(usernameInput.trim());
+          console.log('✅ Username sauvegardé en localStorage (fallback):', usernameInput.trim());
         }
       } catch (error) {
         console.error('❌ Error updating username:', error);
+        // Mode dégradé : sauvegarder en localStorage
+        localStorage.setItem('adminUsername', usernameInput.trim());
+        setCurrentUsername(usernameInput.trim());
+        console.log('✅ Username sauvegardé en localStorage (fallback):', usernameInput.trim());
       }
       setIsEditingUsername(false);
       setUsernameInput('');
@@ -1675,7 +1719,7 @@ export default function AdminInterface() {
         const messageData = {
           channel_id: 'general-chat-2',
           content: conclusionMessage,
-          author: 'Admin',
+          author: currentUsername,
           author_type: 'admin' as const,
           author_avatar: profileImage || undefined,
           timestamp: new Date().toLocaleString('fr-FR', { 
@@ -2158,7 +2202,7 @@ export default function AdminInterface() {
           const messageData = {
             channel_id: selectedChannel.id,
             content: signalMessage,
-            author: 'Admin',
+            author: currentUsername,
             author_type: 'admin' as const,
             author_avatar: profileImage || undefined,
             attachment_data: imageBase64,
@@ -2408,7 +2452,7 @@ export default function AdminInterface() {
         const messageData = {
           channel_id: 'general-chat-2',
           content: conclusionMessage,
-          author: 'Admin',
+          author: currentUsername,
           author_type: 'admin' as const,
           author_avatar: profileImage || undefined,
           attachment_data: conclusionImageBase64,
@@ -2444,7 +2488,7 @@ export default function AdminInterface() {
         const messageData = {
           channel_id: selectedChannel.id,
           content: chatMessage,
-          author: 'Admin',
+          author: currentUsername,
           author_type: 'admin' as const,
           author_avatar: profileImage || undefined // Photo de profil admin
         };
@@ -2466,7 +2510,7 @@ export default function AdminInterface() {
           id: Date.now().toString(),
           text: chatMessage,
           timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-          author: 'Admin (Offline)'
+          author: `${currentUsername} (Offline)`
         };
         
         setChatMessages(prev => ({
@@ -2498,7 +2542,7 @@ export default function AdminInterface() {
                         const messageData = {
                           channel_id: selectedChannel.id,
                           content: '',
-                          author: 'Admin',
+                          author: currentUsername,
                           author_type: 'admin' as const,
                           author_avatar: profileImage || undefined,
                           attachment_data: imageURL,
@@ -4167,7 +4211,7 @@ export default function AdminInterface() {
                             <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
                               {message.author_avatar ? (
                                 <img src={message.author_avatar} alt="Profile" className="w-full h-full object-cover" />
-                              ) : message.author === 'Admin' ? (
+                              ) : message.author === currentUsername ? (
                                 'A'
                               ) : (
                                 'TT'
@@ -4736,7 +4780,7 @@ export default function AdminInterface() {
                       (chatMessages[selectedChannel.id] || []).map((message) => (
                         <div key={message.id} className="flex items-start gap-3">
                           <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
-                            {message.author === 'Admin' && profileImage ? (
+                            {message.author === currentUsername && profileImage ? (
                               <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
                             ) : message.author_avatar ? (
                               <img src={message.author_avatar} alt="Profile" className="w-full h-full object-cover" />

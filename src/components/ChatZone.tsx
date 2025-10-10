@@ -31,6 +31,7 @@ import {
   removeReaction as supabaseRemoveReaction,
   getCurrentUser,
   getUserProfile,
+  getUserProfileByType,
   isUserAdmin,
   updateUserProfile,
   supabase
@@ -191,7 +192,7 @@ const ChatZone: React.FC<ChatZoneProps> = ({
   const handleUsernameEdit = async () => {
     if (usernameInput.trim()) {
       try {
-        const { data, error } = await updateUserProfile(usernameInput.trim());
+        const { data, error } = await updateUserProfile(usernameInput.trim(), undefined, 'user');
         if (!error && data) {
           setCurrentUsername(usernameInput.trim());
           setSupabaseProfile(prev => prev ? { ...prev, name: usernameInput.trim() } : prev);
@@ -236,7 +237,7 @@ const ChatZone: React.FC<ChatZoneProps> = ({
           console.log('✅ Supabase utilisateur chargé:', user.email);
 
           // Charger le profil utilisateur
-          const { data: profile } = await getUserProfile(user.id);
+          const { data: profile } = await getUserProfileByType('user');
           if (profile) {
             setSupabaseProfile(profile);
             console.log('✅ Profil utilisateur chargé:', profile);
@@ -285,7 +286,7 @@ const ChatZone: React.FC<ChatZoneProps> = ({
           console.log('✅ Utilisateur Supabase chargé:', user.email);
 
           // Charger le profil utilisateur
-          const { data: profile } = await getUserProfile(user.id);
+          const { data: profile } = await getUserProfileByType('user');
           if (profile) {
             setSupabaseProfile(profile);
             // Mettre à jour l'ID utilisateur local avec le vrai ID Supabase

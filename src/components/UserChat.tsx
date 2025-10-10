@@ -7,6 +7,7 @@ import {
   removeReaction as supabaseRemoveReaction,
   getCurrentUser,
   getUserProfile,
+  getUserProfileByType,
   isUserAdmin,
   supabase
 } from '../lib/supabase';
@@ -46,7 +47,7 @@ const UserChat = ({ channelId = 'chatzone' }) => {
           console.log('✅ Utilisateur Supabase chargé:', user.email);
 
           // Charger le profil utilisateur
-          const { data: profile } = await getUserProfile(user.id);
+          const { data: profile } = await getUserProfileByType('user');
           if (profile) {
             setSupabaseProfile(profile);
             console.log('✅ Profil utilisateur chargé:', profile);
