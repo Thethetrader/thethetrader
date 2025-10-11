@@ -451,7 +451,7 @@ const WhatsAppChat = ({ user, channelId = 'whatsapp-chat' }) => {
           if (payload.new.sender_id !== user.id) {
             new Notification('Nouveau message', {
               body: payload.new.content,
-              icon: '/favicon.png'
+              icon: '/FAVICON.png'
             });
           }
         }

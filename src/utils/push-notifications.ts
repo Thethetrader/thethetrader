@@ -103,8 +103,8 @@ export const sendLocalNotification = (notification: PushNotificationData): void 
   try {
     const notif = new Notification(notification.title, {
       body: notification.body,
-      icon: notification.icon || '/logo.png',
-      badge: notification.badge || '/logo.png',
+      icon: notification.icon || '/FAVICON.png',
+      badge: notification.badge || '/FAVICON.png',
       tag: notification.tag || 'trading-signal',
       data: notification.data,
       requireInteraction: true,
@@ -142,8 +142,8 @@ export const notifyNewSignal = (signal: any): void => {
   const notification: PushNotificationData = {
     title: `Signal Trade`,
     body: `${signal.type} ${signal.symbol} - Entrée: ${signal.entry} | TP: ${signal.takeProfit} | SL: ${signal.stopLoss}`,
-    icon: '/logo.png',
-    badge: '/logo.png',
+    icon: '/FAVICON.png',
+    badge: '/FAVICON.png',
     tag: `signal-${signal.id}`,
     data: {
       signalId: signal.id,
@@ -191,8 +191,8 @@ export const notifySignalClosed = (signal: any): void => {
   const notification: PushNotificationData = {
     title: `${statusEmoji} Signal ${signal.symbol} ${statusText}`,
     body: `P&L: ${signal.pnl || 'N/A'} - ${signal.closeMessage || 'Position fermée'}`,
-    icon: '/logo.png',
-    badge: '/logo.png',
+    icon: '/FAVICON.png',
+    badge: '/FAVICON.png',
     tag: `signal-closed-${signal.id}`,
     data: {
       signalId: signal.id,
@@ -262,7 +262,7 @@ export const initializeNotifications = async (): Promise<void> => {
           sendLocalNotification({
             title: notification.title || 'Nouvelle notification',
             body: notification.body || '',
-            icon: notification.icon || '/logo.png',
+            icon: notification.icon || '/FAVICON.png',
             data: payload.data
           });
         }

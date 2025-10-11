@@ -80,8 +80,8 @@ exports.sendNotification = onCall(async (request) => {
         notification: {
           title: notificationTitle,
           body: notificationBody,
-          icon: '/logo.png',
-          badge: '/logo.png'
+          icon: '/FAVICON.png',
+          badge: '/FAVICON.png'
         }
       }
     };
@@ -179,8 +179,8 @@ exports.sendClosureNotification = onCall(async (request) => {
         notification: {
           title: notificationTitle,
           body: notificationBody,
-          icon: '/logo.png',
-          badge: '/logo.png'
+          icon: '/FAVICON.png',
+          badge: '/FAVICON.png'
         }
       }
     };
@@ -271,8 +271,8 @@ exports.sendLivestreamNotification = onCall(async (request) => {
         notification: {
           title: notificationTitle,
           body: notificationBody,
-          icon: '/logo.png',
-          badge: '/logo.png'
+          icon: '/FAVICON.png',
+          badge: '/FAVICON.png'
         }
       }
     };

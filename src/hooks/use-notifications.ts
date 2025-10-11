@@ -59,8 +59,8 @@ export const useNotifications = () => {
       const registration = await navigator.serviceWorker.ready;
       await registration.showNotification('Test TheTheTrader', {
         body: 'Ceci est un test de notification !',
-        icon: '/favicon.png',
-        badge: '/favicon.png'
+        icon: '/FAVICON.png',
+        badge: '/FAVICON.png'
       });
     } catch (error) {
       console.error('Erreur lors de l\'envoi de notification:', error);

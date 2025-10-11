@@ -7,7 +7,7 @@ const urlsToCache = [
   '/index.html',
   '/src/index.css',
   '/src/main.tsx',
-  '/logo.png'
+  '/FAVICON.png'
 ];
 
 // Installation du service worker
@@ -90,8 +90,8 @@ self.addEventListener('push', (event) => {
       
       const options = {
         body: body,
-        icon: '/logo.png',
-        badge: '/logo.png',
+        icon: '/FAVICON.png',
+        badge: '/FAVICON.png',
         tag: 'trading-signal',
         requireInteraction: true,
         data: payload.data || {},
@@ -99,12 +99,12 @@ self.addEventListener('push', (event) => {
           {
             action: 'view',
             title: 'Voir',
-            icon: '/logo.png'
+            icon: '/FAVICON.png'
           },
           {
             action: 'close',
             title: 'Fermer',
-            icon: '/logo.png'
+            icon: '/FAVICON.png'
           }
         ]
       };

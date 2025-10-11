@@ -1527,8 +1527,8 @@ export default function AdminInterface() {
     sendLocalNotification({
       title: '🧪 Test Notification Admin',
       body: 'Ceci est un test de notification depuis l\'admin !',
-      icon: '/logo.png',
-      badge: '/logo.png',
+      icon: '/FAVICON.png',
+      badge: '/FAVICON.png',
       tag: 'test-notification',
       data: { type: 'test' }
     });

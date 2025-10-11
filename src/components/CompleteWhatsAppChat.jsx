@@ -355,7 +355,7 @@ const CompleteWhatsAppChat = ({ user, channelId = 'general' }) => {
             
             // Notification si pas l'expéditeur
             if (payload.new.sender_id !== user.id) {
-              showNotification('Nouveau message', payload.new.content, '/favicon.png');
+              showNotification('Nouveau message', payload.new.content, '/FAVICON.png');
               setUnreadCount(prev => prev + 1);
             }
           } else if (payload.eventType === 'UPDATE') {

@@ -2,7 +2,7 @@ const CACHE_NAME = 'thethetrader-v7-sw-manual-notifications';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/favicon.png'
+  '/FAVICON.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -52,8 +52,8 @@ self.addEventListener('push', (event) => {
       
       const options = {
         body: body,
-        icon: '/favicon.png',
-        badge: '/favicon.png',
+        icon: '/FAVICON.png',
+        badge: '/FAVICON.png',
         tag: 'trading-signal',
         requireInteraction: true,
         data: payload.data || {},
@@ -61,12 +61,12 @@ self.addEventListener('push', (event) => {
           {
             action: 'explore',
             title: 'Voir le signal',
-            icon: '/favicon.png'
+            icon: '/FAVICON.png'
           },
           {
             action: 'close',
             title: 'Fermer',
-            icon: '/favicon.png'
+            icon: '/FAVICON.png'
           }
         ]
       };
