@@ -182,6 +182,64 @@ export default function TradingPlatformShell() {
   const [selectedSignalsDate, setSelectedSignalsDate] = useState<Date | null>(null);
   const [pasteArea, setPasteArea] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  
+  // État pour TOUS les signaux (calendrier)
+  const [allSignalsForStats, setAllSignalsForStats] = useState<Array<any>>([]);
+  
+  // Charger TOUS les signaux pour le calendrier
+  useEffect(() => {
+    const loadAllSignalsForCalendar = async () => {
+      try {
+        console.log('📊 [USER] Chargement de TOUS les signaux pour calendrier...');
+        
+        const channels = ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'];
+        let allSignals: any[] = [];
+        
+        for (const channelId of channels) {
+          try {
+            const signals = await getSignals(channelId, 999); // Charger beaucoup de signaux
+            allSignals = [...allSignals, ...signals];
+          } catch (error) {
+            console.error(`❌ [USER] Erreur chargement ${channelId}:`, error);
+          }
+        }
+        
+        if (allSignals.length > 0) {
+          const formattedSignals = allSignals.map(signal => ({
+            id: signal.id || '',
+            type: signal.type,
+            symbol: signal.symbol,
+            timeframe: signal.timeframe,
+            entry: signal.entry?.toString() || 'N/A',
+            takeProfit: signal.takeProfit?.toString() || 'N/A',
+            stopLoss: signal.stopLoss?.toString() || 'N/A',
+            description: signal.description || '',
+            image: signal.image || signal.attachment_data,
+            attachment_data: signal.attachment_data || signal.image,
+            attachment_type: signal.attachment_type,
+            attachment_name: signal.attachment_name,
+            closure_image: signal.closure_image,
+            closure_image_type: signal.closure_image_type,
+            closure_image_name: signal.closure_image_name,
+            timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+            originalTimestamp: signal.timestamp || Date.now(),
+            status: signal.status || 'ACTIVE' as const,
+            channel_id: signal.channel_id,
+            reactions: signal.reactions || [],
+            pnl: signal.pnl,
+            closeMessage: signal.closeMessage
+          }));
+          
+          setAllSignalsForStats(formattedSignals);
+          console.log(`✅ [USER] ${formattedSignals.length} signaux chargés pour calendrier`);
+        }
+      } catch (error) {
+        console.error('❌ [USER] Erreur chargement signaux calendrier:', error);
+      }
+    };
+    
+    loadAllSignalsForCalendar();
+  }, [selectedChannel.id]);
   const [showWeekSignalsModal, setShowWeekSignalsModal] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState<number>(0);
   const [unreadMessages, setUnreadMessages] = useState<{[channelId: string]: number}>({});
@@ -2278,32 +2336,18 @@ export default function TradingPlatformShell() {
   };
 
   const getSignalsForDate = (date: Date) => {
-    // Utiliser realTimeSignals directement (avec les images complètes)
-    const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    
-    const signalsForDate = realTimeSignals.filter(signal => {
+    // Utiliser allSignalsForStats (comme admin)
+    return allSignalsForStats.filter(signal => {
       const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
-      const signalDateOnly = new Date(signalDate.getFullYear(), signalDate.getMonth(), signalDate.getDate());
       
-      return signalDateOnly.getTime() === targetDate.getTime();
+      if (isNaN(signalDate.getTime())) {
+        return false;
+      }
+      
+      return signalDate.getDate() === date.getDate() && 
+             signalDate.getMonth() === date.getMonth() && 
+             signalDate.getFullYear() === date.getFullYear();
     });
-    
-    console.log(`🔍 [CALENDAR] Signaux trouvés pour ${targetDate.toDateString()}:`, signalsForDate.length);
-    signalsForDate.forEach(signal => {
-      console.log(`🔍 [CALENDAR] Signal avec image:`, {
-        id: signal.id,
-        symbol: signal.symbol,
-        hasImage: !!signal.image,
-        hasAttachment: !!signal.attachment_data,
-        image: signal.image,
-        attachment_data: signal.attachment_data,
-        attachment_type: signal.attachment_type,
-        attachment_name: signal.attachment_name,
-        ALL_KEYS: Object.keys(signal)
-      });
-    });
-    
-    return signalsForDate;
   };
 
   // Fonction pour récupérer les signaux d'une semaine spécifique
