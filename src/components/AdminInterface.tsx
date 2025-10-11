@@ -3450,6 +3450,48 @@ export default function AdminInterface() {
           </div>
 
           <div>
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">NOTIFICATIONS</h3>
+            <div className="space-y-1">
+              <button 
+                onClick={async () => {
+                  try {
+                    const functions = getFunctions();
+                    const sendLivestreamNotification = httpsCallable(functions, 'sendLivestreamNotification');
+                    
+                    // Récupérer tous les tokens FCM
+                    const tokens = [];
+                    const fcmTokensRef = ref(database, 'fcm_tokens');
+                    const snapshot = await get(fcmTokensRef);
+                    if (snapshot.exists()) {
+                      const tokensData = snapshot.val();
+                      Object.values(tokensData).forEach((tokenData: any) => {
+                        if (tokenData.token) {
+                          tokens.push(tokenData.token);
+                        }
+                      });
+                    }
+                    
+                    if (tokens.length > 0) {
+                      console.log('📱 Envoi notification livestream à', tokens.length, 'utilisateurs...');
+                      const result = await sendLivestreamNotification({ tokens });
+                      console.log('✅ Notification livestream envoyée:', result.data);
+                      alert(`✅ Notification envoyée à ${result.data.successCount} utilisateurs!`);
+                    } else {
+                      alert('⚠️ Aucun utilisateur avec notifications activées');
+                    }
+                  } catch (error) {
+                    console.error('❌ Erreur envoi notification livestream:', error);
+                    alert('❌ Erreur lors de l\'envoi de la notification');
+                  }
+                }}
+                className="w-full text-left px-3 py-2 rounded text-sm bg-red-600 hover:bg-red-700 text-white font-medium transition-colors"
+              >
+                🔴 Livestream Start 5 min
+              </button>
+            </div>
+          </div>
+
+          <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">ADMIN</h3>
             <div className="space-y-1">
               <button onClick={() => handleChannelChange('user-management', 'user-management')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'user-management' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>👥 Gestion Utilisateurs</button>

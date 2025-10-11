@@ -226,3 +226,95 @@ exports.sendClosureNotification = onCall(async (request) => {
     throw new Error(`Erreur envoi notification clôture: ${error.message}`);
   }
 });
+
+// Fonction pour envoyer une notification de livestream
+exports.sendLivestreamNotification = onCall(async (request) => {
+  try {
+    const { tokens } = request.data;
+    
+    if (!tokens || !Array.isArray(tokens)) {
+      throw new Error("Tokens requis");
+    }
+
+    const messaging = getMessaging();
+    
+    const notificationTitle = '🔴 Livestream Start 5 min';
+    const notificationBody = 'Le livestream démarre dans 5 minutes !';
+    
+    const message = {
+      notification: {
+        title: notificationTitle,
+        body: notificationBody,
+      },
+      data: {
+        type: 'livestream_start',
+        channelId: 'video'
+      },
+      tokens: tokens,
+      android: {
+        priority: 'high',
+        notification: {
+          sound: 'default',
+          priority: 'high',
+          channelId: 'livestream'
+        }
+      },
+      apns: {
+        payload: {
+          aps: {
+            sound: 'default',
+            badge: 1
+          }
+        }
+      },
+      webpush: {
+        notification: {
+          title: notificationTitle,
+          body: notificationBody,
+          icon: '/logo.png',
+          badge: '/logo.png'
+        }
+      }
+    };
+
+    // Envoyer les notifications une par une
+    const responses = [];
+    let successCount = 0;
+    let failureCount = 0;
+    
+    for (const token of tokens) {
+      try {
+        const singleMessage = {
+          notification: message.notification,
+          data: message.data,
+          token: token,
+          android: message.android,
+          apns: message.apns,
+          webpush: message.webpush
+        };
+        
+        const response = await messaging.send(singleMessage);
+        responses.push({ success: true, messageId: response });
+        successCount++;
+        
+      } catch (error) {
+        logger.error(`Erreur envoi notification livestream pour token ${token}:`, error);
+        responses.push({ success: false, error: error.message });
+        failureCount++;
+      }
+    }
+    
+    logger.info(`Notification livestream envoyée: ${successCount} succès, ${failureCount} échecs`);
+    
+    return {
+      success: true,
+      successCount,
+      failureCount,
+      responses
+    };
+    
+  } catch (error) {
+    logger.error("Erreur envoi notification livestream:", error);
+    throw new Error(`Erreur envoi notification livestream: ${error.message}`);
+  }
+});
