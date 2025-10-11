@@ -150,23 +150,23 @@ export const subscribeToMessages = (channelId: string, callback: (message: Messa
   return { unsubscribe };
 };
 
-// Upload d'images vers Firebase Storage
+// Upload d'images en base64 (temporaire - Firebase Storage désactivé)
 export const uploadImage = async (file: File): Promise<string | null> => {
   try {
-    console.log('🚀 Début upload image Firebase:', file.name, 'Taille:', file.size);
+    console.log('🚀 Conversion image en base64:', file.name, 'Taille:', file.size);
     
-    // Convertir en base64 temporairement pour test
+    // Utiliser base64 directement (Firebase Storage désactivé temporairement)
     const reader = new FileReader();
     return new Promise((resolve) => {
       reader.onload = (e) => {
         const base64Image = e.target?.result as string;
-        console.log('📸 Image convertie en base64');
+        console.log('✅ Image convertie en base64');
         resolve(base64Image);
       };
       reader.readAsDataURL(file);
     });
   } catch (error) {
-    console.error('💥 ERREUR upload image Firebase:', error);
+    console.error('💥 ERREUR conversion base64:', error);
     return null;
   }
 };

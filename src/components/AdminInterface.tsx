@@ -938,8 +938,8 @@ export default function AdminInterface() {
               takeProfit: signal.takeProfit?.toString() || 'N/A',
               stopLoss: signal.stopLoss?.toString() || 'N/A',
               description: signal.description || '',
-              image: signal.image,
-              attachment_data: signal.attachment_data,
+              image: signal.image || signal.attachment_data,
+              attachment_data: signal.attachment_data || signal.image,
               attachment_type: signal.attachment_type,
               attachment_name: signal.attachment_name,
               timestamp: timestamp,
@@ -2098,13 +2098,17 @@ export default function AdminInterface() {
       return;
     }
 
-    // Convertir l'image en base64 si présente
-    let imageBase64 = null;
+    // Upload image vers Firebase Storage si présente
+    let attachmentData = null;
+    let attachmentType = null;
+    let attachmentName = null;
     console.log('📸 ADMIN signalData.image existe?', !!signalData.image);
     if (signalData.image) {
-      console.log('📸 ADMIN Conversion de l\'image en base64...');
-      imageBase64 = await uploadImage(signalData.image);
-      console.log('✅ ADMIN Image convertie en base64, longueur:', imageBase64 ? imageBase64.length : 0);
+      console.log('📸 ADMIN Upload image vers Firebase Storage...');
+      attachmentData = await uploadImage(signalData.image);
+      attachmentType = signalData.image.type;
+      attachmentName = signalData.image.name;
+      console.log('✅ ADMIN Image uploadée, URL:', attachmentData);
     }
 
     // Préparer les données pour Firebase
@@ -2118,11 +2122,13 @@ export default function AdminInterface() {
       stopLoss: signalData.stopLoss || '0',
       description: signalData.description || '',
       author: 'Admin',
-      image: imageBase64,
+      attachment_data: attachmentData,
+      attachment_type: attachmentType,
+      attachment_name: attachmentName,
       status: 'ACTIVE' as const
     };
     
-    console.log('📤 ADMIN Envoi à Firebase avec image:', !!signalForFirebase.image);
+    console.log('📤 ADMIN Envoi à Firebase avec attachment:', !!signalForFirebase.attachment_data);
 
     // Sauvegarder en Firebase
     const savedSignal = await addSignal(signalForFirebase);
@@ -5753,7 +5759,7 @@ export default function AdminInterface() {
                           <img 
                             src={signal.attachment_data} 
                             alt="Signal screenshot"
-                            className="max-w-full rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                            className="max-w-2xl rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
                             onClick={() => setSelectedImage(signal.attachment_data)}
                           />
                         </div>

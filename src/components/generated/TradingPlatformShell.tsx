@@ -318,7 +318,10 @@ export default function TradingPlatformShell() {
         takeProfit: signal.takeProfit?.toString() || 'N/A',
         stopLoss: signal.stopLoss?.toString() || 'N/A',
         description: signal.description || '',
-        image: null,
+        image: signal.image || signal.attachment_data,
+        attachment_data: signal.attachment_data || signal.image,
+        attachment_type: signal.attachment_type,
+        attachment_name: signal.attachment_name,
         timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         status: signal.status || 'ACTIVE' as const,
         channel_id: signal.channel_id,
@@ -421,7 +424,10 @@ export default function TradingPlatformShell() {
         takeProfit: newSignal.takeProfit?.toString() || 'N/A',
         stopLoss: newSignal.stopLoss?.toString() || 'N/A',
         description: newSignal.description || '',
-        image: null,
+        image: signal.image || signal.attachment_data,
+        attachment_data: signal.attachment_data || signal.image,
+        attachment_type: signal.attachment_type,
+        attachment_name: signal.attachment_name,
         timestamp: new Date(newSignal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         status: newSignal.status || 'ACTIVE' as const,
         channel_id: newSignal.channel_id,
@@ -1151,7 +1157,10 @@ export default function TradingPlatformShell() {
             takeProfit: signal.takeProfit?.toString() || 'N/A',
             stopLoss: signal.stopLoss?.toString() || 'N/A',
             description: signal.description || '',
-            image: null,
+            image: signal.image || signal.attachment_data,
+        attachment_data: signal.attachment_data || signal.image,
+        attachment_type: signal.attachment_type,
+        attachment_name: signal.attachment_name,
             timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
             originalTimestamp: signal.timestamp || Date.now(),
             status: signal.status || 'ACTIVE' as const,
@@ -2293,13 +2302,17 @@ export default function TradingPlatformShell() {
     }
 
     try {
-      // Convertir l'image en base64 si présente
-      let imageBase64 = null;
+      // Upload image vers Firebase Storage si présente
+      let attachmentData = null;
+      let attachmentType = null;
+      let attachmentName = null;
       console.log('📸 signalData.image existe?', !!signalData.image);
       if (signalData.image) {
-        console.log('📸 Conversion de l\'image en base64...');
-        imageBase64 = await uploadImage(signalData.image);
-        console.log('✅ Image convertie en base64, longueur:', imageBase64 ? imageBase64.length : 0);
+        console.log('📸 Upload image vers Firebase Storage...');
+        attachmentData = await uploadImage(signalData.image);
+        attachmentType = signalData.image.type;
+        attachmentName = signalData.image.name;
+        console.log('✅ Image uploadée, URL:', attachmentData);
       }
       
       // Préparer les données pour Firebase
@@ -2313,11 +2326,13 @@ export default function TradingPlatformShell() {
         stopLoss: signalData.stopLoss || '0',
         description: signalData.description || '',
         author: 'TheTheTrader',
-        image: imageBase64,
+        attachment_data: attachmentData,
+        attachment_type: attachmentType,
+        attachment_name: attachmentName,
         status: 'ACTIVE' as const
       };
       
-      console.log('📤 Envoi à Firebase avec image:', !!signalForFirebase.image);
+      console.log('📤 Envoi à Firebase avec attachment:', !!signalForFirebase.attachment_data);
 
       // Sauvegarder en Firebase
       const savedSignal = await addSignal(signalForFirebase);
@@ -3579,7 +3594,10 @@ export default function TradingPlatformShell() {
                                   takeProfit: signal.takeProfit?.toString() || 'N/A',
                                   stopLoss: signal.stopLoss?.toString() || 'N/A',
                                   description: signal.description || '',
-                                  image: null,
+                                  image: signal.image || signal.attachment_data,
+        attachment_data: signal.attachment_data || signal.image,
+        attachment_type: signal.attachment_type,
+        attachment_name: signal.attachment_name,
                                   timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
                                   status: signal.status || 'ACTIVE' as const,
                                   channel_id: signal.channel_id,
@@ -5565,20 +5583,12 @@ export default function TradingPlatformShell() {
                           <div className="mb-3">
                             <span className="text-sm text-gray-400">Images:</span>
                             <div className="flex gap-2 mt-2">
-                              {signal.image && (
+                              {(signal.image || signal.attachment_data) && (
                                 <img 
-                                  src={signal.image}
+                                  src={signal.image || signal.attachment_data}
                                   alt="Signal image"
-                                  className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80"
-                                  onClick={() => setSelectedImage(signal.image)}
-                                />
-                              )}
-                              {signal.attachment_data && (
-                                <img 
-                                  src={signal.attachment_data}
-                                  alt="Signal attachment"
-                                  className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80"
-                                  onClick={() => setSelectedImage(signal.attachment_data)}
+                                  className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                  onClick={() => setSelectedImage(signal.image || signal.attachment_data)}
                                 />
                               )}
                             </div>
@@ -5780,20 +5790,12 @@ export default function TradingPlatformShell() {
                           <div className="mb-3">
                             <span className="text-sm text-gray-400">Images:</span>
                             <div className="flex gap-2 mt-2">
-                              {signal.image && (
+                              {(signal.image || signal.attachment_data) && (
                                 <img 
-                                  src={signal.image}
+                                  src={signal.image || signal.attachment_data}
                                   alt="Signal image"
-                                  className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80"
-                                  onClick={() => setSelectedImage(signal.image)}
-                                />
-                              )}
-                              {signal.attachment_data && (
-                                <img 
-                                  src={signal.attachment_data}
-                                  alt="Signal attachment"
-                                  className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80"
-                                  onClick={() => setSelectedImage(signal.attachment_data)}
+                                  className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                  onClick={() => setSelectedImage(signal.image || signal.attachment_data)}
                                 />
                               )}
                             </div>
