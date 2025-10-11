@@ -1548,6 +1548,7 @@ export default function TradingPlatformShell() {
       
       weeks.push({
         week: `Week ${weekNum}`,
+        weekNum: weekNum,
         trades: weekTrades.length,
         pnl: weekPnL,
         wins,
@@ -2625,21 +2626,25 @@ export default function TradingPlatformShell() {
                 let tradeCount = 0;
 
                 if (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') {
-                  // Logique pour les trades personnels
+                  // Logique pour les trades personnels - basée sur PnL total
                   if (dayTrades.length > 0) {
                     tradeCount = dayTrades.length;
                     
-                    // Déterminer la couleur selon les statuts des trades
-                    const hasWin = dayTrades.some(t => t.status === 'WIN');
-                    const hasLoss = dayTrades.some(t => t.status === 'LOSS');
-                    const hasBE = dayTrades.some(t => t.status === 'BE');
+                    // Calculer le PnL total pour ce jour
+                    const totalPnL = dayTrades.reduce((total, trade) => {
+                      if (trade.pnl) {
+                        return total + parsePnL(trade.pnl);
+                      }
+                      return total;
+                    }, 0);
                     
-                    if (hasWin && !hasLoss) {
-                      bgColor = 'bg-green-500/60 border-green-400/50 text-white'; // WIN
-                    } else if (hasLoss && !hasWin) {
-                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // LOSS
-                    } else if (hasBE || (hasWin && hasLoss)) {
-                      bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // BE ou mixte
+                    // Déterminer la couleur selon le PnL total
+                    if (totalPnL > 0) {
+                      bgColor = 'bg-green-500/60 border-green-400/50 text-white'; // PnL positif
+                    } else if (totalPnL < 0) {
+                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif
+                    } else {
+                      bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0 (BE)
                     }
                   }
                 } else {
@@ -3350,7 +3355,7 @@ export default function TradingPlatformShell() {
                 {/* Interface Livestream pour mobile */}
                 {selectedChannel.id === 'video' && (
                   <div className="flex flex-col h-full bg-gray-900">
-                    <div className="text-center space-y-4 w-full p-4 pt-16">
+                    <div className="text-center space-y-4 w-full max-w-[95vw] mx-auto p-4 pt-16">
                       <h1 className="text-3xl font-bold text-white mb-2">Livestream</h1>
                       <p className="text-gray-400">Attache ta ceinture cousin</p>
                       
@@ -3399,7 +3404,7 @@ export default function TradingPlatformShell() {
                         <iframe
                           src="https://tote-livestream-033.app.100ms.live/streaming/meeting/hzs-ukns-nts"
                           width="100%"
-                          height="400px"
+                          height="1700px"
                           style={{ border: 'none', borderRadius: '8px' }}
                           allow="camera; microphone; display-capture; fullscreen"
                           allowFullScreen
@@ -4234,37 +4239,6 @@ export default function TradingPlatformShell() {
                       )}
                       <div ref={messagesEndRef} />
                     </div>
-                    
-                    {/* Barre de message */}
-                    <div className="border-t border-gray-700 p-4 fixed bottom-0 left-0 right-0 bg-gray-800 z-30 md:left-64">
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="text"
-                          value={chatMessage}
-                          onChange={(e) => setChatMessage(e.target.value)}
-                          onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                          placeholder="Tapez votre message..."
-                          className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-                        />
-                        <label className="cursor-pointer">
-                          <input
-                            type="file"
-                            onChange={handleFileUpload}
-                            className="hidden"
-                            accept="image/*,.pdf,.doc,.docx"
-                          />
-                          <span className="bg-gray-600 hover:bg-gray-500 p-2 rounded-lg text-gray-300 hover:text-white">
-                            📎
-                          </span>
-                        </label>
-                        <button
-                          onClick={handleSendMessage}
-                          className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white"
-                        >
-                          Envoyer
-                        </button>
-                      </div>
-                    </div>
                   </div>
                 ) : false ? (
                   <div className="flex flex-col h-full">
@@ -4742,7 +4716,7 @@ export default function TradingPlatformShell() {
                     {/* Zone de stream */}
                     <div className="flex-1 bg-gray-900 rounded-lg overflow-hidden">
                       <div className="h-full flex flex-col items-center justify-center p-4 pt-16">
-                        <div className="text-center space-y-4 w-full">
+                        <div className="text-center space-y-4 w-full max-w-[95vw] mx-auto">
                           <h1 className="text-3xl font-bold text-white mb-2">Livestream</h1>
                           <p className="text-gray-400">Attache ta ceinture cousin</p>
                           
@@ -4762,7 +4736,7 @@ export default function TradingPlatformShell() {
                             <iframe
                               src="https://tote-livestream-033.app.100ms.live/streaming/meeting/hzs-ukns-nts"
                               width="100%"
-                              height="600px"
+                              height="1700px"
                               style={{ border: 'none', borderRadius: '8px' }}
                               allow="camera; microphone; display-capture; fullscreen"
                               allowFullScreen
@@ -5109,37 +5083,6 @@ export default function TradingPlatformShell() {
                       ))
                     )}
                     <div ref={messagesEndRef} />
-                  </div>
-                  
-                  {/* Barre de message */}
-                  <div className="border-t border-gray-700 p-4 fixed bottom-0 left-0 right-0 bg-gray-800 z-10 md:left-64 md:right-0">
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        value={chatMessage}
-                        onChange={(e) => setChatMessage(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                        placeholder="Tapez votre message..."
-                        className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-                      />
-                      <label className="cursor-pointer">
-                        <input
-                          type="file"
-                          onChange={handleFileUpload}
-                          className="hidden"
-                          accept="image/*,.pdf,.doc,.docx"
-                        />
-                        <span className="bg-gray-600 hover:bg-gray-500 p-2 rounded-lg text-gray-300 hover:text-white">
-                          📎
-                        </span>
-                      </label>
-                      <button
-                        onClick={handleSendMessage}
-                        className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white"
-                      >
-                        Envoyer
-                      </button>
-                    </div>
                   </div>
                 </div>
               ) : null}
