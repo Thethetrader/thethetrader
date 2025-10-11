@@ -195,7 +195,7 @@ export default function TradingPlatformShell() {
     takeProfit: string;
     stopLoss: string;
     description: string;
-    image: File | null;
+    image: string | null;
     timestamp: string;
     status: 'ACTIVE' | 'WIN' | 'LOSS' | 'BE';
     channel_id: string;
@@ -2293,6 +2293,15 @@ export default function TradingPlatformShell() {
     }
 
     try {
+      // Convertir l'image en base64 si présente
+      let imageBase64 = null;
+      console.log('📸 signalData.image existe?', !!signalData.image);
+      if (signalData.image) {
+        console.log('📸 Conversion de l\'image en base64...');
+        imageBase64 = await uploadImage(signalData.image);
+        console.log('✅ Image convertie en base64, longueur:', imageBase64 ? imageBase64.length : 0);
+      }
+      
       // Préparer les données pour Firebase
       const signalForFirebase = {
         channel_id: selectedChannel.id,
@@ -2304,12 +2313,15 @@ export default function TradingPlatformShell() {
         stopLoss: signalData.stopLoss || '0',
         description: signalData.description || '',
         author: 'TheTheTrader',
-        image: signalData.image,
+        image: imageBase64,
         status: 'ACTIVE' as const
       };
+      
+      console.log('📤 Envoi à Firebase avec image:', !!signalForFirebase.image);
 
       // Sauvegarder en Firebase
       const savedSignal = await addSignal(signalForFirebase);
+      console.log('💾 Signal sauvegardé:', savedSignal);
       
       if (savedSignal) {
         console.log('✅ Signal sauvé en Firebase:', savedSignal);
@@ -3677,7 +3689,7 @@ export default function TradingPlatformShell() {
                             {signal.image && (
                               <div className="mt-2">
                                 <img 
-                                  src={URL.createObjectURL(signal.image)} 
+                                  src={signal.image} 
                                   alt="Signal screenshot"
                                   className="max-w-full md:max-w-2xl rounded-lg border border-gray-600"
                                 />
@@ -4531,7 +4543,7 @@ export default function TradingPlatformShell() {
                           {signal.image && (
                             <div className="mt-2">
                               <img 
-                                src={URL.createObjectURL(signal.image)} 
+                                src={signal.image} 
                                 alt="Signal screenshot"
                                 className="max-w-full md:max-w-2xl rounded-lg border border-gray-600"
                               />
@@ -5555,10 +5567,10 @@ export default function TradingPlatformShell() {
                             <div className="flex gap-2 mt-2">
                               {signal.image && (
                                 <img 
-                                  src={typeof signal.image === 'string' ? signal.image : URL.createObjectURL(signal.image)}
+                                  src={signal.image}
                                   alt="Signal image"
                                   className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80"
-                                  onClick={() => setSelectedImage(typeof signal.image === 'string' ? signal.image : URL.createObjectURL(signal.image))}
+                                  onClick={() => setSelectedImage(signal.image)}
                                 />
                               )}
                               {signal.attachment_data && (
@@ -5770,10 +5782,10 @@ export default function TradingPlatformShell() {
                             <div className="flex gap-2 mt-2">
                               {signal.image && (
                                 <img 
-                                  src={typeof signal.image === 'string' ? signal.image : URL.createObjectURL(signal.image)}
+                                  src={signal.image}
                                   alt="Signal image"
                                   className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80"
-                                  onClick={() => setSelectedImage(typeof signal.image === 'string' ? signal.image : URL.createObjectURL(signal.image))}
+                                  onClick={() => setSelectedImage(signal.image)}
                                 />
                               )}
                               {signal.attachment_data && (

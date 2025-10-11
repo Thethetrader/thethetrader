@@ -10,7 +10,7 @@ interface Signal {
   takeProfit: string;
   stopLoss: string;
   description: string;
-  image: File | null;
+  image: string | null;
   timestamp: string;
   originalTimestamp: number;
   status: 'ACTIVE' | 'WIN' | 'LOSS' | 'BE';
