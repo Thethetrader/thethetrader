@@ -2517,8 +2517,9 @@ export default function TradingPlatformShell() {
   const getTradingCalendar = () => {
     console.log('🔥 getTradingCalendar appelé pour channel:', selectedChannel.id);
     console.log('🔥 personalTrades dans calendrier:', personalTrades.length);
+    const isJournalPerso = selectedChannel.id === 'journal' || selectedChannel.id === 'trading-journal';
     return (
-    <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '0px', marginTop: '-9px' }}>
+    <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: isJournalPerso ? '80px' : '0px', marginTop: isJournalPerso ? '0px' : '-9px' }}>
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-gray-600 pb-4 gap-4 md:gap-0">
         <div className="hidden md:block">
@@ -3056,7 +3057,7 @@ export default function TradingPlatformShell() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Mobile Navigation - Fixed */}
-        <div className="md:hidden bg-gray-800 border-b border-gray-700 p-3 fixed top-0 left-0 right-0 z-30" style={{ height: '60px' }}>
+        <div className={`md:hidden bg-gray-800 p-3 fixed top-0 left-0 right-0 z-30 ${selectedChannel.id === 'calendrier' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' ? '' : 'border-b border-gray-700'}`} style={{ height: '60px' }}>
           {mobileView === 'channels' ? (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
