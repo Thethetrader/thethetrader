@@ -2332,9 +2332,33 @@ export default function TradingPlatformShell() {
 
   // Fonction pour récupérer les signaux d'une semaine spécifique
   const getSignalsForWeek = (weekNum: number): any[] => {
-    const weeklyData = getCalendarWeeklyBreakdownFromHook();
-    const weekData = weeklyData.find(week => week.weekNum === weekNum);
-    return weekData?.signals || [];
+    // Utiliser allSignalsForStats directement (comme getSignalsForDate)
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+    
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+    const firstDayOfWeek = firstDayOfMonth.getDay();
+    const calendarStart = new Date(firstDayOfMonth);
+    const daysToMonday = firstDayOfWeek === 0 ? -6 : -(firstDayOfWeek - 1);
+    calendarStart.setDate(calendarStart.getDate() + daysToMonday);
+    
+    const weekStart = new Date(calendarStart);
+    weekStart.setDate(calendarStart.getDate() + (weekNum - 1) * 7);
+    
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    weekEnd.setHours(23, 59, 59, 999);
+    
+    return allSignalsForStats.filter(signal => {
+      const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
+      
+      if (isNaN(signalDate.getTime())) {
+        return false;
+      }
+      
+      return signalDate >= weekStart && signalDate <= weekEnd;
+    });
   };
 
   const handleSignalSubmit = async () => {

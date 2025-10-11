@@ -3,7 +3,7 @@ import ProfitLoss from './ProfitLoss';
 import ChatZone from './ChatZone';
 import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, addPersonalTrade, getPersonalTrades, PersonalTrade, syncUserId, listenToPersonalTrades } from '../utils/firebase-setup';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, sendLocalNotification } from '../utils/push-notifications';
-import { ref, update, onValue, get } from 'firebase/database';
+import { ref, update, onValue, get, remove } from 'firebase/database';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 import { signOutAdmin } from '../utils/admin-utils';
@@ -5726,8 +5726,6 @@ export default function AdminInterface() {
                       onClick={async () => {
                         if (confirm('Êtes-vous sûr de vouloir supprimer ce signal ?')) {
                           try {
-                            const { ref, remove } = await import('firebase/database');
-                            const { database } = await import('../../utils/firebase-setup');
                             const signalRef = ref(database, `signals/${signal.id}`);
                             await remove(signalRef);
                             
