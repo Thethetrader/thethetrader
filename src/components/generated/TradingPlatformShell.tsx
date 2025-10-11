@@ -33,7 +33,10 @@ export default function TradingPlatformShell() {
     { id: 'general-chat-3', name: 'general-chat-3', emoji: '🪙', fullName: 'Crypto' },
     { id: 'general-chat-4', name: 'general-chat-4', emoji: '💱', fullName: 'Forex' },
     { id: 'chatzone', name: 'chatzone', emoji: '💬', fullName: 'ChatZone' },
-    { id: 'video', name: 'video', emoji: '📺', fullName: 'Livestream' }
+    { id: 'video', name: 'video', emoji: '📺', fullName: 'Livestream' },
+    { id: 'journal', name: 'journal', emoji: '📓', fullName: 'Journal Perso' },
+    { id: 'trading-journal', name: 'trading-journal', emoji: '📓', fullName: 'Journal Perso' },
+    { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' }
   ];
   
   // Charger les réactions depuis localStorage au montage du composant
@@ -2515,7 +2518,7 @@ export default function TradingPlatformShell() {
     console.log('🔥 getTradingCalendar appelé pour channel:', selectedChannel.id);
     console.log('🔥 personalTrades dans calendrier:', personalTrades.length);
     return (
-    <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '20px' }}>
+    <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '0px', marginTop: '-9px' }}>
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-gray-600 pb-4 gap-4 md:gap-0">
         <div className="hidden md:block">
@@ -2527,7 +2530,7 @@ export default function TradingPlatformShell() {
           </p>
         </div>
         
-        <div className="flex items-center gap-4">
+        <div className={`flex items-center ${(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'gap-4' : ''}`}>
           <div className="flex items-center gap-3 text-white">
             <button 
               onClick={goToPreviousMonth}
@@ -2535,9 +2538,10 @@ export default function TradingPlatformShell() {
             >
               ‹
             </button>
-            <span className="px-4 text-lg font-semibold min-w-[120px] text-center">
-              {getMonthName(currentDate)} {currentDate.getFullYear()}
-            </span>
+            <div className="text-center">
+              <div className="text-lg font-semibold">{getMonthName(currentDate)}</div>
+              <div className="text-sm text-gray-400">{currentDate.getFullYear()}</div>
+            </div>
             <button 
               onClick={goToNextMonth}
               className="p-2 hover:bg-gray-700 rounded-lg text-lg font-bold"
