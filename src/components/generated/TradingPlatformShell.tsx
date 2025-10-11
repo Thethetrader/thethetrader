@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, Signal, syncUserId } from '../../utils/firebase-setup';
 import { addPersonalTrade, getPersonalTrades, deletePersonalTrade, PersonalTrade, listenToPersonalTrades } from '../../lib/supabase';
 import ProfitLoss from '../ProfitLoss';
-import ChatZone from '../ChatZone';
 import { createClient } from '@supabase/supabase-js';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
 
@@ -32,7 +31,6 @@ export default function TradingPlatformShell() {
     { id: 'general-chat-2', name: 'general-chat-2', emoji: '📈', fullName: 'Indices' },
     { id: 'general-chat-3', name: 'general-chat-3', emoji: '🪙', fullName: 'Crypto' },
     { id: 'general-chat-4', name: 'general-chat-4', emoji: '💱', fullName: 'Forex' },
-    { id: 'chatzone', name: 'chatzone', emoji: '💬', fullName: 'ChatZone' },
     { id: 'video', name: 'video', emoji: '📺', fullName: 'Livestream' },
     { id: 'journal', name: 'journal', emoji: '📓', fullName: 'Journal Perso' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📓', fullName: 'Journal Perso' },
@@ -131,44 +129,6 @@ export default function TradingPlatformShell() {
 
   const [selectedChannel, setSelectedChannel] = useState({ id: 'general-chat', name: 'general-chat' });
 
-  // Réinitialiser les messages non lus quand on ouvre un salon
-  useEffect(() => {
-    if (selectedChannel.id === 'chatzone') {
-      setUnreadCounts(prev => ({
-        ...prev,
-        chatzone: 0
-      }));
-    }
-  }, [selectedChannel.id]);
-  
-  // Listener temps réel pour chatzone pour mettre à jour la pastille côté utilisateur
-  useEffect(() => {
-    const channel = supabase
-      .channel('unread-chatzone')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: 'channel_id=eq.chatzone' },
-        (payload: any) => {
-          const newMessage = payload?.new;
-          if (!newMessage) return;
-
-          // Si on est déjà dans le salon, ne pas incrémenter
-          if (selectedChannel.id === 'chatzone') return;
-          // Si l'auteur est l'utilisateur actuel, ne pas incrémenter
-          if (user?.id && newMessage.author_id === user.id) return;
-
-          setUnreadCounts((prev) => ({
-            ...prev,
-            chatzone: (prev.chatzone || 0) + 1,
-          }));
-        }
-      )
-      .subscribe();
-
-    return () => {
-      try { supabase.removeChannel(channel); } catch {}
-    };
-  }, [selectedChannel.id, user?.id]);
   const [view, setView] = useState<'signals' | 'calendar'>('signals');
   const [mobileView, setMobileView] = useState<'channels' | 'content'>('channels');
   const [message, setMessage] = useState('');
@@ -753,7 +713,7 @@ export default function TradingPlatformShell() {
 
   // Initialiser les dernières heures de lecture depuis localStorage
   useEffect(() => {
-    const channels = ['chatzone', 'crypto', 'forex', 'indices', 'fondamentaux', 'letsgooo-model'];
+    const channels = ['crypto', 'forex', 'indices', 'fondamentaux', 'letsgooo-model'];
     const lastReads = {};
     
     channels.forEach(channelId => {
@@ -3111,24 +3071,9 @@ export default function TradingPlatformShell() {
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">TRADING HUB</h3>
             <div className="space-y-1">
 
-              <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
               <button onClick={() => handleChannelChange('calendrier', 'calendrier')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               <button onClick={() => handleChannelChange('journal', 'journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 Journal Perso</button>
-              <button onClick={() => {
-                window.open('/trading-live.html', '_blank');
-              }} className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">🎥 Formation Live</button>
               <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
-              <button onClick={() => {
-                console.log('🔍 Button render: unreadCounts.chatzone =', unreadCounts.chatzone);
-                handleChannelChange('chatzone', 'chatzone');
-              }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'chatzone' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>
-                💬 ChatZone
-                {unreadCounts.chatzone > 0 && (
-                  <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-4 flex items-center justify-center px-1 shadow-lg">
-                    {unreadCounts.chatzone > 99 ? '99+' : unreadCounts.chatzone}
-                  </div>
-                )}
-              </button>
             </div>
           </div>
 
@@ -3316,7 +3261,7 @@ export default function TradingPlatformShell() {
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">TRADING HUB</h3>
                 <div className="space-y-2">
-                  {channels.filter(c => ['', 'profit-loss', 'video', 'chatzone'].includes(c.id)).map(channel => (
+                  {channels.filter(c => ['video'].includes(c.id)).map(channel => (
                     <button
                       key={channel.id}
                       onClick={() => {
@@ -3367,24 +3312,8 @@ export default function TradingPlatformShell() {
                       </div>
                     </div>
                   </button>
-                  
-                  
-                  <button
-                    onClick={() => {
-                      window.open('/trading-live.html', '_blank');
-                    }}
-                    className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">🎥</span>
-                      <div>
-                        <p className="font-medium text-white">Formation Live</p>
-                        <p className="text-sm text-gray-400">Formation en direct</p>
-                      </div>
-                    </div>
-                  </button>
-                  
-                </div>
+
+              </div>
               </div>
 
               <div className="bg-gray-700 rounded-lg p-4">
@@ -3420,7 +3349,7 @@ export default function TradingPlatformShell() {
               mobileView === 'content' ? 'translate-x-0' : 'translate-x-full'
             }`}
           >
-            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'video' || selectedChannel.id === 'chatzone' || selectedChannel.id === 'journal') ? (
+            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'video' || selectedChannel.id === 'journal') ? (
               <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '0px' }}>
                 {/* Header avec bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
                 {selectedChannel.id === 'trading-journal' && (
@@ -3453,18 +3382,6 @@ export default function TradingPlatformShell() {
                 {/* Affichage du calendrier */}
                 {(selectedChannel.id === 'calendrier' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && getTradingCalendar()}
                 
-                {/* Interface ChatZone pour mobile */}
-                {selectedChannel.id === 'chatzone' && (
-                  <div className="flex flex-col h-full w-full">
-                    <ChatZone onUnreadCountChange={handleUnreadCountChange} isActive={selectedChannel.id === 'chatzone'} />
-                  </div>
-                )}
-
-                {/* ChatZone toujours monté pour tracker les messages non lus */}
-                <div className="hidden">
-                  <ChatZone onUnreadCountChange={handleUnreadCountChange} isActive={selectedChannel.id === 'chatzone'} />
-                </div>
-
                 {/* Interface Livestream pour mobile */}
                 {selectedChannel.id === 'video' && (
                   <div className="flex flex-col h-full bg-gray-900">
@@ -3633,7 +3550,7 @@ export default function TradingPlatformShell() {
                 ) : null}
                 
                 {/* Affichage des signaux */}
-                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', '', 'calendrier', 'chatzone', 'journal'].includes(selectedChannel.id) ? (
+                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', '', 'calendrier', 'journal'].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
                     {/* Bouton Voir plus fixe en haut */}
                     <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
@@ -3963,27 +3880,6 @@ export default function TradingPlatformShell() {
                         </div>
                       </div>
                     </div>
-                  </div>
-                ) : selectedChannel.id === 'profit-loss' ? (
-                  <div className="flex flex-col h-full w-full">
-                    <div className="flex-1 overflow-hidden">
-                      <ProfitLoss channelId="profit-loss" currentUserId="user" />
-                    </div>
-                    <div className="h-[500px] border-t border-gray-600 bg-gray-800">
-                      <ChatZone onUnreadCountChange={handleUnreadCountChange} isActive={false} />
-                    </div>
-                  </div>
-                ) : selectedChannel.id === 'chatzone' ? (
-                  <div className="bg-red-500 text-white p-8 text-center">
-                    <h1 className="text-4xl font-bold">🚨 CHATZONE ACTIF 🚨</h1>
-                    <p className="text-xl mt-4">Si tu vois ce texte, ça marche !</p>
-                    <p className="text-sm mt-2">selectedChannel.id = {selectedChannel.id}</p>
-                    <p className="text-sm">selectedChannel.name = {selectedChannel.name}</p>
-                    <p className="text-sm">selectedChannel.emoji = 💬</p>
-                  </div>
-                ) : selectedChannel.id === 'chatzone' ? (
-                  <div className="flex flex-col h-full w-full">
-                    <ChatZone onUnreadCountChange={handleUnreadCountChange} isActive={selectedChannel.id === 'chatzone'} />
                   </div>
                 ) : ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
                   <div className="flex flex-col h-full">
@@ -4551,7 +4447,7 @@ export default function TradingPlatformShell() {
               ) : null}
               
               {/* Affichage des signaux */}
-                              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', '', 'calendrier', 'chatzone', 'journal'].includes(selectedChannel.id) ? (
+                              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', '', 'calendrier', 'journal'].includes(selectedChannel.id) ? (
                 <div className="space-y-4">
                   {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                     <div className="text-center py-8">
@@ -4824,10 +4720,6 @@ export default function TradingPlatformShell() {
                 </div>
               ) : selectedChannel.id === 'profit-loss' ? (
                 <ProfitLoss />
-              ) : selectedChannel.id === 'chatzone' ? (
-                <div className="flex flex-col h-full w-full">
-                  <ChatZone onUnreadCountChange={handleUnreadCountChange} isActive={selectedChannel.id === 'chatzone'} />
-                </div>
               ) : selectedChannel.id === 'video' ? (
                 <div className="flex flex-col h-full bg-gray-900">
                   {/* Interface Video avec Sidebar Visible */}
@@ -5955,10 +5847,6 @@ export default function TradingPlatformShell() {
         </div>
       )}
 
-      {/* ChatZone toujours monté pour tracker les messages non lus */}
-      <div className="hidden">
-        <ChatZone onUnreadCountChange={handleUnreadCountChange} isActive={selectedChannel.id === 'chatzone'} />
-      </div>
     </div>
   );
 }

@@ -1768,8 +1768,6 @@ export default function AdminInterface() {
     { id: 'letsgooo-model', name: 'letsgooo-model', emoji: '🚀', fullName: 'Letsgooo model' },
     { id: 'livestream', name: 'livestream', emoji: '📺', fullName: 'Livestream' },
 
-    { id: 'chatzone', name: 'chatzone', emoji: '💬', fullName: 'ChatZone' },
-    { id: 'profit-loss', name: 'profit-loss', emoji: '💰', fullName: 'Profit loss' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' },
     { id: 'user-management', name: 'user-management', emoji: '👥', fullName: 'Gestion Utilisateurs' }
@@ -3364,8 +3362,6 @@ export default function AdminInterface() {
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">TRADING HUB</h3>
             <div className="space-y-1">
 
-              <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💰 Profit-loss</button>
-              <button onClick={() => handleChannelChange('chatzone', 'chatzone')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'chatzone' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💬 Chat Zone</button>
               <button onClick={() => {
                 // Réinitialiser selectedDate si on quitte le Trading Journal
                 if (selectedChannel.id === 'trading-journal') {
@@ -3383,9 +3379,6 @@ export default function AdminInterface() {
                   (window as any).setCurrentPage('livestream');
                 }
               }} className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📺 Livestream</button>
-              <button onClick={() => {
-                window.open('/trading-live.html', '_blank');
-              }} className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">🎥 Formation Live</button>
             </div>
           </div>
 
@@ -3534,24 +3527,6 @@ export default function AdminInterface() {
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">TRADING HUB</h3>
                 <div className="space-y-2">
-                  {channels.filter(c => ['profit-loss', 'chatzone'].includes(c.id)).map(channel => (
-                    <button
-                      key={channel.id}
-                      onClick={() => {
-                        handleChannelChange(channel.id, channel.name);
-                        setMobileView('content');
-                      }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="text-lg">{channel.emoji}</span>
-                        <div>
-                          <p className="font-medium text-white">{channel.fullName}</p>
-                          <p className="text-sm text-gray-400">Hub de trading</p>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
                   
                   
                   <button
