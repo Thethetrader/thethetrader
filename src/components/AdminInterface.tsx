@@ -3486,7 +3486,7 @@ export default function AdminInterface() {
                 }}
                 className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
               >
-                🔴 Livestream Start 5 min
+                🔴 Livestream
               </button>
             </div>
           </div>
