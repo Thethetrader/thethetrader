@@ -1,7 +1,7 @@
 // Service Worker pour TheTheTrader PWA
 // Gère les notifications push en arrière-plan
 
-const CACHE_NAME = 'thethetrader-v6-firebase-notifications';
+const CACHE_NAME = 'thethetrader-v7-sw-manual-notifications';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -66,23 +66,56 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('push', (event) => {
   console.log('📱 Notification push reçue:', event);
   
-  // Par défaut, ne pas afficher de notification car Firebase le fait automatiquement
-  // quand il y a un champ "notification" dans le message
-  if (!event.data) {
-    console.log('📱 Pas de données, Firebase gère la notification');
-    return;
-  }
+  let title = 'TheTheTrader';
+  let body = 'Nouveau signal';
   
-  try {
-    const payload = event.data.json();
-    console.log('📱 Payload reçu:', payload);
-    
-    // Ne rien faire ici - Firebase affiche automatiquement les notifications
-    // qui ont un champ "notification" dans le message
-    // Le service worker ne doit gérer que les notifications sans UI (data-only)
-    
-  } catch (error) {
-    console.error('❌ Erreur parsing notification:', error);
+  if (event.data) {
+    try {
+      const payload = event.data.json();
+      console.log('📱 Payload reçu:', payload);
+      
+      // Extraire le titre et le body depuis le champ notification de Firebase
+      if (payload.notification) {
+        title = payload.notification.title || title;
+        body = payload.notification.body || body;
+      }
+      // Ou depuis les champs data si pas de notification
+      else if (payload.data) {
+        const data = payload.data;
+        title = 'Signal Trade';
+        body = `${data.signalType} ${data.symbol} - Nouveau signal`;
+      }
+      
+      console.log('📱 Affichage notification:', { title, body });
+      
+      const options = {
+        body: body,
+        icon: '/logo.png',
+        badge: '/logo.png',
+        tag: 'trading-signal',
+        requireInteraction: true,
+        data: payload.data || {},
+        actions: [
+          {
+            action: 'view',
+            title: 'Voir',
+            icon: '/logo.png'
+          },
+          {
+            action: 'close',
+            title: 'Fermer',
+            icon: '/logo.png'
+          }
+        ]
+      };
+      
+      event.waitUntil(
+        self.registration.showNotification(title, options)
+      );
+      
+    } catch (error) {
+      console.error('❌ Erreur parsing notification:', error);
+    }
   }
 });
 

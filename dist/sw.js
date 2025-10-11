@@ -1,4 +1,4 @@
-const CACHE_NAME = 'thethetrader-v6-firebase-notifications';
+const CACHE_NAME = 'thethetrader-v7-sw-manual-notifications';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -28,15 +28,53 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('push', (event) => {
   console.log('📱 SW: Notification push reçue:', event);
   
-  // Firebase gère automatiquement les notifications qui ont un champ "notification"
-  // Le service worker ne doit rien faire - Firebase affichera la notification
-  // avec le bon format défini dans la Firebase Function
+  let title = 'TheTheTrader';
+  let body = 'Nouveau signal';
   
   if (event.data) {
     try {
       const payload = event.data.json();
       console.log('📱 SW: Payload reçu:', payload);
-      // Ne rien afficher - Firebase le fait automatiquement
+      
+      // Extraire le titre et le body depuis le champ notification de Firebase
+      if (payload.notification) {
+        title = payload.notification.title || title;
+        body = payload.notification.body || body;
+      }
+      // Ou depuis les champs data si pas de notification
+      else if (payload.data) {
+        const data = payload.data;
+        title = 'Signal Trade';
+        body = `${data.signalType} ${data.symbol} - Nouveau signal`;
+      }
+      
+      console.log('📱 SW: Affichage notification:', { title, body });
+      
+      const options = {
+        body: body,
+        icon: '/favicon.png',
+        badge: '/favicon.png',
+        tag: 'trading-signal',
+        requireInteraction: true,
+        data: payload.data || {},
+        actions: [
+          {
+            action: 'explore',
+            title: 'Voir le signal',
+            icon: '/favicon.png'
+          },
+          {
+            action: 'close',
+            title: 'Fermer',
+            icon: '/favicon.png'
+          }
+        ]
+      };
+      
+      event.waitUntil(
+        self.registration.showNotification(title, options)
+      );
+      
     } catch (error) {
       console.error('❌ SW: Erreur parsing notification:', error);
     }
