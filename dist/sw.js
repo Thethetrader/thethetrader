@@ -1,4 +1,4 @@
-const CACHE_NAME = 'thethetrader-v2';
+const CACHE_NAME = 'thethetrader-v5-fix-notifications';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -26,12 +26,38 @@ self.addEventListener('fetch', (event) => {
 
 // Gestion des notifications push
 self.addEventListener('push', (event) => {
+  let notificationData;
+  let title = 'TheTheTrader - Nouveau Signal';
+  let body = 'Nouveau signal disponible !';
+  
+  // Parser les données de la notification
+  if (event.data) {
+    try {
+      notificationData = event.data.json();
+      console.log('📱 SW: Données notification reçues:', notificationData);
+      
+      // Si Firebase envoie une notification avec le champ notification
+      if (notificationData.notification) {
+        title = notificationData.notification.title || title;
+        body = notificationData.notification.body || body;
+      }
+      // Sinon utiliser les données directement
+      else if (notificationData.data) {
+        const data = notificationData.data;
+        body = `${data.signalType || ''} ${data.symbol || ''} - Nouveau signal`;
+      }
+    } catch (error) {
+      console.error('❌ SW: Erreur parsing notification:', error);
+      body = event.data.text();
+    }
+  }
+  
   const options = {
-    body: event.data ? event.data.text() : 'Nouveau signal disponible !',
+    body: body,
     icon: '/favicon.png',
     badge: '/favicon.png',
     vibrate: [100, 50, 100],
-    data: {
+    data: notificationData?.data || {
       dateOfArrival: Date.now(),
       primaryKey: 1
     },
@@ -50,7 +76,7 @@ self.addEventListener('push', (event) => {
   };
 
   event.waitUntil(
-    self.registration.showNotification('TheTheTrader - Nouveau Signal', options)
+    self.registration.showNotification(title, options)
   );
 });
 

@@ -1,7 +1,7 @@
 // Service Worker pour TheTheTrader PWA
 // Gère les notifications push en arrière-plan
 
-const CACHE_NAME = 'thethetrader-v4-force-refresh';
+const CACHE_NAME = 'thethetrader-v5-fix-notifications';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -66,16 +66,37 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('push', (event) => {
   console.log('📱 Notification push reçue:', event);
   
+  let title = 'TheTheTrader';
+  let body = 'Nouvelle notification';
+  let notificationData = {};
+  
   if (event.data) {
-    const data = event.data.json();
-    console.log('📱 Données notification:', data);
+    try {
+      const data = event.data.json();
+      console.log('📱 Données notification:', data);
+      
+      // Firebase envoie soit un objet avec un champ "notification", soit directement les données
+      if (data.notification) {
+        // Structure Firebase avec notification
+        title = data.notification.title || title;
+        body = data.notification.body || body;
+        notificationData = data.data || {};
+      } else {
+        // Structure directe
+        title = data.title || title;
+        body = data.body || body;
+        notificationData = data.data || {};
+      }
+    } catch (error) {
+      console.error('❌ Erreur parsing notification:', error);
+    }
     
     const options = {
-      body: data.body || 'Nouvelle notification TheTheTrader',
-      icon: data.icon || '/logo.png',
-      badge: data.badge || '/logo.png',
-      tag: data.tag || 'thethetrader-notification',
-      data: data.data || {},
+      body: body,
+      icon: '/logo.png',
+      badge: '/logo.png',
+      tag: 'thethetrader-notification',
+      data: notificationData,
       requireInteraction: true,
       actions: [
         {
@@ -92,7 +113,7 @@ self.addEventListener('push', (event) => {
     };
     
     event.waitUntil(
-      self.registration.showNotification(data.title || 'TheTheTrader', options)
+      self.registration.showNotification(title, options)
     );
   }
 });
