@@ -3484,7 +3484,7 @@ export default function AdminInterface() {
                     alert('❌ Erreur lors de l\'envoi de la notification');
                   }
                 }}
-                className="w-full text-left px-3 py-2 rounded text-sm bg-red-600 hover:bg-red-700 text-white font-medium transition-colors"
+                className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
               >
                 🔴 Livestream Start 5 min
               </button>
