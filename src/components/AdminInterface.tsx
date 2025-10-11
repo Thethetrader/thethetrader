@@ -942,6 +942,9 @@ export default function AdminInterface() {
               attachment_data: signal.attachment_data || signal.image,
               attachment_type: signal.attachment_type,
               attachment_name: signal.attachment_name,
+              closure_image: signal.closure_image,
+              closure_image_type: signal.closure_image_type,
+              closure_image_name: signal.closure_image_name,
               timestamp: timestamp,
               originalTimestamp: signal.timestamp || Date.now(),
               status: signal.status || 'ACTIVE' as const,
@@ -2417,12 +2420,22 @@ export default function AdminInterface() {
         ? `Position ${statusText} fermée - Break-even`
         : `Position ${statusText} fermée - P&L: ${pnl}`;
       
+      // Convertir l'image de fermeture en base64 si elle existe
+      let closureImageBase64: string | undefined;
+      if (conclusionImage) {
+        closureImageBase64 = await uploadImage(conclusionImage);
+        console.log('✅ Image de fermeture convertie:', !!closureImageBase64);
+      }
+
       // Mettre à jour le signal local
       const updatedSignal = { 
         id: signalId,
         status: newStatus, 
         pnl, 
-        closeMessage 
+        closeMessage,
+        closure_image: closureImageBase64,
+        closure_image_type: conclusionImage ? conclusionImage.type : undefined,
+        closure_image_name: conclusionImage ? conclusionImage.name : undefined
       };
       
       // Mettre à jour les signaux locaux
@@ -2435,13 +2448,18 @@ export default function AdminInterface() {
         s.id === signalId ? { ...s, ...updatedSignal } : s
       ));
       
-      // Sauvegarder dans Firebase
-      const firebaseSuccess = await updateSignalStatus(signalId, newStatus, pnl);
+      // Sauvegarder dans Firebase avec l'image de fermeture
+      const firebaseSuccess = await updateSignalStatus(signalId, newStatus, pnl, closureImageBase64);
       console.log('🔄 [ADMIN] Firebase mise à jour:', firebaseSuccess ? 'SUCCÈS' : 'ÉCHEC');
       
-      // Sauvegarder le message de fermeture dans Firebase
+      // Sauvegarder le message de fermeture et l'image dans Firebase
       const signalRef = ref(database, `signals/${signalId}`);
-      await update(signalRef, { closeMessage });
+      await update(signalRef, { 
+        closeMessage,
+        closure_image: closureImageBase64,
+        closure_image_type: conclusionImage ? conclusionImage.type : undefined,
+        closure_image_name: conclusionImage ? conclusionImage.name : undefined
+      });
       
       // Envoyer une notification pour le signal fermé
       notifySignalClosed({ ...updatedSignal, channel_id: 'general-chat-2' });
@@ -5752,16 +5770,36 @@ export default function AdminInterface() {
                       </div>
                     )}
 
-                    {signal.attachment_data && (
+                    {(signal.attachment_data || signal.closure_image) && (
                       <div className="mb-3">
-                        <span className="text-sm text-gray-400">Image du signal:</span>
-                        <div className="mt-2">
-                          <img 
-                            src={signal.attachment_data} 
-                            alt="Signal screenshot"
-                            className="max-w-2xl rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
-                            onClick={() => setSelectedImage(signal.attachment_data)}
-                          />
+                        <span className="text-sm text-gray-400">Images du signal:</span>
+                        <div className="mt-2 space-y-3">
+                          {signal.attachment_data && (
+                            <div>
+                              <span className="text-xs text-gray-500">📸 Image de création:</span>
+                              <div className="mt-1">
+                                <img 
+                                  src={signal.attachment_data} 
+                                  alt="Signal screenshot"
+                                  className="max-w-2xl rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                                  onClick={() => setSelectedImage(signal.attachment_data)}
+                                />
+                              </div>
+                            </div>
+                          )}
+                          {signal.closure_image && (
+                            <div>
+                              <span className="text-xs text-gray-500">📸 Image de fermeture:</span>
+                              <div className="mt-1">
+                                <img 
+                                  src={signal.closure_image} 
+                                  alt="Signal closure screenshot"
+                                  className="max-w-2xl rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                                  onClick={() => setSelectedImage(signal.closure_image)}
+                                />
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}

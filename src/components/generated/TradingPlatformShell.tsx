@@ -322,6 +322,9 @@ export default function TradingPlatformShell() {
         attachment_data: signal.attachment_data || signal.image,
         attachment_type: signal.attachment_type,
         attachment_name: signal.attachment_name,
+        closure_image: signal.closure_image,
+        closure_image_type: signal.closure_image_type,
+        closure_image_name: signal.closure_image_name,
         timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         status: signal.status || 'ACTIVE' as const,
         channel_id: signal.channel_id,
@@ -428,6 +431,9 @@ export default function TradingPlatformShell() {
         attachment_data: signal.attachment_data || signal.image,
         attachment_type: signal.attachment_type,
         attachment_name: signal.attachment_name,
+        closure_image: signal.closure_image,
+        closure_image_type: signal.closure_image_type,
+        closure_image_name: signal.closure_image_name,
         timestamp: new Date(newSignal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         status: newSignal.status || 'ACTIVE' as const,
         channel_id: newSignal.channel_id,
@@ -1161,6 +1167,9 @@ export default function TradingPlatformShell() {
         attachment_data: signal.attachment_data || signal.image,
         attachment_type: signal.attachment_type,
         attachment_name: signal.attachment_name,
+        closure_image: signal.closure_image,
+        closure_image_type: signal.closure_image_type,
+        closure_image_name: signal.closure_image_name,
             timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
             originalTimestamp: signal.timestamp || Date.now(),
             status: signal.status || 'ACTIVE' as const,
@@ -3598,6 +3607,9 @@ export default function TradingPlatformShell() {
         attachment_data: signal.attachment_data || signal.image,
         attachment_type: signal.attachment_type,
         attachment_name: signal.attachment_name,
+        closure_image: signal.closure_image,
+        closure_image_type: signal.closure_image_type,
+        closure_image_name: signal.closure_image_name,
                                   timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
                                   status: signal.status || 'ACTIVE' as const,
                                   channel_id: signal.channel_id,
@@ -5579,17 +5591,35 @@ export default function TradingPlatformShell() {
                         </div>
 
                         {/* Affichage des images */}
-                        {(signal.image || signal.attachment_data) && (
+                        {(signal.image || signal.attachment_data || signal.closure_image) && (
                           <div className="mb-3">
                             <span className="text-sm text-gray-400">Images:</span>
-                            <div className="flex gap-2 mt-2">
+                            <div className="mt-2 space-y-3">
                               {(signal.image || signal.attachment_data) && (
-                                <img 
-                                  src={signal.image || signal.attachment_data}
-                                  alt="Signal image"
-                                  className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
-                                  onClick={() => setSelectedImage(signal.image || signal.attachment_data)}
-                                />
+                                <div>
+                                  <span className="text-xs text-gray-500">📸 Image de création:</span>
+                                  <div className="mt-1">
+                                    <img 
+                                      src={signal.image || signal.attachment_data}
+                                      alt="Signal image"
+                                      className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                      onClick={() => setSelectedImage(signal.image || signal.attachment_data)}
+                                    />
+                                  </div>
+                                </div>
+                              )}
+                              {signal.closure_image && (
+                                <div>
+                                  <span className="text-xs text-gray-500">📸 Image de fermeture:</span>
+                                  <div className="mt-1">
+                                    <img 
+                                      src={signal.closure_image}
+                                      alt="Signal closure image"
+                                      className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                      onClick={() => setSelectedImage(signal.closure_image)}
+                                    />
+                                  </div>
+                                </div>
                               )}
                             </div>
                           </div>
@@ -5786,17 +5816,35 @@ export default function TradingPlatformShell() {
                         </div>
 
                         {/* Affichage des images */}
-                        {(signal.image || signal.attachment_data) && (
+                        {(signal.image || signal.attachment_data || signal.closure_image) && (
                           <div className="mb-3">
                             <span className="text-sm text-gray-400">Images:</span>
-                            <div className="flex gap-2 mt-2">
+                            <div className="mt-2 space-y-3">
                               {(signal.image || signal.attachment_data) && (
-                                <img 
-                                  src={signal.image || signal.attachment_data}
-                                  alt="Signal image"
-                                  className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
-                                  onClick={() => setSelectedImage(signal.image || signal.attachment_data)}
-                                />
+                                <div>
+                                  <span className="text-xs text-gray-500">📸 Image de création:</span>
+                                  <div className="mt-1">
+                                    <img 
+                                      src={signal.image || signal.attachment_data}
+                                      alt="Signal image"
+                                      className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                      onClick={() => setSelectedImage(signal.image || signal.attachment_data)}
+                                    />
+                                  </div>
+                                </div>
+                              )}
+                              {signal.closure_image && (
+                                <div>
+                                  <span className="text-xs text-gray-500">📸 Image de fermeture:</span>
+                                  <div className="mt-1">
+                                    <img 
+                                      src={signal.closure_image}
+                                      alt="Signal closure image"
+                                      className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                      onClick={() => setSelectedImage(signal.closure_image)}
+                                    />
+                                  </div>
+                                </div>
                               )}
                             </div>
                           </div>

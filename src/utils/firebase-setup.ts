@@ -47,6 +47,9 @@ export interface Signal {
   attachment_data?: string;
   attachment_type?: string;
   attachment_name?: string;
+  closure_image?: string;
+  closure_image_type?: string;
+  closure_image_name?: string;
 }
 
 export interface PersonalTrade {
@@ -280,10 +283,14 @@ export const subscribeToSignals = (channelId: string, callback: (signal: Signal)
   return { unsubscribe };
 };
 
-export const updateSignalStatus = async (signalId: string, status: 'WIN' | 'LOSS' | 'BE' | 'ACTIVE', pnl?: string): Promise<boolean> => {
+export const updateSignalStatus = async (signalId: string, status: 'WIN' | 'LOSS' | 'BE' | 'ACTIVE', pnl?: string, closureImage?: string): Promise<boolean> => {
   try {
     const signalRef = ref(database, `signals/${signalId}`);
-    await update(signalRef, { status, pnl });
+    const updateData: any = { status, pnl };
+    if (closureImage) {
+      updateData.closure_image = closureImage;
+    }
+    await update(signalRef, updateData);
     return true;
   } catch (error) {
     console.error('Erreur mise à jour signal Firebase:', error);
