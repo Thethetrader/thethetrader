@@ -2098,6 +2098,15 @@ export default function AdminInterface() {
       return;
     }
 
+    // Convertir l'image en base64 si présente
+    let imageBase64 = null;
+    console.log('📸 ADMIN signalData.image existe?', !!signalData.image);
+    if (signalData.image) {
+      console.log('📸 ADMIN Conversion de l\'image en base64...');
+      imageBase64 = await uploadImage(signalData.image);
+      console.log('✅ ADMIN Image convertie en base64, longueur:', imageBase64 ? imageBase64.length : 0);
+    }
+
     // Préparer les données pour Firebase
     const signalForFirebase = {
       channel_id: selectedChannel.id,
@@ -2109,12 +2118,15 @@ export default function AdminInterface() {
       stopLoss: signalData.stopLoss || '0',
       description: signalData.description || '',
       author: 'Admin',
-      image: signalData.image,
+      image: imageBase64,
       status: 'ACTIVE' as const
     };
+    
+    console.log('📤 ADMIN Envoi à Firebase avec image:', !!signalForFirebase.image);
 
     // Sauvegarder en Firebase
     const savedSignal = await addSignal(signalForFirebase);
+    console.log('💾 ADMIN Signal sauvegardé:', savedSignal);
     
     if (savedSignal) {
       console.log('✅ Signal sauvé en Firebase:', savedSignal);
