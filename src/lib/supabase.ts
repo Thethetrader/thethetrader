@@ -529,7 +529,6 @@ export const getUserProfileByType = async (userType: 'user' | 'admin') => {
     const user = await getCurrentUser();
     if (!user) throw new Error('Utilisateur non connecté');
 
-    console.log('🔍 getUserProfileByType - Recherche profil pour:', {
       userId: user.id,
       userEmail: user.email,
       userType: userType
@@ -542,7 +541,6 @@ export const getUserProfileByType = async (userType: 'user' | 'admin') => {
       .eq('id', user.id)
       .single();
 
-    console.log('📊 Résultat de la requête Supabase:', {
       data: data,
       error: error,
       errorCode: error?.code
@@ -566,7 +564,6 @@ export const updateUserProfile = async (name: string, avatarUrl?: string, userTy
     const user = await getCurrentUser();
     if (!user) throw new Error('Utilisateur non connecté');
 
-    console.log('🔄 updateUserProfile appelé:', {
       userId: user.id,
       userEmail: user.email,
       name: name,
@@ -587,7 +584,6 @@ export const updateUserProfile = async (name: string, avatarUrl?: string, userTy
       profileData.avatar_url = avatarUrl;
     }
 
-    console.log('📝 Données à envoyer à Supabase:', profileData);
 
     const { data, error } = await supabase
       .from('user_profiles')
@@ -597,7 +593,6 @@ export const updateUserProfile = async (name: string, avatarUrl?: string, userTy
 
     if (error) throw error;
     
-    console.log('✅ Profil mis à jour dans Supabase:', data);
     return { data, error: null };
   } catch (error) {
     console.error('❌ Erreur mise à jour profil:', error);
@@ -889,7 +884,6 @@ export const addPersonalTrade = async (trade: Omit<PersonalTrade, 'id' | 'user_i
       return null;
     }
 
-    console.log('🚀 Ajout trade personnel Supabase:', trade);
 
     // Convertir les images File en base64 si nécessaire
     let image1Base64: string | null = null;
@@ -942,7 +936,6 @@ export const addPersonalTrade = async (trade: Omit<PersonalTrade, 'id' | 'user_i
       return null;
     }
 
-    console.log('✅ Trade personnel sauvegardé Supabase:', data);
     
     // Convertir les nombres en strings pour la compatibilité avec l'interface
     const savedTrade: PersonalTrade = {
@@ -971,7 +964,6 @@ export const getPersonalTrades = async (limit: number = 100): Promise<PersonalTr
       return [];
     }
 
-    console.log('📊 Récupération trades personnels Supabase...');
 
     const { data, error } = await supabase
       .from('personal_trades')
@@ -986,7 +978,6 @@ export const getPersonalTrades = async (limit: number = 100): Promise<PersonalTr
       return [];
     }
 
-    console.log('✅ Trades personnels récupérés:', data.length);
 
     // Convertir les nombres en strings pour la compatibilité avec l'interface
     const trades: PersonalTrade[] = data.map(trade => ({
@@ -1026,7 +1017,6 @@ export const deletePersonalTrade = async (tradeId: string): Promise<boolean> => 
       return false;
     }
 
-    console.log('✅ Trade supprimé avec succès');
     return true;
   } catch (error) {
     console.error('❌ Erreur suppression trade Supabase:', error);
@@ -1052,7 +1042,6 @@ export const listenToPersonalTrades = (
     }
 
     userId = user.id;
-    console.log('👂 Démarrage écoute temps réel trades Supabase pour user:', userId);
 
     // Charger les trades initiaux
     getPersonalTrades().then(trades => {
@@ -1071,7 +1060,6 @@ export const listenToPersonalTrades = (
           filter: `user_id=eq.${userId}`
         },
         (payload) => {
-          console.log('🔄 Changement détecté dans trades:', payload);
           // Recharger tous les trades
           getPersonalTrades().then(trades => {
             onTradesChange(trades);
@@ -1080,12 +1068,10 @@ export const listenToPersonalTrades = (
       )
       .subscribe();
 
-    console.log('✅ Abonnement temps réel trades actif');
   });
 
   // Retourner une fonction pour se désabonner
   return () => {
-    console.log('🛑 Arrêt écoute temps réel trades Supabase');
     supabase.channel('personal_trades_changes').unsubscribe();
   };
 };

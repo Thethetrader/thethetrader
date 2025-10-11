@@ -34,31 +34,25 @@ const UserChat = ({ channelId = 'chatzone' }) => {
   useEffect(() => {
     const initializeSupabase = async () => {
       try {
-        console.log('🔄 Initialisation Supabase UserChat...');
 
         // Nettoyage forcé des messages de démo d'avant
         setMessages([]);
-        console.log('🧹 Messages de démo forcément éliminés');
 
         // Charger l'utilisateur actuel
         const user = await getCurrentUser();
         if (user) {
           setSupabaseUser(user);
-          console.log('✅ Utilisateur Supabase chargé:', user.email);
 
           // Charger le profil utilisateur
           const { data: profile } = await getUserProfileByType('user');
           if (profile) {
             setSupabaseProfile(profile);
-            console.log('✅ Profil utilisateur chargé:', profile);
           }
 
           // Vérifier si admin
           const adminStatus = await isUserAdmin(user.id);
           setIsSupabaseAdmin(adminStatus);
-          console.log('👑 Status admin côté user:', adminStatus);
         } else {
-          console.log('❌ Aucun utilisateur Supabase connecté côté user');
         }
 
         // Récupérer l'ID du canal
@@ -70,7 +64,6 @@ const UserChat = ({ channelId = 'chatzone' }) => {
 
         if (channelData) {
           setCurrentChannelId(channelData.id);
-          console.log('✅ Canal trouvé côté user:', channelData.id);
 
           // Charger SEULEMENT les messages depuis Supabase (pas de fallback)
           const { data: messagesData } = await supabaseGetMessages(channelData.id);
@@ -87,23 +80,19 @@ const UserChat = ({ channelId = 'chatzone' }) => {
             }));
 
             setMessages(convertedMessages);
-            console.log('✅ Messages SUPABASE chargés côté user:', convertedMessages.length);
           } else {
             // AUCUN MESSAGE PAR DÉFAUT sinon; Supabase uniquement
             setMessages([]);
-            console.log('✅ AUCUN message - ChatZone vide par design');
           }
         } else {
           // Pas de canal → AUCUN MESSAGE
           setMessages([]);
-          console.log('✅ Aucun canal - ChatZone vide par design');
         }
 
       } catch (error) {
         console.error('❌ Erreur initialisation Supabase côté user:', error);
       } finally {
         setLoading(false);
-        console.log('✅ Initialisation UserChat terminée');
       }
     };
 
@@ -114,10 +103,8 @@ const UserChat = ({ channelId = 'chatzone' }) => {
   useEffect(() => {
     if (!currentChannelId) return;
 
-    console.log('🔔 UserChat - Abonnement temps réel pour canal:', currentChannelId);
 
     const subscription = supabaseSubscribeToMessages(currentChannelId, (newMessage) => {
-      console.log('📨 UserChat - Nouveau message reçu:', newMessage);
 
       // Convertir au format local
       const convertedMessage = {
@@ -136,7 +123,6 @@ const UserChat = ({ channelId = 'chatzone' }) => {
     return () => {
       if (subscription) {
         subscription.unsubscribe();
-        console.log('🔕 UserChat - Désabonnement temps réel');
       }
     };
   }, [currentChannelId]);
@@ -150,14 +136,12 @@ const UserChat = ({ channelId = 'chatzone' }) => {
 
     setUpdating(true);
     try {
-      console.log('📤 UserChat - Envoi message vers Supabase...', { content: newMsg.trim(), channelId: currentChannelId });
 
       const { data, error } = await supabaseSendMessage(currentChannelId, newMsg.trim());
 
       if (error) {
         console.error('❌ UserChat - Erreur envoi message Supabase:', error);
       } else {
-        console.log('✅ UserChat - Message envoyé via Supabase:', data);
         // Le message sera ajouté automatiquement via l'abonnement temps réel
       }
 
@@ -172,22 +156,18 @@ const UserChat = ({ channelId = 'chatzone' }) => {
 
   // Fonctions Firebase désactivées - remplacées par Supabase
   const updateMessage = async (id, changes) => {
-    console.log('⚠️ updateMessage désactivé - Supabase uniquement');
   };
 
   const startEdit = (msg) => {
-    console.log('⚠️ startEdit désactivé pour le moment');
     setMenu(null);
   };
 
   const saveEdit = () => {
-    console.log('⚠️ saveEdit désactivé pour le moment');
     setEditing(null);
     setEditText("");
   };
 
   const deleteMsg = async (id) => {
-    console.log('⚠️ deleteMsg désactivé pour le moment');
     setMenu(null);
   };
 

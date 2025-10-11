@@ -13,7 +13,6 @@ export const useNotifications = () => {
 
   const requestPermission = async () => {
     if (!('Notification' in window)) {
-      console.log('Ce navigateur ne supporte pas les notifications');
       return false;
     }
 
@@ -41,7 +40,6 @@ export const useNotifications = () => {
       });
 
       setSubscription(subscription);
-      console.log('Abonnement push créé:', subscription);
       return subscription;
     } catch (error) {
       console.error('Erreur lors de l\'abonnement push:', error);
@@ -51,7 +49,6 @@ export const useNotifications = () => {
 
   const sendTestNotification = async () => {
     if (permission !== 'granted') {
-      console.log('Permission non accordée');
       return;
     }
 

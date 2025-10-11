@@ -21,7 +21,6 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
     setError(null);
 
     try {
-      console.log('🔐 Tentative de connexion admin:', email);
 
       const { data, error: authError } = await signInAdmin(email, password);
 
@@ -35,7 +34,6 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
       }
 
       if (data?.user) {
-        console.log('✅ Connexion admin réussie:', data.user.email);
         // Appeler la fonction onLogin avec les données utilisateur
         onLogin(data);
       } else {

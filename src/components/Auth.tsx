@@ -116,7 +116,6 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess, defaultMode = 'login' }) => 
 
       if (result.success) {
         // Le hook useAuth gère la redirection
-        console.log('Authentification réussie');
       } else {
         setFormErrors({ submit: result.error || 'Une erreur est survenue' });
       }

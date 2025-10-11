@@ -428,7 +428,6 @@ export const useChat = (options: ChatOptions): ChatState & ChatActions => {
         filter: `channel_id=eq.${channelId}`,
       },
       (payload) => {
-        console.log('Nouveau message:', payload);
         
         // Récupérer le message complet avec relations
         supabase
@@ -470,7 +469,6 @@ export const useChat = (options: ChatOptions): ChatState & ChatActions => {
         filter: `channel_id=eq.${channelId}`,
       },
       (payload) => {
-        console.log('Message modifié:', payload);
         
         updateState(prev => ({
           messages: prev.messages.map(msg => 
@@ -491,7 +489,6 @@ export const useChat = (options: ChatOptions): ChatState & ChatActions => {
       },
       (payload) => {
         if (payload.new.is_deleted) {
-          console.log('Message supprimé:', payload);
           
           updateState(prev => ({
             messages: prev.messages.filter(msg => msg.id !== payload.new.id)
@@ -523,7 +520,6 @@ export const useChat = (options: ChatOptions): ChatState & ChatActions => {
 
     // S'abonner au canal
     channel.subscribe((status) => {
-      console.log('Statut abonnement chat:', status);
     });
 
     channelRef.current = channel;

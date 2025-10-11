@@ -75,7 +75,6 @@ export const addMessage = async (message: Omit<Message, 'id' | 'timestamp'>): Pr
       Object.entries(message).filter(([_, value]) => value !== undefined)
     );
     
-    console.log('🧹 Message nettoyé avant envoi Firebase:', cleanMessage);
     
     const messagesRef = ref(database, 'messages');
     const newMessageRef = push(messagesRef, {
@@ -120,7 +119,6 @@ export const getMessages = async (channelId: string): Promise<Message[]> => {
 
     // Trier par timestamp croissant pour l’affichage
     messages.sort((a, b) => Number(a.timestamp) - Number(b.timestamp));
-    console.log(`✅ Messages chargés depuis Firebase pour ${channelId}:`, messages.length);
     return messages;
   } catch (error) {
     console.error('Erreur récupération messages Firebase:', error);
@@ -153,14 +151,12 @@ export const subscribeToMessages = (channelId: string, callback: (message: Messa
 // Upload d'images vers Firebase Storage
 export const uploadImage = async (file: File): Promise<string | null> => {
   try {
-    console.log('🚀 Début upload image Firebase:', file.name, 'Taille:', file.size);
     
     // Convertir en base64 temporairement pour test
     const reader = new FileReader();
     return new Promise((resolve) => {
       reader.onload = (e) => {
         const base64Image = e.target?.result as string;
-        console.log('📸 Image convertie en base64');
         resolve(base64Image);
       };
       reader.readAsDataURL(file);
@@ -205,7 +201,6 @@ const CACHE_DURATION = 30000; // 30 secondes
 
 export const getSignals = async (channelId?: string, limit: number = 3, beforeTimestamp?: number): Promise<Signal[]> => {
   try {
-    console.log('🚀 getSignals appelé avec channelId:', channelId, 'limit:', limit, 'beforeTimestamp:', beforeTimestamp);
     const signalsRef = ref(database, 'signals');
 
     let queryConstraints = [];
@@ -229,7 +224,6 @@ export const getSignals = async (channelId?: string, limit: number = 3, beforeTi
 
       // Plus anciens en premier (chronologique)
       signals.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-      console.log(`✅ Signaux chargés (avant ${beforeTimestamp}):`, signals.length);
       return signals;
     } else {
       // Premier chargement : récupérer les derniers signaux
@@ -249,7 +243,6 @@ export const getSignals = async (channelId?: string, limit: number = 3, beforeTi
 
       // Plus anciens en premier (chronologique)
       signals.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-      console.log(`✅ Signaux chargés (filtrés):`, signals.length);
       return signals;
     }
   } catch (error) {
@@ -307,7 +300,6 @@ export const updateMessageReactions = async (messageId: string, reactions: Messa
   try {
     const messageReactionsRef = ref(database, `messageReactions/${messageId}`);
     await update(messageReactionsRef, reactions);
-    console.log('✅ Réactions message mises à jour dans Firebase:', messageId, reactions);
     return true;
   } catch (error) {
     console.error('❌ Erreur mise à jour réactions message Firebase:', error);
@@ -345,7 +337,6 @@ export const syncUserId = async (): Promise<string> => {
   // Toujours utiliser l'ID unifié pour tous les utilisateurs
   const userId = generateUserId();
   localStorage.setItem('user_id', userId);
-  console.log('🔄 ID utilisateur unifié synchronisé:', userId);
   
   return userId;
 };
@@ -361,7 +352,6 @@ export const loginUser = (email: string, pseudo: string): string => {
   localStorage.setItem('user_email', email);
   localStorage.setItem('user_pseudo', pseudo);
   
-  console.log('✅ Utilisateur connecté:', { userId, email, pseudo });
   return userId;
 };
 
@@ -370,7 +360,6 @@ export const logoutUser = () => {
   localStorage.removeItem('user_id');
   localStorage.removeItem('user_email');
   localStorage.removeItem('user_pseudo');
-  console.log('✅ Utilisateur déconnecté');
 };
 
 // Vérifier si l'utilisateur est connecté
@@ -392,7 +381,6 @@ export const getUserInfo = () => {
 // Ajouter un trade personnel à Firebase
 export const addPersonalTrade = async (trade: Omit<PersonalTrade, 'id' | 'created_at' | 'user_id'>): Promise<PersonalTrade | null> => {
   try {
-    console.log('🚀 Ajout trade personnel Firebase:', trade);
     
     // Synchroniser l'ID utilisateur
     const userId = await syncUserId();
@@ -444,7 +432,6 @@ export const addPersonalTrade = async (trade: Omit<PersonalTrade, 'id' | 'create
       ...cleanTradeData
     } as PersonalTrade;
     
-    console.log('✅ Trade personnel sauvegardé Firebase:', savedTrade);
     return savedTrade;
   } catch (error) {
     console.error('❌ Erreur ajout trade personnel Firebase:', error);
@@ -455,7 +442,6 @@ export const addPersonalTrade = async (trade: Omit<PersonalTrade, 'id' | 'create
 // Récupérer tous les trades personnels depuis Firebase
 export const getPersonalTrades = async (limit: number = 100): Promise<PersonalTrade[]> => {
   try {
-    console.log('📊 Récupération trades personnels Firebase...');
     
     // Synchroniser l'ID utilisateur
     const userId = await syncUserId();
@@ -464,14 +450,11 @@ export const getPersonalTrades = async (limit: number = 100): Promise<PersonalTr
     const q = query(tradesRef, orderByChild('created_at'), limitToLast(limit));
     const snapshot = await get(q);
     
-    console.log('🔍 Snapshot Firebase:', snapshot.exists() ? 'EXISTE' : 'VIDE');
-    console.log('🔍 Données snapshot:', snapshot.val());
     
     const trades: PersonalTrade[] = [];
     if (snapshot.exists()) {
       snapshot.forEach((childSnapshot) => {
         const data = childSnapshot.val();
-        console.log('📋 Trade trouvé:', childSnapshot.key, data);
         trades.push({
           id: childSnapshot.key!,
           ...data
@@ -482,8 +465,6 @@ export const getPersonalTrades = async (limit: number = 100): Promise<PersonalTr
     // Trier par date de création (plus récent en premier)
     trades.sort((a, b) => new Date(b.created_at || b.timestamp).getTime() - new Date(a.created_at || a.timestamp).getTime());
     
-    console.log(`✅ ${trades.length} trades personnels récupérés Firebase`);
-    console.log('📋 Détail des trades:', trades);
     return trades;
   } catch (error) {
     console.error('❌ Erreur récupération trades personnels Firebase:', error);
@@ -494,12 +475,10 @@ export const getPersonalTrades = async (limit: number = 100): Promise<PersonalTr
 // Mettre à jour un trade personnel
 export const updatePersonalTrade = async (tradeId: string, updates: Partial<PersonalTrade>): Promise<boolean> => {
   try {
-    console.log('🔄 Mise à jour trade personnel Firebase:', tradeId, updates);
     
     const tradeRef = ref(database, `personal_trades/${tradeId}`);
     await update(tradeRef, updates);
     
-    console.log('✅ Trade personnel mis à jour Firebase');
     return true;
   } catch (error) {
     console.error('❌ Erreur mise à jour trade personnel Firebase:', error);
@@ -510,12 +489,10 @@ export const updatePersonalTrade = async (tradeId: string, updates: Partial<Pers
 // Supprimer un trade personnel
 export const deletePersonalTrade = async (tradeId: string): Promise<boolean> => {
   try {
-    console.log('🗑️ Suppression trade personnel Firebase:', tradeId);
     
     const tradeRef = ref(database, `personal_trades/${tradeId}`);
     await remove(tradeRef);
     
-    console.log('✅ Trade personnel supprimé Firebase');
     return true;
   } catch (error) {
     console.error('❌ Erreur suppression trade personnel Firebase:', error);
@@ -532,7 +509,6 @@ export const listenToPersonalTrades = (
   
   const startListening = async () => {
     try {
-      console.log('👂 Démarrage écoute temps réel trades personnels...');
       
       // Synchroniser l'ID utilisateur
       const userId = await syncUserId();
@@ -543,7 +519,6 @@ export const listenToPersonalTrades = (
       const tradesRef = ref(database, `personal_trades/${userId}`);
       
       unsubscribe = onValue(tradesRef, (snapshot) => {
-        console.log('🔄 Mise à jour temps réel trades détectée');
         
         const trades: PersonalTrade[] = [];
         if (snapshot.exists()) {
@@ -559,14 +534,12 @@ export const listenToPersonalTrades = (
         // Trier par date de création (plus récent en premier)
         trades.sort((a, b) => new Date(b.created_at || b.timestamp).getTime() - new Date(a.created_at || a.timestamp).getTime());
         
-        console.log(`✅ ${trades.length} trades synchronisés en temps réel`);
         onTradesUpdate(trades);
       }, (error) => {
         console.error('❌ Erreur écoute temps réel trades:', error);
         if (onError) onError(error);
       });
       
-      console.log('✅ Écoute temps réel trades démarrée');
     } catch (error) {
       console.error('❌ Erreur démarrage écoute temps réel:', error);
       if (onError) onError(error as Error);
@@ -578,7 +551,6 @@ export const listenToPersonalTrades = (
   // Retourner fonction de nettoyage
   return () => {
     if (unsubscribe) {
-      console.log('🛑 Arrêt écoute temps réel trades');
       unsubscribe();
       unsubscribe = null;
     }

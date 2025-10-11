@@ -78,11 +78,9 @@ const ChatZone = ({ onUnreadCountChange, isActive: parentIsActive }) => {
 
   // Déterminer si c'est l'utilisateur actuel (version locale)
   const isCurrentUser = (senderId) => {
-    console.log('🔍 isCurrentUser check (local):', { senderId, currentUserId });
 
     // Simple comparaison locale
     const isOwn = senderId === currentUserId;
-    console.log(isOwn ? '✅ Utilisateur actuel' : '⬅️ Autre utilisateur');
     return isOwn;
   };
 
@@ -109,11 +107,9 @@ const ChatZone = ({ onUnreadCountChange, isActive: parentIsActive }) => {
     if (isAdmin) {
       setCurrentUserId('admin');
       setCurrentUserName('Admin');
-      console.log('✅ Mode admin local détecté');
     } else {
       setCurrentUserId('user');
       setCurrentUserName('Utilisateur');
-      console.log('✅ Mode utilisateur local');
     }
   }, []);
 
@@ -124,7 +120,6 @@ const ChatZone = ({ onUnreadCountChange, isActive: parentIsActive }) => {
     // Charger les messages depuis Supabase uniquement
     setMessages([]);
     setLastReadMessageIndex(0);
-    console.log('✅ ChatZone vide - connexion Supabase uniquement');
   }, [currentUserId]);
 
   // Scroll automatique vers le bas
@@ -155,7 +150,6 @@ const ChatZone = ({ onUnreadCountChange, isActive: parentIsActive }) => {
 
   // Notifier le parent du changement de messages non lus
   useEffect(() => {
-    console.log('🔔 ChatZone: unreadCount changed to:', unreadCount, 'parentIsActive:', parentIsActive);
     if (onUnreadCountChange) {
       onUnreadCountChange('chatzone', unreadCount);
     }
@@ -213,7 +207,6 @@ const ChatZone = ({ onUnreadCountChange, isActive: parentIsActive }) => {
 
         // Envoi Supabase
         try {
-          console.log('📤 Envoi message Supabase - currentUserId:', currentUserId, 'currentUserName:', currentUserName);
 
           // Récupérer l'ID du canal ChatZone
           const { data: channelData } = await supabase
@@ -223,7 +216,6 @@ const ChatZone = ({ onUnreadCountChange, isActive: parentIsActive }) => {
             .single();
 
           if (!channelData) {
-            console.log('❌ Canal chatzone non trouvé dans la base');
             return;
           }
 
@@ -240,14 +232,11 @@ const ChatZone = ({ onUnreadCountChange, isActive: parentIsActive }) => {
             });
 
           if (error) {
-            console.log('❌ Erreur envoi Supabase:', error);
           } else {
-            console.log('✅ Message envoyé à Supabase');
             // Ajouter le message localement pour affichage immédiat
             setMessages(prev => [...prev, newMessage]);
           }
         } catch (error) {
-          console.log('❌ Erreur envoi message Supabase:', error);
         }
         
         setReplyingTo(null);

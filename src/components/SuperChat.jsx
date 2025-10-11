@@ -89,7 +89,6 @@ const SuperChat = () => {
     if (!newMessage.trim() || !currentUser || uploading) return;
 
     const messageContent = newMessage.trim();
-    console.log('🚀 Sending message:', { messageContent, currentUser, channelId });
     
     setNewMessage('');
     setIsTyping(false);
@@ -117,7 +116,6 @@ const SuperChat = () => {
         throw error;
       }
 
-      console.log('✅ Message sent successfully:', data);
 
       // Upload file if selected
       if (selectedFile) {
@@ -490,7 +488,6 @@ const SuperChat = () => {
   }, []);
 
   // Debug info
-  console.log('SuperChat Debug:', { loading, currentUser });
 
   if (loading) {
     return (

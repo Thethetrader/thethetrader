@@ -17,7 +17,6 @@ const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default function TradingPlatformShell() {
-  console.log('🚀 TradingPlatformShell chargé !');
   
   // Hook pour les stats en temps réel synchronisées avec l'admin
   const { stats, allSignalsForStats: realTimeSignals, getWeeklyBreakdown: getCalendarWeeklyBreakdown, getTodaySignals: getCalendarTodaySignals, getThisMonthSignals: getCalendarThisMonthSignals } = useStatsSync();
@@ -69,7 +68,6 @@ export default function TradingPlatformShell() {
       if (session?.user) {
         // Nettoyer les anciennes données si c'est un nouvel utilisateur
         if (event === 'SIGNED_IN') {
-          console.log('🔄 Nouvel utilisateur connecté, nettoyage des données...');
           setCurrentUsername('');
           setSupabaseProfile(null);
           setMessages({});
@@ -79,7 +77,6 @@ export default function TradingPlatformShell() {
           Object.keys(localStorage).forEach(key => {
             if (key.startsWith('userUsername_') && !key.endsWith(`_${session.user.id}`)) {
               localStorage.removeItem(key);
-              console.log('🧹 Ancienne clé localStorage supprimée:', key);
             }
           });
         }
@@ -95,7 +92,6 @@ export default function TradingPlatformShell() {
         setSupabaseProfile(null);
         setMessages({});
         setMessageReactions({});
-        console.log('🧹 États utilisateur nettoyés après déconnexion');
       }
     });
 
@@ -122,7 +118,6 @@ export default function TradingPlatformShell() {
 
   // Fonction callback pour recevoir les changements de messages non lus
   const handleUnreadCountChange = (channelId: string, count: number) => {
-    console.log('📊 TradingPlatformShell: Received unread count for', channelId, ':', count);
     setUnreadCounts(prev => ({
       ...prev,
       [channelId]: count
@@ -233,7 +228,6 @@ export default function TradingPlatformShell() {
         }))
       }));
       
-      console.log(`✅ Messages chargés pour ${channelId}:`, formattedMessages.length);
       
       // Scroll vers le bas après chargement des messages (sauf pour calendrier et journal perso)
       if (!['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux'].includes(channelId)) {
@@ -270,7 +264,6 @@ export default function TradingPlatformShell() {
         });
         
         setMessageReactions(newReactions);
-        console.log('✅ Réactions messages chargées depuis Firebase:', Object.keys(newReactions).length);
         
         // S'abonner aux changements de réactions pour tous les messages
         const subscriptions = allMessages.map((message) => {
@@ -306,9 +299,7 @@ export default function TradingPlatformShell() {
   // Fonction pour charger les signaux depuis Firebase (optimisé - max 3)
   const loadSignals = async (channelId: string) => {
     try {
-      console.log('🚀 Début chargement signaux utilisateur pour:', channelId);
       const signals = await getSignals(channelId, 3); // Limite à 3 signaux
-      console.log('🔍 Signaux bruts utilisateur:', signals);
       const formattedSignals = signals.map(signal => ({
         id: signal.id || '',
         type: signal.type,
@@ -328,9 +319,6 @@ export default function TradingPlatformShell() {
       }));
       
       setSignals(formattedSignals.reverse());
-      console.log(`✅ Signaux chargés pour ${channelId}:`, formattedSignals.length);
-      console.log('🔍 Signaux formatés utilisateur:', formattedSignals);
-      console.log('🎯 État signals utilisateur après setSignals:', formattedSignals);
       
       // Ne pas envoyer de notifications lors du chargement initial
       // Les notifications seront envoyées seulement pour les nouveaux signaux en temps réel
@@ -364,11 +352,9 @@ export default function TradingPlatformShell() {
     
     const subscriptions = channels.map(channelId => {
       return subscribeToMessages(channelId, (newMessage) => {
-        console.log(`🔄 Nouveau message reçu dans ${channelId}:`, newMessage);
         
         // Compter les nouveaux messages seulement si on n'est pas dans ce canal
         if (selectedChannel.id !== channelId) {
-          console.log(`📊 Incrementing unread count for ${channelId}`);
           setUnreadMessages(prev => ({
             ...prev,
             [channelId]: (prev[channelId] || 0) + 1
@@ -384,13 +370,11 @@ export default function TradingPlatformShell() {
 
   // Charger les données quand on change de canal
   useEffect(() => {
-    console.log('🔄 Changement de canal utilisateur:', selectedChannel.id);
     loadMessages(selectedChannel.id);
     loadSignals(selectedChannel.id);
     
     // Subscription aux signaux temps réel pour les réactions et notifications
     const signalSubscription = subscribeToSignals(selectedChannel.id, (updatedSignal) => {
-      console.log('🔄 Signal mis à jour reçu:', updatedSignal);
       
       // Mettre à jour les signaux avec les nouvelles réactions
       setSignals(prev => prev.map(signal => 
@@ -410,7 +394,6 @@ export default function TradingPlatformShell() {
 
     // Subscription aux nouveaux signaux temps réel
     const newSignalSubscription = subscribeToSignals(selectedChannel.id, (newSignal) => {
-      console.log('🆕 Nouveau signal reçu utilisateur:', newSignal);
       
       const formattedSignal = {
         id: newSignal.id || '',
@@ -483,19 +466,16 @@ export default function TradingPlatformShell() {
           // Mode dégradé : sauvegarder en localStorage avec ID générique
           localStorage.setItem('userUsername', usernameInput.trim());
           setCurrentUsername(usernameInput.trim());
-          console.log('✅ Username sauvegardé en localStorage:', usernameInput.trim());
         } else {
           const { data, error } = await updateUserProfile(usernameInput.trim(), undefined, 'user');
         if (!error && data) {
           setCurrentUsername(usernameInput.trim());
           setSupabaseProfile(prev => prev ? { ...prev, name: usernameInput.trim() } : prev);
-          console.log('✅ Username updated successfully in Supabase:', usernameInput.trim());
         } else {
           console.error('❌ Error updating username in Supabase:', error);
             // Mode dégradé : sauvegarder en localStorage avec ID utilisateur
             localStorage.setItem(`userUsername_${user.id}`, usernameInput.trim());
             setCurrentUsername(usernameInput.trim());
-            console.log('✅ Username sauvegardé en localStorage (fallback):', usernameInput.trim());
           }
         }
       } catch (error) {
@@ -507,7 +487,6 @@ export default function TradingPlatformShell() {
           localStorage.setItem('userUsername', usernameInput.trim());
         }
         setCurrentUsername(usernameInput.trim());
-        console.log('✅ Username sauvegardé en localStorage (fallback):', usernameInput.trim());
       }
       setIsEditingUsername(false);
       setUsernameInput('');
@@ -527,7 +506,6 @@ export default function TradingPlatformShell() {
         const session = await supabase.auth.getSession();
         
         if (session.data.session?.user) {
-          console.log('✅ Session utilisateur trouvée:', session.data.session.user.email);
         }
       } catch (error) {
         console.error('❌ Pas de session Supabase:', error);
@@ -540,24 +518,17 @@ export default function TradingPlatformShell() {
   // Initialiser le profil utilisateur au chargement
   useEffect(() => {
     const initProfile = async () => {
-      console.log('🔄 Initialisation profil utilisateur...');
-      console.log('📱 PWA Mode:', window.matchMedia('(display-mode: standalone)').matches);
-      console.log('🌐 User Agent:', navigator.userAgent.includes('Mobile') ? 'MOBILE' : 'DESKTOP');
       
       const image = await initializeProfile('user');
       if (image) {
         setProfileImage(image);
-        console.log('✅ Photo de profil utilisateur chargée');
       } else {
-        console.log('❌ Aucune photo de profil utilisateur trouvée');
       }
 
       // Charger le nom d'utilisateur (Supabase d'abord, puis localStorage)
       if (user) {
-        console.log('👤 Utilisateur connecté:', user.id, user.email);
         try {
           const { data: profile } = await getUserProfileByType('user');
-          console.log('📦 Profil récupéré de Supabase:', profile);
           if (profile?.name) {
             setSupabaseProfile(profile);
             setCurrentUsername(profile.name);
@@ -565,12 +536,9 @@ export default function TradingPlatformShell() {
             if (profile.avatar_url && !image) {
               setProfileImage(profile.avatar_url);
               localStorage.setItem('userProfileImage', profile.avatar_url);
-              console.log('✅ Avatar chargé depuis profil Supabase');
             }
-            console.log('✅ Profil utilisateur chargé depuis Supabase:', profile);
           } else {
             // Profil n'existe pas, créer un profil par défaut avec l'email
-            console.log('⚠️ Pas de profil trouvé, création du profil par défaut...');
             const defaultName = user.email?.split('@')[0] || 'Utilisateur';
             
             // Créer le profil dans Supabase
@@ -579,16 +547,13 @@ export default function TradingPlatformShell() {
             if (newProfile) {
               setSupabaseProfile(newProfile);
               setCurrentUsername(defaultName);
-              console.log('✅ Nouveau profil créé dans Supabase:', newProfile);
             } else {
               // Fallback localStorage avec ID utilisateur
               const localUsername = localStorage.getItem(`userUsername_${user.id}`);
               if (localUsername) {
                 setCurrentUsername(localUsername);
-                console.log('✅ Username chargé depuis localStorage:', localUsername);
               } else {
                 setCurrentUsername(defaultName);
-                console.log('✅ Username défini depuis email:', defaultName);
               }
             }
           }
@@ -598,10 +563,8 @@ export default function TradingPlatformShell() {
           const localUsername = localStorage.getItem(`userUsername_${user.id}`);
           if (localUsername) {
             setCurrentUsername(localUsername);
-            console.log('✅ Username chargé depuis localStorage (fallback):', localUsername);
           } else {
           setCurrentUsername(user.email || 'Utilisateur');
-            console.log('✅ Username défini depuis email (fallback):', user.email);
           }
         }
       } else {
@@ -609,10 +572,8 @@ export default function TradingPlatformShell() {
         const localUsername = localStorage.getItem('userUsername');
         if (localUsername) {
           setCurrentUsername(localUsername);
-          console.log('✅ Username chargé depuis localStorage (pas connecté):', localUsername);
         } else {
           setCurrentUsername('Utilisateur');
-          console.log('✅ Username par défaut (pas connecté)');
         }
       }
     };
@@ -639,7 +600,6 @@ export default function TradingPlatformShell() {
               ...prev,
               [channelId]: (prev[channelId] || 0) + 1
             }));
-            console.log(`📊 Unread message added to ${channelId}: ${newMessage.content}`);
           }
         }
       });
@@ -701,7 +661,6 @@ export default function TradingPlatformShell() {
 
   // Fonction pour changer de canal et réinitialiser selectedDate si nécessaire
   const handleChannelChange = (channelId: string, channelName: string) => {
-    console.log('🔄 handleChannelChange appelé:', { channelId, channelName });
     
     // Réinitialiser le flag de scroll pour permettre un nouveau scroll
     setIsScrolling(false);
@@ -718,7 +677,6 @@ export default function TradingPlatformShell() {
     setSelectedChannel({id: channelId, name: channelName});
     setView('signals');
     
-    console.log('✅ selectedChannel mis à jour:', { id: channelId, name: channelName });
     
     // Enregistrer le timestamp d'ouverture du salon
     setLastChannelOpenTime(prev => ({
@@ -732,7 +690,6 @@ export default function TradingPlatformShell() {
       [channelId]: 0
     }));
     
-    console.log(`📊 Channel opened: ${channelId} at ${new Date().toLocaleTimeString()}`);
     
     // Scroll intelligent : bas pour les canaux de chat, pas de scroll pour signaux/calendrier/trading journal
     setTimeout(() => {
@@ -763,7 +720,6 @@ export default function TradingPlatformShell() {
   useEffect(() => {
     const syncUser = async () => {
       const userId = await syncUserId();
-      console.log('🔄 ID utilisateur synchronisé au démarrage PWA:', userId);
     };
     syncUser();
   }, []); // Une seule fois au démarrage
@@ -772,14 +728,11 @@ export default function TradingPlatformShell() {
   useEffect(() => {
     // Forcer l'initialisation de l'ID utilisateur
     localStorage.setItem('user_id', 'user_unified');
-    console.log('🔄 ID utilisateur forcé dans PWA:', localStorage.getItem('user_id'));
     
-    console.log('👂 Démarrage synchronisation temps réel trades [PWA]...');
     
     // Démarrer l'écoute temps réel
     const unsubscribe = listenToPersonalTrades(
       (trades) => {
-        console.log('🔄 Mise à jour trades reçue [PWA]:', trades.length);
         setPersonalTrades(trades);
       },
       (error) => {
@@ -789,22 +742,16 @@ export default function TradingPlatformShell() {
     
     // Nettoyer l'écoute au démontage du composant
     return () => {
-      console.log('🛑 Arrêt synchronisation temps réel [PWA]');
       unsubscribe();
     };
   }, []); // Une seule fois au démarrage
 
   // Debug: Afficher les trades au chargement
   useEffect(() => {
-    console.log('🔥 DEBUG TRADES:', personalTrades);
-    console.log('🔥 Nombre de trades:', personalTrades.length);
-    console.log('🔥 Channel actuel:', selectedChannel.id);
-    console.log('🔥 View actuel:', view);
   }, [personalTrades, selectedChannel.id, view]);
 
   // Debug: Afficher les messages non lus
   useEffect(() => {
-    console.log('📊 Unread messages state:', unreadMessages);
   }, [unreadMessages]);
 
   const [signalData, setSignalData] = useState({
@@ -1121,7 +1068,6 @@ export default function TradingPlatformShell() {
   useEffect(() => {
     const loadAllSignalsForStats = async () => {
       try {
-        console.log('📊 Chargement de TOUS les signaux pour statistiques et calendrier...');
         
         // Charger les signaux de tous les canaux individuellement
                   const channels = ['fondamentaux', 'letsgooo-model'];
@@ -1129,11 +1075,9 @@ export default function TradingPlatformShell() {
         
         for (const channelId of channels) {
           try {
-            console.log(`🔍 Chargement signaux pour ${channelId}...`);
             const channelSignals = await getSignals(channelId, 100); // 100 signaux par canal
             if (channelSignals && channelSignals.length > 0) {
               allSignals = [...allSignals, ...channelSignals];
-              console.log(`✅ ${channelSignals.length} signaux chargés pour ${channelId}`);
             }
           } catch (error) {
             console.error(`❌ Erreur chargement signaux pour ${channelId}:`, error);
@@ -1162,13 +1106,10 @@ export default function TradingPlatformShell() {
           }));
           
           setAllSignalsForStats(formattedSignals);
-          console.log(`✅ ${formattedSignals.length} signaux formatés chargés pour statistiques au total`);
-          console.log('📊 Signaux par canal:', channels.map(ch => ({
             channel: ch,
             count: formattedSignals.filter(s => s.channel_id === ch).length
           })));
         } else {
-          console.log('⚠️ Aucun signal trouvé pour les statistiques');
         }
       } catch (error) {
         console.error('❌ Erreur chargement signaux pour statistiques:', error);
@@ -1575,7 +1516,6 @@ export default function TradingPlatformShell() {
   // Fonction pour ajouter une réaction flamme à un message (côté utilisateur)
   const handleAddReaction = async (messageId: string) => {
     try {
-      console.log('🔥 handleAddReaction called:', { messageId });
       
       // Vérifier que messageId est valide
       if (!messageId) {
@@ -1584,7 +1524,6 @@ export default function TradingPlatformShell() {
       }
       
       const currentUser = user?.email || 'Anonymous';
-      console.log('👤 Utilisateur actuel:', currentUser);
       
       // Mettre à jour localement d'abord
       setMessageReactions(prev => {
@@ -1598,7 +1537,6 @@ export default function TradingPlatformShell() {
         
         if (userIndex === -1) {
           // Ajouter la réaction
-          console.log('➕ Ajouter réaction pour:', messageId);
           return {
             ...prev,
             [messageId]: {
@@ -1608,7 +1546,6 @@ export default function TradingPlatformShell() {
           };
         } else {
           // Retirer la réaction
-          console.log('➖ Retirer réaction pour:', messageId);
           return {
             ...prev,
             [messageId]: {
@@ -1636,9 +1573,7 @@ export default function TradingPlatformShell() {
         };
       }
       
-      console.log('💾 Sauvegarde Firebase:', { messageId, newReactions, currentUser });
       await updateMessageReactions(messageId, newReactions);
-      console.log('✅ Réaction message synchronisée:', messageId, newReactions, 'par utilisateur:', currentUser);
       
     } catch (error) {
       console.error('❌ Erreur réaction message:', error);
@@ -1664,14 +1599,12 @@ export default function TradingPlatformShell() {
   const scrollToBottom = () => {
     // Éviter les scrolls multiples
     if (isScrolling) {
-      console.log('⏸️ Scroll déjà en cours, ignoré');
       return;
     }
     
     setIsScrolling(true);
     
     // Scroller vers le bas pour voir les messages les plus récents
-    console.log('🔄 Scrolling to bottom user...', {
       hasRef: !!messagesContainerRef.current,
       channelId: selectedChannel.id
     });
@@ -1685,25 +1618,21 @@ export default function TradingPlatformShell() {
     const scrollContainer = document.querySelector('.overflow-y-auto.overflow-x-hidden.p-4.space-y-4.pb-32');
     if (scrollContainer) {
       scrollContainer.scrollTop = scrollContainer.scrollHeight;
-      console.log('✅ Scroll with CSS selector worked');
     }
     
     // Méthode 3: Forcer avec tous les conteneurs possibles
     const allContainers = document.querySelectorAll('[class*="overflow-y-auto"]');
     allContainers.forEach((container, index) => {
       container.scrollTop = container.scrollHeight;
-      console.log(`📜 Scrolled container ${index}`);
     });
     
     // Réinitialiser le flag après un délai
     setTimeout(() => {
       setIsScrolling(false);
-      console.log('✅ Scroll to bottom user completed');
     }, 300);
   };
 
   const handleLogout = async () => {
-    console.log('🚪 Déconnexion utilisateur en cours...');
     
     try {
       // Déconnexion Supabase
@@ -1711,7 +1640,6 @@ export default function TradingPlatformShell() {
       if (error) {
         console.error('❌ Erreur déconnexion Supabase:', error);
       } else {
-        console.log('✅ Déconnexion Supabase réussie');
       }
       
       // Nettoyage complet du localStorage (sauf les photos de profil)
@@ -1723,20 +1651,16 @@ export default function TradingPlatformShell() {
       
       keysToRemove.forEach(key => {
         localStorage.removeItem(key);
-        console.log(`🧹 Supprimé: ${key}`);
       });
       
       // Nettoyer les clés localStorage spécifiques à l'utilisateur actuel
       if (user) {
         const userSpecificKey = `userUsername_${user.id}`;
         localStorage.removeItem(userSpecificKey);
-        console.log(`🧹 Supprimé clé utilisateur spécifique: ${userSpecificKey}`);
       }
       
-      console.log('🧹 Nettoyage localStorage terminé');
       
       // Forcer un rechargement complet de la page (hard reload)
-      console.log('🔄 Rechargement complet de la page...');
       window.location.replace('/');
       setTimeout(() => {
         window.location.reload();
@@ -1753,13 +1677,10 @@ export default function TradingPlatformShell() {
 
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    console.log('📁 USER File selected:', file ? file.name : 'NO FILE');
     if (file && file.type.startsWith('image/')) {
-      console.log('🖼️ USER Processing image...');
       const reader = new FileReader();
       reader.onload = async (e) => {
         const base64Image = e.target?.result as string;
-        console.log('💾 USER Syncing to localStorage AND Supabase...');
         
         // Mettre à jour l'état immédiatement
         setProfileImage(base64Image);
@@ -1767,14 +1688,12 @@ export default function TradingPlatformShell() {
         // Synchroniser avec localStorage et Supabase
         const result = await syncProfileImage('user', base64Image);
         if (result.success) {
-          console.log('✅ USER Profile image synchronized across all devices!');
         } else {
           console.error('❌ USER Sync failed:', result.error);
         }
         
         // Aussi sauvegarder dans le profil utilisateur
         await updateUserProfile(currentUsername || undefined, base64Image, 'user');
-        console.log('✅ Avatar sauvegardé dans le profil utilisateur');
       };
       reader.readAsDataURL(file);
     }
@@ -1798,7 +1717,6 @@ export default function TradingPlatformShell() {
     if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
       navigator.mediaDevices.getDisplayMedia({ video: true })
         .then(stream => {
-          console.log('Stream obtenu:', stream);
           
           // Créer un élément vidéo simple
           const video = document.createElement('video');
@@ -1810,22 +1728,18 @@ export default function TradingPlatformShell() {
           
           // Trouver spécifiquement les conteneurs de 
           const Containers = document.querySelectorAll('.bg-gray-900 .bg-black.flex.items-center.justify-center');
-          console.log('Conteneurs  trouvés:', Containers.length);
           
           if (Containers.length === 0) {
             // Fallback: chercher tous les conteneurs noirs
             const allContainers = document.querySelectorAll('.bg-black.flex.items-center.justify-center');
-            console.log('Tous les conteneurs trouvés:', allContainers.length);
             
             allContainers.forEach((container, index) => {
-              console.log(`Remplacer conteneur ${index}`);
               container.innerHTML = '';
               const videoClone = video.cloneNode(true) as HTMLVideoElement;
               container.appendChild(videoClone);
               
               // Lancer la lecture pour chaque clone
               videoClone.play().then(() => {
-                console.log(`Vidéo ${index} en cours de lecture`);
               }).catch(err => {
                 console.error(`Erreur lecture vidéo ${index}:`, err);
               });
@@ -1833,14 +1747,12 @@ export default function TradingPlatformShell() {
           } else {
             // Utiliser les conteneurs de  spécifiques
             Containers.forEach((container, index) => {
-              console.log(`Remplacer conteneur  ${index}`);
               container.innerHTML = '';
               const videoClone = video.cloneNode(true) as HTMLVideoElement;
               container.appendChild(videoClone);
               
               // Lancer la lecture pour chaque clone
               videoClone.play().then(() => {
-                console.log(`Vidéo  ${index} en cours de lecture`);
               }).catch(err => {
                 console.error(`Erreur lecture vidéo  ${index}:`, err);
               });
@@ -1932,7 +1844,6 @@ export default function TradingPlatformShell() {
         image2: null
       });
       setShowTradeModal(false);
-      console.log('✅ Trade ajouté avec succès dans Firebase !');
     } else {
       console.error('❌ Erreur lors de la sauvegarde du trade');
     }
@@ -1944,8 +1855,6 @@ export default function TradingPlatformShell() {
     const pastedHtml = e.clipboardData.getData('text/html') || '';
     const pastedText = e.clipboardData.getData('text') || '';
     
-    console.log('📋 Paste detected - HTML:', pastedHtml.slice(0, 300));
-    console.log('📋 Paste detected - Text:', pastedText.slice(0, 300));
     
     // Store extracted data
     const extracted: Record<string, any> = {};
@@ -1963,7 +1872,6 @@ export default function TradingPlatformShell() {
           const jsonString = match[1].replace(/&(?:quot|#34);/g, '"');
           const data = JSON.parse(jsonString);
           
-          console.log('📊 TradingView data parsed:', data);
           
           // Extract source and points - similar to Google Apps Script
           const source = data.sources?.[0]?.source;
@@ -2131,7 +2039,6 @@ export default function TradingPlatformShell() {
     
     // Apply extracted data to the form
     if (found) {
-      console.log('✅ Données extraites:', extracted);
       
       // Update form data with extracted values
     if (extracted.symbol) setTradeData(prev => ({ ...prev, symbol: extracted.symbol }));
@@ -2167,8 +2074,6 @@ export default function TradingPlatformShell() {
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
       const dateStr = `${year}-${month}-${day}`;
-      console.log('Recherche trades pour date:', dateStr);
-      console.log('Tous les trades:', personalTrades);
       
       if (!Array.isArray(personalTrades)) {
         console.error('personalTrades n\'est pas un tableau:', personalTrades);
@@ -2177,12 +2082,10 @@ export default function TradingPlatformShell() {
       
       const filteredTrades = personalTrades.filter(trade => {
         if (!trade || !trade.date) {
-          console.log('Trade invalide:', trade);
           return false;
         }
         return trade.date === dateStr;
       });
-      console.log('Trades filtrés:', filteredTrades);
       return filteredTrades;
     } catch (error) {
       console.error('Erreur dans getTradesForDate:', error);
@@ -2197,8 +2100,6 @@ export default function TradingPlatformShell() {
         return [];
       }
 
-      console.log('🔍 DEBUG getTradesForWeek - Tous les trades:', personalTrades);
-      console.log('🔍 DEBUG getTradesForWeek - Semaine demandée:', weekNum);
 
       const currentDate = new Date();
       const currentMonth = currentDate.getMonth();
@@ -2221,12 +2122,9 @@ export default function TradingPlatformShell() {
       weekEnd.setDate(weekStart.getDate() + 6);
       weekEnd.setHours(23, 59, 59, 999); // Fin de journée
       
-      console.log(`🔍 Recherche trades pour semaine ${weekNum}:`, weekStart.toDateString(), 'à', weekEnd.toDateString());
-      console.log(`🔍 Dates des trades:`, personalTrades.map(t => t.date));
       
       const filteredTrades = personalTrades.filter(trade => {
         if (!trade || !trade.date) {
-          console.log('🔍 Trade invalide:', trade);
           return false;
         }
         
@@ -2237,11 +2135,9 @@ export default function TradingPlatformShell() {
         weekStartCompare.setHours(0, 0, 0, 0);
         
         const isInWeek = tradeDate >= weekStartCompare && tradeDate <= weekEnd;
-        console.log(`🔍 Trade ${trade.date} (${tradeDate.toDateString()}) dans semaine ${weekNum}?`, isInWeek);
         return isInWeek;
       });
       
-      console.log(`✅ Trades trouvés pour semaine ${weekNum}:`, filteredTrades.length);
       return filteredTrades;
     } catch (error) {
       console.error('❌ Erreur dans getTradesForWeek:', error);
@@ -2260,9 +2156,7 @@ export default function TradingPlatformShell() {
       return signalDateOnly.getTime() === targetDate.getTime();
     });
     
-    console.log(`🔍 [CALENDAR] Signaux trouvés pour ${targetDate.toDateString()}:`, signalsForDate.length);
     signalsForDate.forEach(signal => {
-      console.log(`🔍 [CALENDAR] Signal avec image:`, {
         id: signal.id,
         symbol: signal.symbol,
         hasImage: !!signal.image,
@@ -2295,11 +2189,8 @@ export default function TradingPlatformShell() {
     try {
       // Convertir l'image en base64 si présente
       let imageBase64 = null;
-      console.log('📸 signalData.image existe?', !!signalData.image);
       if (signalData.image) {
-        console.log('📸 Conversion de l\'image en base64...');
         imageBase64 = await uploadImage(signalData.image);
-        console.log('✅ Image convertie en base64, longueur:', imageBase64 ? imageBase64.length : 0);
       }
       
       // Préparer les données pour Firebase
@@ -2317,15 +2208,11 @@ export default function TradingPlatformShell() {
         status: 'ACTIVE' as const
       };
       
-      console.log('📤 Envoi à Firebase avec image:', !!signalForFirebase.image);
 
       // Sauvegarder en Firebase
       const savedSignal = await addSignal(signalForFirebase);
-      console.log('💾 Signal sauvegardé:', savedSignal);
       
       if (savedSignal) {
-        console.log('✅ Signal sauvé en Firebase:', savedSignal);
-        console.log('Signal créé et sauvé en base ! ✅');
       } else {
         console.error('❌ Erreur sauvegarde signal');
         console.error('Erreur lors de la sauvegarde du signal');
@@ -2354,16 +2241,11 @@ export default function TradingPlatformShell() {
   const handleSendMessage = async () => {
     // Protection contre les envois multiples
     if (isSendingMessage) {
-      console.log('⚠️ Message déjà en cours d\'envoi, ignoré');
       return;
     }
     
     if (chatMessage.trim()) {
       setIsSendingMessage(true); // Bloquer les envois multiples
-      console.log('🚀 Début envoi message côté:', window.matchMedia('(display-mode: standalone)').matches ? 'PWA' : 'Desktop');
-      console.log('📝 Message à envoyer:', chatMessage);
-      console.log('📺 Canal sélectionné:', selectedChannel.id);
-      console.log('📊 Messages actuels avant envoi:', messages[selectedChannel.id]?.length || 0);
       
       try {
         // Créer le message local pour référence
@@ -2377,7 +2259,6 @@ export default function TradingPlatformShell() {
           attachment_data: undefined
         };
 
-        console.log('📱 Message local créé (pas encore affiché):', localMessage);
 
         // Envoyer vers Firebase avec avatar utilisateur
         const messageData = {
@@ -2388,11 +2269,9 @@ export default function TradingPlatformShell() {
           author_avatar: profileImage || undefined // Photo de profil utilisateur
         };
 
-        console.log('📤 Envoi vers Firebase:', messageData);
         const savedMessage = await addMessage(messageData);
 
         if (savedMessage) {
-          console.log('✅ Message envoyé à Firebase:', savedMessage);
           // Le message sera automatiquement ajouté via la subscription Firebase
           // Pas besoin de manipulation manuelle des messages
           
@@ -2411,7 +2290,6 @@ export default function TradingPlatformShell() {
       } catch (error) {
         console.error('💥 ERREUR envoi message:', error);
         // En cas d'erreur, garder le message local
-        console.log('💾 Message local conservé en cas d\'erreur');
       }
 
       // Ne pas vider le champ de message immédiatement
@@ -2449,12 +2327,9 @@ export default function TradingPlatformShell() {
                           attachment_name: file.name
                         };
                           
-                          console.log('📤 Message data envoyé utilisateur:', messageData);
                           const savedMessage = await addMessage(messageData);
-                          console.log('✅ Message sauvegardé utilisateur:', savedMessage);
                           
                                                   if (savedMessage) {
-                          console.log('✅ Image envoyée utilisateur à Firebase:', savedMessage);
                           // La subscription temps réel ajoutera le message automatiquement
                         } else {
                           console.error('❌ Erreur envoi image utilisateur Firebase');
@@ -2524,7 +2399,6 @@ export default function TradingPlatformShell() {
       }));
       
       if (numbers.length >= 3) {
-        console.log(`✅ Données importées - Symbole: ${newData.symbol}, Entrée: ${newData.entry}, TP: ${newData.takeProfit}, SL: ${newData.stopLoss}`);
       } else {
         console.warn(`⚠️ Données partielles importées - Symbole: ${newData.symbol}, Entrée: ${newData.entry}. Complétez les champs manquants`);
       }
@@ -2537,8 +2411,6 @@ export default function TradingPlatformShell() {
   };
 
   const getTradingCalendar = () => {
-    console.log('🔥 getTradingCalendar appelé pour channel:', selectedChannel.id);
-    console.log('🔥 personalTrades dans calendrier:', personalTrades.length);
     const isJournalPerso = selectedChannel.id === 'journal' || selectedChannel.id === 'trading-journal';
     const isMobile = window.innerWidth < 768;
     return (
@@ -2717,10 +2589,8 @@ export default function TradingPlatformShell() {
                           
                           // Ouvrir le popup des trades si il y en a
                           const tradesForDate = getTradesForDate(clickedDate);
-                          console.log('Clic sur jour:', dayNumber, 'Trades trouvés:', tradesForDate.length);
                           
                           if (tradesForDate.length > 0) {
-                            console.log('Trades trouvés, ouverture modal...');
                             setSelectedTradesDate(clickedDate);
                             setShowTradesModal(true);
                           }
@@ -3037,7 +2907,6 @@ export default function TradingPlatformShell() {
               }} className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">🎥 Formation Live</button>
               <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
               <button onClick={() => {
-                console.log('🔍 Button render: unreadCounts.chatzone =', unreadCounts.chatzone);
                 handleChannelChange('chatzone', 'chatzone');
               }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'chatzone' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>
                 💬 ChatZone
@@ -3447,7 +3316,6 @@ export default function TradingPlatformShell() {
                 
                 {/* Affichage des trades pour la date sélectionnée - SEULEMENT pour Trading Journal */}
                 {(() => {
-                  console.log('Vérification affichage trades:', {
                     channel: selectedChannel.id,
                     selectedDate: selectedDate,
                     shouldShow: selectedChannel.id === 'trading-journal' && selectedDate,
@@ -3564,7 +3432,6 @@ export default function TradingPlatformShell() {
                               const oldestSignal = currentSignals[currentSignals.length - 1]; // Le dernier dans l'ordre chronologique
                               const beforeTimestamp = new Date(oldestSignal.timestamp).getTime();
                               
-                              console.log('🔍 Chargement de signaux plus anciens avant:', beforeTimestamp);
                               
                               // Charger 10 signaux plus anciens
                               const more = await getSignals(selectedChannel.id, 10, beforeTimestamp);
@@ -3594,12 +3461,9 @@ export default function TradingPlatformShell() {
                                 
                                 if (newSignals.length > 0) {
                                   setSignals(prev => [...prev, ...newSignals]);
-                                  console.log(`✅ ${newSignals.length} nouveaux signaux ajoutés`);
                                 } else {
-                                  console.log('ℹ️ Aucun nouveau signal à ajouter');
                                 }
                               } else {
-                                console.log('ℹ️ Aucun signal plus ancien trouvé');
                               }
                             }
                           } catch (error) {
@@ -4101,10 +3965,7 @@ export default function TradingPlatformShell() {
                                       {/* Flèche cliquable pour les messages de fermeture */}
                                       {(() => {
                                         const isClosureMessage = message.text.includes('SIGNAL FERMÉ');
-                                        console.log('🔍 Debug flèche USER - message.text:', message.text);
-                                        console.log('🔍 Debug flèche USER - isClosureMessage:', isClosureMessage);
                                         if (isClosureMessage) {
-                                          console.log('✅ Flèche USER devrait apparaître !');
                                         }
                                         return isClosureMessage;
                                       })() && (
@@ -4113,21 +3974,13 @@ export default function TradingPlatformShell() {
                                           onClick={() => {
                                             const signalIdMatch = message.text.match(/\[SIGNAL_ID:([^\]]+)\]/);
                                             const signalId = signalIdMatch ? signalIdMatch[1] : '';
-                                            console.log('🔍 Debug flèche USER - signalId extrait:', signalId);
-                                            console.log('🔍 Debug flèche USER - message.text:', message.text);
                                             
                                             const originalMessage = document.querySelector(`[data-signal-id="${signalId}"]`);
-                                            console.log('🔍 Debug flèche USER - élément trouvé:', originalMessage);
-                                            console.log('🔍 Debug flèche USER - sélecteur utilisé:', `[data-signal-id="${signalId}"]`);
                                             
                                             // Chercher tous les éléments avec data-signal-id
                                             const allSignalElements = document.querySelectorAll('[data-signal-id]');
-                                            console.log('🔍 Debug flèche USER - tous les éléments signal:', allSignalElements);
                                             
                                             if (originalMessage && (originalMessage as HTMLElement).offsetParent !== null) {
-                                              console.log('🔍 Debug flèche USER - scroll vers élément:', originalMessage);
-                                              console.log('🔍 Debug flèche USER - élément visible:', (originalMessage as HTMLElement).offsetParent !== null);
-                                              console.log('🔍 Debug flèche USER - élément dans viewport:', originalMessage.getBoundingClientRect());
                                               
                                               // Forcer le scroll vers le haut de la page d'abord
                                               window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -4140,10 +3993,7 @@ export default function TradingPlatformShell() {
                                                 }, 5000);
                                               }, 500);
                                               
-                                              console.log('✅ Navigation USER vers le signal original réussie');
                                             } else {
-                                              console.log('❌ Signal original USER non trouvé');
-                                              console.log('🔍 Debug flèche USER - recherche alternative...');
                                               
                                               // Recherche simple par contenu dans toute la page
                                               const allDivs = document.querySelectorAll('div');
@@ -4152,7 +4002,6 @@ export default function TradingPlatformShell() {
                                               for (let div of allDivs) {
                                                 if (div.textContent && div.textContent.includes(signalId) && div.classList.contains('bg-gray-700')) {
                                                   foundMessage = div;
-                                                  console.log('🔍 Debug flèche USER - message trouvé par contenu:', foundMessage);
                                                   break;
                                                 }
                                               }
@@ -4164,9 +4013,7 @@ export default function TradingPlatformShell() {
                                                 setTimeout(() => {
                                                   foundMessage.classList.remove('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
                                                 }, 5000);
-                                                console.log('✅ Navigation USER réussie par contenu');
                                               } else {
-                                                console.log('❌ Aucun message trouvé avec ce signalId dans toute la page');
                                               }
                                             }
                                           }}
@@ -4946,10 +4793,7 @@ export default function TradingPlatformShell() {
                                       {/* Flèche cliquable pour les messages de fermeture */}
                                       {(() => {
                                         const isClosureMessage = message.text.includes('SIGNAL FERMÉ');
-                                        console.log('🔍 Debug flèche USER - message.text:', message.text);
-                                        console.log('🔍 Debug flèche USER - isClosureMessage:', isClosureMessage);
                                         if (isClosureMessage) {
-                                          console.log('✅ Flèche USER devrait apparaître !');
                                         }
                                         return isClosureMessage;
                                       })() && (
@@ -4958,21 +4802,13 @@ export default function TradingPlatformShell() {
                                           onClick={() => {
                                             const signalIdMatch = message.text.match(/\[SIGNAL_ID:([^\]]+)\]/);
                                             const signalId = signalIdMatch ? signalIdMatch[1] : '';
-                                            console.log('🔍 Debug flèche USER - signalId extrait:', signalId);
-                                            console.log('🔍 Debug flèche USER - message.text:', message.text);
                                             
                                             const originalMessage = document.querySelector(`[data-signal-id="${signalId}"]`);
-                                            console.log('🔍 Debug flèche USER - élément trouvé:', originalMessage);
-                                            console.log('🔍 Debug flèche USER - sélecteur utilisé:', `[data-signal-id="${signalId}"]`);
                                             
                                             // Chercher tous les éléments avec data-signal-id
                                             const allSignalElements = document.querySelectorAll('[data-signal-id]');
-                                            console.log('🔍 Debug flèche USER - tous les éléments signal:', allSignalElements);
                                             
                                             if (originalMessage && (originalMessage as HTMLElement).offsetParent !== null) {
-                                              console.log('🔍 Debug flèche USER - scroll vers élément:', originalMessage);
-                                              console.log('🔍 Debug flèche USER - élément visible:', (originalMessage as HTMLElement).offsetParent !== null);
-                                              console.log('🔍 Debug flèche USER - élément dans viewport:', originalMessage.getBoundingClientRect());
                                               
                                               // Forcer le scroll vers le haut de la page d'abord
                                               window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -4985,10 +4821,7 @@ export default function TradingPlatformShell() {
                                                 }, 5000);
                                               }, 500);
                                               
-                                              console.log('✅ Navigation USER vers le signal original réussie');
                                             } else {
-                                              console.log('❌ Signal original USER non trouvé');
-                                              console.log('🔍 Debug flèche USER - recherche alternative...');
                                               
                                               // Recherche simple par contenu dans toute la page
                                               const allDivs = document.querySelectorAll('div');
@@ -4997,7 +4830,6 @@ export default function TradingPlatformShell() {
                                               for (let div of allDivs) {
                                                 if (div.textContent && div.textContent.includes(signalId) && div.classList.contains('bg-gray-700')) {
                                                   foundMessage = div;
-                                                  console.log('🔍 Debug flèche USER - message trouvé par contenu:', foundMessage);
                                                   break;
                                                 }
                                               }
@@ -5009,9 +4841,7 @@ export default function TradingPlatformShell() {
                                                 setTimeout(() => {
                                                   foundMessage.classList.remove('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
                                                 }, 5000);
-                                                console.log('✅ Navigation USER réussie par contenu');
                                               } else {
-                                                console.log('❌ Aucun message trouvé avec ce signalId dans toute la page');
                                               }
                                             }
                                           }}
@@ -5500,9 +5330,7 @@ export default function TradingPlatformShell() {
                     const signals = selectedChannel.id === 'trading-journal' ? 
                       getTradesForDate(selectedSignalsDate) : 
                       getSignalsForDate(selectedSignalsDate);
-                    console.log('🔍 [POPUP] Données reçues dans le popup:', signals);
                     signals.forEach(signal => {
-                      console.log('🔍 [POPUP] Signal individuel COMPLET:', {
                         id: signal.id,
                         symbol: signal.symbol,
                         image: signal.image,

@@ -3,7 +3,6 @@ import { supabase } from '../lib/supabase';
 
 const CompleteWhatsAppChat = ({ user, channelId = 'general' }) => {
   // Debug
-  console.log('CompleteWhatsAppChat Debug:', { user, channelId });
   
   // États principaux
   const [messages, setMessages] = useState([]);

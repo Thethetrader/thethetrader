@@ -12,7 +12,6 @@ export const signOutAdmin = async () => {
     localStorage.removeItem('adminAuthenticated');
     localStorage.removeItem('adminUser');
 
-    console.log('✅ Déconnexion admin réussie');
     return { error: null };
   } catch (error) {
     console.error('❌ Erreur déconnexion admin:', error);
@@ -57,7 +56,6 @@ export const checkAdminSession = async (): Promise<boolean> => {
  */
 export const createAdminAccount = async (email: string, password: string, name: string = 'Admin') => {
   try {
-    console.log('🔧 Création compte admin:', email);
 
     const { data, error } = await createAdminUser(email, password, { name });
 
@@ -66,7 +64,6 @@ export const createAdminAccount = async (email: string, password: string, name: 
       return { success: false, error: error.message };
     }
 
-    console.log('✅ Compte admin créé:', data?.user?.email);
     return { success: true, user: data?.user };
   } catch (error) {
     console.error('❌ Erreur création admin:', error);
@@ -106,12 +103,7 @@ export const createDevAdmin = async () => {
   const result = await createAdminAccount(adminEmail, adminPassword, 'Super Admin');
 
   if (result.success) {
-    console.log('✅ Admin créé avec succès !');
-    console.log('📧 Email:', adminEmail);
-    console.log('🔑 Mot de passe:', adminPassword);
-    console.log('🔗 Connectez-vous à /admin');
   } else {
-    console.log('❌ Erreur création admin:', result.error);
   }
 
   return result;
@@ -120,5 +112,4 @@ export const createDevAdmin = async () => {
 // Exposer la fonction en développement dans window
 if (import.meta.env.DEV) {
   (window as any).createDevAdmin = createDevAdmin;
-  console.log('🔧 DEV MODE: Utilisez window.createDevAdmin() pour créer un admin');
 }

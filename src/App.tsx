@@ -44,7 +44,6 @@ const App = () => {
   useEffect(() => {
     if (window.location.pathname === '/admin') {
       setCurrentPage('admin');
-      console.log('🔍 Admin auth check:', localStorage.getItem('adminAuthenticated'));
     }
   }, []);
 
@@ -72,9 +71,7 @@ const App = () => {
 
   // Initialiser les notifications push (séparé de l'auth)
   useEffect(() => {
-    console.log('🚀 Initialisation notifications push...');
     initializeNotifications().then(() => {
-      console.log('✅ Notifications push initialisées');
     }).catch((error) => {
       console.error('❌ Erreur initialisation notifications:', error);
     });
@@ -682,7 +679,6 @@ const App = () => {
           return;
         }
         if (data.user) {
-          console.log('Connexion réussie:', data.user.email);
           setUser({ id: data.user.id, email: data.user.email || email });
           setShowAuthModal(false);
         }
@@ -700,7 +696,6 @@ const App = () => {
       setEmail('');
       setPassword('');
       setCurrentPage('home');
-      console.log('Déconnexion réussie');
     } catch (error) {
       console.error('Erreur de déconnexion:', error);
     }
@@ -978,7 +973,6 @@ const App = () => {
       return <AdminInterface />;
     } else {
       return <AdminLogin onLogin={(adminData) => {
-        console.log('✅ Admin connecté dans App.tsx:', adminData.user.email);
         // Marquer comme admin authentifié
         localStorage.setItem('adminAuthenticated', 'true');
         localStorage.setItem('adminUser', JSON.stringify(adminData.user));
@@ -1130,13 +1124,11 @@ const App = () => {
                   if ('serviceWorker' in navigator) {
                     // Montrer les instructions d'installation PWA pour iOS
                     if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-                      console.log('Pour installer l\'app: Appuyez sur le bouton Partager 📤, puis "Sur l\'écran d\'accueil"');
                     } else {
                       // Pour autres navigateurs, essayer le prompt d'installation
                       if (window.deferredPrompt) {
                         window.deferredPrompt.prompt();
                       } else {
-                        console.log('Utilisez le menu de votre navigateur pour "Ajouter à l\'écran d\'accueil" ou "Installer l\'application"');
                       }
                     }
                   }

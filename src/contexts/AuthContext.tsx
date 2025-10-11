@@ -37,7 +37,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             id: currentUser.id,
             email: currentUser.email || 'unknown@example.com'
           });
-          console.log('✅ Utilisateur Supabase chargé via getCurrentUser:', currentUser.email);
         } else {
           // Fallback: essayer directement supabase.auth.getUser()
           const { data: { user }, error } = await supabase.auth.getUser();
@@ -46,10 +45,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               id: user.id,
               email: user.email || 'unknown@example.com'
             });
-            console.log('✅ Utilisateur Supabase chargé via getUser:', user.email);
           } else {
             setUser(null);
-            console.log('❌ Pas d\'utilisateur Supabase trouvé');
           }
         }
       } catch (error) {
@@ -65,7 +62,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Écouter les changements d'auth
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('🔄 Auth state changed:', event, session?.user?.email);
         if (session?.user) {
           setUser({
             id: session.user.id,

@@ -43,7 +43,6 @@ export function useCalendarSync() {
   // Charger tous les signaux depuis Firebase
   const loadCalendarData = async () => {
     try {
-      console.log('📅 [CALENDAR-SYNC] Chargement des données du calendrier...');
       
       const channels = ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'];
       let allSignals: any[] = [];
@@ -60,10 +59,8 @@ export function useCalendarSync() {
       }
       
               if (allSignals.length > 0) {
-          console.log('🔍 [CALENDAR-SYNC] Signaux bruts reçus:', allSignals);
           
           const formattedSignals: CalendarSignal[] = allSignals.map(signal => {
-            console.log('🔍 [CALENDAR-SYNC] Signal individuel COMPLET:', {
               id: signal.id,
               symbol: signal.symbol,
               image: signal.image,
@@ -163,7 +160,6 @@ export function useCalendarSync() {
           avgLoss
         });
         
-        console.log(`✅ [CALENDAR-SYNC] ${formattedSignals.length} signaux organisés par date`);
       }
     } catch (error) {
       console.error('❌ [CALENDAR-SYNC] Erreur synchronisation:', error);

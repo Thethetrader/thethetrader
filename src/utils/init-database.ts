@@ -1,7 +1,6 @@
 import { supabase } from './supabase-setup';
 
 export const initializeDatabase = async () => {
-  console.log('🚀 Initialisation de la base de données...');
   
   try {
     // Vérifier si les tables existent en essayant de les lire
@@ -9,9 +8,6 @@ export const initializeDatabase = async () => {
     const { error: signalsError } = await supabase.from('signals').select('id').limit(1);
     
     if (messagesError) {
-      console.log('📋 Table messages manquante, création...');
-      console.log('⚠️ Veuillez créer les tables manuellement dans Supabase Dashboard:');
-      console.log(`
 -- Table pour les messages des salons
 CREATE TABLE messages (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -79,13 +75,10 @@ CREATE POLICY "Users can update their own profile" ON user_profiles FOR UPDATE U
 CREATE POLICY "Users can insert their profile" ON user_profiles FOR INSERT WITH CHECK (true);
       `);
     } else {
-      console.log('✅ Table messages trouvée');
     }
     
     if (signalsError) {
-      console.log('📊 Table signals manquante - voir script ci-dessus');
     } else {
-      console.log('✅ Table signals trouvée');
     }
     
     // Ajouter quelques données de test si les tables sont vides
@@ -94,7 +87,6 @@ CREATE POLICY "Users can insert their profile" ON user_profiles FOR INSERT WITH 
       const { data: existingSignals } = await supabase.from('signals').select('id').limit(1);
       
       if (!existingMessages?.length) {
-        console.log('💬 Ajout de messages de test...');
         await supabase.from('messages').insert([
           {
             channel_id: 'crypto',
@@ -112,7 +104,6 @@ CREATE POLICY "Users can insert their profile" ON user_profiles FOR INSERT WITH 
       }
       
       if (!existingSignals?.length) {
-        console.log('📈 Ajout de signaux de test...');
         await supabase.from('signals').insert([
           {
             channel_id: 'crypto',
@@ -140,7 +131,6 @@ CREATE POLICY "Users can insert their profile" ON user_profiles FOR INSERT WITH 
       }
     }
     
-    console.log('✅ Base de données initialisée !');
     
   } catch (error) {
     console.error('❌ Erreur initialisation database:', error);

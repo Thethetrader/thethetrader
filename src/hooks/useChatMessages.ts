@@ -342,7 +342,6 @@ export const useChatMessages = ({
         }
       )
       .subscribe((status) => {
-        console.log(`📡 Abonnement chat ${channelId}:`, status);
         if (status === 'SUBSCRIPTION_ERROR') {
           setError('Erreur de connexion temps réel');
         }
@@ -517,20 +516,17 @@ export const useChatMessages = ({
     searchMessages,
     loadMoreMessages,
     isCurrentUser: useCallback((senderId: string) => {
-      console.log('🔍 isCurrentUser check:', { senderId, currentUserId });
 
       // Vérification admin
       if (senderId === '00000000-0000-0000-0000-000000000001' ||
           senderId === '11111111-1111-1111-1111-111111111111') {
         const adminAuth = localStorage.getItem('adminAuthenticated');
         const isAdmin = adminAuth === 'true';
-        console.log('👑 Admin check:', { senderId, isAdmin });
         return isAdmin;
       }
 
       // Vérification utilisateur normal
       const isCurrentUserMsg = senderId === currentUserId && !!currentUserId;
-      console.log('👤 User check:', { senderId, currentUserId, isCurrentUserMsg });
       return isCurrentUserMsg;
     }, [currentUserId])
   };

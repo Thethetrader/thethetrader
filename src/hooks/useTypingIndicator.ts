@@ -248,7 +248,6 @@ export const useTypingIndicator = ({
           .eq('user_id', currentUserId)
           .eq('channel_id', channelId)
           .then(() => {
-            console.log('Statut frappe nettoyé à la fermeture');
           })
           .catch(err => {
             console.error('Erreur nettoyage statut frappe:', err);

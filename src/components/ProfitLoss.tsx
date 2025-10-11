@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 
 const ProfitLoss = ({ channelId, currentUserId, supabase }: { channelId?: string; currentUserId?: string; supabase?: any }) => {
-  console.log('ProfitLoss component rendering with props:', { channelId, currentUserId, supabase });
   
   // Version ultra-simple pour debug
   return (

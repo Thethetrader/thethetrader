@@ -174,17 +174,14 @@ const ChatZone: React.FC<ChatZoneProps> = ({
 
   const handleTyping = () => {
     // Simulation de frappe locale
-    console.log('Utilisateur en train d\'écrire...');
   };
 
   const uploadMultipleFiles = async (files: File[], userId: string) => {
-    console.log('Upload local simulé pour:', files.length, 'fichiers');
     setIsUploading(true);
 
     // Simulation d'upload
     setTimeout(() => {
       setIsUploading(false);
-      console.log('Upload terminé');
     }, 2000);
   };
 
@@ -196,7 +193,6 @@ const ChatZone: React.FC<ChatZoneProps> = ({
         if (!error && data) {
           setCurrentUsername(usernameInput.trim());
           setSupabaseProfile(prev => prev ? { ...prev, name: usernameInput.trim() } : prev);
-          console.log('✅ Username updated successfully in Supabase:', usernameInput.trim());
           
           // Mettre à jour l'affichage dans les messages existants
           setUserProfiles(prev => ({
@@ -234,22 +230,18 @@ const ChatZone: React.FC<ChatZoneProps> = ({
         const user = await getCurrentUser();
         if (user) {
           setSupabaseUser(user);
-          console.log('✅ Supabase utilisateur chargé:', user.email);
 
           // Charger le profil utilisateur
           const { data: profile } = await getUserProfileByType('user');
           if (profile) {
             setSupabaseProfile(profile);
-            console.log('✅ Profil utilisateur chargé:', profile);
           }
 
           // Charger le nom d'utilisateur
           if (profile?.name) {
             setCurrentUsername(profile.name);
-            console.log('✅ Nom d\'utilisateur chargé:', profile.name);
           }
         } else {
-          console.log('❌ Aucun utilisateur Supabase connecté');
         }
       } catch (error) {
         console.error('❌ Erreur lors de l\'initialisation Supabase:', error);
@@ -277,13 +269,11 @@ const ChatZone: React.FC<ChatZoneProps> = ({
   useEffect(() => {
     const initializeSupabase = async () => {
       try {
-        console.log('🔄 Initialisation Supabase ChatZone...');
 
         // Charger l'utilisateur actuel
         const user = await getCurrentUser();
         if (user) {
           setSupabaseUser(user);
-          console.log('✅ Utilisateur Supabase chargé:', user.email);
 
           // Charger le profil utilisateur
           const { data: profile } = await getUserProfileByType('user');
@@ -304,15 +294,12 @@ const ChatZone: React.FC<ChatZoneProps> = ({
                 status: 'online'
               }
             }));
-            console.log('✅ Profil utilisateur chargé:', profile);
           }
 
           // Vérifier si admin
           const adminStatus = await isUserAdmin(user.id);
           setIsSupabaseAdmin(adminStatus);
-          console.log('👑 Status admin:', adminStatus);
         } else {
-          console.log('❌ Aucun utilisateur Supabase connecté');
         }
 
         // Récupérer l'ID du canal "chatzone"
@@ -324,7 +311,6 @@ const ChatZone: React.FC<ChatZoneProps> = ({
 
         if (channelData) {
           setCurrentChannelId(channelData.id);
-          console.log('✅ Canal trouvé:', channelData.id);
 
           // Charger les messages existants
           const { data: messagesData } = await supabaseGetMessages(channelData.id);
@@ -343,7 +329,6 @@ const ChatZone: React.FC<ChatZoneProps> = ({
             }));
 
             setMessages(convertedMessages);
-            console.log('✅ Messages chargés:', convertedMessages.length);
           }
         }
 
@@ -352,7 +337,6 @@ const ChatZone: React.FC<ChatZoneProps> = ({
       } finally {
         // Terminer le chargement dans tous les cas
         setLoading(false);
-        console.log('✅ Initialisation ChatZone terminée');
       }
     };
 
@@ -363,10 +347,8 @@ const ChatZone: React.FC<ChatZoneProps> = ({
   useEffect(() => {
     if (!currentChannelId) return;
 
-    console.log('🔔 Mise en place abonnement temps réel pour canal:', currentChannelId);
 
     const subscription = supabaseSubscribeToMessages(currentChannelId, (newMessage: any) => {
-      console.log('📨 Nouveau message reçu:', newMessage);
 
       // Convertir au format local
       const convertedMessage = {
@@ -387,7 +369,6 @@ const ChatZone: React.FC<ChatZoneProps> = ({
     return () => {
       if (subscription) {
         subscription.unsubscribe();
-        console.log('🔕 Désabonnement temps réel');
       }
     };
   }, [currentChannelId]);
@@ -409,12 +390,10 @@ const ChatZone: React.FC<ChatZoneProps> = ({
         replyTo: replyToId ? messages.find(m => m.id === replyToId) : undefined
       };
       setMessages(prev => [...prev, newMessage]);
-      console.log('✅ Message envoyé localement (fallback)');
       return;
     }
 
     try {
-      console.log('📤 Envoi message vers Supabase...', { content, channelId: currentChannelId });
 
       const { data, error } = await supabaseSendMessage(currentChannelId, content);
 
@@ -434,9 +413,7 @@ const ChatZone: React.FC<ChatZoneProps> = ({
           replyTo: replyToId ? messages.find(m => m.id === replyToId) : undefined
         };
         setMessages(prev => [...prev, newMessage]);
-        console.log('✅ Message envoyé en mode local (erreur Supabase)');
       } else {
-        console.log('✅ Message envoyé via Supabase:', data);
         // Le message sera ajouté automatiquement via l'abonnement temps réel
       }
     } catch (error) {
@@ -455,7 +432,6 @@ const ChatZone: React.FC<ChatZoneProps> = ({
         replyTo: replyToId ? messages.find(m => m.id === replyToId) : undefined
       };
       setMessages(prev => [...prev, newMessage]);
-      console.log('✅ Message envoyé en mode local (exception)');
     }
   };
 
@@ -465,12 +441,10 @@ const ChatZone: React.FC<ChatZoneProps> = ({
         ? { ...msg, text: newContent, edited: true }
         : msg
     ));
-    console.log('✅ Message modifié localement');
   };
 
   const deleteMessage = async (messageId: string) => {
     setMessages(prev => prev.filter(msg => msg.id !== messageId));
-    console.log('✅ Message supprimé localement');
   };
 
   const addReaction = async (messageId: string, emoji: string) => {
@@ -491,7 +465,6 @@ const ChatZone: React.FC<ChatZoneProps> = ({
           console.error('❌ Erreur suppression réaction:', error);
           return;
         }
-        console.log('✅ Réaction supprimée via Supabase');
       } else {
         // Ajouter la réaction
         const { error } = await supabaseAddReaction(messageId, emoji);
@@ -499,7 +472,6 @@ const ChatZone: React.FC<ChatZoneProps> = ({
           console.error('❌ Erreur ajout réaction:', error);
           return;
         }
-        console.log('✅ Réaction ajoutée via Supabase');
       }
 
       // Mettre à jour localement en attendant la synchronisation

@@ -55,7 +55,6 @@ const App: React.FC = () => {
         channelName="Chat Général"
         onSignOut={() => {
           // La déconnexion est gérée par le hook useAuth
-          console.log('Déconnexion demandée');
         }}
       />
     </div>

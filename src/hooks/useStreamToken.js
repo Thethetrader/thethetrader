@@ -32,7 +32,6 @@ export const useStreamToken = () => {
       const data = await response.json();
       
       if (data.success && data.token) {
-        console.log('✅ Token GetStream obtenu pour:', userId);
         return data.token;
       } else {
         throw new Error(data.error || 'Token non généré');
@@ -50,7 +49,6 @@ export const useStreamToken = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/stream-token/test`);
       const data = await response.json();
-      console.log('✅ Test API GetStream:', data);
       return true;
     } catch (err) {
       console.error('❌ Test API GetStream échoué:', err);

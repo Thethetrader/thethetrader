@@ -60,7 +60,6 @@ export default function AdminInterface() {
         });
         
         setMessageReactions(newReactions);
-        console.log('✅ Réactions messages admin chargées depuis Firebase:', Object.keys(newReactions).length);
         
         // S'abonner aux changements de réactions pour tous les messages
         const subscriptions = allMessages.map((message) => {
@@ -70,7 +69,6 @@ export default function AdminInterface() {
                 ...prev,
                 [message.id]: reactions
               }));
-              console.log('🔥 Réaction message mise à jour en temps réel:', message.id, reactions);
             }
           });
         });
@@ -96,7 +94,6 @@ export default function AdminInterface() {
   
   // S'abonner aux changements de réactions de manière globale (pour tous les messages)
   useEffect(() => {
-    console.log('🔄 Admin: Abonnement global aux changements de réactions');
     
     // Créer un nœud de référence pour toutes les réactions aux messages
     const messageReactionsRef = ref(database, 'messageReactions');
@@ -104,7 +101,6 @@ export default function AdminInterface() {
     const unsubscribe = onValue(messageReactionsRef, (snapshot) => {
       if (snapshot.exists()) {
         const allReactions = snapshot.val();
-        console.log('🔥 Admin: Réactions reçues en temps réel:', allReactions);
         
         // Mettre à jour l'état local avec toutes les réactions
         setMessageReactions(allReactions);
@@ -112,7 +108,6 @@ export default function AdminInterface() {
     });
     
     return () => {
-      console.log('🔄 Admin: Désabonnement global des réactions');
       unsubscribe();
     };
   }, []);
@@ -123,7 +118,6 @@ export default function AdminInterface() {
     
     const subscriptions = channels.map(channelId => {
       return subscribeToSignals(channelId, (updatedSignal) => {
-        console.log('🔄 Signal mis à jour reçu:', updatedSignal);
         
         // Mettre à jour le signal dans l'état local
         setSignals(prev => prev.map(signal => 
@@ -195,7 +189,6 @@ export default function AdminInterface() {
       }
       
       await updateMessageReactions(messageId, newReactions);
-      console.log('✅ Réaction message admin synchronisée avec Firebase:', messageId, newReactions, 'par utilisateur:', currentUser);
       
     } catch (error) {
       console.error('❌ Erreur synchronisation réaction admin Firebase:', error);
@@ -251,7 +244,6 @@ export default function AdminInterface() {
         [channelId]: formattedMessages
       }));
       
-      console.log(`✅ Messages chargés pour ${channelId}:`, formattedMessages.length);
       
       // Scroller vers le bas après le chargement des messages
       setTimeout(() => {
@@ -268,11 +260,9 @@ export default function AdminInterface() {
     
     const subscriptions = channels.map(channelId => {
       return subscribeToMessages(channelId, (newMessage) => {
-        console.log(`🔄 Nouveau message reçu dans ${channelId}:`, newMessage);
         
         // Compter les nouveaux messages seulement si on n'est pas dans ce canal
         if (selectedChannel.id !== channelId) {
-          console.log(`📊 Message reçu dans ${channelId} (canal non actif)`);
         }
       });
     });
@@ -324,34 +314,25 @@ export default function AdminInterface() {
   // Initialiser le profil au chargement
   useEffect(() => {
     const initProfile = async () => {
-      console.log('🔄 Initialisation profil admin...');
-      console.log('📱 PWA Mode:', window.matchMedia('(display-mode: standalone)').matches);
-      console.log('🌐 User Agent:', navigator.userAgent.includes('Mobile') ? 'MOBILE' : 'DESKTOP');
       
       // Charger depuis localStorage directement
       const localImage = localStorage.getItem('adminProfileImage');
       if (localImage) {
         setProfileImage(localImage);
-        console.log('✅ Photo de profil admin chargée depuis localStorage:', localImage);
       } else {
-        console.log('❌ Aucune photo de profil admin trouvée');
       }
 
       // Charger le nom d'utilisateur admin (Supabase d'abord, puis localStorage)
       try {
         const user = await getCurrentUser();
         if (user) {
-          console.log('👤 Utilisateur admin connecté:', user.id, user.email);
           
           const { data } = await getUserProfileByType('admin');
-          console.log('📦 Profil admin récupéré de Supabase:', data);
           
           if (data?.name) {
             setCurrentUsername(data.name);
-            console.log('✅ Nom d\'utilisateur admin chargé depuis Supabase:', data.name);
           } else {
             // Profil n'existe pas, créer un profil par défaut
-            console.log('⚠️ Pas de profil admin trouvé, création du profil par défaut...');
             const defaultName = 'Admin';
             
             // Créer le profil dans Supabase
@@ -359,21 +340,17 @@ export default function AdminInterface() {
             
             if (newProfile) {
               setCurrentUsername(defaultName);
-              console.log('✅ Nouveau profil admin créé dans Supabase:', newProfile);
             } else {
               // Fallback localStorage
               const localUsername = localStorage.getItem('adminUsername');
               if (localUsername) {
                 setCurrentUsername(localUsername);
-                console.log('✅ Username admin chargé depuis localStorage:', localUsername);
               } else {
                 setCurrentUsername(defaultName);
-                console.log('✅ Username admin défini par défaut:', defaultName);
               }
             }
           }
         } else {
-          console.log('❌ Aucun utilisateur admin connecté');
           const localUsername = localStorage.getItem('adminUsername');
           if (localUsername) {
             setCurrentUsername(localUsername);
@@ -385,9 +362,7 @@ export default function AdminInterface() {
         const localUsername = localStorage.getItem('adminUsername');
         if (localUsername) {
           setCurrentUsername(localUsername);
-          console.log('✅ Username admin chargé depuis localStorage (fallback):', localUsername);
         } else {
-          console.log('❌ Aucun nom d\'utilisateur admin trouvé, garder "Admin"');
         }
       }
     };
@@ -439,7 +414,6 @@ export default function AdminInterface() {
 
   // Debug: Afficher profileImage
   useEffect(() => {
-    console.log('🔍 Profile image state:', profileImage);
   }, [profileImage]);
 
   // États pour le journal de trading personnalisé
@@ -462,15 +436,12 @@ export default function AdminInterface() {
   // Fonction pour charger les signaux depuis Firebase
   const loadSignals = async (channelId: string) => {
     try {
-      console.log('🔍 Début loadSignals pour channel:', channelId);
       const startTime = performance.now();
       
       // Charger SEULEMENT les signaux du canal (optimisé)
       const filteredSignals = await getSignals(channelId);
       
       const endTime = performance.now();
-      console.log(`⏱️ getSignals a pris ${endTime - startTime} millisecondes`);
-      console.log('🔍 Signaux reçus pour channel', channelId, ':', filteredSignals);
       
       const formattedSignals = filteredSignals.map(signal => ({
         id: signal.id || '',
@@ -491,8 +462,6 @@ export default function AdminInterface() {
       }));
       
       setSignals(formattedSignals.reverse());
-      console.log(`✅ Signaux chargés pour ${channelId}:`, formattedSignals.length);
-      console.log('🎯 État signals admin après setSignals:', formattedSignals);
     } catch (error) {
       console.error('❌ Erreur chargement signaux:', error);
     }
@@ -514,7 +483,6 @@ export default function AdminInterface() {
     
     // Canal changé
     
-    console.log(`📊 Channel changed to ${channelId}`);
   };
   const [personalTrades, setPersonalTrades] = useState<PersonalTrade[]>([]);
 
@@ -535,7 +503,6 @@ export default function AdminInterface() {
   useEffect(() => {
     const syncUser = async () => {
       const userId = await syncUserId();
-      console.log('🔄 ID utilisateur synchronisé au démarrage ADMIN:', userId);
     };
     syncUser();
   }, []); // Une seule fois au démarrage
@@ -544,14 +511,11 @@ export default function AdminInterface() {
   useEffect(() => {
     // Forcer l'initialisation de l'ID utilisateur
     localStorage.setItem('user_id', 'user_unified');
-    console.log('🔄 ID utilisateur forcé dans Admin:', localStorage.getItem('user_id'));
     
-    console.log('👂 Démarrage synchronisation temps réel trades [ADMIN]...');
     
     // Démarrer l'écoute temps réel
     const unsubscribe = listenToPersonalTrades(
       (trades) => {
-        console.log('🔄 Mise à jour trades reçue [ADMIN]:', trades.length);
         setPersonalTrades(trades);
       },
       (error) => {
@@ -561,19 +525,16 @@ export default function AdminInterface() {
     
     // Nettoyer l'écoute au démontage du composant
     return () => {
-      console.log('🛑 Arrêt synchronisation temps réel [ADMIN]');
       unsubscribe();
     };
   }, []); // Une seule fois au démarrage
 
   // Debug: Afficher les trades au chargement
   useEffect(() => {
-    console.log('Trades chargés:', personalTrades);
   }, [personalTrades]);
 
   // Charger les signaux au démarrage (SIMPLE ET RAPIDE)
   useEffect(() => {
-    console.log('🔄 useEffect loadSignals appelé pour channel:', selectedChannel.id);
     loadSignals(selectedChannel.id);
   }, [selectedChannel.id]);
 
@@ -598,7 +559,6 @@ export default function AdminInterface() {
   // Forcer la mise à jour de currentDate vers la date actuelle au chargement
   useEffect(() => {
     const now = new Date();
-    console.log('🔄 [ADMIN] Mise à jour currentDate vers la date actuelle:', now.toDateString());
     setCurrentDate(now);
   }, []);
 
@@ -900,7 +860,6 @@ export default function AdminInterface() {
   useEffect(() => {
     const loadAllSignalsForStats = async () => {
       try {
-        console.log('📊 [ADMIN] Chargement de TOUS les signaux pour statistiques et calendrier...');
         
         // Charger les signaux de tous les canaux individuellement
         const channels = ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'];
@@ -908,11 +867,9 @@ export default function AdminInterface() {
         
         for (const channelId of channels) {
           try {
-            console.log(`🔍 [ADMIN] Chargement signaux pour ${channelId}...`);
             const channelSignals = await getSignals(channelId, 100); // 100 signaux par canal
             if (channelSignals && channelSignals.length > 0) {
               allSignals = [...allSignals, ...channelSignals];
-              console.log(`✅ [ADMIN] ${channelSignals.length} signaux chargés pour ${channelId}`);
             }
           } catch (error) {
             console.error(`❌ [ADMIN] Erreur chargement signaux pour ${channelId}:`, error);
@@ -953,13 +910,10 @@ export default function AdminInterface() {
           });
           
           setAllSignalsForStats(formattedSignals);
-          console.log(`✅ [ADMIN] ${formattedSignals.length} signaux formatés chargés pour statistiques au total`);
-          console.log('📊 [ADMIN] Signaux par canal:', channels.map(ch => ({
             channel: ch,
             count: formattedSignals.filter(s => s.channel_id === ch).length
           })));
         } else {
-          console.log('⚠️ [ADMIN] Aucun signal trouvé pour les statistiques');
         }
       } catch (error) {
         console.error('❌ [ADMIN] Erreur chargement signaux pour statistiques:', error);
@@ -972,8 +926,6 @@ export default function AdminInterface() {
   // Mettre à jour allSignalsForStats en temps réel quand de nouveaux signaux arrivent
   useEffect(() => {
     if (signals.length > 0) {
-      console.log('🔄 [ADMIN] Mise à jour temps réel des statistiques...');
-      console.log('📊 [ADMIN] Signaux actuels dans le fil:', signals.length);
       
       // Mettre à jour allSignalsForStats avec les nouveaux signaux
       setAllSignalsForStats(prev => {
@@ -981,7 +933,6 @@ export default function AdminInterface() {
         const newSignals = signals.filter(s => !existingIds.has(s.id));
         
         if (newSignals.length > 0) {
-          console.log(`✅ [ADMIN] ${newSignals.length} nouveaux signaux ajoutés aux stats`);
           
           // Formater les nouveaux signaux avec originalTimestamp et données d'attachement
           const formattedNewSignals = newSignals.map(signal => ({
@@ -1002,54 +953,40 @@ export default function AdminInterface() {
 
   // Fonctions pour les statistiques des signaux (utilisent TOUS les signaux du mois sélectionné)
   const calculateTotalPnL = (): number => {
-    console.log('🔍 [ADMIN] calculateTotalPnL - allSignalsForStats:', allSignalsForStats.length);
     const monthSignals = getThisMonthSignals();
     const filteredSignals = monthSignals.filter(s => s.pnl && s.status !== 'ACTIVE');
-    console.log('🔍 [ADMIN] Signaux avec PnL et fermés:', filteredSignals.length);
     const total = filteredSignals.reduce((total, signal) => total + parsePnL(signal.pnl), 0);
-    console.log('💰 [ADMIN] Total PnL calculé:', total);
     return total;
   };
 
   const calculateWinRate = (): number => {
-    console.log('🔍 [ADMIN] calculateWinRate - allSignalsForStats:', allSignalsForStats.length);
     const monthSignals = getThisMonthSignals();
     const closedSignals = monthSignals.filter(s => s.status !== 'ACTIVE');
-    console.log('🔍 [ADMIN] Signaux fermés:', closedSignals.length);
     if (closedSignals.length === 0) return 0;
     const wins = closedSignals.filter(s => s.status === 'WIN').length;
     const winRate = Math.round((wins / closedSignals.length) * 100);
-    console.log('🏆 [ADMIN] Win Rate calculé:', winRate + '%');
     return winRate;
   };
 
   const calculateAvgWin = (): number => {
-    console.log('🔍 [ADMIN] calculateAvgWin - allSignalsForStats:', allSignalsForStats.length);
     const monthSignals = getThisMonthSignals();
     const winSignals = monthSignals.filter(s => s.status === 'WIN' && s.pnl);
-    console.log('🔍 [ADMIN] Signaux gagnants avec PnL:', winSignals.length);
     if (winSignals.length === 0) return 0;
     const totalWinPnL = winSignals.reduce((total, signal) => total + parsePnL(signal.pnl), 0);
     const avgWin = Math.round(totalWinPnL / winSignals.length);
-    console.log('💚 [ADMIN] Moyenne gains calculée:', avgWin);
     return avgWin;
   };
 
   const calculateAvgLoss = (): number => {
-    console.log('🔍 [ADMIN] calculateAvgLoss - allSignalsForStats:', allSignalsForStats.length);
     const monthSignals = getThisMonthSignals();
     const lossSignals = monthSignals.filter(s => s.status === 'LOSS' && s.pnl);
-    console.log('🔍 [ADMIN] Signaux perdants avec PnL:', lossSignals.length);
     if (lossSignals.length === 0) return 0;
     const totalLossPnL = lossSignals.reduce((total, signal) => total + Math.abs(parsePnL(signal.pnl)), 0);
     const avgLoss = Math.round(totalLossPnL / lossSignals.length);
-    console.log('💔 [ADMIN] Moyenne pertes calculée:', avgLoss);
     return avgLoss;
   };
 
   const getTodaySignals = () => {
-    console.log('🔍 [ADMIN] getTodaySignals - allSignalsForStats:', allSignalsForStats.length);
-    console.log('📅 [ADMIN] Date sélectionnée:', currentDate.toDateString());
     
     // Utiliser currentDate au lieu de today
     const todaySignals = allSignalsForStats.filter(s => {
@@ -1068,13 +1005,10 @@ export default function AdminInterface() {
       return isToday;
     });
     
-    console.log('📅 [ADMIN] Signaux pour la date sélectionnée:', todaySignals.length);
     return todaySignals;
   };
 
   const getThisMonthSignals = () => {
-    console.log('🔍 [ADMIN] getThisMonthSignals - allSignalsForStats:', allSignalsForStats.length);
-    console.log('📅 [ADMIN] Mois sélectionné:', currentDate.getMonth() + 1, currentDate.getFullYear());
     
     // Utiliser currentDate au lieu de today
     const monthSignals = allSignalsForStats.filter(s => {
@@ -1092,7 +1026,6 @@ export default function AdminInterface() {
       return isThisMonth;
     });
     
-    console.log('📅 [ADMIN] Signaux pour le mois sélectionné:', monthSignals.length);
     return monthSignals;
   };
 
@@ -1178,7 +1111,6 @@ export default function AdminInterface() {
     const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
     const totalWeeks = Math.ceil(lastDayOfMonth.getDate() / 7);
     
-    console.log(`🔍 [ADMIN] Mois ${currentMonth + 1}/${currentYear} - ${lastDayOfMonth.getDate()} jours - ${totalWeeks} semaines`);
     
     // Créer les semaines nécessaires pour ce mois
     const weeks = [];
@@ -1186,7 +1118,6 @@ export default function AdminInterface() {
       const weekStart = new Date(currentYear, currentMonth, (weekNum - 1) * 7 + 1);
       const weekEnd = new Date(currentYear, currentMonth, Math.min(weekNum * 7, lastDayOfMonth.getDate()));
       
-      console.log(`🔍 [ADMIN] Week ${weekNum} - Début:`, weekStart.toDateString(), 'Fin:', weekEnd.toDateString());
       
       const weekSignals = allSignalsForStats.filter(s => {
         // Utiliser le timestamp original pour déterminer la vraie date
@@ -1194,7 +1125,6 @@ export default function AdminInterface() {
         
         // Si la date est invalide, ignorer ce signal
         if (isNaN(signalDate.getTime())) {
-          console.log('🔍 [ADMIN] Weekly - Date invalide, signal ignoré');
           return false;
         }
         
@@ -1205,10 +1135,8 @@ export default function AdminInterface() {
         
         // Debug pour la semaine 4
         if (weekNum === 4) {
-          console.log('🔍 [ADMIN] Week 4 - Signal:', s.symbol, 'Date:', signalDate.toDateString(), 'Dans semaine 4?', isInWeek);
         }
         
-        console.log('🔍 [ADMIN] Weekly - Signal date:', signalDate.toDateString(), 'Dans semaine', weekNum, '?', isInWeek);
         return isInWeek;
       });
       
@@ -1287,8 +1215,6 @@ export default function AdminInterface() {
         return [];
       }
 
-      console.log('🔍 DEBUG getTradesForWeek [ADMIN] - Tous les trades:', personalTrades);
-      console.log('🔍 DEBUG getTradesForWeek [ADMIN] - Semaine demandée:', weekNum);
 
       // Calculer les dates de début et fin de la semaine
       const currentDate = new Date();
@@ -1304,22 +1230,17 @@ export default function AdminInterface() {
       const weekEnd = new Date(weekStart);
       weekEnd.setDate(weekStart.getDate() + 6);
       
-      console.log(`🔍 Recherche trades pour semaine ${weekNum} [ADMIN]:`, weekStart.toDateString(), 'à', weekEnd.toDateString());
-      console.log(`🔍 Dates des trades [ADMIN]:`, personalTrades.map(t => t.date));
       
       const filteredTrades = personalTrades.filter(trade => {
         if (!trade || !trade.date) {
-          console.log('🔍 Trade invalide [ADMIN]:', trade);
           return false;
         }
         
         const tradeDate = new Date(trade.date);
         const isInWeek = tradeDate >= weekStart && tradeDate <= weekEnd;
-        console.log(`🔍 Trade ${trade.date} (${tradeDate.toDateString()}) dans semaine ${weekNum} [ADMIN]?`, isInWeek);
         return isInWeek;
       });
       
-      console.log(`✅ Trades trouvés pour semaine ${weekNum} [ADMIN]:`, filteredTrades.length);
       return filteredTrades;
     } catch (error) {
       console.error('❌ Erreur dans getTradesForWeek [ADMIN]:', error);
@@ -1371,7 +1292,6 @@ export default function AdminInterface() {
 
   const scrollToBottom = () => {
     // Scroller vers le bas pour voir les messages les plus récents
-    console.log('🔄 Scrolling to bottom admin...', {
       hasRef: !!messagesContainerRef.current,
       channelId: selectedChannel.id
     });
@@ -1385,14 +1305,12 @@ export default function AdminInterface() {
     const scrollContainer = document.querySelector('.overflow-y-auto.overflow-x-hidden.p-4.space-y-4.pb-32');
     if (scrollContainer) {
       scrollContainer.scrollTop = scrollContainer.scrollHeight;
-      console.log('✅ Scroll with CSS selector worked');
     }
     
     // Méthode 3: Forcer avec tous les conteneurs possibles
     const allContainers = document.querySelectorAll('[class*="overflow-y-auto"]');
     allContainers.forEach((container, index) => {
       container.scrollTop = container.scrollHeight;
-      console.log(`📜 Scrolled container ${index}`);
     });
     
     // Méthode 4: Multiple tentatives avec délais
@@ -1408,16 +1326,13 @@ export default function AdminInterface() {
       }
     }, 200);
     
-    console.log('✅ Scroll to bottom admin completed');
   };
 
   const handleLogout = async () => {
-    console.log('🚪 Déconnexion admin en cours...');
 
     try {
       // PRÉSERVER la photo de profil admin avant déconnexion
       const adminProfileImageBackup = localStorage.getItem('adminProfileImage');
-      console.log('💾 ADMIN Sauvegarde photo avant déconnexion:', adminProfileImageBackup ? 'TROUVÉE' : 'PAS TROUVÉE');
 
       // Déconnexion Supabase et nettoyage
       const { error } = await signOutAdmin();
@@ -1426,20 +1341,16 @@ export default function AdminInterface() {
         console.error('❌ Erreur déconnexion admin:', error.message);
         // Continuer quand même le nettoyage local
       } else {
-        console.log('✅ Déconnexion Supabase admin réussie');
       }
 
       // Nettoyage sélectif du localStorage (préserver la photo)
       const keysToRemove = ['signals', 'chat_messages', 'trading_stats', 'user_session'];
       keysToRemove.forEach(key => localStorage.removeItem(key));
-      console.log('🧹 Nettoyage sélectif du localStorage (avatar préservé)');
 
       // GARDER la photo de profil admin - pas besoin de restaurer car elle n'a jamais été supprimée
       if (adminProfileImageBackup) {
-        console.log('✅ ADMIN Photo de profil préservée pendant la déconnexion');
       }
 
-      console.log('🏠 Redirection vers la page d\'accueil...');
       // Rediriger vers la landing page
       window.location.href = '/';
     } catch (error) {
@@ -1451,13 +1362,10 @@ export default function AdminInterface() {
 
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    console.log('📁 ADMIN File selected:', file ? file.name : 'NO FILE');
     if (file && file.type.startsWith('image/')) {
-      console.log('🖼️ ADMIN Processing image...');
       const reader = new FileReader();
       reader.onload = async (e) => {
         const base64Image = e.target?.result as string;
-        console.log('💾 ADMIN Syncing to localStorage AND Supabase...');
         
         // Mettre à jour l'état immédiatement
         setProfileImage(base64Image);
@@ -1465,7 +1373,6 @@ export default function AdminInterface() {
         // Synchroniser avec localStorage et Supabase
         const result = await syncProfileImage('admin', base64Image);
         if (result.success) {
-          console.log('✅ ADMIN Profile image synchronized across all devices!');
         } else {
           console.error('❌ ADMIN Sync failed:', result.error);
         }
@@ -1480,20 +1387,17 @@ export default function AdminInterface() {
         const { data, error } = await updateUserProfile(usernameInput.trim(), undefined, 'admin');
         if (!error && data) {
           setCurrentUsername(usernameInput.trim());
-          console.log('✅ Username updated successfully in Supabase:', usernameInput.trim());
         } else {
           console.error('❌ Error updating username in Supabase:', error);
           // Mode dégradé : sauvegarder en localStorage
           localStorage.setItem('adminUsername', usernameInput.trim());
           setCurrentUsername(usernameInput.trim());
-          console.log('✅ Username sauvegardé en localStorage (fallback):', usernameInput.trim());
         }
       } catch (error) {
         console.error('❌ Error updating username:', error);
         // Mode dégradé : sauvegarder en localStorage
         localStorage.setItem('adminUsername', usernameInput.trim());
         setCurrentUsername(usernameInput.trim());
-        console.log('✅ Username sauvegardé en localStorage (fallback):', usernameInput.trim());
       }
       setIsEditingUsername(false);
       setUsernameInput('');
@@ -1520,7 +1424,6 @@ export default function AdminInterface() {
   };
 
   const handleTestNotification = () => {
-    console.log('🧪 Test notification...');
     sendLocalNotification({
       title: '🧪 Test Notification Admin',
       body: 'Ceci est un test de notification depuis l\'admin !',
@@ -1543,7 +1446,6 @@ export default function AdminInterface() {
         audio: true
       })
         .then(stream => {
-          console.log('Stream obtenu:', stream);
           
           // Créer un élément vidéo haute qualité
           const video = document.createElement('video');
@@ -1561,7 +1463,6 @@ export default function AdminInterface() {
           const videoTrack = stream.getVideoTracks()[0];
           if (videoTrack) {
             const settings = videoTrack.getSettings();
-            console.log('📊 Paramètres vidéo:', settings);
             
             // Appliquer les contraintes de qualité
             videoTrack.applyConstraints({
@@ -1569,32 +1470,26 @@ export default function AdminInterface() {
               height: { ideal: 1080 },
               frameRate: { ideal: 30 }
             }).then(() => {
-              console.log('✅ Qualité vidéo optimisée:', {
                 width: videoTrack.getSettings().width,
                 height: videoTrack.getSettings().height,
                 frameRate: videoTrack.getSettings().frameRate
               });
-            }).catch(err => console.log('❌ Contraintes non appliquées:', err));
           }
           
           // Trouver spécifiquement les conteneurs de 
           const Containers = document.querySelectorAll('.bg-gray-900 .bg-black.flex.items-center.justify-center');
-          console.log('Conteneurs  trouvés:', Containers.length);
           
           if (Containers.length === 0) {
             // Fallback: chercher tous les conteneurs noirs
             const allContainers = document.querySelectorAll('.bg-black.flex.items-center.justify-center');
-            console.log('Tous les conteneurs trouvés:', allContainers.length);
             
             allContainers.forEach((container, index) => {
-              console.log(`Remplacer conteneur ${index}`);
               container.innerHTML = '';
               const videoClone = video.cloneNode(true) as HTMLVideoElement;
               container.appendChild(videoClone);
               
               // Lancer la lecture pour chaque clone
               videoClone.play().then(() => {
-                console.log(`Vidéo ${index} en cours de lecture`);
               }).catch(err => {
                 console.error(`Erreur lecture vidéo ${index}:`, err);
               });
@@ -1602,14 +1497,12 @@ export default function AdminInterface() {
           } else {
             // Utiliser les conteneurs de  spécifiques
             Containers.forEach((container, index) => {
-              console.log(`Remplacer conteneur  ${index}`);
               container.innerHTML = '';
               const videoClone = video.cloneNode(true) as HTMLVideoElement;
               container.appendChild(videoClone);
               
               // Lancer la lecture pour chaque clone
               videoClone.play().then(() => {
-                console.log(`Vidéo  ${index} en cours de lecture`);
               }).catch(err => {
                 console.error(`Erreur lecture vidéo  ${index}:`, err);
               });
@@ -1633,8 +1526,6 @@ export default function AdminInterface() {
     const signal = signals.find(s => s.id === signalId);
     if (!signal) return;
 
-    console.log('🔄 [ADMIN] === CHANGEMENT STATUT SIGNAL ===');
-    console.log('🔄 [ADMIN] Signal ID:', signalId, 'Ancien statut:', signal.status, 'Nouveau statut:', newStatus);
 
     if (signal.status === newStatus) {
       // Si on clique sur le même statut, on remet en ACTIVE
@@ -1647,14 +1538,12 @@ export default function AdminInterface() {
       
       // Sauvegarder dans Firebase
       const firebaseSuccess = await updateSignalStatus(signalId, 'ACTIVE');
-      console.log('🔄 [ADMIN] Firebase mise à jour:', firebaseSuccess ? 'SUCCÈS' : 'ÉCHEC');
       
       // Mettre à jour allSignalsForStats pour que les stats se mettent à jour
       setAllSignalsForStats(prev => prev.map(s => 
         s.id === signalId ? { ...s, status: 'ACTIVE', pnl: undefined, closeMessage: undefined } : s
       ));
       
-      console.log('🔄 [ADMIN] Signal remis en ACTIVE - allSignalsForStats mis à jour pour les stats');
       
       // Les stats seront mises à jour automatiquement via allSignalsForStats
       
@@ -1669,14 +1558,12 @@ export default function AdminInterface() {
       
       // Sauvegarder dans Firebase
       const firebaseSuccess = await updateSignalStatus(signalId, 'ACTIVE');
-      console.log('🔄 [ADMIN] Firebase mise à jour:', firebaseSuccess ? 'SUCCÈS' : 'ÉCHEC');
       
       // Mettre à jour allSignalsForStats pour que les stats se mettent à jour
       setAllSignalsForStats(prev => prev.map(s => 
         s.id === signalId ? { ...s, status: 'ACTIVE', pnl: undefined, closeMessage: undefined } : s
       ));
       
-      console.log('🔄 [ADMIN] Signal remis en ACTIVE - allSignalsForStats mis à jour pour les stats');
       
       // Les stats seront mises à jour automatiquement via allSignalsForStats
       
@@ -1688,8 +1575,6 @@ export default function AdminInterface() {
         const statusText = newStatus === 'WIN' ? 'gagnante' : newStatus === 'LOSS' ? 'perdante' : 'break-even';
         const closeMessage = `Position ${statusText} fermée - P&L: ${pnl}`;
         
-        console.log('🔍 Debug signal dans handleSignalStatus:', signal);
-        console.log('🔍 Debug referenceNumber dans handleSignalStatus:', signal.referenceNumber);
         
         const updatedSignal = { ...signal, status: newStatus, pnl, closeMessage };
         
@@ -1700,7 +1585,6 @@ export default function AdminInterface() {
         
         // Sauvegarder dans Firebase
         const firebaseSuccess = await updateSignalStatus(signalId, newStatus, pnl);
-        console.log('🔄 [ADMIN] Firebase mise à jour:', firebaseSuccess ? 'SUCCÈS' : 'ÉCHEC');
         
         // Sauvegarder le message de fermeture dans Firebase
         const signalRef = ref(database, `signals/${signalId}`);
@@ -1739,13 +1623,11 @@ export default function AdminInterface() {
           s.id === signalId ? { ...s, status: newStatus, pnl, closeMessage } : s
         ));
         
-        console.log('🔄 [ADMIN] Signal fermé - allSignalsForStats mis à jour pour les stats');
         
         // Les stats seront mises à jour automatiquement via allSignalsForStats
       }
     }
     
-    console.log('🔄 [ADMIN] === FIN CHANGEMENT STATUT ===');
   };
 
   // Scroll automatique vers le bas quand de nouveaux messages arrivent ou quand on change de canal
@@ -1831,7 +1713,6 @@ export default function AdminInterface() {
         image2: null
       });
       setShowTradeModal(false);
-      console.log('✅ Trade ajouté avec succès dans Firebase !');
     } else {
       console.error('❌ Erreur lors de la sauvegarde du trade');
     }
@@ -1904,20 +1785,17 @@ export default function AdminInterface() {
 
   const loadUsers = async () => {
     // TODO: Implement Firebase user management
-    console.log('⚠️ User management not implemented with Firebase yet');
     setUsers([]);
   };
 
   const createUser = async () => {
     // TODO: Implement Firebase user creation
     console.warn('⚠️ User creation not implemented with Firebase yet');
-    console.log('⚠️ User creation not implemented with Firebase yet');
   };
 
   const deleteUser = async (userId: string) => {
     // TODO: Implement Firebase user deletion
     console.warn('⚠️ User deletion not implemented with Firebase yet');
-    console.log('⚠️ User deletion not implemented with Firebase yet');
   };
 
   const handleTradingViewPasteTrade = (e: React.ClipboardEvent<HTMLDivElement>) => {
@@ -1925,8 +1803,6 @@ export default function AdminInterface() {
     const pastedHtml = e.clipboardData.getData('text/html') || '';
     const pastedText = e.clipboardData.getData('text') || '';
     
-    console.log('Pasted HTML:', pastedHtml);
-    console.log('Pasted Text:', pastedText);
     
     // Store extracted data
     const extracted: Record<string, any> = {};
@@ -1944,7 +1820,6 @@ export default function AdminInterface() {
           const jsonString = match[1].replace(/&(?:quot|#34);/g, '"');
           const data = JSON.parse(jsonString);
           
-          console.log('TradingView data:', data);
           
           // Extract source and points - similar to Google Apps Script
           const source = data.sources?.[0]?.source;
@@ -2037,7 +1912,6 @@ export default function AdminInterface() {
     
     // Show success message
     if (found || Object.keys(extracted).length > 0) {
-      console.log(`✅ Données importées - Symbole: ${extracted.symbol}, Entrée: ${extracted.entryPrice}, Sortie: ${extracted.exitPrice}, Stop Loss: ${extracted.stopLoss}`);
     } else {
       console.warn('❌ Aucune donnée détectée. Essayez de coller depuis TradingView (Risk/Reward tool)');
     }
@@ -2050,8 +1924,6 @@ export default function AdminInterface() {
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
       const dateStr = `${year}-${month}-${day}`;
-      console.log('Recherche trades pour date:', dateStr);
-      console.log('Tous les trades:', personalTrades);
       
       if (!Array.isArray(personalTrades)) {
         console.error('personalTrades n\'est pas un tableau:', personalTrades);
@@ -2060,12 +1932,10 @@ export default function AdminInterface() {
       
       const filteredTrades = personalTrades.filter(trade => {
         if (!trade || !trade.date) {
-          console.log('Trade invalide:', trade);
           return false;
         }
         return trade.date === dateStr;
       });
-      console.log('Trades filtrés:', filteredTrades);
       return filteredTrades;
     } catch (error) {
       console.error('Erreur dans getTradesForDate:', error);
@@ -2100,11 +1970,8 @@ export default function AdminInterface() {
 
     // Convertir l'image en base64 si présente
     let imageBase64 = null;
-    console.log('📸 ADMIN signalData.image existe?', !!signalData.image);
     if (signalData.image) {
-      console.log('📸 ADMIN Conversion de l\'image en base64...');
       imageBase64 = await uploadImage(signalData.image);
-      console.log('✅ ADMIN Image convertie en base64, longueur:', imageBase64 ? imageBase64.length : 0);
     }
 
     // Préparer les données pour Firebase
@@ -2122,14 +1989,11 @@ export default function AdminInterface() {
       status: 'ACTIVE' as const
     };
     
-    console.log('📤 ADMIN Envoi à Firebase avec image:', !!signalForFirebase.image);
 
     // Sauvegarder en Firebase
     const savedSignal = await addSignal(signalForFirebase);
-    console.log('💾 ADMIN Signal sauvegardé:', savedSignal);
     
     if (savedSignal) {
-      console.log('✅ Signal sauvé en Firebase:', savedSignal);
       
       // Envoyer une notification push via Firebase Function
       try {
@@ -2148,21 +2012,17 @@ export default function AdminInterface() {
                 tokens.push(tokenData.token);
               }
             });
-            console.log('📱 Tokens FCM récupérés depuis Firebase:', tokens.length);
           }
         } catch (error) {
           console.error('❌ Erreur récupération tokens FCM:', error);
         }
         
         if (tokens.length > 0) {
-          console.log('📱 Envoi notification push via Firebase Function...');
           const result = await sendNotification({
             signal: savedSignal,
             tokens: tokens
           });
-          console.log('✅ Notification push envoyée:', result.data);
         } else {
-          console.log('⚠️ Aucun token FCM trouvé, notification locale seulement');
           notifyNewSignal(savedSignal);
         }
       } catch (error) {
@@ -2191,8 +2051,6 @@ export default function AdminInterface() {
           }
         }
         
-        console.log('🔍 Debug savedSignal:', savedSignal);
-        console.log('🔍 Debug referenceNumber:', savedSignal.referenceNumber);
         
         const signalMessage = `🚀 **${signalData.type} ${signalData.symbol || 'N/A'}** ${savedSignal.referenceNumber || ''}\n` +
           `📊 Entry: ${signalData.entry || 'N/A'} TP: ${signalData.takeProfit || 'N/A'} SL: ${signalData.stopLoss || 'N/A'}\n` +
@@ -2223,7 +2081,6 @@ export default function AdminInterface() {
           };
           
           await addMessage(messageData);
-          console.log('✅ Message signal avec image envoyé dans general-chat-2');
         } catch (error) {
           console.error('❌ Erreur envoi message signal:', error);
         }
@@ -2231,7 +2088,6 @@ export default function AdminInterface() {
       
       // Pas d'alerte pour general-chat-2, le message apparaît directement dans le chat
       if (selectedChannel.id !== 'general-chat-2') {
-        console.log('Signal créé et sauvé en base ! ✅');
       }
     } else {
       console.error('❌ Erreur sauvegarde signal');
@@ -2264,7 +2120,6 @@ export default function AdminInterface() {
       }
       
       const signalId = signalIdMatch[1];
-      console.log(`🔄 [ADMIN] Changement statut signal ${signalId} vers ${newStatus}`);
       
       // Créer un popup personnalisé pour PnL et photo
       let pnl: string | undefined;
@@ -2431,7 +2286,6 @@ export default function AdminInterface() {
       
       // Sauvegarder dans Firebase
       const firebaseSuccess = await updateSignalStatus(signalId, newStatus, pnl);
-      console.log('🔄 [ADMIN] Firebase mise à jour:', firebaseSuccess ? 'SUCCÈS' : 'ÉCHEC');
       
       // Sauvegarder le message de fermeture dans Firebase
       const signalRef = ref(database, `signals/${signalId}`);
@@ -2441,8 +2295,6 @@ export default function AdminInterface() {
       notifySignalClosed({ ...updatedSignal, channel_id: 'general-chat-2' });
       
       // Envoyer un message de conclusion dans le chat
-      console.log('🔍 Debug updatedSignal:', updatedSignal);
-      console.log('🔍 Debug referenceNumber:', updatedSignal.referenceNumber);
       
       const conclusionMessage = `📊 SIGNAL FERMÉ 📊\n\n` +
         `Signal ${updatedSignal.referenceNumber || ''} fermé\n` +
@@ -2473,12 +2325,10 @@ export default function AdminInterface() {
         };
         
         await addMessage(messageData);
-        console.log('✅ Message de conclusion avec image envoyé dans general-chat-2');
       } catch (error) {
         console.error('❌ Erreur envoi message conclusion:', error);
       }
       
-      console.log(`✅ [ADMIN] Signal ${signalId} fermé avec succès - Statut: ${newStatus}, P&L: ${pnl}`);
       
     } catch (error) {
       console.error('❌ [ADMIN] Erreur handleSignalStatusFromMessage:', error);
@@ -2490,7 +2340,6 @@ export default function AdminInterface() {
   const handleSendMessage = async () => {
     if (chatMessage.trim()) {
       try {
-        console.log('🚀 Tentative envoi message PWA...', {
           channel: selectedChannel.id,
           content: chatMessage
         });
@@ -2508,7 +2357,6 @@ export default function AdminInterface() {
         const savedMessage = await addMessage(messageData);
         
         if (savedMessage) {
-          console.log('✅ Message envoyé à Firebase:', savedMessage);
           // La subscription temps réel ajoutera le message automatiquement
         } else {
           console.error('❌ Erreur envoi message Firebase');
@@ -2562,12 +2410,9 @@ export default function AdminInterface() {
                           attachment_name: file.name
                         };
                         
-                        console.log('📤 Message data envoyé:', messageData);
                         const savedMessage = await addMessage(messageData);
-                        console.log('✅ Message sauvegardé:', savedMessage);
                         
                         if (savedMessage) {
-                          console.log('✅ Image envoyée à Firebase:', savedMessage);
                           // La subscription temps réel ajoutera le message automatiquement
                         } else {
                           console.error('❌ Erreur envoi image Firebase');
@@ -2637,7 +2482,6 @@ export default function AdminInterface() {
       }));
       
       if (numbers.length >= 3) {
-        console.log(`✅ Données importées - Symbole: ${newData.symbol}, Entrée: ${newData.entry}, TP: ${newData.takeProfit}, SL: ${newData.stopLoss}`);
       } else {
         console.warn(`⚠️ Données partielles importées - Symbole: ${newData.symbol}, Entrée: ${newData.entry}. Complétez les champs manquants`);
       }
@@ -2793,7 +2637,6 @@ export default function AdminInterface() {
                             <div className="flex gap-2">
                               <button 
                                 onClick={() => {
-                                  console.log('Fonctionnalité de réinitialisation du mot de passe à venir');
                                 }}
                                 className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-xs"
                                 title="Réinitialiser mot de passe"
@@ -2802,7 +2645,6 @@ export default function AdminInterface() {
                               </button>
                               <button 
                                 onClick={() => {
-                                  console.log('Fonctionnalité de désactivation/réactivation à venir');
                                 }}
                                 className="bg-yellow-600 hover:bg-yellow-700 px-3 py-1 rounded text-xs"
                                 title={user.status === 'active' ? 'Désactiver' : 'Réactiver'}
@@ -2920,30 +2762,20 @@ export default function AdminInterface() {
               
                               // Vérifier s'il y a des trades personnels ou des signaux pour ce jour
                 if (selectedChannel.id === 'trading-journal' && dayNumber === 29) {
-                  console.log('🔍 [ADMIN] === DEBUG JOUR 29 ===');
-                  console.log('🔍 [ADMIN] Total personalTrades:', personalTrades.length);
-                  console.log('🔍 [ADMIN] Toutes les dates des trades:', personalTrades.map(t => ({ date: t.date, status: t.status })));
                 }
                 
                 // Debug pour le jour 30 (calendrier normal)
                 if (selectedChannel.id !== 'trading-journal' && dayNumber === 30) {
-                  console.log('🔍 [ADMIN] === DEBUG JOUR 30 ===');
-                  console.log('🔍 [ADMIN] allSignalsForStats total:', allSignalsForStats.length);
-                  console.log('🔍 [ADMIN] Signaux avec timestamp HH:MM:', allSignalsForStats.filter(s => typeof s.timestamp === 'string' && s.timestamp.includes(':')).length);
-                  console.log('🔍 [ADMIN] Signaux avec vraie date:', allSignalsForStats.filter(s => !(typeof s.timestamp === 'string' && s.timestamp.includes(':'))).length);
                 }
                 
                 const dayTrades = selectedChannel.id === 'trading-journal' ? 
                   personalTrades.filter(trade => {
-                    console.log('🔍 [ADMIN] Filtrage trade pour jour', dayNumber, 'Trade date:', trade.date, 'Type:', typeof trade.date);
                     const tradeDate = new Date(trade.date);
-                    console.log('🔍 [ADMIN] Trade date parsée:', tradeDate.toDateString());
                     
                     const isMatch = tradeDate.getDate() === dayNumber && 
                                    tradeDate.getMonth() === currentDate.getMonth() && 
                                    tradeDate.getFullYear() === currentDate.getFullYear();
                     
-                    console.log('🔍 [ADMIN] Trade correspond au jour', dayNumber, '?', isMatch);
                     return isMatch;
                   }) : [];
 
@@ -2963,7 +2795,6 @@ export default function AdminInterface() {
                     
                     // Debug pour les jours 29 et 30
                     if (dayNumber === 29 || dayNumber === 30) {
-                      console.log('🔍 [ADMIN] Jour', dayNumber, '- Signal:', signal.symbol, 'originalTimestamp:', signal.originalTimestamp, 'date parsée:', signalDate.toDateString(), 'match:', isMatch);
                     }
                     
                     return isMatch;
@@ -3006,24 +2837,17 @@ export default function AdminInterface() {
                     
                     // Debug pour le jour 30
                     if (dayNumber === 30) {
-                      console.log('🔍 [ADMIN] === DEBUG JOUR 30 ===');
-                      console.log('🔍 [ADMIN] daySignals:', daySignals.length);
-                      console.log('🔍 [ADMIN] PnL total:', totalPnL);
                       daySignals.forEach(signal => {
-                        console.log('🔍 [ADMIN] Signal:', signal.symbol, 'PnL:', signal.pnl, 'Parsed:', parsePnL(signal.pnl));
                       });
                     }
                     
                     // Déterminer la couleur selon le PnL total
                     if (totalPnL > 0) {
                       bgColor = 'bg-green-400/40 border-green-300/30 text-white'; // PnL positif - vert plus pale
-                      if (dayNumber === 30) console.log('🎨 [ADMIN] Jour 30: Couleur VERTE (PnL positif)');
                     } else if (totalPnL < 0) {
                       bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif
-                      if (dayNumber === 30) console.log('🎨 [ADMIN] Jour 30: Couleur ROUGE (PnL négatif)');
                     } else {
                       bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
-                      if (dayNumber === 30) console.log('🎨 [ADMIN] Jour 30: Couleur BLEUE (PnL = 0)');
                     }
                   }
                 }
@@ -3043,10 +2867,8 @@ export default function AdminInterface() {
                           
                           // Ouvrir le popup des trades si il y en a
                           const tradesForDate = getTradesForDate(clickedDate);
-                          console.log('Clic sur jour:', dayNumber, 'Trades trouvés:', tradesForDate.length);
                           
                           if (tradesForDate.length > 0) {
-                            console.log('Trades trouvés, ouverture modal...');
                             setSelectedTradesDate(clickedDate);
                             setShowTradesModal(true);
                           }
@@ -3640,10 +3462,8 @@ export default function AdminInterface() {
                     <div className="flex gap-2">
                       <button 
                         onClick={async () => {
-                          console.log('🔄 Rechargement des trades...');
                           const trades = await getPersonalTrades();
                           setPersonalTrades(trades);
-                          console.log(`✅ ${trades.length} trades rechargés depuis Firebase`);
                         }}
                         className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg text-sm font-medium"
                         title="Recharger les trades depuis Firebase"
@@ -3663,9 +3483,7 @@ export default function AdminInterface() {
                       </button>
                       <button 
                         onClick={async () => {
-                          console.log('🔍 DEBUG: Vérification Firebase...');
                           const userId = localStorage.getItem('user_id');
-                          console.log('🔍 ID utilisateur:', userId);
                           
                           // Test direct Firebase
                           const { ref, get, query, orderByChild, limitToLast } = await import('firebase/database');
@@ -3676,12 +3494,9 @@ export default function AdminInterface() {
                             const q = query(tradesRef, orderByChild('created_at'), limitToLast(10));
                             const snapshot = await get(q);
                             
-                            console.log('🔍 Snapshot existe:', snapshot.exists());
-                            console.log('🔍 Nombre de trades:', snapshot.numChildren());
                             
                             if (snapshot.exists()) {
                               snapshot.forEach((childSnapshot) => {
-                                console.log('📋 Trade trouvé:', childSnapshot.key, childSnapshot.val());
                               });
                             }
                           } catch (error) {
@@ -3783,7 +3598,6 @@ export default function AdminInterface() {
                 
                 {/* Affichage des trades pour la date sélectionnée - SEULEMENT pour Trading Journal */}
                 {(() => {
-                  console.log('Vérification affichage trades:', {
                     channel: selectedChannel.id,
                     selectedDate: selectedDate,
                     shouldShow: selectedChannel.id === 'trading-journal' && selectedDate,
@@ -4819,8 +4633,6 @@ export default function AdminInterface() {
                                       {/* Flèche cliquable pour les messages de fermeture */}
                                       {(() => {
                                         const isClosureMessage = message.text.includes('SIGNAL FERMÉ');
-                                        console.log('🔍 Debug flèche - message.text:', message.text);
-                                        console.log('🔍 Debug flèche - isClosureMessage:', isClosureMessage);
                                         return isClosureMessage;
                                       })() && (
                                         <span 
@@ -4828,11 +4640,8 @@ export default function AdminInterface() {
                                           onClick={() => {
                                             const signalIdMatch = message.text.match(/\[SIGNAL_ID:([^\]]+)\]/);
                                             const signalId = signalIdMatch ? signalIdMatch[1] : '';
-                                            console.log('🔍 Debug flèche - signalId extrait:', signalId);
-                                            console.log('🔍 Debug flèche - message.text:', message.text);
                                             
                                             const originalMessage = document.querySelector(`[data-signal-id="${signalId}"]`);
-                                            console.log('🔍 Debug flèche - élément trouvé:', originalMessage);
                                             
                                             if (originalMessage) {
                                               originalMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -4840,9 +4649,7 @@ export default function AdminInterface() {
                                               setTimeout(() => {
                                                 originalMessage.classList.remove('ring-2', 'ring-blue-400', 'ring-opacity-50');
                                               }, 3000);
-                                              console.log('✅ Navigation vers le signal original réussie');
                                             } else {
-                                              console.log('❌ Signal original non trouvé');
                                             }
                                           }}
                                           title="Aller au signal original"
@@ -5672,9 +5479,7 @@ export default function AdminInterface() {
               <div className="space-y-4">
                 {(() => {
                   const signalsForDate = getSignalsForDate(selectedSignalsDate);
-                  console.log('🔍 [POPUP ADMIN] Signaux trouvés:', signalsForDate.length);
                   signalsForDate.forEach(signal => {
-                    console.log('🔍 [POPUP ADMIN] Signal individuel:', {
                       id: signal.id,
                       symbol: signal.symbol,
                       image: signal.image,

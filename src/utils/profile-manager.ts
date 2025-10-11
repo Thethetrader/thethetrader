@@ -13,12 +13,10 @@ export interface UserProfile {
 // Synchroniser la photo de profil entre localStorage et Supabase
 export const syncProfileImage = async (userType: 'user' | 'admin', imageBase64: string) => {
   try {
-    console.log('🔄 Synchronisation photo de profil...');
     
     // 1. Sauvegarder dans localStorage pour accès rapide
     const localKey = userType === 'admin' ? 'adminProfileImage' : 'userProfileImage';
     localStorage.setItem(localKey, imageBase64);
-    console.log('💾 Sauvegardé dans localStorage');
     
     // 2. Sauvegarder dans Supabase pour synchronisation cross-device
     const userId = userType === 'admin' ? 'admin_user' : 'default_user';
@@ -40,7 +38,6 @@ export const syncProfileImage = async (userType: 'user' | 'admin', imageBase64: 
           updated_at: new Date().toISOString()
         })
         .eq('user_id', userId);
-      console.log('🔄 Profil mis à jour dans Supabase');
     } else {
       // Créer un nouveau profil
       await supabase
@@ -51,7 +48,6 @@ export const syncProfileImage = async (userType: 'user' | 'admin', imageBase64: 
           profile_image: imageBase64,
           display_name: userType === 'admin' ? 'Admin' : 'TheTheTrader'
         });
-      console.log('✨ Nouveau profil créé dans Supabase');
     }
     
     return { success: true };
@@ -69,7 +65,6 @@ export const getProfileImage = async (userType: 'user' | 'admin'): Promise<strin
     const localImage = localStorage.getItem(localKey);
     
     if (localImage) {
-      console.log('📱 Photo trouvée dans localStorage');
       return localImage;
     }
     
@@ -85,11 +80,9 @@ export const getProfileImage = async (userType: 'user' | 'admin'): Promise<strin
     if (profile?.profile_image) {
       // Sauvegarder dans localStorage pour la prochaine fois
       localStorage.setItem(localKey, profile.profile_image);
-      console.log('☁️ Photo trouvée dans Supabase et sauvegardée localement');
       return profile.profile_image;
     }
     
-    console.log('❌ Aucune photo de profil trouvée');
     return null;
   } catch (error) {
     console.error('❌ Erreur récupération profile:', error);

@@ -15,23 +15,19 @@ const SupabaseChat = () => {
   // Attendre que la session soit vraiment chargée
   useEffect(() => {
     const checkSession = async () => {
-      console.log("⏳ Attente de la session Supabase...");
       
       // Essayer plusieurs fois avec des délais
       const tryGetSession = async (attempt = 1) => {
         const { supabase } = await import('../lib/supabase');
         const { data: { session } } = await supabase.auth.getSession();
         
-        console.log(`🔄 Tentative ${attempt}:`, { session: !!session, user: !!session?.user });
         
         if (session?.user) {
-          console.log("✅ Session trouvée après attente:", session.user.email);
           setSessionLoading(false);
         } else if (attempt < 5) {
           // Réessayer après 500ms
           setTimeout(() => tryGetSession(attempt + 1), 500);
         } else {
-          console.log("❌ Aucune session trouvée après 5 tentatives");
           setSessionLoading(false);
         }
       };
@@ -45,17 +41,10 @@ const SupabaseChat = () => {
   
   // DEBUG APPROFONDI - Chat
   useEffect(() => {
-    console.log("🔍 CHAT DEBUG:");
-    console.log("User dans le chat:", currentUser);
-    console.log("Loading dans le chat:", loading);
     
     // Vérifier directement la session
     import('../lib/supabase').then(({ supabase }) => {
       supabase.auth.getSession().then(({ data, error }) => {
-        console.log("Session dans le chat:", data.session);
-        console.log("User de session dans le chat:", data.session?.user);
-        console.log("Client Supabase:", supabase);
-        console.log("Erreur session chat:", error);
       });
     });
   }, [currentUser, loading]);
@@ -72,7 +61,6 @@ const SupabaseChat = () => {
       
       setChannels([defaultChannel]);
       setSelectedChannel(defaultChannel);
-      console.log('✅ Canal par défaut créé pour:', currentUser.id);
     }
   }, [currentUser]);
 

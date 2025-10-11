@@ -122,7 +122,6 @@ export default function TopBar({
 
         
         {/* Settings Button */}
-        <IconButton icon={Settings} label="Paramètres" onClick={() => console.log('Settings clicked')} />
       </nav>
     </header>;
 }

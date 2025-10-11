@@ -38,7 +38,6 @@ export const useSignals = (channel?: string) => {
       .on('postgres_changes', 
         { event: '*', schema: 'public', table: 'signals' },
         (payload) => {
-          console.log('Signal change:', payload)
           fetchSignals() // Recharger les signaux
         }
       )

@@ -69,9 +69,7 @@ export const getMessages = async (channelId: string): Promise<Message[]> => {
       return [];
     }
     
-    console.log(`📨 Messages récupérés pour ${channelId}:`, data?.length || 0);
     if (data && data.length > 0) {
-      console.log('📋 Structure du premier message:', Object.keys(data[0]));
     }
     
     return data || [];
@@ -142,12 +140,9 @@ export const updateSignalStatus = async (signalId: string, status: 'WIN' | 'LOSS
 
 // Subscriptions temps réel
 export const subscribeToMessages = (channelId: string, callback: (message: Message) => void) => {
-  console.log('🔌 Création subscription messages pour:', channelId);
   
   // Test de connexion Supabase
   supabase.auth.getSession().then(({ data, error }) => {
-    console.log('🔑 Session Supabase:', data.session ? 'Connecté' : 'Non connecté');
-    if (error) console.log('❌ Erreur session:', error);
   });
   
   const subscription = supabase
@@ -160,18 +155,13 @@ export const subscribeToMessages = (channelId: string, callback: (message: Messa
         filter: `channel_id=eq.${channelId}`
       }, 
       (payload) => {
-        console.log('📨 Message reçu via subscription:', payload);
         callback(payload.new as Message);
       }
     )
     .subscribe((status) => {
-      console.log('📡 Status subscription:', status);
       if (status === 'SUBSCRIBED') {
-        console.log('✅ Subscription active pour:', channelId);
       } else if (status === 'CLOSED') {
-        console.log('❌ Subscription fermée pour:', channelId);
       } else if (status === 'CHANNEL_ERROR') {
-        console.log('💥 Erreur subscription pour:', channelId);
       }
     });
     

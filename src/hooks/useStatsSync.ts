@@ -46,7 +46,6 @@ export function useStatsSync() {
   // Charger tous les signaux depuis Firebase
   const loadAllSignalsForStats = async () => {
     try {
-      console.log('📊 [STATS-SYNC] Chargement de TOUS les signaux pour synchronisation...');
       
       const channels = ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'];
       let allSignals: any[] = [];
@@ -55,9 +54,7 @@ export function useStatsSync() {
         try {
           const channelSignals = await getSignals(channelId, 100);
           if (channelSignals && channelSignals.length > 0) {
-            console.log(`🔍 [STATS-SYNC] Signaux bruts de ${channelId}:`, channelSignals);
             channelSignals.forEach(signal => {
-              console.log(`🔍 [STATS-SYNC] Signal ${signal.id} de ${channelId}:`, {
                 image: signal.image,
                 attachment_data: signal.attachment_data,
                 ALL_KEYS: Object.keys(signal)
@@ -101,7 +98,6 @@ export function useStatsSync() {
         });
         
         setAllSignalsForStats(formattedSignals);
-        console.log(`✅ [STATS-SYNC] ${formattedSignals.length} signaux synchronisés`);
       }
     } catch (error) {
       console.error('❌ [STATS-SYNC] Erreur synchronisation:', error);
