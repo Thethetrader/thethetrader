@@ -308,7 +308,17 @@ export default function TradingPlatformShell() {
     try {
       console.log('🚀 Début chargement signaux utilisateur pour:', channelId);
       const signals = await getSignals(channelId, 3); // Limite à 3 signaux
-      console.log('🔍 Signaux bruts utilisateur:', signals);
+      console.log('🔍 [USER LOAD] Signaux bruts Firebase:', signals);
+      signals.forEach(sig => {
+        console.log('🔍 [USER LOAD] Signal brut individuel:', {
+          id: sig.id,
+          symbol: sig.symbol,
+          closure_image: sig.closure_image,
+          closure_image_type: sig.closure_image_type,
+          closure_image_name: sig.closure_image_name,
+          ALL_KEYS: Object.keys(sig)
+        });
+      });
       const formattedSignals = signals.map(signal => ({
         id: signal.id || '',
         type: signal.type,
