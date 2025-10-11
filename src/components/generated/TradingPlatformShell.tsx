@@ -2499,15 +2499,15 @@ export default function TradingPlatformShell() {
     console.log('🔥 getTradingCalendar appelé pour channel:', selectedChannel.id);
     console.log('🔥 personalTrades dans calendrier:', personalTrades.length);
     return (
-    <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: selectedChannel.id === 'trading-journal' ? '60px' : '20px' }}>
+    <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '20px' }}>
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-gray-600 pb-4 gap-4 md:gap-0">
         <div className="hidden md:block">
           <h1 className="text-2xl font-bold text-white">
-            {selectedChannel.id === 'trading-journal' ? 'Mon Journal Perso' : 'Journal des Signaux'}
+            {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'Mon Journal Perso' : 'Journal des Signaux'}
           </h1>
           <p className="text-sm text-gray-400 mt-1">
-            {selectedChannel.id === 'trading-journal' ? 'Journal tous tes trades' : 'Suivi des performances des signaux'}
+            {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'Journal tous tes trades' : 'Suivi des performances des signaux'}
           </p>
         </div>
         
@@ -2529,7 +2529,7 @@ export default function TradingPlatformShell() {
               ›
             </button>
           </div>
-          {selectedChannel.id === 'trading-journal' && (
+          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && (
             <button 
               onClick={handleAddTrade}
               className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
@@ -2583,7 +2583,7 @@ export default function TradingPlatformShell() {
                 }
               
                               // Vérifier s'il y a des trades personnels ou des signaux pour ce jour
-                const dayTrades = selectedChannel.id === 'trading-journal' ? 
+                const dayTrades = (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 
                   personalTrades.filter(trade => {
                     const tradeDate = new Date(trade.date);
                     return tradeDate.getDate() === dayNumber && 
@@ -2591,7 +2591,7 @@ export default function TradingPlatformShell() {
                            tradeDate.getFullYear() === currentDate.getFullYear();
                   }) : [];
 
-                const daySignals = selectedChannel.id !== 'trading-journal' ? 
+                const daySignals = (selectedChannel.id !== 'trading-journal' && selectedChannel.id !== 'journal') ? 
                   realTimeSignals.filter(signal => {
                     // Utiliser le timestamp original pour déterminer la vraie date
                     const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
@@ -2612,7 +2612,7 @@ export default function TradingPlatformShell() {
                 let bgColor = 'bg-gray-700 border-gray-600 text-gray-400'; // No trade par défaut
                 let tradeCount = 0;
 
-                if (selectedChannel.id === 'trading-journal') {
+                if (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') {
                   // Logique pour les trades personnels
                   if (dayTrades.length > 0) {
                     tradeCount = dayTrades.length;
@@ -2664,7 +2664,7 @@ export default function TradingPlatformShell() {
                         
                         const clickedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNumber);
                         
-                        if (selectedChannel.id === 'trading-journal') {
+                        if (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') {
                           setSelectedDate(clickedDate);
                           
                           // Ouvrir le popup des trades si il y en a
@@ -2704,7 +2704,7 @@ export default function TradingPlatformShell() {
                       <div className="text-xs md:text-sm font-semibold">{dayNumber}</div>
                       {tradeCount > 0 && (
                       <div className="text-xs font-bold text-center hidden md:block">
-                          {tradeCount} {selectedChannel.id === 'trading-journal' ? 'trade' : 'signal'}{tradeCount > 1 ? 's' : ''}
+                          {tradeCount} {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'trade' : 'signal'}{tradeCount > 1 ? 's' : ''}
                       </div>
                     )}
                   </div>
@@ -2749,17 +2749,17 @@ export default function TradingPlatformShell() {
           <div className="space-y-4 mb-8">
             {/* P&L Total */}
             <div className={`border rounded-lg p-4 border ${
-              (selectedChannel.id === 'trading-journal' ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 
+              ((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 
                 ? 'bg-green-600/20 border-green-500/30' 
                 : 'bg-red-600/20 border-red-500/30'
             }`}>
               <div className={`text-sm mb-1 ${
-                (selectedChannel.id === 'trading-journal' ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-300' : 'text-red-300'
+                ((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-300' : 'text-red-300'
               }`}>P&L Total</div>
               <div className={`text-2xl font-bold ${
-                (selectedChannel.id === 'trading-journal' ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-200' : 'text-red-200'
+                ((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-200' : 'text-red-200'
               }`}>
-                {(selectedChannel.id === 'trading-journal' ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 ? '+' : ''}${selectedChannel.id === 'trading-journal' ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()}
+                {((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 ? '+' : ''}${(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()}
               </div>
             </div>
 
@@ -2767,7 +2767,7 @@ export default function TradingPlatformShell() {
             <div className="bg-blue-600/20 border-blue-500/30 rounded-lg p-4 border">
               <div className="text-sm text-blue-300 mb-1">Win Rate</div>
               <div className="text-2xl font-bold text-blue-200">
-                {selectedChannel.id === 'trading-journal' ? calculateWinRateTradesForMonth() : calculateWinRateForMonth()}%
+                {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateWinRateTradesForMonth() : calculateWinRateForMonth()}%
               </div>
             </div>
             
@@ -2775,7 +2775,7 @@ export default function TradingPlatformShell() {
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Aujourd'hui</div>
                 <div className="text-lg font-bold text-blue-400">
-                  {selectedChannel.id === 'trading-journal' ? getTodayTradesForMonth().length : getTodaySignalsForMonth()}
+                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? getTodayTradesForMonth().length : getTodaySignalsForMonth()}
                 </div>
               </div>
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
@@ -2984,6 +2984,7 @@ export default function TradingPlatformShell() {
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
               <button onClick={() => handleChannelChange('calendrier', 'calendrier')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Journal Perso</button>
+              <button onClick={() => handleChannelChange('journal', 'journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 Journal</button>
               <button onClick={() => {
                 window.open('/trading-live.html', '_blank');
               }} className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">🎥 Formation Live</button>
@@ -3290,7 +3291,7 @@ export default function TradingPlatformShell() {
               mobileView === 'content' ? 'translate-x-0' : 'translate-x-full'
             }`}
           >
-            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'video' || selectedChannel.id === 'chatzone') ? (
+            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'video' || selectedChannel.id === 'chatzone' || selectedChannel.id === 'journal') ? (
               <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '0px' }}>
                 {/* Header avec bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
                 {selectedChannel.id === 'trading-journal' && (
@@ -3321,7 +3322,7 @@ export default function TradingPlatformShell() {
                 )}
                 
                 {/* Affichage du calendrier */}
-                {(selectedChannel.id === 'calendrier' || selectedChannel.id === 'trading-journal') && getTradingCalendar()}
+                {(selectedChannel.id === 'calendrier' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && getTradingCalendar()}
                 
                 {/* Interface ChatZone pour mobile */}
                 {selectedChannel.id === 'chatzone' && (
@@ -3498,12 +3499,12 @@ export default function TradingPlatformShell() {
 
 
                 {/* Affichage du calendrier pour le canal calendrier */}
-                {view === 'signals' && selectedChannel.id === 'calendrier' ? (
+                {view === 'signals' && (selectedChannel.id === 'calendrier' || selectedChannel.id === 'journal') ? (
                   getTradingCalendar()
                 ) : null}
                 
                 {/* Affichage des signaux */}
-                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', '', 'calendrier', 'chatzone'].includes(selectedChannel.id) ? (
+                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', '', 'calendrier', 'chatzone', 'journal'].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
                     {/* Bouton Voir plus fixe en haut */}
                     <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
@@ -4441,12 +4442,12 @@ export default function TradingPlatformShell() {
               {/* Bouton + Signal supprimé - seul admin peut créer des signaux */}
 
               {/* Affichage du calendrier pour le canal calendrier */}
-              {view === 'signals' && selectedChannel.id === 'calendrier' ? (
+              {view === 'signals' && (selectedChannel.id === 'calendrier' || selectedChannel.id === 'journal') ? (
                 getTradingCalendar()
               ) : null}
               
               {/* Affichage des signaux */}
-                              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', '', 'calendrier', 'chatzone'].includes(selectedChannel.id) ? (
+                              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', '', 'calendrier', 'chatzone', 'journal'].includes(selectedChannel.id) ? (
                 <div className="space-y-4">
                   {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                     <div className="text-center py-8">
