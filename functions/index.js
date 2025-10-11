@@ -98,7 +98,8 @@ exports.sendNotification = onCall(async (request) => {
           data: message.data,
           token: token,
           android: message.android,
-          apns: message.apns
+          apns: message.apns,
+          webpush: message.webpush
         };
         
         const response = await messaging.send(singleMessage);
