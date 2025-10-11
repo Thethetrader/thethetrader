@@ -2183,7 +2183,6 @@ export default function TradingPlatformShell() {
       console.log('🔍 DEBUG getTradesForWeek - Tous les trades:', personalTrades);
       console.log('🔍 DEBUG getTradesForWeek - Semaine demandée:', weekNum);
 
-      // Calculer les dates de début et fin de la semaine
       const currentDate = new Date();
       const currentMonth = currentDate.getMonth();
       const currentYear = currentDate.getFullYear();
@@ -2192,10 +2191,18 @@ export default function TradingPlatformShell() {
       const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
       const firstDayOfWeek = firstDayOfMonth.getDay(); // 0 = dimanche, 1 = lundi, etc.
       
-      // Calculer le début de la semaine demandée
-      const weekStart = new Date(currentYear, currentMonth, 1 + (weekNum - 1) * 7 - firstDayOfWeek);
+      // Calculer le premier lundi du calendrier (peut être dans le mois précédent)
+      const calendarStart = new Date(firstDayOfMonth);
+      const daysToMonday = firstDayOfWeek === 0 ? -6 : -(firstDayOfWeek - 1);
+      calendarStart.setDate(calendarStart.getDate() + daysToMonday);
+      
+      // Calculer les dates de la semaine demandée (7 jours par semaine)
+      const weekStart = new Date(calendarStart);
+      weekStart.setDate(calendarStart.getDate() + (weekNum - 1) * 7);
+      
       const weekEnd = new Date(weekStart);
       weekEnd.setDate(weekStart.getDate() + 6);
+      weekEnd.setHours(23, 59, 59, 999); // Fin de journée
       
       console.log(`🔍 Recherche trades pour semaine ${weekNum}:`, weekStart.toDateString(), 'à', weekEnd.toDateString());
       console.log(`🔍 Dates des trades:`, personalTrades.map(t => t.date));
@@ -2207,7 +2214,12 @@ export default function TradingPlatformShell() {
         }
         
         const tradeDate = new Date(trade.date);
-        const isInWeek = tradeDate >= weekStart && tradeDate <= weekEnd;
+        tradeDate.setHours(0, 0, 0, 0); // Début de journée pour comparaison
+        
+        const weekStartCompare = new Date(weekStart);
+        weekStartCompare.setHours(0, 0, 0, 0);
+        
+        const isInWeek = tradeDate >= weekStartCompare && tradeDate <= weekEnd;
         console.log(`🔍 Trade ${trade.date} (${tradeDate.toDateString()}) dans semaine ${weekNum}?`, isInWeek);
         return isInWeek;
       });
@@ -5638,7 +5650,7 @@ export default function TradingPlatformShell() {
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-white">
-                  {selectedChannel.id === 'trading-journal' ? 'Trades de la Semaine' : 'Signaux de la Semaine'} {selectedWeek}
+                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'Trades de la Semaine' : 'Signaux de la Semaine'} {selectedWeek}
                 </h2>
                 <button
                   onClick={() => setShowWeekSignalsModal(false)}
@@ -5649,7 +5661,7 @@ export default function TradingPlatformShell() {
               </div>
 
               <div className="space-y-4">
-                {selectedChannel.id === 'trading-journal' ? (
+                {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? (
                   // Affichage des trades pour le journal perso
                   getTradesForWeek(selectedWeek).length > 0 ? (
                     getTradesForWeek(selectedWeek).map((trade) => (
