@@ -2423,8 +2423,11 @@ export default function AdminInterface() {
       // Convertir l'image de fermeture en base64 si elle existe
       let closureImageBase64: string | undefined;
       if (conclusionImage) {
+        console.log('📸 [CLOSURE] Début conversion image de fermeture...', conclusionImage.name);
         closureImageBase64 = await uploadImage(conclusionImage);
-        console.log('✅ Image de fermeture convertie:', !!closureImageBase64);
+        console.log('✅ [CLOSURE] Image de fermeture convertie:', closureImageBase64 ? `Taille: ${closureImageBase64.length} caractères` : 'ÉCHEC');
+      } else {
+        console.log('⚠️ [CLOSURE] Aucune image de fermeture fournie');
       }
 
       // Mettre à jour le signal local
@@ -2450,15 +2453,22 @@ export default function AdminInterface() {
       
       // Sauvegarder tout dans Firebase en une seule fois
       const signalRef = ref(database, `signals/${signalId}`);
-      await update(signalRef, { 
+      const updateData = { 
         status: newStatus,
         pnl,
         closeMessage,
         closure_image: closureImageBase64 || null,
         closure_image_type: conclusionImage ? conclusionImage.type : null,
         closure_image_name: conclusionImage ? conclusionImage.name : null
+      };
+      console.log('💾 [CLOSURE] Données à sauvegarder dans Firebase:', {
+        hasClosureImage: !!closureImageBase64,
+        closureImageSize: closureImageBase64 ? closureImageBase64.length : 0,
+        closureImageType: updateData.closure_image_type,
+        closureImageName: updateData.closure_image_name
       });
-      console.log('🔄 [ADMIN] Firebase mise à jour complète avec image de fermeture:', !!closureImageBase64);
+      await update(signalRef, updateData);
+      console.log('✅ [CLOSURE] Firebase mise à jour complète');
       
       // Envoyer une notification pour le signal fermé
       notifySignalClosed({ ...updatedSignal, channel_id: 'general-chat-2' });
@@ -5702,6 +5712,9 @@ export default function AdminInterface() {
                       symbol: signal.symbol,
                       image: signal.image,
                       attachment_data: signal.attachment_data,
+                      closure_image: signal.closure_image,
+                      closure_image_type: signal.closure_image_type,
+                      closure_image_name: signal.closure_image_name,
                       ALL_KEYS: Object.keys(signal)
                     });
                   });
