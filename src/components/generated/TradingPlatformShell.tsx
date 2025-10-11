@@ -2742,7 +2742,7 @@ export default function TradingPlatformShell() {
         {/* Panneau des statistiques */}
         <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6">
           <h3 className="text-lg font-bold text-white mb-6">
-            {selectedChannel.id === 'trading-journal' ? 'Mon Journal Perso' : 'Statistiques Signaux'}
+            {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'Mon Journal Perso' : 'Statistiques Signaux'}
           </h3>
           
           {/* Métriques principales */}
@@ -2781,7 +2781,7 @@ export default function TradingPlatformShell() {
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Ce mois</div>
                 <div className="text-lg font-bold text-white">
-                  {selectedChannel.id === 'trading-journal' ? getThisMonthTradesForMonth().length : getThisMonthSignalsForMonth()}
+                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? getThisMonthTradesForMonth().length : getThisMonthSignalsForMonth()}
                 </div>
               </div>
             </div>
@@ -2790,7 +2790,7 @@ export default function TradingPlatformShell() {
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Avg Win</div>
                 <div className="text-lg font-bold text-green-400">
-                  {selectedChannel.id === 'trading-journal' ? 
+                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 
                     (calculateAvgWinTradesForMonth() > 0 ? `+$${calculateAvgWinTradesForMonth()}` : '-') :
                     (getCalendarMonthlyStats(currentDate).avgWin > 0 ? `+$${getCalendarMonthlyStats(currentDate).avgWin}` : '-')
                   }
@@ -2799,7 +2799,7 @@ export default function TradingPlatformShell() {
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Avg Loss</div>
                 <div className="text-lg font-bold text-red-400">
-                  {selectedChannel.id === 'trading-journal' ? 
+                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 
                     (calculateAvgLossTradesForMonth() > 0 ? `-$${calculateAvgLossTradesForMonth()}` : '-') :
                     (getCalendarMonthlyStats(currentDate).avgLoss > 0 ? `-$${getCalendarMonthlyStats(currentDate).avgLoss}` : '-')
                   }
@@ -2983,8 +2983,7 @@ export default function TradingPlatformShell() {
 
               <button onClick={() => handleChannelChange('profit-loss', 'profit-loss')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'profit-loss' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💰 Profit-loss</button>
               <button onClick={() => handleChannelChange('calendrier', 'calendrier')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
-              <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Journal Perso</button>
-              <button onClick={() => handleChannelChange('journal', 'journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 Journal</button>
+              <button onClick={() => handleChannelChange('journal', 'journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 Journal Perso</button>
               <button onClick={() => {
                 window.open('/trading-live.html', '_blank');
               }} className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">🎥 Formation Live</button>
