@@ -3272,7 +3272,7 @@ export default function AdminInterface() {
   return (
     <div className="h-screen w-full bg-gray-900 text-white overflow-hidden flex" style={{ paddingTop: '0px' }}>
       {/* Desktop Sidebar */}
-      <div className="hidden md:flex w-56 bg-gray-800 flex-col">
+      <div className="hidden md:flex w-56 min-w-56 flex-shrink-0 bg-gray-800 flex-col">
         <div className="p-4 border-b border-gray-700">
           <div className="flex items-center gap-3">
             <label className="cursor-pointer">

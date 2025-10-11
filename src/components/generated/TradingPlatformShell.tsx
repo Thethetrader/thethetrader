@@ -2969,7 +2969,7 @@ export default function TradingPlatformShell() {
   return (
     <div className="h-screen w-full bg-gray-900 text-white overflow-hidden flex" style={{ paddingTop: '0px' }}>
       {/* Desktop Sidebar */}
-      <div className="hidden md:flex w-56 bg-gray-800 flex-col">
+      <div className="hidden md:flex w-56 min-w-56 flex-shrink-0 bg-gray-800 flex-col">
         <div className="p-4 border-b border-gray-700">
           <div className="flex items-center gap-3">
             <label className="cursor-pointer">
@@ -4222,7 +4222,7 @@ export default function TradingPlatformShell() {
                                       <img 
                                         src={message.attachment_data} 
                                         alt="Attachment"
-                                        className={`mt-2 ${selectedChannel.id === 'general-chat-2' ? 'max-w-xs max-h-40' : 'max-w-3xl max-h-96'} object-contain rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity`}
+                                        className="mt-2 max-w-3xl max-h-96 object-contain rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
                                         onClick={() => setSelectedImage(message.attachment_data)}
                                       />
                                       <div className="text-xs text-gray-400 mt-1">Cliquez pour agrandir</div>
@@ -5063,7 +5063,7 @@ export default function TradingPlatformShell() {
                                       <img 
                                         src={message.attachment_data} 
                                         alt="Attachment"
-                                        className={`mt-2 ${selectedChannel.id === 'general-chat-2' ? 'max-w-xs max-h-40' : 'max-w-3xl max-h-96'} object-contain rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity`}
+                                        className="mt-2 max-w-3xl max-h-96 object-contain rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
                                         onClick={() => setSelectedImage(message.attachment_data)}
                                       />
                                       <div className="text-xs text-gray-400 mt-1">Cliquez pour agrandir</div>
