@@ -5720,7 +5720,33 @@ export default function AdminInterface() {
                   });
                   return signalsForDate;
                 })().map((signal) => (
-                  <div key={signal.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
+                  <div key={signal.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600 relative">
+                    {/* Bouton supprimer */}
+                    <button
+                      onClick={async () => {
+                        if (confirm('Êtes-vous sûr de vouloir supprimer ce signal ?')) {
+                          try {
+                            const { ref, remove } = await import('firebase/database');
+                            const { database } = await import('../../utils/firebase-setup');
+                            const signalRef = ref(database, `signals/${signal.id}`);
+                            await remove(signalRef);
+                            
+                            // Mettre à jour l'état local
+                            setAllSignalsForStats(prev => prev.filter(s => s.id !== signal.id));
+                            setSignals(prev => prev.filter(s => s.id !== signal.id));
+                            
+                            console.log('✅ Signal supprimé:', signal.id);
+                          } catch (error) {
+                            console.error('❌ Erreur suppression signal:', error);
+                            alert('Erreur lors de la suppression');
+                          }
+                        }
+                      }}
+                      className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center bg-red-600 hover:bg-red-700 text-white rounded-full text-xs font-bold transition-colors"
+                    >
+                      ×
+                    </button>
+                    
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
                         <span className={`px-2 py-1 rounded text-xs font-bold ${
