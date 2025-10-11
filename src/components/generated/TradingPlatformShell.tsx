@@ -561,6 +561,12 @@ export default function TradingPlatformShell() {
           if (profile?.name) {
             setSupabaseProfile(profile);
             setCurrentUsername(profile.name);
+            // Charger aussi l'avatar depuis le profil Supabase
+            if (profile.avatar_url && !image) {
+              setProfileImage(profile.avatar_url);
+              localStorage.setItem('userProfileImage', profile.avatar_url);
+              console.log('✅ Avatar chargé depuis profil Supabase');
+            }
             console.log('✅ Profil utilisateur chargé depuis Supabase:', profile);
           } else {
             // Profil n'existe pas, créer un profil par défaut avec l'email
@@ -1765,6 +1771,10 @@ export default function TradingPlatformShell() {
         } else {
           console.error('❌ USER Sync failed:', result.error);
         }
+        
+        // Aussi sauvegarder dans le profil utilisateur
+        await updateUserProfile(currentUsername || undefined, base64Image, 'user');
+        console.log('✅ Avatar sauvegardé dans le profil utilisateur');
       };
       reader.readAsDataURL(file);
     }
@@ -2518,10 +2528,11 @@ export default function TradingPlatformShell() {
     console.log('🔥 getTradingCalendar appelé pour channel:', selectedChannel.id);
     console.log('🔥 personalTrades dans calendrier:', personalTrades.length);
     const isJournalPerso = selectedChannel.id === 'journal' || selectedChannel.id === 'trading-journal';
+    const isMobile = window.innerWidth < 768;
     return (
-    <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: isJournalPerso ? '80px' : '0px', marginTop: isJournalPerso ? '0px' : '-9px' }}>
+    <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: (isMobile && isJournalPerso) ? '80px' : '0px', marginTop: (isMobile && !isJournalPerso) ? '-9px' : '0px' }}>
       {/* Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 border-b border-gray-600 pb-4 gap-4 md:gap-0">
+      <div className={`flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 pb-4 gap-4 md:gap-0 ${isMobile && !isJournalPerso ? '' : 'border-b border-gray-600'}`}>
         <div className="hidden md:block">
           <h1 className="text-2xl font-bold text-white">
             {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'Mon Journal Perso' : 'Journal des Signaux'}
