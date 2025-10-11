@@ -1177,26 +1177,6 @@ export default function TradingPlatformShell() {
     return parseFloat(cleanStr) || 0;
   };
 
-  // Fonction pour récupérer TOUS les signaux depuis Firebase (indépendant du fil)
-  const [allSignalsForStats, setAllSignalsForStats] = useState<Array<{
-    id: string;
-    type: string;
-    symbol: string;
-    timeframe: string;
-    entry: string;
-    takeProfit: string;
-    stopLoss: string;
-    description: string;
-    image: any;
-    timestamp: string;
-    originalTimestamp: number;
-    status: 'ACTIVE' | 'WIN' | 'LOSS' | 'BE';
-    channel_id: string;
-    reactions?: string[];
-    pnl?: string;
-    closeMessage?: string;
-  }>>([]);
-
   // Charger TOUS les signaux pour les statistiques et le calendrier
   useEffect(() => {
     const loadAllSignalsForStats = async () => {
