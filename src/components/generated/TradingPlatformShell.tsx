@@ -27,10 +27,13 @@ export default function TradingPlatformShell() {
   
   // Définition des channels
   const channels = [
+    { id: 'fondamentaux', name: 'fondamentaux', emoji: '📚', fullName: 'Fondamentaux' },
+    { id: 'letsgooo-model', name: 'letsgooo-model', emoji: '🚀', fullName: 'Letsgooo-model' },
     { id: 'general-chat-2', name: 'general-chat-2', emoji: '📈', fullName: 'Indices' },
     { id: 'general-chat-3', name: 'general-chat-3', emoji: '🪙', fullName: 'Crypto' },
     { id: 'general-chat-4', name: 'general-chat-4', emoji: '💱', fullName: 'Forex' },
-    { id: 'chatzone', name: 'chatzone', emoji: '💬', fullName: 'ChatZone' }
+    { id: 'chatzone', name: 'chatzone', emoji: '💬', fullName: 'ChatZone' },
+    { id: 'video', name: 'video', emoji: '📺', fullName: 'Livestream' }
   ];
   
   // Charger les réactions depuis localStorage au montage du composant
@@ -397,7 +400,7 @@ export default function TradingPlatformShell() {
         const now = Date.now();
         const signalTime = new Date(updatedSignal.timestamp || updatedSignal.created_at).getTime();
         if (now - signalTime < 5000) {
-          notifySignalClosed(updatedSignal);
+        notifySignalClosed(updatedSignal);
         }
       }
     });
@@ -440,7 +443,7 @@ export default function TradingPlatformShell() {
       const now = Date.now();
       const signalTime = new Date(newSignal.timestamp || newSignal.created_at).getTime();
       if (now - signalTime < 10000) {
-        notifyNewSignal(formattedSignal);
+      notifyNewSignal(formattedSignal);
       }
       
       // Scroll automatique (sauf pour calendrier et journal perso)
@@ -480,12 +483,12 @@ export default function TradingPlatformShell() {
           console.log('✅ Username sauvegardé en localStorage:', usernameInput.trim());
         } else {
           const { data, error } = await updateUserProfile(usernameInput.trim(), undefined, 'user');
-          if (!error && data) {
-            setCurrentUsername(usernameInput.trim());
-            setSupabaseProfile(prev => prev ? { ...prev, name: usernameInput.trim() } : prev);
-            console.log('✅ Username updated successfully in Supabase:', usernameInput.trim());
-          } else {
-            console.error('❌ Error updating username in Supabase:', error);
+        if (!error && data) {
+          setCurrentUsername(usernameInput.trim());
+          setSupabaseProfile(prev => prev ? { ...prev, name: usernameInput.trim() } : prev);
+          console.log('✅ Username updated successfully in Supabase:', usernameInput.trim());
+        } else {
+          console.error('❌ Error updating username in Supabase:', error);
             // Mode dégradé : sauvegarder en localStorage avec ID utilisateur
             localStorage.setItem(`userUsername_${user.id}`, usernameInput.trim());
             setCurrentUsername(usernameInput.trim());
@@ -588,7 +591,7 @@ export default function TradingPlatformShell() {
             setCurrentUsername(localUsername);
             console.log('✅ Username chargé depuis localStorage (fallback):', localUsername);
           } else {
-            setCurrentUsername(user.email || 'Utilisateur');
+          setCurrentUsername(user.email || 'Utilisateur');
             console.log('✅ Username défini depuis email (fallback):', user.email);
           }
         }
@@ -2118,12 +2121,12 @@ export default function TradingPlatformShell() {
       console.log('✅ Données extraites:', extracted);
       
       // Update form data with extracted values
-      if (extracted.symbol) setTradeData(prev => ({ ...prev, symbol: extracted.symbol }));
+    if (extracted.symbol) setTradeData(prev => ({ ...prev, symbol: extracted.symbol }));
       if (extracted.tradeType) setTradeData(prev => ({ ...prev, type: extracted.tradeType }));
       if (extracted.outcome) setTradeData(prev => ({ ...prev, status: extracted.outcome }));
-      if (extracted.entryPrice) setTradeData(prev => ({ ...prev, entry: extracted.entryPrice }));
-      if (extracted.exitPrice) setTradeData(prev => ({ ...prev, exit: extracted.exitPrice }));
-      if (extracted.stopLoss) setTradeData(prev => ({ ...prev, stopLoss: extracted.stopLoss }));
+    if (extracted.entryPrice) setTradeData(prev => ({ ...prev, entry: extracted.entryPrice }));
+    if (extracted.exitPrice) setTradeData(prev => ({ ...prev, exit: extracted.exitPrice }));
+    if (extracted.stopLoss) setTradeData(prev => ({ ...prev, stopLoss: extracted.stopLoss }));
       if (extracted.pnl) setTradeData(prev => ({ ...prev, pnl: extracted.pnl }));
       
       // Add extracted info to notes
@@ -2935,8 +2938,8 @@ export default function TradingPlatformShell() {
                   ) : (
                     currentUsername || 'Utilisateur'
                   )}</p>
-                  <p className="text-xs text-gray-400">En ligne</p>
-                </div>
+              <p className="text-xs text-gray-400">En ligne</p>
+            </div>
                 {!isEditingUsername && (
                   <button
                     onClick={() => {
@@ -3404,7 +3407,7 @@ export default function TradingPlatformShell() {
                         <iframe
                           src="https://tote-livestream-033.app.100ms.live/streaming/meeting/hzs-ukns-nts"
                           width="100%"
-                          height="1700px"
+                          height="500px"
                           style={{ border: 'none', borderRadius: '8px' }}
                           allow="camera; microphone; display-capture; fullscreen"
                           allowFullScreen
@@ -4642,11 +4645,11 @@ export default function TradingPlatformShell() {
                               <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs overflow-hidden">
                                 {message.author_avatar ? (
                                   <img src={message.author_avatar} alt="Profile" className="w-full h-full object-cover" />
-                              ) : message.author === 'Admin' ? (
-                                'A'
+                                ) : message.author === 'Admin' ? (
+                                  'A'
                               ) : message.author === currentUsername ? (
                                 currentUsername.charAt(0).toUpperCase()
-                              ) : (
+                                ) : (
                                 'U'
                                 )}
                               </div>
@@ -4892,7 +4895,7 @@ export default function TradingPlatformShell() {
                             {message.author_avatar ? (
                               <img src={message.author_avatar} alt="Profile" className="w-full h-full object-cover" />
                             ) : message.author === 'Admin' ? (
-                                'A'
+                              'A'
                             ) : message.author === currentUsername ? (
                                 currentUsername.charAt(0).toUpperCase()
                             ) : (
