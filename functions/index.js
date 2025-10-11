@@ -43,24 +43,29 @@ exports.sendNotification = onCall(async (request) => {
     const messaging = getMessaging();
     
     // Préparer le message de notification
+    // IMPORTANT: tous les champs dans "data" doivent être des strings
+    const notificationTitle = `Signal Trade`;
+    const notificationBody = `${signal.type} ${signal.symbol} - Entrée: ${signal.entry} | TP: ${signal.takeProfit} | SL: ${signal.stopLoss}`;
+    
     const message = {
       notification: {
-        title: `Signal Trade`,
-        body: `${signal.type} ${signal.symbol} - Entrée: ${signal.entry} | TP: ${signal.takeProfit} | SL: ${signal.stopLoss}`,
+        title: notificationTitle,
+        body: notificationBody,
       },
       data: {
-        signalId: signal.id,
-        channelId: signal.channel_id,
+        signalId: String(signal.id || ''),
+        channelId: String(signal.channel_id || ''),
         type: 'new_signal',
-        symbol: signal.symbol,
-        signalType: signal.type
+        symbol: String(signal.symbol || ''),
+        signalType: String(signal.type || '')
       },
       tokens: tokens, // Array de tokens FCM
       android: {
         priority: 'high',
         notification: {
           sound: 'default',
-          priority: 'high'
+          priority: 'high',
+          channelId: 'signals'
         }
       },
       apns: {
@@ -69,6 +74,14 @@ exports.sendNotification = onCall(async (request) => {
             sound: 'default',
             badge: 1
           }
+        }
+      },
+      webpush: {
+        notification: {
+          title: notificationTitle,
+          body: notificationBody,
+          icon: '/logo.png',
+          badge: '/logo.png'
         }
       }
     };

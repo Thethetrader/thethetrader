@@ -1,7 +1,7 @@
 // Service Worker pour TheTheTrader PWA
 // Gère les notifications push en arrière-plan
 
-const CACHE_NAME = 'thethetrader-v5-fix-notifications';
+const CACHE_NAME = 'thethetrader-v6-firebase-notifications';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -66,55 +66,23 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('push', (event) => {
   console.log('📱 Notification push reçue:', event);
   
-  let title = 'TheTheTrader';
-  let body = 'Nouvelle notification';
-  let notificationData = {};
+  // Par défaut, ne pas afficher de notification car Firebase le fait automatiquement
+  // quand il y a un champ "notification" dans le message
+  if (!event.data) {
+    console.log('📱 Pas de données, Firebase gère la notification');
+    return;
+  }
   
-  if (event.data) {
-    try {
-      const data = event.data.json();
-      console.log('📱 Données notification:', data);
-      
-      // Firebase envoie soit un objet avec un champ "notification", soit directement les données
-      if (data.notification) {
-        // Structure Firebase avec notification
-        title = data.notification.title || title;
-        body = data.notification.body || body;
-        notificationData = data.data || {};
-      } else {
-        // Structure directe
-        title = data.title || title;
-        body = data.body || body;
-        notificationData = data.data || {};
-      }
-    } catch (error) {
-      console.error('❌ Erreur parsing notification:', error);
-    }
+  try {
+    const payload = event.data.json();
+    console.log('📱 Payload reçu:', payload);
     
-    const options = {
-      body: body,
-      icon: '/logo.png',
-      badge: '/logo.png',
-      tag: 'thethetrader-notification',
-      data: notificationData,
-      requireInteraction: true,
-      actions: [
-        {
-          action: 'view',
-          title: 'Voir',
-          icon: '/logo.png'
-        },
-        {
-          action: 'close',
-          title: 'Fermer',
-          icon: '/logo.png'
-        }
-      ]
-    };
+    // Ne rien faire ici - Firebase affiche automatiquement les notifications
+    // qui ont un champ "notification" dans le message
+    // Le service worker ne doit gérer que les notifications sans UI (data-only)
     
-    event.waitUntil(
-      self.registration.showNotification(title, options)
-    );
+  } catch (error) {
+    console.error('❌ Erreur parsing notification:', error);
   }
 });
 

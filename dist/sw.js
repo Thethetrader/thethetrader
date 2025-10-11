@@ -1,4 +1,4 @@
-const CACHE_NAME = 'thethetrader-v5-fix-notifications';
+const CACHE_NAME = 'thethetrader-v6-firebase-notifications';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -26,58 +26,21 @@ self.addEventListener('fetch', (event) => {
 
 // Gestion des notifications push
 self.addEventListener('push', (event) => {
-  let notificationData;
-  let title = 'TheTheTrader - Nouveau Signal';
-  let body = 'Nouveau signal disponible !';
+  console.log('📱 SW: Notification push reçue:', event);
   
-  // Parser les données de la notification
+  // Firebase gère automatiquement les notifications qui ont un champ "notification"
+  // Le service worker ne doit rien faire - Firebase affichera la notification
+  // avec le bon format défini dans la Firebase Function
+  
   if (event.data) {
     try {
-      notificationData = event.data.json();
-      console.log('📱 SW: Données notification reçues:', notificationData);
-      
-      // Si Firebase envoie une notification avec le champ notification
-      if (notificationData.notification) {
-        title = notificationData.notification.title || title;
-        body = notificationData.notification.body || body;
-      }
-      // Sinon utiliser les données directement
-      else if (notificationData.data) {
-        const data = notificationData.data;
-        body = `${data.signalType || ''} ${data.symbol || ''} - Nouveau signal`;
-      }
+      const payload = event.data.json();
+      console.log('📱 SW: Payload reçu:', payload);
+      // Ne rien afficher - Firebase le fait automatiquement
     } catch (error) {
       console.error('❌ SW: Erreur parsing notification:', error);
-      body = event.data.text();
     }
   }
-  
-  const options = {
-    body: body,
-    icon: '/favicon.png',
-    badge: '/favicon.png',
-    vibrate: [100, 50, 100],
-    data: notificationData?.data || {
-      dateOfArrival: Date.now(),
-      primaryKey: 1
-    },
-    actions: [
-      {
-        action: 'explore',
-        title: 'Voir le signal',
-        icon: '/favicon.png'
-      },
-      {
-        action: 'close',
-        title: 'Fermer',
-        icon: '/favicon.png'
-      }
-    ]
-  };
-
-  event.waitUntil(
-    self.registration.showNotification(title, options)
-  );
 });
 
 // Gestion des clics sur les notifications
