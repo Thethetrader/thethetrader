@@ -2448,18 +2448,17 @@ export default function AdminInterface() {
         s.id === signalId ? { ...s, ...updatedSignal } : s
       ));
       
-      // Sauvegarder dans Firebase avec l'image de fermeture
-      const firebaseSuccess = await updateSignalStatus(signalId, newStatus, pnl, closureImageBase64);
-      console.log('🔄 [ADMIN] Firebase mise à jour:', firebaseSuccess ? 'SUCCÈS' : 'ÉCHEC');
-      
-      // Sauvegarder le message de fermeture et l'image dans Firebase
+      // Sauvegarder tout dans Firebase en une seule fois
       const signalRef = ref(database, `signals/${signalId}`);
       await update(signalRef, { 
+        status: newStatus,
+        pnl,
         closeMessage,
-        closure_image: closureImageBase64,
-        closure_image_type: conclusionImage ? conclusionImage.type : undefined,
-        closure_image_name: conclusionImage ? conclusionImage.name : undefined
+        closure_image: closureImageBase64 || null,
+        closure_image_type: conclusionImage ? conclusionImage.type : null,
+        closure_image_name: conclusionImage ? conclusionImage.name : null
       });
+      console.log('🔄 [ADMIN] Firebase mise à jour complète avec image de fermeture:', !!closureImageBase64);
       
       // Envoyer une notification pour le signal fermé
       notifySignalClosed({ ...updatedSignal, channel_id: 'general-chat-2' });
