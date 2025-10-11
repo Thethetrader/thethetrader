@@ -5530,15 +5530,18 @@ export default function TradingPlatformShell() {
                     const signals = selectedChannel.id === 'trading-journal' ? 
                       getTradesForDate(selectedSignalsDate) : 
                       getSignalsForDate(selectedSignalsDate);
-                    console.log('🔍 [POPUP] Données reçues dans le popup:', signals);
+                    console.log('🔍 [POPUP USER] Données reçues dans le popup:', signals);
                     signals.forEach(signal => {
-                      console.log('🔍 [POPUP] Signal individuel COMPLET:', {
+                      console.log('🔍 [POPUP USER] Signal individuel COMPLET:', {
                         id: signal.id,
                         symbol: signal.symbol,
                         image: signal.image,
                         attachment_data: signal.attachment_data,
                         attachment_type: signal.attachment_type,
                         attachment_name: signal.attachment_name,
+                        closure_image: signal.closure_image,
+                        closure_image_type: signal.closure_image_type,
+                        closure_image_name: signal.closure_image_name,
                         status: signal.status,
                         timestamp: signal.timestamp,
                         ALL_KEYS: Object.keys(signal)
