@@ -2468,8 +2468,51 @@ export default function AdminInterface() {
       await update(signalRef, updateData);
       console.log('✅ [CLOSURE] Firebase mise à jour complète');
       
-      // Envoyer une notification pour le signal fermé
+      // Envoyer une notification locale pour le signal fermé
       notifySignalClosed({ ...updatedSignal, channel_id: 'general-chat-2' });
+      
+      // Envoyer une notification push via Firebase Function
+      try {
+        const functions = getFunctions();
+        const sendClosureNotification = httpsCallable(functions, 'sendClosureNotification');
+        
+        // Récupérer tous les tokens FCM depuis Firebase Database
+        const tokens = [];
+        try {
+          const fcmTokensRef = ref(database, 'fcm_tokens');
+          const snapshot = await get(fcmTokensRef);
+          if (snapshot.exists()) {
+            const tokensData = snapshot.val();
+            Object.values(tokensData).forEach((tokenData: any) => {
+              if (tokenData.token) {
+                tokens.push(tokenData.token);
+              }
+            });
+            console.log('📱 Tokens FCM récupérés pour notification clôture:', tokens.length);
+          }
+        } catch (error) {
+          console.error('❌ Erreur récupération tokens FCM:', error);
+        }
+        
+        if (tokens.length > 0) {
+          console.log('📱 Envoi notification push clôture via Firebase Function...');
+          const signalForNotification = signals.find(s => s.id === signalId);
+          const result = await sendClosureNotification({
+            signal: {
+              ...signalForNotification,
+              status: newStatus,
+              pnl: pnl,
+              channel_id: 'general-chat-2'
+            },
+            tokens: tokens
+          });
+          console.log('✅ Notification push clôture envoyée:', result.data);
+        } else {
+          console.log('⚠️ Aucun token FCM trouvé pour notification clôture');
+        }
+      } catch (error) {
+        console.error('❌ Erreur envoi notification push clôture:', error);
+      }
       
       // Envoyer un message de conclusion dans le chat
       console.log('🔍 Debug updatedSignal:', updatedSignal);

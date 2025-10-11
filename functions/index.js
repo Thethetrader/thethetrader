@@ -127,3 +127,102 @@ exports.sendNotification = onCall(async (request) => {
     throw new Error(`Erreur envoi notification: ${error.message}`);
   }
 });
+
+// Fonction pour envoyer des notifications de clôture de signal
+exports.sendClosureNotification = onCall(async (request) => {
+  try {
+    const { signal, tokens } = request.data;
+    
+    if (!signal || !tokens || !Array.isArray(tokens)) {
+      throw new Error("Données manquantes: signal et tokens requis");
+    }
+
+    const messaging = getMessaging();
+    
+    // Préparer le message de notification pour la clôture
+    const statusEmoji = signal.status === 'WIN' ? '🟢' : signal.status === 'LOSS' ? '🔴' : '🔵';
+    const statusText = signal.status === 'WIN' ? 'GAGNANT' : signal.status === 'LOSS' ? 'PERDANT' : 'BREAK-EVEN';
+    const notificationTitle = `Signal Clôturé - ${statusText}`;
+    const notificationBody = `${signal.symbol} - ${signal.status !== 'BE' && signal.pnl ? `P&L: ${signal.pnl}` : 'Break-Even'}`;
+    
+    const message = {
+      notification: {
+        title: notificationTitle,
+        body: notificationBody,
+      },
+      data: {
+        signalId: String(signal.id || ''),
+        channelId: String(signal.channel_id || ''),
+        type: 'signal_closed',
+        symbol: String(signal.symbol || ''),
+        status: String(signal.status || ''),
+        pnl: String(signal.pnl || '')
+      },
+      tokens: tokens,
+      android: {
+        priority: 'high',
+        notification: {
+          sound: 'default',
+          priority: 'high',
+          channelId: 'signals'
+        }
+      },
+      apns: {
+        payload: {
+          aps: {
+            sound: 'default',
+            badge: 1
+          }
+        }
+      },
+      webpush: {
+        notification: {
+          title: notificationTitle,
+          body: notificationBody,
+          icon: '/logo.png',
+          badge: '/logo.png'
+        }
+      }
+    };
+
+    // Envoyer les notifications une par une
+    const responses = [];
+    let successCount = 0;
+    let failureCount = 0;
+    
+    for (const token of tokens) {
+      try {
+        const singleMessage = {
+          notification: message.notification,
+          data: message.data,
+          token: token,
+          android: message.android,
+          apns: message.apns,
+          webpush: message.webpush
+        };
+        
+        const response = await messaging.send(singleMessage);
+        responses.push({ success: true, messageId: response });
+        successCount++;
+        
+      } catch (error) {
+        logger.error(`Erreur envoi notification clôture pour token ${token}:`, error);
+        responses.push({ success: false, error: error.message });
+        failureCount++;
+      }
+    }
+    
+    logger.info(`Notification clôture envoyée: ${successCount} succès, ${failureCount} échecs`);
+    
+    return {
+      success: true,
+      successCount,
+      failureCount,
+      responses
+    };
+    
+  } catch (error) {
+    logger.error("Erreur envoi notification clôture:", error);
+    throw new Error(`Erreur envoi notification clôture: ${error.message}`);
+  }
+});
