@@ -5785,9 +5785,9 @@ export default function AdminInterface() {
                     {(signal.attachment_data || signal.closure_image) && (
                       <div className="mb-3">
                         <span className="text-sm text-gray-400">Images du signal:</span>
-                        <div className="mt-2 space-y-3">
+                        <div className="mt-2 space-y-3 flex flex-col items-center">
                           {signal.attachment_data && (
-                            <div>
+                            <div className="flex flex-col items-center">
                               <span className="text-xs text-gray-500">📸 Image de création:</span>
                               <div className="mt-1">
                                 <img 
@@ -5800,7 +5800,7 @@ export default function AdminInterface() {
                             </div>
                           )}
                           {signal.closure_image && (
-                            <div>
+                            <div className="flex flex-col items-center">
                               <span className="text-xs text-gray-500">📸 Image de fermeture:</span>
                               <div className="mt-1">
                                 <img 
