@@ -4494,15 +4494,34 @@ export default function AdminInterface() {
                 ) : selectedChannel.id === 'trading-hub' ? (
                   <div className="flex flex-col h-full bg-gray-900">
                     {/* Trading Hub - RumbleTalk */}
-                    <div className="flex-1 flex flex-col p-4">
+                    <div className="flex-1 flex flex-col p-4 pt-16">
                       <div className="text-center mb-4">
                         <h1 className="text-3xl font-bold text-white mb-2">💬 Trading Hub</h1>
                         <p className="text-gray-400">Discute avec la communauté en temps réel</p>
                       </div>
                       
-                      {/* RumbleTalk Chat */}
+                      {/* RumbleTalk Chat - HTML inline */}
                       <div className="flex-1 flex items-center justify-center">
-                        <RumbleTalk />
+                        <div style={{ height: '700px', width: '100%', maxWidth: '1200px' }}>
+                          <div id="rt-557e982f6b67541655c3270785d365db-admin"></div>
+                          {typeof window !== 'undefined' && (
+                            <script
+                              dangerouslySetInnerHTML={{
+                                __html: `
+                                  (function() {
+                                    if (!document.getElementById('rumbletalk-script-admin')) {
+                                      var script = document.createElement('script');
+                                      script.id = 'rumbletalk-script-admin';
+                                      script.src = 'https://rumbletalk.com/client/?!1V9roB:';
+                                      script.async = true;
+                                      document.body.appendChild(script);
+                                    }
+                                  })();
+                                `
+                              }}
+                            />
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
