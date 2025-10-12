@@ -4144,7 +4144,7 @@ export default function TradingPlatformShell() {
                             }
                           }
                           
-                          const showDateSeparator = index > 0 && currentMessageDate !== previousMessageDate;
+                          const showDateSeparator = index > 0 && previousMessageDate && currentMessageDate !== previousMessageDate;
                           
                           // Formater la date pour l'affichage
                           const today = new Date();
@@ -5033,7 +5033,7 @@ export default function TradingPlatformShell() {
                           }
                         }
                         
-                        const showDateSeparator = index > 0 && currentMessageDate !== previousMessageDate;
+                        const showDateSeparator = index > 0 && previousMessageDate && currentMessageDate !== previousMessageDate;
                         
                         // Formater la date pour l'affichage
                         const today = new Date();
