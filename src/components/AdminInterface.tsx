@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ProfitLoss from './ProfitLoss';
 import ChatZone from './ChatZone';
 import RumbleTalk from './RumbleTalk';
+import ChatCommunauteAdmin from './ChatCommunauteAdmin';
 import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, addPersonalTrade, getPersonalTrades, PersonalTrade, syncUserId, listenToPersonalTrades } from '../utils/firebase-setup';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, sendLocalNotification } from '../utils/push-notifications';
 import { ref, update, onValue, get, remove } from 'firebase/database';
@@ -4492,23 +4493,7 @@ export default function AdminInterface() {
                     </div>
                   </div>
                 ) : selectedChannel.id === 'chat-communaute' ? (
-                  <div className="flex flex-col h-full bg-gray-900">
-                    {/* Chat Communauté - RumbleTalk */}
-                    <div className="flex-1 flex flex-col p-4 pt-16">
-                      <div className="text-center mb-4">
-                        <h1 className="text-3xl font-bold text-white mb-2">💬 Chat Communauté</h1>
-                        <p className="text-gray-400">Discute avec la communauté en temps réel</p>
-                      </div>
-                      
-                      {/* RumbleTalk Chat - Code collé directement */}
-                      <div className="flex-1 flex items-center justify-center">
-                        <div style={{ height: '700px', width: '100%', maxWidth: '1200px' }}>
-                          <div id="rt-557e982f6b67541655c3270785d365db"></div>
-                          <script src="https://rumbletalk.com/client/?!1V9roB:"></script>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <ChatCommunauteAdmin />
                 ) : selectedChannel.id === 'livestream' ? (
                   <div className="flex flex-col h-full bg-gray-900">
                     {/* Interface Livestream Desktop */}
