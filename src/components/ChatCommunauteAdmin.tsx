@@ -7,63 +7,71 @@ const ChatCommunauteAdmin: React.FC = () => {
   useEffect(() => {
     console.log('🚀 ChatCommunauteAdmin monté');
     
-    // Vérifier si le script existe déjà
-    const existingScript = document.getElementById('rumbletalk-script-admin');
+    // Vérifier si le script Tawk.to existe déjà
+    const existingScript = document.getElementById('tawkto-script-admin');
     if (existingScript) {
-      console.log('⚠️ Script RumbleTalk déjà présent, suppression...');
+      console.log('⚠️ Script Tawk.to déjà présent, suppression...');
       existingScript.remove();
     }
 
-    // Vérifier si le container existe
-    const container = document.getElementById('rt-557e982f6b67541655c3270785d365db');
-    console.log('📦 Container RumbleTalk:', container);
+    console.log('🔄 Chargement du script Tawk.to...');
 
-    console.log('🔄 Création du script RumbleTalk...');
+    // Initialiser Tawk_API
+    (window as any).Tawk_API = (window as any).Tawk_API || {};
+    (window as any).Tawk_LoadStart = new Date();
 
-    // Créer et ajouter le script RumbleTalk
+    // Créer et ajouter le script Tawk.to
     const script = document.createElement('script');
-    script.src = 'https://rumbletalk.com/client/?!1V9roB:';
     script.async = true;
-    script.id = 'rumbletalk-script-admin';
+    script.src = 'https://embed.tawk.to/68caaf2acf5de4191f5b9749/1j5brog6o';
+    script.charset = 'UTF-8';
+    script.setAttribute('crossorigin', '*');
+    script.id = 'tawkto-script-admin';
     
     script.onload = () => {
-      console.log('✅ Script RumbleTalk chargé avec succès');
+      console.log('✅ Script Tawk.to chargé avec succès');
       scriptLoadedRef.current = true;
     };
     
     script.onerror = (error) => {
-      console.error('❌ Erreur chargement script RumbleTalk:', error);
+      console.error('❌ Erreur chargement script Tawk.to:', error);
     };
     
-    console.log('📝 Ajout du script au head...');
-    // Ajouter le script au head au lieu du body
+    console.log('📝 Ajout du script Tawk.to...');
     document.head.appendChild(script);
     
     // Cleanup function
     return () => {
-      console.log('🧹 Nettoyage du script RumbleTalk...');
-      const scriptElement = document.getElementById('rumbletalk-script-admin');
+      console.log('🧹 Nettoyage du script Tawk.to...');
+      const scriptElement = document.getElementById('tawkto-script-admin');
       if (scriptElement && scriptElement.parentNode) {
         scriptElement.parentNode.removeChild(scriptElement);
         scriptLoadedRef.current = false;
-        console.log('✅ Script RumbleTalk retiré');
+        console.log('✅ Script Tawk.to retiré');
+      }
+      
+      // Nettoyer aussi Tawk_API
+      if ((window as any).Tawk_API) {
+        delete (window as any).Tawk_API;
       }
     };
   }, []);
 
   return (
     <div className="flex flex-col h-full bg-gray-900">
-      {/* Chat Communauté - RumbleTalk */}
+      {/* Chat Communauté - Tawk.to */}
       <div className="flex-1 flex flex-col p-4 pt-16">
         <div className="text-center mb-4">
           <h1 className="text-3xl font-bold text-white mb-2">💬 Chat Communauté</h1>
-          <p className="text-gray-400">Discute avec la communauté en temps réel</p>
+          <p className="text-gray-400">Discute avec la communauté en temps réel via Tawk.to</p>
+          <p className="text-gray-500 text-sm mt-2">Le widget de chat apparaîtra en bas à droite de l'écran</p>
         </div>
         
-        {/* Container pour RumbleTalk */}
+        {/* Le widget Tawk.to s'affichera automatiquement en bas à droite */}
         <div className="flex-1 flex items-center justify-center">
-          <div style={{ height: '700px', width: '100%', maxWidth: '1200px' }}>
-            <div id="rt-557e982f6b67541655c3270785d365db" ref={containerRef}></div>
+          <div className="text-gray-400 text-center">
+            <p className="text-xl mb-2">🎯 Widget de chat actif</p>
+            <p>Le chat Tawk.to est disponible en bas à droite de votre écran</p>
           </div>
         </div>
       </div>
