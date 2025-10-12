@@ -12,7 +12,6 @@ import { supabase } from './lib/supabase';
 
 import { useNotifications } from './hooks/use-notifications';
 import { usePWA } from './hooks/use-pwa';
-import { initializeNotifications } from './utils/push-notifications';
 
 // FORCE DEPLOYMENT: 2025-01-13 04:25:00 - FIX OLD CONTENT
 
@@ -68,17 +67,6 @@ const App = () => {
     };
   }, []);
 
-
-
-  // Initialiser les notifications push (séparé de l'auth)
-  useEffect(() => {
-    console.log('🚀 Initialisation notifications push...');
-    initializeNotifications().then(() => {
-      console.log('✅ Notifications push initialisées');
-    }).catch((error) => {
-      console.error('❌ Erreur initialisation notifications:', error);
-    });
-  }, []);
 
   // Changer manifeste selon la page
   useEffect(() => {
