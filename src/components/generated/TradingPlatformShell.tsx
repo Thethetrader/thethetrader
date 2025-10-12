@@ -260,34 +260,16 @@ export default function TradingPlatformShell() {
     closeMessage?: string;
   }>>([]);
 
-  // État pour garder tous les messages disponibles
-  const [allAvailableMessages, setAllAvailableMessages] = useState<{[channelId: string]: any[]}>({});
-  const [displayLimit, setDisplayLimit] = useState<{[channelId: string]: number}>({});
 
   // Fonction pour charger les messages depuis Firebase
-  const loadMessages = async (channelId: string, keepPosition: boolean = false, forceLimit?: number) => {
+  const loadMessages = async (channelId: string, keepPosition: boolean = false) => {
     try {
       // Charger TOUS les messages (999999 = illimité)
       const messages = await getMessages(channelId, 999999);
       const isChatChannel = ['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video'].includes(channelId);
       
-      // Stocker tous les messages disponibles
-      setAllAvailableMessages(prev => ({
-        ...prev,
-        [channelId]: messages
-      }));
-      
-      // Initialiser la limite d'affichage si elle n'existe pas
-      if (!displayLimit[channelId]) {
-        setDisplayLimit(prev => ({
-          ...prev,
-          [channelId]: 20
-        }));
-      }
-      
-      // Limiter les messages affichés selon la limite actuelle
-      const currentLimit = forceLimit || displayLimit[channelId] || 20;
-      const limitedMessages = isChatChannel ? messages.slice(-currentLimit) : messages.reverse();
+      // Afficher TOUS les messages directement sans limite
+      const limitedMessages = isChatChannel ? messages : messages.reverse();
       
       const formattedMessages = limitedMessages.map(msg => ({
         id: msg.id || '',
@@ -330,18 +312,6 @@ export default function TradingPlatformShell() {
     }
   };
 
-  // Fonction pour charger plus de messages
-  const loadMoreMessages = (channelId: string) => {
-    const newLimit = (displayLimit[channelId] || 20) + 20;
-    console.log(`📈 Chargement de plus de messages pour ${channelId}, nouvelle limite:`, newLimit);
-    setDisplayLimit(prev => ({
-      ...prev,
-      [channelId]: newLimit
-    }));
-    // Passer la nouvelle limite directement pour éviter les problèmes de timing
-    loadMessages(channelId, true, newLimit);
-  };
-  
   // Charger les réactions des messages depuis Firebase et s'abonner aux changements
   useEffect(() => {
     const loadAndSubscribeToReactions = async () => {
@@ -4211,18 +4181,6 @@ export default function TradingPlatformShell() {
                         </div>
                       )}
                       
-                      {/* Bouton Charger plus pour les salons de chat (mode desktop/paysage uniquement) */}
-                      {['general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video'].includes(selectedChannel.id) && 
-                       (allAvailableMessages[selectedChannel.id]?.length || 0) > (messages[selectedChannel.id]?.length || 0) && (
-                        <div className="flex justify-center pt-2 sticky top-0 bg-gray-900/95 backdrop-blur-sm p-3 rounded-lg z-10 mb-4 shadow-lg">
-                          <button
-                            onClick={() => loadMoreMessages(selectedChannel.id)}
-                            className="px-4 py-2 text-sm rounded-md bg-gray-600 hover:bg-gray-500 text-gray-200 font-normal transition-colors"
-                          >
-                            ⬆️ Charger plus ({(allAvailableMessages[selectedChannel.id]?.length || 0) - (messages[selectedChannel.id]?.length || 0)} de plus)
-                          </button>
-                        </div>
-                      )}
                       
                       {(messages[selectedChannel.id] || []).length > 0 && 
                         (messages[selectedChannel.id] || []).map((message, index) => {
@@ -5092,18 +5050,6 @@ export default function TradingPlatformShell() {
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}
                   <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
-                    {/* Bouton Charger plus pour les salons de chat (seulement en mode vertical) */}
-                    {['general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video'].includes(selectedChannel.id) && 
-                     (allAvailableMessages[selectedChannel.id]?.length || 0) > (messages[selectedChannel.id]?.length || 0) && (
-                      <div className="flex justify-center pt-2 sticky top-0 bg-gray-900/95 backdrop-blur-sm p-3 rounded-lg z-10 shadow-lg">
-                        <button
-                          onClick={() => loadMoreMessages(selectedChannel.id)}
-                          className="px-4 py-2 text-sm rounded-md bg-gray-600 hover:bg-gray-500 text-gray-200 font-normal transition-colors"
-                        >
-                          ⬆️ Charger plus ({(allAvailableMessages[selectedChannel.id]?.length || 0) - (messages[selectedChannel.id]?.length || 0)} de plus)
-                        </button>
-                      </div>
-                    )}
                     {(messages[selectedChannel.id] || []).length > 0 && 
                       (messages[selectedChannel.id] || []).map((message, index) => {
                         // Vérifier si c'est un nouveau jour par rapport au message précédent
