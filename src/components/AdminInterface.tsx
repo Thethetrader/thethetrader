@@ -4500,28 +4500,9 @@ export default function AdminInterface() {
                         <p className="text-gray-400">Discute avec la communauté en temps réel</p>
                       </div>
                       
-                      {/* RumbleTalk Chat - HTML inline */}
+                      {/* RumbleTalk Chat */}
                       <div className="flex-1 flex items-center justify-center">
-                        <div style={{ height: '700px', width: '100%', maxWidth: '1200px' }}>
-                          <div id="rt-557e982f6b67541655c3270785d365db-admin"></div>
-                          {typeof window !== 'undefined' && (
-                            <script
-                              dangerouslySetInnerHTML={{
-                                __html: `
-                                  (function() {
-                                    if (!document.getElementById('rumbletalk-script-admin')) {
-                                      var script = document.createElement('script');
-                                      script.id = 'rumbletalk-script-admin';
-                                      script.src = 'https://rumbletalk.com/client/?!1V9roB:';
-                                      script.async = true;
-                                      document.body.appendChild(script);
-                                    }
-                                  })();
-                                `
-                              }}
-                            />
-                          )}
-                        </div>
+                        <RumbleTalk />
                       </div>
                     </div>
                   </div>
