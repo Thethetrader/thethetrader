@@ -782,12 +782,6 @@ export default function TradingPlatformShell() {
     // Marquer le canal comme lu quand l'utilisateur l'ouvre
     updateLastReadTime(channelId);
     
-    // Réinitialiser la limite d'affichage des messages à 20
-    setDisplayLimit(prev => ({
-      ...prev,
-      [channelId]: 20
-    }));
-    
     // Réinitialiser selectedDate si on quitte le Trading Journal
     if (selectedChannel.id === 'trading-journal' && channelId !== 'trading-journal') {
       setSelectedDate(null);
