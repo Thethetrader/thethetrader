@@ -3453,6 +3453,7 @@ export default function AdminInterface() {
                   (window as any).setCurrentPage('livestream');
                 }
               }} className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📺 Livestream</button>
+              <button onClick={() => handleChannelChange('trading-hub', 'trading-hub')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-hub' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 Trading Hub</button>
             </div>
           </div>
 
