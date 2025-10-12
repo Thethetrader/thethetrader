@@ -77,12 +77,22 @@ export default function TradingPlatformShell() {
           localStorage.removeItem('notificationsDisabled');
           console.log('🔔 Notifications réactivées après connexion');
           
-          // Réinitialiser les notifications
-          initializeNotifications().then(() => {
-            console.log('✅ Notifications réinitialisées après connexion');
-          }).catch(error => {
-            console.error('❌ Erreur réinitialisation notifications:', error);
-          });
+          // Demander EXPLICITEMENT l'autorisation de notifications à chaque connexion
+          setTimeout(() => {
+            const confirmNotifications = window.confirm('Voulez-vous recevoir les notifications push pour les signaux de trading ?');
+            if (confirmNotifications) {
+              console.log('✅ Utilisateur a accepté les notifications');
+              initializeNotifications().then(() => {
+                console.log('✅ Notifications initialisées après acceptation');
+              }).catch(error => {
+                console.error('❌ Erreur initialisation notifications:', error);
+              });
+            } else {
+              console.log('❌ Utilisateur a refusé les notifications');
+              localStorage.setItem('notificationsDisabled', 'true');
+            }
+          }, 1000);
+        
           
           // Nettoyer les anciennes clés localStorage des autres utilisateurs
           Object.keys(localStorage).forEach(key => {
