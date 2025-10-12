@@ -1423,6 +1423,36 @@ export default function AdminInterface() {
     console.log('🚪 Déconnexion admin en cours...');
 
     try {
+      // Supprimer le token FCM de Firebase Database avant déconnexion
+      try {
+        console.log('🔔 Suppression du token FCM admin...');
+        const { getMessaging, deleteToken } = await import('firebase/messaging');
+        const { ref, remove } = await import('firebase/database');
+        const { database } = await import('../utils/firebase-setup');
+        
+        // Récupérer le token FCM actuel
+        const messaging = getMessaging();
+        const currentToken = await messaging.getToken();
+        
+        if (currentToken) {
+          console.log('🔔 Token FCM admin trouvé, suppression...');
+          
+          // Supprimer le token de Firebase Database
+          const tokenKey = currentToken.replace(/[.#$[\]]/g, '_');
+          const tokenRef = ref(database, `fcm_tokens/${tokenKey}`);
+          await remove(tokenRef);
+          console.log('✅ Token FCM admin supprimé de Firebase Database');
+          
+          // Supprimer le token du navigateur
+          await deleteToken(messaging);
+          console.log('✅ Token FCM admin supprimé du navigateur');
+        } else {
+          console.log('⚠️ Aucun token FCM admin trouvé');
+        }
+      } catch (error) {
+        console.error('❌ Erreur suppression token FCM admin:', error);
+      }
+
       // PRÉSERVER la photo de profil admin avant déconnexion
       const adminProfileImageBackup = localStorage.getItem('adminProfileImage');
       console.log('💾 ADMIN Sauvegarde photo avant déconnexion:', adminProfileImageBackup ? 'TROUVÉE' : 'PAS TROUVÉE');
