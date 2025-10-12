@@ -1,4 +1,4 @@
-// Service Worker pour TheTheTrader PWA
+// Service Worker pour Tradingpourlesnuls PWA
 // Gère les notifications push en arrière-plan
 
 const CACHE_NAME = 'thethetrader-v7-sw-manual-notifications';
@@ -66,7 +66,7 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('push', (event) => {
   console.log('📱 Notification push reçue:', event);
   
-  let title = 'TheTheTrader';
+  let title = 'Tradingpourlesnuls';
   let body = 'Nouveau signal';
   
   if (event.data) {

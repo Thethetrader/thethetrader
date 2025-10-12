@@ -28,7 +28,7 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('push', (event) => {
   console.log('📱 SW: Notification push reçue:', event);
   
-  let title = 'TheTheTrader';
+  let title = 'Tradingpourlesnuls';
   let body = 'Nouveau signal';
   
   if (event.data) {

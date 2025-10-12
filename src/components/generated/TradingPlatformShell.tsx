@@ -222,20 +222,42 @@ export default function TradingPlatformShell() {
     closeMessage?: string;
   }>>([]);
 
-  // Fonction pour charger les messages depuis Firebase (max 20)
-  const loadMessages = async (channelId: string) => {
+  // État pour garder tous les messages disponibles
+  const [allAvailableMessages, setAllAvailableMessages] = useState<{[channelId: string]: any[]}>({});
+  const [displayLimit, setDisplayLimit] = useState<{[channelId: string]: number}>({});
+
+  // Fonction pour charger les messages depuis Firebase
+  const loadMessages = async (channelId: string, keepPosition: boolean = false, forceLimit?: number) => {
     try {
       const messages = await getMessages(channelId);
-      // Limiter à 20 messages pour les salons de chat (plus récents en bas) et inverser l'ordre pour les autres
-      const limitedMessages = ['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video'].includes(channelId) ? messages.slice(-20) : messages.reverse();
+      const isChatChannel = ['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video'].includes(channelId);
+      
+      // Stocker tous les messages disponibles
+      setAllAvailableMessages(prev => ({
+        ...prev,
+        [channelId]: messages
+      }));
+      
+      // Initialiser la limite d'affichage si elle n'existe pas
+      if (!displayLimit[channelId]) {
+        setDisplayLimit(prev => ({
+          ...prev,
+          [channelId]: 20
+        }));
+      }
+      
+      // Limiter les messages affichés selon la limite actuelle
+      const currentLimit = forceLimit || displayLimit[channelId] || 20;
+      const limitedMessages = isChatChannel ? messages.slice(-currentLimit) : messages.reverse();
+      
       const formattedMessages = limitedMessages.map(msg => ({
         id: msg.id || '',
         text: msg.content,
         timestamp: new Date(msg.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         author: msg.author,
-        author_avatar: msg.author_avatar, // CONSERVER l'avatar de l'auteur !
+        author_avatar: msg.author_avatar,
         attachment: undefined,
-        attachment_data: msg.attachment_data // CONSERVER les photos !
+        attachment_data: msg.attachment_data
       }));
       
       setMessages(prev => ({
@@ -244,17 +266,17 @@ export default function TradingPlatformShell() {
           id: msg.id,
           text: msg.text,
           user: msg.author,
-          author: msg.author, // CONSERVER le nom de l'auteur !
-          author_avatar: msg.author_avatar, // CONSERVER l'avatar de l'auteur !
+          author: msg.author,
+          author_avatar: msg.author_avatar,
           timestamp: msg.timestamp,
-          attachment_data: msg.attachment_data // CONSERVER les photos !
+          attachment_data: msg.attachment_data
         }))
       }));
       
-      console.log(`✅ Messages chargés pour ${channelId}:`, formattedMessages.length);
+      console.log(`✅ Messages chargés pour ${channelId}:`, formattedMessages.length, '/', messages.length);
       
-      // Scroll vers le bas après chargement des messages (sauf pour calendrier et journal perso)
-      if (!['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux'].includes(channelId)) {
+      // Scroll vers le bas après chargement des messages (sauf si on garde la position)
+      if (!keepPosition && !['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux'].includes(channelId)) {
         setTimeout(() => {
           scrollToBottom();
         }, 100);
@@ -262,6 +284,18 @@ export default function TradingPlatformShell() {
     } catch (error) {
       console.error('❌ Erreur chargement messages:', error);
     }
+  };
+
+  // Fonction pour charger plus de messages
+  const loadMoreMessages = (channelId: string) => {
+    const newLimit = (displayLimit[channelId] || 20) + 20;
+    console.log(`📈 Chargement de plus de messages pour ${channelId}, nouvelle limite:`, newLimit);
+    setDisplayLimit(prev => ({
+      ...prev,
+      [channelId]: newLimit
+    }));
+    // Passer la nouvelle limite directement pour éviter les problèmes de timing
+    loadMessages(channelId, true, newLimit);
   };
   
   // Charger les réactions des messages depuis Firebase et s'abonner aux changements
@@ -749,6 +783,11 @@ export default function TradingPlatformShell() {
     // Marquer le canal comme lu quand l'utilisateur l'ouvre
     updateLastReadTime(channelId);
     
+    // Réinitialiser la limite d'affichage des messages à 20
+    setDisplayLimit(prev => ({
+      ...prev,
+      [channelId]: 20
+    }));
     
     // Réinitialiser selectedDate si on quitte le Trading Journal
     if (selectedChannel.id === 'trading-journal' && channelId !== 'trading-journal') {
@@ -4052,6 +4091,19 @@ export default function TradingPlatformShell() {
                         </div>
                       )}
                       
+                      {/* Bouton Charger plus pour les salons de chat (mode desktop/paysage uniquement) */}
+                      {['general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video'].includes(selectedChannel.id) && 
+                       (allAvailableMessages[selectedChannel.id]?.length || 0) > (messages[selectedChannel.id]?.length || 0) && (
+                        <div className="flex justify-center pt-2 sticky top-0 bg-gray-900/95 backdrop-blur-sm p-3 rounded-lg z-10 mb-4 shadow-lg">
+                          <button
+                            onClick={() => loadMoreMessages(selectedChannel.id)}
+                            className="px-4 py-2 text-sm rounded-md bg-gray-600 hover:bg-gray-500 text-gray-200 font-normal transition-colors"
+                          >
+                            ⬆️ Charger plus ({(allAvailableMessages[selectedChannel.id]?.length || 0) - (messages[selectedChannel.id]?.length || 0)} de plus)
+                          </button>
+                        </div>
+                      )}
+                      
                       {(messages[selectedChannel.id] || []).length > 0 && (
                         (messages[selectedChannel.id] || []).map((message) => (
                           <div key={message.id} className="flex items-start gap-3">
@@ -4857,42 +4909,15 @@ export default function TradingPlatformShell() {
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}
                   <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
-                    {/* Bouton Voir plus pour les salons de chat */}
-                    {['general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video'].includes(selectedChannel.id) && (messages[selectedChannel.id] || []).length >= 20 && (
-                      <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
+                    {/* Bouton Charger plus pour les salons de chat (seulement en mode vertical) */}
+                    {['general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video'].includes(selectedChannel.id) && 
+                     (allAvailableMessages[selectedChannel.id]?.length || 0) > (messages[selectedChannel.id]?.length || 0) && (
+                      <div className="flex justify-center pt-2 sticky top-0 bg-gray-900/95 backdrop-blur-sm p-3 rounded-lg z-10 shadow-lg">
                         <button
-                          onClick={async () => {
-                            const more = await getMessages(selectedChannel.id);
-                            // Pour les canaux de chat, garder l'ordre chronologique (plus récents en bas)
-                            // Pour les autres canaux, inverser l'ordre
-                            const orderedMessages = ['general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video'].includes(selectedChannel.id) ? more : more.reverse();
-                            
-                            const formatted = orderedMessages.map(msg => ({
-                              id: msg.id || '',
-                              text: msg.content,
-                              timestamp: new Date(msg.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                              author: msg.author,
-                              author_avatar: msg.author_avatar,
-                              attachment: undefined,
-                              attachment_data: msg.attachment_data
-                            }));
-                            
-                            setMessages(prev => ({
-                              ...prev,
-                              [selectedChannel.id]: formatted.map(msg => ({
-                                id: msg.id,
-                                text: msg.text,
-                                user: msg.author,
-                                author: msg.author,
-                                author_avatar: msg.author_avatar,
-                                timestamp: msg.timestamp,
-                                attachment_data: msg.attachment_data
-                              }))
-                            }));
-                          }}
-                          className="px-4 py-2 text-sm rounded bg-gray-700 hover:bg-gray-600 text-white"
+                          onClick={() => loadMoreMessages(selectedChannel.id)}
+                          className="px-4 py-2 text-sm rounded-md bg-gray-600 hover:bg-gray-500 text-gray-200 font-normal transition-colors"
                         >
-                          Voir plus de messages
+                          ⬆️ Charger plus ({(allAvailableMessages[selectedChannel.id]?.length || 0) - (messages[selectedChannel.id]?.length || 0)} de plus)
                         </button>
                       </div>
                     )}
@@ -5407,23 +5432,31 @@ export default function TradingPlatformShell() {
                     {(trade.image1 || trade.image2) && (
                       <div className="mb-3">
                         <span className="text-sm text-gray-400">Images:</span>
-                        <div className="flex gap-2 mt-2">
+                        <div className="mt-2 space-y-3 flex flex-col items-center">
                           {trade.image1 && (
-                            <div className="relative">
-                              <img 
-                                src={trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1} 
-                                alt="Trade image 1" 
-                                className="w-20 h-20 object-cover rounded border border-gray-600"
-                              />
+                            <div className="flex flex-col items-center">
+                              <span className="text-xs text-gray-500">📸 Image 1:</span>
+                              <div className="mt-1">
+                                <img 
+                                  src={trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1} 
+                                  alt="Trade image 1" 
+                                  className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                  onClick={() => setSelectedImage(trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1)}
+                                />
+                              </div>
                             </div>
                           )}
                           {trade.image2 && (
-                            <div className="relative">
-                              <img 
-                                src={trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2} 
-                                alt="Trade image 2" 
-                                className="w-20 h-20 object-cover rounded border border-gray-600"
-                              />
+                            <div className="flex flex-col items-center">
+                              <span className="text-xs text-gray-500">📸 Image 2:</span>
+                              <div className="mt-1">
+                                <img 
+                                  src={trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2} 
+                                  alt="Trade image 2" 
+                                  className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                  onClick={() => setSelectedImage(trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2)}
+                                />
+                              </div>
                             </div>
                           )}
                         </div>

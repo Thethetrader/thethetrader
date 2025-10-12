@@ -44,7 +44,7 @@ self.addEventListener('push', (event) => {
       // Ou depuis les champs data si pas de notification
       else if (payload.data) {
         const data = payload.data;
-        title = 'Signal Trade';
+        title = 'Tradingpourlesnuls';
         body = `${data.signalType} ${data.symbol} - Nouveau signal`;
       }
       
