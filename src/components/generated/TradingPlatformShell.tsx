@@ -1781,7 +1781,7 @@ export default function TradingPlatformShell() {
         console.log('🔔 Suppression du token FCM...');
         const { getMessaging, deleteToken } = await import('firebase/messaging');
         const { ref, remove, get } = await import('firebase/database');
-        const { database } = await import('../utils/firebase-setup');
+        const { database } = await import('../../utils/firebase-setup');
         
         // Récupérer le token FCM actuel
         const messaging = getMessaging();
