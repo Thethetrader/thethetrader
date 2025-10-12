@@ -58,24 +58,22 @@ export default function TradingPlatformShell() {
           email: session.user.email || '' 
         });
         
-        // DEMANDER LES NOTIFICATIONS AU CHARGEMENT INITIAL (session déjà existante)
-        const notificationsDisabled = localStorage.getItem('notificationsDisabled');
-        if (notificationsDisabled !== 'true') {
-          setTimeout(() => {
-            const confirmNotifications = window.confirm('Voulez-vous recevoir les notifications push pour les signaux de trading ?');
-            if (confirmNotifications) {
-              console.log('✅ Utilisateur a accepté les notifications (session existante)');
-              initializeNotifications().then(() => {
-                console.log('✅ Notifications initialisées');
-              }).catch(error => {
-                console.error('❌ Erreur initialisation notifications:', error);
-              });
-            } else {
-              console.log('❌ Utilisateur a refusé les notifications');
-              localStorage.setItem('notificationsDisabled', 'true');
-            }
-          }, 1000);
-        }
+        // DEMANDER LES NOTIFICATIONS AU CHARGEMENT INITIAL (TOUJOURS)
+        localStorage.removeItem('notificationsDisabled');
+        setTimeout(() => {
+          const confirmNotifications = window.confirm('Voulez-vous recevoir les notifications push pour les signaux de trading ?');
+          if (confirmNotifications) {
+            console.log('✅ Utilisateur a accepté les notifications (session existante)');
+            initializeNotifications().then(() => {
+              console.log('✅ Notifications initialisées');
+            }).catch(error => {
+              console.error('❌ Erreur initialisation notifications:', error);
+            });
+          } else {
+            console.log('❌ Utilisateur a refusé les notifications');
+            localStorage.setItem('notificationsDisabled', 'true');
+          }
+        }, 1000);
       }
     });
 
