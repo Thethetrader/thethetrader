@@ -60,9 +60,10 @@ export default function TradingPlatformShell() {
           email: session.user.email || '' 
         });
         
-        // Demander l'autorisation des notifications au chargement
+        // Demander l'autorisation des notifications au chargement (MOBILE SEULEMENT)
         const notificationsDisabled = localStorage.getItem('notificationsDisabled');
-        if (notificationsDisabled !== 'true') {
+        const isMobile = window.innerWidth <= 768;
+        if (notificationsDisabled !== 'true' && isMobile) {
           setTimeout(() => {
             const confirmNotifications = window.confirm('Voulez-vous recevoir les notifications push pour les signaux de trading ?');
             if (confirmNotifications) {
@@ -96,9 +97,10 @@ export default function TradingPlatformShell() {
           setMessages({});
           setMessageReactions({});
           
-          // Demander l'autorisation des notifications à la connexion
+          // Demander l'autorisation des notifications à la connexion (MOBILE SEULEMENT)
           const notificationsDisabled = localStorage.getItem('notificationsDisabled');
-          if (notificationsDisabled !== 'true') {
+          const isMobile = window.innerWidth <= 768;
+          if (notificationsDisabled !== 'true' && isMobile) {
             setTimeout(() => {
               const confirmNotifications = window.confirm('Voulez-vous recevoir les notifications push pour les signaux de trading ?');
               if (confirmNotifications) {
