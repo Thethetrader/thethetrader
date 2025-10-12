@@ -4,7 +4,7 @@ interface RumbleTalkProps {
   chatHash?: string;
 }
 
-const RumbleTalk: React.FC<RumbleTalkProps> = ({ chatHash = 'I1V9ro8' }) => {
+const RumbleTalk: React.FC<RumbleTalkProps> = ({ chatHash = '!1V9roB' }) => {
   // URL iframe RumbleTalk
   const iframeUrl = `https://rumbletalk.com/client/?${chatHash}`;
 
