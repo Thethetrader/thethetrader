@@ -59,27 +59,8 @@ export default function TradingPlatformShell() {
           email: session.user.email || '' 
         });
         
-        // Demander l'autorisation des notifications au chargement (MOBILE SEULEMENT)
-        const notificationsDisabled = localStorage.getItem('notificationsDisabled');
-        const isMobile = window.innerWidth <= 768;
-        if (notificationsDisabled !== 'true' && isMobile) {
-          setTimeout(() => {
-            const confirmNotifications = window.confirm('Voulez-vous recevoir les notifications push pour les signaux de trading ?');
-            if (confirmNotifications) {
-              console.log('✅ Utilisateur a accepté les notifications');
-              initializeNotifications().then(() => {
-                console.log('✅ Notifications initialisées');
-                setNotificationsEnabled(true);
-              }).catch(error => {
-                console.error('❌ Erreur initialisation notifications:', error);
-              });
-            } else {
-              console.log('❌ Utilisateur a refusé les notifications');
-              localStorage.setItem('notificationsDisabled', 'true');
-              setNotificationsEnabled(false);
-            }
-          }, 1000);
-        }
+            // Notifications désactivées sur PWA
+            console.log('🔇 Notifications désactivées sur PWA');
       }
     });
 
@@ -96,27 +77,8 @@ export default function TradingPlatformShell() {
           setMessages({});
           setMessageReactions({});
           
-          // Demander l'autorisation des notifications à la connexion (MOBILE SEULEMENT)
-          const notificationsDisabled = localStorage.getItem('notificationsDisabled');
-          const isMobile = window.innerWidth <= 768;
-          if (notificationsDisabled !== 'true' && isMobile) {
-            setTimeout(() => {
-              const confirmNotifications = window.confirm('Voulez-vous recevoir les notifications push pour les signaux de trading ?');
-              if (confirmNotifications) {
-                console.log('✅ Utilisateur a accepté les notifications');
-                initializeNotifications().then(() => {
-                  console.log('✅ Notifications initialisées après connexion');
-                  setNotificationsEnabled(true);
-                }).catch(error => {
-                  console.error('❌ Erreur initialisation notifications:', error);
-                });
-              } else {
-                console.log('❌ Utilisateur a refusé les notifications');
-                localStorage.setItem('notificationsDisabled', 'true');
-                setNotificationsEnabled(false);
-              }
-            }, 1000);
-          }
+        // Notifications désactivées sur PWA
+        console.log('🔇 Notifications désactivées sur PWA après connexion');
           
           // Nettoyer les anciennes clés localStorage des autres utilisateurs
           Object.keys(localStorage).forEach(key => {
