@@ -1834,7 +1834,6 @@ export default function AdminInterface() {
     { id: 'fondamentaux', name: 'fondamentaux', emoji: '📚', fullName: 'Fondamentaux' },
     { id: 'letsgooo-model', name: 'letsgooo-model', emoji: '🚀', fullName: 'Letsgooo model' },
     { id: 'livestream', name: 'livestream', emoji: '📺', fullName: 'Livestream' },
-    { id: 'chat-communaute', name: 'chat-communaute', emoji: '💬', fullName: 'Chat Communauté' },
 
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' },
@@ -3495,7 +3494,6 @@ export default function AdminInterface() {
                   (window as any).setCurrentPage('livestream');
                 }
               }} className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📺 Livestream</button>
-              <button onClick={() => handleChannelChange('chat-communaute', 'chat-communaute')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'chat-communaute' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 Chat Communauté</button>
             </div>
           </div>
 
