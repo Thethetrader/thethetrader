@@ -4106,9 +4106,9 @@ export default function TradingPlatformShell() {
                       
                       {(messages[selectedChannel.id] || []).length > 0 && 
                         (messages[selectedChannel.id] || []).map((message, index) => {
-                          // Afficher un séparateur de date tous les 10 messages
-                          const showDateSeparator = index % 10 === 0 && index > 0;
-                          const dayIndex = Math.floor(index / 10);
+                          // Afficher un séparateur de date tous les 5 messages
+                          const showDateSeparator = index % 5 === 0 && index > 0;
+                          const dayIndex = Math.floor(index / 5);
                           const dayLabel = dayIndex === 0 ? 'Aujourd\'hui' : 
                                           dayIndex === 1 ? 'Hier' : 
                                           `Jour ${dayIndex}`;
@@ -4948,9 +4948,9 @@ export default function TradingPlatformShell() {
                     )}
                     {(messages[selectedChannel.id] || []).length > 0 && 
                       (messages[selectedChannel.id] || []).map((message, index) => {
-                        // Afficher un séparateur de date tous les 10 messages
-                        const showDateSeparator = index % 10 === 0 && index > 0;
-                        const dayIndex = Math.floor(index / 10);
+                        // Afficher un séparateur de date tous les 5 messages
+                        const showDateSeparator = index % 5 === 0 && index > 0;
+                        const dayIndex = Math.floor(index / 5);
                         const dayLabel = dayIndex === 0 ? 'Aujourd\'hui' : 
                                         dayIndex === 1 ? 'Hier' : 
                                         `Jour ${dayIndex}`;
