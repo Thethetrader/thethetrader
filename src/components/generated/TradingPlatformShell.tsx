@@ -9,6 +9,7 @@ import { syncProfileImage, getProfileImage, initializeProfile } from '../../util
 import { updateUserProfile, getUserProfile, getUserProfileByType } from '../../lib/supabase';
 import { useStatsSync } from '../../hooks/useStatsSync';
 import { useCalendarSync } from '../../hooks/useCalendarSync';
+import RumbleTalk from '../RumbleTalk';
 
 // Configuration Supabase
 const supabaseUrl = 'https://bamwcozzfshuozsfmjah.supabase.co';
@@ -32,6 +33,7 @@ export default function TradingPlatformShell() {
     { id: 'general-chat-3', name: 'general-chat-3', emoji: '🪙', fullName: 'Crypto' },
     { id: 'general-chat-4', name: 'general-chat-4', emoji: '💱', fullName: 'Forex' },
     { id: 'video', name: 'video', emoji: '📺', fullName: 'Livestream' },
+    { id: 'trading-hub', name: 'trading-hub', emoji: '💬', fullName: 'Trading Hub' },
     { id: 'journal', name: 'journal', emoji: '📓', fullName: 'Journal Perso' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📓', fullName: 'Journal Perso' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' }
@@ -3197,6 +3199,7 @@ export default function TradingPlatformShell() {
               <button onClick={() => handleChannelChange('calendrier', 'calendrier')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               <button onClick={() => handleChannelChange('journal', 'journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 Journal Perso</button>
               <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
+              <button onClick={() => handleChannelChange('trading-hub', 'trading-hub')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-hub' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 Trading Hub</button>
             </div>
           </div>
 
@@ -3384,7 +3387,7 @@ export default function TradingPlatformShell() {
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">TRADING HUB</h3>
                 <div className="space-y-2">
-                  {channels.filter(c => ['video'].includes(c.id)).map(channel => (
+                  {channels.filter(c => ['video', 'trading-hub'].includes(c.id)).map(channel => (
                     <button
                       key={channel.id}
                       onClick={() => {
@@ -4942,6 +4945,21 @@ export default function TradingPlatformShell() {
                           </div>
                         </div>
                       </div>
+                    </div>
+                  </div>
+                </div>
+              ) : selectedChannel.id === 'trading-hub' ? (
+                <div className="flex flex-col h-full bg-gray-900">
+                  {/* Trading Hub - RumbleTalk */}
+                  <div className="flex-1 flex flex-col p-4">
+                    <div className="text-center mb-4">
+                      <h1 className="text-3xl font-bold text-white mb-2">💬 Trading Hub</h1>
+                      <p className="text-gray-400">Discute avec la communauté en temps réel</p>
+                    </div>
+                    
+                    {/* RumbleTalk Chat */}
+                    <div className="flex-1 flex items-center justify-center">
+                      <RumbleTalk />
                     </div>
                   </div>
                 </div>

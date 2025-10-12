@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ProfitLoss from './ProfitLoss';
 import ChatZone from './ChatZone';
+import RumbleTalk from './RumbleTalk';
 import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, addPersonalTrade, getPersonalTrades, PersonalTrade, syncUserId, listenToPersonalTrades } from '../utils/firebase-setup';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, sendLocalNotification } from '../utils/push-notifications';
 import { ref, update, onValue, get, remove } from 'firebase/database';
@@ -1791,6 +1792,7 @@ export default function AdminInterface() {
     { id: 'fondamentaux', name: 'fondamentaux', emoji: '📚', fullName: 'Fondamentaux' },
     { id: 'letsgooo-model', name: 'letsgooo-model', emoji: '🚀', fullName: 'Letsgooo model' },
     { id: 'livestream', name: 'livestream', emoji: '📺', fullName: 'Livestream' },
+    { id: 'trading-hub', name: 'trading-hub', emoji: '💬', fullName: 'Trading Hub' },
 
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' },
@@ -4485,6 +4487,21 @@ export default function AdminInterface() {
                         >
                           Envoyer
                         </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : selectedChannel.id === 'trading-hub' ? (
+                  <div className="flex flex-col h-full bg-gray-900">
+                    {/* Trading Hub - RumbleTalk */}
+                    <div className="flex-1 flex flex-col p-4">
+                      <div className="text-center mb-4">
+                        <h1 className="text-3xl font-bold text-white mb-2">💬 Trading Hub</h1>
+                        <p className="text-gray-400">Discute avec la communauté en temps réel</p>
+                      </div>
+                      
+                      {/* RumbleTalk Chat */}
+                      <div className="flex-1 flex items-center justify-center">
+                        <RumbleTalk />
                       </div>
                     </div>
                   </div>
