@@ -215,6 +215,13 @@ export const notifySignalClosed = (signal: any): void => {
 export const initializeNotifications = async (): Promise<void> => {
   console.log('🚀 Initialisation du système de notifications push...');
   
+  // VÉRIFIER SI L'UTILISATEUR A DÉSACTIVÉ LES NOTIFICATIONS (après déconnexion)
+  const notificationsDisabled = localStorage.getItem('notificationsDisabled');
+  if (notificationsDisabled === 'true') {
+    console.log('🔴 NOTIFICATIONS DÉSACTIVÉES PAR L\'UTILISATEUR - AUCUNE INITIALISATION');
+    return;
+  }
+  
   try {
     // Demander la permission
     const hasPermission = await requestNotificationPermission();

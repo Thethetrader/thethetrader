@@ -73,6 +73,17 @@ export default function TradingPlatformShell() {
           setMessages({});
           setMessageReactions({});
           
+          // RÉACTIVER LES NOTIFICATIONS APRÈS CONNEXION
+          localStorage.removeItem('notificationsDisabled');
+          console.log('🔔 Notifications réactivées après connexion');
+          
+          // Réinitialiser les notifications
+          initializeNotifications().then(() => {
+            console.log('✅ Notifications réinitialisées après connexion');
+          }).catch(error => {
+            console.error('❌ Erreur réinitialisation notifications:', error);
+          });
+          
           // Nettoyer les anciennes clés localStorage des autres utilisateurs
           Object.keys(localStorage).forEach(key => {
             if (key.startsWith('userUsername_') && !key.endsWith(`_${session.user.id}`)) {
@@ -1782,6 +1793,10 @@ export default function TradingPlatformShell() {
         const { getMessaging, deleteToken } = await import('firebase/messaging');
         const { ref, remove, get } = await import('firebase/database');
         const { database } = await import('../../utils/firebase-setup');
+        
+        // 0. DÉSACTIVER DÉFINITIVEMENT LES NOTIFICATIONS POUR CET UTILISATEUR
+        localStorage.setItem('notificationsDisabled', 'true');
+        console.log('🔴 FLAG notificationsDisabled activé - empêche réinitialisation automatique');
         
         // 1. Supprimer le token du localStorage
         const storedToken = localStorage.getItem('fcmToken');
