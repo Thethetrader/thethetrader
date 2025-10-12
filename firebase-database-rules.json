@@ -1,0 +1,19 @@
+{
+  "rules": {
+    "messages": {
+      ".indexOn": ["channel_id", "timestamp"]
+    },
+    "signals": {
+      ".indexOn": ["channel_id", "timestamp", "status"]
+    },
+    "fcm_tokens": {
+      ".read": true,
+      ".write": true
+    },
+    "personal_trades": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    }
+  }
+}
+

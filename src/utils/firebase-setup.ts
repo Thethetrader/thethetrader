@@ -105,11 +105,14 @@ export const addMessage = async (message: Omit<Message, 'id' | 'timestamp'>): Pr
 };
 
 // Récupérer les messages depuis Firebase
-export const getMessages = async (channelId: string): Promise<Message[]> => {
+export const getMessages = async (channelId: string, limit: number = 50): Promise<Message[]> => {
   try {
+    console.log(`🔍 Chargement de ${limit} messages pour ${channelId}...`);
+    const startTime = performance.now();
+    
     const messagesRef = ref(database, 'messages');
     // Filtrage côté serveur + limite (plus rapide)
-    const q = query(messagesRef, orderByChild('channel_id'), equalTo(channelId), limitToLast(50));
+    const q = query(messagesRef, orderByChild('channel_id'), equalTo(channelId), limitToLast(limit));
 
     const snapshot = await get(q);
     const messages: Message[] = [];
@@ -121,9 +124,11 @@ export const getMessages = async (channelId: string): Promise<Message[]> => {
       });
     }
 
-    // Trier par timestamp croissant pour l’affichage
+    // Trier par timestamp croissant pour l'affichage
     messages.sort((a, b) => Number(a.timestamp) - Number(b.timestamp));
-    console.log(`✅ Messages chargés depuis Firebase pour ${channelId}:`, messages.length);
+    
+    const endTime = performance.now();
+    console.log(`✅ ${messages.length} messages chargés pour ${channelId} en ${Math.round(endTime - startTime)}ms`);
     return messages;
   } catch (error) {
     console.error('Erreur récupération messages Firebase:', error);

@@ -267,7 +267,8 @@ export default function TradingPlatformShell() {
   // Fonction pour charger les messages depuis Firebase
   const loadMessages = async (channelId: string, keepPosition: boolean = false, forceLimit?: number) => {
     try {
-      const messages = await getMessages(channelId);
+      // Charger seulement 30 messages au lieu de 50 pour performance
+      const messages = await getMessages(channelId, 30);
       const isChatChannel = ['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video'].includes(channelId);
       
       // Stocker tous les messages disponibles
