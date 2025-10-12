@@ -1522,17 +1522,6 @@ export default function AdminInterface() {
     setViewerCount(0);
   };
 
-  const handleTestNotification = () => {
-    console.log('🧪 Test notification...');
-    sendLocalNotification({
-      title: '🧪 Test Notification Admin',
-      body: 'Ceci est un test de notification depuis l\'admin !',
-      icon: '/FAVICON.png',
-      badge: '/FAVICON.png',
-      tag: 'test-notification',
-      data: { type: 'test' }
-    });
-  };
 
   const handleShareScreen = () => {
     if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {

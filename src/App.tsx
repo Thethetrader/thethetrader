@@ -1036,17 +1036,6 @@ const App = () => {
           </div>
           <div className="flex items-center space-x-3">
             <button 
-              onClick={permission === 'granted' ? sendTestNotification : requestPermission}
-              className={`px-3 py-2 rounded-lg font-semibold text-sm transition-all duration-200 ${
-                permission === 'granted' 
-                  ? 'bg-green-600 text-white hover:bg-green-700' 
-                  : 'bg-gray-600 text-white hover:bg-gray-700'
-              }`}
-              title={permission === 'granted' ? 'Test notification' : 'Activer notifications'}
-            >
-              {permission === 'granted' ? '🔔' : '🔕'}
-            </button>
-            <button 
               onClick={() => setShowAuthModal(true)}
               className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold hover:opacity-90 text-sm sm:text-base"
             >
