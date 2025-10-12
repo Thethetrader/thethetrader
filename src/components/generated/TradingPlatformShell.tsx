@@ -4104,9 +4104,32 @@ export default function TradingPlatformShell() {
                         </div>
                       )}
                       
-                      {(messages[selectedChannel.id] || []).length > 0 && (
-                        (messages[selectedChannel.id] || []).map((message) => (
-                          <div key={message.id} className="flex items-start gap-3">
+                      {(messages[selectedChannel.id] || []).length > 0 && 
+                        (messages[selectedChannel.id] || []).map((message, index) => {
+                          // Afficher un séparateur de date tous les 10 messages
+                          const showDateSeparator = index % 10 === 0 && index > 0;
+                          const dayIndex = Math.floor(index / 10);
+                          const dayLabel = dayIndex === 0 ? 'Aujourd\'hui' : 
+                                          dayIndex === 1 ? 'Hier' : 
+                                          `Jour ${dayIndex}`;
+
+                          return (
+                            <div key={message.id}>
+                              {/* Séparateur de date */}
+                              {showDateSeparator && (
+                                <div className="flex items-center justify-center my-4">
+                                  <div className="flex items-center gap-2">
+                                    <div className="h-px bg-gray-600 flex-1 w-16"></div>
+                                    <span className="text-xs text-gray-500 px-3 py-1 bg-gray-800 rounded-full">
+                                      {dayLabel}
+                                    </span>
+                                    <div className="h-px bg-gray-600 flex-1 w-16"></div>
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {/* Message */}
+                              <div className="flex items-start gap-3">
                             <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
                               {message.author_avatar ? (
                                 <img src={message.author_avatar} alt="Profile" className="w-full h-full object-cover" />
@@ -4301,9 +4324,11 @@ export default function TradingPlatformShell() {
                               </div>
 
                             </div>
-                          </div>
-                        ))
-                      )}
+                              </div>
+                            </div>
+                          );
+                        })
+                      }
                       <div ref={messagesEndRef} />
                     </div>
                   </div>
@@ -4921,9 +4946,32 @@ export default function TradingPlatformShell() {
                         </button>
                       </div>
                     )}
-                    {(messages[selectedChannel.id] || []).length > 0 && (
-                      (messages[selectedChannel.id] || []).map((message) => (
-                        <div key={message.id} className="flex items-start gap-3">
+                    {(messages[selectedChannel.id] || []).length > 0 && 
+                      (messages[selectedChannel.id] || []).map((message, index) => {
+                        // Afficher un séparateur de date tous les 10 messages
+                        const showDateSeparator = index % 10 === 0 && index > 0;
+                        const dayIndex = Math.floor(index / 10);
+                        const dayLabel = dayIndex === 0 ? 'Aujourd\'hui' : 
+                                        dayIndex === 1 ? 'Hier' : 
+                                        `Jour ${dayIndex}`;
+
+                        return (
+                          <div key={message.id}>
+                            {/* Séparateur de date */}
+                            {showDateSeparator && (
+                              <div className="flex items-center justify-center my-4">
+                                <div className="flex items-center gap-2">
+                                  <div className="h-px bg-gray-600 flex-1 w-16"></div>
+                                  <span className="text-xs text-gray-500 px-3 py-1 bg-gray-800 rounded-full">
+                                    {dayLabel}
+                                  </span>
+                                  <div className="h-px bg-gray-600 flex-1 w-16"></div>
+                                </div>
+                              </div>
+                            )}
+                            
+                            {/* Message */}
+                            <div className="flex items-start gap-3">
                           <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
                             {message.author_avatar ? (
                               <img src={message.author_avatar} alt="Profile" className="w-full h-full object-cover" />
@@ -5114,11 +5162,13 @@ export default function TradingPlatformShell() {
                                 </button>
                               </div>
 
+                            </div>
+                            </div>
                           </div>
-                        </div>
-                      ))
-                    )}
-                    <div ref={messagesEndRef} />
+                        );
+                        })
+                      }
+                      <div ref={messagesEndRef} />
                   </div>
                 </div>
               ) : null}

@@ -28,7 +28,7 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('push', (event) => {
   console.log('📱 SW: Notification push reçue:', event);
   
-  let title = 'Tradingpourlesnuls';
+  let title = 'TheTheTrader';
   let body = 'Nouveau signal';
   
   if (event.data) {
@@ -44,7 +44,7 @@ self.addEventListener('push', (event) => {
       // Ou depuis les champs data si pas de notification
       else if (payload.data) {
         const data = payload.data;
-        title = 'Signal Trade';
+        title = 'Tradingpourlesnuls';
         body = `${data.signalType} ${data.symbol} - Nouveau signal`;
       }
       

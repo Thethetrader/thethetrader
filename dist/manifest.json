@@ -1,6 +1,6 @@
 {
-  "name": "TheTheTrader",
-  "short_name": "TheTheTrader",
+  "name": "Tradingpourlesnuls",
+  "short_name": "Tradingpourlesnuls",
   "description": "Plateforme de trading avec signaux en temps réel",
   "start_url": "/",
   "display": "standalone",
@@ -9,12 +9,12 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/favicon.png",
+      "src": "/FAVICON.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/favicon.png",
+      "src": "/FAVICON.png",
       "sizes": "512x512",
       "type": "image/png"
     }
