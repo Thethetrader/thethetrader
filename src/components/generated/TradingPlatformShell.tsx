@@ -4166,6 +4166,15 @@ export default function TradingPlatformShell() {
 
                           return (
                             <div key={message.id}>
+                              {/* Séparateur de date au format "=== [Date du jour] ===" */}
+                              {showDateSeparator && (
+                                <div className="flex justify-center my-6">
+                                  <span className="text-xs text-gray-500 px-4 py-2 bg-gray-800 rounded-lg border border-gray-600">
+                                    === {dayLabel} ===
+                                  </span>
+                                </div>
+                              )}
+                              
                               {/* Message */}
                               <div className="flex items-start gap-3">
                             <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
@@ -5046,6 +5055,15 @@ export default function TradingPlatformShell() {
 
                         return (
                           <div key={message.id}>
+                            {/* Séparateur de date au format "=== [Date du jour] ===" */}
+                            {showDateSeparator && (
+                              <div className="flex justify-center my-6">
+                                <span className="text-xs text-gray-500 px-4 py-2 bg-gray-800 rounded-lg border border-gray-600">
+                                  === {dayLabel} ===
+                                </span>
+                              </div>
+                            )}
+                            
                             {/* Message */}
                             <div className="flex items-start gap-3">
                           <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
