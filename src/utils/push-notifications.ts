@@ -34,6 +34,8 @@ export const requestNotificationPermission = async (): Promise<boolean> => {
 
   if (Notification.permission === 'granted') {
     console.log('✅ Permission de notifications déjà accordée');
+    // IMPORTANT: Créer quand même le token FCM si la permission existe déjà
+    await requestFCMToken();
     return true;
   }
 
