@@ -4,9 +4,9 @@ interface RumbleTalkProps {
   chatHash?: string;
 }
 
-const RumbleTalk: React.FC<RumbleTalkProps> = ({ chatHash = '!1V9roB' }) => {
-  // URL iframe RumbleTalk
-  const iframeUrl = `https://rumbletalk.com/client/?${chatHash}`;
+const RumbleTalk: React.FC<RumbleTalkProps> = () => {
+  // Utiliser une page HTML locale qui charge le script RumbleTalk
+  const iframeUrl = '/rumbletalk.html';
 
   return (
     <div className="w-full h-full flex items-center justify-center">
