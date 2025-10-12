@@ -213,7 +213,8 @@ const CACHE_DURATION = 30000; // 30 secondes
 
 export const getSignals = async (channelId?: string, limit: number = 3, beforeTimestamp?: number): Promise<Signal[]> => {
   try {
-    console.log('🚀 getSignals appelé avec channelId:', channelId, 'limit:', limit, 'beforeTimestamp:', beforeTimestamp);
+    console.log(`🔍 Chargement de ${limit} signaux pour ${channelId}...`);
+    const startTime = performance.now();
     const signalsRef = ref(database, 'signals');
 
     let queryConstraints = [];
@@ -237,7 +238,8 @@ export const getSignals = async (channelId?: string, limit: number = 3, beforeTi
 
       // Plus anciens en premier (chronologique)
       signals.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-      console.log(`✅ Signaux chargés (avant ${beforeTimestamp}):`, signals.length);
+      const endTime = performance.now();
+      console.log(`✅ ${signals.length} signaux chargés pour ${channelId} en ${Math.round(endTime - startTime)}ms`);
       return signals;
     } else {
       // Premier chargement : récupérer les derniers signaux
@@ -257,7 +259,8 @@ export const getSignals = async (channelId?: string, limit: number = 3, beforeTi
 
       // Plus anciens en premier (chronologique)
       signals.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-      console.log(`✅ Signaux chargés (filtrés):`, signals.length);
+      const endTime = performance.now();
+      console.log(`✅ ${signals.length} signaux chargés pour ${channelId} en ${Math.round(endTime - startTime)}ms`);
       return signals;
     }
   } catch (error) {
