@@ -460,8 +460,14 @@ export default function TradingPlatformShell() {
   // Charger les données quand on change de canal
   useEffect(() => {
     console.log('🔄 Changement de canal utilisateur:', selectedChannel.id);
-    loadMessages(selectedChannel.id);
-    loadSignals(selectedChannel.id);
+    
+    // Ne pas charger messages/signaux pour les canaux spéciaux
+    const isSpecialChannel = ['calendrier', 'trading-journal', 'journal', 'video', 'trading-hub'].includes(selectedChannel.id);
+    
+    if (!isSpecialChannel) {
+      loadMessages(selectedChannel.id);
+      loadSignals(selectedChannel.id);
+    }
     
     // Subscription aux signaux temps réel pour les réactions et notifications
     const signalSubscription = subscribeToSignals(selectedChannel.id, (updatedSignal) => {
