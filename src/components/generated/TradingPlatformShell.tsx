@@ -1776,9 +1776,9 @@ export default function TradingPlatformShell() {
     console.log('🚪 Déconnexion utilisateur en cours...');
     
     try {
-      // Supprimer le token FCM de Firebase Database avant déconnexion
+      // Supprimer TOUS les tokens FCM de Firebase Database avant déconnexion
       try {
-        console.log('🔔 Suppression du token FCM...');
+        console.log('🔔 Suppression de tous les tokens FCM...');
         const { getMessaging, deleteToken } = await import('firebase/messaging');
         const { ref, remove, get } = await import('firebase/database');
         const { database } = await import('../../utils/firebase-setup');
@@ -1788,22 +1788,79 @@ export default function TradingPlatformShell() {
         const currentToken = await messaging.getToken();
         
         if (currentToken) {
-          console.log('🔔 Token FCM trouvé, suppression...');
+          console.log('🔔 Token FCM actuel trouvé:', currentToken);
           
           // Supprimer le token de Firebase Database
           const tokenKey = currentToken.replace(/[.#$[\]]/g, '_');
           const tokenRef = ref(database, `fcm_tokens/${tokenKey}`);
           await remove(tokenRef);
-          console.log('✅ Token FCM supprimé de Firebase Database');
+          console.log('✅ Token FCM actuel supprimé de Firebase Database');
           
           // Supprimer le token du navigateur
           await deleteToken(messaging);
           console.log('✅ Token FCM supprimé du navigateur');
         } else {
-          console.log('⚠️ Aucun token FCM trouvé');
+          console.log('⚠️ Aucun token FCM actuel trouvé');
         }
+        
+        // Supprimer TOUS les tokens de cet utilisateur dans Firebase Database
+        try {
+          console.log('🔔 Recherche et suppression de tous les tokens utilisateur...');
+          const fcmTokensRef = ref(database, 'fcm_tokens');
+          const snapshot = await get(fcmTokensRef);
+          
+          if (snapshot.exists()) {
+            const tokensData = snapshot.val();
+            const userAgent = navigator.userAgent;
+            
+            // Supprimer tous les tokens qui correspondent à cet appareil/navigateur
+            for (const [tokenKey, tokenData] of Object.entries(tokensData)) {
+              const data = tokenData as any;
+              if (data.userAgent === userAgent || 
+                  (data.userAgent && userAgent.includes(data.userAgent.substring(0, 50)))) {
+                console.log('🗑️ Suppression token correspondant:', tokenKey);
+                await remove(ref(database, `fcm_tokens/${tokenKey}`));
+              }
+            }
+            console.log('✅ Tous les tokens utilisateur supprimés');
+          }
+        } catch (error) {
+          console.error('❌ Erreur suppression tokens utilisateur:', error);
+        }
+        
       } catch (error) {
         console.error('❌ Erreur suppression token FCM:', error);
+      }
+      
+      // Désactiver complètement les notifications push sur mobile
+      try {
+        console.log('🔔 Désactivation des notifications push...');
+        
+        // Désinscrire le service worker
+        if ('serviceWorker' in navigator) {
+          const registrations = await navigator.getRegistrations();
+          for (const registration of registrations) {
+            if (registration.scope.includes('fcm')) {
+              console.log('🗑️ Désinscription service worker FCM');
+              await registration.unregister();
+            }
+          }
+        }
+        
+        // Supprimer les permissions de notification
+        if ('permissions' in navigator) {
+          try {
+            const permission = await navigator.permissions.query({ name: 'notifications' as PermissionName });
+            if (permission.state === 'granted') {
+              console.log('🔔 Notifications désactivées');
+            }
+          } catch (e) {
+            console.log('⚠️ Impossible de vérifier les permissions');
+          }
+        }
+        
+      } catch (error) {
+        console.error('❌ Erreur désactivation notifications:', error);
       }
       
       // Déconnexion Supabase
