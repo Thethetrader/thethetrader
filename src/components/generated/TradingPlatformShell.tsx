@@ -199,7 +199,7 @@ export default function TradingPlatformShell() {
     // Créer le script
     const script = document.createElement('script');
     script.async = true;
-    script.src = 'https://embed.tawk.to/68caaf2acf5de4191f5b9749/1j7d656b7';
+    script.src = 'https://embed.tawk.to/68caaf2acf5de4191f5b9749/1j5brog6o';
     script.charset = 'UTF-8';
     script.setAttribute('crossorigin', '*');
     script.id = 'tawkto-user-script';
