@@ -60,22 +60,7 @@ export default function TradingPlatformShell() {
           email: session.user.email || '' 
         });
         
-        // DEMANDER LES NOTIFICATIONS AU CHARGEMENT INITIAL (TOUJOURS)
-        localStorage.removeItem('notificationsDisabled');
-        setTimeout(() => {
-          const confirmNotifications = window.confirm('Voulez-vous recevoir les notifications push pour les signaux de trading ?');
-          if (confirmNotifications) {
-            console.log('✅ Utilisateur a accepté les notifications (session existante)');
-            initializeNotifications().then(() => {
-              console.log('✅ Notifications initialisées');
-            }).catch(error => {
-              console.error('❌ Erreur initialisation notifications:', error);
-            });
-          } else {
-            console.log('❌ Utilisateur a refusé les notifications');
-            localStorage.setItem('notificationsDisabled', 'true');
-          }
-        }, 1000);
+        // Les notifications sont maintenant gérées par le bouton toggle
       }
     });
 
@@ -92,25 +77,7 @@ export default function TradingPlatformShell() {
           setMessages({});
           setMessageReactions({});
           
-          // RÉACTIVER LES NOTIFICATIONS APRÈS CONNEXION
-          localStorage.removeItem('notificationsDisabled');
-          console.log('🔔 Notifications réactivées après connexion');
-          
-          // Demander EXPLICITEMENT l'autorisation de notifications à chaque connexion
-          setTimeout(() => {
-            const confirmNotifications = window.confirm('Voulez-vous recevoir les notifications push pour les signaux de trading ?');
-            if (confirmNotifications) {
-              console.log('✅ Utilisateur a accepté les notifications');
-              initializeNotifications().then(() => {
-                console.log('✅ Notifications initialisées après acceptation');
-              }).catch(error => {
-                console.error('❌ Erreur initialisation notifications:', error);
-              });
-            } else {
-              console.log('❌ Utilisateur a refusé les notifications');
-              localStorage.setItem('notificationsDisabled', 'true');
-            }
-          }, 1000);
+          // Les notifications sont maintenant gérées par le bouton toggle
         
           
           // Nettoyer les anciennes clés localStorage des autres utilisateurs
@@ -547,6 +514,66 @@ export default function TradingPlatformShell() {
   const [usernameInput, setUsernameInput] = useState('');
   const [currentUsername, setCurrentUsername] = useState('');
   const [supabaseProfile, setSupabaseProfile] = useState<any>(null);
+  
+  // État pour le toggle des notifications
+  const [notificationsEnabled, setNotificationsEnabled] = useState<boolean>(() => {
+    return localStorage.getItem('notificationsDisabled') !== 'true';
+  });
+
+  // Fonction pour toggle les notifications
+  const handleToggleNotifications = async () => {
+    if (!notificationsEnabled) {
+      // Activer les notifications
+      console.log('🔔 Activation des notifications...');
+      localStorage.removeItem('notificationsDisabled');
+      
+      try {
+        await initializeNotifications();
+        setNotificationsEnabled(true);
+        console.log('✅ Notifications activées');
+      } catch (error) {
+        console.error('❌ Erreur activation notifications:', error);
+        alert('Impossible d\'activer les notifications. Vérifiez les permissions de votre navigateur.');
+      }
+    } else {
+      // Désactiver les notifications
+      console.log('🔕 Désactivation des notifications...');
+      
+      try {
+        // Supprimer tous les tokens FCM
+        const { getMessaging, deleteToken } = await import('firebase/messaging');
+        const { ref, remove, get } = await import('../../utils/firebase-setup');
+        const { database } = await import('../../utils/firebase-setup');
+        
+        // Récupérer le token FCM actuel du navigateur
+        try {
+          const messaging = getMessaging();
+          const currentToken = await messaging.getToken();
+          
+          if (currentToken) {
+            console.log('🗑️ Suppression token FCM...');
+            
+            // Supprimer de Firebase Database
+            const tokenKey = currentToken.replace(/[.#$[\]]/g, '_');
+            const tokenRef = ref(database, `fcm_tokens/${tokenKey}`);
+            await remove(tokenRef);
+            
+            // Supprimer du navigateur
+            await deleteToken(messaging);
+            console.log('✅ Token FCM supprimé');
+          }
+        } catch (error) {
+          console.log('⚠️ Erreur suppression token:', error);
+        }
+        
+        localStorage.setItem('notificationsDisabled', 'true');
+        setNotificationsEnabled(false);
+        console.log('✅ Notifications désactivées');
+      } catch (error) {
+        console.error('❌ Erreur désactivation notifications:', error);
+      }
+    }
+  };
 
   // Fonctions pour l'édition du nom d'utilisateur
   const handleUsernameEdit = async () => {
@@ -895,7 +922,6 @@ export default function TradingPlatformShell() {
   // États pour le copier-coller TradingView
   const [debugMode, setDebugMode] = useState(false);
   const [pasteDebug, setPasteDebug] = useState('');
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [isPasteActive, setIsPasteActive] = useState(false);
   const [error, setError] = useState('');
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -3225,8 +3251,19 @@ export default function TradingPlatformShell() {
                 </span>
               </div>
             </div>
-            
           </div>
+
+          {/* Bouton Toggle Notifications */}
+          <button
+            onClick={handleToggleNotifications}
+            className={`w-full px-4 py-3 rounded-lg font-medium transition-colors ${
+              notificationsEnabled
+                ? 'bg-green-600 hover:bg-green-700 text-white'
+                : 'bg-gray-600 hover:bg-gray-500 text-gray-300'
+            }`}
+          >
+            {notificationsEnabled ? '🔔 Notifications ON' : '🔕 Notifications OFF'}
+          </button>
         </div>
       </div>
 
@@ -3299,11 +3336,23 @@ export default function TradingPlatformShell() {
                   )}
                 </div>
               </div>
-              <button onClick={handleLogout} className="text-gray-400 hover:text-white">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={handleToggleNotifications}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                    notificationsEnabled
+                      ? 'bg-green-600 text-white'
+                      : 'bg-gray-600 text-gray-300'
+                  }`}
+                >
+                  {notificationsEnabled ? '🔔' : '🔕'}
+                </button>
+                <button onClick={handleLogout} className="text-gray-400 hover:text-white">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                  </svg>
+                </button>
+              </div>
             </div>
           ) : (
             <div className="flex items-center justify-between">
