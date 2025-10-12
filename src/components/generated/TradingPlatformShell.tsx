@@ -4166,19 +4166,6 @@ export default function TradingPlatformShell() {
 
                           return (
                             <div key={message.id}>
-                              {/* Séparateur de date */}
-                              {showDateSeparator && (
-                                <div className="flex items-center justify-center my-4">
-                                  <div className="flex items-center gap-2">
-                                    <div className="h-px bg-gray-600 flex-1 w-16"></div>
-                                    <span className="text-xs text-gray-500 px-3 py-1 bg-gray-800 rounded-full">
-                                      {dayLabel}
-                                    </span>
-                                    <div className="h-px bg-gray-600 flex-1 w-16"></div>
-                                  </div>
-                                </div>
-                              )}
-                              
                               {/* Message */}
                               <div className="flex items-start gap-3">
                             <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
@@ -5059,19 +5046,6 @@ export default function TradingPlatformShell() {
 
                         return (
                           <div key={message.id}>
-                            {/* Séparateur de date */}
-                            {showDateSeparator && (
-                              <div className="flex items-center justify-center my-4">
-                                <div className="flex items-center gap-2">
-                                  <div className="h-px bg-gray-600 flex-1 w-16"></div>
-                                  <span className="text-xs text-gray-500 px-3 py-1 bg-gray-800 rounded-full">
-                                    {dayLabel}
-                                  </span>
-                                  <div className="h-px bg-gray-600 flex-1 w-16"></div>
-                                </div>
-                              </div>
-                            )}
-                            
                             {/* Message */}
                             <div className="flex items-start gap-3">
                           <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
