@@ -1776,91 +1776,86 @@ export default function TradingPlatformShell() {
     console.log('🚪 Déconnexion utilisateur en cours...');
     
     try {
-      // Supprimer TOUS les tokens FCM de Firebase Database avant déconnexion
+      // SOLUTION RADICALE: Supprimer TOUS les tokens FCM
       try {
-        console.log('🔔 Suppression de tous les tokens FCM...');
+        console.log('🔔 🔴 SUPPRESSION COMPLÈTE DE TOUS LES TOKENS FCM...');
         const { getMessaging, deleteToken } = await import('firebase/messaging');
         const { ref, remove, get } = await import('firebase/database');
         const { database } = await import('../../utils/firebase-setup');
         
-        // Récupérer le token FCM actuel
-        const messaging = getMessaging();
-        const currentToken = await messaging.getToken();
-        
-        if (currentToken) {
-          console.log('🔔 Token FCM actuel trouvé:', currentToken);
-          
-          // Supprimer le token de Firebase Database
-          const tokenKey = currentToken.replace(/[.#$[\]]/g, '_');
-          const tokenRef = ref(database, `fcm_tokens/${tokenKey}`);
-          await remove(tokenRef);
-          console.log('✅ Token FCM actuel supprimé de Firebase Database');
-          
-          // Supprimer le token du navigateur
-          await deleteToken(messaging);
-          console.log('✅ Token FCM supprimé du navigateur');
-        } else {
-          console.log('⚠️ Aucun token FCM actuel trouvé');
+        // 1. Supprimer le token du localStorage
+        const storedToken = localStorage.getItem('fcmToken');
+        if (storedToken) {
+          console.log('🗑️ Token FCM trouvé dans localStorage:', storedToken.substring(0, 20) + '...');
+          localStorage.removeItem('fcmToken');
+          console.log('✅ Token FCM supprimé de localStorage');
         }
         
-        // Supprimer TOUS les tokens de cet utilisateur dans Firebase Database
+        // 2. Récupérer et supprimer le token FCM actuel du navigateur
         try {
-          console.log('🔔 Recherche et suppression de tous les tokens utilisateur...');
+          const messaging = getMessaging();
+          const currentToken = await messaging.getToken();
+          
+          if (currentToken) {
+            console.log('🗑️ Token FCM actuel du navigateur:', currentToken.substring(0, 20) + '...');
+            
+            // Supprimer de Firebase Database
+            const tokenKey = currentToken.replace(/[.#$[\]]/g, '_');
+            const tokenRef = ref(database, `fcm_tokens/${tokenKey}`);
+            await remove(tokenRef);
+            console.log('✅ Token supprimé de Firebase Database');
+            
+            // Supprimer du navigateur
+            await deleteToken(messaging);
+            console.log('✅ Token supprimé du navigateur');
+          }
+        } catch (error) {
+          console.log('⚠️ Erreur récupération token actuel (normal si déjà supprimé):', error.message);
+        }
+        
+        // 3. SUPPRIMER TOUS LES TOKENS DE FIREBASE DATABASE (approche radicale)
+        try {
+          console.log('🔔 🔴 SUPPRESSION DE TOUS LES TOKENS DANS FIREBASE...');
           const fcmTokensRef = ref(database, 'fcm_tokens');
           const snapshot = await get(fcmTokensRef);
           
           if (snapshot.exists()) {
             const tokensData = snapshot.val();
-            const userAgent = navigator.userAgent;
+            console.log('📊 Nombre total de tokens trouvés:', Object.keys(tokensData).length);
             
-            // Supprimer tous les tokens qui correspondent à cet appareil/navigateur
-            for (const [tokenKey, tokenData] of Object.entries(tokensData)) {
-              const data = tokenData as any;
-              if (data.userAgent === userAgent || 
-                  (data.userAgent && userAgent.includes(data.userAgent.substring(0, 50)))) {
-                console.log('🗑️ Suppression token correspondant:', tokenKey);
-                await remove(ref(database, `fcm_tokens/${tokenKey}`));
-              }
+            // Supprimer TOUS les tokens (solution radicale pour mobile)
+            for (const tokenKey of Object.keys(tokensData)) {
+              console.log('🗑️ Suppression token:', tokenKey.substring(0, 20) + '...');
+              await remove(ref(database, `fcm_tokens/${tokenKey}`));
             }
-            console.log('✅ Tous les tokens utilisateur supprimés');
+            console.log('✅ ✅ ✅ TOUS LES TOKENS SUPPRIMÉS DE FIREBASE');
+          } else {
+            console.log('⚠️ Aucun token trouvé dans Firebase Database');
           }
         } catch (error) {
-          console.error('❌ Erreur suppression tokens utilisateur:', error);
+          console.error('❌ Erreur suppression totale des tokens:', error);
         }
         
-      } catch (error) {
-        console.error('❌ Erreur suppression token FCM:', error);
-      }
-      
-      // Désactiver complètement les notifications push sur mobile
-      try {
-        console.log('🔔 Désactivation des notifications push...');
-        
-        // Désinscrire le service worker
-        if ('serviceWorker' in navigator) {
-          const registrations = await navigator.getRegistrations();
-          for (const registration of registrations) {
-            if (registration.scope.includes('fcm')) {
-              console.log('🗑️ Désinscription service worker FCM');
+        // 4. Désinscrire TOUS les service workers
+        try {
+          if ('serviceWorker' in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            console.log('📊 Nombre de service workers trouvés:', registrations.length);
+            
+            for (const registration of registrations) {
+              console.log('🗑️ Désinscription service worker:', registration.scope);
               await registration.unregister();
             }
+            console.log('✅ Tous les service workers désinscrits');
           }
+        } catch (error) {
+          console.error('❌ Erreur désinscription service workers:', error);
         }
         
-        // Supprimer les permissions de notification
-        if ('permissions' in navigator) {
-          try {
-            const permission = await navigator.permissions.query({ name: 'notifications' as PermissionName });
-            if (permission.state === 'granted') {
-              console.log('🔔 Notifications désactivées');
-            }
-          } catch (e) {
-            console.log('⚠️ Impossible de vérifier les permissions');
-          }
-        }
+        console.log('✅ ✅ ✅ NETTOYAGE COMPLET DES NOTIFICATIONS TERMINÉ');
         
       } catch (error) {
-        console.error('❌ Erreur désactivation notifications:', error);
+        console.error('❌ Erreur suppression notifications:', error);
       }
       
       // Déconnexion Supabase
