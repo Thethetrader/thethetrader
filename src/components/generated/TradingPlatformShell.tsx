@@ -4106,12 +4106,30 @@ export default function TradingPlatformShell() {
                       
                       {(messages[selectedChannel.id] || []).length > 0 && 
                         (messages[selectedChannel.id] || []).map((message, index) => {
-                          // Afficher un séparateur de date tous les 5 messages
-                          const showDateSeparator = index % 5 === 0 && index > 0;
-                          const dayIndex = Math.floor(index / 5);
-                          const dayLabel = dayIndex === 0 ? 'Aujourd\'hui' : 
-                                          dayIndex === 1 ? 'Hier' : 
-                                          `Jour ${dayIndex}`;
+                          // Vérifier si c'est un nouveau jour par rapport au message précédent
+                          const currentMessageDate = new Date(message.timestamp).toDateString();
+                          const previousMessage = index > 0 ? messages[selectedChannel.id][index - 1] : null;
+                          const previousMessageDate = previousMessage ? new Date(previousMessage.timestamp).toDateString() : null;
+                          const showDateSeparator = index === 0 || currentMessageDate !== previousMessageDate;
+                          
+                          // Formater la date pour l'affichage
+                          const messageDate = new Date(message.timestamp);
+                          const today = new Date();
+                          const yesterday = new Date(today);
+                          yesterday.setDate(yesterday.getDate() - 1);
+                          
+                          let dayLabel = '';
+                          if (messageDate.toDateString() === today.toDateString()) {
+                            dayLabel = 'Aujourd\'hui';
+                          } else if (messageDate.toDateString() === yesterday.toDateString()) {
+                            dayLabel = 'Hier';
+                          } else {
+                            dayLabel = messageDate.toLocaleDateString('fr-FR', { 
+                              weekday: 'long', 
+                              day: 'numeric', 
+                              month: 'long' 
+                            });
+                          }
 
                           return (
                             <div key={message.id}>
@@ -4948,12 +4966,30 @@ export default function TradingPlatformShell() {
                     )}
                     {(messages[selectedChannel.id] || []).length > 0 && 
                       (messages[selectedChannel.id] || []).map((message, index) => {
-                        // Afficher un séparateur de date tous les 5 messages
-                        const showDateSeparator = index % 5 === 0 && index > 0;
-                        const dayIndex = Math.floor(index / 5);
-                        const dayLabel = dayIndex === 0 ? 'Aujourd\'hui' : 
-                                        dayIndex === 1 ? 'Hier' : 
-                                        `Jour ${dayIndex}`;
+                        // Vérifier si c'est un nouveau jour par rapport au message précédent
+                        const currentMessageDate = new Date(message.timestamp).toDateString();
+                        const previousMessage = index > 0 ? messages[selectedChannel.id][index - 1] : null;
+                        const previousMessageDate = previousMessage ? new Date(previousMessage.timestamp).toDateString() : null;
+                        const showDateSeparator = index === 0 || currentMessageDate !== previousMessageDate;
+                        
+                        // Formater la date pour l'affichage
+                        const messageDate = new Date(message.timestamp);
+                        const today = new Date();
+                        const yesterday = new Date(today);
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        
+                        let dayLabel = '';
+                        if (messageDate.toDateString() === today.toDateString()) {
+                          dayLabel = 'Aujourd\'hui';
+                        } else if (messageDate.toDateString() === yesterday.toDateString()) {
+                          dayLabel = 'Hier';
+                        } else {
+                          dayLabel = messageDate.toLocaleDateString('fr-FR', { 
+                            weekday: 'long', 
+                            day: 'numeric', 
+                            month: 'long' 
+                          });
+                        }
 
                         return (
                           <div key={message.id}>
