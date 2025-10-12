@@ -182,6 +182,47 @@ export default function TradingPlatformShell() {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showGifPicker, setShowGifPicker] = useState(false);
   const [showFileUpload, setShowFileUpload] = useState(false);
+
+  // Charger Tawk.to au montage de TradingPlatformShell
+  useEffect(() => {
+    console.log('💬 Chargement Tawk.to pour utilisateur...');
+    
+    // Vérifier si déjà chargé
+    if (document.getElementById('tawkto-user-script')) {
+      console.log('⚠️ Tawk.to déjà chargé');
+      return;
+    }
+
+    // Initialiser Tawk_API
+    (window as any).Tawk_API = (window as any).Tawk_API || {};
+    (window as any).Tawk_LoadStart = new Date();
+
+    // Créer le script
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://embed.tawk.to/68caaf2acf5de4191f5b9749/1j5brog6o';
+    script.charset = 'UTF-8';
+    script.setAttribute('crossorigin', '*');
+    script.id = 'tawkto-user-script';
+    
+    script.onload = () => {
+      console.log('✅ Tawk.to chargé pour utilisateur');
+    };
+    
+    script.onerror = () => {
+      console.error('❌ Erreur chargement Tawk.to');
+    };
+
+    document.head.appendChild(script);
+    
+    return () => {
+      // Cleanup si besoin
+      const scriptElement = document.getElementById('tawkto-user-script');
+      if (scriptElement) {
+        scriptElement.remove();
+      }
+    };
+  }, []);
   const [showTradesModal, setShowTradesModal] = useState(false);
   const [showSignalsModal, setShowSignalsModal] = useState(false);
   const [selectedTradesDate, setSelectedTradesDate] = useState<Date | null>(null);
