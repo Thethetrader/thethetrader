@@ -5,13 +5,20 @@ const ChatCommunauteAdmin: React.FC = () => {
   const scriptLoadedRef = useRef(false);
 
   useEffect(() => {
-    // Éviter de charger le script plusieurs fois
-    if (scriptLoadedRef.current) {
-      console.log('⚠️ Script RumbleTalk déjà chargé');
-      return;
+    console.log('🚀 ChatCommunauteAdmin monté');
+    
+    // Vérifier si le script existe déjà
+    const existingScript = document.getElementById('rumbletalk-script-admin');
+    if (existingScript) {
+      console.log('⚠️ Script RumbleTalk déjà présent, suppression...');
+      existingScript.remove();
     }
 
-    console.log('🔄 Chargement du script RumbleTalk...');
+    // Vérifier si le container existe
+    const container = document.getElementById('rt-557e982f6b67541655c3270785d365db');
+    console.log('📦 Container RumbleTalk:', container);
+
+    console.log('🔄 Création du script RumbleTalk...');
 
     // Créer et ajouter le script RumbleTalk
     const script = document.createElement('script');
@@ -28,16 +35,18 @@ const ChatCommunauteAdmin: React.FC = () => {
       console.error('❌ Erreur chargement script RumbleTalk:', error);
     };
     
-    // Ajouter le script au body
-    document.body.appendChild(script);
+    console.log('📝 Ajout du script au head...');
+    // Ajouter le script au head au lieu du body
+    document.head.appendChild(script);
     
     // Cleanup function
     return () => {
+      console.log('🧹 Nettoyage du script RumbleTalk...');
       const scriptElement = document.getElementById('rumbletalk-script-admin');
       if (scriptElement && scriptElement.parentNode) {
         scriptElement.parentNode.removeChild(scriptElement);
         scriptLoadedRef.current = false;
-        console.log('🔄 Script RumbleTalk retiré');
+        console.log('✅ Script RumbleTalk retiré');
       }
     };
   }, []);
