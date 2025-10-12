@@ -236,7 +236,12 @@ export default function AdminInterface() {
       const formattedMessages = messages.map(msg => ({
         id: msg.id || '',
         text: msg.content,
-        timestamp: new Date(msg.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        timestamp: new Date(msg.timestamp || Date.now()).toLocaleString('fr-FR', { 
+          day: '2-digit', 
+          month: '2-digit', 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        }),
         author: msg.author,
         author_avatar: msg.author_avatar, // CONSERVER l'avatar de l'auteur !
         attachment: msg.attachment_data ? {
@@ -2584,7 +2589,12 @@ export default function AdminInterface() {
         const fallbackMessage = {
           id: Date.now().toString(),
           text: chatMessage,
-          timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+          timestamp: new Date().toLocaleString('fr-FR', { 
+            day: '2-digit', 
+            month: '2-digit', 
+            hour: '2-digit', 
+            minute: '2-digit' 
+          }),
           author: `${currentUsername} (Offline)`
         };
         
