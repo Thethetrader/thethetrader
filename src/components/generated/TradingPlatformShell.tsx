@@ -253,7 +253,12 @@ export default function TradingPlatformShell() {
       const formattedMessages = limitedMessages.map(msg => ({
         id: msg.id || '',
         text: msg.content,
-        timestamp: new Date(msg.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        timestamp: new Date(msg.timestamp || Date.now()).toLocaleString('fr-FR', { 
+          day: '2-digit', 
+          month: '2-digit', 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        }),
         author: msg.author,
         author_avatar: msg.author_avatar,
         attachment: undefined,
@@ -2454,7 +2459,12 @@ export default function TradingPlatformShell() {
           user: currentUsername || 'Utilisateur',
           author: currentUsername || 'Utilisateur',
           author_avatar: profileImage || undefined,
-          timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+          timestamp: new Date().toLocaleString('fr-FR', { 
+            day: '2-digit', 
+            month: '2-digit', 
+            hour: '2-digit', 
+            minute: '2-digit' 
+          }),
           attachment_data: undefined
         };
 
