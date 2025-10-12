@@ -33,7 +33,6 @@ export default function TradingPlatformShell() {
     { id: 'general-chat-3', name: 'general-chat-3', emoji: '🪙', fullName: 'Crypto' },
     { id: 'general-chat-4', name: 'general-chat-4', emoji: '💱', fullName: 'Forex' },
     { id: 'video', name: 'video', emoji: '📺', fullName: 'Livestream' },
-    { id: 'trading-hub', name: 'trading-hub', emoji: '💬', fullName: 'Trading Hub' },
     { id: 'journal', name: 'journal', emoji: '📓', fullName: 'Journal Perso' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📓', fullName: 'Journal Perso' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' }
@@ -3311,7 +3310,6 @@ export default function TradingPlatformShell() {
               <button onClick={() => handleChannelChange('calendrier', 'calendrier')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               <button onClick={() => handleChannelChange('journal', 'journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 Journal Perso</button>
               <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
-              <button onClick={() => handleChannelChange('trading-hub', 'trading-hub')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-hub' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 Trading Hub</button>
             </div>
           </div>
 
