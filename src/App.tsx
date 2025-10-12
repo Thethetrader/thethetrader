@@ -1135,7 +1135,7 @@ const App = () => {
                 <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2L3 7l9 5 9-5-9-5zM3 17l9 5 9-5M3 12l9 5 9-5"/>
                 </svg>
-                Installer l'app PWA
+                Installer l'app
               </button>
             </div>
 
