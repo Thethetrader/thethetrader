@@ -4107,13 +4107,46 @@ export default function TradingPlatformShell() {
                       {(messages[selectedChannel.id] || []).length > 0 && 
                         (messages[selectedChannel.id] || []).map((message, index) => {
                           // Vérifier si c'est un nouveau jour par rapport au message précédent
-                          const currentMessageDate = new Date(message.timestamp).toDateString();
+                          let messageDate: Date;
+                          
+                          // Gérer différents formats de timestamp
+                          if (typeof message.timestamp === 'string') {
+                            messageDate = new Date(message.timestamp);
+                          } else if (typeof message.timestamp === 'number') {
+                            // Si c'est un timestamp Firebase (millisecondes)
+                            messageDate = new Date(message.timestamp);
+                          } else {
+                            // Fallback: utiliser la date actuelle
+                            messageDate = new Date();
+                          }
+                          
+                          // Vérifier si la date est valide
+                          if (isNaN(messageDate.getTime())) {
+                            messageDate = new Date(); // Fallback si date invalide
+                          }
+                          
+                          const currentMessageDate = messageDate.toDateString();
                           const previousMessage = index > 0 ? messages[selectedChannel.id][index - 1] : null;
-                          const previousMessageDate = previousMessage ? new Date(previousMessage.timestamp).toDateString() : null;
+                          let previousMessageDate = null;
+                          
+                          if (previousMessage) {
+                            let prevDate: Date;
+                            if (typeof previousMessage.timestamp === 'string') {
+                              prevDate = new Date(previousMessage.timestamp);
+                            } else if (typeof previousMessage.timestamp === 'number') {
+                              prevDate = new Date(previousMessage.timestamp);
+                            } else {
+                              prevDate = new Date();
+                            }
+                            
+                            if (!isNaN(prevDate.getTime())) {
+                              previousMessageDate = prevDate.toDateString();
+                            }
+                          }
+                          
                           const showDateSeparator = index === 0 || currentMessageDate !== previousMessageDate;
                           
                           // Formater la date pour l'affichage
-                          const messageDate = new Date(message.timestamp);
                           const today = new Date();
                           const yesterday = new Date(today);
                           yesterday.setDate(yesterday.getDate() - 1);
@@ -4967,13 +5000,46 @@ export default function TradingPlatformShell() {
                     {(messages[selectedChannel.id] || []).length > 0 && 
                       (messages[selectedChannel.id] || []).map((message, index) => {
                         // Vérifier si c'est un nouveau jour par rapport au message précédent
-                        const currentMessageDate = new Date(message.timestamp).toDateString();
+                        let messageDate: Date;
+                        
+                        // Gérer différents formats de timestamp
+                        if (typeof message.timestamp === 'string') {
+                          messageDate = new Date(message.timestamp);
+                        } else if (typeof message.timestamp === 'number') {
+                          // Si c'est un timestamp Firebase (millisecondes)
+                          messageDate = new Date(message.timestamp);
+                        } else {
+                          // Fallback: utiliser la date actuelle
+                          messageDate = new Date();
+                        }
+                        
+                        // Vérifier si la date est valide
+                        if (isNaN(messageDate.getTime())) {
+                          messageDate = new Date(); // Fallback si date invalide
+                        }
+                        
+                        const currentMessageDate = messageDate.toDateString();
                         const previousMessage = index > 0 ? messages[selectedChannel.id][index - 1] : null;
-                        const previousMessageDate = previousMessage ? new Date(previousMessage.timestamp).toDateString() : null;
+                        let previousMessageDate = null;
+                        
+                        if (previousMessage) {
+                          let prevDate: Date;
+                          if (typeof previousMessage.timestamp === 'string') {
+                            prevDate = new Date(previousMessage.timestamp);
+                          } else if (typeof previousMessage.timestamp === 'number') {
+                            prevDate = new Date(previousMessage.timestamp);
+                          } else {
+                            prevDate = new Date();
+                          }
+                          
+                          if (!isNaN(prevDate.getTime())) {
+                            previousMessageDate = prevDate.toDateString();
+                          }
+                        }
+                        
                         const showDateSeparator = index === 0 || currentMessageDate !== previousMessageDate;
                         
                         // Formater la date pour l'affichage
-                        const messageDate = new Date(message.timestamp);
                         const today = new Date();
                         const yesterday = new Date(today);
                         yesterday.setDate(yesterday.getDate() - 1);
