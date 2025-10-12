@@ -1792,7 +1792,7 @@ export default function AdminInterface() {
     { id: 'fondamentaux', name: 'fondamentaux', emoji: '📚', fullName: 'Fondamentaux' },
     { id: 'letsgooo-model', name: 'letsgooo-model', emoji: '🚀', fullName: 'Letsgooo model' },
     { id: 'livestream', name: 'livestream', emoji: '📺', fullName: 'Livestream' },
-    { id: 'trading-hub', name: 'trading-hub', emoji: '💬', fullName: 'Trading Hub' },
+    { id: 'chat-communaute', name: 'chat-communaute', emoji: '💬', fullName: 'Chat Communauté' },
 
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' },
@@ -3453,7 +3453,7 @@ export default function AdminInterface() {
                   (window as any).setCurrentPage('livestream');
                 }
               }} className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📺 Livestream</button>
-              <button onClick={() => handleChannelChange('trading-hub', 'trading-hub')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-hub' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 Trading Hub</button>
+              <button onClick={() => handleChannelChange('chat-communaute', 'chat-communaute')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'chat-communaute' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 Chat Communauté</button>
             </div>
           </div>
 
@@ -4491,18 +4491,21 @@ export default function AdminInterface() {
                       </div>
                     </div>
                   </div>
-                ) : selectedChannel.id === 'trading-hub' ? (
+                ) : selectedChannel.id === 'chat-communaute' ? (
                   <div className="flex flex-col h-full bg-gray-900">
-                    {/* Trading Hub - RumbleTalk */}
+                    {/* Chat Communauté - RumbleTalk */}
                     <div className="flex-1 flex flex-col p-4 pt-16">
                       <div className="text-center mb-4">
-                        <h1 className="text-3xl font-bold text-white mb-2">💬 Trading Hub</h1>
+                        <h1 className="text-3xl font-bold text-white mb-2">💬 Chat Communauté</h1>
                         <p className="text-gray-400">Discute avec la communauté en temps réel</p>
                       </div>
                       
-                      {/* RumbleTalk Chat */}
+                      {/* RumbleTalk Chat - Code collé directement */}
                       <div className="flex-1 flex items-center justify-center">
-                        <RumbleTalk />
+                        <div style={{ height: '700px', width: '100%', maxWidth: '1200px' }}>
+                          <div id="rt-557e982f6b67541655c3270785d365db"></div>
+                          <script src="https://rumbletalk.com/client/?!1V9roB:"></script>
+                        </div>
                       </div>
                     </div>
                   </div>
