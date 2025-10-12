@@ -1,6 +1,6 @@
 {
-  "name": "Tradingpourlesnuls",
-  "short_name": "Tradingpourlesnuls",
+  "name": "TPLN",
+  "short_name": "TPLN",
   "description": "Plateforme de trading avec signaux en temps réel",
   "start_url": "/",
   "display": "standalone",
