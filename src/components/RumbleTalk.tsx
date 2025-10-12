@@ -5,7 +5,6 @@ interface RumbleTalkProps {
 }
 
 const RumbleTalk: React.FC<RumbleTalkProps> = ({ chatId = '!1V9roB' }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const scriptLoadedRef = useRef(false);
 
   useEffect(() => {
@@ -15,10 +14,11 @@ const RumbleTalk: React.FC<RumbleTalkProps> = ({ chatId = '!1V9roB' }) => {
       return;
     }
 
-    // Créer et ajouter le script RumbleTalk
+    // Créer et ajouter le script RumbleTalk directement dans le body
     const script = document.createElement('script');
     script.src = `https://rumbletalk.com/client/?${chatId}:`;
     script.async = true;
+    script.id = 'rumbletalk-script';
     
     script.onload = () => {
       console.log('✅ Script RumbleTalk chargé avec succès');
@@ -29,25 +29,24 @@ const RumbleTalk: React.FC<RumbleTalkProps> = ({ chatId = '!1V9roB' }) => {
       console.error('❌ Erreur chargement script RumbleTalk');
     };
     
-    // Ajouter le script au document
-    if (containerRef.current) {
-      containerRef.current.appendChild(script);
-    }
+    // Ajouter le script au body
+    document.body.appendChild(script);
     
     // Cleanup function
     return () => {
-      if (containerRef.current && script.parentNode) {
-        containerRef.current.removeChild(script);
+      const existingScript = document.getElementById('rumbletalk-script');
+      if (existingScript) {
+        document.body.removeChild(existingScript);
+        scriptLoadedRef.current = false;
+        console.log('🔄 Script RumbleTalk retiré');
       }
-      scriptLoadedRef.current = false;
-      console.log('🔄 Composant RumbleTalk démonté');
     };
   }, [chatId]);
 
   return (
     <div className="w-full h-full flex items-center justify-center">
-      <div style={{ height: '600px', width: '100%', maxWidth: '1200px' }}>
-        <div id="rt-557e982f6b67541655c3270785d365db" ref={containerRef}></div>
+      <div style={{ height: '700px', width: '100%', maxWidth: '1200px' }}>
+        <div id="rt-557e982f6b67541655c3270785d365db"></div>
       </div>
     </div>
   );
