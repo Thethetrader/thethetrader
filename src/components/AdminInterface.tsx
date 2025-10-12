@@ -19,6 +19,47 @@ export default function AdminInterface() {
   const [showChannelsOverlay, setShowChannelsOverlay] = useState(true);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<{[channelId: string]: Array<{id: string, text: string, user: string, timestamp: string, file?: File}>}>({});
+
+  // Charger Tawk.to au montage de l'AdminInterface
+  useEffect(() => {
+    console.log('💬 Chargement Tawk.to pour admin...');
+    
+    // Vérifier si déjà chargé
+    if (document.getElementById('tawkto-admin-script')) {
+      console.log('⚠️ Tawk.to déjà chargé');
+      return;
+    }
+
+    // Initialiser Tawk_API
+    (window as any).Tawk_API = (window as any).Tawk_API || {};
+    (window as any).Tawk_LoadStart = new Date();
+
+    // Créer le script
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://embed.tawk.to/68caaf2acf5de4191f5b9749/1j5brog6o';
+    script.charset = 'UTF-8';
+    script.setAttribute('crossorigin', '*');
+    script.id = 'tawkto-admin-script';
+    
+    script.onload = () => {
+      console.log('✅ Tawk.to chargé pour admin');
+    };
+    
+    script.onerror = () => {
+      console.error('❌ Erreur chargement Tawk.to');
+    };
+
+    document.head.appendChild(script);
+    
+    return () => {
+      // Cleanup si besoin
+      const scriptElement = document.getElementById('tawkto-admin-script');
+      if (scriptElement) {
+        scriptElement.remove();
+      }
+    };
+  }, []);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showGifPicker, setShowGifPicker] = useState(false);
   const [showFileUpload, setShowFileUpload] = useState(false);
