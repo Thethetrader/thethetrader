@@ -3224,7 +3224,7 @@ export default function AdminInterface() {
                       <div className="text-xs md:text-sm font-semibold">{dayNumber}</div>
                       {tradeCount > 0 && (
                         <div className="text-xs font-bold text-center hidden md:block">
-                          {totalPnL > 0 ? `+${totalPnL.toFixed(2)}` : totalPnL < 0 ? `${totalPnL.toFixed(2)}` : 'BE'}
+                          {tradeCount} {selectedChannel.id === 'trading-journal' ? 'trade' : 'signal'}{tradeCount > 1 ? 's' : ''}
                         </div>
                       )}
                     </div>
