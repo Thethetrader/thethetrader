@@ -2988,23 +2988,13 @@ export default function TradingPlatformShell() {
                         ? 'ring-2 ring-purple-400' : ''}
                   `}
                     style={{minHeight: '64px'}}>
-                  <div className="flex flex-col h-full justify-between relative">
-                      {/* Date en haut à gauche */}
+                  <div className="flex flex-col h-full justify-between">
                       <div className="text-xs md:text-sm font-semibold">{dayNumber}</div>
-                      
-                      {/* PNL au milieu */}
                       {tradeCount > 0 && (
-                        <div className="text-xs font-bold text-center flex-1 flex items-center justify-center">
-                          {totalPnL > 0 ? `+${totalPnL.toFixed(2)}` : totalPnL < 0 ? `${totalPnL.toFixed(2)}` : 'BE'}
-                        </div>
-                      )}
-                      
-                      {/* Nombre de trades en bas à droite */}
-                      {tradeCount > 0 && (
-                        <div className="text-xs font-bold text-right">
+                      <div className="text-xs font-bold text-center hidden md:block">
                           {tradeCount} {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'trade' : 'signal'}{tradeCount > 1 ? 's' : ''}
-                        </div>
-                      )}
+                      </div>
+                    )}
                   </div>
                 </div>
               );
