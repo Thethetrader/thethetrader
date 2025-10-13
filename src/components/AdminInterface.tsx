@@ -3222,11 +3222,43 @@ export default function AdminInterface() {
                     style={{minHeight: '64px'}}>
                     <div className="flex flex-col h-full justify-between">
                       <div className="text-xs md:text-sm font-semibold">{dayNumber}</div>
-                      {tradeCount > 0 && (
-                        <div className="text-xs font-bold text-center hidden md:block">
-                          {tradeCount} {selectedChannel.id === 'trading-journal' ? 'trade' : 'signal'}{tradeCount > 1 ? 's' : ''}
-                        </div>
-                      )}
+                      {(() => {
+                        let totalPnL = 0;
+                            if (selectedChannel.id === 'trading-journal') {
+                              // Pour les trades personnels
+                              const dayTrades = personalTrades.filter(trade => {
+                                const tradeDate = new Date(trade.date);
+                                return tradeDate.getDate() === dayNumber && 
+                                       tradeDate.getMonth() === currentDate.getMonth() && 
+                                       tradeDate.getFullYear() === currentDate.getFullYear();
+                              });
+                          totalPnL = dayTrades.reduce((total, trade) => {
+                            if (trade.pnl) {
+                              return total + parsePnL(trade.pnl);
+                            }
+                            return total;
+                          }, 0);
+                        } else {
+                          // Pour les signaux - utiliser allSignalsForStats qui contient TOUS les signaux
+                          const daySignals = allSignalsForStats.filter(signal => {
+                            const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
+                            return signalDate.getDate() === dayNumber && 
+                                   signalDate.getMonth() === currentDate.getMonth() && 
+                                   signalDate.getFullYear() === currentDate.getFullYear();
+                          });
+                          totalPnL = daySignals.reduce((total, signal) => {
+                            if (signal.pnl) {
+                              return total + parsePnL(signal.pnl);
+                            }
+                            return total;
+                          }, 0);
+                        }
+                        return totalPnL !== 0 ? (
+                          <div className="text-xs font-bold text-center hidden md:block">
+                            ${totalPnL.toFixed(0)}
+                          </div>
+                        ) : null;
+                      })()}
                     </div>
                   </div>
                 );
