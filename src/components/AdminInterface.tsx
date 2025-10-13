@@ -1168,6 +1168,7 @@ export default function AdminInterface() {
     return Math.round((wins / monthTrades.length) * 100);
   };
 
+
   const calculateAvgWinTrades = (): number => {
     const monthTrades = personalTrades.filter(t => {
       const tradeDate = new Date(t.date);
@@ -3130,7 +3131,7 @@ export default function AdminInterface() {
                     const hasBE = dayTrades.some(t => t.status === 'BE');
                     
                     if (hasWin && !hasLoss) {
-                      bgColor = 'bg-green-500/60 border-green-400/50 text-white'; // WIN
+                      bgColor = 'bg-green-400/40 border-green-300/30 text-white'; // WIN - vert plus pale
                     } else if (hasLoss && !hasWin) {
                       bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // LOSS
                     } else if (hasBE || (hasWin && hasLoss)) {
@@ -3163,13 +3164,10 @@ export default function AdminInterface() {
                     // Déterminer la couleur selon le PnL total
                     if (totalPnL > 0) {
                       bgColor = 'bg-green-400/40 border-green-300/30 text-white'; // PnL positif - vert plus pale
-                      if (dayNumber === 30) console.log('🎨 [ADMIN] Jour 30: Couleur VERTE (PnL positif)');
                     } else if (totalPnL < 0) {
                       bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif
-                      if (dayNumber === 30) console.log('🎨 [ADMIN] Jour 30: Couleur ROUGE (PnL négatif)');
                     } else {
                       bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
-                      if (dayNumber === 30) console.log('🎨 [ADMIN] Jour 30: Couleur BLEUE (PnL = 0)');
                     }
                   }
                 }
@@ -3224,14 +3222,16 @@ export default function AdminInterface() {
                       <div className="text-xs md:text-sm font-semibold">{dayNumber}</div>
                       {(() => {
                         let totalPnL = 0;
-                            if (selectedChannel.id === 'trading-journal') {
-                              // Pour les trades personnels
-                              const dayTrades = personalTrades.filter(trade => {
-                                const tradeDate = new Date(trade.date);
-                                return tradeDate.getDate() === dayNumber && 
-                                       tradeDate.getMonth() === currentDate.getMonth() && 
-                                       tradeDate.getFullYear() === currentDate.getFullYear();
-                              });
+                        let tradeCount = 0;
+                        if (selectedChannel.id === 'trading-journal') {
+                          // Pour les trades personnels
+                          const dayTrades = personalTrades.filter(trade => {
+                            const tradeDate = new Date(trade.date);
+                            return tradeDate.getDate() === dayNumber && 
+                                   tradeDate.getMonth() === currentDate.getMonth() && 
+                                   tradeDate.getFullYear() === currentDate.getFullYear();
+                          });
+                          tradeCount = dayTrades.length;
                           totalPnL = dayTrades.reduce((total, trade) => {
                             if (trade.pnl) {
                               return total + parsePnL(trade.pnl);
@@ -3246,6 +3246,7 @@ export default function AdminInterface() {
                                    signalDate.getMonth() === currentDate.getMonth() && 
                                    signalDate.getFullYear() === currentDate.getFullYear();
                           });
+                          tradeCount = daySignals.length;
                           totalPnL = daySignals.reduce((total, signal) => {
                             if (signal.pnl) {
                               return total + parsePnL(signal.pnl);
@@ -3253,11 +3254,20 @@ export default function AdminInterface() {
                             return total;
                           }, 0);
                         }
-                        return totalPnL !== 0 ? (
-                          <div className="text-xs font-bold text-center hidden md:block">
-                            ${totalPnL.toFixed(0)}
+                        return (
+                          <div className="flex flex-col items-center space-y-1">
+                            {totalPnL !== 0 && (
+                              <div className="text-xs font-bold text-center hidden md:block">
+                                ${totalPnL.toFixed(0)}
+                              </div>
+                            )}
+                            {tradeCount > 0 && (
+                              <div className="text-xs font-bold text-right self-end">
+                                {tradeCount}
+                              </div>
+                            )}
                           </div>
-                        ) : null;
+                        );
                       })()}
                     </div>
                   </div>
@@ -3322,6 +3332,7 @@ export default function AdminInterface() {
                 {selectedChannel.id === 'trading-journal' ? calculateWinRateTrades() : calculateWinRate()}%
               </div>
             </div>
+
             
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">

@@ -184,6 +184,50 @@ export default function TradingPlatformShell() {
       }
     };
   }, []);
+
+  // Charger les comptes depuis localStorage
+  useEffect(() => {
+    const savedAccounts = localStorage.getItem('tradingAccounts');
+    if (savedAccounts) {
+      const accounts = JSON.parse(savedAccounts);
+      setTradingAccounts(accounts);
+      setSelectedAccount(accounts[0] || 'Compte Principal');
+    }
+  }, []);
+
+  // Sauvegarder les comptes dans localStorage
+  const saveAccounts = (accounts: string[]) => {
+    localStorage.setItem('tradingAccounts', JSON.stringify(accounts));
+    setTradingAccounts(accounts);
+  };
+
+  // Ajouter un nouveau compte
+  const handleAddAccount = () => {
+    if (newAccountName.trim() && !tradingAccounts.includes(newAccountName.trim())) {
+      const updatedAccounts = [...tradingAccounts, newAccountName.trim()];
+      saveAccounts(updatedAccounts);
+      setSelectedAccount(newAccountName.trim());
+      setNewAccountName('');
+      setShowAddAccountModal(false);
+    }
+  };
+
+  // Changer de compte
+  const handleAccountChange = (account: string) => {
+    setSelectedAccount(account);
+  };
+
+  // Supprimer un compte
+  const handleDeleteAccount = (accountToDelete: string) => {
+    if (accountToDelete === 'Compte Principal') return; // Ne pas supprimer le compte principal
+    
+    const updatedAccounts = tradingAccounts.filter(account => account !== accountToDelete);
+    saveAccounts(updatedAccounts);
+    
+    if (selectedAccount === accountToDelete) {
+      setSelectedAccount(updatedAccounts[0] || 'Compte Principal');
+    }
+  };
   const [showTradesModal, setShowTradesModal] = useState(false);
   const [showSignalsModal, setShowSignalsModal] = useState(false);
   const [selectedTradesDate, setSelectedTradesDate] = useState<Date | null>(null);
@@ -894,6 +938,12 @@ export default function TradingPlatformShell() {
   };
   const [personalTrades, setPersonalTrades] = useState<PersonalTrade[]>([]);
 
+  // État pour les comptes multiples
+  const [tradingAccounts, setTradingAccounts] = useState<string[]>(['Compte Principal']);
+  const [selectedAccount, setSelectedAccount] = useState<string>('Compte Principal');
+  const [showAddAccountModal, setShowAddAccountModal] = useState(false);
+  const [newAccountName, setNewAccountName] = useState('');
+
   const [tradeData, setTradeData] = useState({
     symbol: '',
     type: 'BUY' as 'BUY' | 'SELL',
@@ -1472,26 +1522,36 @@ export default function TradingPlatformShell() {
     });
   };
 
-  // Fonctions pour les statistiques des trades personnels
+  // Fonctions pour les statistiques des trades personnels (filtrées par compte)
+  const getTradesForSelectedAccount = () => {
+    return personalTrades.filter(trade => 
+      (trade.account || 'Compte Principal') === selectedAccount
+    );
+  };
+
   const calculateTotalPnLTrades = (): number => {
-    return personalTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0);
+    return getTradesForSelectedAccount().reduce((total, trade) => total + parsePnL(trade.pnl), 0);
   };
 
   const calculateWinRateTrades = (): number => {
-    if (personalTrades.length === 0) return 0;
-    const wins = personalTrades.filter(t => t.status === 'WIN').length;
-    return Math.round((wins / personalTrades.length) * 100);
+    const accountTrades = getTradesForSelectedAccount();
+    if (accountTrades.length === 0) return 0;
+    const wins = accountTrades.filter(t => t.status === 'WIN').length;
+    return Math.round((wins / accountTrades.length) * 100);
   };
 
+
   const calculateAvgWinTrades = (): number => {
-    const winTrades = personalTrades.filter(t => t.status === 'WIN');
+    const accountTrades = getTradesForSelectedAccount();
+    const winTrades = accountTrades.filter(t => t.status === 'WIN');
     if (winTrades.length === 0) return 0;
     const totalWinPnL = winTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0);
     return Math.round(totalWinPnL / winTrades.length);
   };
 
   const calculateAvgLossTrades = (): number => {
-    const lossTrades = personalTrades.filter(t => t.status === 'LOSS');
+    const accountTrades = getTradesForSelectedAccount();
+    const lossTrades = accountTrades.filter(t => t.status === 'LOSS');
     if (lossTrades.length === 0) return 0;
     const totalLossPnL = lossTrades.reduce((total, trade) => total + Math.abs(parsePnL(trade.pnl)), 0);
     return Math.round(totalLossPnL / lossTrades.length);
@@ -1499,12 +1559,12 @@ export default function TradingPlatformShell() {
 
   const getTodayTrades = () => {
     const today = new Date().toISOString().split('T')[0];
-    return personalTrades.filter(t => t.date === today);
+    return getTradesForSelectedAccount().filter(t => t.date === today);
   };
 
   const getThisMonthTrades = () => {
     const today = new Date();
-    return personalTrades.filter(t => {
+    return getTradesForSelectedAccount().filter(t => {
       const tradeDate = new Date(t.date);
       return tradeDate.getMonth() === today.getMonth() &&
              tradeDate.getFullYear() === today.getFullYear();
@@ -1513,7 +1573,7 @@ export default function TradingPlatformShell() {
 
   // Fonctions pour calculer les stats du mois affiché dans le calendrier (trades personnels)
   const getTradesForMonth = (date: Date) => {
-    return personalTrades.filter(t => {
+    return getTradesForSelectedAccount().filter(t => {
       const tradeDate = new Date(t.date);
       return tradeDate.getMonth() === date.getMonth() &&
              tradeDate.getFullYear() === date.getFullYear();
@@ -2127,7 +2187,8 @@ export default function TradingPlatformShell() {
       notes: tradeData.notes,
       image1: tradeData.image1,
       image2: tradeData.image2,
-      timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+      timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+      account: selectedAccount
     };
 
     // Sauvegarder dans Firebase
@@ -2911,7 +2972,7 @@ export default function TradingPlatformShell() {
                     
                     // Déterminer la couleur selon le PnL total
                     if (totalPnL > 0) {
-                      bgColor = 'bg-green-500/60 border-green-400/50 text-white'; // PnL positif
+                      bgColor = 'bg-green-400/40 border-green-300/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
                       bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif
                     } else {
@@ -2992,14 +3053,16 @@ export default function TradingPlatformShell() {
                       <div className="text-xs md:text-sm font-semibold">{dayNumber}</div>
                       {(() => {
                         let totalPnL = 0;
-                            if (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') {
-                              // Pour les trades personnels
-                              const dayTrades = personalTrades.filter(trade => {
-                                const tradeDate = new Date(trade.date);
-                                return tradeDate.getDate() === dayNumber && 
-                                       tradeDate.getMonth() === currentDate.getMonth() && 
-                                       tradeDate.getFullYear() === currentDate.getFullYear();
-                              });
+                        let tradeCount = 0;
+                        if (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') {
+                          // Pour les trades personnels
+                          const dayTrades = personalTrades.filter(trade => {
+                            const tradeDate = new Date(trade.date);
+                            return tradeDate.getDate() === dayNumber && 
+                                   tradeDate.getMonth() === currentDate.getMonth() && 
+                                   tradeDate.getFullYear() === currentDate.getFullYear();
+                          });
+                          tradeCount = dayTrades.length;
                           totalPnL = dayTrades.reduce((total, trade) => {
                             if (trade.pnl) {
                               return total + parsePnL(trade.pnl);
@@ -3014,6 +3077,7 @@ export default function TradingPlatformShell() {
                                    signalDate.getMonth() === currentDate.getMonth() && 
                                    signalDate.getFullYear() === currentDate.getFullYear();
                           });
+                          tradeCount = daySignals.length;
                           totalPnL = daySignals.reduce((total, signal) => {
                             if (signal.pnl) {
                               return total + parsePnL(signal.pnl);
@@ -3021,11 +3085,20 @@ export default function TradingPlatformShell() {
                             return total;
                           }, 0);
                         }
-                        return totalPnL !== 0 ? (
-                          <div className="text-xs font-bold text-center hidden md:block">
-                            ${totalPnL.toFixed(0)}
+                        return (
+                          <div className="flex flex-col items-center space-y-1">
+                            {totalPnL !== 0 && (
+                              <div className="text-xs font-bold text-center hidden md:block">
+                                ${totalPnL.toFixed(0)}
+                              </div>
+                            )}
+                            {tradeCount > 0 && (
+                              <div className="text-xs font-bold text-right self-end">
+                                {tradeCount}
+                              </div>
+                            )}
                           </div>
-                        ) : null;
+                        );
                       })()}
                   </div>
                 </div>
@@ -3090,6 +3163,7 @@ export default function TradingPlatformShell() {
                 {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateWinRateTradesForMonth() : calculateWinRateForMonth()}%
               </div>
             </div>
+
             
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
@@ -3334,10 +3408,10 @@ export default function TradingPlatformShell() {
           {/* Bouton Toggle Notifications */}
           <button
             onClick={handleToggleNotifications}
-            className={`w-full px-4 py-3 rounded-lg font-medium transition-colors ${
+            className={`w-full px-4 py-3 rounded-lg font-medium transition-all duration-200 shadow-sm ${
               notificationsEnabled
-                ? 'bg-green-600 hover:bg-green-700 text-white'
-                : 'bg-gray-600 hover:bg-gray-500 text-gray-300'
+                ? 'bg-green-500/20 hover:bg-green-500/30 text-green-400 border border-green-500/30 hover:border-green-500/50'
+                : 'bg-gray-600/20 hover:bg-gray-600/30 text-gray-400 border border-gray-600/30 hover:border-gray-600/50'
             }`}
           >
             {notificationsEnabled ? '🔔 Notifications ON' : '🔕 Notifications OFF'}
@@ -3604,13 +3678,79 @@ export default function TradingPlatformShell() {
           >
             {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'video' || selectedChannel.id === 'journal') ? (
               <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '0px' }}>
-                {/* Header avec bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
+                {/* Header avec sélecteur de compte et bouton Ajouter Trade pour Trading Journal - Mobile */}
                 {selectedChannel.id === 'trading-journal' && (
-                  <div className="hidden md:flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
-                    <div>
-                      <h1 className="text-2xl font-bold text-white">Mon Journal Perso</h1>
+                  <div className="md:hidden mb-4 border-b border-gray-600 pb-4">
+                    <div className="mb-3">
+                      <h1 className="text-xl font-bold text-white">Mon Journal Perso</h1>
                       <p className="text-sm text-gray-400 mt-1">Journal tous tes trades</p>
                     </div>
+                    
+                    {/* Sélecteur de compte mobile */}
+                    <div className="flex items-center space-x-2 mb-3">
+                      <select
+                        value={selectedAccount}
+                        onChange={(e) => handleAccountChange(e.target.value)}
+                        className="flex-1 bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                      >
+                        {tradingAccounts.map((account) => (
+                          <option key={account} value={account}>
+                            {account}
+                          </option>
+                        ))}
+                      </select>
+                      
+                      {/* Bouton + Ajouter compte mobile */}
+                      <button
+                        onClick={() => setShowAddAccountModal(true)}
+                        className="bg-green-600 hover:bg-green-700 px-3 py-2 rounded-lg text-sm font-medium"
+                      >
+                        + Compte
+                      </button>
+                    </div>
+                    
+                    <button 
+                      onClick={handleAddTrade}
+                      className="w-full bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
+                    >
+                      + Ajouter Trade
+                    </button>
+                  </div>
+                )}
+
+                {/* Header avec sélecteur de compte et bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
+                {selectedChannel.id === 'trading-journal' && (
+                  <div className="hidden md:flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
+                    <div className="flex items-center space-x-4">
+                      <div>
+                        <h1 className="text-2xl font-bold text-white">Mon Journal Perso</h1>
+                        <p className="text-sm text-gray-400 mt-1">Journal tous tes trades</p>
+                      </div>
+                      
+                      {/* Sélecteur de compte */}
+                      <div className="relative">
+                        <select
+                          value={selectedAccount}
+                          onChange={(e) => handleAccountChange(e.target.value)}
+                          className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                        >
+                          {tradingAccounts.map((account) => (
+                            <option key={account} value={account}>
+                              {account}
+                            </option>
+                          ))}
+                        </select>
+                        
+                        {/* Bouton + Ajouter compte */}
+                        <button
+                          onClick={() => setShowAddAccountModal(true)}
+                          className="ml-2 bg-green-600 hover:bg-green-700 px-3 py-2 rounded-lg text-sm font-medium"
+                        >
+                          + Ajouter compte
+                        </button>
+                      </div>
+                    </div>
+                    
                     <div className="flex gap-2">
                       <button 
                         onClick={handleAddTrade}
@@ -6207,6 +6347,45 @@ export default function TradingPlatformShell() {
             >
               ×
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal pour ajouter un nouveau compte */}
+      {showAddAccountModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-lg p-6 w-96">
+            <h3 className="text-lg font-bold text-white mb-4">Ajouter un nouveau compte</h3>
+            
+            <div className="mb-4">
+              <label className="block text-sm text-gray-300 mb-2">Nom du compte</label>
+              <input
+                type="text"
+                value={newAccountName}
+                onChange={(e) => setNewAccountName(e.target.value)}
+                placeholder="Ex: Compte Demo, Compte Live..."
+                className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+                onKeyPress={(e) => e.key === 'Enter' && handleAddAccount()}
+              />
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={handleAddAccount}
+                className="flex-1 bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-white font-medium"
+              >
+                Ajouter
+              </button>
+              <button
+                onClick={() => {
+                  setShowAddAccountModal(false);
+                  setNewAccountName('');
+                }}
+                className="flex-1 bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg text-white font-medium"
+              >
+                Annuler
+              </button>
+            </div>
           </div>
         </div>
       )}

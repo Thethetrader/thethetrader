@@ -68,6 +68,7 @@ export interface PersonalTrade {
   timestamp: string;
   created_at?: string;
   user_id?: string;
+  account?: string; // Nom du compte de trading
 }
 
 // Ajouter un message à Firebase
