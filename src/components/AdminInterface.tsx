@@ -3223,11 +3223,8 @@ export default function AdminInterface() {
                     <div className="flex flex-col h-full justify-between">
                       <div className="text-xs md:text-sm font-semibold">{dayNumber}</div>
                       {tradeCount > 0 && (
-                        <div className="text-xs font-bold text-center flex-1 flex items-center justify-center">
-                          {selectedChannel.id === 'trading-journal' ? 
-                            (totalPnL > 0 ? `+${totalPnL.toFixed(2)}` : totalPnL < 0 ? `${totalPnL.toFixed(2)}` : 'BE') :
-                            (totalPnL > 0 ? `+${totalPnL.toFixed(2)}` : totalPnL < 0 ? `${totalPnL.toFixed(2)}` : 'BE')
-                          }
+                        <div className="text-xs font-bold text-center hidden md:block">
+                          {tradeCount} {selectedChannel.id === 'trading-journal' ? 'trade' : 'signal'}{tradeCount > 1 ? 's' : ''}
                         </div>
                       )}
                     </div>
