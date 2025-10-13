@@ -876,6 +876,7 @@ export interface PersonalTrade {
   timestamp?: string;
   created_at?: string;
   updated_at?: string;
+  account?: string; // Nom du compte de trading
 }
 
 /**
