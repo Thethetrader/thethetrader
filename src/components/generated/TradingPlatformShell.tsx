@@ -3777,13 +3777,6 @@ export default function TradingPlatformShell() {
                             + Ajouter compte
                           </button>
                         </div>
-                        
-                        <button 
-                          onClick={handleAddTrade}
-                          className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
-                        >
-                          + Ajouter Trade
-                        </button>
                       </div>
                     </div>
                   </div>
