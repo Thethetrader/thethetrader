@@ -1522,6 +1522,15 @@ export default function TradingPlatformShell() {
     });
   };
 
+  // États pour forcer la mise à jour des stats
+  const [statsUpdateTrigger, setStatsUpdateTrigger] = useState(0);
+
+  // Forcer la mise à jour des stats quand le compte ou les trades changent
+  useEffect(() => {
+    console.log('🔄 Trigger stats update - Account:', selectedAccount, 'Trades:', personalTrades.length);
+    setStatsUpdateTrigger(prev => prev + 1);
+  }, [selectedAccount, personalTrades]);
+
   // Fonctions pour les statistiques des trades personnels (filtrées par compte)
   const getTradesForSelectedAccount = () => {
     const filtered = personalTrades.filter(trade => 
@@ -3169,7 +3178,7 @@ export default function TradingPlatformShell() {
         </div>
 
         {/* Panneau des statistiques */}
-        <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6" key={`stats-${selectedAccount}-${currentDate.getMonth()}-${currentDate.getFullYear()}`}>
+        <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6" key={`stats-${selectedAccount}-${currentDate.getMonth()}-${currentDate.getFullYear()}-${statsUpdateTrigger}`}>
           <h3 className="text-lg font-bold text-white mb-6">
             {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'Mon Journal Perso' : 'Statistiques Signaux'}
           </h3>
