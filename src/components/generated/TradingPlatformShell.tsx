@@ -1652,7 +1652,7 @@ export default function TradingPlatformShell() {
       const weekStart = new Date(year, month, (weekNum - 1) * 7 + 1);
       const weekEnd = new Date(year, month, weekNum * 7);
       
-      const weekTrades = personalTrades.filter(t => {
+      const weekTrades = getTradesForSelectedAccount().filter(t => {
         const tradeDate = new Date(t.date);
         return tradeDate >= weekStart && 
                tradeDate <= weekEnd &&
