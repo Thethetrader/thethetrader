@@ -2954,7 +2954,7 @@ export default function TradingPlatformShell() {
           </div>
 
           {/* Grille du calendrier */}
-          <div className="grid grid-cols-7 gap-0.5 md:gap-1 w-full" key={`calendar-${selectedChannel.id}-${selectedAccount}-${personalTrades.length}-${currentDate.getMonth()}-${currentDate.getFullYear()}`}>
+          <div className="grid grid-cols-7 gap-0.5 md:gap-1 w-full" key={`calendar-${selectedChannel.id}-${selectedAccount}-${personalTrades.length}-${statsUpdateTrigger}-${currentDate.getMonth()}-${currentDate.getFullYear()}`}>
             {(() => {
               const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
               const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
