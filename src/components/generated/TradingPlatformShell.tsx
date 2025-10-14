@@ -1524,9 +1524,16 @@ export default function TradingPlatformShell() {
 
   // Fonctions pour les statistiques des trades personnels (filtrées par compte)
   const getTradesForSelectedAccount = () => {
-    return personalTrades.filter(trade => 
+    const filtered = personalTrades.filter(trade => 
       (trade.account || 'Compte Principal') === selectedAccount
     );
+    console.log('🔍 DEBUG getTradesForSelectedAccount:', {
+      selectedAccount,
+      totalTrades: personalTrades.length,
+      filteredTrades: filtered.length,
+      allTrades: personalTrades.map(t => ({ symbol: t.symbol, account: t.account || 'Compte Principal' }))
+    });
+    return filtered;
   };
 
   const calculateTotalPnLTrades = (): number => {
@@ -2190,6 +2197,9 @@ export default function TradingPlatformShell() {
       timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
       account: selectedAccount
     };
+    
+    console.log('🔍 DEBUG Adding trade:', newTrade);
+    console.log('🔍 DEBUG Selected account:', selectedAccount);
 
     // Sauvegarder dans Firebase
     const savedTrade = await addPersonalTrade(newTrade as any);
