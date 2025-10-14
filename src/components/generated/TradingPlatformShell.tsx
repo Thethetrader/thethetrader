@@ -3678,86 +3678,48 @@ export default function TradingPlatformShell() {
           >
             {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'video' || selectedChannel.id === 'journal') ? (
               <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '0px' }}>
-                {/* Header avec sélecteur de compte et bouton Ajouter Trade pour Trading Journal - Mobile */}
+                {/* Header avec sélecteur de compte et bouton Ajouter Trade pour Trading Journal */}
                 {selectedChannel.id === 'trading-journal' && (
-                  <div className="md:hidden mb-4 border-b border-gray-600 pb-4">
-                    <div className="mb-3">
-                      <h1 className="text-xl font-bold text-white">Mon Journal Perso</h1>
-                      <p className="text-sm text-gray-400 mt-1">Journal tous tes trades</p>
-                    </div>
-                    
-                    {/* Sélecteur de compte mobile */}
-                    <div className="flex items-center space-x-2 mb-3">
-                      <select
-                        value={selectedAccount}
-                        onChange={(e) => handleAccountChange(e.target.value)}
-                        className="flex-1 bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-                      >
-                        {tradingAccounts.map((account) => (
-                          <option key={account} value={account}>
-                            {account}
-                          </option>
-                        ))}
-                      </select>
-                      
-                      {/* Bouton + Ajouter compte mobile */}
-                      <button
-                        onClick={() => setShowAddAccountModal(true)}
-                        className="bg-green-600 hover:bg-green-700 px-3 py-2 rounded-lg text-sm font-medium"
-                      >
-                        + Compte
-                      </button>
-                    </div>
-                    
-                    <button 
-                      onClick={handleAddTrade}
-                      className="w-full bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
-                    >
-                      + Ajouter Trade
-                    </button>
-                  </div>
-                )}
-
-                {/* Header avec sélecteur de compte et bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
-                {selectedChannel.id === 'trading-journal' && (
-                  <div className="hidden md:flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
-                    <div className="flex items-center space-x-4">
-                      <div>
-                        <h1 className="text-2xl font-bold text-white">Mon Journal Perso</h1>
-                        <p className="text-sm text-gray-400 mt-1">Journal tous tes trades</p>
+                  <div className="mb-4 md:mb-6 border-b border-gray-600 pb-4">
+                    <div className="flex flex-col md:flex-row md:justify-between md:items-center space-y-3 md:space-y-0">
+                      <div className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-4">
+                        <div>
+                          <h1 className="text-xl md:text-2xl font-bold text-white">Mon Journal Perso</h1>
+                          <p className="text-sm text-gray-400 mt-1">Journal tous tes trades</p>
+                        </div>
+                        
+                        {/* Sélecteur de compte */}
+                        <div className="flex items-center space-x-2">
+                          <select
+                            value={selectedAccount}
+                            onChange={(e) => handleAccountChange(e.target.value)}
+                            className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                          >
+                            {tradingAccounts.map((account) => (
+                              <option key={account} value={account}>
+                                {account}
+                              </option>
+                            ))}
+                          </select>
+                          
+                          {/* Bouton + Ajouter compte */}
+                          <button
+                            onClick={() => setShowAddAccountModal(true)}
+                            className="bg-green-600 hover:bg-green-700 px-3 py-2 rounded-lg text-sm font-medium"
+                          >
+                            + Ajouter compte
+                          </button>
+                        </div>
                       </div>
                       
-                      {/* Sélecteur de compte */}
-                      <div className="relative">
-                        <select
-                          value={selectedAccount}
-                          onChange={(e) => handleAccountChange(e.target.value)}
-                          className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={handleAddTrade}
+                          className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
                         >
-                          {tradingAccounts.map((account) => (
-                            <option key={account} value={account}>
-                              {account}
-                            </option>
-                          ))}
-                        </select>
-                        
-                        {/* Bouton + Ajouter compte */}
-                        <button
-                          onClick={() => setShowAddAccountModal(true)}
-                          className="ml-2 bg-green-600 hover:bg-green-700 px-3 py-2 rounded-lg text-sm font-medium"
-                        >
-                          + Ajouter compte
+                          + Ajouter Trade
                         </button>
                       </div>
-                    </div>
-                    
-                    <div className="flex gap-2">
-                      <button 
-                        onClick={handleAddTrade}
-                        className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
-                      >
-                        + Ajouter Trade
-                      </button>
                     </div>
                   </div>
                 )}
