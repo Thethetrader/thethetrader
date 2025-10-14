@@ -3169,7 +3169,7 @@ export default function TradingPlatformShell() {
         </div>
 
         {/* Panneau des statistiques */}
-        <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6">
+        <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6" key={`stats-${selectedAccount}-${currentDate.getMonth()}-${currentDate.getFullYear()}`}>
           <h3 className="text-lg font-bold text-white mb-6">
             {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'Mon Journal Perso' : 'Statistiques Signaux'}
           </h3>
