@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, Signal, syncUserId } from '../../utils/firebase-setup';
-import { addPersonalTrade, getPersonalTrades, deletePersonalTrade, PersonalTrade, listenToPersonalTrades } from '../../lib/supabase';
+import { addPersonalTrade, getPersonalTrades, deletePersonalTrade, PersonalTrade, listenToPersonalTrades, getUserAccounts, addUserAccount, deleteUserAccount, UserAccount } from '../../lib/supabase';
 import ProfitLoss from '../ProfitLoss';
 import { createClient } from '@supabase/supabase-js';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
@@ -186,29 +186,70 @@ export default function TradingPlatformShell() {
   }, []);
 
   // Charger les comptes depuis localStorage
+  // Charger les comptes depuis Supabase au démarrage
   useEffect(() => {
-    const savedAccounts = localStorage.getItem('tradingAccounts');
-    if (savedAccounts) {
-      const accounts = JSON.parse(savedAccounts);
-      setTradingAccounts(accounts);
-      setSelectedAccount(accounts[0] || 'Compte Principal');
-    }
+    loadAccounts();
   }, []);
 
   // Sauvegarder les comptes dans localStorage
-  const saveAccounts = (accounts: string[]) => {
-    localStorage.setItem('tradingAccounts', JSON.stringify(accounts));
+  // Charger les comptes depuis Supabase
+  const loadAccounts = async () => {
+    try {
+      const accounts = await getUserAccounts();
+      if (accounts.length > 0) {
+        setTradingAccounts(accounts);
+        // Sélectionner le compte par défaut ou le premier
+        const defaultAccount = accounts.find(acc => acc.is_default) || accounts[0];
+        setSelectedAccount(defaultAccount.account_name);
+      } else {
+        // Créer le compte principal par défaut
+        const defaultAccount = await addUserAccount('Compte Principal');
+        if (defaultAccount) {
+          setTradingAccounts([defaultAccount]);
+          setSelectedAccount('Compte Principal');
+        }
+      }
+    } catch (error) {
+      console.error('❌ Erreur chargement comptes:', error);
+      // Fallback vers localStorage
+      const savedAccounts = localStorage.getItem('tradingAccounts');
+      if (savedAccounts) {
+        const accounts = JSON.parse(savedAccounts);
+        setTradingAccounts(accounts.map((name: string) => ({ 
+          id: `local-${name}`, 
+          user_id: 'local', 
+          account_name: name, 
+          is_default: name === 'Compte Principal',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })));
+        setSelectedAccount('Compte Principal');
+      }
+    }
+  };
+
+  // Sauvegarder les comptes dans Supabase
+  const saveAccounts = async (accounts: UserAccount[]) => {
     setTradingAccounts(accounts);
+    // Sauvegarder aussi en localStorage comme backup
+    localStorage.setItem('tradingAccounts', JSON.stringify(accounts.map(acc => acc.account_name)));
   };
 
   // Ajouter un nouveau compte
-  const handleAddAccount = () => {
-    if (newAccountName.trim() && !tradingAccounts.includes(newAccountName.trim())) {
-      const updatedAccounts = [...tradingAccounts, newAccountName.trim()];
-      saveAccounts(updatedAccounts);
-      setSelectedAccount(newAccountName.trim());
-      setNewAccountName('');
-      setShowAddAccountModal(false);
+  const handleAddAccount = async () => {
+    if (newAccountName.trim() && !tradingAccounts.some(acc => acc.account_name === newAccountName.trim())) {
+      try {
+        const newAccount = await addUserAccount(newAccountName.trim());
+        if (newAccount) {
+          const updatedAccounts = [...tradingAccounts, newAccount];
+          await saveAccounts(updatedAccounts);
+          setSelectedAccount(newAccountName.trim());
+          setNewAccountName('');
+          setShowAddAccountModal(false);
+        }
+      } catch (error) {
+        console.error('❌ Erreur ajout compte:', error);
+      }
     }
   };
 
@@ -218,14 +259,29 @@ export default function TradingPlatformShell() {
   };
 
   // Supprimer un compte
-  const handleDeleteAccount = (accountToDelete: string) => {
+  const handleDeleteAccount = async (accountToDelete: string) => {
     if (accountToDelete === 'Compte Principal') return; // Ne pas supprimer le compte principal
     
-    const updatedAccounts = tradingAccounts.filter(account => account !== accountToDelete);
-    saveAccounts(updatedAccounts);
-    
-    if (selectedAccount === accountToDelete) {
-      setSelectedAccount(updatedAccounts[0] || 'Compte Principal');
+    try {
+      const account = tradingAccounts.find(acc => acc.account_name === accountToDelete);
+      if (account && account.id.startsWith('local-')) {
+        // Compte local, supprimer de localStorage
+        const updatedAccounts = tradingAccounts.filter(acc => acc.account_name !== accountToDelete);
+        await saveAccounts(updatedAccounts);
+      } else if (account) {
+        // Compte Supabase, supprimer de la base
+        const success = await deleteUserAccount(account.id);
+        if (success) {
+          const updatedAccounts = tradingAccounts.filter(acc => acc.account_name !== accountToDelete);
+          await saveAccounts(updatedAccounts);
+        }
+      }
+      
+      if (selectedAccount === accountToDelete) {
+        setSelectedAccount('Compte Principal');
+      }
+    } catch (error) {
+      console.error('❌ Erreur suppression compte:', error);
     }
   };
   const [showTradesModal, setShowTradesModal] = useState(false);
@@ -939,7 +995,7 @@ export default function TradingPlatformShell() {
   const [personalTrades, setPersonalTrades] = useState<PersonalTrade[]>([]);
 
   // État pour les comptes multiples
-  const [tradingAccounts, setTradingAccounts] = useState<string[]>(['Compte Principal']);
+  const [tradingAccounts, setTradingAccounts] = useState<UserAccount[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<string>('Compte Principal');
   const [showAddAccountModal, setShowAddAccountModal] = useState(false);
   const [newAccountName, setNewAccountName] = useState('');
@@ -2906,8 +2962,8 @@ export default function TradingPlatformShell() {
                 className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
               >
                 {tradingAccounts.map((account) => (
-                  <option key={account} value={account}>
-                    {account}
+                  <option key={account.id} value={account.account_name}>
+                    {account.account_name}
                   </option>
                 ))}
               </select>
@@ -3764,8 +3820,8 @@ export default function TradingPlatformShell() {
                             className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
                           >
                             {tradingAccounts.map((account) => (
-                              <option key={account} value={account}>
-                                {account}
+                              <option key={account.id} value={account.account_name}>
+                                {account.account_name}
                               </option>
                             ))}
                           </select>

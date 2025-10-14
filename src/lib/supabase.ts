@@ -1095,3 +1095,104 @@ export const listenToPersonalTrades = (
     supabase.channel('personal_trades_changes').unsubscribe();
   };
 };
+
+// Interface pour les comptes utilisateur
+export interface UserAccount {
+  id: string;
+  user_id: string;
+  account_name: string;
+  is_default: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// Fonctions pour gérer les comptes utilisateur
+export const getUserAccounts = async (): Promise<UserAccount[]> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      console.error('❌ Utilisateur non connecté');
+      return [];
+    }
+
+    const { data, error } = await supabase
+      .from('user_accounts')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('is_default', { ascending: false })
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.error('❌ Erreur récupération comptes:', error);
+      return [];
+    }
+
+    console.log('✅ Comptes récupérés:', data);
+    return data || [];
+  } catch (error) {
+    console.error('❌ Erreur getUserAccounts:', error);
+    return [];
+  }
+};
+
+export const addUserAccount = async (accountName: string): Promise<UserAccount | null> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      console.error('❌ Utilisateur non connecté');
+      return null;
+    }
+
+    console.log('🚀 Ajout compte utilisateur:', accountName);
+
+    const { data, error } = await supabase
+      .from('user_accounts')
+      .insert({
+        user_id: user.id,
+        account_name: accountName,
+        is_default: false
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('❌ Erreur ajout compte:', error);
+      return null;
+    }
+
+    console.log('✅ Compte ajouté:', data);
+    return data;
+  } catch (error) {
+    console.error('❌ Erreur addUserAccount:', error);
+    return null;
+  }
+};
+
+export const deleteUserAccount = async (accountId: string): Promise<boolean> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      console.error('❌ Utilisateur non connecté');
+      return false;
+    }
+
+    console.log('🗑️ Suppression compte:', accountId);
+
+    const { error } = await supabase
+      .from('user_accounts')
+      .delete()
+      .eq('id', accountId)
+      .eq('user_id', user.id);
+
+    if (error) {
+      console.error('❌ Erreur suppression compte:', error);
+      return false;
+    }
+
+    console.log('✅ Compte supprimé');
+    return true;
+  } catch (error) {
+    console.error('❌ Erreur deleteUserAccount:', error);
+    return false;
+  }
+};
