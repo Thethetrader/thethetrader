@@ -3683,17 +3683,18 @@ export default function TradingPlatformShell() {
                 {console.log('🔍 DEBUG Should show selector:', selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal')}
                 {console.log('🔍 DEBUG tradingAccounts:', tradingAccounts)}
                 {console.log('🔍 DEBUG selectedAccount:', selectedAccount)}
-                {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && (
+                {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? (
                   <div className="mb-4 md:mb-6 border-b border-gray-600 pb-4">
-                    <div className="flex flex-col md:flex-row md:justify-between md:items-center space-y-3 md:space-y-0">
-                      <div className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-4">
-                        <div>
-                          <h1 className="text-xl md:text-2xl font-bold text-white">Mon Journal Perso</h1>
-                          <p className="text-sm text-gray-400 mt-1">Journal tous tes trades</p>
-                        </div>
-                        
-                        {/* Sélecteur de compte */}
-                        <div className="flex items-center space-x-2">
+                    <div className="space-y-4">
+                      {/* Titre */}
+                      <div>
+                        <h1 className="text-xl md:text-2xl font-bold text-white">Mon Journal Perso</h1>
+                        <p className="text-sm text-gray-400 mt-1">Journal tous tes trades</p>
+                      </div>
+                      
+                      {/* Sélecteur de compte et boutons */}
+                      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
+                        <div className="flex items-center gap-2">
                           <select
                             value={selectedAccount}
                             onChange={(e) => handleAccountChange(e.target.value)}
@@ -3706,27 +3707,24 @@ export default function TradingPlatformShell() {
                             ))}
                           </select>
                           
-                          {/* Bouton + Ajouter compte */}
                           <button
                             onClick={() => setShowAddAccountModal(true)}
-                            className="bg-green-600 hover:bg-green-700 px-3 py-2 rounded-lg text-sm font-medium"
+                            className="bg-green-600 hover:bg-green-700 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
                           >
                             + Ajouter compte
                           </button>
                         </div>
-                      </div>
-                      
-                      <div className="flex gap-2">
+                        
                         <button 
                           onClick={handleAddTrade}
-                          className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
+                          className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
                         >
                           + Ajouter Trade
                         </button>
                       </div>
                     </div>
                   </div>
-                )}
+                ) : null}
                 
                   {/* Header pour le calendrier normal */}
                 {(view === 'calendar' || selectedChannel.id === 'calendrier') && selectedChannel.id !== 'trading-journal' && (
