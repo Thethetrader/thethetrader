@@ -2846,13 +2846,39 @@ export default function TradingPlatformShell() {
     <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: (isMobile && isJournalPerso) ? '80px' : '0px', marginTop: (isMobile && !isJournalPerso) ? '-9px' : '0px' }}>
       {/* Header */}
       <div className={`flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 pb-4 gap-4 md:gap-0 ${isMobile && !isJournalPerso ? '' : 'border-b border-gray-600'}`}>
-        <div className="hidden md:block">
-          <h1 className="text-2xl font-bold text-white">
-            {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'Mon Journal Perso' : 'Journal des Signaux'}
-          </h1>
-          <p className="text-sm text-gray-400 mt-1">
-            {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'Journal tous tes trades' : 'Suivi des performances des signaux'}
-          </p>
+        <div className="hidden md:flex md:items-center md:gap-6">
+          <div>
+            <h1 className="text-2xl font-bold text-white">
+              {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'Mon Journal Perso' : 'Journal des Signaux'}
+            </h1>
+            <p className="text-sm text-gray-400 mt-1">
+              {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'Journal tous tes trades' : 'Suivi des performances des signaux'}
+            </p>
+          </div>
+          
+          {/* Sélecteur de compte - DESKTOP */}
+          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && (
+            <div className="flex items-center gap-2">
+              <select
+                value={selectedAccount}
+                onChange={(e) => handleAccountChange(e.target.value)}
+                className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+              >
+                {tradingAccounts.map((account) => (
+                  <option key={account} value={account}>
+                    {account}
+                  </option>
+                ))}
+              </select>
+              
+              <button
+                onClick={() => setShowAddAccountModal(true)}
+                className="bg-green-600 hover:bg-green-700 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
+              >
+                + Ajouter compte
+              </button>
+            </div>
+          )}
         </div>
         
         <div className={`flex items-center ${(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'gap-4' : ''}`}>
