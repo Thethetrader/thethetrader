@@ -3679,7 +3679,7 @@ export default function TradingPlatformShell() {
             {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'video' || selectedChannel.id === 'journal') ? (
               <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '0px' }}>
                 {/* Header avec sélecteur de compte et bouton Ajouter Trade pour Trading Journal */}
-                {/* DEBUG: Current channel ID: {selectedChannel.id} */}
+                {console.log('🔍 DEBUG Channel ID:', selectedChannel.id)}
                 {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && (
                   <div className="mb-4 md:mb-6 border-b border-gray-600 pb-4">
                     <div className="flex flex-col md:flex-row md:justify-between md:items-center space-y-3 md:space-y-0">
