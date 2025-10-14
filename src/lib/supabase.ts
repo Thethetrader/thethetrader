@@ -916,7 +916,7 @@ export const addPersonalTrade = async (trade: Omit<PersonalTrade, 'id' | 'user_i
       image2Base64 = trade.image2;
     }
 
-    const tradeData = {
+    const tradeData: any = {
       user_id: user.id,
       date: trade.date,
       symbol: trade.symbol,
@@ -929,9 +929,13 @@ export const addPersonalTrade = async (trade: Omit<PersonalTrade, 'id' | 'user_i
       notes: trade.notes || null,
       image1: image1Base64,
       image2: image2Base64,
-      timestamp: trade.timestamp || new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-      account: trade.account || 'Compte Principal'
+      timestamp: trade.timestamp || new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
     };
+    
+    // Ajouter account seulement si fourni (pour compatibilité avec migration)
+    if (trade.account) {
+      tradeData.account = trade.account;
+    }
 
     const { data, error } = await supabase
       .from('personal_trades')
