@@ -528,7 +528,7 @@ export default function TradingPlatformShell() {
       if (updatedSignal.status !== 'ACTIVE' && (updatedSignal as any).closeMessage) {
         // Vérifier si c'est un changement récent (moins de 5 secondes) pour éviter les notifications en batch
         const now = Date.now();
-        const signalTime = new Date(updatedSignal.timestamp || updatedSignal.created_at).getTime();
+        const signalTime = new Date(updatedSignal.timestamp).getTime();
         if (now - signalTime < 5000) {
         notifySignalClosed(updatedSignal);
         }
@@ -536,18 +536,18 @@ export default function TradingPlatformShell() {
     });
 
     // Subscription aux nouveaux signaux temps réel
-    const newSignalSubscription = subscribeToSignals(selectedChannel.id, (newSignal) => {
-      console.log('🆕 Nouveau signal reçu utilisateur:', newSignal);
+    const newSignalSubscription = subscribeToSignals(selectedChannel.id, (signal) => {
+      console.log('🆕 Nouveau signal reçu utilisateur:', signal);
       
       const formattedSignal = {
-        id: newSignal.id || '',
-        type: newSignal.type,
-        symbol: newSignal.symbol,
-        timeframe: newSignal.timeframe,
-        entry: newSignal.entry?.toString() || 'N/A',
-        takeProfit: newSignal.takeProfit?.toString() || 'N/A',
-        stopLoss: newSignal.stopLoss?.toString() || 'N/A',
-        description: newSignal.description || '',
+        id: signal.id || '',
+        type: signal.type,
+        symbol: signal.symbol,
+        timeframe: signal.timeframe,
+        entry: signal.entry?.toString() || 'N/A',
+        takeProfit: signal.takeProfit?.toString() || 'N/A',
+        stopLoss: signal.stopLoss?.toString() || 'N/A',
+        description: signal.description || '',
         image: signal.image || signal.attachment_data,
         attachment_data: signal.attachment_data || signal.image,
         attachment_type: signal.attachment_type,
@@ -555,12 +555,12 @@ export default function TradingPlatformShell() {
         closure_image: signal.closure_image,
         closure_image_type: signal.closure_image_type,
         closure_image_name: signal.closure_image_name,
-        timestamp: new Date(newSignal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-        status: newSignal.status || 'ACTIVE' as const,
-        channel_id: newSignal.channel_id,
+        timestamp: new Date(signal.timestamp || Date.now()).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        status: signal.status || 'ACTIVE' as const,
+        channel_id: signal.channel_id,
         reactions: [],
-        pnl: newSignal.pnl,
-        closeMessage: newSignal.closeMessage
+        pnl: signal.pnl,
+        closeMessage: signal.closeMessage
       };
       
       // Ajouter le nouveau signal à la fin (même logique que les messages)
@@ -577,7 +577,7 @@ export default function TradingPlatformShell() {
       
       // Notifier le nouveau signal seulement s'il est vraiment récent (moins de 10 secondes)
       const now = Date.now();
-      const signalTime = new Date(newSignal.timestamp || newSignal.created_at).getTime();
+      const signalTime = new Date(signal.timestamp).getTime();
       if (now - signalTime < 10000) {
       notifyNewSignal(formattedSignal);
       }
@@ -594,7 +594,7 @@ export default function TradingPlatformShell() {
 
     return () => {
       signalSubscription.unsubscribe();
-      newSignalSubscription.unsubscribe();
+      signalSubscription.unsubscribe();
     };
   }, [selectedChannel.id]);
   const [chatMessage, setChatMessage] = useState('');
@@ -633,13 +633,13 @@ export default function TradingPlatformShell() {
       try {
         // Supprimer tous les tokens FCM
         const { getMessaging, deleteToken } = await import('firebase/messaging');
-        const { ref, remove, get } = await import('../../utils/firebase-setup');
         const { database } = await import('../../utils/firebase-setup');
+        const { ref, remove, get } = await import('firebase/database');
         
         // Récupérer le token FCM actuel du navigateur
         try {
           const messaging = getMessaging();
-          const currentToken = await messaging.getToken();
+          const currentToken = await (messaging as any).getToken();
           
           if (currentToken) {
             console.log('🗑️ Suppression token FCM...');
@@ -1921,7 +1921,7 @@ export default function TradingPlatformShell() {
         // 2. Récupérer et supprimer le token FCM actuel du navigateur
         try {
           const messaging = getMessaging();
-          const currentToken = await messaging.getToken();
+          const currentToken = await (messaging as any).getToken();
           
           if (currentToken) {
             console.log('🗑️ Token FCM actuel du navigateur:', currentToken.substring(0, 20) + '...');
@@ -3951,11 +3951,11 @@ export default function TradingPlatformShell() {
                                 
                                 // Filtrer les doublons avant d'ajouter
                                 const existingIds = new Set(currentSignals.map(s => s.id));
-                                const newSignals = formatted.filter(s => !existingIds.has(s.id));
+                                const signals = formatted.filter(s => !existingIds.has(s.id));
                                 
-                                if (newSignals.length > 0) {
-                                  setSignals(prev => [...prev, ...newSignals]);
-                                  console.log(`✅ ${newSignals.length} nouveaux signaux ajoutés`);
+                                if (signals.length > 0) {
+                                  setSignals(prev => [...prev, ...signals]);
+                                  console.log(`✅ ${signals.length} nouveaux signaux ajoutés`);
                                 } else {
                                   console.log('ℹ️ Aucun nouveau signal à ajouter');
                                 }
