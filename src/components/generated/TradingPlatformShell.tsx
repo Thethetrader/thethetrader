@@ -2215,7 +2215,12 @@ export default function TradingPlatformShell() {
     
     if (savedTrade) {
       // Ajouter à la liste locale
-      setPersonalTrades(prev => [savedTrade, ...prev]);
+      setPersonalTrades(prev => {
+        const updated = [savedTrade, ...prev];
+        console.log('🔍 DEBUG Updated personalTrades:', updated.length, 'trades');
+        console.log('🔍 DEBUG New trade added:', savedTrade);
+        return updated;
+      });
       
       // Reset form
       setTradeData({
