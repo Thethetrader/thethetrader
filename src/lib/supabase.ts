@@ -929,7 +929,8 @@ export const addPersonalTrade = async (trade: Omit<PersonalTrade, 'id' | 'user_i
       notes: trade.notes || null,
       image1: image1Base64,
       image2: image2Base64,
-      timestamp: trade.timestamp || new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+      timestamp: trade.timestamp || new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+      account: trade.account || 'Compte Principal'
     };
 
     const { data, error } = await supabase
