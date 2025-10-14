@@ -1646,11 +1646,22 @@ export default function TradingPlatformShell() {
     const month = currentDate.getMonth();
     const year = currentDate.getFullYear();
     
-    // Créer 4 semaines du mois affiché
+    // Créer 4 semaines du mois affiché - calculer comme le calendrier
     const weeks = [];
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+    const firstDayWeekday = firstDayOfMonth.getDay(); // 0 = dimanche, 1 = lundi, etc.
+    
+    // Ajuster pour que lundi soit 0 (comme le calendrier)
+    const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
+    
     for (let weekNum = 1; weekNum <= 4; weekNum++) {
-      const weekStart = new Date(year, month, (weekNum - 1) * 7 + 1);
-      const weekEnd = new Date(year, month, weekNum * 7);
+      // Calculer le début de la semaine comme dans le calendrier
+      const weekStart = new Date(year, month, 1);
+      weekStart.setDate(1 - adjustedFirstDay + (weekNum - 1) * 7);
+      
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 6);
       
       const weekTrades = getTradesForSelectedAccount().filter(t => {
         const tradeDate = new Date(t.date);
