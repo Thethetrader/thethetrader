@@ -2466,15 +2466,18 @@ export default function TradingPlatformShell() {
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
       const dateStr = `${year}-${month}-${day}`;
-      console.log('Recherche trades pour date:', dateStr);
-      console.log('Tous les trades:', personalTrades);
+      console.log('Recherche trades pour date:', dateStr, 'Compte:', selectedAccount);
       
-      if (!Array.isArray(personalTrades)) {
-        console.error('personalTrades n\'est pas un tableau:', personalTrades);
+      // Utiliser les trades du compte sélectionné au lieu de tous les trades
+      const accountTrades = getTradesForSelectedAccount();
+      console.log('Trades du compte:', accountTrades);
+      
+      if (!Array.isArray(accountTrades)) {
+        console.error('accountTrades n\'est pas un tableau:', accountTrades);
         return [];
       }
       
-      const filteredTrades = personalTrades.filter(trade => {
+      const filteredTrades = accountTrades.filter(trade => {
         if (!trade || !trade.date) {
           console.log('Trade invalide:', trade);
           return false;
@@ -2491,12 +2494,15 @@ export default function TradingPlatformShell() {
 
   const getTradesForWeek = (weekNum: number) => {
     try {
-      if (!Array.isArray(personalTrades)) {
-        console.error('personalTrades n\'est pas un tableau:', personalTrades);
+      // Utiliser les trades du compte sélectionné
+      const accountTrades = getTradesForSelectedAccount();
+      
+      if (!Array.isArray(accountTrades)) {
+        console.error('accountTrades n\'est pas un tableau:', accountTrades);
         return [];
       }
 
-      console.log('🔍 DEBUG getTradesForWeek - Tous les trades:', personalTrades);
+      console.log('🔍 DEBUG getTradesForWeek - Trades du compte:', accountTrades);
       console.log('🔍 DEBUG getTradesForWeek - Semaine demandée:', weekNum);
 
       const currentDate = new Date();
@@ -2521,9 +2527,9 @@ export default function TradingPlatformShell() {
       weekEnd.setHours(23, 59, 59, 999); // Fin de journée
       
       console.log(`🔍 Recherche trades pour semaine ${weekNum}:`, weekStart.toDateString(), 'à', weekEnd.toDateString());
-      console.log(`🔍 Dates des trades:`, personalTrades.map(t => t.date));
+      console.log(`🔍 Dates des trades:`, accountTrades.map(t => t.date));
       
-      const filteredTrades = personalTrades.filter(trade => {
+      const filteredTrades = accountTrades.filter(trade => {
         if (!trade || !trade.date) {
           console.log('🔍 Trade invalide:', trade);
           return false;
