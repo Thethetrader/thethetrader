@@ -3106,8 +3106,8 @@ export default function TradingPlatformShell() {
                         let totalPnL = 0;
                         let tradeCount = 0;
                         if (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') {
-                          // Pour les trades personnels
-                          const dayTrades = personalTrades.filter(trade => {
+                          // Pour les trades personnels - utiliser le compte sélectionné
+                          const dayTrades = getTradesForSelectedAccount().filter(trade => {
                             const tradeDate = new Date(trade.date);
                             return tradeDate.getDate() === dayNumber && 
                                    tradeDate.getMonth() === currentDate.getMonth() && 
