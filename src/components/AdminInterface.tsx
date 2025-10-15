@@ -707,11 +707,14 @@ export default function AdminInterface() {
   };
 
   const handleAccountOptions = async (accountName: string) => {
+    const isMainAccount = accountName === 'Compte Principal';
+    
     const choice = prompt(
       `Options pour "${accountName}":\n\n` +
       `1 - Renommer le compte\n` +
-      `2 - Modifier balance et stop-loss\n\n` +
-      `Entrez votre choix (1 ou 2):`,
+      `2 - Modifier balance et stop-loss\n` +
+      (!isMainAccount ? `3 - Supprimer le compte\n` : '') +
+      `\nEntrez votre choix:`,
       '1'
     );
 
@@ -719,6 +722,10 @@ export default function AdminInterface() {
       await handleRenameAccount(accountName);
     } else if (choice === '2') {
       await handleEditAccountSettings(accountName);
+    } else if (choice === '3' && !isMainAccount) {
+      if (confirm(`Supprimer le compte "${accountName}" et tous ses trades ?`)) {
+        await handleDeleteAccount(accountName);
+      }
     }
   };
 
@@ -3642,20 +3649,6 @@ export default function AdminInterface() {
                 >
                   ⚙️ Options
                 </button>
-                
-                {selectedAccount !== 'Compte Principal' && (
-                  <button
-                    onClick={() => {
-                      if (confirm(`Supprimer le compte "${selectedAccount}" ?`)) {
-                        handleDeleteAccount(selectedAccount);
-                      }
-                    }}
-                    className="bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 text-red-300 hover:text-red-200 px-3 py-2 rounded-lg text-sm font-medium"
-                    title="Supprimer ce compte"
-                  >
-                    ❌ Supprimer
-                  </button>
-                )}
                 
                 <button
                   onClick={() => setShowAddAccountModal(true)}
