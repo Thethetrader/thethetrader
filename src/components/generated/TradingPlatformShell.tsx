@@ -814,8 +814,8 @@ export default function TradingPlatformShell() {
           if (profile?.name) {
             setSupabaseProfile(profile);
             setCurrentUsername(profile.name);
-            // Charger aussi l'avatar depuis le profil Supabase
-            if (profile.avatar_url && !image) {
+            // Charger aussi l'avatar depuis le profil Supabase (priorité sur localStorage)
+            if (profile.avatar_url) {
               setProfileImage(profile.avatar_url);
               localStorage.setItem('userProfileImage', profile.avatar_url);
               console.log('✅ Avatar chargé depuis profil Supabase');

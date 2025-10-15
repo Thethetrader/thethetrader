@@ -1756,7 +1756,7 @@ export default function AdminInterface() {
         const closeMessage = `Position ${statusText} fermée - P&L: ${pnl}`;
         
         console.log('🔍 Debug signal dans handleSignalStatus:', signal);
-        console.log('🔍 Debug referenceNumber dans handleSignalStatus:', signal.referenceNumber);
+        console.log('🔍 Debug referenceNumber dans handleSignalStatus:', (signal as any).referenceNumber);
         
         const updatedSignal = { ...signal, status: newStatus, pnl, closeMessage };
         
@@ -1778,7 +1778,7 @@ export default function AdminInterface() {
         
         // Créer un message de fermeture dans le chat
         const conclusionMessage = `📊 SIGNAL FERMÉ 📊\n\n` +
-          `Signal ${signal.referenceNumber || ''} fermé\n` +
+          `Signal ${(signal as any).referenceNumber || ''} fermé\n` +
           `Résultat: ${newStatus === 'WIN' ? '🟢 GAGNANT' : newStatus === 'LOSS' ? '🔴 PERDANT' : '🔵 BREAK-EVEN'}\n` +
           `${newStatus !== 'BE' ? `P&L: ${pnl}` : ''}\n` +
           `[SIGNAL_ID:${signalId}]`;
