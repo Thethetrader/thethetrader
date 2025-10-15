@@ -663,7 +663,7 @@ export default function TradingPlatformShell() {
   // États pour l'édition du nom d'utilisateur
   const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [usernameInput, setUsernameInput] = useState('');
-  const [currentUsername, setCurrentUsername] = useState('');
+  const [currentUsername, setCurrentUsername] = useState<string | null>(null);
   const [supabaseProfile, setSupabaseProfile] = useState<any>(null);
   
   // État pour le toggle des notifications
@@ -853,8 +853,9 @@ export default function TradingPlatformShell() {
             setCurrentUsername(localUsername);
             console.log('✅ Username chargé depuis localStorage (fallback):', localUsername);
           } else {
-          setCurrentUsername(user.email || 'Utilisateur');
-            console.log('✅ Username défini depuis email (fallback):', user.email);
+            const emailName = user.email?.split('@')[0] || 'Utilisateur';
+            setCurrentUsername(emailName);
+            console.log('✅ Username défini depuis email (fallback):', emailName);
           }
         }
       } else {
