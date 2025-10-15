@@ -120,9 +120,9 @@ const ChatZone: React.FC<ChatZoneProps> = ({
     },
     'user': {
       id: 'user',
-      name: 'Utilisateur',
+      name: 'Anonyme',
       email: 'user@local.com',
-      avatar: 'https://ui-avatars.com/api/?name=Utilisateur&background=3b82f6',
+      avatar: 'https://ui-avatars.com/api/?name=Anonyme&background=3b82f6',
       initials: 'US',
       status: 'online'
     }
@@ -297,7 +297,7 @@ const ChatZone: React.FC<ChatZoneProps> = ({
               ...prev,
               [user.id]: {
                 id: user.id,
-                name: profile.name || user.email || 'Utilisateur',
+                name: profile.name || user.email || 'Anonyme',
                 email: user.email || '',
                 avatar: profile.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.name || user.email || 'User')}&background=random`,
                 initials: getUserInitials(profile.name || user.email || 'User'),

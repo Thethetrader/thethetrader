@@ -1001,7 +1001,7 @@ export default function TradingPlatformShell() {
           } else {
             // Profil n'existe pas, créer un profil par défaut avec l'email
             console.log('⚠️ Pas de profil trouvé, création du profil par défaut...');
-            const defaultName = user.email?.split('@')[0] || 'Utilisateur';
+            const defaultName = user.email?.split('@')[0] || 'Anonyme';
             
             // Créer le profil dans Supabase
             const { data: newProfile } = await updateUserProfile(defaultName, undefined, 'user');
@@ -1030,7 +1030,7 @@ export default function TradingPlatformShell() {
             setCurrentUsername(localUsername);
             console.log('✅ Username chargé depuis localStorage (fallback):', localUsername);
           } else {
-            const emailName = user.email?.split('@')[0] || 'Utilisateur';
+            const emailName = user.email?.split('@')[0] || 'Anonyme';
             setCurrentUsername(emailName);
             console.log('✅ Username défini depuis email (fallback):', emailName);
           }
@@ -1042,7 +1042,7 @@ export default function TradingPlatformShell() {
           setCurrentUsername(localUsername);
           console.log('✅ Username chargé depuis localStorage (pas connecté):', localUsername);
         } else {
-          setCurrentUsername('Utilisateur');
+          setCurrentUsername('Anonyme');
           console.log('✅ Username par défaut (pas connecté)');
         }
       }
@@ -2991,8 +2991,8 @@ export default function TradingPlatformShell() {
         const localMessage = {
           id: `local-${Date.now()}`,
           text: chatMessage,
-          user: currentUsername || 'Utilisateur',
-          author: currentUsername || 'Utilisateur',
+          user: currentUsername || 'Anonyme',
+          author: currentUsername || 'Anonyme',
           author_avatar: profileImage || undefined,
           timestamp: new Date().toLocaleString('fr-FR', { 
             day: '2-digit', 
@@ -3009,7 +3009,7 @@ export default function TradingPlatformShell() {
         const messageData = {
           channel_id: selectedChannel.id,
           content: chatMessage,
-          author: currentUsername || 'Utilisateur',
+          author: currentUsername || 'Anonyme',
           author_type: 'user' as const,
           author_avatar: profileImage || undefined // Photo de profil utilisateur
         };
@@ -3067,7 +3067,7 @@ export default function TradingPlatformShell() {
                         const messageData = {
                           channel_id: selectedChannel.id,
                           content: '',
-                      author: currentUsername || 'Utilisateur',
+                      author: currentUsername || 'Anonyme',
                           author_type: 'user' as const,
                           author_avatar: profileImage || undefined,
                           attachment_data: imageURL,
@@ -3704,38 +3704,50 @@ export default function TradingPlatformShell() {
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <div>
-                  <p className="text-sm font-medium">{isEditingUsername ? (
-                    <input
-                      type="text"
-                      value={usernameInput}
-                      onChange={(e) => setUsernameInput(e.target.value)}
-                      className="bg-gray-700 text-white text-sm px-2 py-1 rounded border border-gray-600 w-24"
-                      autoFocus
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleUsernameEdit();
-                        } else if (e.key === 'Escape') {
-                          handleUsernameCancel();
-                        }
-                      }}
-                    />
-                  ) : (
-                    currentUsername || '...'
-                  )}</p>
-              <p className="text-xs text-gray-400">En ligne</p>
-            </div>
-                {!isEditingUsername && (
-                  <button
-                    onClick={() => {
+                  <p 
+                    className="text-sm font-medium cursor-pointer hover:text-blue-300 transition-colors"
+                    onContextMenu={(e) => {
+                      e.preventDefault();
                       setUsernameInput(currentUsername || '');
                       setIsEditingUsername(true);
                     }}
-                    className="text-xs text-gray-400 hover:text-white px-1 py-0.5 rounded hover:bg-gray-700 flex items-center"
-                    title="Modifier le nom"
+                    onTouchStart={(e) => {
+                      const timeout = setTimeout(() => {
+                        setUsernameInput(currentUsername || '');
+                        setIsEditingUsername(true);
+                      }, 500);
+                      e.currentTarget.dataset.timeout = timeout;
+                    }}
+                    onTouchEnd={(e) => {
+                      const timeout = e.currentTarget.dataset.timeout;
+                      if (timeout) {
+                        clearTimeout(timeout);
+                        delete e.currentTarget.dataset.timeout;
+                      }
+                    }}
+                    title="Clic droit ou appui long pour modifier"
                   >
-                    ✏️
-                  </button>
-                )}
+                    {isEditingUsername ? (
+                      <input
+                        type="text"
+                        value={usernameInput}
+                        onChange={(e) => setUsernameInput(e.target.value)}
+                        className="bg-gray-700 text-white text-sm px-2 py-1 rounded border border-gray-600 w-24"
+                        autoFocus
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleUsernameEdit();
+                          } else if (e.key === 'Escape') {
+                            handleUsernameCancel();
+                          }
+                        }}
+                      />
+                    ) : (
+                      currentUsername || 'Chargement...'
+                    )}
+                  </p>
+                  <p className="text-xs text-gray-400">En ligne</p>
+                </div>
                 {isEditingUsername && (
                   <div className="flex gap-1">
                     <button
@@ -3882,18 +3894,32 @@ export default function TradingPlatformShell() {
                   ) : (
                     <div className="flex items-center gap-2">
                       <div>
-                        <p className="text-sm font-medium">{currentUsername || 'Utilisateur'}</p>
+                        <p 
+                          className="text-sm font-medium cursor-pointer hover:text-blue-300 transition-colors"
+                          onContextMenu={(e) => {
+                            e.preventDefault();
+                            setUsernameInput(currentUsername || '');
+                            setIsEditingUsername(true);
+                          }}
+                          onTouchStart={(e) => {
+                            const timeout = setTimeout(() => {
+                              setUsernameInput(currentUsername || '');
+                              setIsEditingUsername(true);
+                            }, 500);
+                            e.currentTarget.dataset.timeout = timeout;
+                          }}
+                          onTouchEnd={(e) => {
+                            const timeout = e.currentTarget.dataset.timeout;
+                            if (timeout) {
+                              clearTimeout(timeout);
+                              delete e.currentTarget.dataset.timeout;
+                            }
+                          }}
+                          title="Clic droit ou appui long pour modifier"
+                        >
+                          {currentUsername || 'Chargement...'}
+                        </p>
                       </div>
-                      <button
-                        onClick={() => {
-                          setUsernameInput(currentUsername || '');
-                          setIsEditingUsername(true);
-                        }}
-                        className="text-xs text-gray-400 hover:text-white px-1 py-0.5 rounded hover:bg-gray-700 flex items-center"
-                        title="Modifier le nom"
-                      >
-                        ✏️
-                      </button>
                     </div>
                   )}
                 </div>
@@ -3903,8 +3929,8 @@ export default function TradingPlatformShell() {
                   onClick={handleToggleNotifications}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                     notificationsEnabled
-                      ? 'bg-green-600 text-white'
-                      : 'bg-gray-600 text-gray-300'
+                      ? 'bg-green-400/20 hover:bg-green-400/30 text-green-200 border border-green-400/30'
+                      : 'bg-gray-600/20 hover:bg-gray-600/30 text-gray-300 border border-gray-600/30'
                   }`}
                 >
                   {notificationsEnabled ? '🔔' : '🔕'}
@@ -3944,6 +3970,37 @@ export default function TradingPlatformShell() {
             }`}
           >
                         <div className="p-4 space-y-6 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
+              
+              {/* Statistiques en haut */}
+              <div className="bg-gray-700 rounded-lg p-4">
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Colonne gauche */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Win Rate:</span>
+                      <span className="text-gray-200 font-medium">{calculateWinRateForMonth()}%</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">P&L Total:</span>
+                      <span className={calculateTotalPnLForMonth() >= 0 ? 'text-green-200 font-medium' : 'text-red-200 font-medium'}>
+                        {calculateTotalPnLForMonth() >= 0 ? '+' : ''}${calculateTotalPnLForMonth()}
+                      </span>
+                    </div>
+                  </div>
+                  {/* Colonne droite */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Signaux actifs:</span>
+                      <span className="text-gray-200 font-medium">{realTimeSignals.filter(s => s.status === 'ACTIVE').length}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Total Trades:</span>
+                      <span className="text-gray-200 font-medium">{realTimeSignals.length}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">ÉDUCATION</h3>
                 <div className="space-y-2">
@@ -4051,30 +4108,6 @@ export default function TradingPlatformShell() {
                   </button>
 
               </div>
-              </div>
-
-              <div className="bg-gray-700 rounded-lg p-4">
-                <h4 className="text-sm font-medium mb-3">Statistiques</h4>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Win Rate:</span>
-                    <span className="text-blue-400">{calculateWinRateForMonth()}%</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Signaux actifs:</span>
-                    <span className="text-yellow-400">{realTimeSignals.filter(s => s.status === 'ACTIVE').length}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">P&L Total:</span>
-                    <span className={calculateTotalPnLForMonth() >= 0 ? 'text-green-400' : 'text-red-400'}>
-                      {calculateTotalPnLForMonth() >= 0 ? '+' : ''}${calculateTotalPnLForMonth()}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Total Trades:</span>
-                    <span className="text-purple-400">{realTimeSignals.length}</span>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
