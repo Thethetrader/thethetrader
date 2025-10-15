@@ -3,7 +3,7 @@ import ProfitLoss from './ProfitLoss';
 import ChatZone from './ChatZone';
 import RumbleTalk from './RumbleTalk';
 import ChatCommunauteAdmin from './ChatCommunauteAdmin';
-import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, addPersonalTrade, getPersonalTrades, PersonalTrade, syncUserId, listenToPersonalTrades } from '../utils/firebase-setup';
+import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, addPersonalTrade, getPersonalTrades, PersonalTrade, syncUserId, listenToPersonalTrades, deleteMessage } from '../utils/firebase-setup';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, sendLocalNotification } from '../utils/push-notifications';
 import { ref, update, onValue, get, remove, push, set } from 'firebase/database';
 import { getFunctions, httpsCallable } from 'firebase/functions';
@@ -1405,6 +1405,29 @@ export default function AdminInterface() {
       }
       return signal;
     }));
+  };
+
+  const handleDeleteMessage = async (messageId: string, channelId: string) => {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce message ?')) {
+      return;
+    }
+    
+    try {
+      console.log('🗑️ Suppression message:', messageId, 'canal:', channelId);
+      const success = await deleteMessage(channelId, messageId);
+      
+      if (success) {
+        console.log('✅ Message supprimé avec succès');
+        // Recharger les messages
+        await loadMessages(channelId);
+      } else {
+        console.error('❌ Échec suppression message');
+        alert('Erreur lors de la suppression du message');
+      }
+    } catch (error) {
+      console.error('❌ Erreur suppression message:', error);
+      alert('Erreur lors de la suppression du message');
+    }
   };
 
   const scrollToTop = () => {
@@ -5010,6 +5033,13 @@ export default function AdminInterface() {
                             <div className="flex items-center gap-2 mb-1">
                               <span className="font-semibold text-white">{message.author}</span>
                               <span className="text-xs text-gray-400">{message.timestamp}</span>
+                              <button
+                                onClick={() => handleDeleteMessage(message.id, selectedChannel.id)}
+                                className="ml-auto text-red-400 hover:text-red-300 transition-colors"
+                                title="Supprimer ce message"
+                              >
+                                🗑️
+                              </button>
                             </div>
                             <div 
                               className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words"

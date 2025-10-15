@@ -537,6 +537,22 @@ export const updatePersonalTrade = async (tradeId: string, updates: Partial<Pers
   }
 };
 
+// Supprimer un message (admin only)
+export const deleteMessage = async (channelId: string, messageId: string): Promise<boolean> => {
+  try {
+    console.log('🗑️ Suppression message Firebase:', messageId);
+    
+    const messageRef = ref(database, `messages/${channelId}/${messageId}`);
+    await remove(messageRef);
+    
+    console.log('✅ Message supprimé Firebase');
+    return true;
+  } catch (error) {
+    console.error('❌ Erreur suppression message Firebase:', error);
+    return false;
+  }
+};
+
 // Supprimer un trade personnel
 export const deletePersonalTrade = async (tradeId: string): Promise<boolean> => {
   try {
