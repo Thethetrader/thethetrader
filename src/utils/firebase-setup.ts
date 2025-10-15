@@ -538,11 +538,12 @@ export const updatePersonalTrade = async (tradeId: string, updates: Partial<Pers
 };
 
 // Supprimer un message (admin only)
-export const deleteMessage = async (channelId: string, messageId: string): Promise<boolean> => {
+export const deleteMessage = async (messageId: string): Promise<boolean> => {
   try {
     console.log('🗑️ Suppression message Firebase:', messageId);
     
-    const messageRef = ref(database, `messages/${channelId}/${messageId}`);
+    // Les messages sont stockés directement sous /messages/{messageId}
+    const messageRef = ref(database, `messages/${messageId}`);
     await remove(messageRef);
     
     console.log('✅ Message supprimé Firebase');

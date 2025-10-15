@@ -1414,21 +1414,25 @@ export default function AdminInterface() {
     
     try {
       console.log('🗑️ [DEBUG] Début suppression message:', { messageId, channelId });
+      console.log('🗑️ [DEBUG] Chemin Firebase correct:', `messages/${messageId}`);
       
-      // Suppression directe dans Firebase avec ref et remove
-      const messageRef = ref(database, `messages/${channelId}/${messageId}`);
-      console.log('🗑️ [DEBUG] Référence Firebase créée:', `messages/${channelId}/${messageId}`);
+      // Suppression avec la fonction firebase-setup qui utilise le bon chemin
+      const success = await deleteMessage(messageId);
       
-      await remove(messageRef);
-      console.log('✅ [DEBUG] Message supprimé de Firebase avec succès');
-      
-      // Mettre à jour le state directement
-      setChatMessages(prev => ({
-        ...prev,
-        [channelId]: (prev[channelId] || []).filter(msg => msg.id !== messageId)
-      }));
-      
-      console.log('✅ [DEBUG] State mis à jour, message retiré de l\'affichage');
+      if (success) {
+        console.log('✅ [DEBUG] Message supprimé de Firebase avec succès');
+        
+        // Attendre un peu pour que Firebase propage la suppression
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // Recharger les messages depuis Firebase (forcer le refresh)
+        console.log('🔄 [DEBUG] Rechargement des messages depuis Firebase...');
+        await loadMessages(channelId);
+        
+        console.log('✅ [DEBUG] Messages rechargés depuis Firebase');
+      } else {
+        alert('Erreur lors de la suppression du message');
+      }
     } catch (error) {
       console.error('❌ [DEBUG] Erreur suppression message:', error);
       alert('Erreur lors de la suppression du message: ' + error);
