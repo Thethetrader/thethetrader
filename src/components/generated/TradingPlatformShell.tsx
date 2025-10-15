@@ -693,8 +693,8 @@ export default function TradingPlatformShell() {
       // Ne pas envoyer de notifications lors du chargement initial
       // Les notifications seront envoyées seulement pour les nouveaux signaux en temps réel
       
-      // Scroll automatique après chargement des signaux (sauf pour calendrier et journal perso)
-      if (!['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux'].includes(channelId)) {
+      // Scroll automatique après chargement des signaux (sauf pour calendrier, journal perso et éducation)
+      if (!['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux', 'fondamentaux', 'letsgooo-model'].includes(channelId)) {
         setTimeout(() => {
           scrollToBottom();
         }, 100);
@@ -819,8 +819,8 @@ export default function TradingPlatformShell() {
       notifyNewSignal(formattedSignal);
       }
       
-      // Scroll automatique (sauf pour calendrier et journal perso)
-      if (!['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux'].includes(selectedChannel.id)) {
+      // Scroll automatique (sauf pour calendrier, journal perso et éducation)
+      if (!['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux', 'fondamentaux', 'letsgooo-model'].includes(selectedChannel.id)) {
         setTimeout(() => {
           scrollToBottom();
         }, 100);
@@ -3448,7 +3448,7 @@ export default function TradingPlatformShell() {
                         return (
                           <div className="flex flex-col items-center space-y-1">
                             {totalPnL !== 0 && (
-                              <div className="text-xs font-bold text-center hidden md:block">
+                              <div className="text-xs font-bold text-center">
                                 ${totalPnL.toFixed(0)}
                               </div>
                             )}

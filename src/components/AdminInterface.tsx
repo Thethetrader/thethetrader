@@ -3582,7 +3582,7 @@ export default function AdminInterface() {
                         return (
                           <div className="flex flex-col items-center space-y-1">
                             {totalPnL !== 0 && (
-                              <div className="text-xs font-bold text-center hidden md:block">
+                              <div className="text-xs font-bold text-center">
                                 ${totalPnL.toFixed(0)}
                               </div>
                             )}
