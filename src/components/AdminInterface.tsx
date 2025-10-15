@@ -3953,18 +3953,18 @@ export default function AdminInterface() {
                 <span className="text-blue-400">{calculateWinRate()}%</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Total Trades:</span>
-                <span className="text-purple-400">{allSignalsForStats.length}</span>
+                <span className="text-gray-400">P&L Total:</span>
+                <span className={calculateTotalPnL() >= 0 ? 'text-green-400' : 'text-red-400'}>
+                  {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
+                </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Signaux actifs:</span>
                 <span className="text-yellow-400">{allSignalsForStats.filter(s => s.status === 'ACTIVE').length}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-400">P&L Total:</span>
-                <span className={calculateTotalPnL() >= 0 ? 'text-green-400' : 'text-red-400'}>
-                  {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
-                </span>
+                <span className="text-gray-400">Total Trades:</span>
+                <span className="text-purple-400">{allSignalsForStats.length}</span>
               </div>
             </div>
           </div>
