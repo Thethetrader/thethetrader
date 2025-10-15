@@ -589,7 +589,7 @@ export default function TradingPlatformShell() {
       console.log(`✅ Messages chargés pour ${channelId}:`, formattedMessages.length, '/', messages.length);
       
       // Scroll vers le bas après chargement des messages (sauf si on garde la position)
-      if (!keepPosition && !['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux'].includes(channelId)) {
+      if (!keepPosition && !['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux', 'fondamentaux', 'letsgooo-model'].includes(channelId)) {
         setTimeout(() => {
           scrollToBottom();
         }, 100);
