@@ -1413,23 +1413,25 @@ export default function AdminInterface() {
     }
     
     try {
-      console.log('🗑️ Suppression message:', messageId, 'canal:', channelId);
-      const success = await deleteMessage(channelId, messageId);
+      console.log('🗑️ [DEBUG] Début suppression message:', { messageId, channelId });
       
-      if (success) {
-        console.log('✅ Message supprimé avec succès');
-        // Mettre à jour le state directement
-        setChatMessages(prev => ({
-          ...prev,
-          [channelId]: (prev[channelId] || []).filter(msg => msg.id !== messageId)
-        }));
-      } else {
-        console.error('❌ Échec suppression message');
-        alert('Erreur lors de la suppression du message');
-      }
+      // Suppression directe dans Firebase avec ref et remove
+      const messageRef = ref(database, `messages/${channelId}/${messageId}`);
+      console.log('🗑️ [DEBUG] Référence Firebase créée:', `messages/${channelId}/${messageId}`);
+      
+      await remove(messageRef);
+      console.log('✅ [DEBUG] Message supprimé de Firebase avec succès');
+      
+      // Mettre à jour le state directement
+      setChatMessages(prev => ({
+        ...prev,
+        [channelId]: (prev[channelId] || []).filter(msg => msg.id !== messageId)
+      }));
+      
+      console.log('✅ [DEBUG] State mis à jour, message retiré de l\'affichage');
     } catch (error) {
-      console.error('❌ Erreur suppression message:', error);
-      alert('Erreur lors de la suppression du message');
+      console.error('❌ [DEBUG] Erreur suppression message:', error);
+      alert('Erreur lors de la suppression du message: ' + error);
     }
   };
 
