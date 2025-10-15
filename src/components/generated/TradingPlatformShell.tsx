@@ -507,7 +507,11 @@ export default function TradingPlatformShell() {
         closeMessage: signal.closeMessage
       }));
       
-      setSignals(formattedSignals.reverse());
+      // Remplacer seulement les signaux du canal actuel
+      setSignals(prev => {
+        const otherChannelSignals = prev.filter(signal => signal.channel_id !== channelId);
+        return [...otherChannelSignals, ...formattedSignals.reverse()];
+      });
       
       // Ne pas envoyer de notifications lors du chargement initial
       // Les notifications seront envoyées seulement pour les nouveaux signaux en temps réel
@@ -650,7 +654,7 @@ export default function TradingPlatformShell() {
 
     return () => {
       signalSubscription.unsubscribe();
-      signalSubscription.unsubscribe();
+      newSignalSubscription.unsubscribe();
     };
   }, [selectedChannel.id]);
   const [chatMessage, setChatMessage] = useState('');

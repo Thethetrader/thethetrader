@@ -210,7 +210,7 @@ export const addSignal = async (signal: Omit<Signal, 'id' | 'timestamp'>): Promi
 
 // Cache local pour éviter de recharger les mêmes données
 const signalsCache = new Map<string, { data: Signal[], timestamp: number }>();
-const CACHE_DURATION = 30000; // 30 secondes
+const CACHE_DURATION = 5000; // 5 secondes au lieu de 30
 
 export const getSignals = async (channelId?: string, limit: number = 3, beforeTimestamp?: number): Promise<Signal[]> => {
   try {
@@ -270,22 +270,18 @@ export const getSignals = async (channelId?: string, limit: number = 3, beforeTi
   }
 };
 
-// Subscription temps réel pour les signaux (même logique que les messages)
+// Subscription temps réel pour les signaux (simplifié)
 export const subscribeToSignals = (channelId: string, callback: (signal: Signal) => void) => {
   const signalsRef = ref(database, 'signals');
   const q = query(signalsRef, orderByChild('channel_id'), equalTo(channelId), limitToLast(3));
 
-  // Garder une trace des signaux déjà traités
-  const processedSignals = new Set<string>();
-
   const unsubscribe = onValue(q, (snapshot) => {
+    console.log('🔄 Signaux temps réel reçus pour', channelId, ':', snapshot.numChildren());
+    
     snapshot.forEach((childSnapshot) => {
       const data = childSnapshot.val();
       const signalId = childSnapshot.key as string;
-      if (!processedSignals.has(signalId)) {
-        processedSignals.add(signalId);
-        callback({ id: signalId, ...data });
-      }
+      callback({ id: signalId, ...data });
     });
   });
 
