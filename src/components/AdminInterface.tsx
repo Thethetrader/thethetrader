@@ -3,7 +3,7 @@ import ProfitLoss from './ProfitLoss';
 import ChatZone from './ChatZone';
 import RumbleTalk from './RumbleTalk';
 import ChatCommunauteAdmin from './ChatCommunauteAdmin';
-import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, addPersonalTrade, getPersonalTrades, PersonalTrade, syncUserId, listenToPersonalTrades, deleteMessage } from '../utils/firebase-setup';
+import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, addPersonalTrade, getPersonalTrades, PersonalTrade, syncUserId, listenToPersonalTrades, deleteMessage, deletePersonalTrade } from '../utils/firebase-setup';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, sendLocalNotification } from '../utils/push-notifications';
 import { ref, update, onValue, get, remove, push, set } from 'firebase/database';
 import { getFunctions, httpsCallable } from 'firebase/functions';
@@ -4051,11 +4051,27 @@ export default function AdminInterface() {
                                 <span className="text-white font-semibold">{trade.symbol}</span>
                                 <span className="text-gray-400">{trade.type}</span>
                               </div>
-                              <span className={`text-lg font-bold ${
-                                parseFloat(trade.pnl) >= 0 ? 'text-green-400' : 'text-red-400'
-                              }`}>
-                                {parseFloat(trade.pnl) >= 0 ? '+' : ''}{trade.pnl}$
-                              </span>
+                              <div className="flex items-center gap-3">
+                                <span className={`text-lg font-bold ${
+                                  parseFloat(trade.pnl) >= 0 ? 'text-green-400' : 'text-red-400'
+                                }`}>
+                                  {parseFloat(trade.pnl) >= 0 ? '+' : ''}{trade.pnl}$
+                                </span>
+                                <button
+                                  onClick={async () => {
+                                    if (confirm('Supprimer ce trade ?')) {
+                                      const success = await deletePersonalTrade(trade.id);
+                                      if (success) {
+                                        setPersonalTrades(prev => prev.filter(t => t.id !== trade.id));
+                                      }
+                                    }
+                                  }}
+                                  className="text-red-400 hover:text-red-300 transition-colors"
+                                  title="Supprimer ce trade"
+                                >
+                                  ❌
+                                </button>
+                              </div>
                             </div>
                             
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
@@ -5801,9 +5817,13 @@ export default function AdminInterface() {
                           {(trade.pnl && parseFloat(trade.pnl) >= 0) ? '+' : ''}{trade.pnl || '0'}$
                         </span>
                         <button
-                          onClick={() => {
-                            setPersonalTrades(prev => prev.filter(t => t.id !== trade.id));
-                            setShowTradesModal(false);
+                          onClick={async () => {
+                            if (confirm('Supprimer ce trade ?')) {
+                              const success = await deletePersonalTrade(trade.id);
+                              if (success) {
+                                setPersonalTrades(prev => prev.filter(t => t.id !== trade.id));
+                              }
+                            }
                           }}
                           className="text-red-400 hover:text-red-300 text-xl font-bold"
                           title="Supprimer ce trade"
