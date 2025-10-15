@@ -5,7 +5,7 @@ import RumbleTalk from './RumbleTalk';
 import ChatCommunauteAdmin from './ChatCommunauteAdmin';
 import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, addPersonalTrade, getPersonalTrades, PersonalTrade, syncUserId, listenToPersonalTrades } from '../utils/firebase-setup';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, sendLocalNotification } from '../utils/push-notifications';
-import { ref, update, onValue, get, remove } from 'firebase/database';
+import { ref, update, onValue, get, remove, push, set } from 'firebase/database';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 import { signOutAdmin } from '../utils/admin-utils';
@@ -3881,7 +3881,7 @@ export default function AdminInterface() {
                             const snapshot = await get(q);
                             
                             console.log('🔍 Snapshot existe:', snapshot.exists());
-                            console.log('🔍 Nombre de trades:', snapshot.numChildren());
+                            console.log('🔍 Nombre de trades:', snapshot.exists() ? Object.keys(snapshot.val() || {}).length : 0);
                             
                             if (snapshot.exists()) {
                               snapshot.forEach((childSnapshot) => {
