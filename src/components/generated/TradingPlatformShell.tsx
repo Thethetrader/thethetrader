@@ -3187,7 +3187,8 @@ export default function TradingPlatformShell() {
               <select
                 value={selectedAccount}
                 onChange={(e) => handleAccountChange(e.target.value)}
-                className="bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/50 text-yellow-300 hover:text-yellow-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-yellow-500 cursor-pointer"
+                className="bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/50 text-yellow-300 hover:text-yellow-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-yellow-500 cursor-pointer h-9"
+                style={{ height: '36px' }}
               >
                 {tradingAccounts.map((account) => (
                   <option key={account.id} value={account.account_name}>
@@ -4103,7 +4104,8 @@ export default function TradingPlatformShell() {
                           <select
                             value={selectedAccount}
                             onChange={(e) => handleAccountChange(e.target.value)}
-                            className="bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/50 text-yellow-300 hover:text-yellow-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-yellow-500 cursor-pointer"
+                            className="bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/50 text-yellow-300 hover:text-yellow-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-yellow-500 cursor-pointer h-9"
+                style={{ height: '36px' }}
                           >
                             {tradingAccounts.map((account) => (
                               <option key={account.id} value={account.account_name}>
