@@ -9,7 +9,7 @@ import { ref, update, onValue, get, remove, push, set } from 'firebase/database'
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 import { signOutAdmin } from '../utils/admin-utils';
-import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, UserAccount } from '../lib/supabase';
+import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount } from '../lib/supabase';
 
 export default function AdminInterface() {
 
@@ -703,6 +703,45 @@ export default function AdminInterface() {
     } catch (error) {
       console.error('❌ [ADMIN] Erreur suppression compte:', error);
       alert('Erreur lors de la suppression du compte');
+    }
+  };
+
+  const handleEditAccountSettings = async (accountName: string) => {
+    const account = tradingAccounts.find(acc => acc.account_name === accountName);
+    if (!account) return;
+
+    const currentBalance = account.initial_balance || 0;
+    const currentMinimum = account.minimum_balance || 0;
+
+    const newBalance = prompt(`Balance initiale pour "${accountName}":`, currentBalance.toString());
+    if (newBalance === null) return; // Annulé
+
+    const newMinimum = prompt(`Stop-loss (minimum) pour "${accountName}":`, currentMinimum.toString());
+    if (newMinimum === null) return; // Annulé
+
+    const balanceValue = parseFloat(newBalance) || 0;
+    const minimumValue = parseFloat(newMinimum) || 0;
+
+    try {
+      // Mettre à jour dans Supabase
+      const updatedAccount = await updateUserAccount(account.id, {
+        initial_balance: balanceValue,
+        minimum_balance: minimumValue
+      });
+
+      if (updatedAccount) {
+        // Mettre à jour l'état local
+        const updatedAccounts = tradingAccounts.map(acc =>
+          acc.id === account.id
+            ? { ...acc, initial_balance: balanceValue, minimum_balance: minimumValue }
+            : acc
+        );
+        setTradingAccounts(updatedAccounts);
+        console.log('✅ [ADMIN] Paramètres du compte mis à jour');
+      }
+    } catch (error) {
+      console.error('❌ [ADMIN] Erreur mise à jour paramètres:', error);
+      alert('Erreur lors de la mise à jour des paramètres');
     }
   };
 
@@ -3612,11 +3651,21 @@ export default function AdminInterface() {
 
               {/* Affichage du solde du compte */}
               <div className="mt-4 p-4 bg-gray-800 rounded-lg border border-gray-600">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-2">
                   <div>
                     <h4 className="text-sm font-medium text-gray-300">Solde du compte</h4>
                     <p className="text-xs text-gray-400">{selectedAccount}</p>
                   </div>
+                  <button
+                    onClick={() => handleEditAccountSettings(selectedAccount)}
+                    className="text-blue-400 hover:text-blue-300 transition-colors"
+                    title="Modifier balance et stop-loss"
+                  >
+                    ✏️
+                  </button>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex-1"></div>
                   <div className="text-right">
                     <div className={`text-lg font-bold ${
                       calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) 

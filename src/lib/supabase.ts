@@ -1198,3 +1198,34 @@ export const deleteUserAccount = async (accountId: string): Promise<boolean> => 
     return false;
   }
 };
+
+export const updateUserAccount = async (accountId: string, updates: Partial<UserAccount>): Promise<UserAccount | null> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      console.error('❌ Utilisateur non connecté');
+      return null;
+    }
+
+    console.log('✏️ Mise à jour compte:', accountId, updates);
+
+    const { data, error } = await supabase
+      .from('user_accounts')
+      .update(updates)
+      .eq('id', accountId)
+      .eq('user_id', user.id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('❌ Erreur mise à jour compte:', error);
+      return null;
+    }
+
+    console.log('✅ Compte mis à jour');
+    return data;
+  } catch (error) {
+    console.error('❌ Erreur updateUserAccount:', error);
+    return null;
+  }
+};
