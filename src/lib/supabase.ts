@@ -1102,6 +1102,8 @@ export interface UserAccount {
   user_id: string;
   account_name: string;
   is_default: boolean;
+  initial_balance?: number;
+  minimum_balance?: number;
   created_at: string;
   updated_at: string;
 }
@@ -1135,7 +1137,7 @@ export const getUserAccounts = async (): Promise<UserAccount[]> => {
   }
 };
 
-export const addUserAccount = async (accountName: string): Promise<UserAccount | null> => {
+export const addUserAccount = async (accountName: string, initialBalance?: number, minimumBalance?: number): Promise<UserAccount | null> => {
   try {
     const user = await getCurrentUser();
     if (!user) {
@@ -1143,7 +1145,7 @@ export const addUserAccount = async (accountName: string): Promise<UserAccount |
       return null;
     }
 
-    console.log('🚀 Ajout compte utilisateur:', accountName);
+    console.log('🚀 Ajout compte utilisateur:', accountName, 'avec balance initiale:', initialBalance || 0, 'minimum:', minimumBalance || 0);
 
     const { data, error } = await supabase
       .from('user_accounts')

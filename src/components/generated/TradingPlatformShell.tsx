@@ -233,23 +233,66 @@ export default function TradingPlatformShell() {
     setTradingAccounts(accounts);
     // Sauvegarder aussi en localStorage comme backup
     localStorage.setItem('tradingAccounts', JSON.stringify(accounts.map(acc => acc.account_name)));
+    // Sauvegarder les balances initiales et minimums
+    const balances = accounts.reduce((acc, account) => {
+      if (account.initial_balance !== undefined) {
+        acc[account.account_name] = account.initial_balance;
+      }
+      return acc;
+    }, {} as Record<string, number>);
+    localStorage.setItem('accountBalances', JSON.stringify(balances));
+    
+    const minimums = accounts.reduce((acc, account) => {
+      if (account.minimum_balance !== undefined) {
+        acc[account.account_name] = account.minimum_balance;
+      }
+      return acc;
+    }, {} as Record<string, number>);
+    localStorage.setItem('accountMinimums', JSON.stringify(minimums));
   };
 
   // Ajouter un nouveau compte
   const handleAddAccount = async () => {
-    if (newAccountName.trim() && !tradingAccounts.some(acc => acc.account_name === newAccountName.trim())) {
-      try {
-        const newAccount = await addUserAccount(newAccountName.trim());
-        if (newAccount) {
-          const updatedAccounts = [...tradingAccounts, newAccount];
-          await saveAccounts(updatedAccounts);
-          setSelectedAccount(newAccountName.trim());
-          setNewAccountName('');
-          setShowAddAccountModal(false);
-        }
-      } catch (error) {
-        console.error('❌ Erreur ajout compte:', error);
+    console.log('🔍 [DEBUG] handleAddAccount appelé');
+    console.log('🔍 [DEBUG] newAccountName:', newAccountName);
+    console.log('🔍 [DEBUG] newAccountBalance:', newAccountBalance);
+    
+    if (!newAccountName.trim()) {
+      alert('Veuillez entrer un nom de compte');
+      return;
+    }
+    
+    if (tradingAccounts.some(acc => acc.account_name === newAccountName.trim())) {
+      alert('Ce nom de compte existe déjà');
+      return;
+    }
+    
+    try {
+      const initialBalance = parseFloat(newAccountBalance) || 0;
+      const minimumBalance = parseFloat(newAccountMinimum) || 0;
+      console.log('🔍 [DEBUG] Appel addUserAccount avec:', newAccountName.trim(), initialBalance, minimumBalance);
+      
+      const newAccount = await addUserAccount(newAccountName.trim(), initialBalance, minimumBalance);
+      console.log('🔍 [DEBUG] Réponse addUserAccount:', newAccount);
+      
+      if (newAccount) {
+        // Ajouter la balance initiale et minimum au compte
+        const accountWithBalance = { ...newAccount, initial_balance: initialBalance, minimum_balance: minimumBalance };
+        const updatedAccounts = [...tradingAccounts, accountWithBalance];
+        await saveAccounts(updatedAccounts);
+        setSelectedAccount(newAccountName.trim());
+        setNewAccountName('');
+        setNewAccountBalance('');
+        setNewAccountMinimum('');
+        setShowAddAccountModal(false);
+        console.log('✅ [DEBUG] Compte ajouté avec succès');
+      } else {
+        console.error('❌ [DEBUG] addUserAccount a retourné null');
+        alert('Erreur lors de l\'ajout du compte');
       }
+    } catch (error) {
+      console.error('❌ [DEBUG] Erreur ajout compte:', error);
+      alert('Erreur lors de l\'ajout du compte: ' + error);
     }
   };
 
@@ -282,6 +325,39 @@ export default function TradingPlatformShell() {
       }
     } catch (error) {
       console.error('❌ Erreur suppression compte:', error);
+    }
+  };
+
+  // Renommer un compte
+  const handleRenameAccount = async (oldName: string) => {
+    const newName = prompt(`Renommer "${oldName}" en:`, oldName);
+    if (!newName || newName.trim() === '' || newName === oldName) return;
+    
+    try {
+      const account = tradingAccounts.find(acc => acc.account_name === oldName);
+      if (account) {
+        // Mettre à jour dans Supabase ou localStorage
+        const updatedAccounts = tradingAccounts.map(acc => 
+          acc.id === account.id 
+            ? { ...acc, account_name: newName.trim() }
+            : acc
+        );
+        await saveAccounts(updatedAccounts);
+        
+        // Mettre à jour le compte sélectionné si c'est celui qu'on renomme
+        if (selectedAccount === oldName) {
+          setSelectedAccount(newName.trim());
+        }
+        
+        // Mettre à jour les trades qui utilisent ce compte
+        setPersonalTrades(prev => prev.map(trade => 
+          (trade.account || 'Compte Principal') === oldName 
+            ? { ...trade, account: newName.trim() }
+            : trade
+        ));
+      }
+    } catch (error) {
+      console.error('❌ Erreur renommage compte:', error);
     }
   };
   const [showTradesModal, setShowTradesModal] = useState(false);
@@ -1004,6 +1080,8 @@ export default function TradingPlatformShell() {
   const [selectedAccount, setSelectedAccount] = useState<string>('Compte Principal');
   const [showAddAccountModal, setShowAddAccountModal] = useState(false);
   const [newAccountName, setNewAccountName] = useState('');
+  const [newAccountBalance, setNewAccountBalance] = useState('');
+  const [newAccountMinimum, setNewAccountMinimum] = useState('');
 
   const [tradeData, setTradeData] = useState({
     symbol: '',
@@ -1600,6 +1678,54 @@ export default function TradingPlatformShell() {
       allTrades: personalTrades.map(t => ({ symbol: t.symbol, account: t.account || 'Compte Principal' }))
     });
     return filtered;
+  };
+
+  // Calculer le solde total du compte (balance initiale + P&L des trades)
+  const calculateAccountBalance = (): number => {
+    const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
+    let initialBalance = account?.initial_balance || 0;
+    
+    // Fallback vers localStorage si pas dans le compte
+    if (!initialBalance) {
+      const savedBalances = localStorage.getItem('accountBalances');
+      if (savedBalances) {
+        const balances = JSON.parse(savedBalances);
+        initialBalance = balances[selectedAccount] || 0;
+      }
+    }
+    
+    const pnl = calculateTotalPnLTrades();
+    return initialBalance + pnl;
+  };
+
+  // Calculer le stop-loss trailing
+  const calculateTrailingStopLoss = () => {
+    const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
+    const currentBalance = calculateAccountBalance();
+    const initialBalance = account?.initial_balance || 0;
+    const initialStopLoss = account?.minimum_balance || 0;
+    
+    if (initialStopLoss === 0) {
+      return { currentStopLoss: null, remaining: null, percentage: null, isAtRisk: false };
+    }
+    
+    // Calculer le P&L total
+    const pnl = calculateTotalPnLTrades();
+    
+    // Stop-loss trailing : il monte avec les gains mais ne descend jamais
+    const trailingStopLoss = Math.max(initialStopLoss, initialStopLoss + Math.max(0, pnl));
+    
+    const remaining = currentBalance - trailingStopLoss;
+    const percentage = trailingStopLoss > 0 ? ((currentBalance / trailingStopLoss) - 1) * 100 : 0;
+    const isAtRisk = remaining < (currentBalance * 0.1); // Alerte si moins de 10% de marge
+    
+    return { 
+      currentStopLoss: trailingStopLoss, 
+      remaining, 
+      percentage, 
+      isAtRisk,
+      pnl 
+    };
   };
 
   const calculateTotalPnLTrades = (): number => {
@@ -2970,8 +3096,30 @@ export default function TradingPlatformShell() {
               </select>
               
               <button
+                onClick={() => handleRenameAccount(selectedAccount)}
+                className="bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 text-blue-300 hover:text-blue-200 px-3 py-2 rounded-lg text-sm font-medium"
+                title="Renommer ce compte"
+              >
+                ✏️
+              </button>
+              
+              {selectedAccount !== 'Compte Principal' && (
+                <button
+                  onClick={() => {
+                    if (confirm(`Supprimer le compte "${selectedAccount}" ?`)) {
+                      handleDeleteAccount(selectedAccount);
+                    }
+                  }}
+                  className="bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 text-red-300 hover:text-red-200 px-3 py-2 rounded-lg text-sm font-medium"
+                  title="Supprimer ce compte"
+                >
+                  ❌
+                </button>
+              )}
+              
+              <button
                 onClick={() => setShowAddAccountModal(true)}
-                className="bg-green-600 hover:bg-green-700 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
+                className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
               >
                 + Ajouter compte
               </button>
@@ -3230,6 +3378,56 @@ export default function TradingPlatformShell() {
               });
             })()}
             </div>
+
+          {/* Solde du compte et indicateur de risque */}
+          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && (
+            <div className="mt-4 space-y-3">
+              {/* Solde principal */}
+              <div className="p-4 bg-gray-800 rounded-lg border border-gray-600">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-300">Solde du compte</h4>
+                    <p className="text-xs text-gray-400">{selectedAccount}</p>
+                  </div>
+                  <div className="text-right">
+                    <div className={`text-lg font-bold ${
+                      calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) 
+                        ? 'text-green-400' : 'text-red-400'
+                    }`}>
+                      ${calculateAccountBalance().toFixed(2)}
+                    </div>
+                <div className="text-xs text-gray-400">
+                  Balance initiale: ${(() => {
+                    const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
+                    let initialBalance = account?.initial_balance || 0;
+                    if (!initialBalance) {
+                      const savedBalances = localStorage.getItem('accountBalances');
+                      if (savedBalances) {
+                        const balances = JSON.parse(savedBalances);
+                        initialBalance = balances[selectedAccount] || 0;
+                      }
+                    }
+                    return initialBalance.toFixed(2);
+                  })()}
+                </div>
+                <div className="text-xs text-gray-400">
+                  Stop-loss: ${(() => {
+                    const stopLoss = calculateTrailingStopLoss();
+                    return stopLoss.currentStopLoss?.toFixed(2) || 'Non défini';
+                  })()}
+                </div>
+                <div className="text-xs text-gray-400">
+                  Marge de sécurité: ${(() => {
+                    const stopLoss = calculateTrailingStopLoss();
+                    return stopLoss.remaining?.toFixed(2) || 'N/A';
+                  })()}
+                </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          )}
 
           {/* Légende */}
           <div className="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-gray-600">
@@ -3828,8 +4026,30 @@ export default function TradingPlatformShell() {
                           </select>
                           
                           <button
+                            onClick={() => handleRenameAccount(selectedAccount)}
+                            className="bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 text-blue-300 hover:text-blue-200 px-3 py-2 rounded-lg text-sm font-medium"
+                            title="Renommer ce compte"
+                          >
+                            ✏️
+                          </button>
+                          
+                          {selectedAccount !== 'Compte Principal' && (
+                            <button
+                              onClick={() => {
+                                if (confirm(`Supprimer le compte "${selectedAccount}" ?`)) {
+                                  handleDeleteAccount(selectedAccount);
+                                }
+                              }}
+                              className="bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 text-red-300 hover:text-red-200 px-3 py-2 rounded-lg text-sm font-medium"
+                              title="Supprimer ce compte"
+                            >
+                              ❌
+                            </button>
+                          )}
+                          
+                          <button
                             onClick={() => setShowAddAccountModal(true)}
-                            className="bg-green-600 hover:bg-green-700 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
+                            className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
                           >
                             + Ajouter compte
                           </button>
@@ -6461,6 +6681,30 @@ export default function TradingPlatformShell() {
                 value={newAccountName}
                 onChange={(e) => setNewAccountName(e.target.value)}
                 placeholder="Ex: Compte Demo, Compte Live..."
+                className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+                onKeyPress={(e) => e.key === 'Enter' && handleAddAccount()}
+              />
+            </div>
+            
+            <div className="mb-4">
+              <label className="block text-sm text-gray-300 mb-2">Balance initiale ($)</label>
+              <input
+                type="number"
+                value={newAccountBalance}
+                onChange={(e) => setNewAccountBalance(e.target.value)}
+                placeholder="Ex: 10000"
+                className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+                onKeyPress={(e) => e.key === 'Enter' && handleAddAccount()}
+              />
+            </div>
+            
+            <div className="mb-4">
+              <label className="block text-sm text-gray-300 mb-2">Balance minimum ($)</label>
+              <input
+                type="number"
+                value={newAccountMinimum}
+                onChange={(e) => setNewAccountMinimum(e.target.value)}
+                placeholder="Ex: 5000 (seuil d'arrêt)"
                 className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
                 onKeyPress={(e) => e.key === 'Enter' && handleAddAccount()}
               />
