@@ -1164,15 +1164,15 @@ export default function TradingPlatformShell() {
     
     console.log(`📊 Channel opened: ${channelId} at ${new Date().toLocaleTimeString()}`);
     
-    // Scroll intelligent : bas pour les canaux de chat, pas de scroll pour signaux/calendrier/trading journal
-    setTimeout(() => {
-      if (['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video'].includes(channelId)) {
-        scrollToBottom();
-      } else if (!['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux'].includes(channelId)) {
-        scrollToTop();
-      }
-      // Pas de scroll pour signaux, calendrier et trading journal
-    }, 200);
+    // Scroll automatique désactivé lors du changement de canal pour éviter le scroll lors de la connexion
+    // setTimeout(() => {
+    //   if (['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video'].includes(channelId)) {
+    //     scrollToBottom();
+    //   } else if (!['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux'].includes(channelId)) {
+    //     scrollToTop();
+    //   }
+    //   // Pas de scroll pour signaux, calendrier et trading journal
+    // }, 200);
   };
   const [personalTrades, setPersonalTrades] = useState<PersonalTrade[]>([]);
 
@@ -3969,13 +3969,13 @@ export default function TradingPlatformShell() {
               mobileView === 'channels' ? 'translate-x-0' : '-translate-x-full'
             }`}
           >
-                        <div className="p-4 space-y-6 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
+                        <div className="p-4 space-y-3 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
               
               {/* Statistiques en haut */}
               <div className="bg-gray-700 rounded-lg p-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   {/* Colonne gauche */}
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-400">Win Rate:</span>
                       <span className="text-gray-200 font-medium">{calculateWinRateForMonth()}%</span>
@@ -3988,7 +3988,7 @@ export default function TradingPlatformShell() {
                     </div>
                   </div>
                   {/* Colonne droite */}
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-400">Signaux actifs:</span>
                       <span className="text-gray-200 font-medium">{realTimeSignals.filter(s => s.status === 'ACTIVE').length}</span>
@@ -4002,7 +4002,7 @@ export default function TradingPlatformShell() {
               </div>
 
               <div>
-                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">ÉDUCATION</h3>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">ÉDUCATION</h3>
                 <div className="space-y-2">
                   {channels.filter(c => ['fondamentaux', 'letsgooo-model'].includes(c.id)).map(channel => (
                     <button
@@ -4027,7 +4027,7 @@ export default function TradingPlatformShell() {
               </div>
 
               <div>
-                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">SIGNAUX</h3>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">SIGNAUX</h3>
                 <div className="space-y-2">
                   {channels.filter(c => ['general-chat-2', 'general-chat-3', 'general-chat-4'].includes(c.id)).map(channel => (
                     <button
@@ -4053,7 +4053,7 @@ export default function TradingPlatformShell() {
               </div>
 
               <div>
-                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">TRADING HUB</h3>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">TRADING HUB</h3>
                 <div className="space-y-2">
                   {channels.filter(c => ['video', 'trading-hub'].includes(c.id)).map(channel => (
                     <button
