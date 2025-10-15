@@ -9,7 +9,7 @@ import { ref, update, onValue, get, remove, push, set } from 'firebase/database'
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 import { signOutAdmin } from '../utils/admin-utils';
-import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType } from '../lib/supabase';
+import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, UserAccount } from '../lib/supabase';
 
 export default function AdminInterface() {
 
@@ -19,6 +19,14 @@ export default function AdminInterface() {
   const [showChannelsOverlay, setShowChannelsOverlay] = useState(true);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<{[channelId: string]: Array<{id: string, text: string, user: string, timestamp: string, file?: File}>}>({});
+
+  // États pour la gestion des comptes
+  const [tradingAccounts, setTradingAccounts] = useState<UserAccount[]>([]);
+  const [selectedAccount, setSelectedAccount] = useState('Compte Principal');
+  const [showAddAccountModal, setShowAddAccountModal] = useState(false);
+  const [newAccountName, setNewAccountName] = useState('');
+  const [newAccountBalance, setNewAccountBalance] = useState('');
+  const [newAccountMinimum, setNewAccountMinimum] = useState('');
 
   // Charger Tawk.to au montage de l'AdminInterface
   useEffect(() => {
@@ -610,6 +618,191 @@ export default function AdminInterface() {
     };
   }, []); // Une seule fois au démarrage
 
+  // Fonctions pour la gestion des comptes
+  const loadAccounts = async () => {
+    try {
+      const accounts = await getUserAccounts();
+      setTradingAccounts(accounts);
+      console.log('✅ [ADMIN] Comptes chargés:', accounts.length);
+    } catch (error) {
+      console.error('❌ [ADMIN] Erreur chargement comptes:', error);
+    }
+  };
+
+  const handleAccountChange = (accountName: string) => {
+    setSelectedAccount(accountName);
+    localStorage.setItem('selectedAccount', accountName);
+    // Effacer la date sélectionnée pour éviter d'afficher les trades de l'ancien compte
+    setSelectedDate(null);
+    // Forcer un rechargement des trades pour mettre à jour le calendrier
+    setPersonalTrades(prev => [...prev]);
+    // Forcer un rechargement du calendrier en changeant temporairement la vue
+    setView('signals');
+    setTimeout(() => setView('calendar'), 100);
+  };
+
+  const handleAddAccount = async () => {
+    if (!newAccountName.trim()) {
+      alert('Veuillez entrer un nom de compte');
+      return;
+    }
+
+    if (tradingAccounts.some(acc => acc.account_name === newAccountName.trim())) {
+      alert('Ce nom de compte existe déjà');
+      return;
+    }
+
+    try {
+      const initialBalance = parseFloat(newAccountBalance) || 0;
+      const minimumBalance = parseFloat(newAccountMinimum) || 0;
+      console.log('🔍 [ADMIN] Appel addUserAccount avec:', newAccountName.trim(), initialBalance, minimumBalance);
+      
+      const newAccount = await addUserAccount(newAccountName.trim(), initialBalance, minimumBalance);
+      if (newAccount) {
+        const accountWithBalance = { ...newAccount, initial_balance: initialBalance, minimum_balance: minimumBalance };
+        const updatedAccounts = [...tradingAccounts, accountWithBalance];
+        setTradingAccounts(updatedAccounts);
+        setSelectedAccount(newAccountName.trim());
+        setNewAccountName('');
+        setNewAccountBalance('');
+        setNewAccountMinimum('');
+        setShowAddAccountModal(false);
+        console.log('✅ [ADMIN] Compte ajouté avec succès');
+      }
+    } catch (error) {
+      console.error('❌ [ADMIN] Erreur ajout compte:', error);
+      alert('Erreur lors de l\'ajout du compte');
+    }
+  };
+
+  const handleDeleteAccount = async (accountName: string) => {
+    try {
+      // D'abord supprimer tous les trades associés à ce compte
+      const tradesToDelete = personalTrades.filter(trade => 
+        (trade.account || 'Compte Principal') === accountName
+      );
+      
+      console.log(`🗑️ [ADMIN] Suppression de ${tradesToDelete.length} trades pour le compte "${accountName}"`);
+      
+      for (const trade of tradesToDelete) {
+        await deletePersonalTrade(trade.id);
+      }
+      
+      // Ensuite supprimer le compte
+      const account = tradingAccounts.find(acc => acc.account_name === accountName);
+      if (account) {
+        await deleteUserAccount(account.id);
+        const updatedAccounts = tradingAccounts.filter(acc => acc.id !== account.id);
+        setTradingAccounts(updatedAccounts);
+        
+        if (selectedAccount === accountName) {
+          setSelectedAccount('Compte Principal');
+        }
+        console.log('✅ [ADMIN] Compte supprimé:', accountName);
+      }
+    } catch (error) {
+      console.error('❌ [ADMIN] Erreur suppression compte:', error);
+      alert('Erreur lors de la suppression du compte');
+    }
+  };
+
+  const handleRenameAccount = async (oldName: string) => {
+    const newName = prompt(`Renommer "${oldName}" en:`, oldName);
+    if (!newName || newName.trim() === '' || newName === oldName) return;
+    
+    try {
+      const account = tradingAccounts.find(acc => acc.account_name === oldName);
+      if (account) {
+        const updatedAccounts = tradingAccounts.map(acc => 
+          acc.id === account.id 
+            ? { ...acc, account_name: newName.trim() }
+            : acc
+        );
+        setTradingAccounts(updatedAccounts);
+        
+        if (selectedAccount === oldName) {
+          setSelectedAccount(newName.trim());
+        }
+        
+        setPersonalTrades(prev => prev.map(trade => 
+          (trade.account || 'Compte Principal') === oldName 
+            ? { ...trade, account: newName.trim() }
+            : trade
+        ));
+        console.log('✅ [ADMIN] Compte renommé:', oldName, '->', newName);
+      }
+    } catch (error) {
+      console.error('❌ [ADMIN] Erreur renommage compte:', error);
+    }
+  };
+
+  // Charger les comptes au montage du composant
+  useEffect(() => {
+    loadAccounts();
+  }, []);
+
+  // Fonctions pour les calculs de balance et stop-loss
+  const getTradesForSelectedAccount = () => {
+    return personalTrades.filter(trade => {
+      const tradeAccount = trade.account || 'Compte Principal';
+      // Debug: vérifier tous les trades pour voir s'ils ont un compte
+      if (!trade.account) {
+        console.log('🚨 Trade sans compte détecté:', trade.symbol, trade.date, '-> assigné à Compte Principal');
+      }
+      return tradeAccount === selectedAccount;
+    });
+  };
+
+  const calculateAccountBalance = (): number => {
+    const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
+    let initialBalance = account?.initial_balance || 0;
+    
+    // Fallback vers localStorage si pas dans le compte
+    if (!initialBalance) {
+      const savedBalances = localStorage.getItem('accountBalances');
+      if (savedBalances) {
+        const balances = JSON.parse(savedBalances);
+        initialBalance = balances[selectedAccount] || 0;
+      }
+    }
+    
+    const pnl = calculateTotalPnLTradesForAccount();
+    return initialBalance + pnl;
+  };
+
+  const calculateTrailingStopLoss = () => {
+    const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
+    const currentBalance = calculateAccountBalance();
+    const initialBalance = account?.initial_balance || 0;
+    const initialStopLoss = account?.minimum_balance || 0;
+    
+    if (initialStopLoss === 0) {
+      return { currentStopLoss: null, remaining: null, percentage: null, isAtRisk: false };
+    }
+    
+    // Calculer le P&L total
+    const pnl = calculateTotalPnLTradesForAccount();
+    
+    // Stop-loss trailing : il monte avec les gains mais ne descend jamais
+    const trailingStopLoss = Math.max(initialStopLoss, initialStopLoss + Math.max(0, pnl));
+    
+    const remaining = currentBalance - trailingStopLoss;
+    const percentage = trailingStopLoss > 0 ? ((currentBalance / trailingStopLoss) - 1) * 100 : 0;
+    const isAtRisk = remaining < (currentBalance * 0.1); // Alerte si moins de 10% de marge
+    
+    return { 
+      currentStopLoss: trailingStopLoss, 
+      remaining, 
+      percentage, 
+      isAtRisk,
+      pnl 
+    };
+  };
+
+  const calculateTotalPnLTradesForAccount = (): number => {
+    return getTradesForSelectedAccount().reduce((total, trade) => total + parseFloat(trade.pnl || '0'), 0);
+  };
+
   // Debug: Afficher les trades au chargement
   useEffect(() => {
     console.log('Trades chargés:', personalTrades);
@@ -1147,8 +1340,11 @@ export default function AdminInterface() {
   const calculateTotalPnLTrades = (): number => {
     const monthTrades = personalTrades.filter(t => {
       const tradeDate = new Date(t.date);
-      return tradeDate.getMonth() === currentDate.getMonth() &&
+      const isCurrentMonth = tradeDate.getMonth() === currentDate.getMonth() &&
              tradeDate.getFullYear() === currentDate.getFullYear();
+      const tradeAccount = t.account || 'Compte Principal';
+      const isSelectedAccount = tradeAccount === selectedAccount;
+      return isCurrentMonth && isSelectedAccount;
     });
     return monthTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0);
   };
@@ -1156,8 +1352,11 @@ export default function AdminInterface() {
   const calculateWinRateTrades = (): number => {
     const monthTrades = personalTrades.filter(t => {
       const tradeDate = new Date(t.date);
-      return tradeDate.getMonth() === currentDate.getMonth() &&
+      const isCurrentMonth = tradeDate.getMonth() === currentDate.getMonth() &&
              tradeDate.getFullYear() === currentDate.getFullYear();
+      const tradeAccount = t.account || 'Compte Principal';
+      const isSelectedAccount = tradeAccount === selectedAccount;
+      return isCurrentMonth && isSelectedAccount;
     });
     if (monthTrades.length === 0) return 0;
     const wins = monthTrades.filter(t => t.status === 'WIN').length;
@@ -1168,8 +1367,11 @@ export default function AdminInterface() {
   const calculateAvgWinTrades = (): number => {
     const monthTrades = personalTrades.filter(t => {
       const tradeDate = new Date(t.date);
-      return tradeDate.getMonth() === currentDate.getMonth() &&
+      const isCurrentMonth = tradeDate.getMonth() === currentDate.getMonth() &&
              tradeDate.getFullYear() === currentDate.getFullYear();
+      const tradeAccount = t.account || 'Compte Principal';
+      const isSelectedAccount = tradeAccount === selectedAccount;
+      return isCurrentMonth && isSelectedAccount;
     });
     const winTrades = monthTrades.filter(t => t.status === 'WIN');
     if (winTrades.length === 0) return 0;
@@ -1180,8 +1382,11 @@ export default function AdminInterface() {
   const calculateAvgLossTrades = (): number => {
     const monthTrades = personalTrades.filter(t => {
       const tradeDate = new Date(t.date);
-      return tradeDate.getMonth() === currentDate.getMonth() &&
+      const isCurrentMonth = tradeDate.getMonth() === currentDate.getMonth() &&
              tradeDate.getFullYear() === currentDate.getFullYear();
+      const tradeAccount = t.account || 'Compte Principal';
+      const isSelectedAccount = tradeAccount === selectedAccount;
+      return isCurrentMonth && isSelectedAccount;
     });
     const lossTrades = monthTrades.filter(t => t.status === 'LOSS');
     if (lossTrades.length === 0) return 0;
@@ -1191,14 +1396,20 @@ export default function AdminInterface() {
 
   const getTodayTrades = () => {
     const currentDateStr = currentDate.toISOString().split('T')[0];
-    return personalTrades.filter(t => t.date === currentDateStr);
+    return personalTrades.filter(t => 
+      t.date === currentDateStr && 
+      (t.account || 'Compte Principal') === selectedAccount
+    );
   };
 
   const getThisMonthTrades = () => {
     return personalTrades.filter(t => {
       const tradeDate = new Date(t.date);
-      return tradeDate.getMonth() === currentDate.getMonth() &&
+      const isCurrentMonth = tradeDate.getMonth() === currentDate.getMonth() &&
              tradeDate.getFullYear() === currentDate.getFullYear();
+      const tradeAccount = t.account || 'Compte Principal';
+      const isSelectedAccount = tradeAccount === selectedAccount;
+      return isCurrentMonth && isSelectedAccount;
     });
   };
 
@@ -1300,10 +1511,16 @@ export default function AdminInterface() {
       
       const weekTrades = personalTrades.filter(t => {
         const tradeDate = new Date(t.date);
-        return tradeDate >= weekStart && 
+        const isDateMatch = tradeDate >= weekStart && 
                tradeDate <= weekEnd &&
                tradeDate.getMonth() === currentMonth &&
                tradeDate.getFullYear() === currentYear;
+        
+        // Filtrer par compte sélectionné
+        const tradeAccount = t.account || 'Compte Principal';
+        const isAccountMatch = tradeAccount === selectedAccount;
+        
+        return isDateMatch && isAccountMatch;
       });
       
       const weekPnL = weekTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0);
@@ -1699,18 +1916,18 @@ export default function AdminInterface() {
               });
             });
           } else {
-            // Utiliser les conteneurs de  spécifiques
+            // Utiliser les conteneurs specifiques
             Containers.forEach((container, index) => {
-              console.log(`Remplacer conteneur  ${index}`);
+              console.log(`Remplacer conteneur ${index}`);
               container.innerHTML = '';
               const videoClone = video.cloneNode(true) as HTMLVideoElement;
               container.appendChild(videoClone);
               
               // Lancer la lecture pour chaque clone
               videoClone.play().then(() => {
-                console.log(`Vidéo  ${index} en cours de lecture`);
+                console.log(`Video ${index} en cours de lecture`);
               }).catch(err => {
-                console.error(`Erreur lecture vidéo  ${index}:`, err);
+                console.error(`Erreur lecture video ${index}:`, err);
               });
             });
           }
@@ -1904,7 +2121,8 @@ export default function AdminInterface() {
       notes: tradeData.notes,
       image1: tradeData.image1,
       image2: tradeData.image2,
-      timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+        timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        account: selectedAccount // Added selectedAccount
     };
 
     // Sauvegarder dans Firebase
@@ -2160,7 +2378,11 @@ export default function AdminInterface() {
           console.log('Trade invalide:', trade);
           return false;
         }
-        return trade.date === dateStr;
+        const tradeAccount = trade.account || 'Compte Principal';
+        const isDateMatch = trade.date === dateStr;
+        const isAccountMatch = tradeAccount === selectedAccount;
+        console.log('Trade date:', trade.date, 'Compte:', tradeAccount, 'Recherche:', dateStr, 'Match date:', isDateMatch, 'Match compte:', isAccountMatch);
+        return isDateMatch && isAccountMatch;
       });
       console.log('Trades filtrés:', filteredTrades);
       return filteredTrades;
@@ -3110,16 +3332,23 @@ export default function AdminInterface() {
                 
                 const dayTrades = selectedChannel.id === 'trading-journal' ? 
                   personalTrades.filter(trade => {
-                    console.log('🔍 [ADMIN] Filtrage trade pour jour', dayNumber, 'Trade date:', trade.date, 'Type:', typeof trade.date);
                     const tradeDate = new Date(trade.date);
-                    console.log('🔍 [ADMIN] Trade date parsée:', tradeDate.toDateString());
                     
-                    const isMatch = tradeDate.getDate() === dayNumber && 
-                                   tradeDate.getMonth() === currentDate.getMonth() && 
-                                   tradeDate.getFullYear() === currentDate.getFullYear();
+                    const isDateMatch = tradeDate.getDate() === dayNumber && 
+                                       tradeDate.getMonth() === currentDate.getMonth() && 
+                                       tradeDate.getFullYear() === currentDate.getFullYear();
                     
-                    console.log('🔍 [ADMIN] Trade correspond au jour', dayNumber, '?', isMatch);
-                    return isMatch;
+                    // Filtrer STRICTEMENT par compte sélectionné - ne montrer QUE les trades du compte sélectionné
+                    const tradeAccount = trade.account || 'Compte Principal';
+                    const isAccountMatch = tradeAccount === selectedAccount;
+                    
+                    // Debug pour voir tous les trades qui matchent la date
+                    if (isDateMatch) {
+                      console.log(`📅 Jour ${dayNumber} - Trade:`, trade.symbol, 'Compte:', tradeAccount, 'Sélectionné:', selectedAccount, 'Match:', isAccountMatch);
+                    }
+                    
+                    // Ne retourner QUE si c'est le bon compte ET la bonne date
+                    return isDateMatch && isAccountMatch;
                   }) : [];
 
                 const daySignals = selectedChannel.id !== 'trading-journal' ? 
@@ -3252,12 +3481,18 @@ export default function AdminInterface() {
                         let totalPnL = 0;
                         let tradeCount = 0;
                         if (selectedChannel.id === 'trading-journal') {
-                          // Pour les trades personnels
+                          // Pour les trades personnels - FILTRER PAR COMPTE SÉLECTIONNÉ
                           const dayTrades = personalTrades.filter(trade => {
                             const tradeDate = new Date(trade.date);
-                            return tradeDate.getDate() === dayNumber && 
-                                   tradeDate.getMonth() === currentDate.getMonth() && 
-                                   tradeDate.getFullYear() === currentDate.getFullYear();
+                            const isDateMatch = tradeDate.getDate() === dayNumber && 
+                                               tradeDate.getMonth() === currentDate.getMonth() && 
+                                               tradeDate.getFullYear() === currentDate.getFullYear();
+                            
+                            // Filtrer par compte sélectionné
+                            const tradeAccount = trade.account || 'Compte Principal';
+                            const isAccountMatch = tradeAccount === selectedAccount;
+                            
+                            return isDateMatch && isAccountMatch;
                           });
                           tradeCount = dayTrades.length;
                           totalPnL = dayTrades.reduce((total, trade) => {
@@ -3327,6 +3562,99 @@ export default function AdminInterface() {
               <span className="text-xs text-gray-300">Today</span>
             </div>
           </div>
+
+          {/* Boutons de gestion des comptes - Sous le calendrier */}
+          {selectedChannel.id === 'trading-journal' && (
+            <div className="mt-6 p-4 bg-gray-800 rounded-lg border border-gray-600">
+              <h4 className="text-sm font-medium text-gray-300 mb-3">Gestion des comptes</h4>
+              <div className="flex flex-wrap items-center gap-2">
+                <select
+                  value={selectedAccount}
+                  onChange={(e) => handleAccountChange(e.target.value)}
+                  className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                >
+                  {tradingAccounts.map((account) => (
+                    <option key={account.id} value={account.account_name}>
+                      {account.account_name}
+                    </option>
+                  ))}
+                </select>
+                
+                <button
+                  onClick={() => handleRenameAccount(selectedAccount)}
+                  className="bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 text-blue-300 hover:text-blue-200 px-3 py-2 rounded-lg text-sm font-medium"
+                  title="Renommer ce compte"
+                >
+                  ✏️ Renommer
+                </button>
+                
+                {selectedAccount !== 'Compte Principal' && (
+                  <button
+                    onClick={() => {
+                      if (confirm(`Supprimer le compte "${selectedAccount}" ?`)) {
+                        handleDeleteAccount(selectedAccount);
+                      }
+                    }}
+                    className="bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 text-red-300 hover:text-red-200 px-3 py-2 rounded-lg text-sm font-medium"
+                    title="Supprimer ce compte"
+                  >
+                    ❌ Supprimer
+                  </button>
+                )}
+                
+                <button
+                  onClick={() => setShowAddAccountModal(true)}
+                  className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 px-3 py-2 rounded-lg text-sm font-medium"
+                >
+                  + Ajouter compte
+                </button>
+              </div>
+
+              {/* Affichage du solde du compte */}
+              <div className="mt-4 p-4 bg-gray-800 rounded-lg border border-gray-600">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-300">Solde du compte</h4>
+                    <p className="text-xs text-gray-400">{selectedAccount}</p>
+                  </div>
+                  <div className="text-right">
+                    <div className={`text-lg font-bold ${
+                      calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) 
+                        ? 'text-green-400' : 'text-red-400'
+                    }`}>
+                      ${calculateAccountBalance().toFixed(2)}
+                    </div>
+                    <div className="text-xs text-gray-400">
+                      Balance initiale: ${(() => {
+                        const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
+                        let initialBalance = account?.initial_balance || 0;
+                        if (!initialBalance) {
+                          const savedBalances = localStorage.getItem('accountBalances');
+                          if (savedBalances) {
+                            const balances = JSON.parse(savedBalances);
+                            initialBalance = balances[selectedAccount] || 0;
+                          }
+                        }
+                        return initialBalance.toFixed(2);
+                      })()}
+                    </div>
+                    <div className="text-xs text-gray-400">
+                      Stop-loss: ${(() => {
+                        const stopLoss = calculateTrailingStopLoss();
+                        return stopLoss.currentStopLoss?.toFixed(2) || 'Non défini';
+                      })()}
+                    </div>
+                    <div className="text-xs text-gray-400">
+                      Marge de sécurité: ${(() => {
+                        const stopLoss = calculateTrailingStopLoss();
+                        return stopLoss.remaining?.toFixed(2) || 'N/A';
+                      })()}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Panneau des statistiques */}
@@ -6109,6 +6437,71 @@ export default function AdminInterface() {
             >
               ×
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal pour ajouter un compte */}
+      {showAddAccountModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
+            <h3 className="text-xl font-bold text-white mb-4">Ajouter un nouveau compte</h3>
+            
+            <div className="mb-4">
+              <label className="block text-sm text-gray-300 mb-2">Nom du compte</label>
+              <input
+                type="text"
+                value={newAccountName}
+                onChange={(e) => setNewAccountName(e.target.value)}
+                placeholder="Ex: Compte Demo"
+                className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+                onKeyPress={(e) => e.key === 'Enter' && handleAddAccount()}
+              />
+            </div>
+            
+            <div className="mb-4">
+              <label className="block text-sm text-gray-300 mb-2">Balance initiale ($)</label>
+              <input
+                type="number"
+                value={newAccountBalance}
+                onChange={(e) => setNewAccountBalance(e.target.value)}
+                placeholder="Ex: 10000"
+                className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+                onKeyPress={(e) => e.key === 'Enter' && handleAddAccount()}
+              />
+            </div>
+            
+            <div className="mb-6">
+              <label className="block text-sm text-gray-300 mb-2">Balance minimum ($)</label>
+              <input
+                type="number"
+                value={newAccountMinimum}
+                onChange={(e) => setNewAccountMinimum(e.target.value)}
+                placeholder="Ex: 5000 (seuil d'arrêt)"
+                className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+                onKeyPress={(e) => e.key === 'Enter' && handleAddAccount()}
+              />
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={handleAddAccount}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium"
+              >
+                Créer le compte
+              </button>
+              <button
+                onClick={() => {
+                  setShowAddAccountModal(false);
+                  setNewAccountName('');
+                  setNewAccountBalance('');
+                  setNewAccountMinimum('');
+                }}
+                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium"
+              >
+                Annuler
+              </button>
+            </div>
           </div>
         </div>
       )}

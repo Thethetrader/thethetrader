@@ -306,25 +306,64 @@ export default function TradingPlatformShell() {
     if (accountToDelete === 'Compte Principal') return; // Ne pas supprimer le compte principal
     
     try {
+      console.log(`🗑️ Début suppression du compte "${accountToDelete}"`);
+      
+      // D'abord supprimer tous les trades associés à ce compte
+      const tradesToDelete = personalTrades.filter(trade => 
+        (trade.account || 'Compte Principal') === accountToDelete
+      );
+      
+      console.log(`🗑️ Suppression de ${tradesToDelete.length} trades pour le compte "${accountToDelete}"`);
+      
+      for (const trade of tradesToDelete) {
+        const success = await deletePersonalTrade(trade.id);
+        console.log(`🗑️ Trade ${trade.id} supprimé:`, success);
+      }
+      
+      // Mettre à jour l'état local des trades
+      setPersonalTrades(prev => prev.filter(trade => 
+        (trade.account || 'Compte Principal') !== accountToDelete
+      ));
+      
+      // Ensuite supprimer le compte
       const account = tradingAccounts.find(acc => acc.account_name === accountToDelete);
+      console.log(`🗑️ Compte trouvé:`, account);
+      
       if (account && account.id.startsWith('local-')) {
         // Compte local, supprimer de localStorage
         const updatedAccounts = tradingAccounts.filter(acc => acc.account_name !== accountToDelete);
         await saveAccounts(updatedAccounts);
+        console.log(`✅ Compte local supprimé`);
       } else if (account) {
         // Compte Supabase, supprimer de la base
+        console.log(`🗑️ Suppression du compte Supabase ID: ${account.id}`);
         const success = await deleteUserAccount(account.id);
+        console.log(`🗑️ Résultat suppression Supabase:`, success);
+        
         if (success) {
-          const updatedAccounts = tradingAccounts.filter(acc => acc.account_name !== accountToDelete);
-          await saveAccounts(updatedAccounts);
+          // Mettre à jour l'état local des comptes
+          const updatedAccounts = tradingAccounts.filter(acc => acc.id !== account.id);
+          setTradingAccounts(updatedAccounts);
+          console.log(`✅ État local mis à jour, comptes restants:`, updatedAccounts.length);
+        } else {
+          console.error('❌ Échec suppression Supabase, mais on continue avec la suppression locale');
+          // Même si Supabase échoue, supprimer localement
+          const updatedAccounts = tradingAccounts.filter(acc => acc.id !== account.id);
+          setTradingAccounts(updatedAccounts);
+          console.log(`✅ État local mis à jour (fallback), comptes restants:`, updatedAccounts.length);
         }
       }
       
+      // Changer le compte sélectionné si nécessaire
       if (selectedAccount === accountToDelete) {
         setSelectedAccount('Compte Principal');
+        console.log(`✅ Compte sélectionné changé vers "Compte Principal"`);
       }
+      
+      console.log(`✅ Compte "${accountToDelete}" supprimé avec succès`);
     } catch (error) {
       console.error('❌ Erreur suppression compte:', error);
+      alert('Erreur lors de la suppression du compte');
     }
   };
 
