@@ -3434,7 +3434,7 @@ export default function TradingPlatformShell() {
                       }}
                     />
                   ) : (
-                    currentUsername || 'Utilisateur'
+                    currentUsername || '...'
                   )}</p>
               <p className="text-xs text-gray-400">En ligne</p>
             </div>
