@@ -367,7 +367,23 @@ export default function TradingPlatformShell() {
     }
   };
 
-  // Renommer un compte
+  // Options du compte
+  const handleAccountOptions = async (accountName: string) => {
+    const choice = prompt(
+      `Options pour "${accountName}":\n\n` +
+      `1 - Renommer le compte\n` +
+      `2 - Modifier balance et stop-loss\n\n` +
+      `Entrez votre choix (1 ou 2):`,
+      '1'
+    );
+
+    if (choice === '1') {
+      await handleRenameAccount(accountName);
+    } else if (choice === '2') {
+      await handleEditAccountSettings(accountName);
+    }
+  };
+
   const handleEditAccountSettings = async (accountName: string) => {
     const account = tradingAccounts.find(acc => acc.account_name === accountName);
     if (!account) return;
@@ -3174,11 +3190,11 @@ export default function TradingPlatformShell() {
               </select>
               
               <button
-                onClick={() => handleRenameAccount(selectedAccount)}
+                onClick={() => handleAccountOptions(selectedAccount)}
                 className="bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 text-blue-300 hover:text-blue-200 px-3 py-2 rounded-lg text-sm font-medium"
-                title="Renommer ce compte"
+                title="Options du compte"
               >
-                ✏️
+                ⚙️
               </button>
               
               {selectedAccount !== 'Compte Principal' && (
@@ -3462,21 +3478,11 @@ export default function TradingPlatformShell() {
             <div className="mt-4 space-y-3">
               {/* Solde principal */}
               <div className="p-4 bg-gray-800 rounded-lg border border-gray-600">
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between">
                   <div>
                     <h4 className="text-sm font-medium text-gray-300">Solde du compte</h4>
                     <p className="text-xs text-gray-400">{selectedAccount}</p>
                   </div>
-                  <button
-                    onClick={() => handleEditAccountSettings(selectedAccount)}
-                    className="text-blue-400 hover:text-blue-300 transition-colors"
-                    title="Modifier balance et stop-loss"
-                  >
-                    ✏️
-                  </button>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex-1"></div>
                   <div className="text-right">
                     <div className={`text-lg font-bold ${
                       calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) 
@@ -4114,11 +4120,11 @@ export default function TradingPlatformShell() {
                           </select>
                           
                           <button
-                            onClick={() => handleRenameAccount(selectedAccount)}
+                            onClick={() => handleAccountOptions(selectedAccount)}
                             className="bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 text-blue-300 hover:text-blue-200 px-3 py-2 rounded-lg text-sm font-medium"
-                            title="Renommer ce compte"
+                            title="Options du compte"
                           >
-                            ✏️
+                            ⚙️
                           </button>
                           
                           {selectedAccount !== 'Compte Principal' && (
