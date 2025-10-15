@@ -590,10 +590,6 @@ export default function AdminInterface() {
   
   // Synchronisation temps réel des trades personnels
   useEffect(() => {
-    // Forcer l'initialisation de l'ID utilisateur
-    localStorage.setItem('user_id', 'user_unified');
-    console.log('🔄 ID utilisateur forcé dans Admin:', localStorage.getItem('user_id'));
-    
     console.log('👂 Démarrage synchronisation temps réel trades [ADMIN]...');
     
     // Démarrer l'écoute temps réel

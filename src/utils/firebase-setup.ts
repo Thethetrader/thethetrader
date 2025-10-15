@@ -356,14 +356,32 @@ export const generateUserId = (): string => {
   return `user_unified`;
 };
 
-// Synchroniser l'ID utilisateur (sans créer de nouvelle instance Supabase)
+// Synchroniser l'ID utilisateur avec Supabase
 export const syncUserId = async (): Promise<string> => {
-  // Toujours utiliser l'ID unifié pour tous les utilisateurs
-  const userId = generateUserId();
-  localStorage.setItem('user_id', userId);
-  console.log('🔄 ID utilisateur unifié synchronisé:', userId);
-  
-  return userId;
+  try {
+    // Essayer d'obtenir l'utilisateur Supabase connecté
+    const { getCurrentUser } = await import('../lib/supabase');
+    const user = await getCurrentUser();
+    
+    if (user) {
+      // Utiliser l'ID Supabase réel de l'utilisateur
+      localStorage.setItem('user_id', user.id);
+      console.log('🔄 ID utilisateur Supabase synchronisé:', user.id);
+      return user.id;
+    } else {
+      // Fallback si pas connecté
+      const userId = generateUserId();
+      localStorage.setItem('user_id', userId);
+      console.log('🔄 ID utilisateur fallback synchronisé:', userId);
+      return userId;
+    }
+  } catch (error) {
+    console.error('❌ Erreur synchronisation ID utilisateur:', error);
+    // Fallback en cas d'erreur
+    const userId = generateUserId();
+    localStorage.setItem('user_id', userId);
+    return userId;
+  }
 };
 
 // Connexion utilisateur simple

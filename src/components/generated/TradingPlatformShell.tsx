@@ -1024,10 +1024,6 @@ export default function TradingPlatformShell() {
 
   // Synchronisation temps réel des trades personnels
   useEffect(() => {
-    // Forcer l'initialisation de l'ID utilisateur
-    localStorage.setItem('user_id', 'user_unified');
-    console.log('🔄 ID utilisateur forcé dans PWA:', localStorage.getItem('user_id'));
-    
     console.log('👂 Démarrage synchronisation temps réel trades [PWA]...');
     
     // Démarrer l'écoute temps réel
