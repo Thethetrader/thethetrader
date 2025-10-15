@@ -1418,8 +1418,11 @@ export default function AdminInterface() {
       
       if (success) {
         console.log('✅ Message supprimé avec succès');
-        // Recharger les messages
-        await loadMessages(channelId);
+        // Mettre à jour le state directement
+        setChatMessages(prev => ({
+          ...prev,
+          [channelId]: (prev[channelId] || []).filter(msg => msg.id !== messageId)
+        }));
       } else {
         console.error('❌ Échec suppression message');
         alert('Erreur lors de la suppression du message');
