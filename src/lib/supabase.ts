@@ -870,6 +870,7 @@ export interface PersonalTrade {
   stopLoss?: string;
   pnl: string;
   status: 'WIN' | 'LOSS' | 'BREAKEVEN';
+  lossReason?: string;
   notes?: string;
   image1?: string | null;
   image2?: string | null;

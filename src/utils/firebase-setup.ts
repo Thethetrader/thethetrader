@@ -62,6 +62,7 @@ export interface PersonalTrade {
   stopLoss: string;
   pnl: string;
   status: 'WIN' | 'LOSS' | 'BE';
+  lossReason?: string;
   notes: string;
   image1?: string; // base64
   image2?: string; // base64
