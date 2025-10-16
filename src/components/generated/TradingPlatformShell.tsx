@@ -1961,7 +1961,8 @@ export default function TradingPlatformShell() {
     
     console.log('🔍 DEBUG Loss analysis - Total trades:', accountTrades.length);
     console.log('🔍 DEBUG Loss analysis - Loss trades:', lossTrades.length);
-    console.log('🔍 DEBUG Loss analysis - Loss trades data:', lossTrades.map(t => ({ id: t.id, symbol: t.symbol, lossReason: t.lossReason })));
+    console.log('🔍 DEBUG Loss analysis - All loss trades:', lossTrades);
+    console.log('🔍 DEBUG Loss analysis - Loss trades with reasons:', lossTrades.filter(t => t.lossReason && t.lossReason.trim() !== ''));
     
     // Grouper les pertes par raison
     const lossByReason: { [key: string]: { count: number, totalPnl: number, trades: any[] } } = {};
