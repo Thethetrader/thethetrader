@@ -1152,6 +1152,7 @@ export default function TradingPlatformShell() {
 
   // États pour le journal de trading personnalisé
   const [showTradeModal, setShowTradeModal] = useState(false);
+  const [showLossReasonsModal, setShowLossReasonsModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(() => {
     // Récupérer selectedDate depuis localStorage
     const saved = localStorage.getItem('selectedDate');
@@ -3624,7 +3625,16 @@ export default function TradingPlatformShell() {
                 if (lossAnalysis.totalLosses > 0) {
                   return (
                     <div className="bg-gray-700 rounded-lg p-3 mt-3">
-                      <h4 className="text-sm font-medium mb-3 text-red-300">📊 Analyse des Pertes</h4>
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="text-sm font-medium text-red-300">📊 Analyse des Pertes</h4>
+                        <button
+                          onClick={() => setShowLossReasonsModal(true)}
+                          className="text-gray-400 hover:text-white transition-colors"
+                          title="Gérer les raisons de perte"
+                        >
+                          ⚙️
+                        </button>
+                      </div>
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-400">Total pertes:</span>
@@ -6991,6 +7001,70 @@ export default function TradingPlatformShell() {
               >
                 Annuler
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de gestion des raisons de perte */}
+      {showLossReasonsModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-lg w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-semibold text-white">⚙️ Gérer les raisons de perte</h3>
+                <button
+                  onClick={() => setShowLossReasonsModal(false)}
+                  className="text-gray-400 hover:text-white text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="mb-6">
+                <p className="text-sm text-gray-400 mb-4">
+                  Pour modifier les raisons de perte, édite le fichier : 
+                  <code className="bg-gray-700 px-2 py-1 rounded text-yellow-300 ml-2">
+                    src/config/loss-reasons.ts
+                  </code>
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="text-sm font-medium text-gray-300 mb-3">Raisons actuelles :</h4>
+                {LOSS_REASONS.map((reason, index) => (
+                  <div 
+                    key={reason.value}
+                    className="flex items-center gap-3 p-3 bg-gray-700 rounded-lg"
+                  >
+                    <span className="text-2xl">{reason.emoji}</span>
+                    <div className="flex-1">
+                      <div className="text-white font-medium">{reason.label}</div>
+                      <div className="text-xs text-gray-400 font-mono">{reason.value}</div>
+                    </div>
+                    <span className="text-gray-500 text-sm">#{index + 1}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+                <h4 className="text-sm font-medium text-blue-300 mb-2">💡 Comment modifier ?</h4>
+                <ol className="text-xs text-gray-300 space-y-1 list-decimal list-inside">
+                  <li>Ouvre le fichier <code className="bg-gray-700 px-1 rounded">src/config/loss-reasons.ts</code></li>
+                  <li>Modifie le tableau <code className="bg-gray-700 px-1 rounded">LOSS_REASONS</code></li>
+                  <li>Sauvegarde le fichier</li>
+                  <li>Les changements apparaîtront automatiquement</li>
+                </ol>
+              </div>
+
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={() => setShowLossReasonsModal(false)}
+                  className="bg-gray-600 hover:bg-gray-700 px-6 py-2 rounded-lg text-white font-medium"
+                >
+                  Fermer
+                </button>
+              </div>
             </div>
           </div>
         </div>
