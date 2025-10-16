@@ -1981,12 +1981,13 @@ export default function TradingPlatformShell() {
     return Math.round(totalLossPnL / lossTrades.length);
   };
 
-  // Analyse des pertes mise en cache pour éviter les recalculs inutiles
-  const lossAnalysis = useMemo(() => {
-    const accountTrades = getTradesForSelectedAccount();
+  // Fonctions pour analyser les pertes par raison
+  const getLossAnalysis = () => {
+    const accountTrades = personalTrades.filter(trade => 
+      (trade.account || 'Compte Principal') === selectedAccount
+    );
     const lossTrades = accountTrades.filter(t => t.status === 'LOSS');
     
-    // Grouper les pertes par raison
     const lossByReason: { [key: string]: { count: number, totalPnl: number, trades: any[] } } = {};
     
     lossTrades.forEach(trade => {
@@ -1999,8 +2000,6 @@ export default function TradingPlatformShell() {
       lossByReason[reason].trades.push(trade);
     });
     
-    // Convertir en array et trier par fréquence
-    // Filtrer pour exclure les raisons "non_specifiee"
     const sortedReasons = Object.entries(lossByReason)
       .filter(([reason]) => reason !== 'non_specifiee')
       .map(([reason, data]) => ({
@@ -2017,7 +2016,7 @@ export default function TradingPlatformShell() {
       totalLossPnl: lossTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0),
       reasons: sortedReasons
     };
-  }, [personalTrades, selectedAccount]); // Se recalcule quand personalTrades ou selectedAccount change
+  };
 
 
   // Fonction pour obtenir le label d'une raison (utilise les raisons personnalisées)
@@ -3636,6 +3635,7 @@ export default function TradingPlatformShell() {
 
               {/* Analyse des pertes - sous les données de solde */}
               {(() => {
+                const lossAnalysis = getLossAnalysis();
                 if (lossAnalysis.totalLosses > 0) {
                   return (
                     <div className="bg-gray-700 rounded-lg p-3 mt-3">
