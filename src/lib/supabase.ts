@@ -1209,13 +1209,31 @@ export const updateUserAccount = async (accountId: string, updates: Partial<User
 
     console.log('✏️ Mise à jour compte:', accountId, updates);
 
+    // Essayer d'abord de vérifier si la table existe en lisant le compte
+    const { data: existingAccount, error: readError } = await supabase
+      .from('user_accounts')
+      .select('*')
+      .eq('id', accountId)
+      .eq('user_id', user.id)
+      .single();
+
+    if (readError) {
+      console.error('❌ Erreur lecture compte:', readError);
+      return null;
+    }
+
+    if (!existingAccount) {
+      console.error('❌ Compte non trouvé');
+      return null;
+    }
+
+    // Maintenant faire la mise à jour
     const { data, error } = await supabase
       .from('user_accounts')
       .update(updates)
       .eq('id', accountId)
       .eq('user_id', user.id)
-      .select()
-      .single();
+      .select();
 
     if (error) {
       console.error('❌ Erreur mise à jour compte:', error);
@@ -1223,7 +1241,7 @@ export const updateUserAccount = async (accountId: string, updates: Partial<User
     }
 
     console.log('✅ Compte mis à jour');
-    return data;
+    return data && data.length > 0 ? data[0] : null;
   } catch (error) {
     console.error('❌ Erreur updateUserAccount:', error);
     return null;

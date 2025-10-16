@@ -392,11 +392,19 @@ export default function TradingPlatformShell() {
   };
 
   const handleEditAccountSettings = async (accountName: string) => {
+    console.log('🔧 handleEditAccountSettings appelé pour:', accountName);
     const account = tradingAccounts.find(acc => acc.account_name === accountName);
-    if (!account) return;
+    console.log('📋 Compte trouvé:', account);
+    
+    if (!account) {
+      console.error('❌ Compte non trouvé');
+      return;
+    }
 
     const currentBalance = account.initial_balance || 0;
     const currentMinimum = account.minimum_balance || 0;
+
+    console.log('💰 Valeurs actuelles - Balance:', currentBalance, 'Minimum:', currentMinimum);
 
     const newBalance = prompt(`Balance initiale pour "${accountName}":`, currentBalance.toString());
     if (newBalance === null) return; // Annulé
@@ -407,12 +415,17 @@ export default function TradingPlatformShell() {
     const balanceValue = parseFloat(newBalance) || 0;
     const minimumValue = parseFloat(newMinimum) || 0;
 
+    console.log('💸 Nouvelles valeurs - Balance:', balanceValue, 'Minimum:', minimumValue);
+
     try {
-      // Mettre à jour dans Supabase
+      // Mettre à jour dans Supabase uniquement
+      console.log('🚀 Appel updateUserAccount avec ID:', account.id);
       const updatedAccount = await updateUserAccount(account.id, {
         initial_balance: balanceValue,
         minimum_balance: minimumValue
       });
+
+      console.log('📝 Résultat updateUserAccount:', updatedAccount);
 
       if (updatedAccount) {
         // Mettre à jour l'état local
@@ -423,10 +436,14 @@ export default function TradingPlatformShell() {
         );
         setTradingAccounts(updatedAccounts);
         console.log('✅ Paramètres du compte mis à jour');
+        alert('Paramètres mis à jour avec succès !');
+      } else {
+        console.error('❌ updateUserAccount a retourné null');
+        alert('Erreur: Impossible de mettre à jour les paramètres');
       }
     } catch (error) {
       console.error('❌ Erreur mise à jour paramètres:', error);
-      alert('Erreur lors de la mise à jour des paramètres');
+      alert('Erreur lors de la mise à jour des paramètres: ' + error);
     }
   };
 
