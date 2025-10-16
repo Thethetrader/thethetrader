@@ -3767,7 +3767,7 @@ export default function TradingPlatformShell() {
           <div>
             <h4 className="text-sm font-semibold text-gray-300 mb-4">Weekly Breakdown</h4>
             <div className="space-y-2">
-              {((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? getWeeklyBreakdownTradesForMonth() : getWeeklyBreakdownForMonth()).map((weekData, index) => (
+              {((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? getWeeklyBreakdownTradesForMonth() : getWeeklyBreakdownForMonth()).filter(weekData => weekData.trades > 0).map((weekData, index) => (
                 <div 
                   key={index} 
                   className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer hover:bg-gray-600/50 transition-colors ${
