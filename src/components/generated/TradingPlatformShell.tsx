@@ -311,8 +311,6 @@ export default function TradingPlatformShell() {
 
   // Supprimer un compte
   const handleDeleteAccount = async (accountToDelete: string) => {
-    if (accountToDelete === 'Compte Principal') return; // Ne pas supprimer le compte principal
-    
     try {
       console.log(`🗑️ Début suppression du compte "${accountToDelete}"`);
       
