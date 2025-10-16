@@ -1237,6 +1237,7 @@ export default function TradingPlatformShell() {
     stopLoss: '',
     pnl: '',
     status: 'WIN' as 'WIN' | 'LOSS' | 'BE',
+    lossReason: '',
     notes: '',
     image1: null as File | null,
     image2: null as File | null
@@ -1953,6 +1954,62 @@ export default function TradingPlatformShell() {
     return Math.round(totalLossPnL / lossTrades.length);
   };
 
+  // Fonctions pour analyser les pertes par raison
+  const getLossAnalysis = () => {
+    const accountTrades = getTradesForSelectedAccount();
+    const lossTrades = accountTrades.filter(t => t.status === 'LOSS');
+    
+    console.log('🔍 DEBUG Loss analysis - Total trades:', accountTrades.length);
+    console.log('🔍 DEBUG Loss analysis - Loss trades:', lossTrades.length);
+    console.log('🔍 DEBUG Loss analysis - Loss trades data:', lossTrades.map(t => ({ id: t.id, symbol: t.symbol, lossReason: t.lossReason })));
+    
+    // Grouper les pertes par raison
+    const lossByReason: { [key: string]: { count: number, totalPnl: number, trades: any[] } } = {};
+    
+    lossTrades.forEach(trade => {
+      const reason = trade.lossReason || 'non_specifiee';
+      if (!lossByReason[reason]) {
+        lossByReason[reason] = { count: 0, totalPnl: 0, trades: [] };
+      }
+      lossByReason[reason].count++;
+      lossByReason[reason].totalPnl += parsePnL(trade.pnl);
+      lossByReason[reason].trades.push(trade);
+    });
+    
+    // Convertir en array et trier par fréquence
+    const sortedReasons = Object.entries(lossByReason)
+      .map(([reason, data]) => ({
+        reason,
+        count: data.count,
+        totalPnl: data.totalPnl,
+        avgPnl: Math.round(data.totalPnl / data.count),
+        percentage: Math.round((data.count / lossTrades.length) * 100)
+      }))
+      .sort((a, b) => b.count - a.count);
+    
+    return {
+      totalLosses: lossTrades.length,
+      totalLossPnl: lossTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0),
+      reasons: sortedReasons
+    };
+  };
+
+  const getLossReasonLabel = (reason: string): string => {
+    const labels: { [key: string]: string } = {
+      'mauvais_entree': '🎯 Mauvais point d\'entrée',
+      'stop_trop_serre': '⚠️ Stop-loss trop serré',
+      'news_impact': '📰 Impact de news/événements',
+      'psychologie': '🧠 Erreur psychologique',
+      'analyse_technique': '📊 Erreur d\'analyse technique',
+      'gestion_risque': '💰 Mauvaise gestion du risque',
+      'timing': '⏰ Mauvais timing',
+      'volatilite': '📈 Volatilité excessive',
+      'autre': '🔧 Autre raison',
+      'non_specifiee': '❓ Non spécifiée'
+    };
+    return labels[reason] || reason;
+  };
+
   const getTodayTradesForMonth = () => {
     const today = new Date();
     const todayStr = today.toISOString().split('T')[0];
@@ -2540,6 +2597,7 @@ export default function TradingPlatformShell() {
       stopLoss: tradeData.stopLoss,
       pnl: tradeData.pnl,
       status: tradeData.status,
+      lossReason: tradeData.lossReason,
       notes: tradeData.notes,
       image1: tradeData.image1,
       image2: tradeData.image2,
@@ -2549,6 +2607,7 @@ export default function TradingPlatformShell() {
     
     console.log('🔍 DEBUG Adding trade:', newTrade);
     console.log('🔍 DEBUG Selected account:', selectedAccount);
+    console.log('🔍 DEBUG Loss reason:', tradeData.lossReason);
 
     // Sauvegarder dans Firebase
     const savedTrade = await addPersonalTrade(newTrade as any);
@@ -2571,6 +2630,7 @@ export default function TradingPlatformShell() {
         stopLoss: '',
         pnl: '',
         status: 'WIN',
+        lossReason: '',
         notes: '',
         image1: null,
         image2: null
@@ -3559,6 +3619,34 @@ export default function TradingPlatformShell() {
                 </div>
               </div>
 
+              {/* Analyse des pertes - sous les données de solde */}
+              {(() => {
+                const lossAnalysis = getLossAnalysis();
+                if (lossAnalysis.totalLosses > 0) {
+                  return (
+                    <div className="bg-gray-700 rounded-lg p-3 mt-3">
+                      <h4 className="text-sm font-medium mb-3 text-red-300">📊 Analyse des Pertes</h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">Total pertes:</span>
+                          <span className="text-red-300">{lossAnalysis.totalLosses}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">P&L total pertes:</span>
+                          <span className="text-red-300">${lossAnalysis.totalLossPnl}</span>
+                        </div>
+                        {lossAnalysis.reasons.slice(0, 3).map((reason, index) => (
+                          <div key={reason.reason} className="flex justify-between text-xs">
+                            <span className="text-gray-400 truncate">{getLossReasonLabel(reason.reason)}</span>
+                            <span className="text-red-300">{reason.count} ({reason.percentage}%)</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
             </div>
           )}
 
@@ -3871,6 +3959,7 @@ export default function TradingPlatformShell() {
               </div>
             </div>
           </div>
+
 
           {/* Bouton Toggle Notifications */}
           <button
@@ -6218,6 +6307,29 @@ export default function TradingPlatformShell() {
                     </button>
                   </div>
                 </div>
+
+                {/* Menu déroulant pour la raison du stop-loss (affiché seulement si LOSS) */}
+                {tradeData.status === 'LOSS' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Raison du Stop-Loss</label>
+                    <select
+                      value={tradeData.lossReason}
+                      onChange={(e) => setTradeData({...tradeData, lossReason: e.target.value})}
+                      className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
+                    >
+                      <option value="">Sélectionner une raison...</option>
+                      <option value="mauvais_entree">🎯 Mauvais point d'entrée</option>
+                      <option value="stop_trop_serre">⚠️ Stop-loss trop serré</option>
+                      <option value="news_impact">📰 Impact de news/événements</option>
+                      <option value="psychologie">🧠 Erreur psychologique (FOMO/Panic)</option>
+                      <option value="analyse_technique">📊 Erreur d'analyse technique</option>
+                      <option value="gestion_risque">💰 Mauvaise gestion du risque</option>
+                      <option value="timing">⏰ Mauvais timing</option>
+                      <option value="volatilite">📈 Volatilité excessive</option>
+                      <option value="autre">🔧 Autre raison</option>
+                    </select>
+                  </div>
+                )}
 
                 {/* Notes */}
                 <div>
