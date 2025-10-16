@@ -3654,18 +3654,21 @@ export default function TradingPlatformShell() {
                         <h4 className="text-sm font-medium text-red-300">📊 Analyse des Pertes</h4>
                         <div className="flex gap-2">
                           <button
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
                               console.log('🔄 BOUTON CLICKÉ - Mise à jour manuelle analyse des pertes');
-                              console.log('🔄 personalTrades actuel:', personalTrades.length);
-                              // Forcer le re-render en changeant l'état
-                              setPersonalTrades(prev => {
-                                console.log('🔄 Nouveau array créé:', prev.length);
-                                return [...prev];
+                              setRefreshKey(prev => {
+                                const newKey = prev + 1;
+                                console.log('🔄 RefreshKey:', prev, '->', newKey);
+                                return newKey;
                               });
-                              console.log('🔄 setPersonalTrades appelé');
+                              // Forcer le re-render du parent aussi
+                              setSelectedAccount(selectedAccount);
                             }}
-                            className="text-gray-400 hover:text-white transition-colors"
+                            className="text-gray-400 hover:text-white transition-colors text-lg cursor-pointer"
                             title="Mettre à jour l'analyse"
+                            type="button"
                           >
                             🔄
                           </button>
