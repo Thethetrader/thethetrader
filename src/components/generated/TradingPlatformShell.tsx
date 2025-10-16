@@ -1159,6 +1159,7 @@ export default function TradingPlatformShell() {
   });
   const [newReason, setNewReason] = useState({ value: '', emoji: '', label: '' });
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
   const [selectedDate, setSelectedDate] = useState<Date | null>(() => {
     // Récupérer selectedDate depuis localStorage
     const saved = localStorage.getItem('selectedDate');
@@ -2630,6 +2631,8 @@ export default function TradingPlatformShell() {
       if (savedTrade) {
         // Ajouter à la liste locale
         setPersonalTrades(prev => [savedTrade, ...prev]);
+        // Forcer le re-render pour mettre à jour les stats
+        setRefreshKey(prev => prev + 1);
         
         // Reset form
         setTradeData({
@@ -3637,7 +3640,7 @@ export default function TradingPlatformShell() {
                 const lossAnalysis = getLossAnalysis();
                 if (lossAnalysis.totalLosses > 0) {
                   return (
-                    <div className="bg-gray-700 rounded-lg p-3 mt-3">
+                    <div key={refreshKey} className="bg-gray-700 rounded-lg p-3 mt-3">
                       <div className="flex items-center justify-between mb-3">
                         <h4 className="text-sm font-medium text-red-300">📊 Analyse des Pertes</h4>
                         <button
