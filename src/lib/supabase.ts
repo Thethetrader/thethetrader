@@ -995,19 +995,31 @@ export const getPersonalTrades = async (limit: number = 100): Promise<PersonalTr
     }
 
     console.log('✅ Trades personnels récupérés:', data.length);
-    console.log('🔍 DEBUG Raw trades from Supabase:', data.map(t => ({ symbol: t.symbol, status: t.status, loss_reason: t.loss_reason })));
 
     // Convertir les nombres en strings pour la compatibilité avec l'interface
-    const trades: PersonalTrade[] = data.map(trade => ({
-      ...trade,
-      entry: trade.entry.toString(),
-      exit: trade.exit.toString(),
-      stopLoss: trade.stop_loss ? trade.stop_loss.toString() : undefined,
-      lossReason: trade.loss_reason || undefined,
-      pnl: trade.pnl.toString()
-    }));
-    
-    console.log('🔍 DEBUG Mapped trades with lossReason:', trades.filter(t => t.lossReason).map(t => ({ symbol: t.symbol, lossReason: t.lossReason })));
+    const trades: PersonalTrade[] = data.map(trade => {
+      const mappedTrade: PersonalTrade = {
+        id: trade.id,
+        user_id: trade.user_id,
+        date: trade.date,
+        symbol: trade.symbol,
+        type: trade.type,
+        entry: trade.entry.toString(),
+        exit: trade.exit.toString(),
+        stopLoss: trade.stop_loss ? trade.stop_loss.toString() : undefined,
+        pnl: trade.pnl.toString(),
+        status: trade.status,
+        lossReason: trade.loss_reason || undefined,
+        notes: trade.notes || undefined,
+        image1: trade.image1 || undefined,
+        image2: trade.image2 || undefined,
+        timestamp: trade.timestamp || undefined,
+        account: trade.account || 'Compte Principal',
+        created_at: trade.created_at,
+        updated_at: trade.updated_at
+      };
+      return mappedTrade;
+    });
 
     return trades;
   } catch (error) {

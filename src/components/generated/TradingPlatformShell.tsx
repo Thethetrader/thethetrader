@@ -1260,7 +1260,6 @@ export default function TradingPlatformShell() {
     const unsubscribe = listenToPersonalTrades(
       (trades) => {
         console.log('🔄 Mise à jour trades reçue [PWA]:', trades.length);
-        console.log('🔍 DEBUG Trades reçus avec lossReason:', trades.filter(t => t.lossReason).map(t => ({ symbol: t.symbol, lossReason: t.lossReason })));
         setPersonalTrades(trades);
       },
       (error) => {
@@ -1960,11 +1959,6 @@ export default function TradingPlatformShell() {
     const accountTrades = getTradesForSelectedAccount();
     const lossTrades = accountTrades.filter(t => t.status === 'LOSS');
     
-    console.log('🔍 DEBUG Loss analysis - Total trades:', accountTrades.length);
-    console.log('🔍 DEBUG Loss analysis - Loss trades:', lossTrades.length);
-    console.log('🔍 DEBUG Loss analysis - All loss trades:', lossTrades);
-    console.log('🔍 DEBUG Loss analysis - Loss trades with reasons:', lossTrades.filter(t => t.lossReason && t.lossReason.trim() !== ''));
-    
     // Grouper les pertes par raison
     const lossByReason: { [key: string]: { count: number, totalPnl: number, trades: any[] } } = {};
     
@@ -1990,9 +1984,6 @@ export default function TradingPlatformShell() {
         percentage: Math.round((data.count / lossTrades.length) * 100)
       }))
       .sort((a, b) => b.count - a.count);
-    
-    console.log('🔍 DEBUG lossByReason:', lossByReason);
-    console.log('🔍 DEBUG sortedReasons:', sortedReasons);
     
     return {
       totalLosses: lossTrades.length,
@@ -2582,16 +2573,7 @@ export default function TradingPlatformShell() {
   };
 
   const handleTradeSubmit = async () => {
-    console.log('🔥 handleTradeSubmit appelé !');
-    console.log('🔥 tradeData:', tradeData);
-    
     if (!tradeData.symbol || !tradeData.entry || !tradeData.exit || !tradeData.pnl) {
-      console.warn('❌ Champs manquants:', {
-        symbol: tradeData.symbol,
-        entry: tradeData.entry,
-        exit: tradeData.exit,
-        pnl: tradeData.pnl
-      });
       alert('Veuillez remplir les champs obligatoires (Symbol, Entry, Exit, PnL)');
       return;
     }
@@ -2620,25 +2602,14 @@ export default function TradingPlatformShell() {
       timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
       account: selectedAccount
     };
-    
-    console.log('🔍 DEBUG Adding trade:', newTrade);
-    console.log('🔍 DEBUG Selected account:', selectedAccount);
-    console.log('🔍 DEBUG Loss reason:', tradeData.lossReason);
 
     // Sauvegarder dans Supabase
-    console.log('🚀 Tentative de sauvegarde dans Supabase...');
     try {
       const savedTrade = await addPersonalTrade(newTrade as any);
-      console.log('📝 Résultat addPersonalTrade:', savedTrade);
       
       if (savedTrade) {
         // Ajouter à la liste locale
-        setPersonalTrades(prev => {
-          const updated = [savedTrade, ...prev];
-          console.log('🔍 DEBUG Updated personalTrades:', updated.length, 'trades');
-          console.log('🔍 DEBUG New trade added:', savedTrade);
-          return updated;
-        });
+        setPersonalTrades(prev => [savedTrade, ...prev]);
         
         // Reset form
         setTradeData({
@@ -2655,13 +2626,12 @@ export default function TradingPlatformShell() {
           image2: null
         });
         setShowTradeModal(false);
-        console.log('✅ Trade ajouté avec succès dans Supabase !');
       } else {
-        console.error('❌ Erreur lors de la sauvegarde du trade - savedTrade est null');
+        alert('Erreur lors de la sauvegarde du trade');
       }
     } catch (error) {
       console.error('❌ Erreur lors de la sauvegarde du trade:', error);
-      alert('Erreur lors de la sauvegarde: ' + error.message);
+      alert('Erreur lors de la sauvegarde: ' + (error as any).message);
     }
   };
 
