@@ -1983,10 +1983,12 @@ export default function TradingPlatformShell() {
 
   // Analyse des pertes mise en cache pour se mettre à jour automatiquement
   const lossAnalysis = useMemo(() => {
+    console.log('🔄 Recalcul analyse des pertes - personalTrades:', personalTrades.length, 'selectedAccount:', selectedAccount);
     const accountTrades = personalTrades.filter(trade => 
       (trade.account || 'Compte Principal') === selectedAccount
     );
     const lossTrades = accountTrades.filter(t => t.status === 'LOSS');
+    console.log('📊 Loss trades trouvés:', lossTrades.length);
     
     const lossByReason: { [key: string]: { count: number, totalPnl: number, trades: any[] } } = {};
     
