@@ -927,6 +927,7 @@ export const addPersonalTrade = async (trade: Omit<PersonalTrade, 'id' | 'user_i
       stop_loss: trade.stopLoss ? parseFloat(trade.stopLoss) : null,
       pnl: parseFloat(trade.pnl),
       status: trade.status,
+      loss_reason: trade.lossReason || null,
       notes: trade.notes || null,
       image1: image1Base64,
       image2: image2Base64,
@@ -1001,6 +1002,7 @@ export const getPersonalTrades = async (limit: number = 100): Promise<PersonalTr
       entry: trade.entry.toString(),
       exit: trade.exit.toString(),
       stopLoss: trade.stop_loss ? trade.stop_loss.toString() : undefined,
+      lossReason: trade.loss_reason || undefined,
       pnl: trade.pnl.toString()
     }));
 
