@@ -1984,10 +1984,12 @@ export default function TradingPlatformShell() {
 
   // Fonctions pour analyser les pertes par raison
   const getLossAnalysis = () => {
+    console.log('🔄 getLossAnalysis appelé - personalTrades:', personalTrades.length);
     const accountTrades = personalTrades.filter(trade => 
       (trade.account || 'Compte Principal') === selectedAccount
     );
     const lossTrades = accountTrades.filter(t => t.status === 'LOSS');
+    console.log('📊 Loss trades:', lossTrades.length);
     
     const lossByReason: { [key: string]: { count: number, totalPnl: number, trades: any[] } } = {};
     
