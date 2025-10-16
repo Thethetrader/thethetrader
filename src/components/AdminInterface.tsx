@@ -8,6 +8,7 @@ import { initializeNotifications, notifyNewSignal, notifySignalClosed, sendLocal
 import { ref, update, onValue, get, remove, push, set } from 'firebase/database';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
+import { LOSS_REASONS, getLossReasonLabel } from '../config/loss-reasons';
 import { signOutAdmin } from '../utils/admin-utils';
 import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount } from '../lib/supabase';
 
@@ -508,6 +509,13 @@ export default function AdminInterface() {
 
   // États pour le journal de trading personnalisé
   const [showTradeModal, setShowTradeModal] = useState(false);
+  const [showLossReasonsModal, setShowLossReasonsModal] = useState(false);
+  const [customLossReasons, setCustomLossReasons] = useState(() => {
+    const saved = localStorage.getItem('customLossReasons');
+    return saved ? JSON.parse(saved) : LOSS_REASONS;
+  });
+  const [newReason, setNewReason] = useState({ value: '', emoji: '', label: '' });
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(() => {
     // Récupérer selectedDate depuis localStorage
     const saved = localStorage.getItem('selectedDate');
@@ -590,6 +598,7 @@ export default function AdminInterface() {
     stopLoss: '',
     pnl: '',
     status: 'WIN' as 'WIN' | 'LOSS' | 'BE',
+    lossReason: '',
     notes: '',
     image1: null as File | null,
     image2: null as File | null
@@ -1560,6 +1569,52 @@ export default function AdminInterface() {
     return Math.round(totalLossPnL / lossTrades.length);
   };
 
+  // Fonctions pour analyser les pertes par raison
+  const getLossAnalysis = () => {
+    const accountTrades = personalTrades.filter(trade => 
+      (trade.account || 'Compte Principal') === selectedAccount
+    );
+    const lossTrades = accountTrades.filter(t => t.status === 'LOSS');
+    
+    const lossByReason: { [key: string]: { count: number, totalPnl: number, trades: any[] } } = {};
+    
+    lossTrades.forEach(trade => {
+      const reason = trade.lossReason || 'non_specifiee';
+      if (!lossByReason[reason]) {
+        lossByReason[reason] = { count: 0, totalPnl: 0, trades: [] };
+      }
+      lossByReason[reason].count++;
+      lossByReason[reason].totalPnl += parsePnL(trade.pnl);
+      lossByReason[reason].trades.push(trade);
+    });
+    
+    const sortedReasons = Object.entries(lossByReason)
+      .filter(([reason]) => reason !== 'non_specifiee')
+      .map(([reason, data]) => ({
+        reason,
+        count: data.count,
+        totalPnl: data.totalPnl,
+        avgPnl: Math.round(data.totalPnl / data.count),
+        percentage: Math.round((data.count / lossTrades.length) * 100)
+      }))
+      .sort((a, b) => b.count - a.count);
+    
+    return {
+      totalLosses: lossTrades.length,
+      totalLossPnl: lossTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0),
+      reasons: sortedReasons
+    };
+  };
+
+  // Fonction pour obtenir le label d'une raison (utilise les raisons personnalisées)
+  const getCustomLossReasonLabel = (reasonValue: string): string => {
+    const reason = customLossReasons.find(r => r.value === reasonValue);
+    if (reason) {
+      return `${reason.emoji} ${reason.label}`;
+    }
+    return getLossReasonLabel(reasonValue);
+  };
+
   const getTodayTrades = () => {
     const currentDateStr = currentDate.toISOString().split('T')[0];
     return personalTrades.filter(t => 
@@ -2284,6 +2339,7 @@ export default function AdminInterface() {
       stopLoss: tradeData.stopLoss,
       pnl: tradeData.pnl,
       status: tradeData.status,
+      lossReason: tradeData.lossReason,
       notes: tradeData.notes,
       image1: tradeData.image1,
       image2: tradeData.image2,
@@ -2307,6 +2363,7 @@ export default function AdminInterface() {
         stopLoss: '',
         pnl: '',
         status: 'WIN',
+        lossReason: '',
         notes: '',
         image1: null,
         image2: null
@@ -3806,6 +3863,50 @@ export default function AdminInterface() {
                   </div>
                 </div>
               </div>
+
+              {/* Analyse des pertes - sous les données de solde */}
+              {(() => {
+                const lossAnalysis = getLossAnalysis();
+                if (lossAnalysis.totalLosses > 0) {
+                  return (
+                    <div className="bg-gray-700 rounded-lg p-3 mt-3">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="text-sm font-medium text-red-300">📊 Analyse des Pertes</h4>
+                        <button
+                          onClick={() => setShowLossReasonsModal(true)}
+                          className="text-gray-400 hover:text-white transition-colors"
+                          title="Gérer les raisons de perte"
+                        >
+                          ⚙️
+                        </button>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">Total pertes:</span>
+                          <span className="text-red-300">{lossAnalysis.totalLosses}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">P&L total pertes:</span>
+                          <span className="text-red-300">${lossAnalysis.totalLossPnl}</span>
+                        </div>
+                        {lossAnalysis.reasons.length > 0 ? (
+                          lossAnalysis.reasons.slice(0, 3).map((reason, index) => (
+                            <div key={reason.reason} className="flex justify-between text-xs">
+                              <span className="text-gray-400 truncate">{getCustomLossReasonLabel(reason.reason)}</span>
+                              <span className="text-red-300">{reason.count} ({reason.percentage}%)</span>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-xs text-gray-500 italic">
+                            Ajoute des raisons aux pertes pour voir l'analyse
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
             </div>
           )}
         </div>
@@ -6204,6 +6305,25 @@ export default function AdminInterface() {
                   </div>
                 </div>
 
+                {/* Menu déroulant pour la raison du stop-loss (affiché seulement si LOSS) */}
+                {tradeData.status === 'LOSS' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Raison du Stop-Loss</label>
+                    <select
+                      value={tradeData.lossReason}
+                      onChange={(e) => setTradeData({...tradeData, lossReason: e.target.value})}
+                      className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
+                    >
+                      <option value="">Sélectionner une raison...</option>
+                      {customLossReasons.map(reason => (
+                        <option key={reason.value} value={reason.value}>
+                          {reason.emoji} {reason.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
                 {/* Notes */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">Notes</label>
@@ -6765,6 +6885,158 @@ export default function AdminInterface() {
               >
                 Annuler
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de gestion des raisons de perte */}
+      {showLossReasonsModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-semibold text-white">⚙️ Gérer les raisons de perte</h3>
+                <button
+                  onClick={() => {
+                    setShowLossReasonsModal(false);
+                    setEditingIndex(null);
+                    setNewReason({ value: '', emoji: '', label: '' });
+                  }}
+                  className="text-gray-400 hover:text-white text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              {/* Formulaire d'ajout/édition */}
+              <div className="mb-6 p-4 bg-gray-700 rounded-lg">
+                <h4 className="text-sm font-medium text-gray-300 mb-3">
+                  {editingIndex !== null ? '✏️ Modifier la raison' : '➕ Ajouter une raison'}
+                </h4>
+                <div className="grid grid-cols-2 gap-3 mb-3">
+                  <input
+                    type="text"
+                    placeholder="Emoji"
+                    value={newReason.emoji}
+                    onChange={(e) => setNewReason({...newReason, emoji: e.target.value})}
+                    className="bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white text-center text-2xl"
+                    maxLength={2}
+                    disabled={editingIndex !== null}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Nom"
+                    value={newReason.label}
+                    onChange={(e) => {
+                      const label = e.target.value;
+                      const value = label.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+                      setNewReason({...newReason, label, value});
+                    }}
+                    className="flex-1 bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      if (!newReason.label.trim()) {
+                        alert('Entre un nom');
+                        return;
+                      }
+                      
+                      if (editingIndex !== null) {
+                        if (!newReason.label.trim()) {
+                          alert('Entre un nom');
+                          return;
+                        }
+                        const updated = [...customLossReasons];
+                        updated[editingIndex] = newReason;
+                        setCustomLossReasons(updated);
+                        localStorage.setItem('customLossReasons', JSON.stringify(updated));
+                        setEditingIndex(null);
+                      } else {
+                        if (!newReason.value || !newReason.emoji || !newReason.label) {
+                          alert('Remplis tous les champs');
+                          return;
+                        }
+                        const updated = [...customLossReasons, newReason];
+                        setCustomLossReasons(updated);
+                        localStorage.setItem('customLossReasons', JSON.stringify(updated));
+                      }
+                      
+                      setNewReason({ value: '', emoji: '', label: '' });
+                    }}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white font-medium"
+                  >
+                    {editingIndex !== null ? '✓ Modifier' : '+ Ajouter'}
+                  </button>
+                  {editingIndex !== null && (
+                    <button
+                      onClick={() => {
+                        setEditingIndex(null);
+                        setNewReason({ value: '', emoji: '', label: '' });
+                      }}
+                      className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded text-white"
+                    >
+                      Annuler
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Liste des raisons */}
+              <div className="space-y-2 mb-6">
+                <h4 className="text-sm font-medium text-gray-300 mb-3">Raisons actuelles ({customLossReasons.length}) :</h4>
+                {customLossReasons.map((reason, index) => (
+                  <div 
+                    key={index}
+                    className="flex items-center gap-3 p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors"
+                  >
+                    <span className="text-2xl">{reason.emoji}</span>
+                    <div className="flex-1">
+                      <div className="text-white font-medium">{reason.label}</div>
+                      <div className="text-xs text-gray-400 font-mono">{reason.value}</div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setNewReason(reason);
+                        setEditingIndex(index);
+                      }}
+                      className="text-blue-400 hover:text-blue-300 px-3 py-1 text-sm"
+                      title="Modifier le nom"
+                    >
+                      ✏️
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Boutons d'action */}
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    if (confirm('Réinitialiser aux raisons par défaut ?')) {
+                      setCustomLossReasons(LOSS_REASONS);
+                      localStorage.setItem('customLossReasons', JSON.stringify(LOSS_REASONS));
+                      setEditingIndex(null);
+                      setNewReason({ value: '', emoji: '', label: '' });
+                    }
+                  }}
+                  className="flex-1 bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded text-white font-medium"
+                >
+                  🔄 Réinitialiser
+                </button>
+                <button
+                  onClick={() => {
+                    setShowLossReasonsModal(false);
+                    setEditingIndex(null);
+                    setNewReason({ value: '', emoji: '', label: '' });
+                  }}
+                  className="flex-1 bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded text-white font-medium"
+                >
+                  Fermer
+                </button>
+              </div>
             </div>
           </div>
         </div>
