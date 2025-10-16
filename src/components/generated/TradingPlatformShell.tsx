@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, Signal, syncUserId } from '../../utils/firebase-setup';
+import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, Signal, syncUserId, database } from '../../utils/firebase-setup';
+import { ref, onValue, push } from 'firebase/database';
 import { addPersonalTrade, getPersonalTrades, deletePersonalTrade, PersonalTrade, listenToPersonalTrades, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount } from '../../lib/supabase';
 import ProfitLoss from '../ProfitLoss';
 import { createClient } from '@supabase/supabase-js';
@@ -22,8 +23,14 @@ export default function TradingPlatformShell() {
   // Hook pour les stats en temps réel synchronisées avec l'admin
   const { stats, allSignalsForStats: realTimeSignals, getWeeklyBreakdown: getCalendarWeeklyBreakdown, getTodaySignals: getCalendarTodaySignals, getThisMonthSignals: getCalendarThisMonthSignals } = useStatsSync();
   
+  console.log('📊 Stats:', stats);
+  console.log('📡 RealTime Signals:', realTimeSignals);
+  
   // Hook pour la synchronisation du calendrier
   const { calendarStats, getMonthlyStats: getCalendarMonthlyStats, getWeeklyBreakdown: getCalendarWeeklyBreakdownFromHook } = useCalendarSync();
+  
+  console.log('📅 Calendar Stats:', calendarStats);
+  console.log('✅ Tous les hooks chargés !');
   
   // Définition des channels
   const channels = [
