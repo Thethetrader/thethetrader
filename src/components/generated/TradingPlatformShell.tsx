@@ -1160,7 +1160,7 @@ export default function TradingPlatformShell() {
   const [newReason, setNewReason] = useState({ value: '', emoji: '', label: '' });
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
-  const [lossAnalysisState, setLossAnalysisState] = useState({ totalLosses: 0, totalLossPnl: 0, reasons: [] });
+  const [lossAnalysisState, setLossAnalysisState] = useState(() => ({ totalLosses: 0, totalLossPnl: 0, reasons: [] }));
   const [selectedDate, setSelectedDate] = useState<Date | null>(() => {
     // Récupérer selectedDate depuis localStorage
     const saved = localStorage.getItem('selectedDate');
@@ -3646,8 +3646,7 @@ export default function TradingPlatformShell() {
 
               {/* Analyse des pertes - sous les données de solde */}
               {(() => {
-                const lossAnalysis = getLossAnalysis();
-                if (lossAnalysis.totalLosses > 0) {
+                if (lossAnalysisState.totalLosses > 0) {
                   return (
                     <div key={refreshKey} className="bg-gray-700 rounded-lg p-3 mt-3">
                       <div className="flex items-center justify-between mb-3">
@@ -3658,13 +3657,10 @@ export default function TradingPlatformShell() {
                               e.preventDefault();
                               e.stopPropagation();
                               console.log('🔄 BOUTON CLICKÉ - Mise à jour manuelle analyse des pertes');
-                              setRefreshKey(prev => {
-                                const newKey = prev + 1;
-                                console.log('🔄 RefreshKey:', prev, '->', newKey);
-                                return newKey;
-                              });
-                              // Forcer le re-render du parent aussi
-                              setSelectedAccount(selectedAccount);
+                              const newAnalysis = getLossAnalysis();
+                              console.log('📊 Nouvelle analyse:', newAnalysis);
+                              setLossAnalysisState(newAnalysis);
+                              setRefreshKey(prev => prev + 1);
                             }}
                             className="text-gray-400 hover:text-white transition-colors text-lg cursor-pointer"
                             title="Mettre à jour l'analyse"
@@ -3684,14 +3680,14 @@ export default function TradingPlatformShell() {
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-400">Total pertes:</span>
-                          <span className="text-red-300">{lossAnalysis.totalLosses}</span>
+                          <span className="text-red-300">{lossAnalysisState.totalLosses}</span>
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-400">P&L total pertes:</span>
-                          <span className="text-red-300">${lossAnalysis.totalLossPnl}</span>
+                          <span className="text-red-300">${lossAnalysisState.totalLossPnl}</span>
                         </div>
-                        {lossAnalysis.reasons.length > 0 ? (
-                          lossAnalysis.reasons.slice(0, 3).map((reason, index) => (
+                        {lossAnalysisState.reasons.length > 0 ? (
+                          lossAnalysisState.reasons.slice(0, 3).map((reason, index) => (
                             <div key={reason.reason} className="flex justify-between text-xs">
                               <span className="text-gray-400 truncate">{getCustomLossReasonLabel(reason.reason)}</span>
                               <span className="text-red-300">{reason.count} ({reason.percentage}%)</span>
