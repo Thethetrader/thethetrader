@@ -3655,9 +3655,14 @@ export default function TradingPlatformShell() {
                         <div className="flex gap-2">
                           <button
                             onClick={() => {
-                              console.log('🔄 Mise à jour manuelle analyse des pertes');
+                              console.log('🔄 BOUTON CLICKÉ - Mise à jour manuelle analyse des pertes');
+                              console.log('🔄 personalTrades actuel:', personalTrades.length);
                               // Forcer le re-render en changeant l'état
-                              setPersonalTrades(prev => [...prev]);
+                              setPersonalTrades(prev => {
+                                console.log('🔄 Nouveau array créé:', prev.length);
+                                return [...prev];
+                              });
+                              console.log('🔄 setPersonalTrades appelé');
                             }}
                             className="text-gray-400 hover:text-white transition-colors"
                             title="Mettre à jour l'analyse"
