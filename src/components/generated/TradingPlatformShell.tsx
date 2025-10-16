@@ -3656,7 +3656,8 @@ export default function TradingPlatformShell() {
                           <button
                             onClick={() => {
                               console.log('🔄 Mise à jour manuelle analyse des pertes');
-                              setRefreshKey(prev => prev + 1);
+                              // Forcer le re-render en changeant l'état
+                              setPersonalTrades(prev => [...prev]);
                             }}
                             className="text-gray-400 hover:text-white transition-colors"
                             title="Mettre à jour l'analyse"
