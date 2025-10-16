@@ -7039,64 +7039,41 @@ export default function TradingPlatformShell() {
                 </button>
               </div>
 
-              {/* Formulaire d'ajout/édition */}
-              <div className="mb-6 p-4 bg-gray-700 rounded-lg">
-                <h4 className="text-sm font-medium text-gray-300 mb-3">
-                  {editingIndex !== null ? '✏️ Modifier la raison' : '➕ Ajouter une nouvelle raison'}
-                </h4>
-                <div className="grid grid-cols-3 gap-3 mb-3">
-                  <input
-                    type="text"
-                    placeholder="Emoji (ex: 🎯)"
-                    value={newReason.emoji}
-                    onChange={(e) => setNewReason({...newReason, emoji: e.target.value})}
-                    className="bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white text-center text-2xl"
-                    maxLength={2}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Identifiant (ex: mauvais_timing)"
-                    value={newReason.value}
-                    onChange={(e) => setNewReason({...newReason, value: e.target.value.toLowerCase().replace(/\s+/g, '_')})}
-                    className="bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white font-mono text-sm"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Label (ex: Mauvais timing)"
-                    value={newReason.label}
-                    onChange={(e) => setNewReason({...newReason, label: e.target.value})}
-                    className="bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white"
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => {
-                      if (!newReason.value || !newReason.emoji || !newReason.label) {
-                        alert('Remplis tous les champs');
-                        return;
-                      }
-                      
-                      if (editingIndex !== null) {
-                        // Modifier
+              {/* Formulaire d'édition (seulement le nom) */}
+              {editingIndex !== null && (
+                <div className="mb-6 p-4 bg-gray-700 rounded-lg">
+                  <h4 className="text-sm font-medium text-gray-300 mb-3">✏️ Modifier le nom</h4>
+                  <div className="flex gap-3 mb-3">
+                    <div className="flex items-center gap-3 flex-1">
+                      <span className="text-3xl">{newReason.emoji}</span>
+                      <input
+                        type="text"
+                        placeholder="Nouveau nom"
+                        value={newReason.label}
+                        onChange={(e) => setNewReason({...newReason, label: e.target.value})}
+                        className="flex-1 bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        if (!newReason.label.trim()) {
+                          alert('Entre un nom');
+                          return;
+                        }
+                        
                         const updated = [...customLossReasons];
                         updated[editingIndex] = newReason;
                         setCustomLossReasons(updated);
                         localStorage.setItem('customLossReasons', JSON.stringify(updated));
                         setEditingIndex(null);
-                      } else {
-                        // Ajouter
-                        const updated = [...customLossReasons, newReason];
-                        setCustomLossReasons(updated);
-                        localStorage.setItem('customLossReasons', JSON.stringify(updated));
-                      }
-                      
-                      setNewReason({ value: '', emoji: '', label: '' });
-                    }}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white font-medium"
-                  >
-                    {editingIndex !== null ? '✓ Modifier' : '+ Ajouter'}
-                  </button>
-                  {editingIndex !== null && (
+                        setNewReason({ value: '', emoji: '', label: '' });
+                      }}
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white font-medium"
+                    >
+                      ✓ Modifier
+                    </button>
                     <button
                       onClick={() => {
                         setEditingIndex(null);
@@ -7106,9 +7083,9 @@ export default function TradingPlatformShell() {
                     >
                       Annuler
                     </button>
-                  )}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Liste des raisons */}
               <div className="space-y-2 mb-6">
@@ -7123,35 +7100,16 @@ export default function TradingPlatformShell() {
                       <div className="text-white font-medium">{reason.label}</div>
                       <div className="text-xs text-gray-400 font-mono">{reason.value}</div>
                     </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          setNewReason(reason);
-                          setEditingIndex(index);
-                        }}
-                        className="text-blue-400 hover:text-blue-300 px-2 py-1 text-sm"
-                        title="Modifier"
-                      >
-                        ✏️
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (confirm(`Supprimer "${reason.label}" ?`)) {
-                            const updated = customLossReasons.filter((_, i) => i !== index);
-                            setCustomLossReasons(updated);
-                            localStorage.setItem('customLossReasons', JSON.stringify(updated));
-                            if (editingIndex === index) {
-                              setEditingIndex(null);
-                              setNewReason({ value: '', emoji: '', label: '' });
-                            }
-                          }
-                        }}
-                        className="text-red-400 hover:text-red-300 px-2 py-1 text-sm"
-                        title="Supprimer"
-                      >
-                        🗑️
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => {
+                        setNewReason(reason);
+                        setEditingIndex(index);
+                      }}
+                      className="text-blue-400 hover:text-blue-300 px-3 py-1 text-sm"
+                      title="Modifier le nom"
+                    >
+                      ✏️
+                    </button>
                   </div>
                 ))}
               </div>
