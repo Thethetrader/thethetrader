@@ -1260,6 +1260,7 @@ export default function TradingPlatformShell() {
     const unsubscribe = listenToPersonalTrades(
       (trades) => {
         console.log('🔄 Mise à jour trades reçue [PWA]:', trades.length);
+        console.log('🔍 DEBUG Trades reçus avec lossReason:', trades.filter(t => t.lossReason).map(t => ({ symbol: t.symbol, lossReason: t.lossReason })));
         setPersonalTrades(trades);
       },
       (error) => {
