@@ -2022,13 +2022,14 @@ export default function TradingPlatformShell() {
     };
   };
 
-  // Force le re-render quand personalTrades change
+  // Met à jour l'analyse des pertes quand personalTrades ou selectedAccount change
   useEffect(() => {
-    console.log('🔄 personalTrades changé, force refresh');
+    console.log('🔄 Mise à jour analyse des pertes - personalTrades:', personalTrades.length, 'selectedAccount:', selectedAccount);
     const analysis = getLossAnalysis();
+    console.log('📊 Analyse calculée:', analysis);
     setLossAnalysisState(analysis);
     setRefreshKey(prev => prev + 1);
-  }, [personalTrades.length]); // Se déclenche quand le nombre de trades change
+  }, [personalTrades, selectedAccount]); // Se déclenche quand personalTrades ou selectedAccount change
 
   // Fonction pour obtenir le label d'une raison (utilise les raisons personnalisées)
   const getCustomLossReasonLabel = (reasonValue: string): string => {
