@@ -1153,6 +1153,12 @@ export default function TradingPlatformShell() {
   // États pour le journal de trading personnalisé
   const [showTradeModal, setShowTradeModal] = useState(false);
   const [showLossReasonsModal, setShowLossReasonsModal] = useState(false);
+  const [customLossReasons, setCustomLossReasons] = useState(() => {
+    const saved = localStorage.getItem('customLossReasons');
+    return saved ? JSON.parse(saved) : LOSS_REASONS;
+  });
+  const [newReason, setNewReason] = useState({ value: '', emoji: '', label: '' });
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(() => {
     // Récupérer selectedDate depuis localStorage
     const saved = localStorage.getItem('selectedDate');
@@ -2013,7 +2019,15 @@ export default function TradingPlatformShell() {
     };
   };
 
-  // getLossReasonLabel est maintenant importé depuis loss-reasons.ts
+  // Fonction pour obtenir le label d'une raison (utilise les raisons personnalisées)
+  const getCustomLossReasonLabel = (reasonValue: string): string => {
+    const reason = customLossReasons.find(r => r.value === reasonValue);
+    if (reason) {
+      return `${reason.emoji} ${reason.label}`;
+    }
+    // Fallback sur les raisons par défaut
+    return getLossReasonLabel(reasonValue);
+  };
 
   const getTodayTradesForMonth = () => {
     const today = new Date();
@@ -3647,7 +3661,7 @@ export default function TradingPlatformShell() {
                         {lossAnalysis.reasons.length > 0 ? (
                           lossAnalysis.reasons.slice(0, 3).map((reason, index) => (
                             <div key={reason.reason} className="flex justify-between text-xs">
-                              <span className="text-gray-400 truncate">{getLossReasonLabel(reason.reason)}</span>
+                              <span className="text-gray-400 truncate">{getCustomLossReasonLabel(reason.reason)}</span>
                               <span className="text-red-300">{reason.count} ({reason.percentage}%)</span>
                             </div>
                           ))
@@ -6333,7 +6347,7 @@ export default function TradingPlatformShell() {
                       className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
                     >
                       <option value="">Sélectionner une raison...</option>
-                      {LOSS_REASONS.map(reason => (
+                      {customLossReasons.map(reason => (
                         <option key={reason.value} value={reason.value}>
                           {reason.emoji} {reason.label}
                         </option>
@@ -7009,49 +7023,161 @@ export default function TradingPlatformShell() {
       {/* Modal de gestion des raisons de perte */}
       {showLossReasonsModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-lg w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+          <div className="bg-gray-800 rounded-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-semibold text-white">⚙️ Gérer les raisons de perte</h3>
                 <button
-                  onClick={() => setShowLossReasonsModal(false)}
+                  onClick={() => {
+                    setShowLossReasonsModal(false);
+                    setEditingIndex(null);
+                    setNewReason({ value: '', emoji: '', label: '' });
+                  }}
                   className="text-gray-400 hover:text-white text-2xl"
                 >
                   ×
                 </button>
               </div>
 
-              <div className="space-y-3">
-                <h4 className="text-sm font-medium text-gray-300 mb-3">Raisons actuelles :</h4>
-                {LOSS_REASONS.map((reason, index) => (
+              {/* Formulaire d'ajout/édition */}
+              <div className="mb-6 p-4 bg-gray-700 rounded-lg">
+                <h4 className="text-sm font-medium text-gray-300 mb-3">
+                  {editingIndex !== null ? '✏️ Modifier la raison' : '➕ Ajouter une nouvelle raison'}
+                </h4>
+                <div className="grid grid-cols-3 gap-3 mb-3">
+                  <input
+                    type="text"
+                    placeholder="Emoji (ex: 🎯)"
+                    value={newReason.emoji}
+                    onChange={(e) => setNewReason({...newReason, emoji: e.target.value})}
+                    className="bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white text-center text-2xl"
+                    maxLength={2}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Identifiant (ex: mauvais_timing)"
+                    value={newReason.value}
+                    onChange={(e) => setNewReason({...newReason, value: e.target.value.toLowerCase().replace(/\s+/g, '_')})}
+                    className="bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white font-mono text-sm"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Label (ex: Mauvais timing)"
+                    value={newReason.label}
+                    onChange={(e) => setNewReason({...newReason, label: e.target.value})}
+                    className="bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      if (!newReason.value || !newReason.emoji || !newReason.label) {
+                        alert('Remplis tous les champs');
+                        return;
+                      }
+                      
+                      if (editingIndex !== null) {
+                        // Modifier
+                        const updated = [...customLossReasons];
+                        updated[editingIndex] = newReason;
+                        setCustomLossReasons(updated);
+                        localStorage.setItem('customLossReasons', JSON.stringify(updated));
+                        setEditingIndex(null);
+                      } else {
+                        // Ajouter
+                        const updated = [...customLossReasons, newReason];
+                        setCustomLossReasons(updated);
+                        localStorage.setItem('customLossReasons', JSON.stringify(updated));
+                      }
+                      
+                      setNewReason({ value: '', emoji: '', label: '' });
+                    }}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white font-medium"
+                  >
+                    {editingIndex !== null ? '✓ Modifier' : '+ Ajouter'}
+                  </button>
+                  {editingIndex !== null && (
+                    <button
+                      onClick={() => {
+                        setEditingIndex(null);
+                        setNewReason({ value: '', emoji: '', label: '' });
+                      }}
+                      className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded text-white"
+                    >
+                      Annuler
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Liste des raisons */}
+              <div className="space-y-2 mb-6">
+                <h4 className="text-sm font-medium text-gray-300 mb-3">Raisons actuelles ({customLossReasons.length}) :</h4>
+                {customLossReasons.map((reason, index) => (
                   <div 
-                    key={reason.value}
-                    className="flex items-center gap-3 p-3 bg-gray-700 rounded-lg"
+                    key={index}
+                    className="flex items-center gap-3 p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors"
                   >
                     <span className="text-2xl">{reason.emoji}</span>
                     <div className="flex-1">
                       <div className="text-white font-medium">{reason.label}</div>
                       <div className="text-xs text-gray-400 font-mono">{reason.value}</div>
                     </div>
-                    <span className="text-gray-500 text-sm">#{index + 1}</span>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setNewReason(reason);
+                          setEditingIndex(index);
+                        }}
+                        className="text-blue-400 hover:text-blue-300 px-2 py-1 text-sm"
+                        title="Modifier"
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (confirm(`Supprimer "${reason.label}" ?`)) {
+                            const updated = customLossReasons.filter((_, i) => i !== index);
+                            setCustomLossReasons(updated);
+                            localStorage.setItem('customLossReasons', JSON.stringify(updated));
+                            if (editingIndex === index) {
+                              setEditingIndex(null);
+                              setNewReason({ value: '', emoji: '', label: '' });
+                            }
+                          }
+                        }}
+                        className="text-red-400 hover:text-red-300 px-2 py-1 text-sm"
+                        title="Supprimer"
+                      >
+                        🗑️
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-6 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
-                <h4 className="text-sm font-medium text-blue-300 mb-2">💡 Comment modifier ?</h4>
-                <ol className="text-xs text-gray-300 space-y-1 list-decimal list-inside">
-                  <li>Ouvre le fichier <code className="bg-gray-700 px-1 rounded">src/config/loss-reasons.ts</code></li>
-                  <li>Modifie le tableau <code className="bg-gray-700 px-1 rounded">LOSS_REASONS</code></li>
-                  <li>Sauvegarde le fichier</li>
-                  <li>Les changements apparaîtront automatiquement</li>
-                </ol>
-              </div>
-
-              <div className="mt-6 flex justify-end">
+              {/* Boutons d'action */}
+              <div className="flex gap-3">
                 <button
-                  onClick={() => setShowLossReasonsModal(false)}
-                  className="bg-gray-600 hover:bg-gray-700 px-6 py-2 rounded-lg text-white font-medium"
+                  onClick={() => {
+                    if (confirm('Réinitialiser aux raisons par défaut ?')) {
+                      setCustomLossReasons(LOSS_REASONS);
+                      localStorage.setItem('customLossReasons', JSON.stringify(LOSS_REASONS));
+                      setEditingIndex(null);
+                      setNewReason({ value: '', emoji: '', label: '' });
+                    }
+                  }}
+                  className="flex-1 bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded text-white font-medium"
+                >
+                  🔄 Réinitialiser
+                </button>
+                <button
+                  onClick={() => {
+                    setShowLossReasonsModal(false);
+                    setEditingIndex(null);
+                    setNewReason({ value: '', emoji: '', label: '' });
+                  }}
+                  className="flex-1 bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded text-white font-medium"
                 >
                   Fermer
                 </button>
