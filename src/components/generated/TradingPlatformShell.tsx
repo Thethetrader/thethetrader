@@ -1990,6 +1990,9 @@ export default function TradingPlatformShell() {
       }))
       .sort((a, b) => b.count - a.count);
     
+    console.log('🔍 DEBUG lossByReason:', lossByReason);
+    console.log('🔍 DEBUG sortedReasons:', sortedReasons);
+    
     return {
       totalLosses: lossTrades.length,
       totalLossPnl: lossTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0),
