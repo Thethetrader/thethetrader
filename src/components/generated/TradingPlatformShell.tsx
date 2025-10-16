@@ -1970,10 +1970,17 @@ export default function TradingPlatformShell() {
 
   const calculateAvgWinTradesForMonth = (): number => {
     const monthTrades = getTradesForMonth(currentDate);
+    console.log('🔍 calculateAvgWinTradesForMonth - monthTrades:', monthTrades.length);
+    console.log('🔍 monthTrades statuses:', monthTrades.map(t => ({ symbol: t.symbol, status: t.status, pnl: t.pnl })));
+    
     const winTrades = monthTrades.filter(t => t.status === 'WIN');
+    console.log('🔍 winTrades:', winTrades.length);
+    
     if (winTrades.length === 0) return 0;
     const totalWinPnL = winTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0);
-    return Math.round(totalWinPnL / winTrades.length);
+    const avgWin = Math.round(totalWinPnL / winTrades.length);
+    console.log('🔍 totalWinPnL:', totalWinPnL, 'avgWin:', avgWin);
+    return avgWin;
   };
 
   const calculateAvgLossTradesForMonth = (): number => {
