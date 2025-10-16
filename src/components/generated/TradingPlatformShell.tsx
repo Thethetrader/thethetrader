@@ -5,6 +5,7 @@ import { addPersonalTrade, getPersonalTrades, deletePersonalTrade, PersonalTrade
 import ProfitLoss from '../ProfitLoss';
 import { createClient } from '@supabase/supabase-js';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
+import { LOSS_REASONS, getLossReasonLabel } from '../../config/loss-reasons';
 
 import { syncProfileImage, getProfileImage, initializeProfile } from '../../utils/profile-manager';
 import { updateUserProfile, getUserProfile, getUserProfileByType } from '../../lib/supabase';
@@ -2011,21 +2012,7 @@ export default function TradingPlatformShell() {
     };
   };
 
-  const getLossReasonLabel = (reason: string): string => {
-    const labels: { [key: string]: string } = {
-      'mauvais_entree': '🎯 Mauvais point d\'entrée',
-      'stop_trop_serre': '⚠️ Stop-loss trop serré',
-      'news_impact': '📰 Impact de news/événements',
-      'psychologie': '🧠 Erreur psychologique',
-      'analyse_technique': '📊 Erreur d\'analyse technique',
-      'gestion_risque': '💰 Mauvaise gestion du risque',
-      'timing': '⏰ Mauvais timing',
-      'volatilite': '📈 Volatilité excessive',
-      'autre': '🔧 Autre raison',
-      'non_specifiee': '❓ Non spécifiée'
-    };
-    return labels[reason] || reason;
-  };
+  // getLossReasonLabel est maintenant importé depuis loss-reasons.ts
 
   const getTodayTradesForMonth = () => {
     const today = new Date();
@@ -6336,15 +6323,11 @@ export default function TradingPlatformShell() {
                       className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
                     >
                       <option value="">Sélectionner une raison...</option>
-                      <option value="mauvais_entree">🎯 Mauvais point d'entrée</option>
-                      <option value="stop_trop_serre">⚠️ Stop-loss trop serré</option>
-                      <option value="news_impact">📰 Impact de news/événements</option>
-                      <option value="psychologie">🧠 Erreur psychologique (FOMO/Panic)</option>
-                      <option value="analyse_technique">📊 Erreur d'analyse technique</option>
-                      <option value="gestion_risque">💰 Mauvaise gestion du risque</option>
-                      <option value="timing">⏰ Mauvais timing</option>
-                      <option value="volatilite">📈 Volatilité excessive</option>
-                      <option value="autre">🔧 Autre raison</option>
+                      {LOSS_REASONS.map(reason => (
+                        <option key={reason.value} value={reason.value}>
+                          {reason.emoji} {reason.label}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 )}
