@@ -2578,8 +2578,17 @@ export default function TradingPlatformShell() {
   };
 
   const handleTradeSubmit = async () => {
+    console.log('🔥 handleTradeSubmit appelé !');
+    console.log('🔥 tradeData:', tradeData);
+    
     if (!tradeData.symbol || !tradeData.entry || !tradeData.exit || !tradeData.pnl) {
-      console.warn('Veuillez remplir les champs obligatoires (Symbol, Entry, Exit, PnL)');
+      console.warn('❌ Champs manquants:', {
+        symbol: tradeData.symbol,
+        entry: tradeData.entry,
+        exit: tradeData.exit,
+        pnl: tradeData.pnl
+      });
+      alert('Veuillez remplir les champs obligatoires (Symbol, Entry, Exit, PnL)');
       return;
     }
 
