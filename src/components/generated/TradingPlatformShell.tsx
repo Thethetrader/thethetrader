@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, Signal, syncUserId, database } from '../../utils/firebase-setup';
 import { ref, onValue, push } from 'firebase/database';
 import { addPersonalTrade, getPersonalTrades, deletePersonalTrade, PersonalTrade, listenToPersonalTrades, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount } from '../../lib/supabase';
@@ -1981,8 +1981,8 @@ export default function TradingPlatformShell() {
     return Math.round(totalLossPnL / lossTrades.length);
   };
 
-  // Fonctions pour analyser les pertes par raison
-  const getLossAnalysis = () => {
+  // Analyse des pertes mise en cache pour éviter les recalculs inutiles
+  const lossAnalysis = useMemo(() => {
     const accountTrades = getTradesForSelectedAccount();
     const lossTrades = accountTrades.filter(t => t.status === 'LOSS');
     
@@ -2017,7 +2017,8 @@ export default function TradingPlatformShell() {
       totalLossPnl: lossTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0),
       reasons: sortedReasons
     };
-  };
+  }, [personalTrades, selectedAccount]); // Se recalcule quand personalTrades ou selectedAccount change
+
 
   // Fonction pour obtenir le label d'une raison (utilise les raisons personnalisées)
   const getCustomLossReasonLabel = (reasonValue: string): string => {
@@ -3635,7 +3636,6 @@ export default function TradingPlatformShell() {
 
               {/* Analyse des pertes - sous les données de solde */}
               {(() => {
-                const lossAnalysis = getLossAnalysis();
                 if (lossAnalysis.totalLosses > 0) {
                   return (
                     <div className="bg-gray-700 rounded-lg p-3 mt-3">
