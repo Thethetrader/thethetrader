@@ -28,6 +28,10 @@ export default function AdminInterface() {
   const [newAccountBalance, setNewAccountBalance] = useState('');
   const [newAccountMinimum, setNewAccountMinimum] = useState('');
 
+  // États pour les notifications admin
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState('');
+
   // Charger Tawk.to au montage de l'AdminInterface
   useEffect(() => {
     console.log('💬 Chargement Tawk.to pour admin...');
@@ -726,6 +730,53 @@ export default function AdminInterface() {
       if (confirm(`Supprimer le compte "${accountName}" et tous ses trades ?`)) {
         await handleDeleteAccount(accountName);
       }
+    }
+  };
+
+  const handleSendNotification = async () => {
+    if (!notificationMessage.trim()) {
+      alert('Veuillez saisir un message');
+      return;
+    }
+
+    try {
+      // Créer un message dans tous les canaux de chat pour que les utilisateurs le voient
+      const channels = ['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'];
+      
+      for (const channelId of channels) {
+        await addMessage(channelId, `📢 MESSAGE ADMIN: ${notificationMessage}`, 'Admin');
+      }
+
+      // Aussi ajouter comme signal pour les notifications push
+      await addSignal('admin-notification', {
+        symbol: '📢 MESSAGE ADMIN',
+        type: 'ADMIN_MESSAGE',
+        entry: notificationMessage,
+        status: 'ACTIVE',
+        timestamp: new Date().toISOString(),
+        channel_id: 'admin-notification',
+        pnl: 0,
+        reactions: {}
+      });
+
+      // Déclencher la notification push comme pour les signaux
+      await notifyNewSignal({
+        symbol: '📢 MESSAGE ADMIN',
+        type: 'ADMIN_MESSAGE',
+        entry: notificationMessage,
+        status: 'ACTIVE',
+        timestamp: new Date().toISOString(),
+        channel_id: 'admin-notification'
+      });
+      
+      // Réinitialiser le modal
+      setNotificationMessage('');
+      setShowNotificationModal(false);
+      
+      alert('Message admin envoyé dans tous les salons de chat !');
+    } catch (error) {
+      console.error('❌ Erreur envoi notification:', error);
+      alert('Erreur lors de l\'envoi du message: ' + error.message);
     }
   };
 
@@ -6545,6 +6596,58 @@ export default function AdminInterface() {
                   setNewAccountName('');
                   setNewAccountBalance('');
                   setNewAccountMinimum('');
+                }}
+                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de notification admin */}
+      {showNotificationModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-white">📢 Envoyer une notification</h3>
+              <button
+                onClick={() => {
+                  setShowNotificationModal(false);
+                  setNotificationMessage('');
+                }}
+                className="text-gray-400 hover:text-white text-2xl"
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="mb-6">
+              <label className="block text-sm text-gray-300 mb-2">Message à envoyer</label>
+              <textarea
+                value={notificationMessage}
+                onChange={(e) => setNotificationMessage(e.target.value)}
+                placeholder="Tapez votre message ici..."
+                className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 h-24 resize-none focus:outline-none focus:border-blue-500"
+                maxLength={200}
+              />
+              <div className="text-xs text-gray-400 mt-1">
+                {notificationMessage.length}/200 caractères
+              </div>
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={handleSendNotification}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium"
+              >
+                Envoyer
+              </button>
+              <button
+                onClick={() => {
+                  setShowNotificationModal(false);
+                  setNotificationMessage('');
                 }}
                 className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium"
               >

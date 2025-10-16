@@ -733,6 +733,27 @@ export default function TradingPlatformShell() {
     initApp();
   }, []);
 
+  // Écouter les notifications admin
+  useEffect(() => {
+    const notificationsRef = ref(database, 'messages/admin_broadcast');
+    
+    const unsubscribe = onValue(notificationsRef, (snapshot) => {
+      const messages = snapshot.val();
+      if (messages) {
+        // Prendre le dernier message
+        const messageKeys = Object.keys(messages);
+        const latestMessage = messages[messageKeys[messageKeys.length - 1]];
+        
+        if (latestMessage && latestMessage.message_type === 'admin_notification') {
+          // Afficher la notification
+          sendLocalNotification('📢 Message Admin', latestMessage.text);
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   // Subscription globale pour tous les canaux (ne se recrée pas à chaque changement de canal)
   useEffect(() => {
     const channels = ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'];

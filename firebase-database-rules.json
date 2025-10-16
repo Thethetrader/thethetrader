@@ -13,6 +13,10 @@
     "personal_trades": {
       ".read": "auth != null",
       ".write": "auth != null"
+    },
+    "admin_notifications": {
+      ".read": true,
+      ".write": true
     }
   }
 }
