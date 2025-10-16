@@ -2351,8 +2351,8 @@ export default function AdminInterface() {
     const savedTrade = await addPersonalTrade(newTrade as any);
     
     if (savedTrade) {
-      // Ajouter à la liste locale
-      setPersonalTrades(prev => [savedTrade, ...prev]);
+      // Le listener temps réel va automatiquement ajouter le trade à la liste
+      // Pas besoin de setPersonalTrades ici pour éviter les doublons
       
       // Reset form
       setTradeData({
