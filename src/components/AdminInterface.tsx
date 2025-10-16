@@ -713,7 +713,12 @@ export default function AdminInterface() {
         setTradingAccounts(updatedAccounts);
         
         if (selectedAccount === accountName) {
-          setSelectedAccount('Compte Principal');
+          const remainingAccounts = updatedAccounts;
+          if (remainingAccounts.length > 0) {
+            setSelectedAccount(remainingAccounts[0].account_name);
+          } else {
+            setSelectedAccount('');
+          }
         }
         console.log('✅ [ADMIN] Compte supprimé:', accountName);
       }
@@ -724,13 +729,11 @@ export default function AdminInterface() {
   };
 
   const handleAccountOptions = async (accountName: string) => {
-    const isMainAccount = accountName === 'Compte Principal';
-    
     const choice = prompt(
       `Options pour "${accountName}":\n\n` +
       `1 - Renommer le compte\n` +
       `2 - Modifier balance et stop-loss\n` +
-      (!isMainAccount ? `3 - Supprimer le compte\n` : '') +
+      `3 - Supprimer le compte\n` +
       `\nEntrez votre choix:`,
       '1'
     );
@@ -739,7 +742,7 @@ export default function AdminInterface() {
       await handleRenameAccount(accountName);
     } else if (choice === '2') {
       await handleEditAccountSettings(accountName);
-    } else if (choice === '3' && !isMainAccount) {
+    } else if (choice === '3') {
       if (confirm(`Supprimer le compte "${accountName}" et tous ses trades ?`)) {
         await handleDeleteAccount(accountName);
       }
@@ -3791,22 +3794,33 @@ export default function AdminInterface() {
             <div className="mt-6 p-4 bg-gray-800 rounded-lg border border-gray-600">
               <h4 className="text-sm font-medium text-gray-300 mb-3">Gestion des comptes</h4>
               <div className="flex flex-wrap items-center gap-2">
-                <select
-                  value={selectedAccount}
-                  onChange={(e) => handleAccountChange(e.target.value)}
-                  className="bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/50 text-yellow-300 hover:text-yellow-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-yellow-500 cursor-pointer h-9"
-                  style={{ height: '36px' }}
-                >
-                  {tradingAccounts.map((account) => (
-                    <option key={account.id} value={account.account_name}>
-                      {account.account_name}
-                    </option>
-                  ))}
-                </select>
+                {tradingAccounts.length > 0 ? (
+                  <select
+                    value={selectedAccount}
+                    onChange={(e) => handleAccountChange(e.target.value)}
+                    className="bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/50 text-yellow-300 hover:text-yellow-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-yellow-500 cursor-pointer h-9"
+                    style={{ height: '36px' }}
+                  >
+                    {tradingAccounts.map((account) => (
+                      <option key={account.id} value={account.account_name}>
+                        {account.account_name}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <div className="text-sm text-gray-400 italic px-3 py-2">
+                    Aucun compte enregistré
+                  </div>
+                )}
                 
                 <button
                   onClick={() => handleAccountOptions(selectedAccount)}
-                  className="bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 text-blue-300 hover:text-blue-200 px-3 py-2 rounded-lg text-sm font-medium"
+                  disabled={tradingAccounts.length === 0}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium ${
+                    tradingAccounts.length === 0
+                      ? 'bg-gray-700 border border-gray-600 text-gray-500 cursor-not-allowed'
+                      : 'bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 text-blue-300 hover:text-blue-200'
+                  }`}
                   title="Options du compte"
                 >
                   ⚙️ Options

@@ -362,8 +362,14 @@ export default function TradingPlatformShell() {
       
       // Changer le compte sélectionné si nécessaire
       if (selectedAccount === accountToDelete) {
-        setSelectedAccount('Compte Principal');
-        console.log(`✅ Compte sélectionné changé vers "Compte Principal"`);
+        const remainingAccounts = tradingAccounts.filter(acc => acc.account_name !== accountToDelete);
+        if (remainingAccounts.length > 0) {
+          setSelectedAccount(remainingAccounts[0].account_name);
+          console.log(`✅ Compte sélectionné changé vers "${remainingAccounts[0].account_name}"`);
+        } else {
+          setSelectedAccount('');
+          console.log(`✅ Plus de comptes, selectedAccount vide`);
+        }
       }
       
       console.log(`✅ Compte "${accountToDelete}" supprimé avec succès`);
@@ -3322,22 +3328,33 @@ export default function TradingPlatformShell() {
           {/* Sélecteur de compte - DESKTOP */}
           {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && (
             <div className="flex items-center gap-2">
-              <select
-                value={selectedAccount}
-                onChange={(e) => handleAccountChange(e.target.value)}
-                className="bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/50 text-yellow-300 hover:text-yellow-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-yellow-500 cursor-pointer h-9"
-                style={{ height: '36px' }}
-              >
-                {tradingAccounts.map((account) => (
-                  <option key={account.id} value={account.account_name}>
-                    {account.account_name}
-                  </option>
-                ))}
-              </select>
+              {tradingAccounts.length > 0 ? (
+                <select
+                  value={selectedAccount}
+                  onChange={(e) => handleAccountChange(e.target.value)}
+                  className="bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/50 text-yellow-300 hover:text-yellow-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-yellow-500 cursor-pointer h-9"
+                  style={{ height: '36px' }}
+                >
+                  {tradingAccounts.map((account) => (
+                    <option key={account.id} value={account.account_name}>
+                      {account.account_name}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <div className="text-sm text-gray-400 italic px-3 py-2">
+                  Aucun compte enregistré
+                </div>
+              )}
               
               <button
                 onClick={() => handleAccountOptions(selectedAccount)}
-                className="bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 text-blue-300 hover:text-blue-200 px-3 py-2 rounded-lg text-sm font-medium"
+                disabled={tradingAccounts.length === 0}
+                className={`px-3 py-2 rounded-lg text-sm font-medium ${
+                  tradingAccounts.length === 0
+                    ? 'bg-gray-700 border border-gray-600 text-gray-500 cursor-not-allowed'
+                    : 'bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 text-blue-300 hover:text-blue-200'
+                }`}
                 title="Options du compte"
               >
                 ⚙️
@@ -4332,22 +4349,33 @@ export default function TradingPlatformShell() {
                       {/* Sélecteur de compte et boutons */}
                       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
                         <div className="flex items-center gap-2">
-                          <select
-                            value={selectedAccount}
-                            onChange={(e) => handleAccountChange(e.target.value)}
-                            className="bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/50 text-yellow-300 hover:text-yellow-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-yellow-500 cursor-pointer h-9"
-                style={{ height: '36px' }}
-                          >
-                            {tradingAccounts.map((account) => (
-                              <option key={account.id} value={account.account_name}>
-                                {account.account_name}
-                              </option>
-                            ))}
-                          </select>
+                          {tradingAccounts.length > 0 ? (
+                            <select
+                              value={selectedAccount}
+                              onChange={(e) => handleAccountChange(e.target.value)}
+                              className="bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/50 text-yellow-300 hover:text-yellow-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-yellow-500 cursor-pointer h-9"
+                  style={{ height: '36px' }}
+                            >
+                              {tradingAccounts.map((account) => (
+                                <option key={account.id} value={account.account_name}>
+                                  {account.account_name}
+                                </option>
+                              ))}
+                            </select>
+                          ) : (
+                            <div className="text-sm text-gray-400 italic px-3 py-2">
+                              Aucun compte enregistré
+                            </div>
+                          )}
                           
                           <button
                             onClick={() => handleAccountOptions(selectedAccount)}
-                            className="bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 text-blue-300 hover:text-blue-200 px-3 py-2 rounded-lg text-sm font-medium"
+                            disabled={tradingAccounts.length === 0}
+                            className={`px-3 py-2 rounded-lg text-sm font-medium ${
+                              tradingAccounts.length === 0
+                                ? 'bg-gray-700 border border-gray-600 text-gray-500 cursor-not-allowed'
+                                : 'bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 text-blue-300 hover:text-blue-200'
+                            }`}
                             title="Options du compte"
                           >
                             ⚙️
