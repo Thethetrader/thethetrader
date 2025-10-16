@@ -995,6 +995,7 @@ export const getPersonalTrades = async (limit: number = 100): Promise<PersonalTr
     }
 
     console.log('✅ Trades personnels récupérés:', data.length);
+    console.log('🔍 DEBUG Raw trades from Supabase:', data.map(t => ({ symbol: t.symbol, status: t.status, loss_reason: t.loss_reason })));
 
     // Convertir les nombres en strings pour la compatibilité avec l'interface
     const trades: PersonalTrade[] = data.map(trade => ({
@@ -1005,6 +1006,8 @@ export const getPersonalTrades = async (limit: number = 100): Promise<PersonalTr
       lossReason: trade.loss_reason || undefined,
       pnl: trade.pnl.toString()
     }));
+    
+    console.log('🔍 DEBUG Mapped trades with lossReason:', trades.filter(t => t.lossReason).map(t => ({ symbol: t.symbol, lossReason: t.lossReason })));
 
     return trades;
   } catch (error) {
