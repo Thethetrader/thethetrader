@@ -995,6 +995,11 @@ export const getPersonalTrades = async (limit: number = 100): Promise<PersonalTr
     }
 
     console.log('✅ Trades personnels récupérés:', data.length);
+    
+    // LOG TEMPORAIRE - Afficher les 3 premiers trades bruts
+    if (data.length > 0) {
+      console.log('🔍 PREMIER TRADE BRUT:', JSON.stringify(data[0], null, 2));
+    }
 
     // Convertir les nombres en strings pour la compatibilité avec l'interface
     const trades: PersonalTrade[] = data.map(trade => {
