@@ -3652,13 +3652,25 @@ export default function TradingPlatformShell() {
                     <div key={refreshKey} className="bg-gray-700 rounded-lg p-3 mt-3">
                       <div className="flex items-center justify-between mb-3">
                         <h4 className="text-sm font-medium text-red-300">📊 Analyse des Pertes</h4>
-                        <button
-                          onClick={() => setShowLossReasonsModal(true)}
-                          className="text-gray-400 hover:text-white transition-colors"
-                          title="Gérer les raisons de perte"
-                        >
-                          ⚙️
-                        </button>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              console.log('🔄 Mise à jour manuelle analyse des pertes');
+                              setRefreshKey(prev => prev + 1);
+                            }}
+                            className="text-gray-400 hover:text-white transition-colors"
+                            title="Mettre à jour l'analyse"
+                          >
+                            🔄
+                          </button>
+                          <button
+                            onClick={() => setShowLossReasonsModal(true)}
+                            className="text-gray-400 hover:text-white transition-colors"
+                            title="Gérer les raisons de perte"
+                          >
+                            ⚙️
+                          </button>
+                        </div>
                       </div>
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
