@@ -230,7 +230,7 @@ exports.sendClosureNotification = onCall(async (request) => {
 // Fonction pour envoyer une notification de livestream
 exports.sendLivestreamNotification = onCall(async (request) => {
   try {
-    const { tokens } = request.data;
+    const { tokens, customMessage } = request.data;
     
     if (!tokens || !Array.isArray(tokens)) {
       throw new Error("Tokens requis");
@@ -238,8 +238,9 @@ exports.sendLivestreamNotification = onCall(async (request) => {
 
     const messaging = getMessaging();
     
-    const notificationTitle = '🔴 Livestream Start 5 min';
-    const notificationBody = 'Le livestream démarre dans 5 minutes !';
+    // Utiliser le message personnalisé s'il est fourni, sinon utiliser le message par défaut
+    const notificationTitle = '🔴 Livestream';
+    const notificationBody = customMessage || 'Le livestream démarre dans 5 minutes !';
     
     const message = {
       notification: {

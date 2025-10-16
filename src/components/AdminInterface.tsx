@@ -31,6 +31,10 @@ export default function AdminInterface() {
   // États pour les notifications admin
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
+  
+  // États pour la notification livestream personnalisée
+  const [showLivestreamModal, setShowLivestreamModal] = useState(false);
+  const [livestreamMessage, setLivestreamMessage] = useState('🎥 Livestream en cours ! Rejoins-nous maintenant !');
 
   // Charger Tawk.to au montage de l'AdminInterface
   useEffect(() => {
@@ -777,6 +781,55 @@ export default function AdminInterface() {
     } catch (error) {
       console.error('❌ Erreur envoi notification:', error);
       alert('Erreur lors de l\'envoi du message: ' + error.message);
+    }
+  };
+
+  const handleSendLivestreamNotification = async () => {
+    if (!livestreamMessage.trim()) {
+      alert('Veuillez saisir un message');
+      return;
+    }
+
+    try {
+      const functions = getFunctions();
+      const sendLivestreamNotification = httpsCallable(functions, 'sendLivestreamNotification');
+      
+      // Récupérer tous les tokens FCM
+      const tokens = [];
+      const fcmTokensRef = ref(database, 'fcm_tokens');
+      const snapshot = await get(fcmTokensRef);
+      if (snapshot.exists()) {
+        const tokensData = snapshot.val();
+        Object.values(tokensData).forEach((tokenData: any) => {
+          if (tokenData.token) {
+            tokens.push(tokenData.token);
+          }
+        });
+      }
+      
+      if (tokens.length > 0) {
+        console.log('📱 Envoi notification livestream personnalisée à', tokens.length, 'utilisateurs...');
+        console.log('📝 Message personnalisé:', livestreamMessage);
+        
+        // Envoyer avec le message personnalisé en paramètre
+        const result = await sendLivestreamNotification({ 
+          tokens,
+          customMessage: livestreamMessage
+        });
+        
+        console.log('✅ Notification livestream envoyée:', result.data);
+        alert(`✅ Notification envoyée à ${result.data.successCount} utilisateurs!`);
+        
+        // Réinitialiser le modal
+        setLivestreamMessage('🎥 Livestream en cours ! Rejoins-nous maintenant !');
+        setShowLivestreamModal(false);
+      } else {
+        alert('⚠️ Aucun utilisateur avec notifications activées');
+      }
+    } catch (error) {
+      console.error('❌ Erreur envoi notification livestream:', error);
+      console.error('❌ Détails erreur:', error);
+      alert('❌ Erreur lors de l\'envoi de la notification: ' + error.message);
     }
   };
 
@@ -4001,21 +4054,21 @@ export default function AdminInterface() {
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Win Rate:</span>
-                <span className="text-blue-400">{calculateWinRate()}%</span>
+                <span className="text-white">{calculateWinRate()}%</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">P&L Total:</span>
-                <span className={calculateTotalPnL() >= 0 ? 'text-green-400' : 'text-red-400'}>
+                <span className="text-green-400">
                   {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Signaux actifs:</span>
-                <span className="text-yellow-400">{allSignalsForStats.filter(s => s.status === 'ACTIVE').length}</span>
+                <span className="text-white">{allSignalsForStats.filter(s => s.status === 'ACTIVE').length}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Total Trades:</span>
-                <span className="text-purple-400">{allSignalsForStats.length}</span>
+                <span className="text-white">{allSignalsForStats.length}</span>
               </div>
             </div>
           </div>
@@ -4058,6 +4111,13 @@ export default function AdminInterface() {
                 className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
               >
                 🔴 Livestream
+              </button>
+              
+              <button 
+                onClick={() => setShowLivestreamModal(true)}
+                className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
+              >
+                📝 Notif Custom
               </button>
             </div>
           </div>
@@ -6648,6 +6708,58 @@ export default function AdminInterface() {
                 onClick={() => {
                   setShowNotificationModal(false);
                   setNotificationMessage('');
+                }}
+                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de notification livestream personnalisée */}
+      {showLivestreamModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-white">🔴 Notification Livestream</h3>
+              <button
+                onClick={() => {
+                  setShowLivestreamModal(false);
+                  setLivestreamMessage('🎥 Livestream en cours ! Rejoins-nous maintenant !');
+                }}
+                className="text-gray-400 hover:text-white text-2xl"
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="mb-6">
+              <label className="block text-sm text-gray-300 mb-2">Message de notification</label>
+              <textarea
+                value={livestreamMessage}
+                onChange={(e) => setLivestreamMessage(e.target.value)}
+                placeholder="Tapez votre message de livestream ici..."
+                className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 h-24 resize-none focus:outline-none focus:border-red-500"
+                maxLength={200}
+              />
+              <div className="text-xs text-gray-400 mt-1">
+                {livestreamMessage.length}/200 caractères
+              </div>
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={handleSendLivestreamNotification}
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium"
+              >
+                Envoyer
+              </button>
+              <button
+                onClick={() => {
+                  setShowLivestreamModal(false);
+                  setLivestreamMessage('🎥 Livestream en cours ! Rejoins-nous maintenant !');
                 }}
                 className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium"
               >
