@@ -942,7 +942,7 @@ export const addPersonalTrade = async (trade: Omit<PersonalTrade, 'id' | 'user_i
     const { data, error } = await supabase
       .from('personal_trades')
       .insert(tradeData)
-      .select()
+      .select('*')
       .single();
 
     if (error) {
