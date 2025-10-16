@@ -2031,6 +2031,12 @@ export default function TradingPlatformShell() {
     setRefreshKey(prev => prev + 1);
   }, [personalTrades, selectedAccount]); // Se déclenche quand personalTrades ou selectedAccount change
 
+  // Force le re-render du calendrier quand personalTrades change
+  useEffect(() => {
+    console.log('📅 Re-render calendrier - personalTrades changé:', personalTrades.length);
+    setStatsUpdateTrigger(prev => prev + 1);
+  }, [personalTrades.length]);
+
   // Fonction pour obtenir le label d'une raison (utilise les raisons personnalisées)
   const getCustomLossReasonLabel = (reasonValue: string): string => {
     const reason = customLossReasons.find(r => r.value === reasonValue);
