@@ -1160,6 +1160,7 @@ export default function TradingPlatformShell() {
   const [newReason, setNewReason] = useState({ value: '', emoji: '', label: '' });
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [calendarRefreshKey, setCalendarRefreshKey] = useState(0);
   const [lossAnalysisState, setLossAnalysisState] = useState(() => ({ totalLosses: 0, totalLossPnl: 0, reasons: [] }));
   const [selectedDate, setSelectedDate] = useState<Date | null>(() => {
     // Récupérer selectedDate depuis localStorage
@@ -2035,6 +2036,7 @@ export default function TradingPlatformShell() {
   useEffect(() => {
     console.log('📅 Re-render calendrier - personalTrades changé:', personalTrades.length);
     setStatsUpdateTrigger(prev => prev + 1);
+    setCalendarRefreshKey(prev => prev + 1);
   }, [personalTrades.length]);
 
   // Fonction pour obtenir le label d'une raison (utilise les raisons personnalisées)
@@ -3395,7 +3397,7 @@ export default function TradingPlatformShell() {
           </div>
 
           {/* Grille du calendrier */}
-          <div className="grid grid-cols-7 gap-0.5 md:gap-1 w-full" key={`calendar-${selectedChannel.id}-${selectedAccount}-${personalTrades.length}-${statsUpdateTrigger}-${currentDate.getMonth()}-${currentDate.getFullYear()}`}>
+          <div className="grid grid-cols-7 gap-0.5 md:gap-1 w-full" key={`calendar-${selectedChannel.id}-${selectedAccount}-${personalTrades.length}-${statsUpdateTrigger}-${calendarRefreshKey}-${currentDate.getMonth()}-${currentDate.getFullYear()}`}>
             {(() => {
               const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
               const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
