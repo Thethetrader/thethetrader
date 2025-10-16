@@ -2612,7 +2612,7 @@ export default function TradingPlatformShell() {
     console.log('🔍 DEBUG Selected account:', selectedAccount);
     console.log('🔍 DEBUG Loss reason:', tradeData.lossReason);
 
-    // Sauvegarder dans Firebase
+    // Sauvegarder dans Supabase
     const savedTrade = await addPersonalTrade(newTrade as any);
     
     if (savedTrade) {
