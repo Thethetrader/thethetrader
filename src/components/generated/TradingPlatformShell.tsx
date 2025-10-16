@@ -2655,7 +2655,17 @@ export default function TradingPlatformShell() {
       
       if (savedTrade) {
         // Le listener temps réel va automatiquement ajouter le trade à la liste
-        // Pas besoin de setPersonalTrades ici pour éviter les doublons
+        // Mais si ça ne marche pas, on recharge manuellement après un délai
+        setTimeout(async () => {
+          console.log('🔄 Rechargement manuel des trades après ajout...');
+          try {
+            const trades = await getPersonalTrades();
+            console.log('📊 Trades rechargés:', trades.length);
+            setPersonalTrades(trades);
+          } catch (error) {
+            console.error('❌ Erreur rechargement trades:', error);
+          }
+        }, 1000); // Attendre 1 seconde pour laisser le temps au listener
         
         // Reset form
         setTradeData({
