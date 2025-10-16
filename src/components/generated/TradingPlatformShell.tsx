@@ -2640,10 +2640,8 @@ export default function TradingPlatformShell() {
       const savedTrade = await addPersonalTrade(newTrade as any);
       
       if (savedTrade) {
-        // Ajouter à la liste locale
-        setPersonalTrades(prev => [savedTrade, ...prev]);
-        // Forcer le re-render pour mettre à jour les stats
-        setRefreshKey(prev => prev + 1);
+        // Le listener temps réel va automatiquement ajouter le trade à la liste
+        // Pas besoin de setPersonalTrades ici pour éviter les doublons
         
         // Reset form
         setTradeData({
@@ -3648,7 +3646,8 @@ export default function TradingPlatformShell() {
 
               {/* Analyse des pertes - sous les données de solde */}
               {(() => {
-                if (lossAnalysisState.totalLosses > 0) {
+                const lossAnalysis = getLossAnalysis();
+                if (lossAnalysis.totalLosses > 0) {
                   return (
                     <div key={refreshKey} className="bg-gray-700 rounded-lg p-3 mt-3">
                       <div className="flex items-center justify-between mb-3">
@@ -3664,14 +3663,14 @@ export default function TradingPlatformShell() {
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-400">Total pertes:</span>
-                          <span className="text-red-300">{lossAnalysisState.totalLosses}</span>
+                          <span className="text-red-300">{lossAnalysis.totalLosses}</span>
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-400">P&L total pertes:</span>
-                          <span className="text-red-300">${lossAnalysisState.totalLossPnl}</span>
+                          <span className="text-red-300">${lossAnalysis.totalLossPnl}</span>
                         </div>
-                        {lossAnalysisState.reasons.length > 0 ? (
-                          lossAnalysisState.reasons.slice(0, 3).map((reason, index) => (
+                        {lossAnalysis.reasons.length > 0 ? (
+                          lossAnalysis.reasons.slice(0, 3).map((reason, index) => (
                             <div key={reason.reason} className="flex justify-between text-xs">
                               <span className="text-gray-400 truncate">{getCustomLossReasonLabel(reason.reason)}</span>
                               <span className="text-red-300">{reason.count} ({reason.percentage}%)</span>
