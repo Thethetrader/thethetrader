@@ -1159,6 +1159,7 @@ export default function TradingPlatformShell() {
   });
   const [newReason, setNewReason] = useState({ value: '', emoji: '', label: '' });
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [forceUpdate, setForceUpdate] = useState(0);
   const [selectedDate, setSelectedDate] = useState<Date | null>(() => {
     // Récupérer selectedDate depuis localStorage
     const saved = localStorage.getItem('selectedDate');
@@ -2018,8 +2019,13 @@ export default function TradingPlatformShell() {
       totalLossPnl: lossTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0),
       reasons: sortedReasons
     };
-  }, [personalTrades, selectedAccount]); // Se recalcule quand personalTrades ou selectedAccount change
+  }, [personalTrades, selectedAccount, forceUpdate]); // Se recalcule quand personalTrades ou selectedAccount change
 
+  // Force la mise à jour de l'analyse des pertes quand personalTrades change
+  useEffect(() => {
+    console.log('🔄 personalTrades changé, force update:', personalTrades.length);
+    setForceUpdate(prev => prev + 1);
+  }, [personalTrades]);
 
   // Fonction pour obtenir le label d'une raison (utilise les raisons personnalisées)
   const getCustomLossReasonLabel = (reasonValue: string): string => {
