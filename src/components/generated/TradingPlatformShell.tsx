@@ -460,14 +460,27 @@ export default function TradingPlatformShell() {
     
     try {
       const account = tradingAccounts.find(acc => acc.account_name === oldName);
-      if (account) {
-        // Mettre à jour dans Supabase ou localStorage
-        const updatedAccounts = tradingAccounts.map(acc => 
+      if (!account) {
+        alert('Compte non trouvé');
+        return;
+      }
+      
+      console.log('🔄 Renommage compte dans Supabase:', oldName, '→', newName.trim());
+      
+      // Mettre à jour dans Supabase
+      const updated = await updateUserAccount(account.id, {
+        account_name: newName.trim()
+      });
+      
+      if (updated) {
+        console.log('✅ Compte renommé dans Supabase');
+        
+        // Mettre à jour l'état local
+        setTradingAccounts(prev => prev.map(acc => 
           acc.id === account.id 
             ? { ...acc, account_name: newName.trim() }
             : acc
-        );
-        await saveAccounts(updatedAccounts);
+        ));
         
         // Mettre à jour le compte sélectionné si c'est celui qu'on renomme
         if (selectedAccount === oldName) {
@@ -480,9 +493,15 @@ export default function TradingPlatformShell() {
             ? { ...trade, account: newName.trim() }
             : trade
         ));
+        
+        alert(`Compte renommé: ${oldName} → ${newName.trim()}`);
+      } else {
+        console.error('❌ Échec renommage dans Supabase');
+        alert('Erreur lors du renommage du compte');
       }
     } catch (error) {
       console.error('❌ Erreur renommage compte:', error);
+      alert('Erreur: ' + (error as any).message);
     }
   };
   const [showTradesModal, setShowTradesModal] = useState(false);
