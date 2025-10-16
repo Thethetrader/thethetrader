@@ -2019,6 +2019,12 @@ export default function TradingPlatformShell() {
     };
   };
 
+  // Force le re-render quand personalTrades change
+  useEffect(() => {
+    console.log('🔄 personalTrades changé, force refresh');
+    setRefreshKey(prev => prev + 1);
+  }, [personalTrades.length]); // Se déclenche quand le nombre de trades change
+
   // Fonction pour obtenir le label d'une raison (utilise les raisons personnalisées)
   const getCustomLossReasonLabel = (reasonValue: string): string => {
     const reason = customLossReasons.find(r => r.value === reasonValue);
