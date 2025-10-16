@@ -377,13 +377,11 @@ export default function TradingPlatformShell() {
 
   // Options du compte
   const handleAccountOptions = async (accountName: string) => {
-    const isMainAccount = accountName === 'Compte Principal';
-    
     const choice = prompt(
       `Options pour "${accountName}":\n\n` +
       `1 - Renommer le compte\n` +
       `2 - Modifier balance et stop-loss\n` +
-      (!isMainAccount ? `3 - Supprimer le compte\n` : '') +
+      `3 - Supprimer le compte\n` +
       `\nEntrez votre choix:`,
       '1'
     );
@@ -392,7 +390,7 @@ export default function TradingPlatformShell() {
       await handleRenameAccount(accountName);
     } else if (choice === '2') {
       await handleEditAccountSettings(accountName);
-    } else if (choice === '3' && !isMainAccount) {
+    } else if (choice === '3') {
       if (confirm(`Supprimer le compte "${accountName}" et tous ses trades ?`)) {
         await handleDeleteAccount(accountName);
       }
