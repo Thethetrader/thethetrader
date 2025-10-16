@@ -3867,45 +3867,42 @@ export default function AdminInterface() {
               {/* Analyse des pertes - sous les données de solde */}
               {(() => {
                 const lossAnalysis = getLossAnalysis();
-                if (lossAnalysis.totalLosses > 0) {
-                  return (
-                    <div className="bg-gray-700 rounded-lg p-3 mt-3">
-                      <div className="flex items-center justify-between mb-3">
-                        <h4 className="text-sm font-medium text-red-300">📊 Analyse des Pertes</h4>
-                        <button
-                          onClick={() => setShowLossReasonsModal(true)}
-                          className="text-gray-400 hover:text-white transition-colors"
-                          title="Gérer les raisons de perte"
-                        >
-                          ⚙️
-                        </button>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-400">Total pertes:</span>
-                          <span className="text-red-300">{lossAnalysis.totalLosses}</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-400">P&L total pertes:</span>
-                          <span className="text-red-300">${lossAnalysis.totalLossPnl}</span>
-                        </div>
-                        {lossAnalysis.reasons.length > 0 ? (
-                          lossAnalysis.reasons.slice(0, 3).map((reason, index) => (
-                            <div key={reason.reason} className="flex justify-between text-xs">
-                              <span className="text-gray-400 truncate">{getCustomLossReasonLabel(reason.reason)}</span>
-                              <span className="text-red-300">{reason.count} ({reason.percentage}%)</span>
-                            </div>
-                          ))
-                        ) : (
-                          <div className="text-xs text-gray-500 italic">
-                            Ajoute des raisons aux pertes pour voir l'analyse
-                          </div>
-                        )}
-                      </div>
+                return (
+                  <div className="bg-gray-700 rounded-lg p-3 mt-3">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-sm font-medium text-red-300">📊 Analyse des Pertes</h4>
+                      <button
+                        onClick={() => setShowLossReasonsModal(true)}
+                        className="text-gray-400 hover:text-white transition-colors"
+                        title="Gérer les raisons de perte"
+                      >
+                        ⚙️
+                      </button>
                     </div>
-                  );
-                }
-                return null;
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-400">Total pertes:</span>
+                        <span className="text-red-300">{lossAnalysis.totalLosses}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-400">P&L total pertes:</span>
+                        <span className="text-red-300">${lossAnalysis.totalLossPnl}</span>
+                      </div>
+                      {lossAnalysis.reasons.length > 0 ? (
+                        lossAnalysis.reasons.slice(0, 3).map((reason, index) => (
+                          <div key={reason.reason} className="flex justify-between text-xs">
+                            <span className="text-gray-400 truncate">{getCustomLossReasonLabel(reason.reason)}</span>
+                            <span className="text-red-300">{reason.count} ({reason.percentage}%)</span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-xs text-gray-500 italic">
+                          Ajoute des raisons aux pertes pour voir l'analyse
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
               })()}
             </div>
           )}
