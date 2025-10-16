@@ -7021,15 +7021,6 @@ export default function TradingPlatformShell() {
                 </button>
               </div>
 
-              <div className="mb-6">
-                <p className="text-sm text-gray-400 mb-4">
-                  Pour modifier les raisons de perte, édite le fichier : 
-                  <code className="bg-gray-700 px-2 py-1 rounded text-yellow-300 ml-2">
-                    src/config/loss-reasons.ts
-                  </code>
-                </p>
-              </div>
-
               <div className="space-y-3">
                 <h4 className="text-sm font-medium text-gray-300 mb-3">Raisons actuelles :</h4>
                 {LOSS_REASONS.map((reason, index) => (
