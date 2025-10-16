@@ -1977,7 +1977,9 @@ export default function TradingPlatformShell() {
     });
     
     // Convertir en array et trier par fréquence
+    // Filtrer pour exclure les raisons "non_specifiee"
     const sortedReasons = Object.entries(lossByReason)
+      .filter(([reason]) => reason !== 'non_specifiee')
       .map(([reason, data]) => ({
         reason,
         count: data.count,
@@ -3635,12 +3637,18 @@ export default function TradingPlatformShell() {
                           <span className="text-gray-400">P&L total pertes:</span>
                           <span className="text-red-300">${lossAnalysis.totalLossPnl}</span>
                         </div>
-                        {lossAnalysis.reasons.slice(0, 3).map((reason, index) => (
-                          <div key={reason.reason} className="flex justify-between text-xs">
-                            <span className="text-gray-400 truncate">{getLossReasonLabel(reason.reason)}</span>
-                            <span className="text-red-300">{reason.count} ({reason.percentage}%)</span>
+                        {lossAnalysis.reasons.length > 0 ? (
+                          lossAnalysis.reasons.slice(0, 3).map((reason, index) => (
+                            <div key={reason.reason} className="flex justify-between text-xs">
+                              <span className="text-gray-400 truncate">{getLossReasonLabel(reason.reason)}</span>
+                              <span className="text-red-300">{reason.count} ({reason.percentage}%)</span>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-xs text-gray-500 italic">
+                            Ajoute des raisons aux pertes pour voir l'analyse
                           </div>
-                        ))}
+                        )}
                       </div>
                     </div>
                   );
