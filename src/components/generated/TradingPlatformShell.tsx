@@ -2613,35 +2613,42 @@ export default function TradingPlatformShell() {
     console.log('🔍 DEBUG Loss reason:', tradeData.lossReason);
 
     // Sauvegarder dans Supabase
-    const savedTrade = await addPersonalTrade(newTrade as any);
-    
-    if (savedTrade) {
-      // Ajouter à la liste locale
-      setPersonalTrades(prev => {
-        const updated = [savedTrade, ...prev];
-        console.log('🔍 DEBUG Updated personalTrades:', updated.length, 'trades');
-        console.log('🔍 DEBUG New trade added:', savedTrade);
-        return updated;
-      });
+    console.log('🚀 Tentative de sauvegarde dans Supabase...');
+    try {
+      const savedTrade = await addPersonalTrade(newTrade as any);
+      console.log('📝 Résultat addPersonalTrade:', savedTrade);
       
-      // Reset form
-      setTradeData({
-        symbol: '',
-        type: 'BUY',
-        entry: '',
-        exit: '',
-        stopLoss: '',
-        pnl: '',
-        status: 'WIN',
-        lossReason: '',
-        notes: '',
-        image1: null,
-        image2: null
-      });
-      setShowTradeModal(false);
-      console.log('✅ Trade ajouté avec succès dans Firebase !');
-    } else {
-      console.error('❌ Erreur lors de la sauvegarde du trade');
+      if (savedTrade) {
+        // Ajouter à la liste locale
+        setPersonalTrades(prev => {
+          const updated = [savedTrade, ...prev];
+          console.log('🔍 DEBUG Updated personalTrades:', updated.length, 'trades');
+          console.log('🔍 DEBUG New trade added:', savedTrade);
+          return updated;
+        });
+        
+        // Reset form
+        setTradeData({
+          symbol: '',
+          type: 'BUY',
+          entry: '',
+          exit: '',
+          stopLoss: '',
+          pnl: '',
+          status: 'WIN',
+          lossReason: '',
+          notes: '',
+          image1: null,
+          image2: null
+        });
+        setShowTradeModal(false);
+        console.log('✅ Trade ajouté avec succès dans Supabase !');
+      } else {
+        console.error('❌ Erreur lors de la sauvegarde du trade - savedTrade est null');
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de la sauvegarde du trade:', error);
+      alert('Erreur lors de la sauvegarde: ' + error.message);
     }
   };
 
