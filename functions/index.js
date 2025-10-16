@@ -239,7 +239,7 @@ exports.sendLivestreamNotification = onCall(async (request) => {
     const messaging = getMessaging();
     
     // Utiliser le message personnalisé s'il est fourni, sinon utiliser le message par défaut
-    const notificationTitle = '🔴 Livestream';
+    const notificationTitle = customMessage ? '📢 TPLN' : '🔴 Livestream';
     const notificationBody = customMessage || 'Le livestream démarre dans 5 minutes !';
     
     const message = {

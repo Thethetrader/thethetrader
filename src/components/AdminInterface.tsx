@@ -34,7 +34,7 @@ export default function AdminInterface() {
   
   // États pour la notification livestream personnalisée
   const [showLivestreamModal, setShowLivestreamModal] = useState(false);
-  const [livestreamMessage, setLivestreamMessage] = useState('🎥 Livestream en cours ! Rejoins-nous maintenant !');
+  const [livestreamMessage, setLivestreamMessage] = useState('');
 
   // Charger Tawk.to au montage de l'AdminInterface
   useEffect(() => {
@@ -821,7 +821,7 @@ export default function AdminInterface() {
         alert(`✅ Notification envoyée à ${result.data.successCount} utilisateurs!`);
         
         // Réinitialiser le modal
-        setLivestreamMessage('🎥 Livestream en cours ! Rejoins-nous maintenant !');
+        setLivestreamMessage('');
         setShowLivestreamModal(false);
       } else {
         alert('⚠️ Aucun utilisateur avec notifications activées');
@@ -6727,7 +6727,7 @@ export default function AdminInterface() {
               <button
                 onClick={() => {
                   setShowLivestreamModal(false);
-                  setLivestreamMessage('🎥 Livestream en cours ! Rejoins-nous maintenant !');
+                  setLivestreamMessage('');
                 }}
                 className="text-gray-400 hover:text-white text-2xl"
               >
@@ -6740,8 +6740,8 @@ export default function AdminInterface() {
               <textarea
                 value={livestreamMessage}
                 onChange={(e) => setLivestreamMessage(e.target.value)}
-                placeholder="Tapez votre message de livestream ici..."
-                className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 h-24 resize-none focus:outline-none focus:border-red-500"
+                placeholder="Exemple: 📈 Nouveau signal BTC en cours ! Entrée à 45,000$ - TP: 47,500$ - SL: 43,500$"
+                className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 h-24 resize-none focus:outline-none focus:border-red-500 placeholder-gray-400"
                 maxLength={200}
               />
               <div className="text-xs text-gray-400 mt-1">
@@ -6759,7 +6759,7 @@ export default function AdminInterface() {
               <button
                 onClick={() => {
                   setShowLivestreamModal(false);
-                  setLivestreamMessage('🎥 Livestream en cours ! Rejoins-nous maintenant !');
+                  setLivestreamMessage('');
                 }}
                 className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium"
               >
