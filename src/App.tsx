@@ -1340,29 +1340,6 @@ const App = () => {
                 </div>
               </div>
 
-              {/* Description du service sélectionné */}
-              <div className="max-w-7xl mx-auto px-4 sm:px-6">
-                <div className="mt-8 bg-gray-800/50 p-6 rounded-xl border border-gray-600/50 backdrop-blur-sm">
-                  <div className="text-center">
-                    <h3 className="text-2xl font-bold text-white mb-4">📊 Journal de Trading</h3>
-                    <p className="text-gray-300 text-lg max-w-3xl mx-auto">
-                      Suivez vos performances avec notre calendrier de trading interactif. Analysez vos wins et losses, 
-                      identifiez vos raisons de perte et optimisez votre stratégie grâce à nos statistiques détaillées.
-                    </p>
-                    <div className="mt-6 flex justify-center gap-4">
-                      <div className="bg-green-500/20 px-4 py-2 rounded-lg">
-                        <span className="text-green-400 font-medium">74% Win Rate</span>
-                </div>
-                      <div className="bg-blue-500/20 px-4 py-2 rounded-lg">
-                        <span className="text-blue-400 font-medium">+$3,285 P&L</span>
-                      </div>
-                      <div className="bg-purple-500/20 px-4 py-2 rounded-lg">
-                        <span className="text-purple-400 font-medium">Analyse des Pertes</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
 
             </div>
 
