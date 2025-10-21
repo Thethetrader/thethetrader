@@ -109,7 +109,7 @@ const App = () => {
   const getServicePwaImage = (service: string) => {
     const pwaImages: { [key: string]: string } = {
       'signaux': '/pwa signaux.png',
-      'formation': '/pwa formation.png',
+      'formation': '/pwa app.png', // Utilise l'image PWA app pour formation
       'journal': '/pwa journal.png',
       'live': '/pwa live.png',
       'app': '/pwa app.png',
