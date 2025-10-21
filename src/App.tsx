@@ -109,7 +109,7 @@ const App = () => {
   const getServicePwaImage = (service: string) => {
     const pwaImages: { [key: string]: string } = {
       'signaux': '/pwa signaux.png',
-      'formation': '/pwa.png', // Pas d'image PWA spécifique
+      'formation': '/pwa formation.png',
       'journal': '/pwa journal.png',
       'live': '/pwa live.png',
       'app': '/pwa app.png',
@@ -1209,7 +1209,7 @@ const App = () => {
                       <span className={`text-xs sm:text-sm transition-colors ${
                         selectedService === 'signaux' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
                       }`}>Signaux</span>
-                    </div>
+                </div>
 
                     {/* Formation */}
                     <div 
@@ -1226,7 +1226,7 @@ const App = () => {
                       <span className={`text-xs sm:text-sm transition-colors ${
                         selectedService === 'formation' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
                       }`}>Formation</span>
-                    </div>
+                </div>
 
                     {/* Journal */}
                     <div 
@@ -1243,7 +1243,7 @@ const App = () => {
                       <span className={`text-xs sm:text-sm transition-colors ${
                         selectedService === 'journal' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
                       }`}>Journal</span>
-                    </div>
+                </div>
 
                     {/* Live Trading */}
                     <div 
