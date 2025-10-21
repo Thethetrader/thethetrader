@@ -1330,7 +1330,6 @@ const App = () => {
                     src={getServiceImage(selectedService)}
                     alt={`Service ${selectedService}`}
                     className="w-full max-w-4xl h-auto object-cover rounded-lg shadow-2xl"
-                    style={{ maxHeight: '400px', objectFit: 'cover' }}
                   />
                   {/* Superposition PWA en bas à droite */}
                   <img 
