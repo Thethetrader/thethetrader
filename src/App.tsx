@@ -7,6 +7,7 @@ import UserChat from './components/UserChat';
 import ProfitLoss from './components/ProfitLoss';
 import LivestreamPage from './components/LivestreamPage';
 import UserLivestreamPage from './components/UserLivestreamPage';
+import PreviewCalendar from './components/PreviewCalendar';
 import { supabase } from './lib/supabase';
 
 
@@ -88,6 +89,35 @@ const App = () => {
   const [password, setPassword] = useState('');
   const [activeChannel, setActiveChannel] = useState('crypto');
   const [previewChannel, setPreviewChannel] = useState('crypto');
+  const [selectedService, setSelectedService] = useState('journal');
+
+  // Fonction pour obtenir l'image du service
+  const getServiceImage = (service: string) => {
+    const images = {
+      'signaux': '/signaux.png',
+      'formation': '/formation.png',
+      'journal': '/journaux.png',
+      'live': '/live.png',
+      'app': '/app.png',
+      'analytics': '/analytics.png',
+      'chat': '/signal.png' // Image par défaut pour chat
+    };
+    return images[service as keyof typeof images] || '/signal.png';
+  };
+
+  // Fonction pour obtenir l'image PWA du service
+  const getServicePwaImage = (service: string) => {
+    const pwaImages: { [key: string]: string } = {
+      'signaux': '/pwa signaux.png',
+      'formation': '/pwa.png', // Pas d'image PWA spécifique
+      'journal': '/pwa journal.png',
+      'live': '/pwa live.png',
+      'app': '/pwa app.png',
+      'analytics': '/pwa analytics.png',
+      'chat': '/pwa.png' // Pas d'image PWA spécifique
+    };
+    return pwaImages[service] || '/pwa.png';
+  };
   const [mobileActiveChannel, setMobileActiveChannel] = useState(null);
   const [showMobileChannel, setShowMobileChannel] = useState(false);
   
@@ -1024,6 +1054,32 @@ const App = () => {
           </div>
           <div className="flex items-center space-x-3">
             <button 
+              onClick={(e) => {
+                e.preventDefault();
+                // Déclencher l'installation PWA
+                if ('serviceWorker' in navigator) {
+                  // Montrer les instructions d'installation PWA pour iOS
+                  if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                    console.log('Pour installer l\'app: Appuyez sur le bouton Partager 📤, puis "Sur l\'écran d\'accueil"');
+                  } else {
+                    // Pour autres navigateurs, essayer le prompt d'installation
+                    if (window.deferredPrompt) {
+                      window.deferredPrompt.prompt();
+                    } else {
+                      console.log('Utilisez le menu de votre navigateur pour "Ajouter à l\'écran d\'accueil" ou "Installer l\'application"');
+                    }
+                  }
+                }
+              }}
+              className="bg-black/80 border-2 border-gray-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold hover:bg-black/90 hover:border-white transition-all duration-300 text-sm sm:text-base flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L3 7l9 5 9-5-9-5zM3 17l9 5 9-5M3 12l9 5 9-5"/>
+              </svg>
+              <span className="hidden sm:inline">Télécharger l'app</span>
+              <span className="sm:hidden">App</span>
+            </button>
+            <button 
               onClick={() => setShowAuthModal(true)}
               className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold hover:opacity-90 text-sm sm:text-base"
             >
@@ -1093,39 +1149,6 @@ const App = () => {
             <p className="text-xl sm:text-3xl text-gray-300 mb-10 sm:mb-12 max-w-4xl mx-auto px-2 mt-4 md:-mt-40">
               Un setup très simple, des signaux expliqués, un journal de performance. Rejoins la communauté et trade en confiance.
             </p>
-            <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 justify-center mb-12 sm:mb-28 px-4">
-              <button 
-                onClick={() => setShowAuthModal(true)}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 sm:px-12 py-5 sm:py-6 rounded-lg text-xl sm:text-2xl font-semibold hover:opacity-90 w-full sm:w-auto"
-              >
-                Se connecter
-              </button>
-              <button 
-                onClick={(e) => {
-                  e.preventDefault();
-                  // Déclencher l'installation PWA
-                  if ('serviceWorker' in navigator) {
-                    // Montrer les instructions d'installation PWA pour iOS
-                    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-                      console.log('Pour installer l\'app: Appuyez sur le bouton Partager 📤, puis "Sur l\'écran d\'accueil"');
-                    } else {
-                      // Pour autres navigateurs, essayer le prompt d'installation
-                      if (window.deferredPrompt) {
-                        window.deferredPrompt.prompt();
-                      } else {
-                        console.log('Utilisez le menu de votre navigateur pour "Ajouter à l\'écran d\'accueil" ou "Installer l\'application"');
-                      }
-                    }
-                  }
-                }}
-                className="bg-black/80 border-2 border-gray-600 text-white px-10 sm:px-12 py-5 sm:py-6 rounded-lg text-xl sm:text-2xl font-semibold hover:bg-black/90 hover:border-white transition-all duration-300 w-full sm:w-auto flex items-center justify-center gap-3"
-              >
-                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2L3 7l9 5 9-5-9-5zM3 17l9 5 9-5M3 12l9 5 9-5"/>
-                </svg>
-                Installer l'app
-              </button>
-            </div>
 
             {/* Barre de défilement - Full Width */}
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 sm:py-10 overflow-hidden relative mb-10 sm:mb-16 w-screen -mx-4 sm:-mx-6">
@@ -1143,55 +1166,201 @@ const App = () => {
 
 
 
-            {/* Nos Services - Mobile Optimized */}
-            <div id="services" className="max-w-7xl mx-auto mb-10 sm:mb-16 px-4 sm:px-6">
-              <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-12 sm:mb-20">
+            {/* Nos Services - Navigation Horizontale */}
+            <div id="services" className="w-full mb-10 sm:mb-16">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-12 sm:mb-20">
+                <h2 className="text-4xl sm:text-5xl font-bold text-white text-center">
                 Les Services
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8">
-                {/* Service 1 */}
-                <div className="bg-gray-800/50 p-4 sm:p-6 rounded-xl border border-gray-600/50 backdrop-blur-sm hover:bg-gray-800/70 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-500/50 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">📊</div>
-                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-purple-400 transition-colors duration-300">Signaux de Trading</h3>
-                  <p className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">
-                    Recevez des signaux de trading précis avec des points d'entrée, de sortie et de stop-loss clairement définis.
-                  </p>
                 </div>
 
-                {/* Service 2 */}
-                <div className="bg-gray-800/50 p-4 sm:p-6 rounded-xl border border-gray-600/50 backdrop-blur-sm hover:bg-gray-800/70 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25 hover:border-blue-500/50 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">📚</div>
-                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors duration-300">Formation Complète</h3>
-                  <p className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">
-                    Apprenez les bases du trading avec nos cours structurés et nos stratégies éprouvées. Apprentissage de mon setup ultra simple.
-                  </p>
-                </div>
+              {/* Barre de navigation horizontale - Full width sur mobile */}
+              <div className="w-screen bg-white/5 backdrop-blur-sm border-y border-white/10 -mx-4 sm:mx-0 sm:w-full">
+                <div className="flex items-center justify-between px-0 sm:px-4 py-6">
+                  {/* Flèche gauche - Masquée sur mobile */}
+                  <button className="hidden sm:block text-gray-400 hover:text-white transition-colors p-2">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
 
-                {/* Service 3 */}
-                <div className="bg-gray-800/50 p-4 sm:p-6 rounded-xl border border-gray-600/50 backdrop-blur-sm hover:bg-gray-800/70 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 hover:border-green-500/50 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">📈</div>
-                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-green-400 transition-colors duration-300">Suivi Performance</h3>
-                  <p className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">
-                    Suivez vos performances avec notre calendrier de trading et nos analyses détaillées. Journal de trading personnalisé pour optimiser votre stratégie.
-                  </p>
-                </div>
+                  {/* Services avec icônes - Scroll horizontal sur mobile */}
+                  <div 
+                    className="flex items-center space-x-4 sm:space-x-8 overflow-x-auto scrollbar-hide flex-1 sm:flex-none px-0 sm:px-0 min-w-max sm:w-auto"
+                    style={{
+                      WebkitOverflowScrolling: 'touch',
+                      scrollBehavior: 'smooth',
+                      overflowX: 'scroll',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    {/* Signaux */}
+                    <div 
+                      className="flex flex-col items-center cursor-pointer group flex-shrink-0"
+                      onClick={() => setSelectedService('signaux')}
+                    >
+                      <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
+                        selectedService === 'signaux' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-purple-600'
+                      }`}>
+                        <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                      </div>
+                      <span className={`text-xs sm:text-sm transition-colors ${
+                        selectedService === 'signaux' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
+                      }`}>Signaux</span>
+                    </div>
 
-                {/* Service 4 - App Mobile */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 p-4 sm:p-6 rounded-xl border border-purple-500/50 backdrop-blur-sm hover:from-purple-600/30 hover:to-pink-600/30 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-400 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">📱</div>
-                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-purple-400 transition-colors duration-300">App Ludique</h3>
-                  <p className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">
-                    <strong>App mobile native iOS</strong> avec notifications push instantanées, suivi des signaux en temps réel, sessions live trading et interface ultra-intuitive. <strong>Tradez partout, tout le temps !</strong>
-                  </p>
-                </div>
+                    {/* Formation */}
+                    <div 
+                      className="flex flex-col items-center cursor-pointer group flex-shrink-0"
+                      onClick={() => setSelectedService('formation')}
+                    >
+                      <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
+                        selectedService === 'formation' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-blue-600'
+                      }`}>
+                        <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                      </div>
+                      <span className={`text-xs sm:text-sm transition-colors ${
+                        selectedService === 'formation' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
+                      }`}>Formation</span>
+                    </div>
 
-                {/* Service 5 - Live Trading */}
-                <div className="bg-gradient-to-br from-red-600/20 to-orange-600/20 p-4 sm:p-6 rounded-xl border border-red-500/50 backdrop-blur-sm hover:from-red-600/30 hover:to-orange-600/30 hover:scale-105 hover:shadow-2xl hover:shadow-red-500/25 hover:border-red-400 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">🎥</div>
-                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-red-400 transition-colors duration-300">Live Trading</h3>
-                  <p className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">
-                    Regardez nos sessions de trading en direct 3 fois par semaine et apprenez en temps réel.
-                  </p>
+                    {/* Journal */}
+                    <div 
+                      className="flex flex-col items-center cursor-pointer group flex-shrink-0"
+                      onClick={() => setSelectedService('journal')}
+                    >
+                      <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
+                        selectedService === 'journal' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-purple-700'
+                      }`}>
+                        <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                      </div>
+                      <span className={`text-xs sm:text-sm transition-colors ${
+                        selectedService === 'journal' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
+                      }`}>Journal</span>
+                    </div>
+
+                    {/* Live Trading */}
+                    <div 
+                      className="flex flex-col items-center cursor-pointer group flex-shrink-0"
+                      onClick={() => setSelectedService('live')}
+                    >
+                      <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
+                        selectedService === 'live' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-red-600'
+                      }`}>
+                        <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <span className={`text-xs sm:text-sm transition-colors ${
+                        selectedService === 'live' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
+                      }`}>Live</span>
+                    </div>
+
+                    {/* App Mobile */}
+                    <div 
+                      className="flex flex-col items-center cursor-pointer group flex-shrink-0"
+                      onClick={() => setSelectedService('app')}
+                    >
+                      <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
+                        selectedService === 'app' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-green-600'
+                      }`}>
+                        <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <span className={`text-xs sm:text-sm transition-colors ${
+                        selectedService === 'app' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
+                      }`}>App</span>
+                    </div>
+
+                    {/* Analytics */}
+                    <div 
+                      className="flex flex-col items-center cursor-pointer group flex-shrink-0"
+                      onClick={() => setSelectedService('analytics')}
+                    >
+                      <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
+                        selectedService === 'analytics' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-indigo-600'
+                      }`}>
+                        <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <span className={`text-xs sm:text-sm transition-colors ${
+                        selectedService === 'analytics' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
+                      }`}>Analytics</span>
+                    </div>
+
+                    {/* Chat */}
+                    <div 
+                      className="flex flex-col items-center cursor-pointer group flex-shrink-0"
+                      onClick={() => setSelectedService('chat')}
+                    >
+                      <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
+                        selectedService === 'chat' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-yellow-600'
+                      }`}>
+                        <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                      </div>
+                      <span className={`text-xs sm:text-sm transition-colors ${
+                        selectedService === 'chat' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
+                      }`}>Chat</span>
+                    </div>
+                  </div>
+
+                  {/* Flèche droite - Masquée sur mobile */}
+                  <button className="hidden sm:block text-gray-400 hover:text-white transition-colors p-2">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Image du service sélectionné */}
+              <div className="w-screen -mx-4 sm:mx-0 sm:w-full">
+                <div className="flex justify-center relative">
+                  <img 
+                    src={getServiceImage(selectedService)}
+                    alt={`Service ${selectedService}`}
+                    className="w-full max-w-4xl h-auto object-cover rounded-lg shadow-2xl"
+                  />
+                  {/* Superposition PWA en bas à droite */}
+                  <img 
+                    src={getServicePwaImage(selectedService)}
+                    alt={`PWA ${selectedService}`}
+                    className="absolute bottom-2 right-2 w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-full shadow-lg border-2 border-white/30"
+                  />
+                </div>
+              </div>
+
+              {/* Description du service sélectionné */}
+              <div className="max-w-7xl mx-auto px-4 sm:px-6">
+                <div className="mt-8 bg-gray-800/50 p-6 rounded-xl border border-gray-600/50 backdrop-blur-sm">
+                  <div className="text-center">
+                    <h3 className="text-2xl font-bold text-white mb-4">📊 Journal de Trading</h3>
+                    <p className="text-gray-300 text-lg max-w-3xl mx-auto">
+                      Suivez vos performances avec notre calendrier de trading interactif. Analysez vos wins et losses, 
+                      identifiez vos raisons de perte et optimisez votre stratégie grâce à nos statistiques détaillées.
+                    </p>
+                    <div className="mt-6 flex justify-center gap-4">
+                      <div className="bg-green-500/20 px-4 py-2 rounded-lg">
+                        <span className="text-green-400 font-medium">74% Win Rate</span>
+                </div>
+                      <div className="bg-blue-500/20 px-4 py-2 rounded-lg">
+                        <span className="text-blue-400 font-medium">+$3,285 P&L</span>
+                      </div>
+                      <div className="bg-purple-500/20 px-4 py-2 rounded-lg">
+                        <span className="text-purple-400 font-medium">Analyse des Pertes</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -3351,100 +3520,8 @@ const App = () => {
                         {/* Vue Trading Journal */}
                         {previewChannel === 'trading-journal' && (
                           <div className="space-y-4">
-                            {/* Calendrier Trading Journal - Code original */}
-                            <div className="bg-gray-800 rounded-lg p-6 border border-gray-600">
-                              <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-xl font-bold text-white">Trading Journal - Décembre 2024</h2>
-                              </div>
-
-                              {/* Jours de la semaine */}
-                              <div className="grid grid-cols-7 gap-1 md:gap-2 mb-4">
-                                {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
-                                  <div key={day} className="text-center text-gray-400 font-semibold py-3 text-sm uppercase tracking-wide">
-                                    {day.substring(0, 3)}
-                                  </div>
-                                ))}
-                              </div>
-
-                              {/* Grille du calendrier */}
-                              <div className="grid grid-cols-7 gap-1 md:gap-2">
-                                {(() => {
-                                  const calendarDays = [
-                                    { date: 1, status: 'win' },
-                                    { date: 2, status: 'win' },
-                                    { date: 3, status: 'loss' },
-                                    { date: 4, status: 'win' },
-                                    { date: 5, status: 'be' },
-                                    { date: 6, status: 'win' },
-                                    { date: 7, status: 'win' },
-                                    { date: 8, status: 'win' },
-                                    { date: 9, status: 'loss' },
-                                    { date: 10, status: 'win' },
-                                    { date: 11, status: 'win' },
-                                    { date: 12, status: 'be' },
-                                    { date: 13, status: 'win' },
-                                    { date: 14, status: 'win' },
-                                    { date: 15, status: 'win' },
-                                    { date: 16, status: 'loss' },
-                                    { date: 17, status: 'win' },
-                                    { date: 18, status: 'win' },
-                                    { date: 19, status: 'win' },
-                                    { date: 20, status: 'be' },
-                                    { date: 21, status: 'win' },
-                                    { date: 22, status: 'win' },
-                                    { date: 23, status: 'loss' },
-                                    { date: 24, status: 'win' },
-                                    { date: 25, status: 'win' },
-                                    { date: 26, status: 'win' },
-                                    { date: 27, status: 'win' },
-                                    { date: 28, status: 'be' },
-                                    { date: 29, status: 'win' },
-                                    { date: 30, status: 'win' },
-                                    { date: 31, status: 'win' }
-                                  ];
-
-                                  const getDayStyle = (day: { date: number; status: string }) => {
-                                    const baseStyle = "h-12 rounded flex items-center justify-center text-white font-semibold text-sm cursor-pointer hover:opacity-80 transition-opacity";
-                                    
-                                    switch (day.status) {
-                                      case 'win':
-                                        return `${baseStyle} bg-green-500`;
-                                      case 'be':
-                                        return `${baseStyle} bg-yellow-500 text-black`;
-                                      case 'loss':
-                                        return `${baseStyle} bg-red-500`;
-                                      default:
-                                        return `${baseStyle} bg-gray-700`;
-                                    }
-                                  };
-
-                                  return calendarDays.map((day) => (
-                                    <div
-                                      key={day.date}
-                                      className={getDayStyle(day)}
-                                    >
-                                      {day.date}
-                                    </div>
-                                  ));
-                                })()}
-                              </div>
-
-                              {/* Légende */}
-                              <div className="flex items-center justify-center gap-6 text-sm mt-6">
-                                <div className="flex items-center gap-2">
-                                  <div className="w-4 h-4 bg-green-500 rounded"></div>
-                                  <span className="text-white">Win</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <div className="w-4 h-4 bg-yellow-500 rounded"></div>
-                                  <span className="text-white">BE</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <div className="w-4 h-4 bg-red-500 rounded"></div>
-                                  <span className="text-white">Loss</span>
-                                </div>
-                              </div>
-                            </div>
+                            {/* Calendrier Trading Journal - Vrai calendrier */}
+                            <PreviewCalendar />
 
                             
                             {/* Statistiques Trading Journal - Format exact */}
@@ -3516,6 +3593,45 @@ const App = () => {
                                     <div className="text-green-400 text-xl font-bold">+$1,600</div>
                                   </div>
                                 </div>
+                              </div>
+
+                              {/* Analyse des Pertes */}
+                              <div className="bg-gray-800 rounded-lg p-4">
+                                <div className="flex items-center justify-between mb-4">
+                                  <h4 className="text-base font-bold text-white">📊 Analyse des Pertes</h4>
+                                  <button className="text-gray-400 hover:text-white text-sm">
+                                    ⚙️
+                                  </button>
+                                </div>
+                                <div className="space-y-2">
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-gray-300 text-sm">Mauvais point d'entrée</span>
+                                    <span className="text-red-400 font-bold">8</span>
+                                  </div>
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-gray-300 text-sm">Stop-loss trop serré</span>
+                                    <span className="text-red-400 font-bold">5</span>
+                                  </div>
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-gray-300 text-sm">Impact de news/événements</span>
+                                    <span className="text-red-400 font-bold">3</span>
+                                  </div>
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-gray-300 text-sm">Erreur psychologique</span>
+                                    <span className="text-red-400 font-bold">2</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Bouton d'ajout de trade */}
+                              <div className="bg-gray-800 rounded-lg p-4">
+                                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium flex items-center justify-center gap-2">
+                                  <span className="text-xl">+</span>
+                                  Ajouter un Trade
+                                </button>
+                                <p className="text-gray-400 text-xs mt-2 text-center">
+                                  Ajoutez vos trades avec analyse des raisons de perte
+                                </p>
                               </div>
                             </div>
                           </div>
