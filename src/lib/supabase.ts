@@ -871,6 +871,7 @@ export interface PersonalTrade {
   pnl: string;
   status: 'WIN' | 'LOSS' | 'BREAKEVEN';
   lossReason?: string;
+  lossReasons?: string[];
   notes?: string;
   image1?: string | null;
   image2?: string | null;
@@ -928,6 +929,7 @@ export const addPersonalTrade = async (trade: Omit<PersonalTrade, 'id' | 'user_i
       pnl: parseFloat(trade.pnl),
       status: trade.status,
       loss_reason: trade.lossReason || null,
+      loss_reasons: trade.lossReasons ? JSON.stringify(trade.lossReasons) : null,
       notes: trade.notes || null,
       image1: image1Base64,
       image2: image2Base64,
@@ -1015,6 +1017,7 @@ export const getPersonalTrades = async (limit: number = 100): Promise<PersonalTr
         pnl: trade.pnl.toString(),
         status: trade.status,
         lossReason: trade.loss_reason || undefined,
+        lossReasons: trade.loss_reasons ? JSON.parse(trade.loss_reasons) : undefined,
         notes: trade.notes || undefined,
         image1: trade.image1 || undefined,
         image2: trade.image2 || undefined,

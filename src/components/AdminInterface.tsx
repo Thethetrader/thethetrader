@@ -6925,26 +6925,17 @@ export default function AdminInterface() {
                 <h4 className="text-sm font-medium text-gray-300 mb-3">
                   {editingIndex !== null ? '✏️ Modifier la raison' : '➕ Ajouter une raison'}
                 </h4>
-                <div className="grid grid-cols-2 gap-3 mb-3">
+                <div className="mb-3">
                   <input
                     type="text"
-                    placeholder="Emoji"
-                    value={newReason.emoji}
-                    onChange={(e) => setNewReason({...newReason, emoji: e.target.value})}
-                    className="bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white text-center text-2xl"
-                    maxLength={2}
-                    disabled={editingIndex !== null}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Nom"
+                    placeholder="Nom de la raison"
                     value={newReason.label}
                     onChange={(e) => {
                       const label = e.target.value;
                       const value = label.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
                       setNewReason({...newReason, label, value});
                     }}
-                    className="flex-1 bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white"
+                    className="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white"
                   />
                 </div>
                 <div className="flex gap-2">
@@ -6966,8 +6957,8 @@ export default function AdminInterface() {
                         localStorage.setItem('customLossReasons', JSON.stringify(updated));
                         setEditingIndex(null);
                       } else {
-                        if (!newReason.value || !newReason.emoji || !newReason.label) {
-                          alert('Remplis tous les champs');
+                        if (!newReason.value || !newReason.label) {
+                          alert('Remplis le nom');
                           return;
                         }
                         const updated = [...customLossReasons, newReason];
@@ -7008,16 +6999,33 @@ export default function AdminInterface() {
                       <div className="text-white font-medium">{reason.label}</div>
                       <div className="text-xs text-gray-400 font-mono">{reason.value}</div>
                     </div>
-                    <button
-                      onClick={() => {
-                        setNewReason(reason);
-                        setEditingIndex(index);
-                      }}
-                      className="text-blue-400 hover:text-blue-300 px-3 py-1 text-sm"
-                      title="Modifier le nom"
-                    >
-                      ✏️
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setNewReason(reason);
+                          setEditingIndex(index);
+                        }}
+                        className="text-blue-400 hover:text-blue-300 px-3 py-1 text-sm"
+                        title="Modifier le nom"
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (confirm(`Supprimer "${reason.label}" ?`)) {
+                            const updated = customLossReasons.filter((_, i) => i !== index);
+                            setCustomLossReasons(updated);
+                            localStorage.setItem('customLossReasons', JSON.stringify(updated));
+                            setEditingIndex(null);
+                            setNewReason({ value: '', emoji: '', label: '' });
+                          }
+                        }}
+                        className="text-red-400 hover:text-red-300 px-3 py-1 text-sm"
+                        title="Supprimer"
+                      >
+                        🗑️
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>

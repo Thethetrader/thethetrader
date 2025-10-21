@@ -1270,6 +1270,7 @@ export default function TradingPlatformShell() {
     pnl: '',
     status: 'WIN' as 'WIN' | 'LOSS' | 'BE',
     lossReason: '',
+    lossReasons: [] as string[],
     notes: '',
     image1: null as File | null,
     image2: null as File | null
@@ -1992,22 +1993,47 @@ export default function TradingPlatformShell() {
   // Fonctions pour analyser les pertes par raison
   const getLossAnalysis = () => {
     console.log('🔄 getLossAnalysis appelé - personalTrades:', personalTrades.length);
-    const accountTrades = personalTrades.filter(trade => 
-      (trade.account || 'Compte Principal') === selectedAccount
-    );
-    const lossTrades = accountTrades.filter(t => t.status === 'LOSS');
-    console.log('📊 Loss trades:', lossTrades.length);
+    
+    // Utiliser la même logique que le calendrier
+    const accountTrades = getTradesForSelectedAccount();
+    
+    // Filtrer par mois sélectionné (utiliser currentDate du calendrier)
+    const dateToUse = currentDate;
+    const selectedMonth = dateToUse.getMonth();
+    const selectedYear = dateToUse.getFullYear();
+    
+    console.log('📅 Filtrage par mois - selectedDate:', selectedDate, 'Mois:', selectedMonth + 1, 'Année:', selectedYear);
+    
+    const monthlyTrades = accountTrades.filter(trade => {
+      const tradeDate = new Date(trade.date);
+      const tradeMonth = tradeDate.getMonth();
+      const tradeYear = tradeDate.getFullYear();
+      const matchesMonth = tradeMonth === selectedMonth && tradeYear === selectedYear;
+      
+      console.log(`Trade ${trade.date}: Mois ${tradeMonth + 1}/${tradeYear} - Match: ${matchesMonth}`);
+      
+      return matchesMonth;
+    });
+    
+    const lossTrades = monthlyTrades.filter(t => t.status === 'LOSS');
+    console.log('📊 Loss trades pour le mois:', lossTrades.length);
     
     const lossByReason: { [key: string]: { count: number, totalPnl: number, trades: any[] } } = {};
     
     lossTrades.forEach(trade => {
-      const reason = trade.lossReason || 'non_specifiee';
-      if (!lossByReason[reason]) {
-        lossByReason[reason] = { count: 0, totalPnl: 0, trades: [] };
-      }
-      lossByReason[reason].count++;
-      lossByReason[reason].totalPnl += parsePnL(trade.pnl);
-      lossByReason[reason].trades.push(trade);
+      // Gérer les multiples raisons (lossReasons) ou la raison unique (lossReason)
+      const reasons = trade.lossReasons && trade.lossReasons.length > 0 
+        ? trade.lossReasons 
+        : (trade.lossReason ? [trade.lossReason] : ['non_specifiee']);
+      
+      reasons.forEach(reason => {
+        if (!lossByReason[reason]) {
+          lossByReason[reason] = { count: 0, totalPnl: 0, trades: [] };
+        }
+        lossByReason[reason].count++;
+        lossByReason[reason].totalPnl += parsePnL(trade.pnl);
+        lossByReason[reason].trades.push(trade);
+      });
     });
     
     const sortedReasons = Object.entries(lossByReason)
@@ -2030,12 +2056,27 @@ export default function TradingPlatformShell() {
 
   // Met à jour l'analyse des pertes quand personalTrades ou selectedAccount change
   useEffect(() => {
-    console.log('🔄 Mise à jour analyse des pertes - personalTrades:', personalTrades.length, 'selectedAccount:', selectedAccount);
+    console.log('🔄 Mise à jour analyse des pertes - personalTrades:', personalTrades.length, 'selectedAccount:', selectedAccount, 'selectedDate:', selectedDate);
+    
+    // Forcer la mise à jour immédiate
+    const updateAnalysis = () => {
+      const analysis = getLossAnalysis();
+      console.log('📊 Analyse calculée:', analysis);
+      setLossAnalysisState(analysis);
+      setRefreshKey(prev => prev + 1);
+    };
+    
+    updateAnalysis();
+  }, [personalTrades, selectedAccount, currentDate]); // Se déclenche quand personalTrades, selectedAccount ou currentDate change
+
+  // Mise à jour spécifique quand currentDate change (navigation mois)
+  useEffect(() => {
+    console.log('📅 currentDate changé, mise à jour analyse des pertes:', currentDate);
     const analysis = getLossAnalysis();
-    console.log('📊 Analyse calculée:', analysis);
+    console.log('📊 Analyse recalculée pour le nouveau mois:', analysis);
     setLossAnalysisState(analysis);
     setRefreshKey(prev => prev + 1);
-  }, [personalTrades, selectedAccount]); // Se déclenche quand personalTrades ou selectedAccount change
+  }, [currentDate]);
 
   // Force le re-render du calendrier quand personalTrades change
   useEffect(() => {
@@ -2642,6 +2683,7 @@ export default function TradingPlatformShell() {
       pnl: tradeData.pnl,
       status: tradeData.status,
       lossReason: tradeData.lossReason,
+      lossReasons: tradeData.lossReasons,
       notes: tradeData.notes,
       image1: tradeData.image1,
       image2: tradeData.image2,
@@ -2677,6 +2719,7 @@ export default function TradingPlatformShell() {
           pnl: '',
           status: 'WIN',
           lossReason: '',
+          lossReasons: [],
           notes: '',
           image1: null,
           image2: null
@@ -3683,9 +3726,9 @@ export default function TradingPlatformShell() {
               {(() => {
                 if (lossAnalysisState.totalLosses > 0) {
                   return (
-                    <div key={refreshKey} className="bg-gray-700 rounded-lg p-3 mt-3">
-                      <div className="flex items-center justify-between mb-3">
-                        <h4 className="text-sm font-medium text-red-300">📊 Analyse des Pertes</h4>
+                    <div key={refreshKey} className="bg-gray-700 rounded-lg p-4 mt-3">
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="text-base font-medium text-red-300">📊 Analyse des Pertes</h4>
                         <div className="flex gap-2">
                           <button
                             onClick={(e) => {
@@ -3712,22 +3755,27 @@ export default function TradingPlatformShell() {
                           </button>
                         </div>
                       </div>
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-400">Total pertes:</span>
-                          <span className="text-red-300">{lossAnalysisState.totalLosses}</span>
+                          <span className="text-red-300 font-medium">{lossAnalysisState.totalLosses}</span>
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-400">P&L total pertes:</span>
-                          <span className="text-red-300">${lossAnalysisState.totalLossPnl}</span>
+                          <span className="text-red-300 font-medium">${lossAnalysisState.totalLossPnl}</span>
                         </div>
                         {lossAnalysisState.reasons.length > 0 ? (
-                          lossAnalysisState.reasons.slice(0, 3).map((reason, index) => (
-                            <div key={reason.reason} className="flex justify-between text-xs">
-                              <span className="text-gray-400 truncate">{getCustomLossReasonLabel(reason.reason)}</span>
-                              <span className="text-red-300">{reason.count} ({reason.percentage}%)</span>
+                          <div className="mt-3">
+                            <div className="text-xs text-gray-500 mb-2">Raisons des pertes:</div>
+                            <div className="space-y-2">
+                              {lossAnalysisState.reasons.map((reason, index) => (
+                                <div key={reason.reason} className="flex justify-between text-sm">
+                                  <span className="text-gray-300">{getCustomLossReasonLabel(reason.reason)}</span>
+                                  <span className="text-red-300 font-medium">{reason.count} ({reason.percentage}%)</span>
+                                </div>
+                              ))}
                             </div>
-                          ))
+                          </div>
                         ) : (
                           <div className="text-xs text-gray-500 italic">
                             Ajoute des raisons aux pertes pour voir l'analyse
@@ -3860,20 +3908,17 @@ export default function TradingPlatformShell() {
                     }`}>
                       {weekData.week}
                     </div>
-                    <div className="text-xs text-gray-400">
-                      {weekData.trades} trade{weekData.trades !== 1 ? 's' : ''}
-                  </div>
                   </div>
                   <div className="flex items-center gap-2">
                     {(weekData.wins > 0 || weekData.losses > 0) ? (
                       <div className="flex items-center gap-1">
                         {weekData.wins > 0 && (
-                          <div className="text-sm bg-green-500 text-white px-3 py-1 rounded-lg font-bold shadow-lg">
+                          <div className="text-xs bg-green-400/70 text-white px-2 py-1 rounded font-bold">
                             {weekData.wins}W
                           </div>
                         )}
                         {weekData.losses > 0 && (
-                          <div className="text-sm bg-red-500 text-white px-3 py-1 rounded-lg font-bold shadow-lg">
+                          <div className="text-xs bg-red-400/70 text-white px-2 py-1 rounded font-bold">
                             {weekData.losses}L
                           </div>
                         )}
@@ -6411,22 +6456,59 @@ export default function TradingPlatformShell() {
                   </div>
                 </div>
 
-                {/* Menu déroulant pour la raison du stop-loss (affiché seulement si LOSS) */}
+                {/* Sélection multiple des raisons du stop-loss (affiché seulement si LOSS) */}
                 {tradeData.status === 'LOSS' && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Raison du Stop-Loss</label>
-                    <select
-                      value={tradeData.lossReason}
-                      onChange={(e) => setTradeData({...tradeData, lossReason: e.target.value})}
-                      className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
-                    >
-                      <option value="">Sélectionner une raison...</option>
-                      {customLossReasons.map(reason => (
-                        <option key={reason.value} value={reason.value}>
-                          {reason.emoji} {reason.label}
-                        </option>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Raisons du Stop-Loss (max 3)
+                    </label>
+                    <div className="space-y-2">
+                      {[0, 1, 2].map(index => (
+                        <div key={index} className="flex items-center space-x-2">
+                          <select
+                            value={tradeData.lossReasons[index] || ''}
+                            onChange={(e) => {
+                              const newLossReasons = [...tradeData.lossReasons];
+                              if (e.target.value) {
+                                newLossReasons[index] = e.target.value;
+                              } else {
+                                newLossReasons.splice(index, 1);
+                              }
+                              setTradeData({...tradeData, lossReasons: newLossReasons});
+                            }}
+                            className="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
+                          >
+                            <option value="">{index === 0 ? 'Sélectionner une raison...' : 'Optionnel...'}</option>
+                            {customLossReasons.map(reason => (
+                              <option key={reason.value} value={reason.value}>
+                                {reason.emoji} {reason.label}
+                              </option>
+                            ))}
+                          </select>
+                          {index > 0 && tradeData.lossReasons[index] && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newLossReasons = [...tradeData.lossReasons];
+                                newLossReasons.splice(index, 1);
+                                setTradeData({...tradeData, lossReasons: newLossReasons});
+                              }}
+                              className="text-red-400 hover:text-red-300 px-2"
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
                       ))}
-                    </select>
+                    </div>
+                    {tradeData.lossReasons.length > 0 && (
+                      <div className="mt-2 text-sm text-gray-400">
+                        Raisons sélectionnées: {tradeData.lossReasons.map(reason => {
+                          const reasonObj = customLossReasons.find(r => r.value === reason);
+                          return reasonObj ? `${reasonObj.emoji} ${reasonObj.label}` : reason;
+                        }).join(', ')}
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -7118,26 +7200,17 @@ export default function TradingPlatformShell() {
                 <h4 className="text-sm font-medium text-gray-300 mb-3">
                   {editingIndex !== null ? '✏️ Modifier la raison' : '➕ Ajouter une raison'}
                 </h4>
-                <div className="grid grid-cols-2 gap-3 mb-3">
+                <div className="mb-3">
                   <input
                     type="text"
-                    placeholder="Emoji"
-                    value={newReason.emoji}
-                    onChange={(e) => setNewReason({...newReason, emoji: e.target.value})}
-                    className="bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white text-center text-2xl"
-                    maxLength={2}
-                    disabled={editingIndex !== null}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Nom"
+                    placeholder="Nom de la raison"
                     value={newReason.label}
                     onChange={(e) => {
                       const label = e.target.value;
                       const value = label.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
                       setNewReason({...newReason, label, value});
                     }}
-                    className="flex-1 bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white"
+                    className="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white"
                   />
                 </div>
                 <div className="flex gap-2">
@@ -7161,8 +7234,8 @@ export default function TradingPlatformShell() {
                         setEditingIndex(null);
                       } else {
                         // Ajouter
-                        if (!newReason.value || !newReason.emoji || !newReason.label) {
-                          alert('Remplis tous les champs');
+                        if (!newReason.value || !newReason.label) {
+                          alert('Remplis le nom');
                           return;
                         }
                         const updated = [...customLossReasons, newReason];
@@ -7203,16 +7276,33 @@ export default function TradingPlatformShell() {
                       <div className="text-white font-medium">{reason.label}</div>
                       <div className="text-xs text-gray-400 font-mono">{reason.value}</div>
                     </div>
-                    <button
-                      onClick={() => {
-                        setNewReason(reason);
-                        setEditingIndex(index);
-                      }}
-                      className="text-blue-400 hover:text-blue-300 px-3 py-1 text-sm"
-                      title="Modifier le nom"
-                    >
-                      ✏️
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setNewReason(reason);
+                          setEditingIndex(index);
+                        }}
+                        className="text-blue-400 hover:text-blue-300 px-3 py-1 text-sm"
+                        title="Modifier le nom"
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (confirm(`Supprimer "${reason.label}" ?`)) {
+                            const updated = customLossReasons.filter((_, i) => i !== index);
+                            setCustomLossReasons(updated);
+                            localStorage.setItem('customLossReasons', JSON.stringify(updated));
+                            setEditingIndex(null);
+                            setNewReason({ value: '', emoji: '', label: '' });
+                          }
+                        }}
+                        className="text-red-400 hover:text-red-300 px-3 py-1 text-sm"
+                        title="Supprimer"
+                      >
+                        🗑️
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
