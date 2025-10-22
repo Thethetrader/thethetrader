@@ -1860,9 +1860,9 @@ const App = () => {
                                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                               </svg>
                             </div>
-                            <h3 className="text-lg sm:text-xl font-bold text-white">Rapports avec les données de base</h3>
+                            <h3 className="text-lg sm:text-xl font-bold text-white">Analysez vos statistiques</h3>
                           </div>
-                          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed">Visualisez vos performances de trading avec des rapports détaillés et des statistiques essentielles.</p>
+                          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed">Visualisez vos performances avec plus de 50 rapports détaillés pour comprendre vos résultats.</p>
                           
                           {/* Image cadre 1 */}
                           <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl overflow-hidden shadow-xl border border-white/20">
@@ -1885,9 +1885,9 @@ const App = () => {
                                 <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
                               </svg>
                             </div>
-                            <h3 className="text-lg sm:text-xl font-bold text-white">Étudiez vos stop loss</h3>
+                            <h3 className="text-lg sm:text-xl font-bold text-white">Comprenez vos erreurs</h3>
                           </div>
-                          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed">C'est comme ça qu'on progresse le mieux. Analysez vos erreurs et optimisez votre gestion du risque.</p>
+                          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed">Identifiez vos points faibles en analysant vos pertes pour améliorer votre gestion du risque.</p>
                           
                           {/* Image cadre 2 */}
                           <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl overflow-hidden shadow-xl border border-white/20">
@@ -1910,9 +1910,9 @@ const App = () => {
                                 <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
                               </svg>
                             </div>
-                            <h3 className="text-lg sm:text-xl font-bold text-white">Vision générale du mois</h3>
+                            <h3 className="text-lg sm:text-xl font-bold text-white">Suivez votre progression</h3>
                           </div>
-                          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed">Obtenez un résumé complet de vos performances mensuelles pour identifier vos forces et faiblesses.</p>
+                          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed">Obtenez une vue d'ensemble de vos performances mensuelles pour mesurer votre évolution.</p>
                           
                           {/* Image cadre 3 */}
                           <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl overflow-hidden shadow-xl border border-white/20">
