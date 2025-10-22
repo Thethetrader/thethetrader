@@ -1414,7 +1414,7 @@ const App = () => {
                   <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Chacun a son propre journal de trading pour suivre ses trades et analyser ses performances.</div>
                 </div>
               </div>
-
+              
               {/* Section 1 - Formation */}
               <div className="mt-16 sm:mt-20">
                 <div className="relative">
@@ -1457,8 +1457,8 @@ const App = () => {
                       Votre navigateur ne supporte pas la lecture de vidéos.
                     </video>
                   </div>
-                </div>
               </div>
+            </div>
 
               {/* Section 2 - Analyse des Trades */}
               <div className="mt-16 sm:mt-20">
