@@ -1137,17 +1137,15 @@ const App = () => {
         <>
           {/* Hero Section - Mobile Optimized */}
           <div className="text-center pt-20 sm:pt-32 pb-0 px-4 sm:px-6">
-            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 sm:mb-8">
-              <span className="text-white">Everything you ever</span>
+            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 sm:mb-8">
+              <span className="text-white">Ne t'abonne pas si tu ne veux pas</span>
               <br />
               <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-                wanted to know
+                vraiment apprendre à trader.
               </span>
-              <br />
-              <span className="text-white">about your trading...</span>
             </h1>
             <p className="text-xl sm:text-2xl text-gray-300 mb-4">
-              ...but your spreadsheets never told you.
+              Ici, pas de promesses magiques : juste une méthode claire, simple et efficace pour comprendre le marché et progresser chaque jour.
             </p>
             <p className="text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed">
               Trading pour les nuls shows you the metrics that matter—and the behaviours that lead to profit 
