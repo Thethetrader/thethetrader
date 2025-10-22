@@ -1869,7 +1869,7 @@ const App = () => {
                             <img 
                               src="/cadre1.png" 
                               alt="Journal statistiques" 
-                              className="w-full h-auto"
+                              className="w-full h-[400px] sm:h-[500px] object-cover object-top"
                             />
                           </div>
                         </div>
@@ -1894,7 +1894,7 @@ const App = () => {
                             <img 
                               src="/cadre2.png" 
                               alt="Journal comportements" 
-                              className="w-full h-auto"
+                              className="w-full h-[400px] sm:h-[500px] object-cover object-top"
                             />
                           </div>
                         </div>
@@ -1919,7 +1919,7 @@ const App = () => {
                             <img 
                               src="/cadre3.png" 
                               alt="Journal résumé" 
-                              className="w-full h-auto"
+                              className="w-full h-[400px] sm:h-[500px] object-cover object-top"
                             />
                           </div>
                         </div>
