@@ -1265,7 +1265,7 @@ const App = () => {
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
                       onClick={() => {
                         setSelectedService('formation');
-                        scrollToSection('services');
+                        scrollToSection('section-formation');
                       }}
                       style={{ scrollSnapAlign: 'start' }}
                     >
@@ -1286,7 +1286,7 @@ const App = () => {
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
                       onClick={() => {
                         setSelectedService('signaux');
-                        scrollToSection('services');
+                        scrollToSection('section-signaux');
                       }}
                       style={{ scrollSnapAlign: 'start' }}
                     >
@@ -1307,7 +1307,7 @@ const App = () => {
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
                       onClick={() => {
                         setSelectedService('journal');
-                        scrollToSection('services');
+                        scrollToSection('section-journal');
                       }}
                       style={{ scrollSnapAlign: 'start' }}
                     >
@@ -1328,7 +1328,7 @@ const App = () => {
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
                       onClick={() => {
                         setSelectedService('live');
-                        scrollToSection('services');
+                        scrollToSection('section-live');
                       }}
                       style={{ scrollSnapAlign: 'start' }}
                     >
@@ -1349,7 +1349,7 @@ const App = () => {
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
                       onClick={() => {
                         setSelectedService('app');
-                        scrollToSection('services');
+                        scrollToSection('section-app');
                       }}
                       style={{ scrollSnapAlign: 'start' }}
                     >
@@ -1370,7 +1370,7 @@ const App = () => {
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
                       onClick={() => {
                         setSelectedService('analytics');
-                        scrollToSection('services');
+                        scrollToSection('section-app');
                       }}
                       style={{ scrollSnapAlign: 'start' }}
                     >
@@ -1391,7 +1391,7 @@ const App = () => {
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
                       onClick={() => {
                         setSelectedService('chat');
-                        scrollToSection('services');
+                        scrollToSection('section-app');
                       }}
                       style={{ scrollSnapAlign: 'start' }}
                     >
@@ -1732,7 +1732,7 @@ const App = () => {
               </div>
               
               {/* Section 1 - Formation */}
-              <div className="mt-16 sm:mt-20">
+              <div id="section-formation" className="mt-16 sm:mt-20">
                 <div className="relative">
                   {/* Numéro 1 en haut à gauche */}
                   <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
@@ -1777,7 +1777,7 @@ const App = () => {
             </div>
 
               {/* Section 2 - Signaux */}
-              <div className="mt-16 sm:mt-20">
+              <div id="section-signaux" className="mt-16 sm:mt-20">
                 <div className="relative">
                   {/* Numéro 2 en haut à gauche */}
                   <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
@@ -1821,7 +1821,7 @@ const App = () => {
               </div>
 
               {/* Section 3 - Journal */}
-              <div className="mt-16 sm:mt-20">
+              <div id="section-journal" className="mt-16 sm:mt-20">
                 <div className="relative">
                   {/* Numéro 3 en haut à gauche */}
                   <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
@@ -2024,7 +2024,7 @@ const App = () => {
               </div>
 
               {/* Section 4 - Live */}
-              <div className="mt-16 sm:mt-20">
+              <div id="section-live" className="mt-16 sm:mt-20">
                 <div className="relative">
                   {/* Numéro 4 en haut à gauche */}
                   <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
@@ -2069,7 +2069,7 @@ const App = () => {
               </div>
 
               {/* Section 5 - App */}
-              <div className="mt-16 sm:mt-20">
+              <div id="section-app" className="mt-16 sm:mt-20">
                 <div className="relative">
                   {/* Numéro 5 en haut à gauche */}
                   <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
