@@ -1849,15 +1849,15 @@ const App = () => {
                       <div className="group relative bg-gradient-to-br from-purple-900/30 via-purple-800/20 to-blue-900/30 rounded-xl sm:rounded-2xl p-4 sm:p-8 border border-purple-500/30 backdrop-blur-sm hover:border-purple-400/60 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20">
                         <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-blue-600/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <div className="relative z-10">
-                          <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                          <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                             <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-purple-400 to-purple-600 rounded-lg flex items-center justify-center">
                               <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                               </svg>
                             </div>
-                            <h3 className="text-lg sm:text-xl font-bold text-white">Analysez vos statistiques</h3>
+                            <h3 className="text-lg sm:text-xl font-bold text-white text-center">Analysez vos statistiques</h3>
                           </div>
-                          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed min-h-[48px]">Visualisez vos performances avec plus de 50 rapports détaillés pour comprendre vos résultats.</p>
+                          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed min-h-[48px] text-center">Visualisez vos performances avec plus de 50 rapports détaillés pour comprendre vos résultats.</p>
                           
                           {/* Image cadre 1 */}
                           <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl overflow-hidden shadow-xl border border-white/20">
