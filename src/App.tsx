@@ -1037,7 +1037,7 @@ const App = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Navigation - Masquée en PWA */}
       {!isPWA && (
-        <nav className="flex items-center justify-between p-4 sm:p-6 relative z-50 bg-white shadow-sm">
+        <nav className="flex items-center justify-between p-4 sm:p-6 relative z-50">
           <div className="flex items-center">
             <img 
               src="/logo-removebg-preview.png" 
@@ -1047,10 +1047,10 @@ const App = () => {
             />
           </div>
           <div className="hidden md:flex space-x-8">
-            <a href="#services" className="text-gray-600 hover:text-gray-900 transition-all duration-200">Services</a>
-            <a href="#about-thethetrader" className="text-gray-600 hover:text-gray-900 transition-all duration-200">À propos</a>
-            <a href="#interface" className="text-gray-600 hover:text-gray-900 transition-all duration-200">La plateforme</a>
-            <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-all duration-200">Prix</a>
+            <a href="#services" className="text-gray-300 hover:text-white transition-all duration-200">Services</a>
+            <a href="#about-thethetrader" className="text-gray-300 hover:text-white transition-all duration-200">À propos</a>
+            <a href="#interface" className="text-gray-300 hover:text-white transition-all duration-200">La plateforme</a>
+            <a href="#pricing" className="text-gray-300 hover:text-white transition-all duration-200">Prix</a>
           </div>
           <div className="flex items-center space-x-3">
             <button 
@@ -1350,7 +1350,7 @@ const App = () => {
                   <img 
                     src={getServicePwaImage(selectedService)}
                     alt={`PWA ${selectedService}`}
-                    className="absolute top-1/3 right-2 w-32 h-48 sm:top-1/2 sm:left-1/2 sm:transform sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-36 sm:h-48 object-cover rounded-lg shadow-lg border-2 border-white/30"
+                    className="absolute bottom-2 right-2 w-32 h-48 sm:w-36 sm:h-48 object-cover rounded-lg shadow-lg border-2 border-white/30"
                   />
                 </div>
               </div>
