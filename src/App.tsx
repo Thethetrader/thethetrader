@@ -1214,14 +1214,14 @@ const App = () => {
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
                       onClick={() => setSelectedService('signaux')}
                     >
-                      <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
+                      <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
                         selectedService === 'signaux' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-purple-600'
                       }`}>
-                        <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
                       </div>
-                      <span className={`text-xs sm:text-sm transition-colors ${
+                      <span className={`text-xs sm:text-base transition-colors ${
                         selectedService === 'signaux' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
                       }`}>Signaux</span>
                 </div>
@@ -1231,14 +1231,14 @@ const App = () => {
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
                       onClick={() => setSelectedService('formation')}
                     >
-                      <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
+                      <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
                         selectedService === 'formation' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-blue-600'
                       }`}>
-                        <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                         </svg>
                       </div>
-                      <span className={`text-xs sm:text-sm transition-colors ${
+                      <span className={`text-xs sm:text-base transition-colors ${
                         selectedService === 'formation' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
                       }`}>Formation</span>
                 </div>
@@ -1248,14 +1248,14 @@ const App = () => {
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
                       onClick={() => setSelectedService('journal')}
                     >
-                      <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
+                      <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
                         selectedService === 'journal' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-purple-700'
                       }`}>
-                        <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                       </div>
-                      <span className={`text-xs sm:text-sm transition-colors ${
+                      <span className={`text-xs sm:text-base transition-colors ${
                         selectedService === 'journal' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
                       }`}>Journal</span>
                 </div>
@@ -1265,14 +1265,14 @@ const App = () => {
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
                       onClick={() => setSelectedService('live')}
                     >
-                      <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
+                      <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
                         selectedService === 'live' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-red-600'
                       }`}>
-                        <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                         </svg>
                 </div>
-                      <span className={`text-xs sm:text-sm transition-colors ${
+                      <span className={`text-xs sm:text-base transition-colors ${
                         selectedService === 'live' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
                       }`}>Live</span>
               </div>
@@ -1282,14 +1282,14 @@ const App = () => {
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
                       onClick={() => setSelectedService('app')}
                     >
-                      <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
+                      <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
                         selectedService === 'app' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-green-600'
                       }`}>
-                        <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                         </svg>
                       </div>
-                      <span className={`text-xs sm:text-sm transition-colors ${
+                      <span className={`text-xs sm:text-base transition-colors ${
                         selectedService === 'app' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
                       }`}>App</span>
                     </div>
@@ -1299,14 +1299,14 @@ const App = () => {
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
                       onClick={() => setSelectedService('analytics')}
                     >
-                      <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
+                      <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
                         selectedService === 'analytics' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-indigo-600'
                       }`}>
-                        <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                       </div>
-                      <span className={`text-xs sm:text-sm transition-colors ${
+                      <span className={`text-xs sm:text-base transition-colors ${
                         selectedService === 'analytics' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
                       }`}>Analytics</span>
                     </div>
@@ -1316,14 +1316,14 @@ const App = () => {
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
                       onClick={() => setSelectedService('chat')}
                     >
-                      <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
+                      <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
                         selectedService === 'chat' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-yellow-600'
                       }`}>
-                        <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                         </svg>
                       </div>
-                      <span className={`text-xs sm:text-sm transition-colors ${
+                      <span className={`text-xs sm:text-base transition-colors ${
                         selectedService === 'chat' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
                       }`}>Chat</span>
                     </div>
