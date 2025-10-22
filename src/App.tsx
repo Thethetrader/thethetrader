@@ -1774,62 +1774,6 @@ const App = () => {
                     </video>
                   </div>
 
-                  {/* Cadre explicatif AMD */}
-                  <div className="max-w-6xl mx-auto">
-                    <div className="bg-gradient-to-br from-purple-900/30 via-purple-800/20 to-blue-900/30 rounded-2xl p-6 sm:p-10 border border-purple-500/30 backdrop-blur-sm">
-                      <div className="flex items-center gap-3 mb-6">
-                        <span className="text-4xl">🧠</span>
-                        <h3 className="text-2xl sm:text-3xl font-bold text-white">Comment le prix fonctionne : 3 phases essentielles</h3>
-                      </div>
-                      
-                      <div className="space-y-6 mb-8">
-                        <p className="text-gray-300 text-lg">
-                          Le prix, c'est comme un <span className="text-white font-semibold">voyage de A à B 🚗💨</span>
-                        </p>
-                        <p className="text-gray-300 text-lg">
-                          Pour avancer, il a besoin de <span className="text-white font-semibold">liquidité</span>, comme une voiture a besoin d'<span className="text-white font-semibold">essence ⛽</span>
-                        </p>
-                        <p className="text-gray-300 text-lg">
-                          Ce mouvement suit <span className="text-white font-semibold">3 phases clés 🔄</span> :
-                        </p>
-                      </div>
-
-                      <div className="space-y-4 mb-8">
-                        <div className="flex items-start gap-4 bg-white/5 p-4 rounded-xl border border-purple-500/20">
-                          <span className="text-2xl flex-shrink-0">1️⃣</span>
-                          <div>
-                            <h4 className="text-xl font-bold text-white mb-2">Accumulation – le prix se prépare 🔴⛽</h4>
-                            <p className="text-gray-300">Phase de préparation où le prix accumule de l'énergie</p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-start gap-4 bg-white/5 p-4 rounded-xl border border-blue-500/20">
-                          <span className="text-2xl flex-shrink-0">2️⃣</span>
-                          <div>
-                            <h4 className="text-xl font-bold text-white mb-2">Manipulation – il piège les traders 🎯🍯</h4>
-                            <p className="text-gray-300">En allant chercher l'essence (prise de liquidité). Il <span className="text-white font-semibold">fait le plein</span></p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-start gap-4 bg-white/5 p-4 rounded-xl border border-green-500/20">
-                          <span className="text-2xl flex-shrink-0">3️⃣</span>
-                          <div>
-                            <h4 className="text-xl font-bold text-white mb-2">Distribution – le vrai mouvement commence 🚀📈</h4>
-                            <p className="text-gray-300">Vers l'objectif, le mouvement directionnel principal</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="bg-gradient-to-r from-purple-600/20 to-blue-600/20 p-6 rounded-xl border border-purple-500/30">
-                        <p className="text-gray-300 text-lg mb-3">
-                          Ce modèle s'applique à <span className="text-white font-semibold">toutes les unités de temps, même à une seule bougie 🕯️</span>
-                        </p>
-                        <p className="text-white text-xl font-bold">
-                          — on l'appelle le <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">modèle AMD</span> (Accumulation – Manipulation – Distribution) 🔄
-                        </p>
-                      </div>
-                    </div>
-                  </div>
               </div>
             </div>
 
@@ -2888,148 +2832,25 @@ const App = () => {
 
                         {/* Vue Formation */}
                         {mobileActiveChannel === 'formation' && (
-                          <div className="overflow-x-hidden max-w-full min-w-0 overflow-y-auto max-h-[calc(100vh-200px)]">
-                            <div className="space-y-6 overflow-x-hidden p-4">
-                              
-                              {/* En-tête Scalping Trading */}
-                              <div className="bg-gradient-to-r from-pink-600/20 to-purple-600/20 border border-pink-500/30 rounded-lg p-4">
+                          <div className="overflow-x-hidden max-w-full min-w-0">
+                            <div className="space-y-4 overflow-x-hidden">
+                              <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-4 overflow-x-hidden">
                                 <div className="flex items-center gap-2 mb-3">
-                                  <span className="text-2xl">🧠</span>
-                                  <h2 className="text-white font-bold text-lg">Scalp Trading pour les Nuls</h2>
+                                  <span className="bg-blue-600 text-white px-2 py-1 rounded text-xs font-bold">COURS COMPLET</span>
+                                  <span className="text-white font-bold text-sm">🎓 Formation Scalping</span>
                                 </div>
-                                <p className="text-gray-300 text-sm mb-2">
-                                  Ce que je vais vous partager ici est un <span className="text-white font-semibold">mélange de plusieurs concepts</span> que j'ai appris lors de ma long apprentissage 🧠
-                                </p>
-                                <p className="text-gray-300 text-sm mb-2">
-                                  Je ne <span className="text-white font-semibold">prétends pas avoir inventé</span> quoi que ce soit. J'ai simplement <span className="text-white font-semibold">organisé</span> mon propre setup, basé sur ce qui m'a <span className="text-white font-semibold">compris</span>, observé, et expérimenté.
-                                </p>
-                              </div>
-
-                              {/* Avant de rentrer */}
-                              <div className="bg-gray-700/30 border border-gray-600/30 rounded-lg p-4">
-                                <div className="flex items-center gap-2 mb-3">
-                                  <span className="text-2xl">📞</span>
-                                  <h3 className="text-white font-bold text-base">Avant de rentrer dans les détails du setup</h3>
+                                <div className="text-blue-300 text-xs mb-2">
+                                  📚 Guide complet | 🎯 Setup A+ | ⚡ CRT & AMD | 🦄 Concepts avancés
                                 </div>
-                                <p className="text-gray-300 text-sm mb-3">
-                                  on va <span className="text-white font-semibold">d'abord poser quelques fondamentaux essentiels</span> pour mieux comprendre <span className="text-white font-semibold">comment le charts bougent</span> et ce qui les influence.
-                                </p>
-                              </div>
-
-                              {/* C'est quoi un chart */}
-                              <div className="bg-gray-700/30 border border-gray-600/30 rounded-lg p-4">
-                                <div className="flex items-center gap-2 mb-3">
-                                  <span className="text-2xl">📊</span>
-                                  <h3 className="text-white font-bold text-base">C'est quoi un "chart" ?</h3>
+                                <div className="text-gray-300 text-xs mb-3">
+                                  Formation complète aux concepts fondamentaux et stratégies avancées de "scalping" trading.
                                 </div>
-                                <div className="flex items-center gap-2 mb-3">
-                                  <span className="text-3xl">📉</span>
-                                  <span className="text-3xl">📈</span>
-                                </div>
-                                <p className="text-gray-300 text-sm mb-3">
-                                  Un chart (ou graphique) nous représente <span className="text-white font-semibold">visuels de prix d'un actif financier</span> dans le temps (comme le Bitcoin, l'or, les actions, etc.).
-                                </p>
-                                <div className="bg-gray-800/50 rounded p-3 mb-3">
-                                  <p className="text-gray-300 text-sm mb-2">Elles permet de :</p>
-                                  <ul className="list-disc list-inside space-y-1 text-gray-300 text-sm">
-                                    <li>Voir comment le prix évolue.</li>
-                                    <li>Identifier des tendances (hausse/baisse).</li>
-                                    <li>Comprendre le comportement du marché.</li>
-                                  </ul>
+                                <div className="text-center">
+                                  <button className="bg-blue-600 text-white px-4 py-2 rounded text-xs font-medium hover:bg-blue-700 transition-colors">
+                                    📖 Accéder au cours complet
+                                  </button>
                                 </div>
                               </div>
-
-                              {/* Comment le prix fonctionne */}
-                              <div className="bg-gradient-to-r from-purple-600/20 to-blue-600/20 border border-purple-500/30 rounded-lg p-4">
-                                <div className="flex items-center gap-2 mb-3">
-                                  <span className="text-2xl">🧠</span>
-                                  <h3 className="text-white font-bold text-base">Comment le prix fonctionne : 3 phases essentielles</h3>
-                                </div>
-                                <p className="text-gray-300 text-sm mb-2">
-                                  Le prix, c'est comme un <span className="text-white font-semibold">voyage de A à B 🚗💨</span>
-                                </p>
-                                <p className="text-gray-300 text-sm mb-3">
-                                  Pour avancer, il a besoin de <span className="text-white font-semibold">liquidité</span>, comme une voiture a besoin d'<span className="text-white font-semibold">essence ⛽</span>
-                                </p>
-                                <p className="text-gray-300 text-sm mb-3">
-                                  Ce mouvement suit <span className="text-white font-semibold">3 phases clés 🔄</span> :
-                                </p>
-
-                                <div className="space-y-3 mb-4">
-                                  <div className="bg-white/5 p-3 rounded border border-red-500/30">
-                                    <div className="flex items-center gap-2 mb-2">
-                                      <span className="text-xl">1️⃣</span>
-                                      <span className="text-xl">🔴</span>
-                                      <h4 className="text-white font-bold text-sm">Accumulation</h4>
-                                    </div>
-                                    <p className="text-gray-300 text-xs">le prix se prépare 🔴⛽ (Il fait le plein)</p>
-                                  </div>
-
-                                  <div className="bg-white/5 p-3 rounded border border-blue-500/30">
-                                    <div className="flex items-center gap-2 mb-2">
-                                      <span className="text-xl">2️⃣</span>
-                                      <span className="text-xl">🎯</span>
-                                      <h4 className="text-white font-bold text-sm">Manipulation</h4>
-                                    </div>
-                                    <p className="text-gray-300 text-xs">il piège les traders, en allant chercher l'essence (prise de liquidité). Il <span className="text-white font-semibold">fait le plein</span></p>
-                                  </div>
-
-                                  <div className="bg-white/5 p-3 rounded border border-green-500/30">
-                                    <div className="flex items-center gap-2 mb-2">
-                                      <span className="text-xl">3️⃣</span>
-                                      <span className="text-xl">🚀</span>
-                                      <h4 className="text-white font-bold text-sm">Distribution</h4>
-                                    </div>
-                                    <p className="text-gray-300 text-xs">le vrai mouvement commence vers l'objectif 🚀📈</p>
-                                  </div>
-                                </div>
-
-                                <div className="bg-purple-900/30 p-3 rounded border border-purple-500/30">
-                                  <p className="text-gray-300 text-sm mb-2">
-                                    Ce modèle s'applique à <span className="text-white font-semibold">toutes les unités de temps, même à une seule bougie 🕯️</span>
-                                  </p>
-                                  <p className="text-white text-sm font-bold">
-                                    — on l'appelle le <span className="text-purple-400">modèle AMD</span> (Accumulation – Manipulation – Distribution) 🔄
-                                  </p>
-                                </div>
-                              </div>
-
-                              {/* Comprendre les mouvements */}
-                              <div className="bg-gray-700/30 border border-gray-600/30 rounded-lg p-4">
-                                <div className="flex items-center gap-2 mb-3">
-                                  <span className="text-2xl">📊</span>
-                                  <h3 className="text-white font-bold text-base">Comprendre les mouvements du prix</h3>
-                                </div>
-                                <p className="text-gray-300 text-sm mb-3">
-                                  Le prix fait des mouvements dans les deux sens : <span className="text-white font-semibold">en hausse</span> (📈) et <span className="text-white font-semibold">en baisse</span> (📉). Ce va-et-vient forme le <span className="text-white font-semibold">swing</span>.
-                                </p>
-                                <div className="bg-gray-800/50 rounded p-3 mb-3">
-                                  <p className="text-white font-semibold text-sm mb-2">Quand le prix dépasse un <span className="text-green-400">high</span> ou crée un nouveau précédent, on parle de <span className="text-green-400">Break of structure (BOS)</span> 🟢</p>
-                                  <p className="text-white font-semibold text-sm">Cela signale une <span className="text-green-400">continuation de tendance</span>, ou une <span className="text-green-400">continuation du mouvement</span>.</p>
-                                </div>
-                                <p className="text-gray-300 text-sm mb-3">
-                                  Le prix crée des <span className="text-white font-semibold">plus petits swings</span> à l'intérieur du <span className="text-white font-semibold">produit swing</span>, ce qui rend le flux des marchés plus <span className="text-white font-semibold">complexe</span> 🧩
-                                </p>
-                                <p className="text-gray-300 text-sm">
-                                  Pour éviter de se perdre dans cette <span className="text-white font-semibold">complexité</span>, on peut se fier à des <span className="text-white font-semibold">indicateurs</span> qui nous aident à <span className="text-white font-semibold">simplifier</span> l'analyse.
-                                </p>
-                              </div>
-
-                              {/* Moves Origin */}
-                              <div className="bg-gradient-to-r from-yellow-600/20 to-orange-600/20 border border-yellow-500/30 rounded-lg p-4">
-                                <div className="flex items-center gap-2 mb-3">
-                                  <span className="text-2xl">🎯</span>
-                                  <h3 className="text-white font-bold text-base">Moves Origin (MO)</h3>
-                                </div>
-                                <p className="text-gray-300 text-sm mb-2">
-                                  <span className="text-white font-semibold">Aussi à l'origine du swing 🎯</span>
-                                </p>
-                                <div className="bg-gray-800/50 rounded p-3 mb-3">
-                                  <p className="text-white font-semibold text-sm mb-2">SNAP 📸</p>
-                                  <p className="text-gray-300 text-xs">dernière zone formée avant le swing 🎯</p>
-                                </div>
-                              </div>
-
                             </div>
                           </div>
                         )}
