@@ -1037,7 +1037,7 @@ const App = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Navigation - Masquée en PWA */}
       {!isPWA && (
-        <nav className="flex items-center justify-between p-4 sm:p-6 relative z-50">
+        <nav className="flex items-center justify-between p-4 sm:p-6 relative z-50 bg-white shadow-sm">
           <div className="flex items-center">
             <img 
               src="/logo-removebg-preview.png" 
@@ -1047,10 +1047,10 @@ const App = () => {
             />
           </div>
           <div className="hidden md:flex space-x-8">
-            <a href="#services" className="text-gray-300 hover:text-white transition-all duration-200">Services</a>
-            <a href="#about-thethetrader" className="text-gray-300 hover:text-white transition-all duration-200">À propos</a>
-            <a href="#interface" className="text-gray-300 hover:text-white transition-all duration-200">La plateforme</a>
-            <a href="#pricing" className="text-gray-300 hover:text-white transition-all duration-200">Prix</a>
+            <a href="#services" className="text-gray-600 hover:text-gray-900 transition-all duration-200">Services</a>
+            <a href="#about-thethetrader" className="text-gray-600 hover:text-gray-900 transition-all duration-200">À propos</a>
+            <a href="#interface" className="text-gray-600 hover:text-gray-900 transition-all duration-200">La plateforme</a>
+            <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-all duration-200">Prix</a>
           </div>
           <div className="flex items-center space-x-3">
             <button 
