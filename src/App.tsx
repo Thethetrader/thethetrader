@@ -1155,7 +1155,7 @@ const App = () => {
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8">
               <div className="flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg">
                 <span className="text-green-200">✓</span>
-                <span className="font-semibold">14 jours Garantie Satisfait</span>
+                <span className="font-semibold">3j Garantie Satisfait</span>
               </div>
               <button 
                 onClick={() => setShowAuthModal(true)}
