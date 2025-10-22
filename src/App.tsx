@@ -1042,7 +1042,7 @@ const App = () => {
             <img 
               src="/logo-removebg-preview.png" 
               alt="Trading pour les nuls" 
-              className="h-8 sm:h-10 md:h-32 w-auto"
+              className="h-12 sm:h-16 md:h-40 w-auto"
 
             />
           </div>
