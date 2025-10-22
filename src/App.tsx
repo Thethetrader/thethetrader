@@ -1919,7 +1919,7 @@ const App = () => {
                             <img 
                               src="/cadre3.png" 
                               alt="Journal résumé" 
-                              className="w-full h-[400px] sm:h-[500px] object-cover object-[center_20%]"
+                              className="w-full h-[400px] sm:h-[500px] object-cover object-[center_10%]"
                             />
                           </div>
                         </div>
