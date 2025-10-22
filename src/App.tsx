@@ -1864,38 +1864,13 @@ const App = () => {
                           </div>
                           <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed">Over 50+ reports to help you visualize your trading performance.</p>
                           
-                          {/* Interface de statistiques */}
-                          <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-xl border border-white/20">
-                            <div className="text-sm sm:text-lg font-bold mb-4 sm:mb-6 text-gray-800 flex items-center gap-2">
-                              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-500 rounded-full"></div>
-                              YOUR STATS (ALL DATES)
-                            </div>
-                            <div className="space-y-2 sm:space-y-4">
-                              <div className="flex justify-between items-center p-2 sm:p-3 bg-green-50 rounded-lg border-l-4 border-green-400">
-                                <span className="text-gray-700 font-medium text-xs sm:text-sm">Best Month:</span>
-                                <span className="text-green-600 font-bold text-xs sm:text-sm">$5,132.50</span>
-                              </div>
-                              <div className="flex justify-between items-center p-2 sm:p-3 bg-red-50 rounded-lg border-l-4 border-red-400">
-                                <span className="text-gray-700 font-medium text-xs sm:text-sm">Lowest Month:</span>
-                                <span className="text-red-600 font-bold text-xs sm:text-sm">$1,900.00</span>
-                              </div>
-                              <div className="flex justify-between items-center p-2 sm:p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">
-                                <span className="text-gray-700 font-medium text-xs sm:text-sm">Average:</span>
-                                <span className="text-blue-600 font-bold text-xs sm:text-sm">$3,516.25</span>
-                              </div>
-                              <div className="flex justify-between items-center p-2 sm:p-3 bg-green-50 rounded-lg border-l-4 border-green-400">
-                                <span className="text-gray-700 font-medium text-xs sm:text-sm">Total P&L:</span>
-                                <span className="text-green-600 font-bold text-xs sm:text-sm">$7,032.50</span>
-                              </div>
-                              <div className="flex justify-between items-center p-2 sm:p-3 bg-purple-50 rounded-lg border-l-4 border-purple-400">
-                                <span className="text-gray-700 font-medium text-xs sm:text-sm">Win Rate:</span>
-                                <span className="text-purple-600 font-bold text-xs sm:text-sm">68%</span>
-                              </div>
-                              <div className="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg border-l-4 border-gray-400">
-                                <span className="text-gray-700 font-medium text-xs sm:text-sm">Total Trades:</span>
-                                <span className="text-gray-600 font-bold text-xs sm:text-sm">156</span>
-                              </div>
-                            </div>
+                          {/* Image cadre 1 */}
+                          <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl overflow-hidden shadow-xl border border-white/20">
+                            <img 
+                              src="/cadre1.png" 
+                              alt="Journal statistiques" 
+                              className="w-full h-auto"
+                            />
                           </div>
                         </div>
                       </div>
@@ -1914,56 +1889,13 @@ const App = () => {
                           </div>
                           <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed">Gain key insights in your trading behaviors by digging deeper into over 50+ reports.</p>
                           
-                          {/* Graphiques de comportement */}
-                          <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-xl border border-white/20">
-                            <div className="text-sm sm:text-lg font-bold mb-4 sm:mb-6 text-gray-800 flex items-center gap-2">
-                              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-500 rounded-full"></div>
-                              TRADE DISTRIBUTION BY DURATION
-                            </div>
-                            <div className="space-y-2 sm:space-y-4 mb-4 sm:mb-6">
-                              <div className="flex items-center gap-2 sm:gap-3">
-                                <div className="w-16 sm:w-24 bg-gradient-to-r from-blue-200 to-blue-300 h-4 sm:h-6 rounded-full shadow-inner"></div>
-                                <span className="text-gray-700 font-medium text-xs sm:text-sm">Under 1 min</span>
-                                <span className="text-blue-600 font-bold ml-auto text-xs sm:text-sm">12 trades</span>
-                              </div>
-                              <div className="flex items-center gap-2 sm:gap-3">
-                                <div className="w-20 sm:w-32 bg-gradient-to-r from-blue-300 to-blue-400 h-4 sm:h-6 rounded-full shadow-inner"></div>
-                                <span className="text-gray-700 font-medium text-xs sm:text-sm">1:00 to 1:59</span>
-                                <span className="text-blue-600 font-bold ml-auto text-xs sm:text-sm">18 trades</span>
-                              </div>
-                              <div className="flex items-center gap-2 sm:gap-3">
-                                <div className="w-24 sm:w-40 bg-gradient-to-r from-blue-400 to-blue-500 h-4 sm:h-6 rounded-full shadow-inner"></div>
-                                <span className="text-gray-700 font-medium text-xs sm:text-sm">2:00 to 4:59</span>
-                                <span className="text-blue-600 font-bold ml-auto text-xs sm:text-sm">25 trades</span>
-                              </div>
-                              <div className="flex items-center gap-2 sm:gap-3">
-                                <div className="w-32 sm:w-48 bg-gradient-to-r from-blue-500 to-blue-600 h-4 sm:h-6 rounded-full shadow-inner"></div>
-                                <span className="text-gray-700 font-medium text-xs sm:text-sm">5:00 to 9:59</span>
-                                <span className="text-blue-600 font-bold ml-auto text-xs sm:text-sm">35 trades</span>
-                              </div>
-                            </div>
-                            
-                            <div className="text-sm sm:text-lg font-bold mb-4 sm:mb-6 text-gray-800 flex items-center gap-2">
-                              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-indigo-500 rounded-full"></div>
-                              PERFORMANCE BY DURATION
-                            </div>
-                            <div className="space-y-2 sm:space-y-4">
-                              <div className="flex items-center gap-2 sm:gap-3">
-                                <div className="w-12 sm:w-16 bg-gradient-to-r from-red-200 to-red-300 h-4 sm:h-6 rounded-full shadow-inner"></div>
-                                <span className="text-gray-700 font-medium text-xs sm:text-sm">Under 1 min</span>
-                                <span className="text-red-600 font-bold ml-auto text-xs sm:text-sm">-$600</span>
-                              </div>
-                              <div className="flex items-center gap-2 sm:gap-3">
-                                <div className="w-16 sm:w-24 bg-gradient-to-r from-green-200 to-green-300 h-4 sm:h-6 rounded-full shadow-inner"></div>
-                                <span className="text-gray-700 font-medium text-xs sm:text-sm">5:00 to 9:59</span>
-                                <span className="text-green-600 font-bold ml-auto text-xs sm:text-sm">+$750</span>
-                              </div>
-                              <div className="flex items-center gap-2 sm:gap-3">
-                                <div className="w-20 sm:w-32 bg-gradient-to-r from-green-300 to-green-400 h-4 sm:h-6 rounded-full shadow-inner"></div>
-                                <span className="text-gray-700 font-medium text-xs sm:text-sm">10:00 to 29:59</span>
-                                <span className="text-green-600 font-bold ml-auto text-xs sm:text-sm">+$4,531</span>
-                              </div>
-                            </div>
+                          {/* Image cadre 2 */}
+                          <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl overflow-hidden shadow-xl border border-white/20">
+                            <img 
+                              src="/cadre2.png" 
+                              alt="Journal comportements" 
+                              className="w-full h-auto"
+                            />
                           </div>
                         </div>
                       </div>
@@ -1982,39 +1914,13 @@ const App = () => {
                           </div>
                           <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed">Curated summaries for you to understand your strengths and weaknesses as a trader.</p>
                           
-                          {/* Tableau de résumé */}
-                          <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-xl border border-white/20">
-                            <div className="text-sm sm:text-lg font-bold mb-4 sm:mb-6 text-gray-800 flex items-center gap-2">
-                              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-500 rounded-full"></div>
-                              SUMMARY
-                            </div>
-                            <div className="space-y-2 sm:space-y-3">
-                              <div className="grid grid-cols-3 gap-2 sm:gap-4 font-semibold text-gray-600 border-b-2 border-gray-200 pb-1 sm:pb-2 text-xs sm:text-sm">
-                                <span>Duration</span>
-                                <span>Net Profit</span>
-                                <span>Win Rate</span>
-                              </div>
-                              <div className="grid grid-cols-3 gap-2 sm:gap-4 p-2 sm:p-3 bg-red-50 rounded-lg border-l-4 border-red-400">
-                                <span className="text-gray-700 font-medium text-xs sm:text-sm">Under 1 min</span>
-                                <span className="text-red-600 font-bold text-xs sm:text-sm">-$600.00</span>
-                                <span className="text-red-500 font-bold text-xs sm:text-sm">25%</span>
-                              </div>
-                              <div className="grid grid-cols-3 gap-2 sm:gap-4 p-2 sm:p-3 bg-orange-50 rounded-lg border-l-4 border-orange-400">
-                                <span className="text-gray-700 font-medium text-xs sm:text-sm">1:00 to 1:59</span>
-                                <span className="text-red-600 font-bold text-xs sm:text-sm">-$1,262</span>
-                                <span className="text-orange-500 font-bold text-xs sm:text-sm">30%</span>
-                              </div>
-                              <div className="grid grid-cols-3 gap-2 sm:gap-4 p-2 sm:p-3 bg-green-50 rounded-lg border-l-4 border-green-400">
-                                <span className="text-gray-700 font-medium text-xs sm:text-sm">5:00 to 9:59</span>
-                                <span className="text-green-600 font-bold text-xs sm:text-sm">+$750</span>
-                                <span className="text-green-500 font-bold text-xs sm:text-sm">75%</span>
-                              </div>
-                              <div className="grid grid-cols-3 gap-2 sm:gap-4 p-2 sm:p-3 bg-green-50 rounded-lg border-l-4 border-green-400">
-                                <span className="text-gray-700 font-medium text-xs sm:text-sm">10:00 to 29:59</span>
-                                <span className="text-green-600 font-bold text-xs sm:text-sm">+$4,531</span>
-                                <span className="text-green-500 font-bold text-xs sm:text-sm">85%</span>
-                              </div>
-                            </div>
+                          {/* Image cadre 3 */}
+                          <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl overflow-hidden shadow-xl border border-white/20">
+                            <img 
+                              src="/cadre3.png" 
+                              alt="Journal résumé" 
+                              className="w-full h-auto"
+                            />
                           </div>
                         </div>
                       </div>
