@@ -1148,7 +1148,7 @@ const App = () => {
               Tu n'as pas besoin d'être un expert pour trader efficacement. Tu as juste besoin de la bonne méthode — simple, directe, et conçue pour t'apprendre à penser comme un pro.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8">
-              <div className="flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg">
+              <div className="flex items-center gap-2 bg-green-600 text-white px-8 py-4 rounded-lg">
                 <span className="text-green-200">✓</span>
                 <span className="font-semibold">3j Garantie Satisfait</span>
               </div>
@@ -1180,8 +1180,9 @@ const App = () => {
             <div id="services" className="w-full mb-10 sm:mb-16">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-12 sm:mb-20">
                 <h2 className="text-4xl sm:text-5xl font-bold text-center">
+                  <div className="text-white">Les services</div>
                   <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-                Les Services
+                    de TPLN
                   </span>
               </h2>
                 </div>
@@ -1886,7 +1887,7 @@ const App = () => {
                         
                         {/* Vidéo superposée */}
                         <video 
-                          className="absolute top-8 left-1/2 transform -translate-x-1/2 w-[44%] aspect-[9/16] rounded-[2rem] sm:rounded-[4rem] scale-150 sm:scale-100 sm:top-20"
+                          className="absolute top-12 left-1/2 transform -translate-x-1/2 w-[44%] aspect-[9/16] rounded-[2rem] sm:rounded-[4rem] scale-150 sm:scale-100 sm:top-20"
                           autoPlay
                           loop
                           muted
@@ -1929,8 +1930,13 @@ const App = () => {
 
             {/* Avantages clés - Mobile Optimized */}
             <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
-              <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-8 sm:mb-12">
-                Pourquoi choisir TheTheTrader ?
+              <h2 className="text-4xl sm:text-5xl font-bold text-center mb-8 sm:mb-12">
+                <div className="text-white">
+                  Pourquoi choisir
+                </div>
+                <div className="bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+                  TheTheTrader ?
+                </div>
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
                 {/* Carte 1 */}
@@ -2070,7 +2076,7 @@ const App = () => {
                           <div className="text-xl">🎓</div>
                           <div>
                             <div className="text-white font-medium text-sm">Formation</div>
-                            <div className="text-gray-400 text-xs">Cours complet scalping</div>
+                            <div className="text-gray-400 text-xs">Cours complet "scalping"</div>
                           </div>
                         </div>
                       </div>
@@ -2701,7 +2707,7 @@ const App = () => {
                                   📚 Guide complet | 🎯 Setup A+ | ⚡ CRT & AMD | 🦄 Concepts avancés
                                 </div>
                                 <div className="text-gray-300 text-xs mb-3">
-                                  Formation complète aux concepts fondamentaux et stratégies avancées de scalping trading.
+                                  Formation complète aux concepts fondamentaux et stratégies avancées de "scalping" trading.
                                 </div>
                                 <div className="text-center">
                                   <button className="bg-blue-600 text-white px-4 py-2 rounded text-xs font-medium hover:bg-blue-700 transition-colors">
