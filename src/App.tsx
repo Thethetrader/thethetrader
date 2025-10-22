@@ -1150,8 +1150,9 @@ const App = () => {
               ...but your spreadsheets never told you.
             </p>
             <p className="text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed">
-              Trading pour les nuls shows you the metrics that matter—and the behaviours that lead to profit 
-              with the power of journaling and analytics.
+              Ne t'abonne pas si tu ne veux pas vraiment apprendre à trader.
+              <br />
+              Ici, pas de promesses magiques : juste une méthode claire, simple et efficace pour comprendre le marché et progresser chaque jour.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8">
               <div className="flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg">
