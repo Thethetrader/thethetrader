@@ -1199,18 +1199,20 @@ const App = () => {
 
                   {/* Services avec icônes - Scroll horizontal sur mobile */}
                   <div 
-                    className="flex items-center space-x-4 sm:space-x-8 overflow-x-auto scrollbar-hide flex-1 sm:flex-none px-0 sm:px-0 min-w-max sm:w-auto"
+                    className="flex items-center space-x-4 sm:space-x-8 overflow-x-auto scrollbar-hide flex-1 sm:flex-none px-4 sm:px-0 min-w-max sm:w-auto"
                     style={{
                       WebkitOverflowScrolling: 'touch',
                       scrollBehavior: 'smooth',
-                      overflowX: 'scroll',
-                      whiteSpace: 'nowrap'
+                      overflowX: 'auto',
+                      whiteSpace: 'nowrap',
+                      scrollSnapType: 'x mandatory'
                     }}
                   >
                     {/* Formation */}
                     <div 
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
                       onClick={() => setSelectedService('formation')}
+                      style={{ scrollSnapAlign: 'start' }}
                     >
                       <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
                         selectedService === 'formation' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-blue-600'
@@ -1228,6 +1230,7 @@ const App = () => {
                     <div 
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
                       onClick={() => setSelectedService('signaux')}
+                      style={{ scrollSnapAlign: 'start' }}
                     >
                       <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
                         selectedService === 'signaux' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-purple-600'
@@ -1245,6 +1248,7 @@ const App = () => {
                     <div 
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
                       onClick={() => setSelectedService('journal')}
+                      style={{ scrollSnapAlign: 'start' }}
                     >
                       <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
                         selectedService === 'journal' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-purple-700'
@@ -1262,6 +1266,7 @@ const App = () => {
                     <div 
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
                       onClick={() => setSelectedService('live')}
+                      style={{ scrollSnapAlign: 'start' }}
                     >
                       <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
                         selectedService === 'live' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-red-600'
@@ -1279,6 +1284,7 @@ const App = () => {
                     <div 
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
                       onClick={() => setSelectedService('app')}
+                      style={{ scrollSnapAlign: 'start' }}
                     >
                       <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
                         selectedService === 'app' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-green-600'
@@ -1296,6 +1302,7 @@ const App = () => {
                     <div 
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
                       onClick={() => setSelectedService('analytics')}
+                      style={{ scrollSnapAlign: 'start' }}
                     >
                       <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
                         selectedService === 'analytics' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-indigo-600'
@@ -1313,6 +1320,7 @@ const App = () => {
                     <div 
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
                       onClick={() => setSelectedService('chat')}
+                      style={{ scrollSnapAlign: 'start' }}
                     >
                       <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
                         selectedService === 'chat' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-yellow-600'
