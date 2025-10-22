@@ -1137,18 +1137,53 @@ const App = () => {
         <>
           {/* Hero Section - Mobile Optimized */}
           <div className="text-center pt-20 sm:pt-32 pb-0 px-4 sm:px-6">
-            <div className="mb-4 sm:mb-6 md:mb-0 flex justify-center hover:scale-105 transition-transform duration-300">
-              <img 
-                src="/logo-removebg-preview.png" 
-                alt="Trading pour les nuls" 
-                className="h-64 sm:h-80 md:h-[32rem] lg:h-[40rem] w-auto object-cover"
-                style={{ clipPath: 'inset(10% 5% 15% 5%)' }}
-
-              />
-            </div>
-            <p className="text-xl sm:text-3xl text-gray-300 mb-10 sm:mb-12 max-w-4xl mx-auto px-2 mt-4 md:-mt-40">
-              Un setup très simple, des signaux expliqués, un journal de performance. Rejoins la communauté et trade en confiance.
+            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 sm:mb-8">
+              <span className="text-white">Everything you ever</span>
+              <br />
+              <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                wanted to know
+              </span>
+              <br />
+              <span className="text-white">about your trading...</span>
+            </h1>
+            <p className="text-xl sm:text-2xl text-gray-300 mb-4">
+              ...but your spreadsheets never told you.
             </p>
+            <p className="text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed">
+              Trading pour les nuls shows you the metrics that matter—and the behaviours that lead to profit 
+              with the power of journaling and analytics.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8">
+              <div className="flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg">
+                <span className="text-green-200">✓</span>
+                <span className="font-semibold">14 jours Garantie Satisfait</span>
+              </div>
+              <button 
+                onClick={() => setShowAuthModal(true)}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                Commencer Maintenant
+              </button>
+            </div>
+            <div className="flex items-center justify-center gap-4 mb-8">
+              <div className="flex items-center gap-2">
+                <div className="flex text-yellow-400">
+                  ★★★★★
+                </div>
+                <span className="text-gray-300">4.8</span>
+              </div>
+              <span className="text-gray-400">593 Avis</span>
+            </div>
+            <p className="text-gray-500 text-sm mb-4">Recommandé par:</p>
+            <div className="flex justify-center items-center gap-4">
+              <div className="w-8 h-8 bg-gray-600 rounded-full"></div>
+              <div className="w-8 h-8 bg-gray-600 rounded-full"></div>
+              <div className="w-8 h-8 bg-gray-600 rounded-full"></div>
+              <div className="w-8 h-8 bg-gray-600 rounded-full"></div>
+              <div className="w-8 h-8 bg-gray-600 rounded-full"></div>
+              <div className="w-8 h-8 bg-gray-600 rounded-full"></div>
+              <div className="w-8 h-8 bg-gray-600 rounded-full"></div>
+            </div>
 
             {/* Barre de défilement - Full Width */}
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 sm:py-10 overflow-hidden relative mb-10 sm:mb-16 w-screen -mx-4 sm:-mx-6">
