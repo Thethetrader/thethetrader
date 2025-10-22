@@ -45,6 +45,10 @@ const App = () => {
         -ms-overflow-style: none;
         scrollbar-width: none;
       }
+      body, html {
+        overflow-x: hidden;
+        max-width: 100vw;
+      }
     `;
     document.head.appendChild(style);
     return () => document.head.removeChild(style);
@@ -1194,7 +1198,7 @@ const App = () => {
             </div>
 
             {/* Barre de défilement - Full Width */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 sm:py-10 overflow-hidden relative mb-10 sm:mb-16 w-screen -mx-4 sm:-mx-6">
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 sm:py-10 overflow-hidden relative mb-10 sm:mb-16 w-full">
               <div className="whitespace-nowrap animate-scroll">
                 <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
                 <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
