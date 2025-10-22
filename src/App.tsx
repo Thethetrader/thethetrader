@@ -116,7 +116,15 @@ const App = () => {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
+      // Temporairement permettre le scroll
+      document.body.style.overflow = 'auto';
       element.scrollIntoView({ behavior: 'smooth' });
+      // Remettre le scroll bloqué après un délai
+      setTimeout(() => {
+        if (isPWA && currentPage === 'home' && !user) {
+          document.body.style.overflow = 'hidden';
+        }
+      }, 1000);
     }
   };
 
