@@ -1874,15 +1874,15 @@ const App = () => {
                       <div className="group relative bg-gradient-to-br from-blue-900/30 via-blue-800/20 to-indigo-900/30 rounded-xl sm:rounded-2xl p-4 sm:p-8 border border-blue-500/30 backdrop-blur-sm hover:border-blue-400/60 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20">
                         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-indigo-600/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <div className="relative z-10">
-                          <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                          <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                             <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
                               <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
                               </svg>
                             </div>
-                            <h3 className="text-lg sm:text-xl font-bold text-white">Comprenez vos erreurs</h3>
+                            <h3 className="text-lg sm:text-xl font-bold text-white text-center">Comprenez vos erreurs</h3>
                           </div>
-                          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed min-h-[48px]">Identifiez vos points faibles en analysant vos pertes pour améliorer votre gestion du risque.</p>
+                          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed min-h-[48px] text-center">Identifiez vos points faibles en analysant vos pertes pour améliorer votre gestion du risque.</p>
                           
                           {/* Image cadre 2 */}
                           <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl overflow-hidden shadow-xl border border-white/20">
@@ -1899,15 +1899,15 @@ const App = () => {
                       <div className="group relative bg-gradient-to-br from-emerald-900/30 via-emerald-800/20 to-teal-900/30 rounded-xl sm:rounded-2xl p-4 sm:p-8 border border-emerald-500/30 backdrop-blur-sm hover:border-emerald-400/60 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/20">
                         <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/10 to-teal-600/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <div className="relative z-10">
-                          <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                          <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                             <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
                               <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
                               </svg>
                             </div>
-                            <h3 className="text-lg sm:text-xl font-bold text-white">Suivez votre progression</h3>
+                            <h3 className="text-lg sm:text-xl font-bold text-white text-center">Suivez votre progression</h3>
                           </div>
-                          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed min-h-[48px]">Obtenez une vue d'ensemble de vos performances mensuelles pour mesurer votre évolution.</p>
+                          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed min-h-[48px] text-center">Obtenez une vue d'ensemble de vos performances mensuelles pour mesurer votre évolution.</p>
                           
                           {/* Image cadre 3 */}
                           <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl overflow-hidden shadow-xl border border-white/20">
