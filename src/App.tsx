@@ -1874,7 +1874,7 @@ const App = () => {
                         <img 
                           src="/FOndiphone.png" 
                           alt="Cadre iPhone" 
-                          className="w-full h-auto scale-150 sm:scale-100"
+                          className="w-full h-auto scale-125 sm:scale-100"
                           style={{
                             display: 'block',
                             maxWidth: '100%',
@@ -1887,7 +1887,7 @@ const App = () => {
                         
                         {/* Vidéo superposée */}
                         <video 
-                          className="absolute top-10 left-1/2 transform -translate-x-1/2 w-[44%] aspect-[9/16] rounded-[2rem] sm:rounded-[4rem] scale-150 sm:scale-100 sm:top-20"
+                          className="absolute top-10 left-1/2 transform -translate-x-1/2 w-[44%] aspect-[9/16] rounded-[2rem] sm:rounded-[4rem] scale-125 sm:scale-100 sm:top-20"
                           autoPlay
                           loop
                           muted
