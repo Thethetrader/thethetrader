@@ -1328,10 +1328,19 @@ export default function TradingPlatformShell() {
     const unsubscribe = listenToPersonalTrades(
       (trades) => {
         console.log('🔄 Mise à jour trades reçue [PWA]:', trades.length);
-        setPersonalTrades(trades);
+        // Si pas de vraies données, garder les données fictives pour screenshots
+        if (trades.length === 0) {
+          console.log('📊 Pas de vraies données, garde les données fictives pour screenshots');
+          setPersonalTrades(mockTrades);
+        } else {
+          setPersonalTrades(trades);
+        }
       },
       (error) => {
         console.error('❌ Erreur synchronisation temps réel [PWA]:', error);
+        // En cas d'erreur, garder les données fictives
+        console.log('📊 Erreur, garde les données fictives pour screenshots');
+        setPersonalTrades(mockTrades);
       }
     );
     
