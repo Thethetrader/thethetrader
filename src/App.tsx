@@ -1758,7 +1758,7 @@ const App = () => {
                   </div>
 
                   {/* Vidéo complète */}
-                  <div className="max-w-6xl mx-auto">
+                  <div className="max-w-6xl mx-auto mb-12">
                     <video 
                       className="w-full rounded-xl shadow-2xl"
                       autoPlay
@@ -1772,6 +1772,63 @@ const App = () => {
                       <source src="/videodemo copie.mp4" type="video/mp4" />
                       Votre navigateur ne supporte pas la lecture de vidéos.
                     </video>
+                  </div>
+
+                  {/* Cadre explicatif AMD */}
+                  <div className="max-w-6xl mx-auto">
+                    <div className="bg-gradient-to-br from-purple-900/30 via-purple-800/20 to-blue-900/30 rounded-2xl p-6 sm:p-10 border border-purple-500/30 backdrop-blur-sm">
+                      <div className="flex items-center gap-3 mb-6">
+                        <span className="text-4xl">🧠</span>
+                        <h3 className="text-2xl sm:text-3xl font-bold text-white">Comment le prix fonctionne : 3 phases essentielles</h3>
+                      </div>
+                      
+                      <div className="space-y-6 mb-8">
+                        <p className="text-gray-300 text-lg">
+                          Le prix, c'est comme un <span className="text-white font-semibold">voyage de A à B 🚗💨</span>
+                        </p>
+                        <p className="text-gray-300 text-lg">
+                          Pour avancer, il a besoin de <span className="text-white font-semibold">liquidité</span>, comme une voiture a besoin d'<span className="text-white font-semibold">essence ⛽</span>
+                        </p>
+                        <p className="text-gray-300 text-lg">
+                          Ce mouvement suit <span className="text-white font-semibold">3 phases clés 🔄</span> :
+                        </p>
+                      </div>
+
+                      <div className="space-y-4 mb-8">
+                        <div className="flex items-start gap-4 bg-white/5 p-4 rounded-xl border border-purple-500/20">
+                          <span className="text-2xl flex-shrink-0">1️⃣</span>
+                          <div>
+                            <h4 className="text-xl font-bold text-white mb-2">Accumulation – le prix se prépare 🔴⛽</h4>
+                            <p className="text-gray-300">Phase de préparation où le prix accumule de l'énergie</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-4 bg-white/5 p-4 rounded-xl border border-blue-500/20">
+                          <span className="text-2xl flex-shrink-0">2️⃣</span>
+                          <div>
+                            <h4 className="text-xl font-bold text-white mb-2">Manipulation – il piège les traders 🎯🍯</h4>
+                            <p className="text-gray-300">En allant chercher l'essence (prise de liquidité). Il <span className="text-white font-semibold">fait le plein</span></p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-4 bg-white/5 p-4 rounded-xl border border-green-500/20">
+                          <span className="text-2xl flex-shrink-0">3️⃣</span>
+                          <div>
+                            <h4 className="text-xl font-bold text-white mb-2">Distribution – le vrai mouvement commence 🚀📈</h4>
+                            <p className="text-gray-300">Vers l'objectif, le mouvement directionnel principal</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-gradient-to-r from-purple-600/20 to-blue-600/20 p-6 rounded-xl border border-purple-500/30">
+                        <p className="text-gray-300 text-lg mb-3">
+                          Ce modèle s'applique à <span className="text-white font-semibold">toutes les unités de temps, même à une seule bougie 🕯️</span>
+                        </p>
+                        <p className="text-white text-xl font-bold">
+                          — on l'appelle le <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">modèle AMD</span> (Accumulation – Manipulation – Distribution) 🔄
+                        </p>
+                      </div>
+                    </div>
                   </div>
               </div>
             </div>
