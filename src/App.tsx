@@ -53,10 +53,11 @@ const App = () => {
         overflow: hidden !important;
         height: 100vh !important;
         max-height: 100vh !important;
-        position: relative !important;
-      }
-      .pwa-landing-no-scroll > * {
-        overflow: hidden !important;
+        position: fixed !important;
+        width: 100% !important;
+        top: 0 !important;
+        left: 0 !important;
+        touch-action: none !important;
       }
     `;
     document.head.appendChild(style);
