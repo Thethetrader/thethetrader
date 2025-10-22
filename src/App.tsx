@@ -1164,25 +1164,6 @@ const App = () => {
                 Commencer Maintenant
               </button>
             </div>
-            <div className="flex items-center justify-center gap-4 mb-8">
-              <div className="flex items-center gap-2">
-                <div className="flex text-yellow-400">
-                  ★★★★★
-                </div>
-                <span className="text-gray-300">4.8</span>
-              </div>
-              <span className="text-gray-400">593 Avis</span>
-            </div>
-            <p className="text-gray-500 text-sm mb-4">Recommandé par:</p>
-            <div className="flex justify-center items-center gap-4">
-              <div className="w-8 h-8 bg-gray-600 rounded-full"></div>
-              <div className="w-8 h-8 bg-gray-600 rounded-full"></div>
-              <div className="w-8 h-8 bg-gray-600 rounded-full"></div>
-              <div className="w-8 h-8 bg-gray-600 rounded-full"></div>
-              <div className="w-8 h-8 bg-gray-600 rounded-full"></div>
-              <div className="w-8 h-8 bg-gray-600 rounded-full"></div>
-              <div className="w-8 h-8 bg-gray-600 rounded-full"></div>
-            </div>
 
             {/* Barre de défilement - Full Width */}
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 sm:py-10 overflow-hidden relative mb-10 sm:mb-16 w-screen -mx-4 sm:-mx-6">
