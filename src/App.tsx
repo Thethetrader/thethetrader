@@ -246,6 +246,22 @@ const App = () => {
     };
   }, [isPWA, user]);
 
+  // Bloquer le scroll sur la landing page PWA même sans utilisateur connecté
+  useEffect(() => {
+    if (isPWA && currentPage === 'home' && !user) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.height = '100vh';
+    } else if (!isPWA || currentPage !== 'home' || user) {
+      document.body.style.overflow = '';
+      document.body.style.height = '';
+    }
+    
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.height = '';
+    };
+  }, [isPWA, currentPage, user]);
+
   // Précharger l'image pour éviter le clignotement
   useEffect(() => {
     const img = new Image();
