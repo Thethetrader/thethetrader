@@ -1144,13 +1144,8 @@ const App = () => {
                 vraiment apprendre à trader.
               </span>
             </h1>
-            <p className="text-xl sm:text-2xl text-gray-300 mb-4">
-              Ici, pas de promesses magiques : juste une méthode claire, simple et efficace pour comprendre le marché et progresser chaque jour.
-            </p>
             <p className="text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed">
-              Tu n'as pas besoin d'être un expert pour trader efficacement.
-              <br />
-              Tu as juste besoin de la bonne méthode — simple, directe, et conçue pour t'apprendre à penser comme un pro.
+              Tu n'as pas besoin d'être un expert pour trader efficacement. Tu as juste besoin de la bonne méthode — simple, directe, et conçue pour t'apprendre à penser comme un pro.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8">
               <div className="flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg">
@@ -1184,8 +1179,10 @@ const App = () => {
             {/* Nos Services - Navigation Horizontale */}
             <div id="services" className="w-full mb-10 sm:mb-16">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-12 sm:mb-20">
-                <h2 className="text-4xl sm:text-5xl font-bold text-white text-center">
+                <h2 className="text-4xl sm:text-5xl font-bold text-center">
+                  <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
                 Les Services
+                  </span>
               </h2>
                 </div>
 
@@ -1209,23 +1206,6 @@ const App = () => {
                       whiteSpace: 'nowrap'
                     }}
                   >
-                    {/* Signaux */}
-                    <div 
-                      className="flex flex-col items-center cursor-pointer group flex-shrink-0"
-                      onClick={() => setSelectedService('signaux')}
-                    >
-                      <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
-                        selectedService === 'signaux' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-purple-600'
-                      }`}>
-                        <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
-                      </div>
-                      <span className={`text-xs sm:text-base transition-colors ${
-                        selectedService === 'signaux' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
-                      }`}>Signaux</span>
-                </div>
-
                     {/* Formation */}
                     <div 
                       className="flex flex-col items-center cursor-pointer group flex-shrink-0"
@@ -1241,6 +1221,23 @@ const App = () => {
                       <span className={`text-xs sm:text-base transition-colors ${
                         selectedService === 'formation' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
                       }`}>Formation</span>
+                </div>
+
+                    {/* Signaux */}
+                    <div 
+                      className="flex flex-col items-center cursor-pointer group flex-shrink-0"
+                      onClick={() => setSelectedService('signaux')}
+                    >
+                      <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
+                        selectedService === 'signaux' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-purple-600'
+                      }`}>
+                        <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                      </div>
+                      <span className={`text-xs sm:text-base transition-colors ${
+                        selectedService === 'signaux' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
+                      }`}>Signaux</span>
                 </div>
 
                     {/* Journal */}
@@ -1338,21 +1335,110 @@ const App = () => {
                 </div>
               </div>
 
-              {/* Image du service sélectionné */}
-              <div className="w-screen -mx-4 sm:mx-0 sm:w-full">
-                <div className="flex justify-center relative">
-                  <img 
-                    src={getServiceImage(selectedService)}
-                    alt={`Service ${selectedService}`}
-                    className="w-full max-w-4xl h-auto object-cover rounded-lg shadow-2xl"
-                  />
-                  {/* Superposition PWA en bas à droite */}
-                  <img 
-                    src={getServicePwaImage(selectedService)}
-                    alt={`PWA ${selectedService}`}
-                    className="block sm:hidden absolute bottom-2 left-2 w-32 h-48 sm:w-36 sm:h-48 object-cover rounded-lg shadow-lg border-2 border-white/30"
-                  />
-                </div>
+              {/* Sections des services - Déplacées vers le haut */}
+              <div className="w-screen -mx-4 sm:mx-0 sm:w-full mt-8">
+                {selectedService === 'Formation' && (
+                  <div className="bg-gradient-to-r from-purple-900/20 to-blue-900/20 rounded-xl p-8 m-4">
+                    <h3 className="text-2xl font-bold text-white mb-4">Formation</h3>
+                    <p className="text-gray-300 mb-6">Apprenez les fondamentaux du trading avec nos cours structurés et progressifs.</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-white/10 rounded-lg p-4">
+                        <h4 className="text-lg font-semibold text-white mb-2">1. Fondamentaux</h4>
+                        <p className="text-gray-300 text-sm">Les bases essentielles pour comprendre les marchés financiers.</p>
+                      </div>
+                      <div className="bg-white/10 rounded-lg p-4">
+                        <h4 className="text-lg font-semibold text-white mb-2">2. Stratégies</h4>
+                        <p className="text-gray-300 text-sm">Des stratégies éprouvées pour trader efficacement.</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {selectedService === 'Signaux' && (
+                  <div className="bg-gradient-to-r from-green-900/20 to-emerald-900/20 rounded-xl p-8 m-4">
+                    <h3 className="text-2xl font-bold text-white mb-4">Signaux</h3>
+                    <p className="text-gray-300 mb-6">Recevez des signaux de trading en temps réel avec nos analyses techniques.</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-white/10 rounded-lg p-4">
+                        <h4 className="text-lg font-semibold text-white mb-2">Crypto</h4>
+                        <p className="text-gray-300 text-sm">Signaux pour les principales cryptomonnaies.</p>
+                      </div>
+                      <div className="bg-white/10 rounded-lg p-4">
+                        <h4 className="text-lg font-semibold text-white mb-2">Forex</h4>
+                        <p className="text-gray-300 text-sm">Signaux pour les paires de devises majeures.</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+
+                {selectedService === 'Live' && (
+                  <div className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-xl p-8 m-4">
+                    <h3 className="text-2xl font-bold text-white mb-4">Live</h3>
+                    <p className="text-gray-300 mb-6">Participez à nos sessions de trading en direct avec nos experts.</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-white/10 rounded-lg p-4">
+                        <h4 className="text-lg font-semibold text-white mb-2">Sessions quotidiennes</h4>
+                        <p className="text-gray-300 text-sm">Analyse de marché en temps réel.</p>
+                      </div>
+                      <div className="bg-white/10 rounded-lg p-4">
+                        <h4 className="text-lg font-semibold text-white mb-2">Q&A en direct</h4>
+                        <p className="text-gray-300 text-sm">Posez vos questions aux experts.</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {selectedService === 'App' && (
+                  <div className="bg-gradient-to-r from-indigo-900/20 to-cyan-900/20 rounded-xl p-8 m-4">
+                    <h3 className="text-2xl font-bold text-white mb-4">App</h3>
+                    <p className="text-gray-300 mb-6">Accédez à tous nos services depuis votre smartphone.</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-white/10 rounded-lg p-4">
+                        <h4 className="text-lg font-semibold text-white mb-2">Trading mobile</h4>
+                        <p className="text-gray-300 text-sm">Tradez en déplacement avec notre app.</p>
+                      </div>
+                      <div className="bg-white/10 rounded-lg p-4">
+                        <h4 className="text-lg font-semibold text-white mb-2">Notifications</h4>
+                        <p className="text-gray-300 text-sm">Recevez des alertes en temps réel.</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {selectedService === 'Analytics' && (
+                  <div className="bg-gradient-to-r from-teal-900/20 to-green-900/20 rounded-xl p-8 m-4">
+                    <h3 className="text-2xl font-bold text-white mb-4">Analytics</h3>
+                    <p className="text-gray-300 mb-6">Analysez les données de marché avec nos outils avancés.</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-white/10 rounded-lg p-4">
+                        <h4 className="text-lg font-semibold text-white mb-2">Graphiques avancés</h4>
+                        <p className="text-gray-300 text-sm">Outils d'analyse technique professionnels.</p>
+                      </div>
+                      <div className="bg-white/10 rounded-lg p-4">
+                        <h4 className="text-lg font-semibold text-white mb-2">Indicateurs</h4>
+                        <p className="text-gray-300 text-sm">Plus de 100 indicateurs techniques.</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {selectedService === 'Chat' && (
+                  <div className="bg-gradient-to-r from-pink-900/20 to-purple-900/20 rounded-xl p-8 m-4">
+                    <h3 className="text-2xl font-bold text-white mb-4">Chat</h3>
+                    <p className="text-gray-300 mb-6">Communiquez avec la communauté de traders.</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-white/10 rounded-lg p-4">
+                        <h4 className="text-lg font-semibold text-white mb-2">Communauté</h4>
+                        <p className="text-gray-300 text-sm">Échangez avec d'autres traders.</p>
+                      </div>
+                      <div className="bg-white/10 rounded-lg p-4">
+                        <h4 className="text-lg font-semibold text-white mb-2">Support</h4>
+                        <p className="text-gray-300 text-sm">Obtenez de l'aide de nos experts.</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
 
@@ -1426,7 +1512,7 @@ const App = () => {
                   {/* Titre principal */}
                   <div className="text-center mb-8">
                     <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
-                      FORMATION
+                      APPRENTISSAGE
                     </div>
                     <h2 className="text-4xl md:text-6xl font-bold mb-6">
                       <span className="text-white">Apprenez les</span>
@@ -1460,56 +1546,12 @@ const App = () => {
               </div>
             </div>
 
-              {/* Section 2 - Analyse des Trades */}
+              {/* Section 2 - Signaux */}
               <div className="mt-16 sm:mt-20">
                 <div className="relative">
                   {/* Numéro 2 en haut à gauche */}
                   <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
                     2
-                  </div>
-                  
-                  {/* Titre principal */}
-                  <div className="text-center mb-8">
-                    <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
-                      TRADE ANALYSIS
-                    </div>
-                    <h2 className="text-4xl md:text-6xl font-bold mb-6">
-                      <span className="text-white">Analysez vos</span>
-                      <br />
-                      <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-                        performances
-                      </span>
-                    </h2>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
-                      Comprenez vos erreurs, analysez vos trades et améliorez vos stratégies. 
-                      Chaque trade est une leçon pour progresser.
-                    </p>
-                  </div>
-
-                  {/* Vidéo complète */}
-                  <div className="max-w-6xl mx-auto">
-                    <video 
-                      className="w-full rounded-xl shadow-2xl"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      preload="auto"
-                      controls={false}
-                    >
-                      <source src="/videodemo copie.mp4" type="video/mp4" />
-                      Votre navigateur ne supporte pas la lecture de vidéos.
-                    </video>
-                  </div>
-                </div>
-              </div>
-
-              {/* Section 3 - Signaux */}
-              <div className="mt-16 sm:mt-20">
-                <div className="relative">
-                  {/* Numéro 3 en haut à gauche */}
-                  <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
-                    3
                   </div>
                   
                   {/* Titre principal */}
@@ -1548,12 +1590,12 @@ const App = () => {
                 </div>
               </div>
 
-              {/* Section 4 - Journal */}
+              {/* Section 3 - Journal */}
               <div className="mt-16 sm:mt-20">
                 <div className="relative">
-                  {/* Numéro 4 en haut à gauche */}
+                  {/* Numéro 3 en haut à gauche */}
                   <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
-                    4
+                    3
                   </div>
                   
                   {/* Titre principal */}
@@ -1574,30 +1616,189 @@ const App = () => {
                     </p>
                   </div>
 
-                  {/* Vidéo complète */}
-                  <div className="max-w-6xl mx-auto">
-                    <video 
-                      className="w-full rounded-xl shadow-2xl"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      preload="auto"
-                      controls={false}
-                    >
-                      <source src="/videodemo copie.mp4" type="video/mp4" />
-                      Votre navigateur ne supporte pas la lecture de vidéos.
-                    </video>
+                  {/* Interface d'analyse des performances */}
+                  <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
+                      
+                      {/* Panneau 1 - Vos statistiques */}
+                      <div className="group relative bg-gradient-to-br from-purple-900/30 via-purple-800/20 to-blue-900/30 rounded-xl sm:rounded-2xl p-4 sm:p-8 border border-purple-500/30 backdrop-blur-sm hover:border-purple-400/60 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20">
+                        <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-blue-600/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <div className="relative z-10">
+                          <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-purple-400 to-purple-600 rounded-lg flex items-center justify-center">
+                              <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                              </svg>
+                            </div>
+                            <h3 className="text-lg sm:text-xl font-bold text-white">Dive deeper into your strategy</h3>
+                          </div>
+                          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed">Over 50+ reports to help you visualize your trading performance.</p>
+                          
+                          {/* Interface de statistiques */}
+                          <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-xl border border-white/20">
+                            <div className="text-sm sm:text-lg font-bold mb-4 sm:mb-6 text-gray-800 flex items-center gap-2">
+                              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-500 rounded-full"></div>
+                              YOUR STATS (ALL DATES)
+                            </div>
+                            <div className="space-y-2 sm:space-y-4">
+                              <div className="flex justify-between items-center p-2 sm:p-3 bg-green-50 rounded-lg border-l-4 border-green-400">
+                                <span className="text-gray-700 font-medium text-xs sm:text-sm">Best Month:</span>
+                                <span className="text-green-600 font-bold text-xs sm:text-sm">$5,132.50</span>
+                              </div>
+                              <div className="flex justify-between items-center p-2 sm:p-3 bg-red-50 rounded-lg border-l-4 border-red-400">
+                                <span className="text-gray-700 font-medium text-xs sm:text-sm">Lowest Month:</span>
+                                <span className="text-red-600 font-bold text-xs sm:text-sm">$1,900.00</span>
+                              </div>
+                              <div className="flex justify-between items-center p-2 sm:p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">
+                                <span className="text-gray-700 font-medium text-xs sm:text-sm">Average:</span>
+                                <span className="text-blue-600 font-bold text-xs sm:text-sm">$3,516.25</span>
+                              </div>
+                              <div className="flex justify-between items-center p-2 sm:p-3 bg-green-50 rounded-lg border-l-4 border-green-400">
+                                <span className="text-gray-700 font-medium text-xs sm:text-sm">Total P&L:</span>
+                                <span className="text-green-600 font-bold text-xs sm:text-sm">$7,032.50</span>
+                              </div>
+                              <div className="flex justify-between items-center p-2 sm:p-3 bg-purple-50 rounded-lg border-l-4 border-purple-400">
+                                <span className="text-gray-700 font-medium text-xs sm:text-sm">Win Rate:</span>
+                                <span className="text-purple-600 font-bold text-xs sm:text-sm">68%</span>
+                              </div>
+                              <div className="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg border-l-4 border-gray-400">
+                                <span className="text-gray-700 font-medium text-xs sm:text-sm">Total Trades:</span>
+                                <span className="text-gray-600 font-bold text-xs sm:text-sm">156</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Panneau 2 - Comportements de trading */}
+                      <div className="group relative bg-gradient-to-br from-blue-900/30 via-blue-800/20 to-indigo-900/30 rounded-xl sm:rounded-2xl p-4 sm:p-8 border border-blue-500/30 backdrop-blur-sm hover:border-blue-400/60 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20">
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-indigo-600/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <div className="relative z-10">
+                          <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
+                              <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+                              </svg>
+                            </div>
+                            <h3 className="text-lg sm:text-xl font-bold text-white">Understand your trading behaviors</h3>
+                          </div>
+                          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed">Gain key insights in your trading behaviors by digging deeper into over 50+ reports.</p>
+                          
+                          {/* Graphiques de comportement */}
+                          <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-xl border border-white/20">
+                            <div className="text-sm sm:text-lg font-bold mb-4 sm:mb-6 text-gray-800 flex items-center gap-2">
+                              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-500 rounded-full"></div>
+                              TRADE DISTRIBUTION BY DURATION
+                            </div>
+                            <div className="space-y-2 sm:space-y-4 mb-4 sm:mb-6">
+                              <div className="flex items-center gap-2 sm:gap-3">
+                                <div className="w-16 sm:w-24 bg-gradient-to-r from-blue-200 to-blue-300 h-4 sm:h-6 rounded-full shadow-inner"></div>
+                                <span className="text-gray-700 font-medium text-xs sm:text-sm">Under 1 min</span>
+                                <span className="text-blue-600 font-bold ml-auto text-xs sm:text-sm">12 trades</span>
+                              </div>
+                              <div className="flex items-center gap-2 sm:gap-3">
+                                <div className="w-20 sm:w-32 bg-gradient-to-r from-blue-300 to-blue-400 h-4 sm:h-6 rounded-full shadow-inner"></div>
+                                <span className="text-gray-700 font-medium text-xs sm:text-sm">1:00 to 1:59</span>
+                                <span className="text-blue-600 font-bold ml-auto text-xs sm:text-sm">18 trades</span>
+                              </div>
+                              <div className="flex items-center gap-2 sm:gap-3">
+                                <div className="w-24 sm:w-40 bg-gradient-to-r from-blue-400 to-blue-500 h-4 sm:h-6 rounded-full shadow-inner"></div>
+                                <span className="text-gray-700 font-medium text-xs sm:text-sm">2:00 to 4:59</span>
+                                <span className="text-blue-600 font-bold ml-auto text-xs sm:text-sm">25 trades</span>
+                              </div>
+                              <div className="flex items-center gap-2 sm:gap-3">
+                                <div className="w-32 sm:w-48 bg-gradient-to-r from-blue-500 to-blue-600 h-4 sm:h-6 rounded-full shadow-inner"></div>
+                                <span className="text-gray-700 font-medium text-xs sm:text-sm">5:00 to 9:59</span>
+                                <span className="text-blue-600 font-bold ml-auto text-xs sm:text-sm">35 trades</span>
+                              </div>
+                            </div>
+                            
+                            <div className="text-sm sm:text-lg font-bold mb-4 sm:mb-6 text-gray-800 flex items-center gap-2">
+                              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-indigo-500 rounded-full"></div>
+                              PERFORMANCE BY DURATION
+                            </div>
+                            <div className="space-y-2 sm:space-y-4">
+                              <div className="flex items-center gap-2 sm:gap-3">
+                                <div className="w-12 sm:w-16 bg-gradient-to-r from-red-200 to-red-300 h-4 sm:h-6 rounded-full shadow-inner"></div>
+                                <span className="text-gray-700 font-medium text-xs sm:text-sm">Under 1 min</span>
+                                <span className="text-red-600 font-bold ml-auto text-xs sm:text-sm">-$600</span>
+                              </div>
+                              <div className="flex items-center gap-2 sm:gap-3">
+                                <div className="w-16 sm:w-24 bg-gradient-to-r from-green-200 to-green-300 h-4 sm:h-6 rounded-full shadow-inner"></div>
+                                <span className="text-gray-700 font-medium text-xs sm:text-sm">5:00 to 9:59</span>
+                                <span className="text-green-600 font-bold ml-auto text-xs sm:text-sm">+$750</span>
+                              </div>
+                              <div className="flex items-center gap-2 sm:gap-3">
+                                <div className="w-20 sm:w-32 bg-gradient-to-r from-green-300 to-green-400 h-4 sm:h-6 rounded-full shadow-inner"></div>
+                                <span className="text-gray-700 font-medium text-xs sm:text-sm">10:00 to 29:59</span>
+                                <span className="text-green-600 font-bold ml-auto text-xs sm:text-sm">+$4,531</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Panneau 3 - Résumé des performances */}
+                      <div className="group relative bg-gradient-to-br from-emerald-900/30 via-emerald-800/20 to-teal-900/30 rounded-xl sm:rounded-2xl p-4 sm:p-8 border border-emerald-500/30 backdrop-blur-sm hover:border-emerald-400/60 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/20">
+                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/10 to-teal-600/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <div className="relative z-10">
+                          <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
+                              <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
+                              </svg>
+                            </div>
+                            <h3 className="text-lg sm:text-xl font-bold text-white">Get a summary of what's working for you</h3>
+                          </div>
+                          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed">Curated summaries for you to understand your strengths and weaknesses as a trader.</p>
+                          
+                          {/* Tableau de résumé */}
+                          <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-6 shadow-xl border border-white/20">
+                            <div className="text-sm sm:text-lg font-bold mb-4 sm:mb-6 text-gray-800 flex items-center gap-2">
+                              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-500 rounded-full"></div>
+                              SUMMARY
+                            </div>
+                            <div className="space-y-2 sm:space-y-3">
+                              <div className="grid grid-cols-3 gap-2 sm:gap-4 font-semibold text-gray-600 border-b-2 border-gray-200 pb-1 sm:pb-2 text-xs sm:text-sm">
+                                <span>Duration</span>
+                                <span>Net Profit</span>
+                                <span>Win Rate</span>
+                              </div>
+                              <div className="grid grid-cols-3 gap-2 sm:gap-4 p-2 sm:p-3 bg-red-50 rounded-lg border-l-4 border-red-400">
+                                <span className="text-gray-700 font-medium text-xs sm:text-sm">Under 1 min</span>
+                                <span className="text-red-600 font-bold text-xs sm:text-sm">-$600.00</span>
+                                <span className="text-red-500 font-bold text-xs sm:text-sm">25%</span>
+                              </div>
+                              <div className="grid grid-cols-3 gap-2 sm:gap-4 p-2 sm:p-3 bg-orange-50 rounded-lg border-l-4 border-orange-400">
+                                <span className="text-gray-700 font-medium text-xs sm:text-sm">1:00 to 1:59</span>
+                                <span className="text-red-600 font-bold text-xs sm:text-sm">-$1,262</span>
+                                <span className="text-orange-500 font-bold text-xs sm:text-sm">30%</span>
+                              </div>
+                              <div className="grid grid-cols-3 gap-2 sm:gap-4 p-2 sm:p-3 bg-green-50 rounded-lg border-l-4 border-green-400">
+                                <span className="text-gray-700 font-medium text-xs sm:text-sm">5:00 to 9:59</span>
+                                <span className="text-green-600 font-bold text-xs sm:text-sm">+$750</span>
+                                <span className="text-green-500 font-bold text-xs sm:text-sm">75%</span>
+                              </div>
+                              <div className="grid grid-cols-3 gap-2 sm:gap-4 p-2 sm:p-3 bg-green-50 rounded-lg border-l-4 border-green-400">
+                                <span className="text-gray-700 font-medium text-xs sm:text-sm">10:00 to 29:59</span>
+                                <span className="text-green-600 font-bold text-xs sm:text-sm">+$4,531</span>
+                                <span className="text-green-500 font-bold text-xs sm:text-sm">85%</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Section 5 - Live */}
+              {/* Section 4 - Live */}
               <div className="mt-16 sm:mt-20">
                 <div className="relative">
-                  {/* Numéro 5 en haut à gauche */}
+                  {/* Numéro 4 en haut à gauche */}
                   <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
-                    5
+                    4
                   </div>
                   
                   {/* Titre principal */}
@@ -1629,9 +1830,76 @@ const App = () => {
                       preload="auto"
                       controls={false}
                     >
-                      <source src="/videodemo copie.mp4" type="video/mp4" />
+                      <source src="/videolive copie.mp4" type="video/mp4" />
+                      <source src="/videolive.mov" type="video/quicktime" />
                       Votre navigateur ne supporte pas la lecture de vidéos.
                     </video>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 5 - App */}
+              <div className="mt-16 sm:mt-20">
+                <div className="relative">
+                  {/* Numéro 5 en haut à gauche */}
+                  <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
+                    5
+                  </div>
+                  
+                  {/* Titre principal */}
+                  <div className="text-center mb-8">
+                    <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
+                      APP
+                    </div>
+                    <h2 className="text-4xl md:text-6xl font-bold mb-6">
+                      <span className="text-white">Application</span>
+                      <br />
+                      <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                        mobile
+                      </span>
+                    </h2>
+                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+                      Accédez à tous nos services depuis votre smartphone. 
+                      Trading en déplacement, notifications en temps réel.
+                    </p>
+                  </div>
+
+                  {/* Vidéo complète */}
+                  <div className="w-full sm:max-w-3xl mx-auto py-8 sm:py-4">
+                    <div className="relative w-full sm:max-w-none">
+                      {/* Cadre iPhone avec photo */}
+                      <div className="relative">
+                        {/* Photo du cadre iPhone */}
+                        <img 
+                          src="/FOndiphone.png" 
+                          alt="Cadre iPhone" 
+                          className="w-full h-auto scale-150 sm:scale-100"
+                          style={{
+                            display: 'block',
+                            maxWidth: '100%',
+                            height: 'auto'
+                          }}
+                          onError={(e) => {
+                            e.currentTarget.src = '/faceiphone.png';
+                          }}
+                        />
+                        
+                        {/* Vidéo superposée */}
+                        <video 
+                          className="absolute top-8 left-1/2 transform -translate-x-1/2 w-[44%] aspect-[9/16] rounded-[2rem] sm:rounded-[4rem] scale-150 sm:scale-100 sm:top-20"
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          preload="auto"
+                          controls={false}
+                        >
+                          <source src="/videoapp copie.mp4" type="video/mp4" />
+                          <source src="/videoapp.mov" type="video/quicktime" />
+                          Votre navigateur ne supporte pas la lecture de vidéos.
+                        </video>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
