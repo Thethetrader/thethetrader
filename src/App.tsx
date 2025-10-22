@@ -1924,7 +1924,7 @@ const App = () => {
                           {/* Image cadre 1 */}
                           <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl overflow-hidden shadow-xl border border-white/20">
                             <img 
-                              src="/cadre1.png" 
+                              src="/cadre1.jpg" 
                               alt="Journal statistiques" 
                               className="w-full h-[400px] sm:h-[500px] object-cover object-top"
                             />
@@ -1949,7 +1949,7 @@ const App = () => {
                           {/* Image cadre 2 */}
                           <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl overflow-hidden shadow-xl border border-white/20">
                             <img 
-                              src="/cadre2.png" 
+                              src="/cadre2.jpg" 
                               alt="Journal comportements" 
                               className="w-full h-[400px] sm:h-[500px] object-cover object-[center_20%]"
                             />
@@ -1974,7 +1974,7 @@ const App = () => {
                           {/* Image cadre 3 */}
                           <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl overflow-hidden shadow-xl border border-white/20">
                             <img 
-                              src="/cadre3.png" 
+                              src="/cadre3.jpg" 
                               alt="Journal résumé" 
                               className="w-full h-[400px] sm:h-[500px] object-cover object-[center_10%]"
                             />
