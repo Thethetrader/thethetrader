@@ -1335,6 +1335,51 @@ const App = () => {
                 </div>
               </div>
 
+              {/* Section APPRENTISSAGE - Sous les icônes des services */}
+              <div className="mt-16 sm:mt-20">
+                <div className="relative">
+                  {/* Numéro 1 en haut à gauche */}
+                  <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
+                    1
+                  </div>
+                  
+                  {/* Titre principal */}
+                  <div className="text-center mb-8">
+                    <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
+                      APPRENTISSAGE
+                    </div>
+                    <h2 className="text-4xl md:text-6xl font-bold mb-6">
+                      <span className="text-white">Apprenez les</span>
+                      <br />
+                      <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                        fondamentaux
+                      </span>
+                    </h2>
+                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+                      Maîtrisez les bases du trading avec nos cours structurés. De la théorie à la pratique, 
+                      développez vos compétences étape par étape.
+                    </p>
+                  </div>
+
+                  {/* Vidéo complète */}
+                  <div className="max-w-6xl mx-auto">
+                    <video 
+                      className="w-full rounded-xl shadow-2xl"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="metadata"
+                      webkit-playsinline="true"
+                      x-webkit-airplay="allow"
+                    >
+                      <source src="/videodemo copie.mp4" type="video/mp4" />
+                      Votre navigateur ne supporte pas la lecture de vidéos.
+                    </video>
+                  </div>
+                </div>
+              </div>
+
               {/* Sections des services - Déplacées vers le haut */}
               <div className="w-screen -mx-4 sm:mx-0 sm:w-full mt-8">
                 {selectedService === 'Formation' && (
@@ -1501,50 +1546,6 @@ const App = () => {
                 </div>
               </div>
               
-              {/* Section 1 - Formation */}
-              <div className="mt-16 sm:mt-20">
-                <div className="relative">
-                  {/* Numéro 1 en haut à gauche */}
-                  <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
-                    1
-                  </div>
-                  
-                  {/* Titre principal */}
-                  <div className="text-center mb-8">
-                    <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
-                      APPRENTISSAGE
-                    </div>
-                    <h2 className="text-4xl md:text-6xl font-bold mb-6">
-                      <span className="text-white">Apprenez les</span>
-                      <br />
-                      <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-                        fondamentaux
-                      </span>
-                    </h2>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
-                      Maîtrisez les bases du trading avec nos cours structurés. De la théorie à la pratique, 
-                      développez vos compétences étape par étape.
-                    </p>
-                  </div>
-
-                  {/* Vidéo complète */}
-                  <div className="max-w-6xl mx-auto">
-                    <video 
-                      className="w-full rounded-xl shadow-2xl"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      preload="metadata"
-                      webkit-playsinline="true"
-                      x-webkit-airplay="allow"
-                    >
-                      <source src="/videodemo copie.mp4" type="video/mp4" />
-                      Votre navigateur ne supporte pas la lecture de vidéos.
-                    </video>
-                  </div>
-              </div>
-            </div>
 
               {/* Section 2 - Signaux */}
               <div className="mt-16 sm:mt-20">
