@@ -1862,7 +1862,7 @@ const App = () => {
                             </div>
                             <h3 className="text-lg sm:text-xl font-bold text-white">Analysez vos statistiques</h3>
                           </div>
-                          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed">Visualisez vos performances avec plus de 50 rapports détaillés pour comprendre vos résultats.</p>
+                          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed min-h-[48px]">Visualisez vos performances avec plus de 50 rapports détaillés pour comprendre vos résultats.</p>
                           
                           {/* Image cadre 1 */}
                           <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl overflow-hidden shadow-xl border border-white/20">
@@ -1887,14 +1887,14 @@ const App = () => {
                             </div>
                             <h3 className="text-lg sm:text-xl font-bold text-white">Comprenez vos erreurs</h3>
                           </div>
-                          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed">Identifiez vos points faibles en analysant vos pertes pour améliorer votre gestion du risque.</p>
+                          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed min-h-[48px]">Identifiez vos points faibles en analysant vos pertes pour améliorer votre gestion du risque.</p>
                           
                           {/* Image cadre 2 */}
                           <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl overflow-hidden shadow-xl border border-white/20">
                             <img 
                               src="/cadre2.png" 
                               alt="Journal comportements" 
-                              className="w-full h-[400px] sm:h-[500px] object-cover object-top"
+                              className="w-full h-[400px] sm:h-[500px] object-cover object-center"
                             />
                           </div>
                         </div>
@@ -1912,14 +1912,14 @@ const App = () => {
                             </div>
                             <h3 className="text-lg sm:text-xl font-bold text-white">Suivez votre progression</h3>
                           </div>
-                          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed">Obtenez une vue d'ensemble de vos performances mensuelles pour mesurer votre évolution.</p>
+                          <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm leading-relaxed min-h-[48px]">Obtenez une vue d'ensemble de vos performances mensuelles pour mesurer votre évolution.</p>
                           
                           {/* Image cadre 3 */}
                           <div className="bg-white/95 backdrop-blur-sm rounded-lg sm:rounded-xl overflow-hidden shadow-xl border border-white/20">
                             <img 
                               src="/cadre3.png" 
                               alt="Journal résumé" 
-                              className="w-full h-[400px] sm:h-[500px] object-cover object-top"
+                              className="w-full h-[400px] sm:h-[500px] object-cover object-center"
                             />
                           </div>
                         </div>
