@@ -52,6 +52,11 @@ const App = () => {
       .pwa-landing-no-scroll {
         overflow: hidden !important;
         height: 100vh !important;
+        max-height: 100vh !important;
+        position: relative !important;
+      }
+      .pwa-landing-no-scroll > * {
+        overflow: hidden !important;
       }
     `;
     document.head.appendChild(style);
@@ -270,21 +275,6 @@ const App = () => {
     };
   }, [isPWA, user]);
 
-  // Bloquer le scroll sur la landing page PWA même sans utilisateur connecté
-  useEffect(() => {
-    if (isPWA && currentPage === 'home' && !user) {
-      document.body.style.overflow = 'hidden';
-      document.body.style.height = '100vh';
-    } else if (!isPWA || currentPage !== 'home' || user) {
-      document.body.style.overflow = '';
-      document.body.style.height = '';
-    }
-    
-    return () => {
-      document.body.style.overflow = '';
-      document.body.style.height = '';
-    };
-  }, [isPWA, currentPage, user]);
 
   // Précharger l'image pour éviter le clignotement
   useEffect(() => {
