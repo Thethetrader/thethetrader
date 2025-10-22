@@ -49,6 +49,10 @@ const App = () => {
         overflow-x: hidden;
         max-width: 100vw;
       }
+      .pwa-landing-no-scroll {
+        overflow: hidden !important;
+        height: 100vh !important;
+      }
     `;
     document.head.appendChild(style);
     return () => document.head.removeChild(style);
@@ -1013,7 +1017,7 @@ const App = () => {
 
     const page = pages[currentPage];
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <div className={`min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 ${isPWA && currentPage === 'home' && !user ? 'pwa-landing-no-scroll' : ''}`}>
         {/* Header with back button */}
         <nav className="flex items-center justify-between p-4 sm:p-6 relative z-50 border-b border-purple-700/50">
           <button 
@@ -1087,7 +1091,7 @@ const App = () => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className={`min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 ${isPWA && currentPage === 'home' && !user ? 'pwa-landing-no-scroll' : ''}`}>
       {/* Navigation - Masquée en PWA */}
       {!isPWA && (
         <nav className="flex items-center justify-between p-4 sm:p-6 relative z-50">
