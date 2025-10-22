@@ -1350,7 +1350,7 @@ const App = () => {
                   <img 
                     src={getServicePwaImage(selectedService)}
                     alt={`PWA ${selectedService}`}
-                    className="absolute bottom-2 right-2 w-32 h-48 sm:w-36 sm:h-48 object-cover rounded-lg shadow-lg border-2 border-white/30"
+                    className="absolute bottom-2 left-2 w-32 h-48 sm:w-36 sm:h-48 object-cover rounded-lg shadow-lg border-2 border-white/30"
                   />
                 </div>
               </div>
