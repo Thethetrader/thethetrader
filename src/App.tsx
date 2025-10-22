@@ -1350,7 +1350,7 @@ const App = () => {
                   <img 
                     src={getServicePwaImage(selectedService)}
                     alt={`PWA ${selectedService}`}
-                    className="absolute bottom-2 left-2 w-32 h-48 sm:w-36 sm:h-48 object-cover rounded-lg shadow-lg border-2 border-white/30"
+                    className="block sm:hidden absolute bottom-2 left-2 w-32 h-48 sm:w-36 sm:h-48 object-cover rounded-lg shadow-lg border-2 border-white/30"
                   />
                 </div>
               </div>
@@ -1414,25 +1414,239 @@ const App = () => {
                   <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Chacun a son propre journal de trading pour suivre ses trades et analyser ses performances.</div>
                 </div>
               </div>
-              
-              {/* Bouton Se connecter après Pourquoi choisir */}
-              <div className="text-center mt-8">
-                <button 
-                  onClick={() => {
-                    const pricingSection = document.getElementById('pricing');
-                    if (pricingSection) {
-                      pricingSection.scrollIntoView({ behavior: 'smooth' });
-                    }
-                  }}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 sm:px-12 py-5 sm:py-6 rounded-lg text-xl sm:text-2xl font-semibold hover:opacity-90"
-                >
-                  Se connecter
-                </button>
+
+              {/* Section 1 - Formation */}
+              <div className="mt-16 sm:mt-20">
+                <div className="relative">
+                  {/* Numéro 1 en haut à gauche */}
+                  <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
+                    1
+                  </div>
+                  
+                  {/* Titre principal */}
+                  <div className="text-center mb-8">
+                    <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
+                      FORMATION
+                    </div>
+                    <h2 className="text-4xl md:text-6xl font-bold mb-6">
+                      <span className="text-white">Apprenez les</span>
+                      <br />
+                      <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                        fondamentaux
+                      </span>
+                    </h2>
+                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+                      Maîtrisez les bases du trading avec nos cours structurés. De la théorie à la pratique, 
+                      développez vos compétences étape par étape.
+                    </p>
+                  </div>
+
+                  {/* Vidéo complète */}
+                  <div className="max-w-6xl mx-auto">
+                    <video 
+                      className="w-full rounded-xl shadow-2xl"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="metadata"
+                      webkit-playsinline="true"
+                      x-webkit-airplay="allow"
+                    >
+                      <source src="/videodemo copie.mp4" type="video/mp4" />
+                      Votre navigateur ne supporte pas la lecture de vidéos.
+                    </video>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 2 - Analyse des Trades */}
+              <div className="mt-16 sm:mt-20">
+                <div className="relative">
+                  {/* Numéro 2 en haut à gauche */}
+                  <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
+                    2
+                  </div>
+                  
+                  {/* Titre principal */}
+                  <div className="text-center mb-8">
+                    <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
+                      TRADE ANALYSIS
+                    </div>
+                    <h2 className="text-4xl md:text-6xl font-bold mb-6">
+                      <span className="text-white">Analysez vos</span>
+                      <br />
+                      <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                        performances
+                      </span>
+                    </h2>
+                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+                      Comprenez vos erreurs, analysez vos trades et améliorez vos stratégies. 
+                      Chaque trade est une leçon pour progresser.
+                    </p>
+                  </div>
+
+                  {/* Vidéo complète */}
+                  <div className="max-w-6xl mx-auto">
+                    <video 
+                      className="w-full rounded-xl shadow-2xl"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="auto"
+                      controls={false}
+                    >
+                      <source src="/videodemo.mov" type="video/quicktime" />
+                      <source src="/videodemo.mp4" type="video/mp4" />
+                      <source src="/videodemo.webm" type="video/webm" />
+                      Votre navigateur ne supporte pas la lecture de vidéos.
+                    </video>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 3 - Signaux */}
+              <div className="mt-16 sm:mt-20">
+                <div className="relative">
+                  {/* Numéro 3 en haut à gauche */}
+                  <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
+                    3
+                  </div>
+                  
+                  {/* Titre principal */}
+                  <div className="text-center mb-8">
+                    <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
+                      SIGNAUX
+                    </div>
+                    <h2 className="text-4xl md:text-6xl font-bold mb-6">
+                      <span className="text-white">Recevez les</span>
+                      <br />
+                      <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                        meilleurs signaux
+                      </span>
+                    </h2>
+                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+                      Accédez à nos signaux de trading en temps réel. Forex, Crypto, Indices - 
+                      tous les marchés couverts par nos experts.
+                    </p>
+                  </div>
+
+                  {/* Vidéo complète */}
+                  <div className="max-w-6xl mx-auto">
+                    <video 
+                      className="w-full rounded-xl shadow-2xl"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="auto"
+                      controls={false}
+                    >
+                      <source src="/videodemo.mov" type="video/quicktime" />
+                      <source src="/videodemo.mp4" type="video/mp4" />
+                      <source src="/videodemo.webm" type="video/webm" />
+                      Votre navigateur ne supporte pas la lecture de vidéos.
+                    </video>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 4 - Journal */}
+              <div className="mt-16 sm:mt-20">
+                <div className="relative">
+                  {/* Numéro 4 en haut à gauche */}
+                  <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
+                    4
+                  </div>
+                  
+                  {/* Titre principal */}
+                  <div className="text-center mb-8">
+                    <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
+                      JOURNAL
+                    </div>
+                    <h2 className="text-4xl md:text-6xl font-bold mb-6">
+                      <span className="text-white">Suivez votre</span>
+                      <br />
+                      <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                        progression
+                      </span>
+                    </h2>
+                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+                      Enregistrez chaque trade, analysez vos performances et identifiez vos patterns. 
+                      Votre journal personnel pour devenir un meilleur trader.
+                    </p>
+                  </div>
+
+                  {/* Vidéo complète */}
+                  <div className="max-w-6xl mx-auto">
+                    <video 
+                      className="w-full rounded-xl shadow-2xl"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="auto"
+                      controls={false}
+                    >
+                      <source src="/videodemo.mov" type="video/quicktime" />
+                      <source src="/videodemo.mp4" type="video/mp4" />
+                      <source src="/videodemo.webm" type="video/webm" />
+                      Votre navigateur ne supporte pas la lecture de vidéos.
+                    </video>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 5 - Live */}
+              <div className="mt-16 sm:mt-20">
+                <div className="relative">
+                  {/* Numéro 5 en haut à gauche */}
+                  <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
+                    5
+                  </div>
+                  
+                  {/* Titre principal */}
+                  <div className="text-center mb-8">
+                    <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
+                      LIVE
+                    </div>
+                    <h2 className="text-4xl md:text-6xl font-bold mb-6">
+                      <span className="text-white">Trading en</span>
+                      <br />
+                      <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                        direct
+                      </span>
+                    </h2>
+                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+                      Rejoignez nos sessions de trading en direct. Apprenez en temps réel, 
+                      posez vos questions et échangez avec la communauté.
+                    </p>
+                  </div>
+
+                  {/* Vidéo complète */}
+                  <div className="max-w-6xl mx-auto">
+                    <video 
+                      className="w-full rounded-xl shadow-2xl"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="auto"
+                      controls={false}
+                    >
+                      <source src="/videodemo.mov" type="video/quicktime" />
+                      <source src="/videodemo.mp4" type="video/mp4" />
+                      <source src="/videodemo.webm" type="video/webm" />
+                      Votre navigateur ne supporte pas la lecture de vidéos.
+                    </video>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Interface Mobile après Connexion - Mobile uniquement */}
-            <div className="block md:hidden max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
+            {/* Interface Mobile après Connexion - Mobile uniquement - SUPPRIMÉ */}
+            <div className="block md:hidden max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6" style={{display: 'none'}}>
               <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-8 sm:mb-12">
                 Aperçu de la plateforme
               </h2>
@@ -2389,8 +2603,8 @@ const App = () => {
               </div>
             </div>
 
-            {/* Interface Desktop - Desktop uniquement */}
-            <div id="interface" className="hidden md:block max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
+            {/* Interface Desktop - Desktop uniquement - SUPPRIMÉ */}
+            <div id="interface" className="hidden md:block max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6" style={{display: 'none'}}>
               <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-8 sm:mb-12">
                 Aperçu de la plateforme
               </h2>
