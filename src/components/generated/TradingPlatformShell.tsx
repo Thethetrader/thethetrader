@@ -1251,7 +1251,42 @@ export default function TradingPlatformShell() {
     //   // Pas de scroll pour signaux, calendrier et trading journal
     // }, 200);
   };
-  const [personalTrades, setPersonalTrades] = useState<PersonalTrade[]>([]);
+  // Données fictives pour screenshots de promotion - 90% win rate
+  const mockTrades: PersonalTrade[] = [
+    { id: '1', date: '2024-12-01', symbol: 'EURUSD', side: 'long', entry: 1.0850, exit: 1.0920, quantity: 100, pnl: 250, account: 'Compte Principal', lossReason: 'mauvais_entree', lossReasons: ['mauvais_entree'] },
+    { id: '2', date: '2024-12-02', symbol: 'GBPUSD', side: 'short', entry: 1.2650, exit: 1.2580, quantity: 100, pnl: 180, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '3', date: '2024-12-03', symbol: 'USDJPY', side: 'long', entry: 149.50, exit: 150.20, quantity: 100, pnl: 320, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '4', date: '2024-12-04', symbol: 'AUDUSD', side: 'short', entry: 0.6650, exit: 0.6580, quantity: 100, pnl: 190, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '5', date: '2024-12-05', symbol: 'EURUSD', side: 'long', entry: 1.0880, exit: 1.0950, quantity: 100, pnl: 280, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '6', date: '2024-12-06', symbol: 'GBPUSD', side: 'short', entry: 1.2620, exit: 1.2550, quantity: 100, pnl: 210, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '7', date: '2024-12-07', symbol: 'USDJPY', side: 'long', entry: 149.20, exit: 150.50, quantity: 100, pnl: 350, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '8', date: '2024-12-08', symbol: 'AUDUSD', side: 'short', entry: 0.6680, exit: 0.6620, quantity: 100, pnl: 160, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '9', date: '2024-12-09', symbol: 'EURUSD', side: 'long', entry: 1.0920, exit: 1.0850, quantity: 100, pnl: -120, account: 'Compte Principal', lossReason: 'volatilite_excessive', lossReasons: ['volatilite_excessive'] },
+    { id: '10', date: '2024-12-10', symbol: 'GBPUSD', side: 'short', entry: 1.2580, exit: 1.2500, quantity: 100, pnl: 290, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '11', date: '2024-12-11', symbol: 'USDJPY', side: 'long', entry: 150.00, exit: 150.80, quantity: 100, pnl: 220, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '12', date: '2024-12-12', symbol: 'AUDUSD', side: 'short', entry: 0.6600, exit: 0.6530, quantity: 100, pnl: 180, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '13', date: '2024-12-13', symbol: 'EURUSD', side: 'long', entry: 1.0850, exit: 1.0920, quantity: 100, pnl: 310, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '14', date: '2024-12-14', symbol: 'GBPUSD', side: 'short', entry: 1.2550, exit: 1.2480, quantity: 100, pnl: 240, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '15', date: '2024-12-15', symbol: 'USDJPY', side: 'long', entry: 150.50, exit: 151.20, quantity: 100, pnl: 200, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '16', date: '2024-12-16', symbol: 'AUDUSD', side: 'short', entry: 0.6530, exit: 0.6470, quantity: 100, pnl: 270, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '17', date: '2024-12-17', symbol: 'EURUSD', side: 'long', entry: 1.0920, exit: 1.0980, quantity: 100, pnl: 190, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '18', date: '2024-12-18', symbol: 'GBPUSD', side: 'short', entry: 1.2480, exit: 1.2400, quantity: 100, pnl: 330, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '19', date: '2024-12-19', symbol: 'USDJPY', side: 'long', entry: 151.20, exit: 152.00, quantity: 100, pnl: 260, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '20', date: '2024-12-20', symbol: 'AUDUSD', side: 'short', entry: 0.6470, exit: 0.6410, quantity: 100, pnl: 170, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '21', date: '2024-12-21', symbol: 'EURUSD', side: 'long', entry: 1.0980, exit: 1.1050, quantity: 100, pnl: 300, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '22', date: '2024-12-22', symbol: 'GBPUSD', side: 'short', entry: 1.2400, exit: 1.2330, quantity: 100, pnl: 230, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '23', date: '2024-12-23', symbol: 'USDJPY', side: 'long', entry: 152.00, exit: 151.50, quantity: 100, pnl: -90, account: 'Compte Principal', lossReason: 'mauvais_timing', lossReasons: ['mauvais_timing'] },
+    { id: '24', date: '2024-12-24', symbol: 'AUDUSD', side: 'short', entry: 0.6410, exit: 0.6350, quantity: 100, pnl: 280, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '25', date: '2024-12-25', symbol: 'EURUSD', side: 'long', entry: 1.1050, exit: 1.1120, quantity: 100, pnl: 210, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '26', date: '2024-12-26', symbol: 'GBPUSD', side: 'short', entry: 1.2330, exit: 1.2250, quantity: 100, pnl: 340, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '27', date: '2024-12-27', symbol: 'USDJPY', side: 'long', entry: 151.50, exit: 152.30, quantity: 100, pnl: 250, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '28', date: '2024-12-28', symbol: 'AUDUSD', side: 'short', entry: 0.6350, exit: 0.6290, quantity: 100, pnl: 180, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '29', date: '2024-12-29', symbol: 'EURUSD', side: 'long', entry: 1.1120, exit: 1.1180, quantity: 100, pnl: 290, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '30', date: '2024-12-30', symbol: 'GBPUSD', side: 'short', entry: 1.2250, exit: 1.2180, quantity: 100, pnl: 220, account: 'Compte Principal', lossReason: undefined, lossReasons: [] },
+    { id: '31', date: '2024-12-31', symbol: 'USDJPY', side: 'long', entry: 152.30, exit: 153.20, quantity: 100, pnl: 360, account: 'Compte Principal', lossReason: undefined, lossReasons: [] }
+  ];
+
+  const [personalTrades, setPersonalTrades] = useState<PersonalTrade[]>(mockTrades);
 
   // État pour les comptes multiples
   const [tradingAccounts, setTradingAccounts] = useState<UserAccount[]>([]);
