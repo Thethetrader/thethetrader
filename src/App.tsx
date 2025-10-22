@@ -1497,9 +1497,7 @@ const App = () => {
                       preload="auto"
                       controls={false}
                     >
-                      <source src="/videodemo.mov" type="video/quicktime" />
-                      <source src="/videodemo.mp4" type="video/mp4" />
-                      <source src="/videodemo.webm" type="video/webm" />
+                      <source src="/videodemo copie.mp4" type="video/mp4" />
                       Votre navigateur ne supporte pas la lecture de vidéos.
                     </video>
                   </div>
@@ -1543,9 +1541,7 @@ const App = () => {
                       preload="auto"
                       controls={false}
                     >
-                      <source src="/videodemo.mov" type="video/quicktime" />
-                      <source src="/videodemo.mp4" type="video/mp4" />
-                      <source src="/videodemo.webm" type="video/webm" />
+                      <source src="/videodemo copie.mp4" type="video/mp4" />
                       Votre navigateur ne supporte pas la lecture de vidéos.
                     </video>
                   </div>
@@ -1589,9 +1585,7 @@ const App = () => {
                       preload="auto"
                       controls={false}
                     >
-                      <source src="/videodemo.mov" type="video/quicktime" />
-                      <source src="/videodemo.mp4" type="video/mp4" />
-                      <source src="/videodemo.webm" type="video/webm" />
+                      <source src="/videodemo copie.mp4" type="video/mp4" />
                       Votre navigateur ne supporte pas la lecture de vidéos.
                     </video>
                   </div>
@@ -1635,9 +1629,7 @@ const App = () => {
                       preload="auto"
                       controls={false}
                     >
-                      <source src="/videodemo.mov" type="video/quicktime" />
-                      <source src="/videodemo.mp4" type="video/mp4" />
-                      <source src="/videodemo.webm" type="video/webm" />
+                      <source src="/videodemo copie.mp4" type="video/mp4" />
                       Votre navigateur ne supporte pas la lecture de vidéos.
                     </video>
                   </div>
