@@ -1740,15 +1740,15 @@ const App = () => {
                       APPRENTISSAGE
                     </div>
                     <h2 className="text-4xl md:text-6xl font-bold mb-6">
-                      <span className="text-white">Apprenez les</span>
+                      <span className="text-white">Adoptez mon approche</span>
                       <br />
                       <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-                        fondamentaux
+                        précise
                       </span>
                     </h2>
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
-                      Maîtrisez les bases du trading avec nos cours structurés. De la théorie à la pratique, 
-                      développez vos compétences étape par étape.
+                      Méthode graphique pure, zéro indicateurs, zéro blabla. Un setup précis qui se répète sans fin. 
+                      Des charts clairs pour un trading carré et des résultats constants.
                     </p>
                   </div>
 
@@ -1786,15 +1786,14 @@ const App = () => {
                       SIGNAUX
                     </div>
                     <h2 className="text-4xl md:text-6xl font-bold mb-6">
-                      <span className="text-white">Recevez les</span>
+                      <span className="text-white">Reçois mes signaux</span>
                       <br />
                       <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-                        meilleurs signaux
+                        en temps réel
                       </span>
                     </h2>
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
-                      Accédez à nos signaux de trading en temps réel. Forex, Crypto, Indices - 
-                      tous les marchés couverts par nos experts.
+                      Reçois des signaux Forex, Crypto, Indices avec des charts annotés pour assimiler mon modèle étape par étape. Le but : ta maîtrise du marché.
                     </p>
                   </div>
 
@@ -1830,15 +1829,14 @@ const App = () => {
                       JOURNAL
                     </div>
                     <h2 className="text-4xl md:text-6xl font-bold mb-6">
-                      <span className="text-white">Suivez votre</span>
+                      <span className="text-white">Journal de</span>
                       <br />
                       <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-                        progression
+                        trading
                       </span>
                     </h2>
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
-                      Enregistrez chaque trade, analysez vos performances et identifiez vos patterns. 
-                      Votre journal personnel pour devenir un meilleur trader.
+                      Un journal complet et personnalisable pour suivre vos signaux, gérer plusieurs comptes, et analyser vos performances avec précision. Suivez vos statistiques, étudiez vos stop loss et transformez chaque trade — gagnant comme perdant — en véritable source d'apprentissage.
                     </p>
                   </div>
 
@@ -1939,15 +1937,14 @@ const App = () => {
                       LIVE
                     </div>
                     <h2 className="text-4xl md:text-6xl font-bold mb-6">
-                      <span className="text-white">Trading en</span>
+                      <span className="text-white">Session de live</span>
                       <br />
                       <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-                        direct
+                        trading
                       </span>
                     </h2>
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
-                      Rejoignez nos sessions de trading en direct. Apprenez en temps réel, 
-                      posez vos questions et échangez avec la communauté.
+                      Rejoins mes sessions de trading, apprends en direct avec mes annotations et pose tes questions.
                     </p>
                   </div>
 
@@ -1979,25 +1976,25 @@ const App = () => {
                   </div>
                   
                   {/* Titre principal */}
-                  <div className="text-center mb-8">
-                    <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
+                  <div className="text-center mb-2">
+                    <div className="text-sm font-semibold text-purple-400 mb-2 tracking-wider">
                       APP
                     </div>
-                    <h2 className="text-4xl md:text-6xl font-bold mb-6">
+                    <h2 className="text-4xl md:text-6xl font-bold mb-3">
                       <span className="text-white">Application</span>
                       <br />
                       <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
                         mobile
                       </span>
                     </h2>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-2">
                       Accédez à tous nos services depuis votre smartphone. 
                       Trading en déplacement, notifications en temps réel.
                     </p>
                   </div>
 
                   {/* Vidéo complète */}
-                  <div className="w-full sm:max-w-3xl mx-auto py-8 sm:py-4">
+                  <div className="w-full sm:max-w-3xl mx-auto py-0 sm:py-0">
                     <div className="relative w-full sm:max-w-none">
                       {/* Cadre iPhone avec photo */}
                       <div className="relative">
@@ -2018,7 +2015,7 @@ const App = () => {
                         
                         {/* Vidéo superposée */}
                         <video 
-                          className="absolute top-10 left-1/2 transform -translate-x-1/2 w-[44%] aspect-[9/16] rounded-[2rem] sm:rounded-[4rem] scale-125 sm:scale-100 sm:top-20"
+                          className={`absolute left-1/2 transform -translate-x-1/2 w-[44%] aspect-[9/16] rounded-[2rem] sm:rounded-[4rem] scale-125 sm:scale-100 ${isPWA && !user ? 'top-2' : 'top-10'} sm:top-20`}
                           autoPlay
                           loop
                           muted
