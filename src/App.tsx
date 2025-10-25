@@ -4738,7 +4738,7 @@ const App = () => {
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-gray-300">Standard</span>
-                        <span>Support / contact</span>
+                        <span>Support standard</span>
                       </li>
                     </ul>
                   </div>
@@ -4799,15 +4799,15 @@ const App = () => {
                         </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400">✓</span>
-                        <span>Signaux (en temps réel + détaillés)</span>
+                        <span>Signaux en temps réel détaillés</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400">✓</span>
-                        <span>Journal de trading (multi-comptes)</span>
+                        <span>Journal de trading multi-comptes</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400">✓</span>
-                        <span>Statistiques (avancées, par setup)</span>
+                        <span>Statistiques avancées par setup</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400">✓</span>
@@ -4819,7 +4819,7 @@ const App = () => {
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400">✓</span>
-                        <span>Support prioritaire + contact direct</span>
+                        <span>Support prioritaire et contact direct</span>
                       </li>
                     </ul>
                   </div>
