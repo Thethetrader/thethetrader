@@ -4694,7 +4694,7 @@ const App = () => {
                       <span className="text-lg text-gray-400 font-normal"> / mois</span>
                       {paymentType === 'yearly' && (
                         <div className="text-gray-300 text-sm font-normal mt-2">
-                          Facturé 390€ / an
+                          Facturé 290€ / an
                         </div>
                       )}
                       <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full">
@@ -4766,7 +4766,7 @@ const App = () => {
                   }`}
                 >
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg animate-pulse">
-                    {paymentType === 'yearly' ? '💎 ÉCONOMISE 50€' : '⭐ RECOMMANDÉ'}
+                    {paymentType === 'yearly' ? '💎 ÉCONOMISE 100€' : '⭐ RECOMMANDÉ'}
                   </div>
                   <div className="text-center">
                     <h3 className="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent mb-3">PREMIUM</h3>
@@ -4776,7 +4776,7 @@ const App = () => {
                       <span className="text-lg text-gray-400 font-normal"> / mois</span>
                       {paymentType === 'yearly' && (
                         <div className="text-gray-300 text-sm font-normal mt-2">
-                          Facturé 790€ / an
+                          Facturé 690€ / an
                         </div>
                       )}
                       <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full">
