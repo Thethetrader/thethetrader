@@ -4323,10 +4323,15 @@ export default function TradingPlatformShell() {
               <button 
                 onClick={() => {
                   setMobileView('channels');
-                  // Force scroll to top when returning to channels
-                  setTimeout(() => {
-                    window.scrollTo({ top: 0, behavior: 'instant' });
-                  }, 50);
+                  // Force scroll to top immediately
+                  window.scrollTo({ top: 0, behavior: 'instant' });
+                  // Also force scroll on the channels container
+                  requestAnimationFrame(() => {
+                    const channelsContainer = document.querySelector('.p-4.space-y-3.h-full.overflow-y-auto');
+                    if (channelsContainer) {
+                      channelsContainer.scrollTop = 0;
+                    }
+                  });
                 }}
                 className="flex items-center gap-2 text-gray-400 hover:text-white"
               >
