@@ -4360,7 +4360,7 @@ export default function TradingPlatformShell() {
               
               {/* Statistiques en haut */}
               <div className="bg-gray-700 rounded-lg p-6">
-                <h4 className="text-sm font-semibold text-white mb-3 text-center">Statistiques signaux</h4>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">📊 STATISTIQUES SIGNAUX</h3>
                 <div className="grid grid-cols-2 gap-4">
                   {/* Colonne gauche */}
                   <div className="space-y-2">
