@@ -1346,8 +1346,8 @@ const App = () => {
                             <span>Statistiques (de base)</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-red-400">✗</span>
-                            <span>Live streams / Replays</span>
+                            <span className="text-green-400">✓</span>
+                            <span>Live streams (1/semaine)</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-red-400">✗</span>
@@ -1412,7 +1412,7 @@ const App = () => {
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400">✓</span>
-                            <span>Live streams / Replays</span>
+                            <span>Live streams (5/7)</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400">✓</span>
@@ -4729,7 +4729,7 @@ const App = () => {
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-red-400">✗</span>
-                        <span>Live streams / Replays</span>
+                        <span>Live streams (1/semaine)</span>
                       </li>
                       
                       <li className="flex items-center gap-2">
@@ -4811,7 +4811,7 @@ const App = () => {
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400">✓</span>
-                        <span>Live streams / Replays</span>
+                        <span>Live streams (5/7)</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400">✓</span>
