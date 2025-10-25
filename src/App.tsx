@@ -1747,8 +1747,8 @@ const App = () => {
                       </span>
                     </h2>
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
-                      Méthode graphique pure, zéro indicateurs, zéro blabla. Un setup précis qui se répète sans fin. 
-                      Des charts clairs pour un trading carré et des résultats constants.
+                      Découvre ma méthode de scalping : analyse graphique pure, zéro indicateurs, zéro blabla. 
+                      Un setup précis qui se répète sans fin pour des trades rapides et efficaces.
                     </p>
                   </div>
 
@@ -1987,8 +1987,9 @@ const App = () => {
                       </span>
                     </h2>
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-2">
-                      Accédez à tous nos services depuis votre smartphone. 
-                      Trading en déplacement, notifications en temps réel.
+                      Installe l'app et reçois des notifications instantanées pour chaque signal. 
+                      Accède au livestream, consulte tes journaux personnels. 
+                      TPLN est 100% responsive, partout avec toi.
                     </p>
                   </div>
 
