@@ -1752,21 +1752,20 @@ const App = () => {
                     </p>
                   </div>
 
-                  {/* Vidéo complète */}
-                  <div className="max-w-6xl mx-auto mb-12">
-                    <video 
+                  {/* Image Model */}
+                  <div className="max-w-6xl mx-auto mb-12 relative">
+                    <img 
+                      src="/model.png" 
+                      alt="Model de trading" 
                       className="w-full rounded-xl shadow-2xl"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      preload="metadata"
-                      webkit-playsinline="true"
-                      x-webkit-airplay="allow"
-                    >
-                      <source src="/videodemo copie.mp4" type="video/mp4" />
-                      Votre navigateur ne supporte pas la lecture de vidéos.
-                    </video>
+                    />
+                    {/* Image Model2 en bas à droite format iPhone */}
+                    <img 
+                      src="/model2.png" 
+                      alt="Model iPhone" 
+                      className="absolute bottom-4 right-8 sm:right-12 w-16 sm:w-48 rounded-2xl shadow-2xl"
+                      style={{ aspectRatio: '9/19.5' }}
+                    />
                   </div>
 
               </div>
@@ -1976,7 +1975,7 @@ const App = () => {
                   </div>
                   
                   {/* Titre principal */}
-                  <div className="text-center mb-2">
+                  <div className="text-center mb-8 sm:mb-2">
                     <div className="text-sm font-semibold text-purple-400 mb-2 tracking-wider">
                       APP
                     </div>
@@ -2015,7 +2014,7 @@ const App = () => {
                         
                         {/* Vidéo superposée */}
                         <video 
-                          className={`absolute left-1/2 transform -translate-x-1/2 w-[44%] aspect-[9/16] rounded-[2rem] sm:rounded-[4rem] scale-125 sm:scale-100 ${isPWA && !user ? 'top-2' : 'top-10'} sm:top-20`}
+                          className={`absolute left-1/2 transform -translate-x-1/2 w-[44%] aspect-[9/16] rounded-[2rem] sm:rounded-[4rem] scale-125 sm:scale-100 ${isPWA && !user ? 'top-1.5' : 'top-9'} sm:top-20`}
                           autoPlay
                           loop
                           muted
@@ -2062,7 +2061,7 @@ const App = () => {
                 <div className="text-white">
                   Pourquoi choisir
                 </div>
-                <div className="bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+                <div className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
                   TPLN ?
                 </div>
               </h2>

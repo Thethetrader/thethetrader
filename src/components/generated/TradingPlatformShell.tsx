@@ -4995,11 +4995,15 @@ export default function TradingPlatformShell() {
                           <div className="text-center mb-8 p-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white">
                             <div className="flex justify-center mb-0">
                   <img 
+                    src="/formation.jpeg" 
+                    alt="Trading pour les nuls" 
+                    className="hidden sm:block h-48 w-auto object-cover"
+                  />
+                  <img 
                     src="/logo-removebg-preview.png" 
                     alt="Trading pour les nuls" 
-                    className="h-48 w-auto object-cover"
+                    className="sm:hidden h-48 w-auto object-cover"
                     style={{ clipPath: 'inset(10% 5% 15% 5%)' }}
-
                   />
                 </div>
                             <p className="text-xl opacity-90 -mt-3">Guide complet des concepts fondamentaux et stratégies avancées</p>
