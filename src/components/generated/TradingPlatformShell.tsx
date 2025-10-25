@@ -4344,15 +4344,15 @@ export default function TradingPlatformShell() {
                         <div className="p-4 space-y-3 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
               
               {/* Statistiques en haut */}
-              <div className="bg-gray-700 rounded-lg p-4">
-                <div className="grid grid-cols-2 gap-3">
+              <div className="bg-gray-700 rounded-lg p-6">
+                <div className="grid grid-cols-2 gap-4">
                   {/* Colonne gauche */}
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-sm">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-base">
                       <span className="text-gray-400">Win Rate:</span>
                       <span className="text-gray-200 font-medium">{calculateWinRateForMonth()}%</span>
                     </div>
-                    <div className="flex justify-between text-sm">
+                    <div className="flex justify-between text-base">
                       <span className="text-gray-400">P&L Total:</span>
                       <span className={calculateTotalPnLForMonth() >= 0 ? 'text-green-200 font-medium' : 'text-red-200 font-medium'}>
                         {calculateTotalPnLForMonth() >= 0 ? '+' : ''}${calculateTotalPnLForMonth()}
@@ -4360,12 +4360,12 @@ export default function TradingPlatformShell() {
                     </div>
                   </div>
                   {/* Colonne droite */}
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-sm">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-base">
                       <span className="text-gray-400">Signaux actifs:</span>
                       <span className="text-gray-200 font-medium">{realTimeSignals.filter(s => s.status === 'ACTIVE').length}</span>
                     </div>
-                    <div className="flex justify-between text-sm">
+                    <div className="flex justify-between text-base">
                       <span className="text-gray-400">Total Trades:</span>
                       <span className="text-gray-200 font-medium">{realTimeSignals.length}</span>
                     </div>
