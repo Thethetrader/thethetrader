@@ -4700,7 +4700,7 @@ const App = () => {
                       <span className="text-lg text-gray-400 font-normal"> / mois</span>
                       {paymentType === 'yearly' && (
                         <div className="text-gray-300 text-sm font-normal mt-2">
-                          Facturé 290€ / an
+                          Facturé 418€ / an
                         </div>
                       )}
                       <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full">
