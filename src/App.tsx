@@ -1314,11 +1314,11 @@ const App = () => {
                         <h3 className="text-xl font-bold text-white mb-3">BASIC</h3>
                         <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
                           <span className="text-2xl align-top text-gray-300">€</span>
-                          {paymentType === 'monthly' ? '39' : '28,33'}
+                          {paymentType === 'monthly' ? '39' : '34,83'}
                           <span className="text-lg text-gray-400 font-normal"> / mois</span>
                           {paymentType === 'yearly' && (
                             <div className="text-gray-300 text-sm font-normal mt-2">
-                              Facturé 340€ / an
+                              Facturé 418€ / an
                             </div>
                           )}
                           <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full">
@@ -4696,7 +4696,7 @@ const App = () => {
                     <h3 className="text-xl font-bold text-white mb-3">BASIC</h3>
                     <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
                       <span className="text-2xl align-top text-gray-300">€</span>
-                      {paymentType === 'monthly' ? '39' : '28,33'}
+                      {paymentType === 'monthly' ? '39' : '34,83'}
                       <span className="text-lg text-gray-400 font-normal"> / mois</span>
                       {paymentType === 'yearly' && (
                         <div className="text-gray-300 text-sm font-normal mt-2">
