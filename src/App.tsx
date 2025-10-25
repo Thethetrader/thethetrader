@@ -1376,7 +1376,7 @@ const App = () => {
                         <h3 className="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent mb-3">PREMIUM</h3>
                         <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
                           <span className="text-2xl align-top text-gray-300">€</span>
-                          {paymentType === 'monthly' ? '79' : '65,8'}
+                          {paymentType === 'monthly' ? '79' : '57,5'}
                           <span className="text-lg text-gray-400 font-normal"> / mois</span>
                           {paymentType === 'yearly' && (
                             <div className="text-gray-300 text-sm font-normal mt-2">
@@ -4772,7 +4772,7 @@ const App = () => {
                     <h3 className="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent mb-3">PREMIUM</h3>
                     <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
                       <span className="text-2xl align-top text-gray-300">€</span>
-                      {paymentType === 'monthly' ? '79' : '65,8'}
+                      {paymentType === 'monthly' ? '79' : '57,5'}
                       <span className="text-lg text-gray-400 font-normal"> / mois</span>
                       {paymentType === 'yearly' && (
                         <div className="text-gray-300 text-sm font-normal mt-2">
