@@ -5483,12 +5483,12 @@ export default function TradingPlatformShell() {
                                 })()}
                                 
                                 {message.attachment_data && (
-                                  <div className="mt-2">
+                                  <div className="mt-2 max-w-full overflow-hidden">
                                     <div className="relative">
                                       <img 
                                         src={message.attachment_data} 
                                         alt="Attachment"
-                                        className="mt-2 max-w-xs md:max-w-3xl max-h-40 md:max-h-96 object-contain rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                                        className="mt-2 w-full max-w-full h-auto max-h-40 md:max-h-96 object-contain rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
                                         onClick={() => setSelectedImage(message.attachment_data)}
                                       />
                                       <div className="text-xs text-gray-400 mt-1">Cliquez pour agrandir</div>
@@ -6363,12 +6363,12 @@ export default function TradingPlatformShell() {
                                 })()}
                                 
                                 {message.attachment_data && (
-                                  <div className="mt-2">
+                                  <div className="mt-2 max-w-full overflow-hidden">
                                     <div className="relative">
                                       <img 
                                         src={message.attachment_data} 
                                         alt="Attachment"
-                                        className="mt-2 max-w-xs md:max-w-3xl max-h-40 md:max-h-96 object-contain rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                                        className="mt-2 w-full max-w-full h-auto max-h-40 md:max-h-96 object-contain rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
                                         onClick={() => setSelectedImage(message.attachment_data)}
                                       />
                                       <div className="text-xs text-gray-400 mt-1">Cliquez pour agrandir</div>
