@@ -1206,6 +1206,21 @@ const App = () => {
                 <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY SCALPING</span>
               </div>
             </div>
+            
+            {/* Lien Twitter */}
+            <div className="text-center mt-8">
+              <a 
+                href="https://x.com/thethetrader" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+                Suivez @thethetrader
+              </a>
+            </div>
           </div>
           
           {/* Contenu complet quand connecté */}
@@ -5290,6 +5305,24 @@ const App = () => {
                     <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Services</h4>
                     <div className="space-y-3">
                       <button onClick={() => setCurrentPage('livestream')} className="block text-gray-300 hover:text-white transition-colors text-sm text-left">Livestream Trading</button>
+                    </div>
+                  </div>
+
+                  {/* Réseaux Sociaux */}
+                  <div>
+                    <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Suivez-nous</h4>
+                    <div className="space-y-3">
+                      <a 
+                        href="https://x.com/thethetrader" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors text-sm"
+                      >
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+                        @thethetrader
+                      </a>
                     </div>
                   </div>
                 </div>
