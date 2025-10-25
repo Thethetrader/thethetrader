@@ -1322,7 +1322,7 @@ const App = () => {
                       
                       {/* Basic Plan */}
                       <div className={`bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 sm:p-8 relative border-2 transition-all duration-500 ${isTransitioning ? 'border-purple-500 shadow-[0_0_30px_rgba(147,51,234,0.3)] scale-105 rotate-y-3 brightness-110 backdrop-blur-sm' : 'border-gray-700 hover:border-purple-500 hover:shadow-[0_0_30px_rgba(147,51,234,0.3)] hover:scale-105 hover:rotate-y-3 hover:brightness-110 hover:backdrop-blur-sm'} transform-gpu`}>
-                        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg animate-pulse">
+                        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse md:hidden">
                           {paymentType === 'yearly' ? '💎 ÉCONOMISE 50€' : ''}
                         </div>
                         <h3 className="text-xl font-bold text-white mb-3">BASIC</h3>
@@ -1387,7 +1387,7 @@ const App = () => {
 
                       {/* Premium Plan */}
                       <div className={`bg-gradient-to-br from-purple-900 to-blue-900 rounded-2xl p-6 sm:p-8 relative border-2 transition-all duration-500 ${isTransitioning ? 'border-blue-500 shadow-[0_0_40px_rgba(59,130,246,0.5)] scale-105 rotate-y-6 brightness-110 backdrop-blur-sm' : 'border-purple-500 hover:border-blue-500 hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] hover:scale-105 hover:rotate-y-6 hover:brightness-110 hover:backdrop-blur-sm'} transform-gpu`}>
-                        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg animate-pulse">
+                        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse md:hidden">
                           {paymentType === 'yearly' ? '💎 ÉCONOMISE 100€' : '⭐ RECOMMANDÉ'}
                         </div>
                         <h3 className="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent mb-3">PREMIUM</h3>
@@ -4704,7 +4704,7 @@ const App = () => {
                     : 'border-purple-500/50 hover:border-purple-400 hover:from-purple-600/30 hover:to-blue-600/30 hover:scale-105 hover:shadow-[0_0_30px_rgba(168,85,247,0.4)]'
                 }`}>
                   <div className="text-center">
-                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg animate-pulse">
+                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse md:hidden">
                       {paymentType === 'yearly' ? '💎 ÉCONOMISE 50€' : '⭐ RECOMMANDÉ'}
                     </div>
                     <h3 className="text-xl font-bold text-white mb-3">BASIC</h3>
@@ -4785,7 +4785,7 @@ const App = () => {
                       : 'border-blue-500/50 backdrop-blur-sm hover:border-blue-400 hover:from-blue-600/30 hover:to-purple-600/30 hover:scale-105 hover:shadow-[0_0_40px_rgba(59,130,246,0.4)]'
                   }`}
                 >
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg animate-pulse">
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse md:hidden">
                     {paymentType === 'yearly' ? '💎 ÉCONOMISE 100€' : '⭐ RECOMMANDÉ'}
                   </div>
                   <div className="text-center">
