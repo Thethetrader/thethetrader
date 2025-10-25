@@ -1412,7 +1412,7 @@ const App = () => {
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400">✓</span>
-                            <span>Live streams (5/7)</span>
+                            <span>Live streams (5 jours/semaine)</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400">✓</span>
@@ -4811,7 +4811,7 @@ const App = () => {
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400">✓</span>
-                        <span>Live streams (5/7)</span>
+                        <span>Live streams (5 jours/semaine)</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400">✓</span>
