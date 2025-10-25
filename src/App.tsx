@@ -79,8 +79,7 @@ const App = () => {
       .pwa-connected-scroll {
         overflow-y: auto !important;
         overflow-x: hidden !important;
-        height: 100vh !important;
-        max-height: 100vh !important;
+        min-height: 100vh !important;
         position: relative !important;
         width: 100% !important;
         touch-action: pan-y !important;
@@ -1167,7 +1166,7 @@ const App = () => {
 
       {/* Version PWA - Page scrollable quand connecté */}
       {isPWA ? (
-        <div className={`w-screen ${user ? 'h-auto min-h-screen overflow-y-auto' : 'h-screen overflow-hidden'} bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900`}>
+        <div className={`w-screen ${user ? 'min-h-screen' : 'h-screen overflow-hidden'} bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900`}>
           {/* Hero Section - Centré verticalement quand pas connecté, scrollable quand connecté */}
           <div className={`text-center ${user ? 'pt-20 pb-8' : 'flex-1 flex flex-col justify-center'} px-4 sm:px-6 max-w-full`}>
             <div className="mb-0 flex justify-center hover:scale-105 transition-transform duration-300">
