@@ -513,6 +513,98 @@ export default function TradingPlatformShell() {
   const [selectedSignalsDate, setSelectedSignalsDate] = useState<Date | null>(null);
   const [pasteArea, setPasteArea] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [imageZoom, setImageZoom] = useState(1);
+  const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  
+  // Fonctions pour le zoom et drag des images
+  const handleImageZoom = (delta: number) => {
+    setImageZoom(prev => Math.max(0.5, Math.min(5, prev + delta)));
+  };
+
+  const handleImageDragStart = (e: React.MouseEvent) => {
+    if (imageZoom > 1) {
+      setIsDragging(true);
+      setDragStart({ x: e.clientX - imagePosition.x, y: e.clientY - imagePosition.y });
+    }
+  };
+
+  const handleImageDrag = (e: React.MouseEvent) => {
+    if (isDragging && imageZoom > 1) {
+      setImagePosition({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y
+      });
+    }
+  };
+
+  const handleImageDragEnd = () => {
+    setIsDragging(false);
+  };
+
+  const resetImageView = () => {
+    setImageZoom(1);
+    setImagePosition({ x: 0, y: 0 });
+  };
+
+  const handleImageClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (imageZoom === 1) {
+      handleImageZoom(0.5);
+    }
+  };
+
+  // Support tactile pour mobile
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 2) {
+      // Pinch to zoom
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      const distance = Math.sqrt(
+        Math.pow(touch2.clientX - touch1.clientX, 2) +
+        Math.pow(touch2.clientY - touch1.clientY, 2)
+      );
+      (e.target as any).initialDistance = distance;
+      (e.target as any).initialZoom = imageZoom;
+    } else if (imageZoom > 1) {
+      // Drag
+      const touch = e.touches[0];
+      setIsDragging(true);
+      setDragStart({ x: touch.clientX - imagePosition.x, y: touch.clientY - imagePosition.y });
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    e.preventDefault();
+    if (e.touches.length === 2) {
+      // Pinch to zoom
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      const distance = Math.sqrt(
+        Math.pow(touch2.clientX - touch1.clientX, 2) +
+        Math.pow(touch2.clientY - touch1.clientY, 2)
+      );
+      const initialDistance = (e.target as any).initialDistance;
+      const initialZoom = (e.target as any).initialZoom;
+      if (initialDistance) {
+        const scale = distance / initialDistance;
+        const newZoom = initialZoom * scale;
+        setImageZoom(Math.max(0.5, Math.min(5, newZoom)));
+      }
+    } else if (isDragging && imageZoom > 1) {
+      // Drag
+      const touch = e.touches[0];
+      setImagePosition({
+        x: touch.clientX - dragStart.x,
+        y: touch.clientY - dragStart.y
+      });
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
   
   // État pour TOUS les signaux (calendrier)
   const [allSignalsForStats, setAllSignalsForStats] = useState<Array<any>>([]);
@@ -7106,22 +7198,93 @@ export default function TradingPlatformShell() {
         </div>
       )}
 
-      {/* Popup Image */}
+      {/* Popup Image avec Zoom */}
       {selectedImage && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" onClick={() => setSelectedImage(null)}>
-          <div className="relative max-w-4xl max-h-[90vh]">
+        <div 
+          className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4" 
+          onClick={() => {
+            setSelectedImage(null);
+            resetImageView();
+          }}
+        >
+          <div className="relative w-full h-full flex items-center justify-center">
             <img 
               src={selectedImage} 
               alt="Image agrandie"
-              className="max-w-full max-h-full object-contain rounded-lg"
-              onClick={(e) => e.stopPropagation()}
+              className="max-w-full max-h-full object-contain rounded-lg transition-transform duration-200 cursor-grab active:cursor-grabbing"
+              style={{
+                transform: `scale(${imageZoom}) translate(${imagePosition.x}px, ${imagePosition.y}px)`,
+                transformOrigin: 'center center'
+              }}
+              onClick={handleImageClick}
+              onMouseDown={handleImageDragStart}
+              onMouseMove={handleImageDrag}
+              onMouseUp={handleImageDragEnd}
+              onMouseLeave={handleImageDragEnd}
+              onWheel={(e) => {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? -0.1 : 0.1;
+                handleImageZoom(delta);
+              }}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
             />
+            
+            {/* Contrôles de zoom */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 bg-black/50 rounded-lg p-2">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleImageZoom(-0.2);
+                }}
+                className="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded text-sm font-bold"
+                disabled={imageZoom <= 0.5}
+              >
+                −
+              </button>
+              <span className="text-white text-sm px-2 py-1 bg-white/20 rounded">
+                {Math.round(imageZoom * 100)}%
+              </span>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleImageZoom(0.2);
+                }}
+                className="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded text-sm font-bold"
+                disabled={imageZoom >= 5}
+              >
+                +
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  resetImageView();
+                }}
+                className="bg-blue-500/50 hover:bg-blue-500/70 text-white px-3 py-1 rounded text-sm"
+              >
+                🔄 Reset
+              </button>
+            </div>
+
+            {/* Bouton fermer */}
             <button
-              onClick={() => setSelectedImage(null)}
-              className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl"
+              onClick={() => {
+                setSelectedImage(null);
+                resetImageView();
+              }}
+              className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl transition-all"
             >
               ×
             </button>
+
+            {/* Instructions */}
+            <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-3 py-2 rounded-lg">
+              <div>🖱️ Clic pour zoomer</div>
+              <div>🔄 Molette pour zoomer</div>
+              <div>✋ Glisser quand zoomé</div>
+              <div>📱 Pinch pour zoomer (mobile)</div>
+            </div>
           </div>
         </div>
       )}

@@ -76,6 +76,16 @@ const App = () => {
         left: 0 !important;
         touch-action: none !important;
       }
+      .pwa-connected-scroll {
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        position: relative !important;
+        width: 100% !important;
+        touch-action: pan-y !important;
+        -webkit-overflow-scrolling: touch !important;
+      }
     `;
     document.head.appendChild(style);
     return () => document.head.removeChild(style);
@@ -1025,7 +1035,7 @@ const App = () => {
 
     const page = pages[currentPage];
     return (
-      <div className={`min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 ${isPWA && currentPage === 'home' && !user ? 'pwa-landing-no-scroll' : ''}`}>
+      <div className={`min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 ${isPWA && currentPage === 'home' && !user ? 'pwa-landing-no-scroll' : isPWA && user ? 'pwa-connected-scroll' : ''}`}>
         {/* Header with back button */}
         <nav className="flex items-center justify-between p-4 sm:p-6 relative z-50 border-b border-purple-700/50">
           <button 
@@ -1099,7 +1109,7 @@ const App = () => {
 
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 ${isPWA && currentPage === 'home' && !user ? 'pwa-landing-no-scroll' : ''}`}>
+    <div className={`min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 ${isPWA && currentPage === 'home' && !user ? 'pwa-landing-no-scroll' : isPWA && user ? 'pwa-connected-scroll' : ''}`}>
       {/* Navigation - Masquée en PWA */}
       {!isPWA && (
         <nav className="flex items-center justify-between p-4 sm:p-6 relative z-50">
@@ -1155,11 +1165,11 @@ const App = () => {
         </nav>
       )}
 
-      {/* Version PWA - Page fixe sans scroll */}
+      {/* Version PWA - Page scrollable quand connecté */}
       {isPWA ? (
-        <div className="h-screen w-screen flex flex-col justify-center items-center overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-          {/* Hero Section - Centré verticalement */}
-          <div className="text-center flex-1 flex flex-col justify-center px-4 sm:px-6 max-w-full">
+        <div className={`w-screen ${user ? 'h-auto min-h-screen overflow-y-auto' : 'h-screen overflow-hidden'} bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900`}>
+          {/* Hero Section - Centré verticalement quand pas connecté, scrollable quand connecté */}
+          <div className={`text-center ${user ? 'pt-20 pb-8' : 'flex-1 flex flex-col justify-center'} px-4 sm:px-6 max-w-full`}>
             <div className="mb-0 flex justify-center hover:scale-105 transition-transform duration-300">
               <img 
                 src="/logo-removebg-preview.png" 
@@ -1197,6 +1207,237 @@ const App = () => {
               </div>
             </div>
           </div>
+          
+          {/* Contenu complet quand connecté */}
+          {user && (
+            <>
+              {/* Hero Section complète */}
+              <div className="text-center pt-20 sm:pt-32 pb-0 px-4 sm:px-6">
+                <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 sm:mb-8">
+                  <span className="text-white">Ne t'abonne pas si tu ne veux pas</span>
+                  <br />
+                  <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                    vraiment apprendre à trader.
+                  </span>
+                </h1>
+                <p className="text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed">
+                  Tu n'as pas besoin d'être un expert pour trader efficacement. Tu as juste besoin de la bonne méthode — simple, directe, et conçue pour t'apprendre à penser comme un pro.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8">
+                  <div className="flex items-center gap-2 bg-green-600 text-white px-8 py-4 rounded-lg">
+                    <span className="text-green-200">✓</span>
+                    <span className="font-semibold">3j Garantie Satisfait</span>
+                  </div>
+                  <button 
+                    onClick={() => setShowAuthModal(true)}
+                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    Commencer Maintenant
+                  </button>
+                </div>
+
+                {/* Barre de défilement - Full Width */}
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 sm:py-10 overflow-hidden relative mb-10 sm:mb-16 w-full">
+                  <div className="whitespace-nowrap animate-scroll">
+                    <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
+                    <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
+                    <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
+                    <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
+                    <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
+                    <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
+                    <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
+                    <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section Apprentissage */}
+              <div className="py-16 sm:py-24 px-4 sm:px-6">
+                <div className="max-w-6xl mx-auto">
+                  <div className="text-center mb-8">
+                    <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
+                      APPRENTISSAGE
+                    </div>
+                    <h2 className="text-4xl md:text-6xl font-bold mb-6">
+                      <span className="text-white">Adoptez mon approche</span>
+                      <br />
+                      <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                        précise
+                      </span>
+                    </h2>
+                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+                      Découvre ma méthode de scalping : analyse graphique pure, zéro indicateurs, zéro blabla. 
+                      Un setup précis qui se répète sans fin pour des trades rapides et efficaces.
+                    </p>
+                  </div>
+
+                  {/* Plans de prix - Mobile Optimized */}
+                  <div id="pricing" className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
+                    <h2 className="text-5xl md:text-7xl font-bold text-center mb-8 sm:mb-12 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
+                      Les services de TPLN
+                    </h2>
+                    
+                    {/* Payment Type Selector */}
+                    <div className="flex justify-center mb-8">
+                      <div className="bg-gray-800 p-1 rounded-lg flex">
+                        <button 
+                          onClick={() => handlePaymentTypeChange('monthly')}
+                          className={`px-6 py-3 rounded-lg font-medium ${
+                            paymentType === 'monthly' 
+                              ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white' 
+                              : 'text-gray-400'
+                          }`}
+                        >
+                          Payer mensuellement
+                        </button>
+                        <button 
+                          onClick={() => handlePaymentTypeChange('yearly')}
+                          className={`px-6 py-3 rounded-lg font-medium ${
+                            paymentType === 'yearly' 
+                              ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white'
+                              : 'text-gray-400'
+                          }`}
+                        >
+                          Payer annuellement
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Pricing Cards */}
+                    <div className={`grid md:grid-cols-[0.9fr_1.1fr] gap-6 sm:gap-8 transition-all duration-400 ease-out ${isTransitioning ? 'opacity-0 scale-75 rotate-3 blur-md translate-y-20 transform-gpu perspective-1000' : 'opacity-100 scale-100 rotate-0 blur-0 translate-y-0 transform-gpu perspective-1000'}`} style={{ transformStyle: 'preserve-3d', perspective: '1000px' }}>
+                      
+                      {/* Basic Plan */}
+                      <div className={`bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 sm:p-8 relative border-2 transition-all duration-500 ${isTransitioning ? 'border-purple-500 shadow-[0_0_30px_rgba(147,51,234,0.3)] scale-105 rotate-y-3 brightness-110 backdrop-blur-sm' : 'border-gray-700 hover:border-purple-500 hover:shadow-[0_0_30px_rgba(147,51,234,0.3)] hover:scale-105 hover:rotate-y-3 hover:brightness-110 hover:backdrop-blur-sm'} transform-gpu`}>
+                        <h3 className="text-xl font-bold text-white mb-3">BASIC</h3>
+                        <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
+                          <span className="text-2xl align-top text-gray-300">€</span>
+                          {paymentType === 'monthly' ? '39' : '32,5'}
+                          <span className="text-lg text-gray-400 font-normal"> / mois</span>
+                          {paymentType === 'yearly' && (
+                            <div className="text-gray-300 text-sm font-normal mt-2">
+                              Facturé 290€ / an
+                            </div>
+                          )}
+                          <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full">
+                            🎉 Première semaine à 4€ seulement !
+                          </div>
+                        </div>
+                        {paymentType === 'yearly' && (
+                          <div className="text-gray-400 text-sm mb-4">Best for beginner traders</div>
+                        )}
+                        <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-400">✓</span>
+                            <span>Formation Setup</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-400">✓</span>
+                            <span>Signaux (standard)</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-400">✓</span>
+                            <span>Journal de trading (1 compte)</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-400">✓</span>
+                            <span>Statistiques (de base)</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-red-400">✗</span>
+                            <span>Live streams / Replays</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-red-400">✗</span>
+                            <span>Accès prioritaire aux nouveaux setups</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-gray-300">Standard</span>
+                            <span>Support / contact</span>
+                          </li>
+                        </ul>
+                        <button 
+                          onClick={() => setShowAuthModal(true)}
+                          className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                        >
+                          Commencer
+                        </button>
+                        <div className="text-center mt-4">
+                          <button className="text-gray-400 hover:text-white text-sm underline">
+                            Voir le détail complet
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Premium Plan */}
+                      <div className={`bg-gradient-to-br from-purple-900 to-blue-900 rounded-2xl p-6 sm:p-8 relative border-2 transition-all duration-500 ${isTransitioning ? 'border-blue-500 shadow-[0_0_40px_rgba(59,130,246,0.5)] scale-105 rotate-y-6 brightness-110 backdrop-blur-sm' : 'border-purple-500 hover:border-blue-500 hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] hover:scale-105 hover:rotate-y-6 hover:brightness-110 hover:backdrop-blur-sm'} transform-gpu`}>
+                        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg animate-pulse">
+                          {paymentType === 'yearly' ? '💎 ÉCONOMISE 100€' : '⭐ RECOMMANDÉ'}
+                        </div>
+                        <h3 className="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent mb-3">PREMIUM</h3>
+                        <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
+                          <span className="text-2xl align-top text-gray-300">€</span>
+                          {paymentType === 'monthly' ? '79' : '65,8'}
+                          <span className="text-lg text-gray-400 font-normal"> / mois</span>
+                          {paymentType === 'yearly' && (
+                            <div className="text-gray-300 text-sm font-normal mt-2">
+                              Facturé 690€ / an
+                            </div>
+                          )}
+                          <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full">
+                            🎉 Première semaine à 4€ seulement !
+                          </div>
+                        </div>
+                        {paymentType === 'yearly' && (
+                          <div className="text-gray-400 text-sm mb-4">Best for advanced traders</div>
+                        )}
+                        <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-400">✓</span>
+                            <span>Formation Setup</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-400">✓</span>
+                            <span>Signaux (en temps réel + détaillés)</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-400">✓</span>
+                            <span>Journal de trading (multi-comptes)</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-400">✓</span>
+                            <span>Statistiques (avancées, par setup)</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-400">✓</span>
+                            <span>Live streams / Replays</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-400">✓</span>
+                            <span>Accès prioritaire aux nouveaux setups</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-400">✓</span>
+                            <span>Support prioritaire + contact direct</span>
+                          </li>
+                        </ul>
+                        <button 
+                          onClick={() => setShowAuthModal(true)}
+                          className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                        >
+                          Commencer
+                        </button>
+                        <div className="text-center mt-4">
+                          <button className="text-gray-400 hover:text-white text-sm underline">
+                            Voir le détail complet
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       ) : (
         <>
@@ -4449,13 +4690,16 @@ const App = () => {
                     <h3 className="text-xl font-bold text-white mb-3">BASIC</h3>
                     <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
                       <span className="text-2xl align-top text-gray-300">€</span>
-                      {paymentType === 'monthly' ? '15' : '12,5'}
+                      {paymentType === 'monthly' ? '39' : '32,5'}
                       <span className="text-lg text-gray-400 font-normal"> / mois</span>
                       {paymentType === 'yearly' && (
                         <div className="text-gray-300 text-sm font-normal mt-2">
-                          Facturé 150€ / an
+                          Facturé 390€ / an
                         </div>
                       )}
+                      <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full">
+                        🎉 Première semaine à 4€ seulement !
+                      </div>
                     </div>
                     {paymentType === 'yearly' && (
                       <div className="text-gray-400 text-sm mb-4">Best for beginner traders</div>
@@ -4463,32 +4707,32 @@ const App = () => {
                                           <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
                         <li className="flex items-center gap-2">
                           <span className="text-green-400">✓</span>
-                          <span>Tous les signaux (Crypto, Forex, Futures)</span>
+                          <span>Formation Setup</span>
                         </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400">✓</span>
-                        <span>Formation complète (10h de vidéos)</span>
+                        <span>Signaux (standard)</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400">✓</span>
-                        <span>Accès au chat communautaire</span>
+                        <span>Journal de trading (1 compte)</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400">✓</span>
-                        <span>Calendrier de performance</span>
+                        <span>Statistiques (de base)</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-red-400">✗</span>
-                        <span>Live Trading</span>
+                        <span>Live streams / Replays</span>
                       </li>
                       
                       <li className="flex items-center gap-2">
                         <span className="text-red-400">✗</span>
-                        <span>Support prioritaire</span>
+                        <span>Accès prioritaire aux nouveaux setups</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-red-400">✗</span>
-                        <span>Journal de trading personnalisé</span>
+                        <span className="text-gray-300">Standard</span>
+                        <span>Support / contact</span>
                       </li>
                     </ul>
                   </div>
@@ -4528,13 +4772,16 @@ const App = () => {
                     <h3 className="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent mb-3">PREMIUM</h3>
                     <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
                       <span className="text-2xl align-top text-gray-300">€</span>
-                      {paymentType === 'monthly' ? '25' : '21'}
+                      {paymentType === 'monthly' ? '79' : '65,8'}
                       <span className="text-lg text-gray-400 font-normal"> / mois</span>
                       {paymentType === 'yearly' && (
                         <div className="text-gray-300 text-sm font-normal mt-2">
-                          Facturé 250€ / an
+                          Facturé 790€ / an
                         </div>
                       )}
+                      <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full">
+                        🎉 Première semaine à 4€ seulement !
+                      </div>
                     </div>
                     {paymentType === 'yearly' && (
                       <div className="text-gray-400 text-sm mb-4">Best for advanced traders</div>
@@ -4542,33 +4789,32 @@ const App = () => {
                                           <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
                         <li className="flex items-center gap-2">
                           <span className="text-green-400">✓</span>
-                          <span>Tous les signaux (Crypto, Forex, Futures)</span>
+                          <span>Formation Setup</span>
                         </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400">✓</span>
-                        <span>Formation complète + stratégies avancées</span>
+                        <span>Signaux (en temps réel + détaillés)</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400">✓</span>
-                        <span>Live Trading en direct (3x/semaine)</span>
+                        <span>Journal de trading (multi-comptes)</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400">✓</span>
-                        <span>Calendrier avancé avec analytics</span>
+                        <span>Statistiques (avancées, par setup)</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400">✓</span>
-                        <span>Support prioritaire 24/7</span>
+                        <span>Live streams / Replays</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400">✓</span>
-                        <span>Signaux exclusifs VIP</span>
+                        <span>Accès prioritaire aux nouveaux setups</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400">✓</span>
-                        <span>Journal de trading personnalisé</span>
+                        <span>Support prioritaire + contact direct</span>
                       </li>
-
                     </ul>
                   </div>
                   <button className={`w-full bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-[length:200%_100%] animate-gradient text-white py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/40 ${isTransitioning ? 'animate-pulse' : ''}`}>
