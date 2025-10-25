@@ -1166,25 +1166,25 @@ const App = () => {
 
       {/* Version PWA - Page scrollable quand connecté */}
       {isPWA ? (
-        <div className={`w-screen ${user ? 'min-h-screen' : 'h-screen overflow-hidden flex items-center justify-center'} bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900`}>
+        <div className={`w-screen ${user ? 'min-h-screen' : 'h-screen overflow-hidden flex flex-col justify-start pt-8'} bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900`}>
           {/* Hero Section - Centré verticalement quand pas connecté, scrollable quand connecté */}
           <div className={`text-center ${user ? 'pt-20 pb-8' : 'w-full'} px-4 sm:px-6 max-w-full`}>
             <div className="mb-0 flex justify-center hover:scale-105 transition-transform duration-300">
               <img 
                 src="/logo-removebg-preview.png" 
                 alt="Trading pour les nuls" 
-                className="h-80 sm:h-96 w-auto object-cover"
+                className="h-64 sm:h-80 w-auto object-cover"
                 style={{ clipPath: 'inset(10% 5% 15% 5%)' }}
 
               />
             </div>
-            <p className="text-xl sm:text-3xl text-gray-300 mb-10 sm:mb-12 max-w-4xl mx-auto px-2 -mt-12">
+            <p className="text-lg sm:text-2xl text-gray-300 mb-6 sm:mb-8 max-w-4xl mx-auto px-2 -mt-8">
               Un setup très simple, des signaux expliqués, un journal de performance. Rejoins la communauté et trade en confiance.
             </p>
-            <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 justify-center mb-8 sm:mb-12 px-4">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mb-6 sm:mb-8 px-4">
               <button 
                 onClick={() => setShowAuthModal(true)}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 sm:px-12 py-5 sm:py-6 rounded-lg text-xl sm:text-2xl font-semibold hover:opacity-90 w-full sm:w-auto"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 sm:px-10 py-4 sm:py-5 rounded-lg text-lg sm:text-xl font-semibold hover:opacity-90 w-full sm:w-auto"
               >
                 Se connecter
               </button>
@@ -1193,7 +1193,7 @@ const App = () => {
 
             
             {/* Barre de défilement - Sous le bouton */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 sm:py-6 overflow-hidden relative w-full max-w-full rounded-lg mx-auto">
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 sm:py-4 overflow-hidden relative w-full max-w-full rounded-lg mx-auto">
               <div className="whitespace-nowrap animate-scroll">
                 <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY SCALPING</span>
                 <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY SCALPING</span>
@@ -1207,12 +1207,12 @@ const App = () => {
             </div>
             
             {/* Lien Twitter */}
-            <div className="text-center mt-8">
+            <div className="text-center mt-6">
               <a 
                 href="https://x.com/thethetrader" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-5 py-2.5 rounded-lg font-medium transition-all duration-200 hover:scale-105 text-sm"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
