@@ -1166,7 +1166,7 @@ const App = () => {
 
       {/* Version PWA - Page scrollable quand connecté */}
       {isPWA ? (
-        <div className={`w-screen ${user ? 'min-h-screen' : 'h-screen overflow-hidden flex flex-col justify-start pt-8'} bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900`}>
+        <div className={`w-screen ${user ? 'min-h-screen' : 'h-screen overflow-hidden flex items-center justify-center'} bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900`}>
           {/* Hero Section - Centré verticalement quand pas connecté, scrollable quand connecté */}
           <div className={`text-center ${user ? 'pt-20 pb-8' : 'w-full'} px-4 sm:px-6 max-w-full`}>
             <div className="mb-0 flex justify-center hover:scale-105 transition-transform duration-300">
