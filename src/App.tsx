@@ -34,6 +34,22 @@ const App = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [currentPage, setCurrentPage] = useState<string>('home');
   const [paymentType, setPaymentType] = useState<'monthly' | 'yearly'>('monthly');
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Fonction pour changer le type de paiement avec animation
+  const handlePaymentTypeChange = (newType: 'monthly' | 'yearly') => {
+    if (newType === paymentType) return;
+    
+    setIsTransitioning(true);
+    
+    setTimeout(() => {
+      setPaymentType(newType);
+    }, 250);
+    
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 150);
+  };
 
   // Ajouter CSS pour le scroll mobile
   useEffect(() => {
@@ -4392,53 +4408,58 @@ const App = () => {
 
             {/* Plans de prix - Mobile Optimized */}
             <div id="pricing" className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
-              <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-8 sm:mb-12">
-                Choisissez votre plan
+              <h2 className="text-5xl md:text-7xl font-bold text-center mb-8 sm:mb-12 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
+                Les services de TPLN
               </h2>
               
               {/* Payment Type Selector */}
               <div className="flex justify-center mb-8">
                 <div className="bg-gray-800 p-1 rounded-lg flex">
                   <button 
-                    onClick={() => setPaymentType('monthly')}
+                    onClick={() => handlePaymentTypeChange('monthly')}
                     className={`px-6 py-3 rounded-lg font-medium ${
                       paymentType === 'monthly' 
                         ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white' 
                         : 'text-gray-400'
                     }`}
                   >
-                    Pay monthly
+                    Payer mensuellement
                   </button>
                   <button 
-                    onClick={() => setPaymentType('yearly')}
+                    onClick={() => handlePaymentTypeChange('yearly')}
                     className={`px-6 py-3 rounded-lg font-medium ${
                       paymentType === 'yearly' 
                         ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white' 
                         : 'text-gray-400'
                     }`}
                   >
-                    Pay yearly
+                    Payer annuellement
                   </button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-[0.8fr_1.2fr] gap-8 md:gap-0 max-w-6xl mx-auto">
+              <div className={`grid grid-cols-1 md:grid-cols-[0.9fr_1.1fr] gap-8 md:gap-0 max-w-6xl mx-auto transition-all duration-400 ease-out ${isTransitioning ? 'opacity-0 scale-75 rotate-3 blur-md translate-y-20 transform-gpu perspective-1000' : 'opacity-100 scale-100 rotate-0 blur-0 translate-y-0 transform-gpu perspective-1000'}`} style={{ transformStyle: 'preserve-3d', perspective: '1000px' }}>
                 {/* Plan Starter */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 px-8 py-6 sm:px-12 sm:py-8 rounded-xl md:rounded-l-xl md:rounded-r-none border border-purple-500/50 backdrop-blur-sm hover:from-purple-600/30 hover:to-blue-600/30 flex flex-col">
+                <div className={`bg-gradient-to-br from-purple-600/20 to-blue-600/20 px-8 py-6 sm:px-12 sm:py-8 rounded-xl md:rounded-l-xl md:rounded-r-none border-2 backdrop-blur-sm flex flex-col transition-all duration-500 ease-out transform-gpu ${
+                  isTransitioning 
+                    ? 'border-purple-600 shadow-[0_0_30px_rgba(168,85,247,0.6)] scale-105 rotate-y-6 brightness-110' 
+                    : 'border-purple-500/50 hover:border-purple-400 hover:from-purple-600/30 hover:to-blue-600/30 hover:scale-105 hover:shadow-[0_0_30px_rgba(168,85,247,0.4)]'
+                }`}>
                   <div className="text-center">
                     <h3 className="text-xl font-bold text-white mb-3">BASIC</h3>
-                    <div className="text-4xl font-bold text-blue-400 mb-6">
-                      {paymentType === 'monthly' ? '15€' : '150€'}
-                      <span className="text-sm text-gray-400">
-                        {paymentType === 'monthly' ? '/mois' : '/an'}
-                      </span>
+                    <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
+                      <span className="text-2xl align-top text-gray-300">€</span>
+                      {paymentType === 'monthly' ? '15' : '12,5'}
+                      <span className="text-lg text-gray-400 font-normal"> / mois</span>
                       {paymentType === 'yearly' && (
-                        <div className="text-green-400 text-sm font-normal">
-                          Économisez 30€ par an!
+                        <div className="text-gray-300 text-sm font-normal mt-2">
+                          Facturé 150€ / an
                         </div>
                       )}
                     </div>
-                    <div className="text-gray-400 text-sm mb-4">Best for beginner traders</div>
+                    {paymentType === 'yearly' && (
+                      <div className="text-gray-400 text-sm mb-4">Best for beginner traders</div>
+                    )}
                                           <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
                         <li className="flex items-center gap-2">
                           <span className="text-green-400">✓</span>
@@ -4470,31 +4491,54 @@ const App = () => {
                         <span>Journal de trading personnalisé</span>
                       </li>
                     </ul>
-                    <button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-4 px-6 rounded-lg font-semibold text-lg transition-colors">
-                      Se connecter
+                  </div>
+                  <button 
+                    className={`w-full border-2 text-white py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-500 ease-out transform-gpu ${
+                      isTransitioning 
+                        ? 'border-purple-600 bg-purple-600/30 shadow-[0_0_30px_rgba(168,85,247,0.8)] scale-110' 
+                        : 'border-purple-500 bg-transparent hover:scale-110 hover:shadow-[0_0_40px_rgba(168,85,247,0.6)] hover:bg-purple-500/20 hover:border-purple-400'
+                    }`}
+                  >
+                    Commencer
+                  </button>
+                  
+                  {/* Voir le détail complet */}
+                  <div className="text-center mt-4">
+                    <button className="text-purple-400 hover:text-purple-300 transition-colors duration-300 text-sm font-medium flex items-center justify-center gap-2 mx-auto">
+                      Voir le détail complet
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
                     </button>
                   </div>
                 </div>
 
                 {/* Plan Pro */}
-                <div className="bg-gradient-to-br from-blue-600/20 to-purple-600/20 p-8 sm:p-12 rounded-xl md:rounded-r-xl md:rounded-l-none border border-blue-500/50 backdrop-blur-sm hover:from-blue-600/30 hover:to-purple-600/30 relative flex flex-col">
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                    {paymentType === 'yearly' ? 'SAVE 50€' : 'RECOMMANDÉ'}
+                <div 
+                  className={`bg-gradient-to-br from-blue-600/20 to-purple-600/20 p-8 sm:p-12 rounded-xl md:rounded-r-xl md:rounded-l-none border-2 relative flex flex-col justify-between transition-all duration-500 ease-out transform-gpu ${
+                    isTransitioning 
+                      ? 'border-blue-600 shadow-[0_0_40px_rgba(59,130,246,0.5)] scale-105 rotate-y-6 brightness-110' 
+                      : 'border-blue-500/50 backdrop-blur-sm hover:border-blue-400 hover:from-blue-600/30 hover:to-purple-600/30 hover:scale-105 hover:shadow-[0_0_40px_rgba(59,130,246,0.4)]'
+                  }`}
+                >
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg animate-pulse">
+                    {paymentType === 'yearly' ? '💎 ÉCONOMISE 50€' : '⭐ RECOMMANDÉ'}
                   </div>
                   <div className="text-center">
                     <h3 className="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent mb-3">PREMIUM</h3>
-                    <div className="text-4xl font-bold text-blue-400 mb-6">
-                      {paymentType === 'monthly' ? '25€' : '250€'}
-                      <span className="text-sm text-gray-400">
-                        {paymentType === 'monthly' ? '/mois' : '/an'}
-                      </span>
+                    <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
+                      <span className="text-2xl align-top text-gray-300">€</span>
+                      {paymentType === 'monthly' ? '25' : '21'}
+                      <span className="text-lg text-gray-400 font-normal"> / mois</span>
                       {paymentType === 'yearly' && (
-                        <div className="text-green-400 text-sm font-normal">
-                          Économisez 50€ par an!
+                        <div className="text-gray-300 text-sm font-normal mt-2">
+                          Facturé 250€ / an
                         </div>
                       )}
                     </div>
-                    <div className="text-gray-400 text-sm mb-4">Best for advanced traders</div>
+                    {paymentType === 'yearly' && (
+                      <div className="text-gray-400 text-sm mb-4">Best for advanced traders</div>
+                    )}
                                           <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
                         <li className="flex items-center gap-2">
                           <span className="text-green-400">✓</span>
@@ -4526,8 +4570,18 @@ const App = () => {
                       </li>
 
                     </ul>
-                    <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 px-6 rounded-lg font-semibold text-lg transition-colors">
-                      Devenir Pro
+                  </div>
+                  <button className={`w-full bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-[length:200%_100%] animate-gradient text-white py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/40 ${isTransitioning ? 'animate-pulse' : ''}`}>
+                    Commencer
+                  </button>
+                  
+                  {/* Voir le détail complet */}
+                  <div className="text-center mt-4">
+                    <button className="text-blue-400 hover:text-blue-300 transition-colors duration-300 text-sm font-medium flex items-center justify-center gap-2 mx-auto">
+                      Voir le détail complet
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
                     </button>
                   </div>
                 </div>
