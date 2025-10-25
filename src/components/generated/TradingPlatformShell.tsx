@@ -4334,14 +4334,14 @@ export default function TradingPlatformShell() {
         </div>
 
         {/* Mobile Content Container with Slide Animation */}
-        <div className="md:hidden relative flex-1 overflow-hidden" style={{ paddingTop: '0px' }}>
+        <div className="md:hidden relative flex-1 overflow-hidden" style={{ paddingTop: '60px' }}>
           {/* Channels List - Slides from left */}
           <div 
             className={`absolute inset-0 bg-gray-800 transform transition-transform duration-300 ease-in-out z-10 ${
               mobileView === 'channels' ? 'translate-x-0' : '-translate-x-full'
             }`}
           >
-                        <div className="p-4 space-y-3 h-full overflow-y-auto" style={{ paddingTop: '10px' }}>
+                        <div className="p-4 space-y-3 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
               
               {/* Statistiques en haut */}
               <div className="bg-gray-700 rounded-lg p-6">
