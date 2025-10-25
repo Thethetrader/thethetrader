@@ -7235,41 +7235,43 @@ export default function TradingPlatformShell() {
               onTouchEnd={handleTouchEnd}
             />
             
-            {/* Contrôles de zoom */}
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 bg-black/50 rounded-lg p-2">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleImageZoom(-0.2);
-                }}
-                className="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded text-sm font-bold"
-                disabled={imageZoom <= 0.5}
-              >
-                −
-              </button>
-              <span className="text-white text-sm px-2 py-1 bg-white/20 rounded">
-                {Math.round(imageZoom * 100)}%
-              </span>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleImageZoom(0.2);
-                }}
-                className="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded text-sm font-bold"
-                disabled={imageZoom >= 5}
-              >
-                +
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  resetImageView();
-                }}
-                className="bg-blue-500/50 hover:bg-blue-500/70 text-white px-3 py-1 rounded text-sm"
-              >
-                🔄 Reset
-              </button>
-            </div>
+            {/* Contrôles de zoom - Cachés sur PWA */}
+            {!window.matchMedia('(display-mode: standalone)').matches && (
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 bg-black/50 rounded-lg p-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleImageZoom(-0.2);
+                  }}
+                  className="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded text-sm font-bold"
+                  disabled={imageZoom <= 0.5}
+                >
+                  −
+                </button>
+                <span className="text-white text-sm px-2 py-1 bg-white/20 rounded">
+                  {Math.round(imageZoom * 100)}%
+                </span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleImageZoom(0.2);
+                  }}
+                  className="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded text-sm font-bold"
+                  disabled={imageZoom >= 5}
+                >
+                  +
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    resetImageView();
+                  }}
+                  className="bg-blue-500/50 hover:bg-blue-500/70 text-white px-3 py-1 rounded text-sm"
+                >
+                  🔄 Reset
+                </button>
+              </div>
+            )}
 
             {/* Bouton fermer */}
             <button
@@ -7282,13 +7284,15 @@ export default function TradingPlatformShell() {
               ×
             </button>
 
-            {/* Instructions */}
-            <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-3 py-2 rounded-lg">
-              <div>🖱️ Clic pour zoomer</div>
-              <div>🔄 Molette pour zoomer</div>
-              <div>✋ Glisser quand zoomé</div>
-              <div>📱 Pinch pour zoomer (mobile)</div>
-            </div>
+            {/* Instructions - Cachées sur PWA */}
+            {!window.matchMedia('(display-mode: standalone)').matches && (
+              <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-3 py-2 rounded-lg">
+                <div>🖱️ Clic pour zoomer</div>
+                <div>🔄 Molette pour zoomer</div>
+                <div>✋ Glisser quand zoomé</div>
+                <div>📱 Pinch pour zoomer (mobile)</div>
+              </div>
+            )}
           </div>
         </div>
       )}
