@@ -33,6 +33,7 @@ const App = () => {
   const [user, setUser] = useState<User | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [currentPage, setCurrentPage] = useState<string>('home');
+  const [paymentType, setPaymentType] = useState<'monthly' | 'yearly'>('monthly');
 
   // Ajouter CSS pour le scroll mobile
   useEffect(() => {
@@ -1169,14 +1170,14 @@ const App = () => {
             {/* Barre de défilement - Sous le bouton */}
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 sm:py-6 overflow-hidden relative w-full max-w-full rounded-lg mx-auto">
               <div className="whitespace-nowrap animate-scroll">
-                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY TRADING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY TRADING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY TRADING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY TRADING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY TRADING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY TRADING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY TRADING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY TRADING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY SCALPING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY SCALPING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY SCALPING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY SCALPING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY SCALPING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY SCALPING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY SCALPING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY SCALPING</span>
               </div>
             </div>
           </div>
@@ -1211,14 +1212,14 @@ const App = () => {
             {/* Barre de défilement - Full Width */}
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 sm:py-10 overflow-hidden relative mb-10 sm:mb-16 w-full">
               <div className="whitespace-nowrap animate-scroll">
-                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY TRADING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
+                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
               </div>
             </div>
 
@@ -4394,13 +4395,50 @@ const App = () => {
               <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-8 sm:mb-12">
                 Choisissez votre plan
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 max-w-6xl mx-auto">
+              
+              {/* Payment Type Selector */}
+              <div className="flex justify-center mb-8">
+                <div className="bg-gray-800 p-1 rounded-lg flex">
+                  <button 
+                    onClick={() => setPaymentType('monthly')}
+                    className={`px-6 py-3 rounded-lg font-medium ${
+                      paymentType === 'monthly' 
+                        ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white' 
+                        : 'text-gray-400'
+                    }`}
+                  >
+                    Pay monthly
+                  </button>
+                  <button 
+                    onClick={() => setPaymentType('yearly')}
+                    className={`px-6 py-3 rounded-lg font-medium ${
+                      paymentType === 'yearly' 
+                        ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white' 
+                        : 'text-gray-400'
+                    }`}
+                  >
+                    Pay yearly
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-[0.8fr_1.2fr] gap-8 md:gap-0 max-w-6xl mx-auto">
                 {/* Plan Starter */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 p-8 sm:p-12 rounded-xl border border-purple-500/50 backdrop-blur-sm hover:from-purple-600/30 hover:to-blue-600/30 transition-all duration-300 min-h-[600px]">
+                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 px-8 py-6 sm:px-12 sm:py-8 rounded-xl md:rounded-l-xl md:rounded-r-none border border-purple-500/50 backdrop-blur-sm hover:from-purple-600/30 hover:to-blue-600/30 flex flex-col">
                   <div className="text-center">
-                    <h3 className="text-xl font-bold text-white mb-3">Starter</h3>
-                    <div className="text-4xl font-bold text-blue-400 mb-6">15€<span className="text-sm text-gray-400">/mois</span></div>
-                    <div className="text-green-400 text-sm mb-4">🎯 Parfait pour débuter</div>
+                    <h3 className="text-xl font-bold text-white mb-3">BASIC</h3>
+                    <div className="text-4xl font-bold text-blue-400 mb-6">
+                      {paymentType === 'monthly' ? '15€' : '150€'}
+                      <span className="text-sm text-gray-400">
+                        {paymentType === 'monthly' ? '/mois' : '/an'}
+                      </span>
+                      {paymentType === 'yearly' && (
+                        <div className="text-green-400 text-sm font-normal">
+                          Économisez 30€ par an!
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-gray-400 text-sm mb-4">Best for beginner traders</div>
                                           <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
                         <li className="flex items-center gap-2">
                           <span className="text-green-400">✓</span>
@@ -4439,14 +4477,24 @@ const App = () => {
                 </div>
 
                 {/* Plan Pro */}
-                <div className="bg-gradient-to-br from-blue-600/20 to-purple-600/20 p-8 sm:p-12 rounded-xl border border-blue-500/50 backdrop-blur-sm hover:from-blue-600/30 hover:to-purple-600/30 transition-all duration-300 relative min-h-[600px]">
+                <div className="bg-gradient-to-br from-blue-600/20 to-purple-600/20 p-8 sm:p-12 rounded-xl md:rounded-r-xl md:rounded-l-none border border-blue-500/50 backdrop-blur-sm hover:from-blue-600/30 hover:to-purple-600/30 relative flex flex-col">
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                    RECOMMANDÉ
+                    {paymentType === 'yearly' ? 'SAVE 50€' : 'RECOMMANDÉ'}
                   </div>
                   <div className="text-center">
-                    <h3 className="text-xl font-bold text-white mb-3">Pro</h3>
-                    <div className="text-4xl font-bold text-blue-400 mb-6">25€<span className="text-sm text-gray-400">/mois</span></div>
-                    <div className="text-green-400 text-sm mb-4">🚀 Pour trader comme un pro</div>
+                    <h3 className="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent mb-3">PREMIUM</h3>
+                    <div className="text-4xl font-bold text-blue-400 mb-6">
+                      {paymentType === 'monthly' ? '25€' : '250€'}
+                      <span className="text-sm text-gray-400">
+                        {paymentType === 'monthly' ? '/mois' : '/an'}
+                      </span>
+                      {paymentType === 'yearly' && (
+                        <div className="text-green-400 text-sm font-normal">
+                          Économisez 50€ par an!
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-gray-400 text-sm mb-4">Best for advanced traders</div>
                                           <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
                         <li className="flex items-center gap-2">
                           <span className="text-green-400">✓</span>
