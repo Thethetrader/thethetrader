@@ -4356,7 +4356,7 @@ export default function TradingPlatformShell() {
               mobileView === 'channels' ? 'translate-x-0' : '-translate-x-full'
             }`}
           >
-                        <div className="p-4 space-y-3 h-full overflow-y-auto" style={{ paddingTop: '10px' }}>
+                        <div className="p-4 space-y-3 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
               
               {/* Statistiques en haut */}
               <div className="bg-gray-700 rounded-lg p-6">
