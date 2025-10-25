@@ -1958,9 +1958,17 @@ const App = () => {
                   </div>
                   <div className="text-center">
                     <div className="text-6xl mb-4">🚀</div>
-                    <p className="text-gray-300 text-sm sm:text-base">
-                      Plus de 1000+ membres actifs
-                    </p>
+                    <a 
+                      href="https://x.com/thethetrader" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                    >
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                      </svg>
+                      Suivez @thethetrader
+                    </a>
                   </div>
                 </div>
               </div>
@@ -2323,9 +2331,17 @@ const App = () => {
                   </div>
                   <div className="text-center">
                     <div className="text-6xl mb-4">🚀</div>
-                    <p className="text-gray-300 text-sm sm:text-base">
-                      Plus de 1000+ membres actifs
-                    </p>
+                    <a 
+                      href="https://x.com/thethetrader" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                    >
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                      </svg>
+                      Suivez @thethetrader
+                    </a>
                   </div>
                 </div>
               </div>
