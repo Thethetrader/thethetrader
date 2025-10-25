@@ -526,15 +526,17 @@ export default function TradingPlatformShell() {
   const handleImageDragStart = (e: React.MouseEvent) => {
     if (imageZoom > 1) {
       setIsDragging(true);
-      setDragStart({ x: e.clientX - imagePosition.x, y: e.clientY - imagePosition.y });
+      setDragStart({ x: e.clientX - imagePosition.x * imageZoom, y: e.clientY - imagePosition.y * imageZoom });
     }
   };
 
   const handleImageDrag = (e: React.MouseEvent) => {
     if (isDragging && imageZoom > 1) {
+      const newX = e.clientX - dragStart.x;
+      const newY = e.clientY - dragStart.y;
       setImagePosition({
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y
+        x: newX / imageZoom,
+        y: newY / imageZoom
       });
     }
   };
@@ -571,7 +573,7 @@ export default function TradingPlatformShell() {
       // Drag
       const touch = e.touches[0];
       setIsDragging(true);
-      setDragStart({ x: touch.clientX - imagePosition.x, y: touch.clientY - imagePosition.y });
+      setDragStart({ x: touch.clientX - imagePosition.x * imageZoom, y: touch.clientY - imagePosition.y * imageZoom });
     }
   };
 
@@ -595,9 +597,11 @@ export default function TradingPlatformShell() {
     } else if (isDragging && imageZoom > 1) {
       // Drag
       const touch = e.touches[0];
+      const newX = touch.clientX - dragStart.x;
+      const newY = touch.clientY - dragStart.y;
       setImagePosition({
-        x: touch.clientX - dragStart.x,
-        y: touch.clientY - dragStart.y
+        x: newX / imageZoom,
+        y: newY / imageZoom
       });
     }
   };
