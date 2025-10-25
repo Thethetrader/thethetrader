@@ -4321,7 +4321,13 @@ export default function TradingPlatformShell() {
           ) : (
             <div className="flex items-center justify-between">
               <button 
-                onClick={() => setMobileView('channels')}
+                onClick={() => {
+                  setMobileView('channels');
+                  // Force scroll to top when returning to channels
+                  setTimeout(() => {
+                    window.scrollTo({ top: 0, behavior: 'instant' });
+                  }, 50);
+                }}
                 className="flex items-center gap-2 text-gray-400 hover:text-white"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
