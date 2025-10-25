@@ -1335,15 +1335,15 @@ const App = () => {
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400">✓</span>
-                            <span>Signaux (standard)</span>
+                            <span>Signaux standard</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400">✓</span>
-                            <span>Journal de trading (1 compte)</span>
+                            <span>Journal de trading 1 compte</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400">✓</span>
-                            <span>Statistiques (de base)</span>
+                            <span>Statistiques de base</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400">✓</span>
@@ -1355,7 +1355,7 @@ const App = () => {
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-gray-300">Standard</span>
-                            <span>Support / contact</span>
+                            <span>Support standard</span>
                           </li>
                         </ul>
                         <button 
@@ -1400,15 +1400,15 @@ const App = () => {
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400">✓</span>
-                            <span>Signaux (en temps réel + détaillés)</span>
+                            <span>Signaux en temps réel détaillés</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400">✓</span>
-                            <span>Journal de trading (multi-comptes)</span>
+                            <span>Journal de trading multi-comptes</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400">✓</span>
-                            <span>Statistiques (avancées, par setup)</span>
+                            <span>Statistiques avancées par setup</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400">✓</span>
@@ -1420,7 +1420,7 @@ const App = () => {
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400">✓</span>
-                            <span>Support prioritaire + contact direct</span>
+                            <span>Support prioritaire et contact direct</span>
                           </li>
                         </ul>
                         <button 
