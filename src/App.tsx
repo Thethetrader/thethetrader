@@ -1324,7 +1324,7 @@ const App = () => {
                       {/* Basic Plan */}
                       <div className={`bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 sm:p-8 relative border-2 transition-all duration-500 ${isTransitioning ? 'border-purple-500 shadow-[0_0_30px_rgba(147,51,234,0.3)] scale-105 rotate-y-3 brightness-110 backdrop-blur-sm' : 'border-gray-700 hover:border-purple-500 hover:shadow-[0_0_30px_rgba(147,51,234,0.3)] hover:scale-105 hover:rotate-y-3 hover:brightness-110 hover:backdrop-blur-sm'} transform-gpu`}>
                         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg animate-pulse">
-                          {paymentType === 'yearly' ? '💎 ÉCONOMISE 50€' : '⭐ RECOMMANDÉ'}
+                          {paymentType === 'yearly' ? '💎 ÉCONOMISE 50€' : ''}
                         </div>
                         <h3 className="text-xl font-bold text-white mb-3">BASIC</h3>
                         <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
