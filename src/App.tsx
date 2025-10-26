@@ -1336,7 +1336,7 @@ const App = () => {
                             </div>
                           )}
                           <div className="text-yellow-400 text-[8px] md:text-sm font-semibold mt-2 bg-yellow-400/10 px-1 py-0.5 rounded-full whitespace-nowrap overflow-hidden text-ellipsis">
-                            🎉 1ère semaine à 4€ !
+                            🎉 Première semaine à 4€ seulement !
                           </div>
                         </div>
                         {paymentType === 'yearly' && (
@@ -1401,7 +1401,7 @@ const App = () => {
                             </div>
                           )}
                           <div className="text-yellow-400 text-[8px] md:text-sm font-semibold mt-2 bg-yellow-400/10 px-1 py-0.5 rounded-full whitespace-nowrap overflow-hidden text-ellipsis">
-                            🎉 1ère semaine à 4€ !
+                            🎉 Première semaine à 4€ seulement !
                           </div>
                         </div>
                         {paymentType === 'yearly' && (
@@ -4734,7 +4734,7 @@ const App = () => {
                         </div>
                       )}
                       <div className="text-yellow-400 text-[8px] md:text-sm font-semibold mt-2 bg-yellow-400/10 px-1 py-0.5 rounded-full whitespace-nowrap overflow-hidden text-ellipsis">
-                        🎉 1ère semaine à 4€ !
+                        🎉 Première semaine à 4€ seulement !
                       </div>
                     </div>
                     {paymentType === 'yearly' && (
@@ -4816,7 +4816,7 @@ const App = () => {
                         </div>
                       )}
                       <div className="text-yellow-400 text-[8px] md:text-sm font-semibold mt-2 bg-yellow-400/10 px-1 py-0.5 rounded-full whitespace-nowrap overflow-hidden text-ellipsis">
-                        🎉 1ère semaine à 4€ !
+                        🎉 Première semaine à 4€ seulement !
                       </div>
                     </div>
                     {paymentType === 'yearly' && (
