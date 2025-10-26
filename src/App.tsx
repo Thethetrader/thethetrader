@@ -1116,7 +1116,7 @@ const App = () => {
             <img 
               src="/logo-removebg-preview.png" 
               alt="Trading pour les nuls" 
-              className="h-12 sm:h-16 md:h-40 w-auto"
+              className="h-16 sm:h-16 md:h-40 w-auto"
 
             />
           </div>
