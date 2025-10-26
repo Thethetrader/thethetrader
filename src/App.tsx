@@ -1192,19 +1192,6 @@ const App = () => {
 
 
             
-            {/* Barre de défilement - Sous le bouton */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 sm:py-4 overflow-hidden relative w-full max-w-full rounded-lg mx-auto">
-              <div className="whitespace-nowrap animate-scroll">
-                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY SCALPING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY SCALPING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY SCALPING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY SCALPING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY SCALPING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY SCALPING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY SCALPING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-6 sm:mx-24">EASY SETUP EASY SCALPING</span>
-              </div>
-            </div>
             
             {/* Lien Twitter */}
             <div className="text-center mt-6">
@@ -1246,19 +1233,6 @@ const App = () => {
                   </button>
                 </div>
 
-                {/* Barre de défilement - Full Width */}
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 sm:py-10 overflow-hidden relative mb-10 sm:mb-16 w-full">
-                  <div className="whitespace-nowrap animate-scroll">
-                    <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
-                    <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
-                    <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
-                    <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
-                    <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
-                    <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
-                    <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
-                    <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
-                  </div>
-                </div>
               </div>
 
               {/* Section Apprentissage */}
@@ -1475,19 +1449,6 @@ const App = () => {
               </button>
             </div>
 
-            {/* Barre de défilement - Full Width */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 sm:py-10 overflow-hidden relative mb-10 sm:mb-16 w-full">
-              <div className="whitespace-nowrap animate-scroll">
-                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
-                <span className="text-lg sm:text-3xl font-bold mx-4 sm:mx-16">EASY SETUP EASY SCALPING</span>
-              </div>
-            </div>
 
 
 
