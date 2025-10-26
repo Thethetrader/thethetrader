@@ -1145,7 +1145,7 @@ const App = () => {
                   }
                 }
               }}
-              className="bg-black/80 border-2 border-gray-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold hover:bg-black/90 hover:border-white transition-all duration-300 text-sm sm:text-base flex items-center gap-2"
+              className="bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base flex items-center gap-2"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2L3 7l9 5 9-5-9-5zM3 17l9 5 9-5M3 12l9 5 9-5"/>
@@ -1155,7 +1155,7 @@ const App = () => {
             </button>
             <button 
               onClick={() => setShowAuthModal(true)}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold hover:opacity-90 text-sm sm:text-base"
+              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base"
             >
               <span className="hidden sm:inline">Se connecter</span>
               <span className="sm:hidden">Login</span>
