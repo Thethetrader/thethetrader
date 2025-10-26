@@ -1228,10 +1228,10 @@ const App = () => {
               {/* Hero Section complète */}
               <div className="text-center pt-20 sm:pt-32 pb-0 px-4 sm:px-6">
                 <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 sm:mb-8">
-                  <span className="text-white">Ne t'abonne pas si tu ne veux pas</span>
+                  <span className="text-white">Arrête de perdre ton argent.</span>
                   <br />
                   <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-                    vraiment apprendre à trader.
+                    Apprends à trader.
                   </span>
                 </h1>
                 <p className="text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed">
@@ -1457,10 +1457,10 @@ const App = () => {
           {/* Hero Section - Mobile Optimized */}
           <div className="text-center pt-20 sm:pt-32 pb-0 px-4 sm:px-6">
             <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 sm:mb-8">
-              <span className="text-white">Ne t'abonne pas si tu ne veux pas</span>
+              <span className="text-white">Arrête de perdre ton argent.</span>
               <br />
               <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-                vraiment apprendre à trader.
+                Apprends à trader.
               </span>
             </h1>
             <p className="text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed">
