@@ -1240,7 +1240,7 @@ const App = () => {
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8">
                   <button 
                     onClick={() => setShowAuthModal(true)}
-                    className="bg-gradient-to-r from-gray-800 to-black hover:from-gray-700 hover:to-gray-900 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 border border-slate-600"
                   >
                     Commencer Maintenant
                   </button>
@@ -1435,7 +1435,7 @@ const App = () => {
                         </ul>
                         <button 
                           onClick={() => setShowAuthModal(true)}
-                          className="w-full bg-gradient-to-r from-gray-800 to-black hover:from-gray-700 hover:to-gray-900 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                          className="w-full bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 border border-slate-600"
                         >
                           Commencer
                         </button>
@@ -1469,7 +1469,7 @@ const App = () => {
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8">
               <button 
                 onClick={() => setShowAuthModal(true)}
-                className="bg-gradient-to-r from-gray-800 to-black hover:from-gray-700 hover:to-gray-900 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 border border-slate-600"
               >
                 Commencer Maintenant
               </button>
