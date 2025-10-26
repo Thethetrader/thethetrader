@@ -1335,7 +1335,7 @@ const App = () => {
                               Facturé 418€ / an
                             </div>
                           )}
-                          <div className="text-yellow-400 text-[8px] md:text-sm font-semibold mt-2 bg-yellow-400/10 px-1 py-0.5 rounded-full whitespace-nowrap overflow-hidden text-ellipsis">
+                          <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full whitespace-nowrap overflow-hidden text-ellipsis">
                             🎉 Première semaine à 4€ seulement !
                           </div>
                         </div>
@@ -1400,7 +1400,7 @@ const App = () => {
                               Facturé 690€ / an
                             </div>
                           )}
-                          <div className="text-yellow-400 text-[8px] md:text-sm font-semibold mt-2 bg-yellow-400/10 px-1 py-0.5 rounded-full whitespace-nowrap overflow-hidden text-ellipsis">
+                          <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full whitespace-nowrap overflow-hidden text-ellipsis">
                             🎉 Première semaine à 4€ seulement !
                           </div>
                         </div>
@@ -4733,7 +4733,7 @@ const App = () => {
                           Facturé 418€ / an
                         </div>
                       )}
-                      <div className="text-yellow-400 text-[8px] md:text-sm font-semibold mt-2 bg-yellow-400/10 px-1 py-0.5 rounded-full whitespace-nowrap overflow-hidden text-ellipsis">
+                      <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full whitespace-nowrap overflow-hidden text-ellipsis">
                         🎉 Première semaine à 4€ seulement !
                       </div>
                     </div>
@@ -4815,7 +4815,7 @@ const App = () => {
                           Facturé 690€ / an
                         </div>
                       )}
-                      <div className="text-yellow-400 text-[8px] md:text-sm font-semibold mt-2 bg-yellow-400/10 px-1 py-0.5 rounded-full whitespace-nowrap overflow-hidden text-ellipsis">
+                      <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full whitespace-nowrap overflow-hidden text-ellipsis">
                         🎉 Première semaine à 4€ seulement !
                       </div>
                     </div>
