@@ -1238,10 +1238,6 @@ const App = () => {
                   Tu n'as pas besoin d'être un expert pour trader efficacement. Tu as juste besoin de la bonne méthode — simple, directe, et conçue pour t'apprendre à penser comme un pro.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8">
-                  <div className="flex items-center gap-2 bg-green-600 text-white px-8 py-4 rounded-lg">
-                    <span className="text-green-200">✓</span>
-                    <span className="font-semibold">3j Garantie Satisfait</span>
-                  </div>
                   <button 
                     onClick={() => setShowAuthModal(true)}
                     className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
