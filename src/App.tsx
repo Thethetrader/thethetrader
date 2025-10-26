@@ -1336,7 +1336,7 @@ const App = () => {
                             </div>
                           )}
                           <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full text-center">
-                            🎉 1ère semaine à<br />4€ seulement !
+                            🎉 Première semaine à<br />4€ seulement !
                           </div>
                         </div>
                         {paymentType === 'yearly' && (
@@ -1401,7 +1401,7 @@ const App = () => {
                             </div>
                           )}
                           <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full text-center">
-                            🎉 1ère semaine à<br />4€ seulement !
+                            🎉 Première semaine à<br />4€ seulement !
                           </div>
                         </div>
                         {paymentType === 'yearly' && (
@@ -4734,7 +4734,7 @@ const App = () => {
                         </div>
                       )}
                       <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full text-center">
-                        🎉 1ère semaine à<br />4€ seulement !
+                        🎉 Première semaine à<br />4€ seulement !
                       </div>
                     </div>
                     {paymentType === 'yearly' && (
@@ -4816,7 +4816,7 @@ const App = () => {
                         </div>
                       )}
                       <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full text-center">
-                        🎉 1ère semaine à<br />4€ seulement !
+                        🎉 Première semaine à<br />4€ seulement !
                       </div>
                     </div>
                     {paymentType === 'yearly' && (
