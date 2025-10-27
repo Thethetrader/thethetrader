@@ -2201,7 +2201,7 @@ const App = () => {
                       </span>
                     </h2>
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
-                      Rejoins mes sessions de trading, apprends en direct avec mes annotations et pose tes questions.
+                      Rejoins mes sessions de trading, apprends en direct avec mes annotations qui expliquent chaque décision au fur et à mesure.
                     </p>
                   </div>
 
