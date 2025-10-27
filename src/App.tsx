@@ -5268,14 +5268,6 @@ const App = () => {
                     </div>
                   </div>
 
-                  {/* Services */}
-                  <div>
-                    <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Services</h4>
-                    <div className="space-y-3">
-                      <button onClick={() => setCurrentPage('livestream')} className="block text-gray-300 hover:text-white transition-colors text-sm text-left">Livestream Trading</button>
-                    </div>
-                  </div>
-
                   {/* Réseaux Sociaux */}
                   <div>
                     <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Suivez-nous</h4>
