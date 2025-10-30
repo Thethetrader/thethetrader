@@ -12,11 +12,114 @@ import { updateUserProfile, getUserProfile, getUserProfileByType } from '../../l
 import { useStatsSync } from '../../hooks/useStatsSync';
 import { useCalendarSync } from '../../hooks/useCalendarSync';
 import RumbleTalk from '../RumbleTalk';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { Area, AreaChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 
 // Configuration Supabase
 const supabaseUrl = 'https://bamwcozzfshuozsfmjah.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhbXdjb3p6ZnNodW96c2ZtamFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDM0ODcsImV4cCI6MjA2NTY3OTQ4N30.NWSUKoYLl0oGS-dXf4jhtmLRiSuBSk-0lV3NRHJLvrs';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// Configuration du graphique
+const chartConfig = {
+  cumulativeProfit: {
+    label: 'Profit cumulé',
+    color: '#22c55e'
+  }
+};
+
+// Composant graphique de profit cumulé
+function CumulativeProfitChart({ signals }: { signals: Signal[] }) {
+  // Calculer les données cumulatives
+  const chartData = useMemo(() => {
+    // Filtrer uniquement les signaux clôturés avec PnL
+    const closedSignals = signals.filter(s => 
+      s.status !== 'ACTIVE' && 
+      s.pnl && 
+      s.pnl !== '0' && 
+      s.pnl !== '$0' &&
+      s.timestamp
+    );
+
+    if (closedSignals.length === 0) {
+      return [];
+    }
+
+    // Trier par timestamp
+    const sortedSignals = [...closedSignals].sort((a, b) => 
+      new Date(a.timestamp || 0).getTime() - new Date(b.timestamp || 0).getTime()
+    );
+
+    // Calculer le profit cumulé
+    let cumulativeProfit = 0;
+    const data: { date: string; profit: number }[] = [];
+
+    sortedSignals.forEach(signal => {
+      // Parser le PnL
+      const cleanPnL = signal.pnl?.replace(/[$,]/g, '').trim() || '0';
+      const pnl = Number(cleanPnL);
+      
+      if (!isNaN(pnl)) {
+        cumulativeProfit += pnl;
+        data.push({
+          date: new Date(signal.timestamp || Date.now()).toLocaleDateString('fr-FR', { 
+            month: 'short', 
+            day: 'numeric',
+            year: 'numeric'
+          }),
+          profit: Math.round(cumulativeProfit)
+        });
+      }
+    });
+
+    return data;
+  }, [signals]);
+
+  if (chartData.length === 0) {
+    return (
+      <div className="bg-gray-700 rounded-lg p-4 text-center text-gray-400 text-sm">
+        Aucune donnée disponible
+      </div>
+    );
+  }
+
+  return (
+    <ChartContainer config={chartConfig} className="w-full h-48">
+      <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+        <defs>
+          <linearGradient id="gradientProfit" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#22c55e" stopOpacity={0.8}/>
+            <stop offset="95%" stopColor="#22c55e" stopOpacity={0.1}/>
+          </linearGradient>
+        </defs>
+        <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+        <XAxis 
+          dataKey="date" 
+          stroke="#9ca3af"
+          tick={{ fill: '#9ca3af', fontSize: 10 }}
+          interval="preserveStartEnd"
+        />
+        <YAxis 
+          stroke="#9ca3af"
+          tick={{ fill: '#9ca3af', fontSize: 10 }}
+          tickFormatter={(value) => `$${value}`}
+        />
+        <ChartTooltip 
+          content={<ChartTooltipContent 
+            formatter={(value) => [`$${value}`, 'Profit cumulé']}
+          />}
+        />
+        <Area 
+          type="monotone" 
+          dataKey="profit" 
+          stroke="#22c55e" 
+          fill="url(#gradientProfit)"
+          strokeWidth={2}
+        />
+      </AreaChart>
+    </ChartContainer>
+  );
+}
 
 export default function TradingPlatformShell() {
   console.log('🚀 TradingPlatformShell chargé !');
@@ -3988,6 +4091,12 @@ export default function TradingPlatformShell() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Graphique de profit cumulé */}
+          <div className="mb-8">
+            <h4 className="text-sm font-semibold text-gray-300 mb-4">Profit cumulé</h4>
+            <CumulativeProfitChart signals={realTimeSignals} />
           </div>
 
           {/* Résumé hebdomadaire */}
