@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Règles pour les signaux
+    match /signals/{document} {
+      allow read, write: if true;
+    }
+    
+    // Règles pour les messages
+    match /messages/{document} {
+      allow read, write: if true;
+    }
+    
+    // Règles pour le chat profit-loss
+    match /profit-loss-chat/{document} {
+      allow read, write: if true;
+    }
+    
+    // Règles pour les chats utilisateurs (general-chat, crypto-signaux, etc.)
+    match /chat-general-chat/{document} {
+      allow read, write: if true;
+    }
+    
+    match /chat-crypto-signaux/{document} {
+      allow read, write: if true;
+    }
+    
+    match /chat-forex-signaux/{document} {
+      allow read, write: if true;
+    }
+    
+    match /chat-futures-signaux/{document} {
+      allow read, write: if true;
+    }
+    
+    // Règles pour les profils utilisateurs
+    match /user_profiles/{document} {
+      allow read, write: if true;
+    }
+    
+    // Règles pour les tokens FCM
+    match /fcm_tokens/{document} {
+      allow read, write: if true;
+    }
+    
+    // Règles pour les trades personnels
+    match /personal_trades/{document} {
+      allow read, write: if true;
+    }
+  }
+}

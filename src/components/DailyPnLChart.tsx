@@ -1,0 +1,195 @@
+import React, { useMemo } from 'react';
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Area,
+} from 'recharts';
+
+type DailyPnLPoint = {
+  date: string;
+  balance: number;
+};
+
+interface DailyPnLChartProps {
+  data: DailyPnLPoint[];
+  height?: number;
+}
+
+const formatXAxisLabel = (value: string) => {
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return value;
+  }
+
+  return parsed.toLocaleDateString('fr-FR', {
+    month: '2-digit',
+    day: '2-digit',
+  });
+};
+
+const formatBalance = (value: number) => {
+  if (!Number.isFinite(value)) {
+    return '0';
+  }
+  const rounded = Math.round(value);
+  const prefix = rounded > 0 ? '+' : '';
+  return `${prefix}$${rounded.toLocaleString('en-US')}`;
+};
+
+const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220 }) => {
+  const sanitizedData = useMemo(() => {
+    if (!Array.isArray(data)) {
+      return [];
+    }
+    const sorted = data
+      .map((point) => ({
+        date: point.date,
+        balance: Number.isFinite(point.balance) ? Math.round(point.balance) : 0,
+      }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    if (sorted.length === 0) {
+      return [];
+    }
+
+    let startIndex = 0;
+    for (let i = 1; i < sorted.length; i++) {
+      if (sorted[i].balance !== sorted[i - 1].balance) {
+        startIndex = i;
+        break;
+      }
+    }
+
+    let endIndex = sorted.length - 1;
+    for (let i = sorted.length - 1; i > 0; i--) {
+      if (sorted[i].balance !== sorted[i - 1].balance) {
+        endIndex = i;
+        break;
+      }
+    }
+
+    const trimmed = sorted.slice(startIndex, endIndex + 1);
+
+    if (trimmed.length === 0) {
+      return sorted.slice(-1);
+    }
+
+    const deduplicated = trimmed.filter((point, index) => {
+      if (index === 0) {
+        return true;
+      }
+      return point.balance !== trimmed[index - 1].balance;
+    });
+
+    return deduplicated.length > 0 ? deduplicated : trimmed;
+  }, [data]);
+
+  const tradeTicks = useMemo(() => {
+    if (sanitizedData.length === 0) {
+      return [];
+    }
+    const ticks: string[] = [];
+    sanitizedData.forEach((point, index) => {
+      if (index === 0) {
+        ticks.push(point.date);
+        return;
+      }
+      const previous = sanitizedData[index - 1];
+      if (point.balance !== previous.balance) {
+        ticks.push(point.date);
+      }
+    });
+    return ticks;
+  }, [sanitizedData]);
+
+  return (
+    <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 shadow-inner">
+      <div className="flex items-center justify-between mb-3">
+        <div>
+          <h4 className="text-sm font-semibold text-white uppercase tracking-wide">
+            Daily Account Balance
+          </h4>
+          <p className="text-xs text-gray-400 mt-1">
+            Solde cumulé jour par jour
+          </p>
+        </div>
+        <span
+          className="text-gray-400 text-sm border border-gray-600 rounded-full w-5 h-5 flex items-center justify-center"
+          title="Somme cumulée du PnL jusqu’à la date affichée"
+        >
+          ?
+        </span>
+      </div>
+
+      {sanitizedData.length === 0 ? (
+        <div className="text-sm text-gray-400 text-center py-10">
+          Aucune donnée disponible pour le mois en cours.
+        </div>
+      ) : (
+        <ResponsiveContainer width="100%" height={height}>
+          <LineChart data={sanitizedData}>
+            <defs>
+              <linearGradient id="dailyPnlArea" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="rgba(226, 232, 240, 0.7)" />
+                <stop offset="60%" stopColor="rgba(148, 163, 184, 0.55)" />
+                <stop offset="100%" stopColor="rgba(51, 65, 85, 0.6)" />
+              </linearGradient>
+            </defs>
+
+            <XAxis
+              dataKey="date"
+              tick={{ fill: '#94a3b8', fontSize: 12 }}
+              stroke="#475569"
+              axisLine={{ stroke: '#475569' }}
+              tickLine={{ stroke: '#475569' }}
+              tickFormatter={formatXAxisLabel}
+              interval={0}
+              minTickGap={12}
+              ticks={tradeTicks.length > 0 ? tradeTicks : undefined}
+            />
+            <YAxis
+              tick={{ fill: '#94a3b8', fontSize: 12 }}
+              axisLine={{ stroke: '#475569' }}
+              tickLine={{ stroke: '#475569' }}
+              tickFormatter={(value) => value.toLocaleString('en-US')}
+              width={60}
+            />
+            <Tooltip
+              cursor={{ stroke: '#64748b', strokeDasharray: '4 4' }}
+              contentStyle={{
+                backgroundColor: '#1f2937',
+                border: '1px solid #4b5563',
+                borderRadius: '8px',
+                color: '#f8fafc',
+              }}
+              formatter={(value: number) => [formatBalance(value), 'Balance']}
+              labelFormatter={(label) => `Date : ${formatXAxisLabel(label)}`}
+            />
+            <Area
+              type="monotone"
+              dataKey="balance"
+              stroke="none"
+              fill="url(#dailyPnlArea)"
+              fillOpacity={1}
+            />
+            <Line
+              type="monotone"
+              dataKey="balance"
+              stroke="#ffffff"
+              strokeWidth={2}
+              dot={{ r: 3, stroke: '#ffffff', strokeWidth: 2, fill: '#ffffff' }}
+              activeDot={{ r: 4, stroke: '#ffffff', strokeWidth: 2, fill: '#1f2937' }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      )}
+    </div>
+  );
+};
+
+export default DailyPnLChart;
+

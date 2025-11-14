@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Notifications</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #333;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .error {
+            color: #ff4444;
+        }
+        .success {
+            color: #44ff44;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Notifications Firebase</h1>
+    <p>Ce test va appeler directement la Cloud Function pour vérifier l'erreur exacte.</p>
+    
+    <button onclick="testLivestreamNotification()">Test Livestream Notification</button>
+    
+    <div id="result"></div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-functions.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAkooeomw80N2p89zUaSB5L2AwoB-SSpKg",
+            authDomain: "tradingpourlesnuls-e7da4.firebaseapp.com",
+            databaseURL: "https://tradingpourlesnuls-e7da4-default-rtdb.firebaseio.com",
+            projectId: "tradingpourlesnuls-e7da4",
+            storageBucket: "tradingpourlesnuls-e7da4.appspot.com",
+            messagingSenderId: "742975995598",
+            appId: "1:742975995598:web:a873ce4b7b3fb5af899a9f",
+            measurementId: "G-4SVCDJXSYN"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const functions = getFunctions(app);
+        
+        // Afficher la configuration
+        console.log('🔧 Functions region:', functions.region);
+        console.log('🔧 App name:', functions.app.name);
+        
+        window.testLivestreamNotification = async function() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '⏳ Test en cours...\n\n';
+            
+            try {
+                console.log('📞 Appel de sendLivestreamNotification...');
+                const sendLivestreamNotification = httpsCallable(functions, 'sendLivestreamNotification');
+                
+                // Appeler avec un token de test vide (juste pour voir si la fonction répond)
+                const result = await sendLivestreamNotification({ 
+                    tokens: ['test-token-fake-for-debugging'],
+                    customMessage: 'Test depuis HTML'
+                });
+                
+                resultDiv.innerHTML = '✅ SUCCÈS!\n\n' + JSON.stringify(result, null, 2);
+                resultDiv.className = 'success';
+                console.log('✅ Résultat:', result);
+                
+            } catch (error) {
+                console.error('❌ Erreur complète:', error);
+                
+                let errorDetails = '❌ ERREUR!\n\n';
+                errorDetails += 'Message: ' + error.message + '\n';
+                errorDetails += 'Code: ' + error.code + '\n';
+                errorDetails += 'Name: ' + error.name + '\n\n';
+                
+                if (error.details) {
+                    errorDetails += 'Details: ' + JSON.stringify(error.details, null, 2) + '\n\n';
+                }
+                
+                errorDetails += 'Stack: ' + error.stack;
+                
+                resultDiv.innerHTML = errorDetails;
+                resultDiv.className = 'error';
+            }
+        };
+    </script>
+</body>
+</html>
+
