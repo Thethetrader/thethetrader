@@ -13,6 +13,7 @@ import { supabase } from './lib/supabase';
 
 import { useNotifications } from './hooks/use-notifications';
 import { usePWA } from './hooks/use-pwa';
+import { redirectToCheckout } from './utils/stripe';
 
 // FORCE DEPLOYMENT: 2025-01-13 04:25:00 - FIX OLD CONTENT
 
@@ -1519,7 +1520,14 @@ const App = () => {
                           </li>
                         </ul>
                         <button 
-                          onClick={() => setShowAuthModal(true)}
+                          onClick={async () => {
+                            try {
+                              await redirectToCheckout('basic', paymentType);
+                            } catch (error) {
+                              console.error('Erreur Stripe:', error);
+                              alert('Erreur lors de l\'ouverture du paiement');
+                            }
+                          }}
                           className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
                         >
                           Commencer
@@ -1584,7 +1592,14 @@ const App = () => {
                           </li>
                         </ul>
                         <button 
-                          onClick={() => setShowAuthModal(true)}
+                          onClick={async () => {
+                            try {
+                              await redirectToCheckout('premium', paymentType);
+                            } catch (error) {
+                              console.error('Erreur Stripe:', error);
+                              alert('Erreur lors de l\'ouverture du paiement');
+                            }
+                          }}
                           className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
                         >
                           Commencer
