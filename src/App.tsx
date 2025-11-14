@@ -33,6 +33,9 @@ declare global {
 const App = () => {
   const [user, setUser] = useState<User | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [currentPage, setCurrentPage] = useState<string>('home');
   const [paymentType, setPaymentType] = useState<'monthly' | 'yearly'>('monthly');
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -168,8 +171,8 @@ const App = () => {
       // Vérifier si on a un hash de réinitialisation dans l'URL
       const hash = window.location.hash;
       if (hash.includes('access_token') || hash.includes('type=recovery')) {
-        // L'utilisateur vient de cliquer sur le lien de réinitialisation
-        alert('✅ Vous pouvez maintenant définir votre nouveau mot de passe. Utilisez le formulaire ci-dessous.');
+        // Ouvrir le modal de réinitialisation
+        setShowResetPasswordModal(true);
       }
       // Nettoyer l'URL mais garder le hash pour Supabase
       window.history.replaceState({}, '', window.location.pathname + window.location.hash);
@@ -864,6 +867,38 @@ const App = () => {
       }
     } catch (error: any) {
       alert('Erreur lors de l\'envoi de l\'email: ' + error.message);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!newPassword || !confirmPassword) {
+      alert('Veuillez remplir tous les champs.');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      alert('Les mots de passe ne correspondent pas.');
+      return;
+    }
+    if (newPassword.length < 6) {
+      alert('Le mot de passe doit contenir au moins 6 caractères.');
+      return;
+    }
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+      if (error) {
+        alert('Erreur: ' + error.message);
+      } else {
+        alert('✅ Mot de passe mis à jour avec succès ! Vous pouvez maintenant vous connecter.');
+        setShowResetPasswordModal(false);
+        setNewPassword('');
+        setConfirmPassword('');
+        // Nettoyer l'URL
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    } catch (error: any) {
+      alert('Erreur lors de la mise à jour du mot de passe: ' + error.message);
     }
   };
 
@@ -5659,6 +5694,55 @@ const App = () => {
                 className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:opacity-90"
               >
                 Se connecter
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de réinitialisation de mot de passe */}
+      {showResetPasswordModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-lg max-w-md w-full mx-4">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Nouveau mot de passe</h2>
+              <button 
+                onClick={() => {
+                  setShowResetPasswordModal(false);
+                  setNewPassword('');
+                  setConfirmPassword('');
+                }}
+                className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-gray-700 mb-2">Nouveau mot de passe</label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                  placeholder="••••••••"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 mb-2">Confirmer le mot de passe</label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                  placeholder="••••••••"
+                />
+              </div>
+              <button
+                onClick={handleResetPassword}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:opacity-90"
+              >
+                Définir le mot de passe
               </button>
             </div>
           </div>
