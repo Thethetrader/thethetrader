@@ -4028,7 +4028,7 @@ export default function TradingPlatformShell() {
                 className={`px-3 py-2 rounded-lg text-sm font-medium ${
                   tradingAccounts.length === 0
                     ? 'bg-gray-700 border border-gray-600 text-gray-500 cursor-not-allowed'
-                    : 'bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 text-blue-300 hover:text-blue-200'
+                    : 'bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200'
                 }`}
                 title="Options du compte"
               >
