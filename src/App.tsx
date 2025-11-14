@@ -1531,7 +1531,7 @@ const App = () => {
                           }}
                           className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
                         >
-                          Commencer
+                          Je m'abonne
                         </button>
                         <div className="text-center mt-4">
                           <button className="text-gray-400 hover:text-white text-sm underline">
@@ -1604,7 +1604,7 @@ const App = () => {
                           }}
                           className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
                         >
-                          Commencer
+                          Je m'abonne
                         </button>
                         <div className="text-center mt-4">
                           <button className="text-gray-400 hover:text-white text-sm underline">
