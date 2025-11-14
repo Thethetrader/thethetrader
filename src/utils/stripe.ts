@@ -16,6 +16,15 @@ export const redirectToCheckout = async (
   billingCycle: BillingCycle
 ): Promise<void> => {
   try {
+    console.log('🚀 Démarrage checkout:', { planType, billingCycle });
+    
+    // Vérifier que la clé Stripe est présente
+    const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+    if (!stripeKey) {
+      throw new Error('VITE_STRIPE_PUBLISHABLE_KEY manquante');
+    }
+    console.log('✅ Clé Stripe trouvée');
+
     // Appeler la fonction Netlify pour créer la session
     const response = await fetch('/.netlify/functions/create-checkout-session', {
       method: 'POST',
@@ -23,18 +32,28 @@ export const redirectToCheckout = async (
       body: JSON.stringify({ planType, billingCycle }),
     });
 
+    console.log('📡 Réponse Netlify:', response.status, response.statusText);
+
     if (!response.ok) {
-      throw new Error('Erreur lors de la création de la session');
+      const errorText = await response.text();
+      console.error('❌ Erreur Netlify:', errorText);
+      throw new Error(`Erreur ${response.status}: ${errorText}`);
     }
 
-    const { sessionId } = await response.json();
-    const stripe = await getStripe();
+    const data = await response.json();
+    console.log('✅ Session créée:', data);
+    
+    if (!data.sessionId) {
+      throw new Error('Session ID manquant dans la réponse');
+    }
 
+    const stripe = await getStripe();
     if (!stripe) {
       throw new Error('Stripe non initialisé');
     }
 
-    const result = await stripe.redirectToCheckout({ sessionId });
+    console.log('🔄 Redirection vers Stripe Checkout...');
+    const result = await stripe.redirectToCheckout({ sessionId: data.sessionId });
 
     if (result.error) {
       throw result.error;

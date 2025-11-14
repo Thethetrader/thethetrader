@@ -1522,10 +1522,11 @@ const App = () => {
                         <button 
                           onClick={async () => {
                             try {
+                              console.log('🖱️ Clic sur bouton Basic');
                               await redirectToCheckout('basic', paymentType);
-                            } catch (error) {
+                            } catch (error: any) {
                               console.error('Erreur Stripe:', error);
-                              alert('Erreur lors de l\'ouverture du paiement');
+                              alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
                             }
                           }}
                           className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
@@ -1594,10 +1595,11 @@ const App = () => {
                         <button 
                           onClick={async () => {
                             try {
+                              console.log('🖱️ Clic sur bouton Premium');
                               await redirectToCheckout('premium', paymentType);
-                            } catch (error) {
+                            } catch (error: any) {
                               console.error('Erreur Stripe:', error);
-                              alert('Erreur lors de l\'ouverture du paiement');
+                              alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
                             }
                           }}
                           className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
