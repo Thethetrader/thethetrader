@@ -65,9 +65,11 @@ export const handler = async (event) => {
           break;
         }
 
-        // Trouver l'utilisateur par email
+        // Trouver l'utilisateur par email (insensible à la casse)
         const { data: users } = await supabaseAdmin.auth.admin.listUsers();
-        let user = users?.users?.find(u => u.email === customerEmail);
+        let user = users?.users?.find(u => 
+          u.email?.toLowerCase() === customerEmail.toLowerCase()
+        );
 
         // Si l'utilisateur n'existe pas, le créer
         if (!user) {
@@ -82,16 +84,32 @@ export const handler = async (event) => {
             email_confirm: true,
           });
 
-          if (createError || !newUser) {
-            console.error('❌ Erreur création utilisateur:', createError);
-            break;
+          if (createError) {
+            // Si l'utilisateur existe déjà, le récupérer
+            if (createError.message?.includes('already been registered')) {
+              console.log('ℹ️ Utilisateur existe déjà, récupération...');
+              const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
+              user = existingUsers?.users?.find(u => 
+                u.email?.toLowerCase() === customerEmail.toLowerCase()
+              );
+              if (!user) {
+                console.error('❌ Impossible de trouver l\'utilisateur existant');
+                break;
+              }
+            } else {
+              console.error('❌ Erreur création utilisateur:', createError);
+              break;
+            }
+          } else if (newUser) {
+            user = newUser.user;
+            console.log('✅ Utilisateur créé:', user.id);
           }
+        } else {
+          console.log('ℹ️ Utilisateur existe déjà:', user.id);
+        }
 
-          user = newUser.user;
-          console.log('✅ Utilisateur créé:', user.id);
-          
-          // Envoyer un email de réinitialisation de mot de passe
-          // L'utilisateur pourra définir son propre mot de passe
+        // Envoyer un email de réinitialisation de mot de passe (même si l'utilisateur existe déjà)
+        if (user) {
           try {
             const { error: emailError } = await supabase.auth.resetPasswordForEmail(customerEmail, {
               redirectTo: `${process.env.SITE_URL || 'https://tradingpourlesnuls.com'}/?reset=true`,
@@ -107,6 +125,13 @@ export const handler = async (event) => {
         }
 
         // Créer/mettre à jour l'abonnement
+        const periodStart = subscription.current_period_start 
+          ? new Date(subscription.current_period_start * 1000).toISOString()
+          : new Date().toISOString();
+        const periodEnd = subscription.current_period_end
+          ? new Date(subscription.current_period_end * 1000).toISOString()
+          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(); // +30 jours par défaut
+
         await supabaseAdmin.from('subscriptions').upsert({
           user_id: user.id,
           stripe_customer_id: session.customer,
@@ -114,8 +139,8 @@ export const handler = async (event) => {
           plan_type: planType,
           billing_cycle: billingCycle,
           status: subscription.status,
-          current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-          current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+          current_period_start: periodStart,
+          current_period_end: periodEnd,
           cancel_at_period_end: subscription.cancel_at_period_end || false,
         });
 
@@ -130,12 +155,19 @@ export const handler = async (event) => {
           ? 'canceled' 
           : subscription.status;
 
+        const periodStart = subscription.current_period_start 
+          ? new Date(subscription.current_period_start * 1000).toISOString()
+          : new Date().toISOString();
+        const periodEnd = subscription.current_period_end
+          ? new Date(subscription.current_period_end * 1000).toISOString()
+          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+
         await supabaseAdmin
           .from('subscriptions')
           .update({
             status: status,
-            current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-            current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+            current_period_start: periodStart,
+            current_period_end: periodEnd,
             cancel_at_period_end: subscription.cancel_at_period_end || false,
           })
           .eq('stripe_subscription_id', subscription.id);
