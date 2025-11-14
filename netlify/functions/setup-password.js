@@ -20,7 +20,7 @@ export const handler = async (event) => {
     return {
       statusCode: 405,
       headers,
-      body: JSON.stringify({ error: 'Method not allowed' }),
+      body: JSON.stringify({ error: 'Méthode non autorisée' }),
     };
   }
 
@@ -31,7 +31,7 @@ export const handler = async (event) => {
       return {
         statusCode: 400,
         headers,
-        body: JSON.stringify({ error: 'Email and password are required' }),
+        body: JSON.stringify({ error: 'Email et mot de passe requis' }),
       };
     }
 
@@ -39,7 +39,7 @@ export const handler = async (event) => {
       return {
         statusCode: 400,
         headers,
-        body: JSON.stringify({ error: 'Password must be at least 6 characters' }),
+        body: JSON.stringify({ error: 'Le mot de passe doit contenir au moins 6 caractères' }),
       };
     }
 
@@ -53,7 +53,7 @@ export const handler = async (event) => {
       return {
         statusCode: 404,
         headers,
-        body: JSON.stringify({ error: 'User not found' }),
+        body: JSON.stringify({ error: 'Utilisateur non trouvé' }),
       };
     }
 
@@ -79,7 +79,7 @@ export const handler = async (event) => {
       headers,
       body: JSON.stringify({ 
         success: true,
-        message: 'Password created successfully'
+        message: 'Mot de passe créé avec succès'
       }),
     };
   } catch (error) {

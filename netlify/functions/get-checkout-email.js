@@ -19,7 +19,7 @@ export const handler = async (event) => {
     return {
       statusCode: 405,
       headers,
-      body: JSON.stringify({ error: 'Method not allowed' }),
+      body: JSON.stringify({ error: 'Méthode non autorisée' }),
     };
   }
 
@@ -30,7 +30,7 @@ export const handler = async (event) => {
       return {
         statusCode: 400,
         headers,
-        body: JSON.stringify({ error: 'session_id is required' }),
+        body: JSON.stringify({ error: 'session_id requis' }),
       };
     }
 
@@ -43,7 +43,7 @@ export const handler = async (event) => {
       return {
         statusCode: 404,
         headers,
-        body: JSON.stringify({ error: 'Email not found in session' }),
+        body: JSON.stringify({ error: 'Email non trouvé dans la session' }),
       };
     }
 

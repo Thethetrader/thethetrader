@@ -19,7 +19,7 @@ export const handler = async (event) => {
     return {
       statusCode: 405,
       headers,
-      body: JSON.stringify({ error: 'Method not allowed' }),
+      body: JSON.stringify({ error: 'Méthode non autorisée' }),
     };
   }
 
@@ -30,7 +30,7 @@ export const handler = async (event) => {
       return {
         statusCode: 400,
         headers,
-        body: JSON.stringify({ error: 'planType and billingCycle required' }),
+        body: JSON.stringify({ error: 'planType et billingCycle requis' }),
       };
     }
 
@@ -52,7 +52,7 @@ export const handler = async (event) => {
       return {
         statusCode: 400,
         headers,
-        body: JSON.stringify({ error: 'Invalid plan or billing cycle' }),
+        body: JSON.stringify({ error: 'Plan ou cycle de facturation invalide' }),
       };
     }
 
