@@ -4006,7 +4006,7 @@ export default function TradingPlatformShell() {
                 <select
                   value={selectedAccount}
                   onChange={(e) => handleAccountChange(e.target.value)}
-                  className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-green-500 cursor-pointer w-32"
+                  className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-green-500 cursor-pointer h-9"
                 >
                   <option value="Tous les comptes">📊 Tous les comptes</option>
                   {tradingAccounts.map((account) => (
@@ -4016,7 +4016,7 @@ export default function TradingPlatformShell() {
                   ))}
                 </select>
               ) : (
-                <div className="text-sm text-gray-400 italic px-3 py-2 w-32">
+                <div className="text-sm text-gray-400 italic px-3 py-2 h-9 flex items-center">
                   Aucun compte enregistré
                 </div>
               )}
@@ -4024,7 +4024,7 @@ export default function TradingPlatformShell() {
               <button
                 onClick={() => handleAccountOptions(selectedAccount)}
                 disabled={tradingAccounts.length === 0}
-                className={`px-3 py-2 rounded-lg text-sm font-medium w-32 ${
+                className={`px-3 py-2 rounded-lg text-sm font-medium h-9 flex items-center justify-center ${
                   tradingAccounts.length === 0
                     ? 'bg-gray-700 border border-gray-600 text-gray-500 cursor-not-allowed'
                     : 'bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200'
@@ -4036,7 +4036,7 @@ export default function TradingPlatformShell() {
               
               <button
                 onClick={() => setShowAddAccountModal(true)}
-                className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap w-32"
+                className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap h-9 flex items-center justify-center"
               >
                 + Compte
               </button>
