@@ -148,6 +148,24 @@ const App = () => {
     };
   }, []);
 
+  // Détecter le retour après paiement Stripe
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get('success');
+    const canceled = urlParams.get('canceled');
+    const sessionId = urlParams.get('session_id');
+
+    if (success === 'true' && sessionId) {
+      alert('✅ Paiement réussi ! Votre abonnement est en cours d\'activation. Vous recevrez un email de confirmation.');
+      // Nettoyer l'URL
+      window.history.replaceState({}, '', window.location.pathname);
+    } else if (canceled === 'true') {
+      alert('❌ Paiement annulé.');
+      // Nettoyer l'URL
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
+
 
   // Changer manifeste selon la page
   useEffect(() => {
