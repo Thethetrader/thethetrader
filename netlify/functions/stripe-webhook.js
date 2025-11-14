@@ -108,20 +108,10 @@ export const handler = async (event) => {
           console.log('ℹ️ Utilisateur existe déjà:', user.id);
         }
 
-        // Envoyer un email de réinitialisation de mot de passe (même si l'utilisateur existe déjà)
+        // Ne pas envoyer d'email automatiquement
+        // L'utilisateur créera son mot de passe directement sur le site après le paiement
         if (user) {
-          try {
-            const { error: emailError } = await supabase.auth.resetPasswordForEmail(customerEmail, {
-              redirectTo: 'https://tradingpourlesnuls.com/?reset=true',
-            });
-            if (emailError) {
-              console.error('❌ Erreur envoi email:', emailError);
-            } else {
-              console.log('📧 Email de réinitialisation envoyé à:', customerEmail);
-            }
-          } catch (emailError) {
-            console.error('❌ Erreur envoi email:', emailError);
-          }
+          console.log('✅ Utilisateur prêt pour création de mot de passe:', user.id);
         }
 
         // Créer/mettre à jour l'abonnement

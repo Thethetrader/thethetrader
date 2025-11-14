@@ -63,11 +63,12 @@ export const handler = async (event) => {
       mode: 'subscription',
       payment_method_types: ['card'],
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${origin}/?success=true&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/?canceled=true`,
+          success_url: `${origin}/?success=true&session_id={CHECKOUT_SESSION_ID}&setup_password=true`,
+          cancel_url: `${origin}/?canceled=true`,
       metadata: {
         plan_type: planType,
         billing_cycle: billingCycle,
+        customer_email: customerEmail || '',
       },
     });
 

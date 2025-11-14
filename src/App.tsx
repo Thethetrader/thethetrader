@@ -160,7 +160,26 @@ const App = () => {
     const reset = urlParams.get('reset');
 
     if (success === 'true' && sessionId) {
-      alert('✅ Paiement réussi ! Votre compte est en cours de création. Vous recevrez un email pour définir votre mot de passe dans quelques instants.');
+      const setupPassword = urlParams.get('setup_password');
+      if (setupPassword === 'true') {
+        // Récupérer l'email depuis la session Stripe
+        fetch(`/.netlify/functions/get-checkout-email?session_id=${sessionId}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.email) {
+              setSetupPasswordEmail(data.email);
+              setShowResetPasswordModal(true);
+            } else {
+              alert('✅ Paiement réussi ! Votre compte est en cours de création.');
+            }
+          })
+          .catch(error => {
+            console.error('Erreur récupération email:', error);
+            alert('✅ Paiement réussi ! Votre compte est en cours de création.');
+          });
+      } else {
+        alert('✅ Paiement réussi ! Votre compte est en cours de création.');
+      }
       // Nettoyer l'URL
       window.history.replaceState({}, '', window.location.pathname);
     } else if (canceled === 'true') {
@@ -870,6 +889,8 @@ const App = () => {
     }
   };
 
+  const [setupPasswordEmail, setSetupPasswordEmail] = useState('');
+
   const handleResetPassword = async () => {
     if (!newPassword || !confirmPassword) {
       alert('Veuillez remplir tous les champs.');
@@ -884,21 +905,65 @@ const App = () => {
       return;
     }
     try {
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword,
-      });
-      if (error) {
-        alert('Erreur: ' + error.message);
+      // Vérifier si on a une session (utilisateur connecté via le hash de réinitialisation)
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session) {
+        // Utilisateur déjà authentifié (via hash de réinitialisation)
+        const { error } = await supabase.auth.updateUser({
+          password: newPassword,
+        });
+        if (error) {
+          alert('Erreur: ' + error.message);
+        } else {
+          alert('✅ Mot de passe créé avec succès ! Vous êtes maintenant connecté.');
+          setShowResetPasswordModal(false);
+          setNewPassword('');
+          setConfirmPassword('');
+          // Recharger pour mettre à jour l'état utilisateur
+          window.location.reload();
+        }
+      } else if (setupPasswordEmail) {
+        // Pas de session - l'utilisateur vient du paiement
+        // Utiliser la fonction Netlify pour créer le mot de passe
+        const response = await fetch('/.netlify/functions/setup-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: setupPasswordEmail, password: newPassword }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          alert('Erreur: ' + (data.error || 'Erreur lors de la création du mot de passe'));
+          return;
+        }
+
+        // Mot de passe créé, maintenant connecter l'utilisateur
+        const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+          email: setupPasswordEmail,
+          password: newPassword,
+        });
+
+        if (loginError) {
+          alert('Mot de passe créé ! Veuillez vous connecter avec votre email et votre nouveau mot de passe.');
+          setShowResetPasswordModal(false);
+          setShowAuthModal(true);
+        } else {
+          alert('✅ Mot de passe créé avec succès ! Vous êtes maintenant connecté.');
+          setUser({ id: loginData.user.id, email: loginData.user.email || setupPasswordEmail });
+          setShowResetPasswordModal(false);
+          setNewPassword('');
+          setConfirmPassword('');
+          setSetupPasswordEmail('');
+        }
       } else {
-        alert('✅ Mot de passe mis à jour avec succès ! Vous pouvez maintenant vous connecter.');
+        alert('Email non trouvé. Veuillez utiliser "Mot de passe oublié" depuis la page de connexion.');
         setShowResetPasswordModal(false);
-        setNewPassword('');
-        setConfirmPassword('');
-        // Nettoyer l'URL
-        window.history.replaceState({}, '', window.location.pathname);
+        setShowAuthModal(true);
       }
     } catch (error: any) {
-      alert('Erreur lors de la mise à jour du mot de passe: ' + error.message);
+      alert('Erreur lors de la création du mot de passe: ' + error.message);
     }
   };
 
@@ -5700,12 +5765,12 @@ const App = () => {
         </div>
       )}
 
-      {/* Modal de réinitialisation de mot de passe */}
+      {/* Modal de création/réinitialisation de mot de passe */}
       {showResetPasswordModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-8 rounded-lg max-w-md w-full mx-4">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Nouveau mot de passe</h2>
+              <h2 className="text-2xl font-bold text-gray-900">Créer votre mot de passe</h2>
               <button 
                 onClick={() => {
                   setShowResetPasswordModal(false);
@@ -5718,6 +5783,13 @@ const App = () => {
               </button>
             </div>
             <div className="space-y-4">
+              {setupPasswordEmail && (
+                <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+                  <p className="text-sm text-gray-700">
+                    <strong>Email:</strong> {setupPasswordEmail}
+                  </p>
+                </div>
+              )}
               <div>
                 <label className="block text-gray-700 mb-2">Nouveau mot de passe</label>
                 <input
