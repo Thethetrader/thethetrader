@@ -4940,13 +4940,22 @@ const App = () => {
                     </ul>
                   </div>
                   <button 
+                    onClick={async () => {
+                      try {
+                        console.log('🖱️ Clic sur bouton Basic (mobile)');
+                        await redirectToCheckout('basic', paymentType);
+                      } catch (error: any) {
+                        console.error('Erreur Stripe:', error);
+                        alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
+                      }
+                    }}
                     className={`w-full border-2 text-white py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-500 ease-out transform-gpu ${
                       isTransitioning 
                         ? 'border-purple-600 bg-purple-600/30 shadow-[0_0_30px_rgba(168,85,247,0.8)] scale-110' 
                         : 'border-purple-500 bg-transparent hover:scale-110 hover:shadow-[0_0_40px_rgba(168,85,247,0.6)] hover:bg-purple-500/20 hover:border-purple-400'
                     }`}
                   >
-                    Commencer
+                    Je m'abonne
                   </button>
                   
                   {/* Voir le détail complet */}
@@ -5020,8 +5029,19 @@ const App = () => {
                       </li>
                     </ul>
                   </div>
-                  <button className={`w-full bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-[length:200%_100%] animate-gradient text-white py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/40 ${isTransitioning ? 'animate-pulse' : ''}`}>
-                    Commencer
+                  <button 
+                    onClick={async () => {
+                      try {
+                        console.log('🖱️ Clic sur bouton Premium (mobile)');
+                        await redirectToCheckout('premium', paymentType);
+                      } catch (error: any) {
+                        console.error('Erreur Stripe:', error);
+                        alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
+                      }
+                    }}
+                    className={`w-full bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-[length:200%_100%] animate-gradient text-white py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/40 ${isTransitioning ? 'animate-pulse' : ''}`}
+                  >
+                    Je m'abonne
                   </button>
                   
                   {/* Voir le détail complet */}
