@@ -1279,3 +1279,37 @@ export const updateUserAccount = async (accountId: string, updates: Partial<User
     return null;
   }
 };
+
+// Récupérer l'abonnement de l'utilisateur
+export const getUserSubscription = async (): Promise<{ plan_type: 'basic' | 'premium' | 'journal' | null; status: string } | null> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      console.log('ℹ️ Utilisateur non connecté');
+      return null;
+    }
+
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .select('plan_type, status')
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        // Aucun abonnement trouvé
+        console.log('ℹ️ Aucun abonnement actif trouvé');
+        return null;
+      }
+      console.error('❌ Erreur récupération abonnement:', error);
+      return null;
+    }
+
+    console.log('✅ Abonnement récupéré:', data);
+    return data;
+  } catch (error) {
+    console.error('❌ Erreur getUserSubscription:', error);
+    return null;
+  }
+};

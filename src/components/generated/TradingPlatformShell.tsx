@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, Signal, syncUserId, database } from '../../utils/firebase-setup';
 import { ref, onValue, push } from 'firebase/database';
-import { addPersonalTrade, getPersonalTrades, deletePersonalTrade, PersonalTrade, listenToPersonalTrades, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount } from '../../lib/supabase';
+import { addPersonalTrade, getPersonalTrades, deletePersonalTrade, PersonalTrade, listenToPersonalTrades, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, getUserSubscription } from '../../lib/supabase';
 import ProfitLoss from '../ProfitLoss';
 import { createClient } from '@supabase/supabase-js';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
 import { LOSS_REASONS, getLossReasonLabel } from '../../config/loss-reasons';
+import { hasChannelAccess, type PlanType } from '../../config/subscription-plans';
 
 import { syncProfileImage, getProfileImage, initializeProfile } from '../../utils/profile-manager';
 import { updateUserProfile, getUserProfile, getUserProfileByType } from '../../lib/supabase';
@@ -269,18 +270,37 @@ export default function TradingPlatformShell() {
   console.log('📅 Calendar Stats:', calendarStats);
   console.log('✅ Tous les hooks chargés !');
   
+  // États pour l'abonnement
+  const [userPlan, setUserPlan] = useState<PlanType | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  
+  // État pour l'utilisateur connecté
+  const [user, setUser] = useState<{id: string, email: string} | null>(null);
+  
   // Définition des channels
-  const channels = [
+  const allChannels = [
     { id: 'fondamentaux', name: 'fondamentaux', emoji: '📚', fullName: 'Fondamentaux' },
     { id: 'letsgooo-model', name: 'letsgooo-model', emoji: '🚀', fullName: 'Letsgooo-model' },
     { id: 'general-chat-2', name: 'general-chat-2', emoji: '📈', fullName: 'Indices' },
     { id: 'general-chat-3', name: 'general-chat-3', emoji: '🪙', fullName: 'Crypto' },
     { id: 'general-chat-4', name: 'general-chat-4', emoji: '💱', fullName: 'Forex' },
     { id: 'video', name: 'video', emoji: '📺', fullName: 'Livestream' },
+    { id: 'livestream-premium', name: 'livestream-premium', emoji: '⭐', fullName: 'Livestream Premium' },
     { id: 'journal', name: 'journal', emoji: '📓', fullName: 'Journal Perso' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📓', fullName: 'Journal Perso' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' }
   ];
+
+  // Filtrer les canaux selon le plan de l'utilisateur
+  const channels = useMemo(() => {
+    if (isAdmin) {
+      return allChannels; // Admin a accès à tout
+    }
+    if (!userPlan) {
+      return allChannels; // Pas d'abonnement = accès à tout (pour l'instant)
+    }
+    return allChannels.filter(channel => hasChannelAccess(userPlan, channel.id));
+  }, [userPlan, isAdmin]);
   
   // Charger les réactions depuis localStorage au montage du composant
   useEffect(() => {
@@ -351,6 +371,34 @@ export default function TradingPlatformShell() {
     return () => subscription.unsubscribe();
   }, []);
   
+  // Charger l'abonnement de l'utilisateur
+  useEffect(() => {
+    const loadSubscription = async () => {
+      // Vérifier si admin
+      const adminAuth = localStorage.getItem('adminAuthenticated');
+      if (adminAuth === 'true') {
+        setIsAdmin(true);
+        setUserPlan(null); // Admin a accès à tout
+        return;
+      }
+
+      if (user) {
+        const subscription = await getUserSubscription();
+        if (subscription?.plan_type) {
+          setUserPlan(subscription.plan_type);
+          console.log('✅ Plan utilisateur:', subscription.plan_type);
+        } else {
+          setUserPlan(null);
+          console.log('ℹ️ Aucun abonnement actif');
+        }
+      } else {
+        setUserPlan(null);
+      }
+    };
+
+    loadSubscription();
+  }, [user]);
+  
   // État pour éviter les envois multiples
   const [isSendingMessage, setIsSendingMessage] = useState(false);
   
@@ -359,9 +407,6 @@ export default function TradingPlatformShell() {
   
   // État pour les réactions aux messages (côté utilisateur)
   const [messageReactions, setMessageReactions] = useState<{[messageId: string]: {fire: number, users: string[]}}>({});
-  
-  // État pour l'utilisateur connecté
-  const [user, setUser] = useState<{id: string, email: string} | null>(null);
   
   // Système de notifications pour les messages non lus
   const [lastReadTimes, setLastReadTimes] = useState({});
@@ -935,7 +980,7 @@ export default function TradingPlatformShell() {
     try {
       // Charger TOUS les messages (999999 = illimité)
       const messages = await getMessages(channelId, 999999);
-      const isChatChannel = ['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video'].includes(channelId);
+      const isChatChannel = ['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', 'livestream-premium'].includes(channelId);
       
       // Afficher TOUS les messages directement sans limite
       const limitedMessages = isChatChannel ? messages : messages.reverse();
@@ -1148,7 +1193,7 @@ export default function TradingPlatformShell() {
     console.log('🔄 Changement de canal utilisateur:', selectedChannel.id);
     
     // Ne pas charger messages/signaux pour les canaux spéciaux
-    const isSpecialChannel = ['calendrier', 'trading-journal', 'journal', 'video', 'trading-hub'].includes(selectedChannel.id);
+    const isSpecialChannel = ['calendrier', 'trading-journal', 'journal', 'video', 'livestream-premium', 'trading-hub'].includes(selectedChannel.id);
     
     if (!isSpecialChannel) {
       loadMessages(selectedChannel.id);
@@ -1547,6 +1592,13 @@ export default function TradingPlatformShell() {
   const handleChannelChange = (channelId: string, channelName: string) => {
     console.log('🔄 handleChannelChange appelé:', { channelId, channelName });
     
+    // Vérifier l'accès pour les abonnés "journal"
+    if (userPlan === 'journal' && channelId !== 'journal' && channelId !== 'trading-journal') {
+      console.log('❌ Accès refusé pour plan journal:', channelId);
+      setShowAccessRestrictedPopup(true);
+      return;
+    }
+    
     // Réinitialiser le flag de scroll pour permettre un nouveau scroll
     setIsScrolling(false);
     
@@ -1593,6 +1645,8 @@ export default function TradingPlatformShell() {
   const [tradingAccounts, setTradingAccounts] = useState<UserAccount[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<string>('Compte Principal');
   const [showAddAccountModal, setShowAddAccountModal] = useState(false);
+  const [showPremiumPopup, setShowPremiumPopup] = useState(false);
+  const [showAccessRestrictedPopup, setShowAccessRestrictedPopup] = useState(false);
   const [newAccountName, setNewAccountName] = useState('');
   const [newAccountBalance, setNewAccountBalance] = useState('');
   const [newAccountCurrentBalance, setNewAccountCurrentBalance] = useState('');
@@ -2979,7 +3033,7 @@ export default function TradingPlatformShell() {
 
   const scrollToTop = () => {
     // Pour les salons de chat, scroller dans le conteneur de messages
-          if (messagesContainerRef.current && ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video'].includes(selectedChannel.id)) {
+          if (messagesContainerRef.current && ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', 'livestream-premium'].includes(selectedChannel.id)) {
       messagesContainerRef.current.scrollTop = 0;
     } else {
       // Pour les autres vues, scroller la page
@@ -4046,7 +4100,13 @@ export default function TradingPlatformShell() {
               </button>
               
               <button
-                onClick={() => setShowAddAccountModal(true)}
+                onClick={() => {
+                  if (userPlan === 'basic') {
+                    setShowPremiumPopup(true);
+                  } else {
+                    setShowAddAccountModal(true);
+                  }
+                }}
                 className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap h-9 flex items-center justify-center"
               >
                 + Compte
@@ -4818,6 +4878,9 @@ export default function TradingPlatformShell() {
               }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               <button onClick={() => handleChannelChange('journal', 'journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 Journal Perso</button>
               <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
+              {channels.some(c => c.id === 'livestream-premium') && (
+                <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>⭐ Livestream Premium</button>
+              )}
             </div>
           </div>
 
@@ -5084,7 +5147,7 @@ export default function TradingPlatformShell() {
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">TRADING HUB</h3>
                 <div className="space-y-2">
-                  {channels.filter(c => ['video', 'trading-hub'].includes(c.id)).map(channel => (
+                  {channels.filter(c => ['video', 'livestream-premium', 'trading-hub'].includes(c.id)).map(channel => (
                     <button
                       key={channel.id}
                       onClick={() => {
@@ -5150,7 +5213,7 @@ export default function TradingPlatformShell() {
               mobileView === 'content' ? 'translate-x-0 pointer-events-auto' : 'translate-x-full pointer-events-none'
             }`}
           >
-            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'video' || selectedChannel.id === 'journal') ? (
+            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'video' || selectedChannel.id === 'livestream-premium' || selectedChannel.id === 'journal') ? (
               <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '0px', WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}>
                 {/* Header avec sélecteur de compte et bouton Ajouter Trade pour Trading Journal */}
                 {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? (
@@ -5199,7 +5262,13 @@ export default function TradingPlatformShell() {
                           </button>
                           
                           <button
-                            onClick={() => setShowAddAccountModal(true)}
+                            onClick={() => {
+                              if (userPlan === 'basic') {
+                                setShowPremiumPopup(true);
+                              } else {
+                                setShowAddAccountModal(true);
+                              }
+                            }}
                             className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
                           >
                             + Compte
@@ -5224,10 +5293,10 @@ export default function TradingPlatformShell() {
                 {(selectedChannel.id === 'calendrier' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && getTradingCalendar()}
                 
                 {/* Interface Livestream pour mobile */}
-                {selectedChannel.id === 'video' && (
+                {(selectedChannel.id === 'video' || selectedChannel.id === 'livestream-premium') && (
                   <div className="flex flex-col h-full bg-gray-900">
                     <div className="text-center space-y-4 w-full max-w-[95vw] mx-auto p-4 pt-16">
-                      <h1 className="text-3xl font-bold text-white mb-2">Livestream</h1>
+                      <h1 className="text-3xl font-bold text-white mb-2">{selectedChannel.id === 'livestream-premium' ? 'Livestream Premium' : 'Livestream'}</h1>
                       <p className="text-gray-400">Attache ta ceinture cousin</p>
                       
                       {/* Iframe 100ms */}
@@ -5407,7 +5476,7 @@ export default function TradingPlatformShell() {
                 ) : null}
                 
                 {/* Affichage des signaux */}
-                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', '', 'calendrier', 'journal'].includes(selectedChannel.id) ? (
+                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', 'livestream-premium', '', 'calendrier', 'journal'].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
                     {/* Bouton Voir plus fixe en haut */}
                     <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
@@ -6371,7 +6440,7 @@ export default function TradingPlatformShell() {
               ) : null}
               
               {/* Affichage des signaux */}
-                              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', 'trading-hub', '', 'calendrier', 'journal'].includes(selectedChannel.id) ? (
+                              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', 'livestream-premium', 'trading-hub', '', 'calendrier', 'journal'].includes(selectedChannel.id) ? (
                 <div className="space-y-4">
                   {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                     <div className="text-center py-8">
@@ -7086,7 +7155,7 @@ export default function TradingPlatformShell() {
                 </div>
               ) : selectedChannel.id === 'profit-loss' ? (
                 <ProfitLoss />
-              ) : selectedChannel.id === 'video' ? (
+              ) : (selectedChannel.id === 'video' || selectedChannel.id === 'livestream-premium') ? (
                 <div className="flex flex-col h-full bg-gray-900">
                   {/* Interface Video avec Sidebar Visible */}
                   <div className="flex-1 flex flex-col gap-4 p-2">
@@ -7094,7 +7163,7 @@ export default function TradingPlatformShell() {
                     <div className="flex-1 bg-gray-900 rounded-lg overflow-hidden">
                       <div className="h-full flex flex-col items-center justify-center p-4 pt-16">
                         <div className="text-center space-y-4 w-full max-w-[95vw] mx-auto">
-                          <h1 className="text-3xl font-bold text-white mb-2">Livestream</h1>
+                          <h1 className="text-3xl font-bold text-white mb-2">{selectedChannel.id === 'livestream-premium' ? 'Livestream Premium' : 'Livestream'}</h1>
                           <p className="text-gray-400">Attache ta ceinture cousin</p>
                           
                           {/* Iframe 100ms */}
@@ -7139,7 +7208,7 @@ export default function TradingPlatformShell() {
                     </div>
                   </div>
                 </div>
-              ) : selectedChannel.id === 'video' ? (
+              ) : (selectedChannel.id === 'video' || selectedChannel.id === 'livestream-premium') ? (
                 <div className="flex flex-col h-full bg-gray-900">
                   {/* Interface Livestream avec Sidebar Visible */}
                   <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
@@ -8152,6 +8221,47 @@ export default function TradingPlatformShell() {
           </div>
         </div>
       )}
+      
+      {/* Popup Premium */}
+      {showPremiumPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-lg p-6 w-96">
+            <h3 className="text-lg font-bold text-white mb-4">Seulement pour les premium!</h3>
+            <p className="text-gray-300 mb-6">
+              Cette fonctionnalité est réservée aux abonnés PREMIUM. Passez à PREMIUM pour ajouter plusieurs comptes.
+            </p>
+            <div className="flex justify-end">
+              <button
+                onClick={() => setShowPremiumPopup(false)}
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium"
+              >
+                Fermer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Popup Accès Restreint pour plan Journal */}
+      {showAccessRestrictedPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-lg p-6 w-96">
+            <h3 className="text-lg font-bold text-white mb-4">Accès restreint</h3>
+            <p className="text-gray-300 mb-6">
+              Abonne-toi à une autre formule pour y avoir accès.
+            </p>
+            <div className="flex justify-end">
+              <button
+                onClick={() => setShowAccessRestrictedPopup(false)}
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium"
+              >
+                Fermer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Modal pour ajouter un nouveau compte */}
       {showAddAccountModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

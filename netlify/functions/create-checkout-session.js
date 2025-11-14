@@ -44,6 +44,10 @@ export const handler = async (event) => {
         monthly: process.env.STRIPE_PRICE_ID_PREMIUM_MONTHLY || '',
         yearly: process.env.STRIPE_PRICE_ID_PREMIUM_YEARLY || '',
       },
+      journal: {
+        monthly: process.env.STRIPE_PRICE_ID_JOURNAL_MONTHLY || '',
+        yearly: process.env.STRIPE_PRICE_ID_JOURNAL_YEARLY || '',
+      },
     };
 
     const priceId = priceIds[planType]?.[billingCycle];

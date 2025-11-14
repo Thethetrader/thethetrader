@@ -107,6 +107,22 @@ const App = () => {
         touch-action: pan-y !important;
         -webkit-overflow-scrolling: touch !important;
       }
+      @keyframes shimmer {
+        0% {
+          background-position: -200% 0;
+        }
+        100% {
+          background-position: 200% 0;
+        }
+      }
+      @keyframes beam {
+        0% {
+          transform: translateX(-100%) skewX(-15deg);
+        }
+        100% {
+          transform: translateX(200%) skewX(-15deg);
+        }
+      }
     `;
     document.head.appendChild(style);
     return () => {
@@ -1612,7 +1628,66 @@ const App = () => {
                     </div>
 
                     {/* Pricing Cards */}
-                    <div className={`grid md:grid-cols-[0.9fr_1.1fr] gap-6 sm:gap-8 transition-all duration-400 ease-out ${isTransitioning ? 'opacity-0 scale-75 rotate-3 blur-md translate-y-20 transform-gpu perspective-1000' : 'opacity-100 scale-100 rotate-0 blur-0 translate-y-0 transform-gpu perspective-1000'}`} style={{ transformStyle: 'preserve-3d', perspective: '1000px' }}>
+                    <div className={`grid md:grid-cols-[0.8fr_0.9fr_1.1fr] gap-6 sm:gap-8 transition-all duration-400 ease-out ${isTransitioning ? 'opacity-0 scale-75 rotate-3 blur-md translate-y-20 transform-gpu perspective-1000' : 'opacity-100 scale-100 rotate-0 blur-0 translate-y-0 transform-gpu perspective-1000'}`} style={{ transformStyle: 'preserve-3d', perspective: '1000px' }}>
+                      
+                      {/* Journal Perso Plan */}
+                      <div className={`bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 sm:p-8 relative border-2 transition-all duration-500 ${isTransitioning ? 'border-purple-500 shadow-[0_0_30px_rgba(147,51,234,0.3)] scale-105 rotate-y-3 brightness-110 backdrop-blur-sm' : 'border-gray-700 hover:border-purple-500 hover:shadow-[0_0_30px_rgba(147,51,234,0.3)] hover:scale-105 hover:rotate-y-3 hover:brightness-110 hover:backdrop-blur-sm'} transform-gpu`}>
+                        <h3 className="text-xl font-bold text-white mb-3">JOURNAL PERSO</h3>
+                        <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
+                          <span className="text-2xl align-top text-gray-300">€</span>
+                          {paymentType === 'monthly' ? '15' : '12,5'}
+                          <span className="text-lg text-gray-400 font-normal"> / mois</span>
+                          {paymentType === 'yearly' && (
+                            <div className="text-gray-300 text-sm font-normal mt-2">
+                              Facturé 150€ / an
+                            </div>
+                          )}
+                          <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full text-center">
+                            🎉 Premier mois à<br />10€ seulement !
+                          </div>
+                        </div>
+                        <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-400 font-bold text-lg">✓</span>
+                            <span className="font-semibold text-white">Compte illimité</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-400 font-bold text-lg">✓</span>
+                            <span className="font-semibold text-white">Analyse des pertes</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-400 font-bold text-lg">✓</span>
+                            <span className="font-semibold text-white">Journal de trading</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-400 font-bold text-lg">✓</span>
+                            <span className="font-semibold text-white">Suivi de tes trades</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-400 font-bold text-lg">✓</span>
+                            <span className="font-semibold text-white">Statistiques personnelles</span>
+                          </li>
+                        </ul>
+                        <button 
+                          onClick={async () => {
+                            try {
+                              console.log('🖱️ Clic sur bouton Journal Perso');
+                              await redirectToCheckout('journal', 'monthly');
+                            } catch (error: any) {
+                              console.error('Erreur:', error);
+                              alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
+                            }
+                          }}
+                          className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                        >
+                          Je m'abonne
+                        </button>
+                        <div className="text-center mt-4">
+                          <button className="text-gray-400 hover:text-white text-sm underline">
+                            Voir le détail complet
+                          </button>
+                        </div>
+                      </div>
                       
                       {/* Basic Plan */}
                       <div className={`bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 sm:p-8 relative border-2 transition-all duration-500 ${isTransitioning ? 'border-purple-500 shadow-[0_0_30px_rgba(147,51,234,0.3)] scale-105 rotate-y-3 brightness-110 backdrop-blur-sm' : 'border-gray-700 hover:border-purple-500 hover:shadow-[0_0_30px_rgba(147,51,234,0.3)] hover:scale-105 hover:rotate-y-3 hover:brightness-110 hover:backdrop-blur-sm'} transform-gpu`}>
@@ -1638,32 +1713,32 @@ const App = () => {
                         )}
                         <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400">✓</span>
-                            <span>Formation Setup</span>
+                            <span className="text-green-400 font-bold text-lg">✓</span>
+                            <span className="font-semibold text-white">Formation Setup</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400">✓</span>
-                            <span>Signaux standard</span>
+                            <span className="text-green-400 font-bold text-lg">✓</span>
+                            <span className="font-semibold text-white">Signaux standard</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400">✓</span>
-                            <span>Journal de trading 1 compte</span>
+                            <span className="text-green-400 font-bold text-lg">✓</span>
+                            <span className="font-semibold text-white">Journal de trading 1 compte</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400">✓</span>
-                            <span>Statistiques de base</span>
+                            <span className="text-green-400 font-bold text-lg">✓</span>
+                            <span className="font-semibold text-white">Statistiques de base</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400">✓</span>
-                            <span>Live streams (1/semaine)</span>
+                            <span className="text-green-400 font-bold text-lg">✓</span>
+                            <span className="font-semibold text-white">Live streams (1/semaine)</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-red-400">✗</span>
-                            <span>Accès prioritaire aux nouveaux setups</span>
+                            <span className="text-red-400 font-bold text-lg">✗</span>
+                            <span className="font-semibold text-white">Accès prioritaire aux nouveaux setups</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-gray-300">Standard</span>
-                            <span>Support standard</span>
+                            <span className="text-gray-300 font-semibold">Standard</span>
+                            <span className="font-semibold text-white">Support standard</span>
                           </li>
                         </ul>
                         <button 
@@ -1711,32 +1786,32 @@ const App = () => {
                         )}
                         <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400">✓</span>
-                            <span>Formation Setup</span>
+                            <span className="text-green-400 font-bold text-lg">✓</span>
+                            <span className="font-semibold text-white">Formation Setup</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400">✓</span>
-                            <span>Signaux en temps réel détaillés</span>
+                            <span className="text-green-400 font-bold text-lg">✓</span>
+                            <span className="font-semibold text-white">Signaux en temps réel détaillés</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400">✓</span>
-                            <span>Journal de trading multi-comptes</span>
+                            <span className="text-green-400 font-bold text-lg">✓</span>
+                            <span className="font-semibold text-white">Journal de trading multi-comptes</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400">✓</span>
-                            <span>Statistiques avancées par setup</span>
+                            <span className="text-green-400 font-bold text-lg">✓</span>
+                            <span className="font-semibold text-white">Statistiques avancées par setup</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400">✓</span>
-                            <span>Live streams (5 jours/semaine)</span>
+                            <span className="text-green-400 font-bold text-lg">✓</span>
+                            <span className="font-semibold text-white">Live streams (5 jours/semaine)</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400">✓</span>
-                            <span>Accès prioritaire aux nouveaux setups</span>
+                            <span className="text-green-400 font-bold text-lg">✓</span>
+                            <span className="font-semibold text-white">Accès prioritaire aux nouveaux setups</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400">✓</span>
-                            <span>Support prioritaire et contact direct</span>
+                            <span className="text-green-400 font-bold text-lg">✓</span>
+                            <span className="font-semibold text-white">Support prioritaire et contact direct</span>
                           </li>
                         </ul>
                         <button 
@@ -1749,9 +1824,14 @@ const App = () => {
                               alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
                             }
                           }}
-                          className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                          className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 relative overflow-hidden"
+                          style={{ 
+                            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(147, 51, 234, 0.9) 50%, rgba(59, 130, 246, 0.9) 100%)',
+                            boxShadow: 'inset 0 0 20px rgba(255, 255, 255, 0.2), inset 0 0 40px rgba(168, 85, 247, 0.15)'
+                          }}
                         >
-                          Je m'abonne
+                          <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-beam" style={{ animation: 'beam 2s ease-in-out infinite' }}></span>
+                          <span className="relative z-10">Je m'abonne</span>
                         </button>
                         <div className="text-center mt-4">
                           <button className="text-gray-400 hover:text-white text-sm underline">
@@ -5026,9 +5106,83 @@ const App = () => {
                 </div>
               </div>
 
-              <div className={`grid grid-cols-1 md:grid-cols-[0.9fr_1.1fr] gap-8 md:gap-0 max-w-6xl mx-auto transition-all duration-400 ease-out ${isTransitioning ? 'opacity-0 scale-75 rotate-3 blur-md translate-y-20 transform-gpu perspective-1000' : 'opacity-100 scale-100 rotate-0 blur-0 translate-y-0 transform-gpu perspective-1000'}`} style={{ transformStyle: 'preserve-3d', perspective: '1000px' }}>
+              <div className={`grid grid-cols-1 md:grid-cols-[0.8fr_0.9fr_1.1fr] gap-8 md:gap-0 max-w-6xl mx-auto transition-all duration-400 ease-out ${isTransitioning ? 'opacity-0 scale-75 rotate-3 blur-md translate-y-20 transform-gpu perspective-1000' : 'opacity-100 scale-100 rotate-0 blur-0 translate-y-0 transform-gpu perspective-1000'}`} style={{ transformStyle: 'preserve-3d', perspective: '1000px' }}>
+                {/* Plan Journal Perso */}
+                <div className={`bg-gradient-to-br from-gray-800/20 to-gray-900/20 px-8 py-6 sm:px-12 sm:py-8 rounded-xl md:rounded-l-xl md:rounded-r-none border-2 backdrop-blur-sm flex flex-col transition-all duration-500 ease-out transform-gpu ${
+                  isTransitioning 
+                    ? 'border-purple-600 shadow-[0_0_30px_rgba(168,85,247,0.6)] scale-105 rotate-y-6 brightness-110' 
+                    : 'border-gray-500/50 hover:border-purple-400 hover:from-gray-800/30 hover:to-gray-900/30 hover:scale-105 hover:shadow-[0_0_30px_rgba(168,85,247,0.4)]'
+                }`}>
+                  <div className="text-center">
+                    <h3 className="text-xl font-bold text-white mb-3">JOURNAL PERSO</h3>
+                    <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
+                      <span className="text-2xl align-top text-gray-300">€</span>
+                      {paymentType === 'monthly' ? '15' : '12,5'}
+                      <span className="text-lg text-gray-400 font-normal"> / mois</span>
+                      {paymentType === 'yearly' && (
+                        <div className="text-gray-300 text-sm font-normal mt-2">
+                          Facturé 150€ / an
+                        </div>
+                      )}
+                      <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full text-center">
+                        🎉 Premier mois à<br />10€ seulement !
+                      </div>
+                    </div>
+                    <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
+                      <li className="flex items-center gap-2">
+                        <span className="text-green-400 font-bold text-lg">✓</span>
+                        <span className="font-semibold text-white">Compte illimité</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-green-400 font-bold text-lg">✓</span>
+                        <span className="font-semibold text-white">Analyse des pertes</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-green-400 font-bold text-lg">✓</span>
+                        <span className="font-semibold text-white">Journal de trading personnel</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-green-400 font-bold text-lg">✓</span>
+                        <span className="font-semibold text-white">Suivi de tes trades</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-green-400 font-bold text-lg">✓</span>
+                        <span className="font-semibold text-white">Statistiques personnelles</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <button 
+                    onClick={async () => {
+                      try {
+                        console.log('🖱️ Clic sur bouton Journal Perso (mobile)');
+                        await redirectToCheckout('journal', 'monthly');
+                      } catch (error: any) {
+                        console.error('Erreur:', error);
+                        alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
+                      }
+                    }}
+                    className={`w-full border-2 text-white py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-500 ease-out transform-gpu ${
+                      isTransitioning 
+                        ? 'border-purple-600 bg-purple-600/30 shadow-[0_0_30px_rgba(168,85,247,0.8)] scale-110' 
+                        : 'border-purple-500 bg-transparent hover:scale-110 hover:shadow-[0_0_40px_rgba(168,85,247,0.6)] hover:bg-purple-500/20 hover:border-purple-400'
+                    }`}
+                  >
+                    Je m'abonne
+                  </button>
+                  
+                  {/* Voir le détail complet */}
+                  <div className="text-center mt-4">
+                    <button className="text-purple-400 hover:text-purple-300 transition-colors duration-300 text-sm font-medium flex items-center justify-center gap-2 mx-auto">
+                      Voir le détail complet
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
                 {/* Plan Starter */}
-                <div className={`bg-gradient-to-br from-purple-600/20 to-blue-600/20 px-8 py-6 sm:px-12 sm:py-8 rounded-xl md:rounded-l-xl md:rounded-r-none border-2 backdrop-blur-sm flex flex-col transition-all duration-500 ease-out transform-gpu ${
+                <div className={`bg-gradient-to-br from-purple-600/20 to-blue-600/20 px-8 py-6 sm:px-12 sm:py-8 rounded-xl md:rounded-none border-2 backdrop-blur-sm flex flex-col transition-all duration-500 ease-out transform-gpu ${
                   isTransitioning 
                     ? 'border-purple-600 shadow-[0_0_30px_rgba(168,85,247,0.6)] scale-105 rotate-y-6 brightness-110' 
                     : 'border-purple-500/50 hover:border-purple-400 hover:from-purple-600/30 hover:to-blue-600/30 hover:scale-105 hover:shadow-[0_0_30px_rgba(168,85,247,0.4)]'
@@ -5056,33 +5210,33 @@ const App = () => {
                     )}
                                           <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
                         <li className="flex items-center gap-2">
-                          <span className="text-green-400">✓</span>
-                          <span>Formation Setup</span>
+                          <span className="text-green-400 font-bold text-lg">✓</span>
+                          <span className="font-semibold text-white">Formation Setup</span>
                         </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-green-400">✓</span>
-                        <span>Signaux (standard)</span>
+                        <span className="text-green-400 font-bold text-lg">✓</span>
+                        <span className="font-semibold text-white">Signaux (standard)</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-green-400">✓</span>
-                        <span>Journal de trading (1 compte)</span>
+                        <span className="text-green-400 font-bold text-lg">✓</span>
+                        <span className="font-semibold text-white">Journal de trading (1 compte)</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-green-400">✓</span>
-                        <span>Statistiques (de base)</span>
+                        <span className="text-green-400 font-bold text-lg">✓</span>
+                        <span className="font-semibold text-white">Statistiques (de base)</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-red-400">✗</span>
-                        <span>Live streams (1/semaine)</span>
+                        <span className="text-red-400 font-bold text-lg">✗</span>
+                        <span className="font-semibold text-white">Live streams (1/semaine)</span>
                       </li>
                       
                       <li className="flex items-center gap-2">
-                        <span className="text-red-400">✗</span>
-                        <span>Accès prioritaire aux nouveaux setups</span>
+                        <span className="text-red-400 font-bold text-lg">✗</span>
+                        <span className="font-semibold text-white">Accès prioritaire aux nouveaux setups</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-gray-300">Standard</span>
-                        <span>Support standard</span>
+                        <span className="text-gray-300 font-semibold">Standard</span>
+                        <span className="font-semibold text-white">Support standard</span>
                       </li>
                     </ul>
                   </div>
@@ -5147,32 +5301,32 @@ const App = () => {
                     )}
                                           <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
                         <li className="flex items-center gap-2">
-                          <span className="text-green-400">✓</span>
-                          <span>Formation Setup</span>
+                          <span className="text-green-400 font-bold text-lg">✓</span>
+                          <span className="font-semibold text-white">Formation Setup</span>
                         </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-green-400">✓</span>
-                        <span>Signaux en temps réel détaillés</span>
+                        <span className="text-green-400 font-bold text-lg">✓</span>
+                        <span className="font-semibold text-white">Signaux en temps réel détaillés</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-green-400">✓</span>
-                        <span>Journal de trading multi-comptes</span>
+                        <span className="text-green-400 font-bold text-lg">✓</span>
+                        <span className="font-semibold text-white">Journal de trading multi-comptes</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-green-400">✓</span>
-                        <span>Statistiques avancées par setup</span>
+                        <span className="text-green-400 font-bold text-lg">✓</span>
+                        <span className="font-semibold text-white">Statistiques avancées par setup</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-green-400">✓</span>
-                        <span>Live streams (5 jours/semaine)</span>
+                        <span className="text-green-400 font-bold text-lg">✓</span>
+                        <span className="font-semibold text-white">Live streams (5 jours/semaine)</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-green-400">✓</span>
-                        <span>Accès prioritaire aux nouveaux setups</span>
+                        <span className="text-green-400 font-bold text-lg">✓</span>
+                        <span className="font-semibold text-white">Accès prioritaire aux nouveaux setups</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-green-400">✓</span>
-                        <span>Support prioritaire et contact direct</span>
+                        <span className="text-green-400 font-bold text-lg">✓</span>
+                        <span className="font-semibold text-white">Support prioritaire et contact direct</span>
                       </li>
                     </ul>
                   </div>
@@ -5186,9 +5340,14 @@ const App = () => {
                         alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
                       }
                     }}
-                    className={`w-full bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-[length:200%_100%] animate-gradient text-white py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/40 ${isTransitioning ? 'animate-pulse' : ''}`}
+                    className={`w-full text-white py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-300 ease-out hover:scale-105 relative overflow-hidden ${isTransitioning ? 'animate-pulse' : ''}`}
+                    style={{ 
+                      background: 'linear-gradient(135deg, rgba(147, 51, 234, 0.9) 0%, rgba(236, 72, 153, 0.9) 50%, rgba(147, 51, 234, 0.9) 100%)',
+                      boxShadow: 'inset 0 0 20px rgba(255, 255, 255, 0.2), inset 0 0 40px rgba(168, 85, 247, 0.15)'
+                    }}
                   >
-                    Je m'abonne
+                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-beam" style={{ animation: 'beam 2s ease-in-out infinite' }}></span>
+                    <span className="relative z-10">Je m'abonne</span>
                   </button>
                   
                   {/* Voir le détail complet */}
