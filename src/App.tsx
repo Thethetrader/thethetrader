@@ -156,7 +156,7 @@ const App = () => {
     const sessionId = urlParams.get('session_id');
 
     if (success === 'true' && sessionId) {
-      alert('✅ Paiement réussi ! Votre abonnement est en cours d\'activation. Vous recevrez un email de confirmation.');
+      alert('✅ Paiement réussi ! Votre compte est en cours de création. Vous recevrez un email avec vos identifiants de connexion dans quelques instants.');
       // Nettoyer l'URL
       window.history.replaceState({}, '', window.location.pathname);
     } else if (canceled === 'true') {

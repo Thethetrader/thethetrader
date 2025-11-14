@@ -61,11 +61,32 @@ export const handler = async (event) => {
 
         // Trouver l'utilisateur par email
         const { data: users } = await supabase.auth.admin.listUsers();
-        const user = users?.users?.find(u => u.email === customerEmail);
+        let user = users?.users?.find(u => u.email === customerEmail);
 
+        // Si l'utilisateur n'existe pas, le créer
         if (!user) {
-          console.error('❌ User not found:', customerEmail);
-          break;
+          console.log('📝 Création d\'un nouvel utilisateur pour:', customerEmail);
+          
+          // Générer un mot de passe temporaire
+          const tempPassword = Math.random().toString(36).slice(-12) + 'A1!';
+          
+          const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
+            email: customerEmail,
+            password: tempPassword,
+            email_confirm: true,
+          });
+
+          if (createError || !newUser) {
+            console.error('❌ Erreur création utilisateur:', createError);
+            break;
+          }
+
+          user = newUser.user;
+          console.log('✅ Utilisateur créé:', user.id);
+          
+          // TODO: Envoyer un email avec le mot de passe temporaire
+          // Pour l'instant, on le log (à remplacer par un service d'email)
+          console.log('📧 Mot de passe temporaire pour', customerEmail, ':', tempPassword);
         }
 
         // Créer/mettre à jour l'abonnement
