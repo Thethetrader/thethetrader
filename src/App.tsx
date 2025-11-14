@@ -154,6 +154,7 @@ const App = () => {
     const success = urlParams.get('success');
     const canceled = urlParams.get('canceled');
     const sessionId = urlParams.get('session_id');
+    const reset = urlParams.get('reset');
 
     if (success === 'true' && sessionId) {
       alert('✅ Paiement réussi ! Votre compte est en cours de création. Vous recevrez un email pour définir votre mot de passe dans quelques instants.');
@@ -163,6 +164,15 @@ const App = () => {
       alert('❌ Paiement annulé.');
       // Nettoyer l'URL
       window.history.replaceState({}, '', window.location.pathname);
+    } else if (reset === 'true') {
+      // Vérifier si on a un hash de réinitialisation dans l'URL
+      const hash = window.location.hash;
+      if (hash.includes('access_token') || hash.includes('type=recovery')) {
+        // L'utilisateur vient de cliquer sur le lien de réinitialisation
+        alert('✅ Vous pouvez maintenant définir votre nouveau mot de passe. Utilisez le formulaire ci-dessous.');
+      }
+      // Nettoyer l'URL mais garder le hash pour Supabase
+      window.history.replaceState({}, '', window.location.pathname + window.location.hash);
     }
   }, []);
 

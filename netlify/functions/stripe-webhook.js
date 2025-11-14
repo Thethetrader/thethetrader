@@ -112,7 +112,7 @@ export const handler = async (event) => {
         if (user) {
           try {
             const { error: emailError } = await supabase.auth.resetPasswordForEmail(customerEmail, {
-              redirectTo: `${process.env.SITE_URL || 'https://tradingpourlesnuls.com'}/?reset=true`,
+              redirectTo: 'https://tradingpourlesnuls.com/?reset=true',
             });
             if (emailError) {
               console.error('❌ Erreur envoi email:', emailError);
