@@ -111,7 +111,7 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220 }) => 
       <div className="flex items-center justify-between mb-3">
         <div>
           <h4 className="text-sm font-semibold text-white uppercase tracking-wide">
-            Daily Account Balance
+            Solde du compte quotidien
           </h4>
           <p className="text-xs text-gray-400 mt-1">
             Solde cumulé jour par jour
