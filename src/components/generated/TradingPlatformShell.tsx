@@ -6466,6 +6466,448 @@ export default function TradingPlatformShell() {
                     ))
                   )}
                 </div>
+              ) : ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
+                <div className="flex flex-col h-full">
+                  {/* Messages de chat */}
+                  <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
+                    {/* Cours Scalping pour le salon Fondamentaux */}
+                    {selectedChannel.id === 'fondamentaux' && (
+                      <div className="bg-gray-800 rounded-lg p-6 mb-6">
+                        <div className="text-center mb-8 p-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white">
+                          <div className="flex justify-center mb-0">
+                  <img 
+                    src="/formation.jpeg" 
+                    alt="Trading pour les nuls" 
+                    className="hidden sm:block h-48 w-auto object-cover"
+                  />
+                  <img 
+                    src="/logo-removebg-preview.png" 
+                    alt="Trading pour les nuls" 
+                    className="sm:hidden h-48 w-auto object-cover"
+                    style={{ clipPath: 'inset(10% 5% 15% 5%)' }}
+                  />
+                </div>
+                            <p className="text-xl opacity-90 -mt-3">Guide complet des concepts fondamentaux et stratégies avancées</p>
+                          </div>
+                          
+                          <div className="space-y-6 text-gray-300">
+                            <div className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4">
+                              <p className="text-yellow-200"><strong>📖 Avertissement :</strong> Ce guide présente un ensemble de concepts appris et expérimentés sur les marchés financiers. Il ne s'agit pas d'inventions originales, mais d'un setup personnel basé sur l'observation et l'expérience pratique.</p>
+                            </div>
+                            
+                            <div>
+                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">1. 📚 Introduction</h2>
+                              <p>Ce document vous présente les fondamentaux essentiels pour comprendre comment les charts évoluent et ce qui influence leurs mouvements. L'objectif est de construire une base solide avant d'aborder les stratégies avancées.</p>
+                            </div>
+                            
+                            <div>
+                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">2. 🧠 Fondamentaux des Charts</h2>
+                              <div className="bg-gray-700 rounded-lg p-4 mb-4">
+                                <h3 className="text-lg font-semibold text-green-400 mb-2">📈 Qu'est-ce qu'une Chart ?</h3>
+                                <p className="mb-3">Une chart (ou graphique) est une représentation visuelle du prix d'un actif financier dans le temps (Bitcoin, or, actions, etc.).</p>
+                                <div className="bg-gray-600 rounded p-3">
+                                  <h4 className="font-semibold text-blue-300 mb-2">Elle permet de :</h4>
+                                  <ul className="space-y-1 text-sm">
+                                    <li>→ Voir comment le prix évolue</li>
+                                    <li>→ Trouver des points d'entrée/sortie</li>
+                                    <li>→ Comprendre le comportement du marché</li>
+                                  </ul>
+                                </div>
+                              </div>
+                              
+                              <div className="bg-gray-700 rounded-lg p-4">
+                                <h3 className="text-lg font-semibold text-green-400 mb-2">🕯️ Comprendre les Bougies</h3>
+                                <p className="mb-3">Chaque bougie montre l'évolution du prix sur une période donnée (1 min, 1h, 1 jour, etc.)</p>
+                                <div className="bg-gray-600 rounded p-3">
+                                  <h4 className="font-semibold text-blue-300 mb-2">Composition d'une bougie :</h4>
+                                  <ul className="space-y-1 text-sm">
+                                    <li>→ <strong>Le corps (body) :</strong> différence entre ouverture et clôture</li>
+                                    <li>→ <strong>Les mèches (wicks) :</strong> les plus hauts et plus bas atteints</li>
+                                    <li>→ <strong>Couleur :</strong> verte/blanche si clôture &gt; ouverture, rouge/noire si clôture &lt; ouverture</li>
+                                  </ul>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">3. 🧠 Mouvement des Prix (Modèle AMD)</h2>
+                              <div className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4 mb-4">
+                                <p><strong>🚗💨 Analogie :</strong> Le prix, c'est comme un voyage de A à B. Pour avancer, il a besoin de liquidité, comme une voiture a besoin d'essence.</p>
+                              </div>
+                              
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                <div className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4 text-center">
+                                  <div className="text-2xl font-bold mb-2">1️⃣</div>
+                                  <div className="font-semibold mb-2">Accumulation</div>
+                                  <p className="text-sm">Le prix se prépare 🛑⛽</p>
+                                </div>
+                                <div className="bg-red-600/20 border border-red-600/30 rounded-lg p-4 text-center">
+                                  <div className="text-2xl font-bold mb-2">2️⃣</div>
+                                  <div className="font-semibold mb-2">Manipulation</div>
+                                  <p className="text-sm">Il piège les traders 🎯🪤</p>
+                                </div>
+                                <div className="bg-green-600/20 border border-green-600/30 rounded-lg p-4 text-center">
+                                  <div className="text-2xl font-bold mb-2">3️⃣</div>
+                                  <div className="font-semibold mb-2">Distribution</div>
+                                  <p className="text-sm">Le vrai mouvement 🚀📈</p>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">4. 📈 Support et Résistance</h2>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-green-600/20 border border-green-600/30 rounded-lg p-4 text-center">
+                                  <strong className="text-green-300">🔹 Support</strong><br/>
+                                  <span className="text-sm">Zone où le prix rebondit vers le haut 🔼</span>
+                                </div>
+                                <div className="bg-red-600/20 border border-red-600/30 rounded-lg p-4 text-center">
+                                  <strong className="text-red-300">🔹 Résistance</strong><br/>
+                                  <span className="text-sm">Zone où le prix bloque et redescend 🔽</span>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">5. 🔬 Concepts Avancés</h2>
+                              <div className="space-y-4">
+                                <div className="bg-gray-700 rounded-lg p-4">
+                                  <h3 className="text-lg font-semibold text-purple-400 mb-2">🧱 ORDER BLOCK (OB)</h3>
+                                  <p className="mb-2">Un Order Block représente la dernière bougie haussière (ou baissière) avant un mouvement impulsif majeur dans la direction opposée.</p>
+                                  <div className="text-sm text-blue-300">
+                                    → Ces zones deviennent des repères de liquidité<br/>
+                                    → Souvent retestées par le prix<br/>
+                                    → Offrent des points d'entrée à fort potentiel
+                                  </div>
+                                </div>
+                                
+                                <div className="bg-gray-700 rounded-lg p-4">
+                                  <h3 className="text-lg font-semibold text-purple-400 mb-2">⚡📉📈 FVG – Fair Value Gap</h3>
+                                  <p className="mb-2">Un FVG est une zone de déséquilibre créée lors d'un mouvement rapide et violent du marché 🚀.</p>
+                                  <div className="text-sm text-blue-300">
+                                    → Le prix revient fréquemment combler ces gaps<br/>
+                                    → Zones intéressantes pour entrer ou sortir d'une position
+                                  </div>
+                                </div>
+                                
+                                <div className="bg-gray-700 rounded-lg p-4">
+                                  <h3 className="text-lg font-semibold text-purple-400 mb-2">🦄 Unicorn</h3>
+                                  <p className="mb-2">C'est un setup formé par l'association d'un Breaker (BRKR) ⚡ et d'un Fair Value Gap (FVG) 📉.</p>
+                                  <div className="text-sm text-blue-300">
+                                    → Zone à forte probabilité de réaction du prix<br/>
+                                    → Rassemble deux zones institutionnelles clés<br/>
+                                    → Point d'entrée ou de prise de profit idéal
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">6. 🕵️ CRT – Candle Range Theory</h2>
+                              <p className="mb-4">La Candle Range Theory (CRT) est une méthode d'analyse basée sur 3 bougies consécutives.</p>
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4 text-center">
+                                  <div className="text-2xl font-bold mb-2">1️⃣</div>
+                                  <div className="font-semibold mb-2">La Range</div>
+                                  <p className="text-sm">Bougie avec grand corps<br/>Zone de stagnation</p>
+                                </div>
+                                <div className="bg-red-600/20 border border-red-600/30 rounded-lg p-4 text-center">
+                                  <div className="text-2xl font-bold mb-2">2️⃣</div>
+                                  <div className="font-semibold mb-2">Manipulation</div>
+                                  <p className="text-sm">Va chercher la liquidité<br/>Piège les traders</p>
+                                </div>
+                                <div className="bg-green-600/20 border border-green-600/30 rounded-lg p-4 text-center">
+                                  <div className="text-2xl font-bold mb-2">3️⃣</div>
+                                  <div className="font-semibold mb-2">Distribution</div>
+                                  <p className="text-sm">Bougie directionnelle<br/>Zone d'entrée</p>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">7. 📌 Le Setup "A+"</h2>
+                              <div className="bg-green-600/20 border border-green-600/30 rounded-lg p-4 mb-4">
+                                <h3 className="font-semibold mb-2">PRINCIPE DU MODÈLE</h3>
+                                <p className="mb-2">Le principe du modèle, c'est de prendre position après la phase de manipulation ⏸️, sur la timeframe basse (LTF) du contexte défini sur la timeframe haute (HTF) 📊.</p>
+                                <p>🎯 Cela permet d'éviter les pièges des faux breakouts 🚫 et de s'aligner avec la vraie direction du mouvement ➡️.</p>
+                              </div>
+                            </div>
+                            
+                            <div className="bg-red-600/20 border border-red-600/30 rounded-lg p-4">
+                              <h4 className="font-semibold mb-2">⚠️ Avertissement Légal</h4>
+                              <p className="text-sm">Ce document est fourni à des fins éducatives uniquement. Le trading comporte des risques significatifs de perte financière. Il est essentiel de bien comprendre les risques avant de trader et ne jamais risquer plus que ce que vous pouvez vous permettre de perdre.</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      
+                      {(messages[selectedChannel.id] || []).length > 0 && 
+                        (messages[selectedChannel.id] || []).map((message, index) => {
+                          // Vérifier si c'est un nouveau jour par rapport au message précédent
+                          let messageDate: Date;
+                          
+                          // Gérer différents formats de timestamp
+                          if (typeof message.timestamp === 'string') {
+                            messageDate = new Date(message.timestamp);
+                          } else if (typeof message.timestamp === 'number') {
+                            // Si c'est un timestamp Firebase (millisecondes)
+                            messageDate = new Date(message.timestamp);
+                          } else {
+                            // Fallback: utiliser la date actuelle
+                            messageDate = new Date();
+                          }
+                          
+                          // Vérifier si la date est valide
+                          if (isNaN(messageDate.getTime())) {
+                            messageDate = new Date(); // Fallback si date invalide
+                          }
+                          
+                          const currentMessageDate = messageDate.toDateString();
+                          const previousMessage = index > 0 ? messages[selectedChannel.id][index - 1] : null;
+                          let previousMessageDate = null;
+                          
+                          if (previousMessage) {
+                            let prevDate: Date;
+                            if (typeof previousMessage.timestamp === 'string') {
+                              prevDate = new Date(previousMessage.timestamp);
+                            } else if (typeof previousMessage.timestamp === 'number') {
+                              prevDate = new Date(previousMessage.timestamp);
+                            } else {
+                              prevDate = new Date();
+                            }
+                            
+                            if (!isNaN(prevDate.getTime())) {
+                              previousMessageDate = prevDate.toDateString();
+                            }
+                          }
+                          
+                          const showDateSeparator = index > 0 && previousMessageDate && currentMessageDate !== previousMessageDate;
+                          
+                          // Formater la date pour l'affichage
+                          const today = new Date();
+                          const yesterday = new Date(today);
+                          yesterday.setDate(yesterday.getDate() - 1);
+                          
+                          let dayLabel = '';
+                          if (messageDate.toDateString() === today.toDateString()) {
+                            dayLabel = 'Aujourd\'hui';
+                          } else if (messageDate.toDateString() === yesterday.toDateString()) {
+                            dayLabel = 'Hier';
+                          } else {
+                            dayLabel = messageDate.toLocaleDateString('fr-FR', { 
+                              weekday: 'long', 
+                              day: 'numeric', 
+                              month: 'long' 
+                            });
+                          }
+
+                          return (
+                            <div key={message.id}>
+                              {/* Message */}
+                              <div className="flex items-start gap-3">
+                            <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
+                              {message.author_avatar ? (
+                                <img src={message.author_avatar} alt="Profile" className="w-full h-full object-cover" />
+                              ) : message.author === 'Admin' ? (
+                                'A'
+                              ) : message.author === currentUsername ? (
+                                currentUsername.charAt(0).toUpperCase()
+                              ) : (
+                                'U'
+                              )}
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="font-semibold text-white">{message.author}</span>
+                                <span className="text-xs text-gray-400">{message.timestamp}</span>
+                              </div>
+                              <div 
+                                className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words"
+                                data-signal-id={message.text.includes('[SIGNAL_ID:') ? message.text.match(/\[SIGNAL_ID:([^\]]+)\]/)?.[1] : undefined}
+                              >
+                                <div className="text-white">
+                                  {message.text.includes('[SIGNAL_ID:') ? (
+                                    <>
+                                      {message.text.split('[SIGNAL_ID:')[0]}
+                                      <span className="text-gray-700 text-xs">[SIGNAL_ID:{message.text.split('[SIGNAL_ID:')[1].split(']')[0]}]</span>
+                                      {message.text.split(']').slice(1).join(']')}
+                                      
+                                      {/* Flèche cliquable pour les messages de fermeture */}
+                                      {(() => {
+                                        const isClosureMessage = message.text.includes('SIGNAL FERMÉ');
+                                        console.log('🔍 Debug flèche USER - message.text:', message.text);
+                                        console.log('🔍 Debug flèche USER - isClosureMessage:', isClosureMessage);
+                                        if (isClosureMessage) {
+                                          console.log('✅ Flèche USER devrait apparaître !');
+                                        }
+                                        return isClosureMessage;
+                                      })() && (
+                                        <span 
+                                          className="ml-2 text-blue-400 hover:text-blue-300 cursor-pointer text-2xl transition-colors inline-block bg-blue-500/20 px-2 py-1 rounded-lg hover:bg-blue-500/30"
+                                          onClick={() => {
+                                            const signalIdMatch = message.text.match(/\[SIGNAL_ID:([^\]]+)\]/);
+                                            const signalId = signalIdMatch ? signalIdMatch[1] : '';
+                                            console.log('🔍 Debug flèche USER - signalId extrait:', signalId);
+                                            console.log('🔍 Debug flèche USER - message.text:', message.text);
+                                            
+                                            const originalMessage = document.querySelector(`[data-signal-id="${signalId}"]`);
+                                            console.log('🔍 Debug flèche USER - élément trouvé:', originalMessage);
+                                            console.log('🔍 Debug flèche USER - sélecteur utilisé:', `[data-signal-id="${signalId}"]`);
+                                            
+                                            // Chercher tous les éléments avec data-signal-id
+                                            const allSignalElements = document.querySelectorAll('[data-signal-id]');
+                                            console.log('🔍 Debug flèche USER - tous les éléments signal:', allSignalElements);
+                                            
+                                            if (originalMessage && (originalMessage as HTMLElement).offsetParent !== null) {
+                                              console.log('🔍 Debug flèche USER - scroll vers élément:', originalMessage);
+                                              console.log('🔍 Debug flèche USER - élément visible:', (originalMessage as HTMLElement).offsetParent !== null);
+                                              console.log('🔍 Debug flèche USER - élément dans viewport:', originalMessage.getBoundingClientRect());
+                                              
+                                              // Forcer le scroll vers le haut de la page d'abord
+                                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                                              
+                                              setTimeout(() => {
+                                                originalMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                originalMessage.classList.add('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
+                                                setTimeout(() => {
+                                                  originalMessage.classList.remove('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
+                                                }, 5000);
+                                              }, 500);
+                                              
+                                              console.log('✅ Navigation USER vers le signal original réussie');
+                                            } else {
+                                              console.log('❌ Signal original USER non trouvé');
+                                              console.log('🔍 Debug flèche USER - recherche alternative...');
+                                              
+                                              // Recherche simple par contenu dans toute la page
+                                              const allDivs = document.querySelectorAll('div');
+                                              let foundMessage = null;
+                                              
+                                              for (let div of allDivs) {
+                                                if (div.textContent && div.textContent.includes(signalId) && div.classList.contains('bg-gray-700')) {
+                                                  foundMessage = div;
+                                                  console.log('🔍 Debug flèche USER - message trouvé par contenu:', foundMessage);
+                                                  break;
+                                                }
+                                              }
+                                              
+                                              if (foundMessage) {
+                                                // Scroll direct vers le message trouvé
+                                                foundMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                foundMessage.classList.add('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
+                                                setTimeout(() => {
+                                                  foundMessage.classList.remove('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
+                                                }, 5000);
+                                                console.log('✅ Navigation USER réussie par contenu');
+                                              } else {
+                                                console.log('❌ Aucun message trouvé avec ce signalId dans toute la page');
+                                              }
+                                            }
+                                          }}
+                                          title="Aller au signal original"
+                                        >
+                                          ⬆️
+                                        </span>
+                                      )}
+                                    </>
+                                  ) : (
+                                    message.text
+                                  )}
+                                </div>
+                                
+                                {/* Boutons WIN/LOSS/BE pour les messages de signal (pas pour les messages de fermeture) */}
+                                {message.text.includes('[SIGNAL_ID:') && !message.text.includes('SIGNAL FERMÉ') && (() => {
+                                  // Extraire l'ID du signal pour vérifier son statut
+                                  const signalIdMatch = message.text.match(/\[SIGNAL_ID:([^\]]+)\]/);
+                                  const signalId = signalIdMatch ? signalIdMatch[1] : '';
+                                  const currentSignal = signals.find(s => s.id === signalId);
+                                  const isClosed = currentSignal && ['WIN', 'LOSS', 'BE'].includes(currentSignal.status);
+                                  
+                                  return (
+                                    <div className="mt-3 pt-3 border-t border-gray-600">
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-xs text-gray-400">Résultat du signal:</span>
+                                        <div className={`px-3 py-1.5 rounded-lg text-xs font-medium ${
+                                          isClosed && currentSignal?.status === 'WIN'
+                                            ? 'bg-green-500 text-white border-2 border-green-400 shadow-lg' // Bouton WIN actif
+                                            : isClosed && currentSignal?.status === 'LOSS'
+                                            ? 'bg-red-500 text-white border-2 border-red-400 shadow-lg' // Bouton LOSS actif
+                                            : isClosed && currentSignal?.status === 'BE'
+                                            ? 'bg-blue-500 text-white border-2 border-blue-400 shadow-lg' // Bouton BE actif
+                                            : 'bg-gray-500/30 text-gray-400 border border-gray-500/30' // Bouton neutre
+                                        }`}>
+                                          {isClosed && currentSignal?.status === 'WIN' ? '🟢 WIN' :
+                                           isClosed && currentSignal?.status === 'LOSS' ? '🔴 LOSS' :
+                                           isClosed && currentSignal?.status === 'BE' ? '🔵 BE' : '⏳ EN ATTENTE'}
+                                        </div>
+                                      </div>
+                                      {isClosed && (
+                                        <div className="mt-2 text-xs text-gray-400">
+                                          <span 
+                                            className="cursor-pointer text-blue-400 hover:text-blue-300 underline"
+                                            onClick={() => {
+                                              // Trouver le message original du signal
+                                              const originalMessage = document.querySelector(`[data-signal-id="${signalId}"]`);
+                                              if (originalMessage && (originalMessage as HTMLElement).offsetParent !== null) {
+                                                originalMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                // Surligner temporairement
+                                                originalMessage.classList.add('ring-2', 'ring-blue-400', 'ring-opacity-50');
+                                                setTimeout(() => {
+                                                  originalMessage.classList.remove('ring-2', 'ring-blue-400', 'ring-opacity-50');
+                                                }, 3000);
+                                              }
+                                            }}
+                                          >
+                                            Signal {currentSignal?.id || ''} fermé avec {currentSignal?.pnl ? `P&L: ${currentSignal.pnl}` : 'aucun P&L'}
+                                          </span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  );
+                                })()}
+                                
+                                {message.attachment_data && (
+                                  <div className="mt-2 max-w-full overflow-hidden">
+                                    <div className="relative">
+                                      <img 
+                                        src={message.attachment_data} 
+                                        alt="Attachment"
+                                        className="mt-2 w-full max-w-full h-auto max-h-40 md:max-h-96 object-contain rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                                        onClick={() => setSelectedImage(message.attachment_data)}
+                                      />
+                                      <div className="text-xs text-gray-400 mt-1">Cliquez pour agrandir</div>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                              
+                              {/* Bouton de réaction flamme */}
+                              <div className="mt-2 flex justify-start">
+                                <button
+                                  onClick={() => handleAddReaction(message.id)}
+                                  className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
+                                    (messageReactions[message.id]?.users || []).includes(user?.email || 'Anonymous')
+                                      ? 'bg-orange-500 text-white hover:bg-orange-600'
+                                      : 'bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white'
+                                  }`}
+                                >
+                                  🔥
+                                  <span className="text-xs">
+                                    {messageReactions[message.id]?.fire || 0}
+                                  </span>
+                                </button>
+                              </div>
+
+                            </div>
+                              </div>
+                            </div>
+                          );
+                        })
+                      }
+                      <div ref={messagesEndRef} />
+                    </div>
+                  </div>
               ) : false ? (
                 <div className="flex flex-col h-full">
                   {/* Interface Livestream Desktop */}
