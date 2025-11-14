@@ -74,7 +74,10 @@ export const handler = async (event) => {
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ sessionId: session.id }),
+      body: JSON.stringify({ 
+        sessionId: session.id,
+        url: session.url 
+      }),
     };
   } catch (error) {
     console.error('❌ Erreur:', error);

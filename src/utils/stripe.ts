@@ -43,21 +43,12 @@ export const redirectToCheckout = async (
     const data = await response.json();
     console.log('✅ Session créée:', data);
     
-    if (!data.sessionId) {
-      throw new Error('Session ID manquant dans la réponse');
-    }
-
-    const stripe = await getStripe();
-    if (!stripe) {
-      throw new Error('Stripe non initialisé');
+    if (!data.url) {
+      throw new Error('URL de checkout manquante dans la réponse');
     }
 
     console.log('🔄 Redirection vers Stripe Checkout...');
-    const result = await stripe.redirectToCheckout({ sessionId: data.sessionId });
-
-    if (result.error) {
-      throw result.error;
-    }
+    window.location.href = data.url;
   } catch (error) {
     console.error('❌ Erreur Stripe:', error);
     throw error;
