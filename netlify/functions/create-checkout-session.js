@@ -68,7 +68,6 @@ export const handler = async (event) => {
       metadata: {
         plan_type: planType,
         billing_cycle: billingCycle,
-        customer_email: customerEmail || '',
       },
     });
 
