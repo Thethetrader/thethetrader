@@ -5,9 +5,15 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2024-12-18.acacia',
 });
 
-const supabase = createClient(
+const supabaseAdmin = createClient(
   process.env.SUPABASE_URL || '',
   process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+);
+
+// Client normal pour resetPasswordForEmail (nécessite la clé anon)
+const supabase = createClient(
+  process.env.SUPABASE_URL || '',
+  process.env.SUPABASE_ANON_KEY || ''
 );
 
 export const handler = async (event) => {
@@ -60,7 +66,7 @@ export const handler = async (event) => {
         }
 
         // Trouver l'utilisateur par email
-        const { data: users } = await supabase.auth.admin.listUsers();
+        const { data: users } = await supabaseAdmin.auth.admin.listUsers();
         let user = users?.users?.find(u => u.email === customerEmail);
 
         // Si l'utilisateur n'existe pas, le créer
@@ -70,7 +76,7 @@ export const handler = async (event) => {
           // Générer un mot de passe temporaire
           const tempPassword = Math.random().toString(36).slice(-12) + 'A1!';
           
-          const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
+          const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
             email: customerEmail,
             password: tempPassword,
             email_confirm: true,
@@ -84,13 +90,24 @@ export const handler = async (event) => {
           user = newUser.user;
           console.log('✅ Utilisateur créé:', user.id);
           
-          // TODO: Envoyer un email avec le mot de passe temporaire
-          // Pour l'instant, on le log (à remplacer par un service d'email)
-          console.log('📧 Mot de passe temporaire pour', customerEmail, ':', tempPassword);
+          // Envoyer un email de réinitialisation de mot de passe
+          // L'utilisateur pourra définir son propre mot de passe
+          try {
+            const { error: emailError } = await supabase.auth.resetPasswordForEmail(customerEmail, {
+              redirectTo: `${process.env.SITE_URL || 'https://tradingpourlesnuls.com'}/?reset=true`,
+            });
+            if (emailError) {
+              console.error('❌ Erreur envoi email:', emailError);
+            } else {
+              console.log('📧 Email de réinitialisation envoyé à:', customerEmail);
+            }
+          } catch (emailError) {
+            console.error('❌ Erreur envoi email:', emailError);
+          }
         }
 
         // Créer/mettre à jour l'abonnement
-        await supabase.from('subscriptions').upsert({
+        await supabaseAdmin.from('subscriptions').upsert({
           user_id: user.id,
           stripe_customer_id: session.customer,
           stripe_subscription_id: subscriptionId,
@@ -113,7 +130,7 @@ export const handler = async (event) => {
           ? 'canceled' 
           : subscription.status;
 
-        await supabase
+        await supabaseAdmin
           .from('subscriptions')
           .update({
             status: status,

@@ -156,7 +156,7 @@ const App = () => {
     const sessionId = urlParams.get('session_id');
 
     if (success === 'true' && sessionId) {
-      alert('✅ Paiement réussi ! Votre compte est en cours de création. Vous recevrez un email avec vos identifiants de connexion dans quelques instants.');
+      alert('✅ Paiement réussi ! Votre compte est en cours de création. Vous recevrez un email pour définir votre mot de passe dans quelques instants.');
       // Nettoyer l'URL
       window.history.replaceState({}, '', window.location.pathname);
     } else if (canceled === 'true') {
@@ -835,6 +835,25 @@ const App = () => {
       console.log('Déconnexion réussie');
     } catch (error) {
       console.error('Erreur de déconnexion:', error);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      alert('Veuillez entrer votre email pour réinitialiser votre mot de passe.');
+      return;
+    }
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/?reset=true`,
+      });
+      if (error) {
+        alert('Erreur: ' + error.message);
+      } else {
+        alert('Un email de réinitialisation a été envoyé à ' + email);
+      }
+    } catch (error: any) {
+      alert('Erreur lors de l\'envoi de l\'email: ' + error.message);
     }
   };
 
@@ -5619,6 +5638,12 @@ const App = () => {
                   placeholder="••••••••"
                 />
               </div>
+              <button
+                onClick={handleForgotPassword}
+                className="text-sm text-blue-600 hover:text-blue-800 text-left w-full"
+              >
+                Mot de passe oublié ?
+              </button>
               <button
                 onClick={handleLogin}
                 className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:opacity-90"
