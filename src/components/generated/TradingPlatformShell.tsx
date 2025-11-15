@@ -292,14 +292,30 @@ export default function TradingPlatformShell() {
   ];
 
   // Filtrer les canaux selon le plan de l'utilisateur
+  // Note: Pour le plan "journal", on garde tous les canaux visibles mais on bloque l'accès au clic
   const channels = useMemo(() => {
+    console.log('🔍 Filtrage canaux - userPlan:', userPlan, 'isAdmin:', isAdmin);
     if (isAdmin) {
+      console.log('✅ Admin - accès à tous les canaux');
       return allChannels; // Admin a accès à tout
     }
     if (!userPlan) {
+      console.log('⚠️ Pas de plan - accès à tous les canaux (temporaire)');
       return allChannels; // Pas d'abonnement = accès à tout (pour l'instant)
     }
-    return allChannels.filter(channel => hasChannelAccess(userPlan, channel.id));
+    // Pour le plan "journal", on garde tous les canaux visibles (mais l'accès sera bloqué au clic)
+    if (userPlan === 'journal') {
+      console.log('📋 Plan journal - tous les canaux visibles mais accès restreint');
+      return allChannels;
+    }
+    // Pour les autres plans (basic/premium), on filtre normalement
+    const filtered = allChannels.filter(channel => {
+      const hasAccess = hasChannelAccess(userPlan, channel.id);
+      console.log(`  ${hasAccess ? '✅' : '❌'} ${channel.id}: ${hasAccess}`);
+      return hasAccess;
+    });
+    console.log('📋 Canaux filtrés:', filtered.map(c => c.id));
+    return filtered;
   }, [userPlan, isAdmin]);
   
   // Charger les réactions depuis localStorage au montage du composant
@@ -374,29 +390,49 @@ export default function TradingPlatformShell() {
   // Charger l'abonnement de l'utilisateur
   useEffect(() => {
     const loadSubscription = async () => {
+      const isPWA = window.matchMedia('(display-mode: standalone)').matches;
+      console.log('📱 PWA Mode:', isPWA);
+      
       // Vérifier si admin
       const adminAuth = localStorage.getItem('adminAuthenticated');
       if (adminAuth === 'true') {
+        console.log('👑 Admin détecté - accès à tout');
         setIsAdmin(true);
         setUserPlan(null); // Admin a accès à tout
         return;
       }
 
       if (user) {
-        const subscription = await getUserSubscription();
-        if (subscription?.plan_type) {
-          setUserPlan(subscription.plan_type);
-          console.log('✅ Plan utilisateur:', subscription.plan_type);
-        } else {
+        console.log('🔍 Récupération abonnement pour user:', user.id, 'PWA:', isPWA);
+        try {
+          const subscription = await getUserSubscription();
+          console.log('📦 Abonnement récupéré:', subscription, 'PWA:', isPWA);
+          if (subscription?.plan_type) {
+            setUserPlan(subscription.plan_type);
+            console.log('✅ Plan utilisateur défini:', subscription.plan_type, 'Status:', subscription.status, 'PWA:', isPWA);
+          } else {
+            setUserPlan(null);
+            console.log('ℹ️ Aucun abonnement actif trouvé - PWA:', isPWA);
+          }
+        } catch (error) {
+          console.error('❌ Erreur récupération abonnement PWA:', error);
           setUserPlan(null);
-          console.log('ℹ️ Aucun abonnement actif');
         }
       } else {
         setUserPlan(null);
+        console.log('ℹ️ Utilisateur non connecté - PWA:', isPWA);
       }
     };
 
-    loadSubscription();
+    // Attendre un peu en PWA pour s'assurer que tout est chargé
+    const isPWA = window.matchMedia('(display-mode: standalone)').matches;
+    if (isPWA) {
+      setTimeout(() => {
+        loadSubscription();
+      }, 500);
+    } else {
+      loadSubscription();
+    }
   }, [user]);
   
   // État pour éviter les envois multiples
@@ -1589,14 +1625,48 @@ export default function TradingPlatformShell() {
 
 
   // Fonction pour changer de canal et réinitialiser selectedDate si nécessaire
-  const handleChannelChange = (channelId: string, channelName: string) => {
-    console.log('🔄 handleChannelChange appelé:', { channelId, channelName });
+  const handleChannelChange = async (channelId: string, channelName: string) => {
+    const isPWA = window.matchMedia('(display-mode: standalone)').matches;
+    console.log('🔄 handleChannelChange appelé:', { channelId, channelName, userPlan, isPWA, isAdmin, user: user?.id });
     
-    // Vérifier l'accès pour les abonnés "journal"
-    if (userPlan === 'journal' && channelId !== 'journal' && channelId !== 'trading-journal') {
-      console.log('❌ Accès refusé pour plan journal:', channelId);
-      setShowAccessRestrictedPopup(true);
-      return;
+    // TOUJOURS vérifier le plan en PWA (même si userPlan est défini, au cas où)
+    let currentPlan = userPlan;
+    if (isPWA && !isAdmin && user) {
+      console.log('🔄 Vérification du plan en PWA (toujours)...');
+      try {
+        const subscription = await getUserSubscription();
+        console.log('📦 Abonnement récupéré dans handleChannelChange:', subscription);
+        if (subscription?.plan_type) {
+          currentPlan = subscription.plan_type;
+          if (currentPlan !== userPlan) {
+            setUserPlan(currentPlan);
+            console.log('✅ Plan mis à jour en PWA:', currentPlan);
+          }
+        } else {
+          currentPlan = null;
+          console.log('ℹ️ Aucun plan trouvé en PWA');
+        }
+      } catch (error) {
+        console.error('❌ Erreur récupération plan en PWA:', error);
+      }
+    }
+    
+    console.log('🔍 Vérification accès - currentPlan:', currentPlan, 'channelId:', channelId, 'isAdmin:', isAdmin);
+    
+    // Vérifier l'accès pour les abonnés "journal" (sauf admin)
+    if (!isAdmin && currentPlan === 'journal') {
+      // Les abonnés journal ont accès UNIQUEMENT à journal (pas calendrier/Journal Signaux)
+      const allowedChannels = ['journal'];
+      if (!allowedChannels.includes(channelId)) {
+        console.log('❌❌❌ ACCÈS REFUSÉ pour plan journal:', channelId, 'PWA:', isPWA, 'userPlan:', currentPlan);
+        setShowAccessRestrictedPopup(true);
+        return; // IMPORTANT: return ici pour empêcher le changement de canal
+      }
+      console.log('✅ Accès autorisé pour plan journal:', channelId, 'PWA:', isPWA);
+    } else if (isAdmin) {
+      console.log('👑 Admin - accès libre à tous les canaux');
+    } else {
+      console.log('ℹ️ Plan non-journal, accès libre:', currentPlan, 'PWA:', isPWA);
     }
     
     // Réinitialiser le flag de scroll pour permettre un nouveau scroll
@@ -4847,8 +4917,12 @@ export default function TradingPlatformShell() {
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">ÉDUCATION</h3>
             <div className="space-y-1">
-              <button onClick={() => handleChannelChange('fondamentaux', 'fondamentaux')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'fondamentaux' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📚 Fondamentaux</button>
-              <button onClick={() => handleChannelChange('letsgooo-model', 'letsgooo-model')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'letsgooo-model' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>🚀 Letsgooo-model</button>
+              {channels.find(c => c.id === 'fondamentaux') && (
+                <button onClick={() => handleChannelChange('fondamentaux', 'fondamentaux')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'fondamentaux' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📚 Fondamentaux</button>
+              )}
+              {channels.find(c => c.id === 'letsgooo-model') && (
+                <button onClick={() => handleChannelChange('letsgooo-model', 'letsgooo-model')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'letsgooo-model' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>🚀 Letsgooo-model</button>
+              )}
             </div>
           </div>
 
@@ -4870,15 +4944,33 @@ export default function TradingPlatformShell() {
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">TRADING HUB</h3>
             <div className="space-y-1">
-
-              <button onClick={() => {
-                console.log('🔵 Desktop: Clic sur Journal Signaux');
-                setSelectedChannel({ id: 'calendrier', name: 'calendrier' });
-                setView('signals');
-              }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
-              <button onClick={() => handleChannelChange('journal', 'journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 Journal Perso</button>
-              <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
-              {channels.some(c => c.id === 'livestream-premium') && (
+              {channels.find(c => c.id === 'calendrier') && (
+                <button onClick={async () => {
+                  console.log('🔵 Desktop: Clic sur Journal Signaux');
+                  // Vérifier le plan en PWA si nécessaire
+                  let currentPlan = userPlan;
+                  const isPWA = window.matchMedia('(display-mode: standalone)').matches;
+                  if (isPWA && !isAdmin && user) {
+                    const subscription = await getUserSubscription();
+                    if (subscription?.plan_type) {
+                      currentPlan = subscription.plan_type;
+                    }
+                  }
+                  if (currentPlan === 'journal') {
+                    setShowAccessRestrictedPopup(true);
+                    return;
+                  }
+                  handleChannelChange('calendrier', 'calendrier');
+                  setView('signals');
+                }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
+              )}
+              {channels.find(c => c.id === 'journal') && (
+                <button onClick={() => handleChannelChange('journal', 'journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 Journal Perso</button>
+              )}
+              {channels.find(c => c.id === 'video') && (
+                <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
+              )}
+              {channels.find(c => c.id === 'livestream-premium') && (
                 <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>⭐ Livestream Premium</button>
               )}
             </div>
@@ -5167,40 +5259,57 @@ export default function TradingPlatformShell() {
                     </button>
                   ))}
                   
-                  <button
-                    onClick={() => {
-                      console.log('🔵 Clic sur Journal Signaux');
-                      setSelectedChannel({ id: 'calendrier', name: 'calendrier' });
-                      setView('signals');
-                      setMobileView('content');
-                      console.log('✅ État mis à jour: calendrier');
-                    }}
-                    className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">📅</span>
-                      <div>
-                        <p className="font-medium text-white">Journal Signaux</p>
-                        <p className="text-sm text-gray-400">Suivi des performances</p>
+                  {channels.find(c => c.id === 'calendrier') && (
+                    <button
+                      onClick={async () => {
+                        console.log('🔵 Clic sur Journal Signaux');
+                        // Vérifier le plan en PWA si nécessaire
+                        let currentPlan = userPlan;
+                        const isPWA = window.matchMedia('(display-mode: standalone)').matches;
+                        if (isPWA && !isAdmin && user) {
+                          const subscription = await getUserSubscription();
+                          if (subscription?.plan_type) {
+                            currentPlan = subscription.plan_type;
+                          }
+                        }
+                        if (currentPlan === 'journal') {
+                          setShowAccessRestrictedPopup(true);
+                          return;
+                        }
+                        handleChannelChange('calendrier', 'calendrier');
+                        setView('signals');
+                        setMobileView('content');
+                        console.log('✅ État mis à jour: calendrier');
+                      }}
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">📅</span>
+                        <div>
+                          <p className="font-medium text-white">Journal Signaux</p>
+                          <p className="text-sm text-gray-400">Suivi des performances</p>
+                        </div>
                       </div>
-                    </div>
-                  </button>
+                    </button>
+                  )}
                   
-                  <button
-                    onClick={() => {
-                      handleChannelChange('trading-journal', 'trading-journal');
-                      setMobileView('content');
-                    }}
-                    className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">📊</span>
-                      <div>
-                        <p className="font-medium text-white">Journal Perso</p>
-                        <p className="text-sm text-gray-400">Journal personnel</p>
+                  {channels.find(c => c.id === 'journal') && (
+                    <button
+                      onClick={() => {
+                        handleChannelChange('journal', 'journal');
+                        setMobileView('content');
+                      }}
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">📓</span>
+                        <div>
+                          <p className="font-medium text-white">Journal Perso</p>
+                          <p className="text-sm text-gray-400">Journal personnel</p>
+                        </div>
                       </div>
-                    </div>
-                  </button>
+                    </button>
+                  )}
 
               </div>
               </div>
@@ -8250,12 +8359,22 @@ export default function TradingPlatformShell() {
             <p className="text-gray-300 mb-6">
               Abonne-toi à une autre formule pour y avoir accès.
             </p>
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-3">
               <button
                 onClick={() => setShowAccessRestrictedPopup(false)}
-                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium"
+                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium"
               >
                 Fermer
+              </button>
+              <button
+                onClick={() => {
+                  setShowAccessRestrictedPopup(false);
+                  // Rediriger vers la page d'accueil avec hash pricing
+                  window.location.href = '/#pricing';
+                }}
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium"
+              >
+                Abonnement
               </button>
             </div>
           </div>

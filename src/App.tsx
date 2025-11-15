@@ -139,6 +139,24 @@ const App = () => {
     (window as any).getCurrentPage = () => currentPage;
   }, [currentPage]);
 
+  // Gérer le scroll vers pricing au chargement de la page si hash présent
+  useEffect(() => {
+    if (window.location.hash === '#pricing') {
+      // Attendre que la page soit chargée
+      setTimeout(() => {
+        if (currentPage === 'home') {
+          handleScrollToSection('pricing');
+        } else {
+          // Si on n'est pas sur home, rediriger vers home puis scroller
+          setCurrentPage('home');
+          setTimeout(() => {
+            handleScrollToSection('pricing');
+          }, 100);
+        }
+      }, 300);
+    }
+  }, [currentPage]);
+
   // Détecter URL admin et vérifier persistance
   useEffect(() => {
     if (window.location.pathname === '/admin') {

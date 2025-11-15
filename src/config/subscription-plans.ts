@@ -74,7 +74,9 @@ export const SUBSCRIPTION_PLANS: Record<PlanType, SubscriptionPlan> = {
     monthlyPrice: 15,
     yearlyPrice: 150, // 12.5€/mois × 12
     accessibleChannels: [
-      CHANNELS.JOURNAL_PERSO,
+      CHANNELS.JOURNAL_PERSO, // 'journal'
+      CHANNELS.TRADING_JOURNAL, // 'trading-journal'
+      // Note: calendrier (Journal Signaux) n'est PAS inclus
     ],
   },
 };
