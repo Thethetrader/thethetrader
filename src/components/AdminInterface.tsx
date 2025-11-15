@@ -4936,7 +4936,7 @@ const dailyPnLChartData = useMemo(
   };
 
   return (
-    <div className="h-screen w-full bg-gray-900 text-white overflow-hidden flex" style={{ paddingTop: '0px' }}>
+    <div className="h-screen w-full bg-gray-900 text-white overflow-hidden flex" style={{ paddingTop: '0px', backgroundColor: '#111827' }}>
       {/* Desktop Sidebar */}
       <div className="hidden md:flex w-56 min-w-56 flex-shrink-0 bg-gray-800 flex-col">
         <div className="p-4 border-b border-gray-700">
@@ -5155,9 +5155,9 @@ const dailyPnLChartData = useMemo(
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col bg-gray-900">
         {/* Mobile Navigation - Fixed */}
-        <div className="md:hidden bg-gray-800 border-b border-gray-700 p-3 fixed top-0 left-0 right-0 z-30" style={{ height: '60px' }}>
+        <div className="md:hidden bg-gray-800 border-b border-gray-700 p-3 fixed top-0 left-0 right-0 z-30" style={{ height: '60px', backgroundColor: '#1f2937' }}>
           {mobileView === 'channels' ? (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -5218,7 +5218,7 @@ const dailyPnLChartData = useMemo(
         </div>
 
         {/* Mobile Content Container with Slide Animation */}
-        <div className="md:hidden relative flex-1 overflow-hidden" style={{ paddingTop: '60px' }}>
+        <div className="md:hidden relative flex-1 overflow-hidden bg-gray-900" style={{ paddingTop: '60px', backgroundColor: '#111827' }}>
           {/* Channels List - Slides from left */}
           <div 
             className={`absolute inset-0 bg-gray-800 transform transition-transform duration-300 ease-in-out z-10 ${
@@ -6246,36 +6246,36 @@ const dailyPnLChartData = useMemo(
                     </div>
                     
                     {/* Barre de message */}
-                    <div className="border-t border-gray-700 p-4 fixed bottom-0 left-0 right-0 bg-gray-800 z-30 md:left-64">
-                      <div className="flex items-center gap-2">
+                    <div className="border-t border-gray-700 p-2 md:p-4 fixed bottom-0 left-0 right-0 bg-gray-800 z-30 md:left-64" style={{ backgroundColor: '#1f2937' }}>
+                      <div className="flex items-center gap-1.5 md:gap-2">
                         <input
                           type="text"
                           value={chatMessage}
                           onChange={(e) => setChatMessage(e.target.value)}
                           onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                           placeholder="Tapez votre message..."
-                          className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                          className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                         />
-                        <label className="cursor-pointer">
+                        <label className="cursor-pointer flex-shrink-0">
                           <input
                             type="file"
                             onChange={handleFileUpload}
                             className="hidden"
                             accept="image/*,.pdf,.doc,.docx"
                           />
-                          <span className="bg-gray-600 hover:bg-gray-500 p-2 rounded-lg text-gray-300 hover:text-white">
+                          <span className="bg-gray-600 hover:bg-gray-500 p-1.5 md:p-2 rounded-lg text-gray-300 hover:text-white text-sm md:text-base">
                             📎
                           </span>
                         </label>
                         <button
                           onClick={handleCreateSignal}
-                          className="bg-green-600 hover:bg-green-700 px-3 py-2 rounded-lg text-white text-sm font-medium"
+                          className="bg-green-600 hover:bg-green-700 px-2 md:px-3 py-1.5 md:py-2 rounded-lg text-white text-xs md:text-sm font-medium flex-shrink-0"
                         >
                           + Signal
                         </button>
                         <button
                           onClick={handleSendMessage}
-                          className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white"
+                          className="bg-blue-600 hover:bg-blue-700 px-2 md:px-3 py-1.5 md:py-2 rounded-lg text-white text-xs md:text-sm flex-shrink-0"
                         >
                           Envoyer
                         </button>
@@ -6978,36 +6978,36 @@ const dailyPnLChartData = useMemo(
                   </div>
                   
                   {/* Barre de message */}
-                  <div className="border-t border-gray-700 p-4 fixed bottom-0 left-0 right-0 bg-gray-800 z-10 md:left-64 md:right-0">
-                    <div className="flex items-center gap-2">
+                  <div className="border-t border-gray-700 p-2 md:p-4 fixed bottom-0 left-0 right-0 bg-gray-800 z-10 md:left-64 md:right-0" style={{ backgroundColor: '#1f2937' }}>
+                    <div className="flex items-center gap-1.5 md:gap-2">
                       <input
                         type="text"
                         value={chatMessage}
                         onChange={(e) => setChatMessage(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                         placeholder="Tapez votre message..."
-                        className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                        className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                       />
-                      <label className="cursor-pointer">
+                      <label className="cursor-pointer flex-shrink-0">
                         <input
                           type="file"
                           onChange={handleFileUpload}
                           className="hidden"
                           accept="image/*,.pdf,.doc,.docx"
                         />
-                        <span className="bg-gray-600 hover:bg-gray-500 p-2 rounded-lg text-gray-300 hover:text-white">
+                        <span className="bg-gray-600 hover:bg-gray-500 p-1.5 md:p-2 rounded-lg text-gray-300 hover:text-white text-sm md:text-base">
                           📎
                         </span>
                       </label>
                       <button
                         onClick={handleCreateSignal}
-                        className="bg-green-600 hover:bg-green-700 px-3 py-2 rounded-lg text-white text-sm font-medium"
+                        className="bg-green-600 hover:bg-green-700 px-2 md:px-3 py-1.5 md:py-2 rounded-lg text-white text-xs md:text-sm font-medium flex-shrink-0"
                       >
                         + Signal
                       </button>
                       <button
                         onClick={handleSendMessage}
-                        className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white"
+                        className="bg-blue-600 hover:bg-blue-700 px-2 md:px-3 py-1.5 md:py-2 rounded-lg text-white text-xs md:text-sm flex-shrink-0"
                       >
                         Envoyer
                       </button>
