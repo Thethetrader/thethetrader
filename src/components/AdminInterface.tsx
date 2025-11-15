@@ -2162,27 +2162,58 @@ const dailyPnLChartData = useMemo(
     
     const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
     const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+    const daysInMonth = lastDayOfMonth.getDate();
     const firstDayWeekday = firstDayOfMonth.getDay(); // 0 = dimanche, 1 = lundi, etc.
     
-    // Ajuster pour que lundi soit 0
+    // Ajuster pour que lundi soit 0 (même logique que le calendrier)
     const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
     
-    // Calculer le nombre de semaines nécessaires pour ce mois
-    const totalCells = Math.ceil((adjustedFirstDay + lastDayOfMonth.getDate()) / 7);
+    // Calculer le nombre de lignes/semaines nécessaires (même logique que le calendrier)
+    const totalCells = Math.ceil((adjustedFirstDay + daysInMonth) / 7);
     
-    console.log(`🔍 [ADMIN] Mois ${currentMonth + 1}/${currentYear} - ${lastDayOfMonth.getDate()} jours - ${totalCells} semaines`);
+    console.log(`🔍 [ADMIN] Mois ${currentMonth + 1}/${currentYear} - ${daysInMonth} jours - ${totalCells} semaines`);
     
-    // Créer les semaines nécessaires pour ce mois
+    // Créer les semaines en fonction des lignes du calendrier
     const weeks = [];
     for (let weekNum = 1; weekNum <= totalCells; weekNum++) {
-      // Calculer les jours de la semaine
-      const weekStartDay = (weekNum - 1) * 7 - adjustedFirstDay + 1;
-      const weekEndDay = Math.min(weekNum * 7 - adjustedFirstDay, lastDayOfMonth.getDate());
+      // Calculer les jours de la semaine en fonction de la ligne du calendrier
+      // Chaque ligne commence à l'index (weekNum - 1) * 7 dans le tableau totalCells
+      const weekStartIndex = (weekNum - 1) * 7;
+      const weekEndIndex = weekNum * 7 - 1;
+      
+      // Les jours de cette semaine dans le calendrier
+      const weekDays: number[] = [];
+      for (let i = weekStartIndex; i <= weekEndIndex; i++) {
+        const dayNumber = i - adjustedFirstDay + 1;
+        // Inclure seulement les jours valides du mois (entre 1 et daysInMonth)
+        if (dayNumber >= 1 && dayNumber <= daysInMonth) {
+          weekDays.push(dayNumber);
+        }
+      }
+      
+      if (weekDays.length === 0) {
+        // Semaine vide (ne devrait pas arriver, mais au cas où)
+        weeks.push({
+          week: `Week ${weekNum}`,
+          weekNum: weekNum,
+          trades: 0,
+          pnl: 0,
+          wins: 0,
+          losses: 0,
+          isCurrentWeek: false
+        });
+        continue;
+      }
+      
+      const weekStartDay = Math.min(...weekDays);
+      const weekEndDay = Math.max(...weekDays);
       
       const weekStart = new Date(currentYear, currentMonth, weekStartDay);
       const weekEnd = new Date(currentYear, currentMonth, weekEndDay);
+      // Ajouter 23h59 pour inclure toute la journée
+      weekEnd.setHours(23, 59, 59, 999);
       
-      console.log(`🔍 [ADMIN] Week ${weekNum} - Début:`, weekStart.toDateString(), 'Fin:', weekEnd.toDateString());
+      console.log(`🔍 [ADMIN] Week ${weekNum} (ligne ${weekNum}) - Jours: ${weekDays.join(', ')} - Début:`, weekStart.toDateString(), 'Fin:', weekEnd.toDateString());
       
       const weekSignals = allSignalsForStats.filter(s => {
         // Utiliser le timestamp original pour déterminer la vraie date
@@ -2190,21 +2221,19 @@ const dailyPnLChartData = useMemo(
         
         // Si la date est invalide, ignorer ce signal
         if (isNaN(signalDate.getTime())) {
-          console.log('🔍 [ADMIN] Weekly - Date invalide, signal ignoré');
           return false;
         }
         
-        const isInWeek = signalDate >= weekStart && 
-               signalDate <= weekEnd &&
-               signalDate.getMonth() === currentMonth &&
-               signalDate.getFullYear() === currentYear;
+        // Vérifier si le signal est dans cette semaine (même mois et année)
+        const signalDay = signalDate.getDate();
+        const isInWeek = signalDate.getMonth() === currentMonth &&
+               signalDate.getFullYear() === currentYear &&
+               weekDays.includes(signalDay);
         
-        // Debug pour la semaine 4
-        if (weekNum === 4) {
-          console.log('🔍 [ADMIN] Week 4 - Signal:', s.symbol, 'Date:', signalDate.toDateString(), 'Dans semaine 4?', isInWeek);
+        if (isInWeek) {
+          console.log(`🔍 [ADMIN] Week ${weekNum} - Signal:`, s.symbol, 'Date:', signalDate.toDateString(), 'Jour:', signalDay);
         }
         
-        console.log('🔍 [ADMIN] Weekly - Signal date:', signalDate.toDateString(), 'Dans semaine', weekNum, '?', isInWeek);
         return isInWeek;
       });
       
@@ -2214,14 +2243,17 @@ const dailyPnLChartData = useMemo(
       const losses = closedSignals.filter(s => s.status === 'LOSS').length;
       
       // Vérifier si c'est la semaine actuelle
-      const todayWeek = Math.ceil(currentDate.getDate() / 7);
-      const isCurrentWeek = weekNum === todayWeek;
+      const today = new Date();
+      const todayDay = today.getDate();
+      const isCurrentWeek = today.getMonth() === currentMonth &&
+                           today.getFullYear() === currentYear &&
+                           weekDays.includes(todayDay);
       
       weeks.push({
         week: `Week ${weekNum}`,
         weekNum: weekNum,
         trades: weekSignals.length,
-        pnl: 0, // Pas de PnL affiché
+        pnl: weekPnL,
         wins,
         losses,
         isCurrentWeek
@@ -4776,9 +4808,11 @@ const dailyPnLChartData = useMemo(
                     }`}>
                       {weekData.week}
                     </div>
-                    <div className="text-xs text-gray-400">
-                      {weekData.trades} trade{weekData.trades !== 1 ? 's' : ''}
-                    </div>
+                    {selectedChannel.id === 'trading-journal' && (
+                      <div className="text-xs text-gray-400">
+                        {weekData.trades} trade{weekData.trades !== 1 ? 's' : ''}
+                      </div>
+                    )}
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="grid grid-cols-2 gap-1" style={{ width: '84px' }}>
@@ -8101,18 +8135,38 @@ const dailyPnLChartData = useMemo(
                 ) : (
                   // Affichage des signaux pour les autres canaux
                   (() => {
-                    // Utiliser la même logique que getWeeklyBreakdown
+                    // Utiliser la même logique que getWeeklyBreakdown (lignes du calendrier)
                     const currentMonth = currentDate.getMonth();
                     const currentYear = currentDate.getFullYear();
-                    const weekStart = new Date(currentYear, currentMonth, (selectedWeek - 1) * 7 + 1);
-                    const weekEnd = new Date(currentYear, currentMonth, selectedWeek * 7);
+                    
+                    const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+                    const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+                    const daysInMonth = lastDayOfMonth.getDate();
+                    const firstDayWeekday = firstDayOfMonth.getDay();
+                    const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
+                    
+                    // Calculer les jours de la semaine en fonction de la ligne du calendrier
+                    const weekStartIndex = (selectedWeek - 1) * 7;
+                    const weekEndIndex = selectedWeek * 7 - 1;
+                    
+                    const weekDays: number[] = [];
+                    for (let i = weekStartIndex; i <= weekEndIndex; i++) {
+                      const dayNumber = i - adjustedFirstDay + 1;
+                      if (dayNumber >= 1 && dayNumber <= daysInMonth) {
+                        weekDays.push(dayNumber);
+                      }
+                    }
                     
                     const weekSignals = allSignalsForStats.filter(signal => {
-                      const signalDate = new Date(signal.originalTimestamp);
-                      return signalDate >= weekStart && 
-                             signalDate <= weekEnd &&
-                             signalDate.getMonth() === currentMonth &&
-                             signalDate.getFullYear() === currentYear;
+                      const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
+                      if (isNaN(signalDate.getTime())) {
+                        return false;
+                      }
+                      
+                      const signalDay = signalDate.getDate();
+                      return signalDate.getMonth() === currentMonth &&
+                             signalDate.getFullYear() === currentYear &&
+                             weekDays.includes(signalDay);
                     });
 
                     return weekSignals.length > 0 ? (
