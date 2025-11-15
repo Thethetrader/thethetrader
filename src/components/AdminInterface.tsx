@@ -6105,8 +6105,8 @@ const dailyPnLChartData = useMemo(
                       )}
                       
                       {(chatMessages[selectedChannel.id] || []).length > 0 && (
-                        (chatMessages[selectedChannel.id] || []).map((message) => (
-                          <div key={message.id} className="flex items-start gap-3">
+                        (chatMessages[selectedChannel.id] || []).map((message, messageIndex) => (
+                          <div key={message.id} id={`message-${message.id}`} className="flex items-start gap-3">
                             <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
                               {message.author_avatar ? (
                                 <img src={message.author_avatar} alt="Profile" className="w-full h-full object-cover" />
@@ -6179,6 +6179,39 @@ const dailyPnLChartData = useMemo(
                                                   <div className="flex items-center gap-2 mb-2">
                                                     <span className="text-xs">📊</span>
                                                     <span className="text-sm font-semibold text-gray-300">SIGNAL FERMÉ</span>
+                                                    {signalData.status === 'LOSS' && signalId && (
+                                                      <button
+                                                        onClick={() => {
+                                                          // Trouver le signal d'origine (message actif avec le même signalId)
+                                                          const messages = chatMessages[selectedChannel.id] || [];
+                                                          const originalSignalIndex = messages.findIndex((msg, idx) => {
+                                                            if (idx >= messageIndex) return false;
+                                                            const msgSignalData = formatSignalMessage(msg.text);
+                                                            return msgSignalData && msgSignalData.signalId === signalId && 
+                                                                   msgSignalData.status !== 'CLOSED' && 
+                                                                   msgSignalData.status !== 'WIN' && 
+                                                                   msgSignalData.status !== 'LOSS';
+                                                          });
+                                                          
+                                                          if (originalSignalIndex !== -1) {
+                                                            const originalMessage = messages[originalSignalIndex];
+                                                            const element = document.getElementById(`message-${originalMessage.id}`);
+                                                            if (element) {
+                                                              element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                              // Highlight temporaire
+                                                              element.style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
+                                                              setTimeout(() => {
+                                                                element.style.backgroundColor = '';
+                                                              }, 2000);
+                                                            }
+                                                          }
+                                                        }}
+                                                        className="ml-auto text-blue-400 hover:text-blue-300 transition-colors"
+                                                        title="Remonter au signal d'origine"
+                                                      >
+                                                        ⬆️
+                                                      </button>
+                                                    )}
                                                   </div>
                                                   <div className="text-sm">
                                                     <div className="flex items-center gap-2 mb-1">
@@ -6210,11 +6243,6 @@ const dailyPnLChartData = useMemo(
                                                       <span className="text-white">Entry: {signalData.entry}</span>
                                                     </div>
                                                   )}
-                                                  {signalData.tp && signalData.sl && (
-                                                    <div className="flex items-center gap-2 text-sm">
-                                                      <span className="text-white">TP: {signalData.tp} SL: {signalData.sl}</span>
-                                                    </div>
-                                                  )}
                                                   {signalData.rr && (
                                                     <div className="flex items-center gap-2 text-sm">
                                                       <span className="text-gray-400">🎯</span>
@@ -6234,11 +6262,11 @@ const dailyPnLChartData = useMemo(
                                             {/* Boutons WIN/LOSS/BE pour clôturer les signaux */}
                                             {signalId && (
                                               <div className="mt-3 pt-3 border-t border-gray-600">
-                                                <div className="flex items-center gap-2 flex-wrap">
+                                                <div className="flex items-center gap-1.5 justify-center">
                                                   <button
                                                     onClick={() => handleSignalStatusFromMessage(message.text, 'WIN')}
                                                     disabled={isClosed && currentSignal?.status !== 'WIN'}
-                                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-1 ${
+                                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1 flex-1 ${
                                                       isClosed && currentSignal?.status === 'WIN'
                                                         ? 'bg-green-500 text-white shadow-lg shadow-green-500/20'
                                                         : isClosed
@@ -6251,7 +6279,7 @@ const dailyPnLChartData = useMemo(
                                                   <button
                                                     onClick={() => handleSignalStatusFromMessage(message.text, 'LOSS')}
                                                     disabled={isClosed && currentSignal?.status !== 'LOSS'}
-                                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-1 ${
+                                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1 flex-1 ${
                                                       isClosed && currentSignal?.status === 'LOSS'
                                                         ? 'bg-red-500 text-white shadow-lg shadow-red-500/20'
                                                         : isClosed
@@ -6264,7 +6292,7 @@ const dailyPnLChartData = useMemo(
                                                   <button
                                                     onClick={() => handleSignalStatusFromMessage(message.text, 'BE')}
                                                     disabled={isClosed && currentSignal?.status !== 'BE'}
-                                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-1 ${
+                                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1 flex-1 ${
                                                       isClosed && currentSignal?.status === 'BE'
                                                         ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'
                                                         : isClosed
@@ -6287,18 +6315,17 @@ const dailyPnLChartData = useMemo(
                                 {message.attachment_data && (
                                   <div className="mt-2">
                                     {true ? (
-                                      <div className="relative">
+                                      <div className="relative flex flex-col items-center">
                                         <img 
                                           src={message.attachment_data} 
                                           alt="Attachment"
-                                          className="mt-2 max-w-xs max-h-48 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                                          className="mt-2 max-w-[200px] max-h-32 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
                                           onClick={() => {
                                             const newWindow = window.open();
                                             newWindow!.document.write(`<img src="${message.attachment_data}" style="max-width: 100%; height: auto;" />`);
                                             newWindow!.document.title = 'Image en grand';
                                           }}
                                         />
-                                        <div className="text-xs text-gray-400 mt-1">Cliquez pour agrandir</div>
                                       </div>
                                     ) : (
                                       <div className="flex items-center gap-2 text-blue-400">
