@@ -260,46 +260,62 @@ export default function AdminInterface() {
   const [showLivestreamModal, setShowLivestreamModal] = useState(false);
   const [livestreamMessage, setLivestreamMessage] = useState('');
 
-  // Charger Tawk.to au montage de l'AdminInterface
+  // Supprimer Tawk.to côté admin
   useEffect(() => {
-    console.log('💬 Chargement Tawk.to pour admin...');
-    
-    // Vérifier si déjà chargé
-    if (document.getElementById('tawkto-admin-script')) {
-      console.log('⚠️ Tawk.to déjà chargé');
-      return;
+    // Supprimer le script Tawk s'il existe
+    const tawkScript = document.getElementById('tawkto-admin-script') || document.getElementById('tawkto-user-script') || document.getElementById('tawkto-script-admin');
+    if (tawkScript) {
+      tawkScript.remove();
     }
 
-    // Initialiser Tawk_API
-    (window as any).Tawk_API = (window as any).Tawk_API || {};
-    (window as any).Tawk_LoadStart = new Date();
+    // Masquer/cacher le widget Tawk s'il est déjà chargé
+    if ((window as any).Tawk_API) {
+      (window as any).Tawk_API.hideWidget();
+      (window as any).Tawk_API.maximize = () => {};
+      (window as any).Tawk_API.minimize = () => {};
+      (window as any).Tawk_API.showWidget = () => {};
+    }
 
-    // Créer le script
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = 'https://embed.tawk.to/68ec2d91af8498194f4f9fc1/1j7d940jh';
-    script.charset = 'UTF-8';
-    script.setAttribute('crossorigin', '*');
-    script.id = 'tawkto-admin-script';
-    
-    script.onload = () => {
-      console.log('✅ Tawk.to chargé pour admin');
-    };
-    
-    script.onerror = () => {
-      console.error('❌ Erreur chargement Tawk.to');
-    };
+    // Supprimer l'iframe Tawk si elle existe
+    const tawkIframe = document.querySelector('iframe[src*="tawk.to"]');
+    if (tawkIframe) {
+      (tawkIframe as HTMLElement).style.display = 'none';
+      tawkIframe.remove();
+    }
 
-    document.head.appendChild(script);
-    
+    // Supprimer le conteneur Tawk s'il existe
+    const tawkContainer = document.getElementById('tawkchat-container') || document.querySelector('[id*="tawk"]');
+    if (tawkContainer) {
+      (tawkContainer as HTMLElement).style.display = 'none';
+      tawkContainer.remove();
+    }
+
+    // Observer pour supprimer tout nouveau widget Tawk qui pourrait être ajouté
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === 1) {
+            const element = node as HTMLElement;
+            if (element.id && element.id.includes('tawk')) {
+              element.style.display = 'none';
+              element.remove();
+            }
+            if (element.tagName === 'IFRAME' && (element as HTMLIFrameElement).src.includes('tawk.to')) {
+              element.style.display = 'none';
+              element.remove();
+            }
+          }
+        });
+      });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
     return () => {
-      // Cleanup si besoin
-      const scriptElement = document.getElementById('tawkto-admin-script');
-      if (scriptElement) {
-        scriptElement.remove();
-      }
+      observer.disconnect();
     };
   }, []);
+
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showGifPicker, setShowGifPicker] = useState(false);
   const [showFileUpload, setShowFileUpload] = useState(false);
@@ -842,6 +858,8 @@ export default function AdminInterface() {
   });
   const [showWeekSignalsModal, setShowWeekSignalsModal] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState<number>(0);
+  const [showNotificationDiagnostic, setShowNotificationDiagnostic] = useState(false);
+  const [diagnosticInfo, setDiagnosticInfo] = useState<any>(null);
   
   // Sauvegarder selectedDate dans localStorage
   useEffect(() => {
@@ -2227,6 +2245,97 @@ const dailyPnLChartData = useMemo(
     };
   };
 
+  // Fonction de diagnostic des notifications
+  const checkNotificationStatus = async () => {
+    const info: any = {
+      serviceWorker: null,
+      notifications: null,
+      fcmToken: null,
+      tokensInFirebase: null,
+      errors: []
+    };
+
+    try {
+      // Vérifier le service worker
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        info.serviceWorker = {
+          supported: true,
+          registered: registrations.length > 0,
+          count: registrations.length,
+          registrations: registrations.map(reg => ({
+            scope: reg.scope,
+            active: reg.active?.state,
+            installing: reg.installing?.state,
+            waiting: reg.waiting?.state
+          }))
+        };
+      } else {
+        info.serviceWorker = { supported: false };
+        info.errors.push('Service Worker non supporté');
+      }
+
+      // Vérifier les permissions de notifications
+      if ('Notification' in window) {
+        info.notifications = {
+          supported: true,
+          permission: Notification.permission,
+          granted: Notification.permission === 'granted'
+        };
+      } else {
+        info.notifications = { supported: false };
+        info.errors.push('Notifications non supportées');
+      }
+
+      // Vérifier le token FCM local
+      const localToken = localStorage.getItem('fcmToken');
+      info.fcmToken = localToken ? {
+        exists: true,
+        token: localToken.substring(0, 30) + '...'
+      } : { exists: false };
+
+      // Vérifier les tokens dans Firebase
+      try {
+        const fcmTokensRef = ref(database, 'fcm_tokens');
+        const snapshot = await get(fcmTokensRef);
+        if (snapshot.exists()) {
+          const tokensData = snapshot.val();
+          const tokens = Object.values(tokensData).map((t: any) => t.token);
+          info.tokensInFirebase = {
+            count: tokens.length,
+            tokens: tokens.map((t: string) => t.substring(0, 30) + '...')
+          };
+        } else {
+          info.tokensInFirebase = { count: 0 };
+        }
+      } catch (error: any) {
+        info.errors.push(`Erreur récupération tokens Firebase: ${error.message}`);
+      }
+
+      // Test de notification locale
+      if (Notification.permission === 'granted' && 'serviceWorker' in navigator) {
+        try {
+          const registration = await navigator.serviceWorker.ready;
+          await registration.showNotification('Test Diagnostic', {
+            body: 'Si tu vois cette notification, le service worker fonctionne',
+            icon: '/FAVICON.png',
+            tag: 'diagnostic-test'
+          });
+          info.localNotificationTest = { success: true };
+        } catch (error: any) {
+          info.localNotificationTest = { success: false, error: error.message };
+          info.errors.push(`Erreur test notification locale: ${error.message}`);
+        }
+      }
+
+    } catch (error: any) {
+      info.errors.push(`Erreur diagnostic: ${error.message}`);
+    }
+
+    setDiagnosticInfo(info);
+    setShowNotificationDiagnostic(true);
+  };
+
   const getWeeklyBreakdown = () => {
     // Utiliser currentDate au lieu de today
     const currentMonth = currentDate.getMonth();
@@ -3329,62 +3438,28 @@ const dailyPnLChartData = useMemo(
         try {
           const fcmTokensRef = ref(database, 'fcm_tokens');
           const snapshot = await get(fcmTokensRef);
-          console.log('🔍 Snapshot FCM tokens existe?', snapshot.exists());
           if (snapshot.exists()) {
             const tokensData = snapshot.val();
-            console.log('🔍 Tokens data bruts:', tokensData);
             Object.values(tokensData).forEach((tokenData: any) => {
               if (tokenData && tokenData.token) {
                 tokens.push(tokenData.token);
-                console.log('✅ Token ajouté:', tokenData.token.substring(0, 20) + '...');
               }
             });
-            console.log('📱 Tokens FCM récupérés depuis Firebase:', tokens.length);
-            console.log('📱 Liste complète des tokens:', tokens);
-          } else {
-            console.log('⚠️ Aucun token FCM dans Firebase Database');
           }
         } catch (error) {
           console.error('❌ Erreur récupération tokens FCM:', error);
-          console.error('❌ Détails erreur:', error.message);
         }
         
         if (tokens.length > 0) {
-          console.log('📱 Envoi notification push via Firebase Function avec', tokens.length, 'tokens...');
           try {
             const result = await sendNotification({
               signal: savedSignal,
               tokens: tokens
             });
-            console.log('✅ Notification push envoyée via Firebase Function:', result.data);
-            if (result.data) {
-              console.log('📊 Résultat détaillé:', JSON.stringify(result.data, null, 2));
-              console.log(`📱 ${result.data.successCount || 0} notifications envoyées avec succès`);
-              console.log(`❌ ${result.data.failureCount || 0} notifications échouées`);
-              console.log(`📊 Total tokens: ${result.data.totalTokens || 0}`);
-              
-              if (result.data.responses) {
-                console.log('📋 Détails des réponses:', result.data.responses);
-                result.data.responses.forEach((resp: any, index: number) => {
-                  if (resp.success) {
-                    console.log(`✅ Token ${index + 1}: Notification envoyée (MessageId: ${resp.messageId})`);
-                  } else {
-                    console.log(`❌ Token ${index + 1}: Erreur - ${resp.errorCode || 'unknown'}: ${resp.error || 'unknown error'}`);
-                  }
-                });
-              }
-            }
+            console.log('✅ Notification push envoyée:', result.data?.successCount || 0, 'succès');
           } catch (notifError: any) {
-            console.error('❌ Erreur envoi notification push via Firebase Function:', notifError);
-            console.error('❌ Code erreur:', notifError.code);
-            console.error('❌ Message erreur:', notifError.message);
-            console.error('❌ Détails erreur:', notifError.details);
+            console.error('❌ Erreur envoi notification push:', notifError.message);
           }
-        } else {
-          console.log('⚠️ Aucun token FCM trouvé - Les utilisateurs doivent autoriser les notifications');
-          console.log('💡 Pour recevoir des notifications, les utilisateurs doivent :');
-          console.log('   1. Autoriser les notifications dans leur navigateur');
-          console.log('   2. Le token FCM sera alors sauvegardé dans Firebase Database');
         }
       } catch (error) {
         console.error('❌ Erreur envoi notification push:', error);
@@ -3506,8 +3581,8 @@ const dailyPnLChartData = useMemo(
       let lossReason: string | undefined = undefined;
       
       if (newStatus !== 'BE') {
-        // Générer les options de raisons de perte
-        const lossReasonOptions = LOSS_REASONS.map(reason => 
+        // Générer les options de raisons de perte (utiliser customLossReasons)
+        const lossReasonOptions = customLossReasons.map(reason => 
           `<option value="${reason.value}">${reason.emoji} ${reason.label}</option>`
         ).join('');
         
@@ -5147,6 +5222,13 @@ const dailyPnLChartData = useMemo(
               >
                 📝 Notif Custom
               </button>
+              
+              <button 
+                onClick={checkNotificationStatus}
+                className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
+              >
+                🔍 Diagnostic Notif
+              </button>
             </div>
           </div>
 
@@ -5770,10 +5852,11 @@ const dailyPnLChartData = useMemo(
                               </div>
                             )}
 
-                            <div className="flex items-center gap-2 flex-wrap mt-2">
+                            {/* Boutons WIN/LOSS/BE pour clôturer les signaux */}
+                            <div className="flex items-center gap-2 flex-wrap mt-3">
                               <button 
                                 onClick={() => handleSignalStatus(signal.id, signal.status === 'WIN' ? 'ACTIVE' : 'WIN')}
-                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                                className={`px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-1 ${
                                   signal.status === 'WIN' 
                                     ? 'bg-green-500 text-white shadow-lg shadow-green-500/20' 
                                     : 'bg-gray-600 hover:bg-green-500 text-gray-300 hover:text-white'
@@ -5783,7 +5866,7 @@ const dailyPnLChartData = useMemo(
                               </button>
                               <button 
                                 onClick={() => handleSignalStatus(signal.id, signal.status === 'LOSS' ? 'ACTIVE' : 'LOSS')}
-                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                                className={`px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-1 ${
                                   signal.status === 'LOSS' 
                                     ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' 
                                     : 'bg-gray-600 hover:bg-red-500 text-gray-300 hover:text-white'
@@ -5793,7 +5876,7 @@ const dailyPnLChartData = useMemo(
                               </button>
                               <button 
                                 onClick={() => handleSignalStatus(signal.id, signal.status === 'BE' ? 'ACTIVE' : 'BE')}
-                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                                className={`px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-1 ${
                                   signal.status === 'BE' 
                                     ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
                                     : 'bg-gray-600 hover:bg-blue-500 text-gray-300 hover:text-white'
@@ -6082,61 +6165,116 @@ const dailyPnLChartData = useMemo(
                                     ) : (() => {
                                       const signalData = formatSignalMessage(message.text);
                                       if (signalData) {
+                                        // Trouver le signal correspondant
+                                        const signalIdMatch = message.text.match(/\[SIGNAL_ID:([^\]]+)\]/);
+                                        const signalId = signalIdMatch ? signalIdMatch[1] : '';
+                                        const currentSignal = signals.find(s => s.id === signalId);
+                                        const isClosed = currentSignal && ['WIN', 'LOSS', 'BE'].includes(currentSignal.status);
+                                        
                                         return (
-                                          <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
-                                            {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
-                                              <div className="mb-3">
-                                                <div className="flex items-center gap-2 mb-2">
-                                                  <span className="text-xs">📊</span>
-                                                  <span className="text-sm font-semibold text-gray-300">SIGNAL FERMÉ</span>
-                                                </div>
-                                                <div className="text-sm">
-                                                  <div className="flex items-center gap-2 mb-1">
-                                                    <span className={signalData.status === 'WIN' ? 'text-green-400' : 'text-red-400'}>
-                                                      {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
-                                                    </span>
+                                          <div>
+                                            <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
+                                              {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
+                                                <div className="mb-3">
+                                                  <div className="flex items-center gap-2 mb-2">
+                                                    <span className="text-xs">📊</span>
+                                                    <span className="text-sm font-semibold text-gray-300">SIGNAL FERMÉ</span>
                                                   </div>
-                                                  {signalData.pnl && (
-                                                    <div className="text-gray-300">
-                                                      P&L: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-400'}>{signalData.pnl}</span>
+                                                  <div className="text-sm">
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                      <span className={signalData.status === 'WIN' ? 'text-green-400' : 'text-red-400'}>
+                                                        {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
+                                                      </span>
+                                                    </div>
+                                                    {signalData.pnl && (
+                                                      <div className="text-gray-300">
+                                                        P&L: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-400'}>{signalData.pnl}</span>
+                                                      </div>
+                                                    )}
+                                                  </div>
+                                                </div>
+                                              ) : (
+                                                <div className="space-y-2">
+                                                  <div className="flex items-center gap-2">
+                                                    <span className="text-lg">🚀</span>
+                                                    <span className="font-bold text-white">
+                                                      {signalData.type} {signalData.symbol}
+                                                    </span>
+                                                    {signalData.timeframe && (
+                                                      <span className="text-sm text-gray-400">{signalData.timeframe}</span>
+                                                    )}
+                                                  </div>
+                                                  {signalData.entry && (
+                                                    <div className="flex items-center gap-2 text-sm">
+                                                      <span className="text-gray-400">📊</span>
+                                                      <span className="text-white">Entry: {signalData.entry}</span>
+                                                    </div>
+                                                  )}
+                                                  {signalData.tp && signalData.sl && (
+                                                    <div className="flex items-center gap-2 text-sm">
+                                                      <span className="text-white">TP: {signalData.tp} SL: {signalData.sl}</span>
+                                                    </div>
+                                                  )}
+                                                  {signalData.rr && (
+                                                    <div className="flex items-center gap-2 text-sm">
+                                                      <span className="text-gray-400">🎯</span>
+                                                      <span className="text-white">R:R ≈ {signalData.rr}</span>
+                                                    </div>
+                                                  )}
+                                                  {signalData.timeframe && (
+                                                    <div className="flex items-center gap-2 text-sm">
+                                                      <span className="text-gray-400">⏰</span>
+                                                      <span className="text-white">{signalData.timeframe}</span>
                                                     </div>
                                                   )}
                                                 </div>
-                                              </div>
-                                            ) : (
-                                              <div className="space-y-2">
-                                                <div className="flex items-center gap-2">
-                                                  <span className="text-lg">🚀</span>
-                                                  <span className="font-bold text-white">
-                                                    {signalData.type} {signalData.symbol}
-                                                  </span>
-                                                  {signalData.timeframe && (
-                                                    <span className="text-sm text-gray-400">{signalData.timeframe}</span>
-                                                  )}
+                                              )}
+                                            </div>
+                                            
+                                            {/* Boutons WIN/LOSS/BE pour clôturer les signaux */}
+                                            {signalId && (
+                                              <div className="mt-3 pt-3 border-t border-gray-600">
+                                                <div className="flex items-center gap-2 flex-wrap">
+                                                  <button
+                                                    onClick={() => handleSignalStatusFromMessage(message.text, 'WIN')}
+                                                    disabled={isClosed && currentSignal?.status !== 'WIN'}
+                                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-1 ${
+                                                      isClosed && currentSignal?.status === 'WIN'
+                                                        ? 'bg-green-500 text-white shadow-lg shadow-green-500/20'
+                                                        : isClosed
+                                                        ? 'bg-gray-500/30 text-gray-400 cursor-not-allowed opacity-50'
+                                                        : 'bg-gray-600 hover:bg-green-500 text-gray-300 hover:text-white'
+                                                    }`}
+                                                  >
+                                                    ✅ WIN
+                                                  </button>
+                                                  <button
+                                                    onClick={() => handleSignalStatusFromMessage(message.text, 'LOSS')}
+                                                    disabled={isClosed && currentSignal?.status !== 'LOSS'}
+                                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-1 ${
+                                                      isClosed && currentSignal?.status === 'LOSS'
+                                                        ? 'bg-red-500 text-white shadow-lg shadow-red-500/20'
+                                                        : isClosed
+                                                        ? 'bg-gray-500/30 text-gray-400 cursor-not-allowed opacity-50'
+                                                        : 'bg-gray-600 hover:bg-red-500 text-gray-300 hover:text-white'
+                                                    }`}
+                                                  >
+                                                    ❌ LOSS
+                                                  </button>
+                                                  <button
+                                                    onClick={() => handleSignalStatusFromMessage(message.text, 'BE')}
+                                                    disabled={isClosed && currentSignal?.status !== 'BE'}
+                                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-1 ${
+                                                      isClosed && currentSignal?.status === 'BE'
+                                                        ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'
+                                                        : isClosed
+                                                        ? 'bg-gray-500/30 text-gray-400 cursor-not-allowed opacity-50'
+                                                        : 'bg-gray-600 hover:bg-blue-500 text-gray-300 hover:text-white'
+                                                    }`}
+                                                  >
+                                                    ⚖️ BE
+                                                  </button>
                                                 </div>
-                                                {signalData.entry && (
-                                                  <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-400">📊</span>
-                                                    <span className="text-white">Entry: {signalData.entry}</span>
-                                                  </div>
-                                                )}
-                                                {signalData.tp && signalData.sl && (
-                                                  <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-white">TP: {signalData.tp} SL: {signalData.sl}</span>
-                                                  </div>
-                                                )}
-                                                {signalData.rr && (
-                                                  <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-400">🎯</span>
-                                                    <span className="text-white">R:R ≈ {signalData.rr}</span>
-                                                  </div>
-                                                )}
-                                                {signalData.timeframe && (
-                                                  <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-400">⏰</span>
-                                                    <span className="text-white">{signalData.timeframe}</span>
-                                                  </div>
-                                                )}
                                               </div>
                                             )}
                                           </div>
@@ -7942,6 +8080,130 @@ const dailyPnLChartData = useMemo(
                 className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium"
               >
                 Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de diagnostic des notifications */}
+      {showNotificationDiagnostic && diagnosticInfo && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-white">🔍 Diagnostic des Notifications</h3>
+              <button
+                onClick={() => setShowNotificationDiagnostic(false)}
+                className="text-gray-400 hover:text-white text-2xl"
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              {/* Service Worker */}
+              <div className="bg-gray-700 rounded-lg p-4">
+                <h4 className="text-white font-semibold mb-2">Service Worker</h4>
+                {diagnosticInfo.serviceWorker?.supported ? (
+                  <div className="text-sm text-gray-300 space-y-1">
+                    <div>✅ Supporté: Oui</div>
+                    <div>{diagnosticInfo.serviceWorker.registered ? '✅' : '❌'} Enregistré: {diagnosticInfo.serviceWorker.registered ? 'Oui' : 'Non'}</div>
+                    <div>Nombre: {diagnosticInfo.serviceWorker.count}</div>
+                    {diagnosticInfo.serviceWorker.registrations?.map((reg: any, i: number) => (
+                      <div key={i} className="ml-4 text-xs">
+                        Scope: {reg.scope}<br/>
+                        État actif: {reg.active || 'N/A'}<br/>
+                        État installation: {reg.installing || 'N/A'}<br/>
+                        État attente: {reg.waiting || 'N/A'}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-sm text-red-400">❌ Service Worker non supporté</div>
+                )}
+              </div>
+
+              {/* Permissions */}
+              <div className="bg-gray-700 rounded-lg p-4">
+                <h4 className="text-white font-semibold mb-2">Permissions</h4>
+                {diagnosticInfo.notifications?.supported ? (
+                  <div className="text-sm text-gray-300 space-y-1">
+                    <div>✅ Supporté: Oui</div>
+                    <div>Permission: {diagnosticInfo.notifications.permission}</div>
+                    <div>{diagnosticInfo.notifications.granted ? '✅' : '❌'} Accordée: {diagnosticInfo.notifications.granted ? 'Oui' : 'Non'}</div>
+                  </div>
+                ) : (
+                  <div className="text-sm text-red-400">❌ Notifications non supportées</div>
+                )}
+              </div>
+
+              {/* Token FCM Local */}
+              <div className="bg-gray-700 rounded-lg p-4">
+                <h4 className="text-white font-semibold mb-2">Token FCM Local</h4>
+                {diagnosticInfo.fcmToken?.exists ? (
+                  <div className="text-sm text-gray-300">
+                    <div>✅ Token présent</div>
+                    <div className="text-xs text-gray-400 mt-1">{diagnosticInfo.fcmToken.token}</div>
+                  </div>
+                ) : (
+                  <div className="text-sm text-red-400">❌ Aucun token FCM local</div>
+                )}
+              </div>
+
+              {/* Tokens Firebase */}
+              <div className="bg-gray-700 rounded-lg p-4">
+                <h4 className="text-white font-semibold mb-2">Tokens dans Firebase</h4>
+                {diagnosticInfo.tokensInFirebase?.count > 0 ? (
+                  <div className="text-sm text-gray-300 space-y-1">
+                    <div>✅ Nombre de tokens: {diagnosticInfo.tokensInFirebase.count}</div>
+                    {diagnosticInfo.tokensInFirebase.tokens?.map((token: string, i: number) => (
+                      <div key={i} className="text-xs text-gray-400 ml-4">{token}</div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-sm text-red-400">❌ Aucun token dans Firebase</div>
+                )}
+              </div>
+
+              {/* Test notification locale */}
+              {diagnosticInfo.localNotificationTest && (
+                <div className="bg-gray-700 rounded-lg p-4">
+                  <h4 className="text-white font-semibold mb-2">Test Notification Locale</h4>
+                  {diagnosticInfo.localNotificationTest.success ? (
+                    <div className="text-sm text-green-400">✅ Notification locale envoyée avec succès</div>
+                  ) : (
+                    <div className="text-sm text-red-400">
+                      ❌ Erreur: {diagnosticInfo.localNotificationTest.error}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Erreurs */}
+              {diagnosticInfo.errors.length > 0 && (
+                <div className="bg-red-900/30 rounded-lg p-4">
+                  <h4 className="text-red-400 font-semibold mb-2">Erreurs</h4>
+                  <div className="text-sm text-red-300 space-y-1">
+                    {diagnosticInfo.errors.map((error: string, i: number) => (
+                      <div key={i}>• {error}</div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-6 flex gap-3">
+              <button
+                onClick={checkNotificationStatus}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium"
+              >
+                🔄 Actualiser
+              </button>
+              <button
+                onClick={() => setShowNotificationDiagnostic(false)}
+                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium"
+              >
+                Fermer
               </button>
             </div>
           </div>
