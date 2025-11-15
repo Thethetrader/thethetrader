@@ -4507,7 +4507,7 @@ const dailyPnLChartData = useMemo(
           {/* Graphique PnL cumulé pour journal perso desktop - sous le calendrier */}
           {!isMobile && selectedChannel.id === 'trading-journal' && dailyPnLChartData.length > 0 && (
             <div className="mt-4">
-              <DailyPnLChart data={dailyPnLChartData} />
+              <DailyPnLChart data={dailyPnLChartData} height={450} />
             </div>
           )}
 
@@ -4591,7 +4591,7 @@ const dailyPnLChartData = useMemo(
 
           {!isMobile && selectedChannel.id !== 'trading-journal' && dailyPnLChartData.length > 0 && (
             <div className="mt-4">
-              <DailyPnLChart data={dailyPnLChartData} />
+              <DailyPnLChart data={dailyPnLChartData} height={450} />
             </div>
           )}
         </div>
@@ -4781,28 +4781,26 @@ const dailyPnLChartData = useMemo(
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    {(weekData.wins > 0 || weekData.losses > 0) ? (
-                      <div className="flex items-center gap-1">
-                        {weekData.wins > 0 && (
-                          <div className="text-sm bg-green-800/30 text-green-200 px-3 py-1 rounded-lg font-bold shadow-lg border border-green-600/20">
-                            {weekData.wins}W
+                    <div className="grid grid-cols-2 gap-1" style={{ width: '84px' }}>
+                      {weekData.wins === 0 && weekData.losses === 0 ? (
+                        <div className="col-span-2 text-sm text-gray-500 text-center">
+                          -
+                        </div>
+                      ) : (
+                        <>
+                          <div className={`text-sm py-1 rounded-lg font-bold shadow-lg border flex items-center justify-center ${weekData.wins > 0 ? 'bg-green-800/30 text-green-200 border-green-600/20' : 'bg-transparent border-transparent'}`} style={{ width: '40px', height: '28px' }}>
+                            {weekData.wins > 0 ? `${weekData.wins}W` : ''}
                           </div>
-                        )}
-                        {weekData.losses > 0 && (
-                          <div className="text-sm bg-red-800/30 text-red-200 px-3 py-1 rounded-lg font-bold shadow-lg border border-red-600/20">
-                            {weekData.losses}L
+                          <div className={`text-sm py-1 rounded-lg font-bold shadow-lg border flex items-center justify-center ${weekData.losses > 0 ? 'bg-red-800/30 text-red-200 border-red-600/20' : 'bg-transparent border-transparent'}`} style={{ width: '40px', height: '28px' }}>
+                            {weekData.losses > 0 ? `${weekData.losses}L` : ''}
                           </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="text-sm text-gray-500 px-3 py-1">
-                        -
-                      </div>
-                    )}
+                        </>
+                      )}
+                    </div>
                     <div className={`text-xs ${
                       weekData.pnl > 0 ? 'text-green-400' : 
                       weekData.pnl < 0 ? 'text-red-400' : 'text-gray-500'
-                    }`}>
+                    }`} style={{ minWidth: '60px', textAlign: 'right' }}>
                       {weekData.pnl !== 0 ? `${weekData.pnl > 0 ? '+' : ''}$${weekData.pnl}` : ''}
                     </div>
                   </div>

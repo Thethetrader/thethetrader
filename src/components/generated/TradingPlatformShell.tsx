@@ -4580,7 +4580,7 @@ export default function TradingPlatformShell() {
 
               {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && dailyPnLChartData.length > 0 && (
                 <div className="mt-3">
-                  <DailyPnLChart data={dailyPnLChartData} />
+                  <DailyPnLChart data={dailyPnLChartData} height={450} />
                 </div>
               )}
             </div>
@@ -4646,7 +4646,7 @@ export default function TradingPlatformShell() {
 
               {dailyPnLChartData.length > 0 && (
                 <div className="mt-4">
-                  <DailyPnLChart data={dailyPnLChartData} />
+                  <DailyPnLChart data={dailyPnLChartData} height={450} />
                 </div>
               )}
             </>
@@ -4784,28 +4784,26 @@ export default function TradingPlatformShell() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    {(weekData.wins > 0 || weekData.losses > 0) ? (
-                      <div className="flex items-center gap-1">
-                        {weekData.wins > 0 && (
-                          <div className="text-xs bg-green-400/70 text-white px-2 py-1 rounded font-bold">
-                            {weekData.wins}W
+                    <div className="grid grid-cols-2 gap-1" style={{ width: '76px' }}>
+                      {weekData.wins === 0 && weekData.losses === 0 ? (
+                        <div className="col-span-2 text-sm text-gray-500 text-center">
+                          -
+                        </div>
+                      ) : (
+                        <>
+                          <div className={`text-xs py-1 rounded font-bold flex items-center justify-center ${weekData.wins > 0 ? 'bg-green-400/70 text-white' : 'bg-transparent'}`} style={{ width: '36px', height: '24px' }}>
+                            {weekData.wins > 0 ? `${weekData.wins}W` : ''}
                           </div>
-                        )}
-                        {weekData.losses > 0 && (
-                          <div className="text-xs bg-red-400/70 text-white px-2 py-1 rounded font-bold">
-                            {weekData.losses}L
+                          <div className={`text-xs py-1 rounded font-bold flex items-center justify-center ${weekData.losses > 0 ? 'bg-red-400/70 text-white' : 'bg-transparent'}`} style={{ width: '36px', height: '24px' }}>
+                            {weekData.losses > 0 ? `${weekData.losses}L` : ''}
                           </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="text-sm text-gray-500 px-3 py-1">
-                        -
-                      </div>
-                    )}
+                        </>
+                      )}
+                    </div>
                     <div className={`text-xs ${
                       weekData.pnl > 0 ? 'text-green-400' : 
                       weekData.pnl < 0 ? 'text-red-400' : 'text-gray-500'
-                    }`}>
+                    }`} style={{ minWidth: '60px', textAlign: 'right' }}>
                       {weekData.pnl !== 0 ? `${weekData.pnl > 0 ? '+' : ''}$${weekData.pnl}` : ''}
                     </div>
                   </div>
