@@ -1646,25 +1646,30 @@ const App = () => {
                     </div>
 
                     {/* Pricing Cards */}
-                    <div className={`grid md:grid-cols-[0.8fr_0.9fr_1.1fr] gap-6 sm:gap-8 transition-all duration-400 ease-out ${isTransitioning ? 'opacity-0 scale-75 rotate-3 blur-md translate-y-20 transform-gpu perspective-1000' : 'opacity-100 scale-100 rotate-0 blur-0 translate-y-0 transform-gpu perspective-1000'}`} style={{ transformStyle: 'preserve-3d', perspective: '1000px' }}>
+                    <div className={`grid md:grid-cols-[0.8fr_0.9fr_1.1fr] gap-6 sm:gap-8 items-stretch transition-all duration-400 ease-out ${isTransitioning ? 'opacity-0 scale-75 rotate-3 blur-md translate-y-20 transform-gpu perspective-1000' : 'opacity-100 scale-100 rotate-0 blur-0 translate-y-0 transform-gpu perspective-1000'}`} style={{ transformStyle: 'preserve-3d', perspective: '1000px' }}>
                       
                       {/* Journal Perso Plan */}
-                      <div className={`bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 sm:p-8 relative border-2 transition-all duration-500 ${isTransitioning ? 'border-purple-500 shadow-[0_0_30px_rgba(147,51,234,0.3)] scale-105 rotate-y-3 brightness-110 backdrop-blur-sm' : 'border-gray-700 hover:border-purple-500 hover:shadow-[0_0_30px_rgba(147,51,234,0.3)] hover:scale-105 hover:rotate-y-3 hover:brightness-110 hover:backdrop-blur-sm'} transform-gpu`}>
-                        <h3 className="text-xl font-bold text-white mb-3">JOURNAL PERSO</h3>
-                        <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
-                          <span className="text-2xl align-top text-gray-300">€</span>
-                          {paymentType === 'monthly' ? '15' : '12,5'}
-                          <span className="text-lg text-gray-400 font-normal"> / mois</span>
-                          {paymentType === 'yearly' && (
-                            <div className="text-gray-300 text-sm font-normal mt-2">
-                              Facturé 150€ / an
-                            </div>
-                          )}
+                      <div className={`bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 sm:p-8 relative border-2 transition-all duration-500 flex flex-col h-full ${isTransitioning ? 'border-purple-500 shadow-[0_0_30px_rgba(147,51,234,0.3)] scale-105 rotate-y-3 brightness-110 backdrop-blur-sm' : 'border-gray-700 hover:border-purple-500 hover:shadow-[0_0_30px_rgba(147,51,234,0.3)] hover:scale-105 hover:rotate-y-3 hover:brightness-110 hover:backdrop-blur-sm'} transform-gpu`}>
+                        <h3 className="text-xl font-bold text-white mb-3 h-8 flex items-center">TRADING JOURNAL</h3>
+                        <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 flex flex-col ${isTransitioning ? 'scale-110' : 'scale-100'}`} style={{ height: '140px', justifyContent: 'flex-start' }}>
+                          <div className="h-auto">
+                            <span className="text-2xl align-top text-gray-300">€</span>
+                            {paymentType === 'monthly' ? '15' : '12,5'}
+                            <span className="text-lg text-gray-400 font-normal"> / mois</span>
+                          </div>
+                          <div className="h-[24px] mt-2 flex items-center">
+                            {paymentType === 'yearly' ? (
+                              <div className="text-gray-300 text-sm font-normal">Facturé 150€ / an</div>
+                            ) : null}
+                          </div>
                           <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full text-center">
                             🎉 Premier mois à<br />10€ seulement !
                           </div>
                         </div>
-                        <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
+                        <div className="text-gray-400 text-sm mb-4 h-[20px] flex items-center">
+                          {paymentType === 'yearly' ? '' : <>&nbsp;</>}
+                        </div>
+                        <ul className="text-gray-300 text-base space-y-4 mb-8 text-left flex-grow">
                           <li className="flex items-center gap-2">
                             <span className="text-green-400 font-bold text-lg">✓</span>
                             <span className="font-semibold text-white">Compte illimité</span>
@@ -1686,50 +1691,54 @@ const App = () => {
                             <span className="font-semibold text-white">Statistiques personnelles</span>
                           </li>
                         </ul>
-                        <button 
-                          onClick={async () => {
-                            try {
-                              console.log('🖱️ Clic sur bouton Journal Perso');
-                              await redirectToCheckout('journal', 'monthly');
-                            } catch (error: any) {
-                              console.error('Erreur:', error);
-                              alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
-                            }
-                          }}
-                          className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-                        >
-                          Je m'abonne
-                        </button>
-                        <div className="text-center mt-4">
-                          <button className="text-gray-400 hover:text-white text-sm underline">
-                            Voir le détail complet
+                        <div className="mt-auto flex flex-col" style={{ minHeight: '100px' }}>
+                          <button 
+                            onClick={async () => {
+                              try {
+                                console.log('🖱️ Clic sur bouton Journal Perso');
+                                await redirectToCheckout('journal', 'monthly');
+                              } catch (error: any) {
+                                console.error('Erreur:', error);
+                                alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
+                              }
+                            }}
+                            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 h-12 flex items-center justify-center"
+                          >
+                            Je m'abonne
                           </button>
+                          <div className="text-center mt-4 h-6 flex items-center justify-center">
+                            <button className="text-gray-400 hover:text-white text-sm underline">
+                              Voir le détail complet
+                            </button>
+                          </div>
                         </div>
                       </div>
                       
                       {/* Basic Plan */}
-                      <div className={`bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 sm:p-8 relative border-2 transition-all duration-500 ${isTransitioning ? 'border-purple-500 shadow-[0_0_30px_rgba(147,51,234,0.3)] scale-105 rotate-y-3 brightness-110 backdrop-blur-sm' : 'border-gray-700 hover:border-purple-500 hover:shadow-[0_0_30px_rgba(147,51,234,0.3)] hover:scale-105 hover:rotate-y-3 hover:brightness-110 hover:backdrop-blur-sm'} transform-gpu`}>
+                      <div className={`bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 sm:p-8 relative border-2 transition-all duration-500 flex flex-col h-full ${isTransitioning ? 'border-purple-500 shadow-[0_0_30px_rgba(147,51,234,0.3)] scale-105 rotate-y-3 brightness-110 backdrop-blur-sm' : 'border-gray-700 hover:border-purple-500 hover:shadow-[0_0_30px_rgba(147,51,234,0.3)] hover:scale-105 hover:rotate-y-3 hover:brightness-110 hover:backdrop-blur-sm'} transform-gpu`}>
                         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse md:hidden">
                           {paymentType === 'yearly' ? '💎 ÉCONOMISE 50€' : ''}
                         </div>
-                        <h3 className="text-xl font-bold text-white mb-3">BASIC</h3>
-                        <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
-                          <span className="text-2xl align-top text-gray-300">€</span>
-                          {paymentType === 'monthly' ? '39' : '34,83'}
-                          <span className="text-lg text-gray-400 font-normal"> / mois</span>
-                          {paymentType === 'yearly' && (
-                            <div className="text-gray-300 text-sm font-normal mt-2">
-                              Facturé 418€ / an
-                            </div>
-                          )}
+                        <h3 className="text-xl font-bold text-white mb-3 h-8 flex items-center">BASIC</h3>
+                        <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 flex flex-col ${isTransitioning ? 'scale-110' : 'scale-100'}`} style={{ height: '140px', justifyContent: 'flex-start' }}>
+                          <div className="h-auto">
+                            <span className="text-2xl align-top text-gray-300">€</span>
+                            {paymentType === 'monthly' ? '39' : '34,83'}
+                            <span className="text-lg text-gray-400 font-normal"> / mois</span>
+                          </div>
+                          <div className="h-[24px] mt-2 flex items-center">
+                            {paymentType === 'yearly' ? (
+                              <div className="text-gray-300 text-sm font-normal">Facturé 418€ / an</div>
+                            ) : null}
+                          </div>
                           <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full text-center">
                             🎉 Première semaine à<br />4€ seulement !
                           </div>
                         </div>
-                        {paymentType === 'yearly' && (
-                          <div className="text-gray-400 text-sm mb-4">Best for beginner traders</div>
-                        )}
-                        <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
+                        <div className="text-gray-400 text-sm mb-4 h-[20px] flex items-center">
+                          {paymentType === 'yearly' ? 'Best for beginner traders' : <>&nbsp;</>}
+                        </div>
+                        <ul className="text-gray-300 text-base space-y-4 mb-8 text-left flex-grow">
                           <li className="flex items-center gap-2">
                             <span className="text-green-400 font-bold text-lg">✓</span>
                             <span className="font-semibold text-white">Formation Setup</span>
@@ -1759,50 +1768,54 @@ const App = () => {
                             <span className="font-semibold text-white">Support standard</span>
                           </li>
                         </ul>
-                        <button 
-                          onClick={async () => {
-                            try {
-                              console.log('🖱️ Clic sur bouton Basic');
-                              await redirectToCheckout('basic', paymentType);
-                            } catch (error: any) {
-                              console.error('Erreur Stripe:', error);
-                              alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
-                            }
-                          }}
-                          className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-                        >
-                          Je m'abonne
-                        </button>
-                        <div className="text-center mt-4">
-                          <button className="text-gray-400 hover:text-white text-sm underline">
-                            Voir le détail complet
+                        <div className="mt-auto flex flex-col" style={{ minHeight: '100px' }}>
+                          <button 
+                            onClick={async () => {
+                              try {
+                                console.log('🖱️ Clic sur bouton Basic');
+                                await redirectToCheckout('basic', paymentType);
+                              } catch (error: any) {
+                                console.error('Erreur Stripe:', error);
+                                alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
+                              }
+                            }}
+                            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 h-12 flex items-center justify-center"
+                          >
+                            Je m'abonne
                           </button>
+                          <div className="text-center mt-4 h-6 flex items-center justify-center">
+                            <button className="text-gray-400 hover:text-white text-sm underline">
+                              Voir le détail complet
+                            </button>
+                          </div>
                         </div>
                       </div>
 
                       {/* Premium Plan */}
-                      <div className={`bg-gradient-to-br from-purple-900 to-blue-900 rounded-2xl p-6 sm:p-8 relative border-2 transition-all duration-500 ${isTransitioning ? 'border-blue-500 shadow-[0_0_40px_rgba(59,130,246,0.5)] scale-105 rotate-y-6 brightness-110 backdrop-blur-sm' : 'border-purple-500 hover:border-blue-500 hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] hover:scale-105 hover:rotate-y-6 hover:brightness-110 hover:backdrop-blur-sm'} transform-gpu`}>
+                      <div className={`bg-gradient-to-br from-purple-900 to-blue-900 rounded-2xl p-6 sm:p-8 relative border-2 transition-all duration-500 flex flex-col h-full ${isTransitioning ? 'border-blue-500 shadow-[0_0_40px_rgba(59,130,246,0.5)] scale-105 rotate-y-6 brightness-110 backdrop-blur-sm' : 'border-purple-500 hover:border-blue-500 hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] hover:scale-105 hover:rotate-y-6 hover:brightness-110 hover:backdrop-blur-sm'} transform-gpu`}>
                         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse md:hidden">
                           {paymentType === 'yearly' ? '💎 ÉCONOMISE 100€' : '⭐ RECOMMANDÉ'}
                         </div>
-                        <h3 className="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent mb-3">PREMIUM</h3>
-                        <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
-                          <span className="text-2xl align-top text-gray-300">€</span>
-                          {paymentType === 'monthly' ? '79' : '57,5'}
-                          <span className="text-lg text-gray-400 font-normal"> / mois</span>
-                          {paymentType === 'yearly' && (
-                            <div className="text-gray-300 text-sm font-normal mt-2">
-                              Facturé 690€ / an
-                            </div>
-                          )}
+                        <h3 className="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent mb-3 h-8 flex items-center">PREMIUM</h3>
+                        <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 flex flex-col ${isTransitioning ? 'scale-110' : 'scale-100'}`} style={{ height: '140px', justifyContent: 'flex-start' }}>
+                          <div className="h-auto">
+                            <span className="text-2xl align-top text-gray-300">€</span>
+                            {paymentType === 'monthly' ? '79' : '57,5'}
+                            <span className="text-lg text-gray-400 font-normal"> / mois</span>
+                          </div>
+                          <div className="h-[24px] mt-2 flex items-center">
+                            {paymentType === 'yearly' ? (
+                              <div className="text-gray-300 text-sm font-normal">Facturé 690€ / an</div>
+                            ) : null}
+                          </div>
                           <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full text-center">
                             🎉 Première semaine à<br />4€ seulement !
                           </div>
                         </div>
-                        {paymentType === 'yearly' && (
-                          <div className="text-gray-400 text-sm mb-4">Best for advanced traders</div>
-                        )}
-                        <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
+                        <div className="text-gray-400 text-sm mb-4 h-[20px] flex items-center">
+                          {paymentType === 'yearly' ? 'Best for advanced traders' : <>&nbsp;</>}
+                        </div>
+                        <ul className="text-gray-300 text-base space-y-4 mb-8 text-left flex-grow">
                           <li className="flex items-center gap-2">
                             <span className="text-green-400 font-bold text-lg">✓</span>
                             <span className="font-semibold text-white">Formation Setup</span>
@@ -1832,29 +1845,31 @@ const App = () => {
                             <span className="font-semibold text-white">Support prioritaire et contact direct</span>
                           </li>
                         </ul>
-                        <button 
-                          onClick={async () => {
-                            try {
-                              console.log('🖱️ Clic sur bouton Premium');
-                              await redirectToCheckout('premium', paymentType);
-                            } catch (error: any) {
-                              console.error('Erreur Stripe:', error);
-                              alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
-                            }
-                          }}
-                          className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 relative overflow-hidden"
-                          style={{ 
-                            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(147, 51, 234, 0.9) 50%, rgba(59, 130, 246, 0.9) 100%)',
-                            boxShadow: 'inset 0 0 20px rgba(255, 255, 255, 0.2), inset 0 0 40px rgba(168, 85, 247, 0.15)'
-                          }}
-                        >
-                          <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-beam" style={{ animation: 'beam 2s ease-in-out infinite' }}></span>
-                          <span className="relative z-10">Je m'abonne</span>
-                        </button>
-                        <div className="text-center mt-4">
-                          <button className="text-gray-400 hover:text-white text-sm underline">
-                            Voir le détail complet
+                        <div className="mt-auto flex flex-col" style={{ minHeight: '100px' }}>
+                          <button 
+                            onClick={async () => {
+                              try {
+                                console.log('🖱️ Clic sur bouton Premium');
+                                await redirectToCheckout('premium', paymentType);
+                              } catch (error: any) {
+                                console.error('Erreur Stripe:', error);
+                                alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
+                              }
+                            }}
+                            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 relative overflow-hidden h-12 flex items-center justify-center"
+                            style={{ 
+                              background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(147, 51, 234, 0.9) 50%, rgba(59, 130, 246, 0.9) 100%)',
+                              boxShadow: 'inset 0 0 20px rgba(255, 255, 255, 0.2), inset 0 0 40px rgba(168, 85, 247, 0.15)'
+                            }}
+                          >
+                            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-beam" style={{ animation: 'beam 2s ease-in-out infinite' }}></span>
+                            <span className="relative z-10">Je m'abonne</span>
                           </button>
+                          <div className="text-center mt-4 h-6 flex items-center justify-center">
+                            <button className="text-gray-400 hover:text-white text-sm underline">
+                              Voir le détail complet
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -5132,7 +5147,7 @@ const App = () => {
                     : 'border-gray-500/50 hover:border-purple-400 hover:from-gray-800/30 hover:to-gray-900/30 hover:scale-105 hover:shadow-[0_0_30px_rgba(168,85,247,0.4)]'
                 }`}>
                   <div className="text-center">
-                    <h3 className="text-xl font-bold text-white mb-3">JOURNAL PERSO</h3>
+                    <h3 className="text-xl font-bold text-white mb-3">TRADING JOURNAL</h3>
                     <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
                       <span className="text-2xl align-top text-gray-300">€</span>
                       {paymentType === 'monthly' ? '15' : '12,5'}

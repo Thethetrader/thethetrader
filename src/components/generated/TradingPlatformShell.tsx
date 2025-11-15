@@ -4116,7 +4116,7 @@ export default function TradingPlatformShell() {
         <div className="hidden md:flex md:items-center md:gap-6">
           <div>
             <h1 className="text-2xl font-bold text-white">
-              {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'Mon Journal Perso' : 'Journal des Signaux'}
+              {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'Trading Journal' : 'Journal des Signaux'}
             </h1>
             <p className="text-sm text-gray-400 mt-1">
               {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'Journal tous tes trades' : 'Suivi des performances des signaux'}
@@ -4965,7 +4965,7 @@ export default function TradingPlatformShell() {
                 }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               )}
               {channels.find(c => c.id === 'journal') && (
-                <button onClick={() => handleChannelChange('journal', 'journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 Journal Perso</button>
+                <button onClick={() => handleChannelChange('journal', 'journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 Trading Journal</button>
               )}
               {channels.find(c => c.id === 'video') && (
                 <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
@@ -5330,7 +5330,7 @@ export default function TradingPlatformShell() {
                     <div className="space-y-4">
                       {/* Titre */}
                       <div>
-                        <h1 className="text-xl md:text-2xl font-bold text-white">Mon Journal Perso</h1>
+                        <h1 className="text-xl md:text-2xl font-bold text-white">Trading Journal</h1>
                         <p className="text-sm text-gray-400 mt-1">Journal tous tes trades</p>
                       </div>
                       
