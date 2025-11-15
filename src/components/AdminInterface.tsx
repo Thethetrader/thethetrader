@@ -2155,6 +2155,78 @@ const dailyPnLChartData = useMemo(
     return (reward / risk).toFixed(2);
   };
 
+  // Fonction pour formater les signaux dans les messages
+  const formatSignalMessage = (text: string) => {
+    // Détecter si c'est un signal (contient SIGNAL_ID ou format de signal)
+    const signalIdMatch = text.match(/\[SIGNAL_ID[:\s]+([^\]]+)\]/);
+    if (!signalIdMatch) return null;
+
+    // Parser les informations du signal
+    const lines = text.split('\n');
+    let signalType = '';
+    let symbol = '';
+    let entry = '';
+    let tp = '';
+    let sl = '';
+    let timeframe = '';
+    let rr = '';
+    let status = '';
+    let pnl = '';
+    let closeMessage = '';
+
+    lines.forEach(line => {
+      if (line.includes('🚀') || line.includes('**')) {
+        const match = line.match(/\*\*([A-Z]+)\s+([A-Z0-9]+)\**/);
+        if (match) {
+          signalType = match[1];
+          symbol = match[2];
+        }
+      }
+      if (line.includes('Entry:')) {
+        entry = line.split('Entry:')[1]?.trim() || '';
+      }
+      if (line.includes('TP:')) {
+        tp = line.split('TP:')[1]?.split('SL:')[0]?.trim() || '';
+        sl = line.split('SL:')[1]?.trim() || '';
+      }
+      if (line.includes('⏰')) {
+        timeframe = line.split('⏰')[1]?.trim() || '';
+      }
+      if (line.includes('R:R')) {
+        rr = line.split('R:R')[1]?.trim() || '';
+      }
+      if (line.includes('SIGNAL FERMÉ') || line.includes('fermé Résultat:')) {
+        status = 'CLOSED';
+      }
+      if (line.includes('GAGNANT')) {
+        status = 'WIN';
+      }
+      if (line.includes('PERDANT')) {
+        status = 'LOSS';
+      }
+      if (line.includes('P&L:')) {
+        pnl = line.split('P&L:')[1]?.trim() || '';
+      }
+      if (line.includes('fermé Résultat:') && !closeMessage) {
+        closeMessage = line;
+      }
+    });
+
+    return {
+      signalId: signalIdMatch[1],
+      type: signalType,
+      symbol,
+      entry,
+      tp,
+      sl,
+      timeframe,
+      rr,
+      status,
+      pnl,
+      closeMessage
+    };
+  };
+
   const getWeeklyBreakdown = () => {
     // Utiliser currentDate au lieu de today
     const currentMonth = currentDate.getMonth();
@@ -3257,29 +3329,62 @@ const dailyPnLChartData = useMemo(
         try {
           const fcmTokensRef = ref(database, 'fcm_tokens');
           const snapshot = await get(fcmTokensRef);
+          console.log('🔍 Snapshot FCM tokens existe?', snapshot.exists());
           if (snapshot.exists()) {
             const tokensData = snapshot.val();
+            console.log('🔍 Tokens data bruts:', tokensData);
             Object.values(tokensData).forEach((tokenData: any) => {
-              if (tokenData.token) {
+              if (tokenData && tokenData.token) {
                 tokens.push(tokenData.token);
+                console.log('✅ Token ajouté:', tokenData.token.substring(0, 20) + '...');
               }
             });
             console.log('📱 Tokens FCM récupérés depuis Firebase:', tokens.length);
+            console.log('📱 Liste complète des tokens:', tokens);
+          } else {
+            console.log('⚠️ Aucun token FCM dans Firebase Database');
           }
         } catch (error) {
           console.error('❌ Erreur récupération tokens FCM:', error);
+          console.error('❌ Détails erreur:', error.message);
         }
         
         if (tokens.length > 0) {
-          console.log('📱 Envoi notification push via Firebase Function...');
-          const result = await sendNotification({
-            signal: savedSignal,
-            tokens: tokens
-          });
-          console.log('✅ Notification push envoyée:', result.data);
+          console.log('📱 Envoi notification push via Firebase Function avec', tokens.length, 'tokens...');
+          try {
+            const result = await sendNotification({
+              signal: savedSignal,
+              tokens: tokens
+            });
+            console.log('✅ Notification push envoyée via Firebase Function:', result.data);
+            if (result.data) {
+              console.log('📊 Résultat détaillé:', JSON.stringify(result.data, null, 2));
+              console.log(`📱 ${result.data.successCount || 0} notifications envoyées avec succès`);
+              console.log(`❌ ${result.data.failureCount || 0} notifications échouées`);
+              console.log(`📊 Total tokens: ${result.data.totalTokens || 0}`);
+              
+              if (result.data.responses) {
+                console.log('📋 Détails des réponses:', result.data.responses);
+                result.data.responses.forEach((resp: any, index: number) => {
+                  if (resp.success) {
+                    console.log(`✅ Token ${index + 1}: Notification envoyée (MessageId: ${resp.messageId})`);
+                  } else {
+                    console.log(`❌ Token ${index + 1}: Erreur - ${resp.errorCode || 'unknown'}: ${resp.error || 'unknown error'}`);
+                  }
+                });
+              }
+            }
+          } catch (notifError: any) {
+            console.error('❌ Erreur envoi notification push via Firebase Function:', notifError);
+            console.error('❌ Code erreur:', notifError.code);
+            console.error('❌ Message erreur:', notifError.message);
+            console.error('❌ Détails erreur:', notifError.details);
+          }
         } else {
-          console.log('⚠️ Aucun token FCM trouvé, notification locale seulement');
-          notifyNewSignal(savedSignal);
+          console.log('⚠️ Aucun token FCM trouvé - Les utilisateurs doivent autoriser les notifications');
+          console.log('💡 Pour recevoir des notifications, les utilisateurs doivent :');
+          console.log('   1. Autoriser les notifications dans leur navigateur');
+          console.log('   2. Le token FCM sera alors sauvegardé dans Firebase Database');
         }
       } catch (error) {
         console.error('❌ Erreur envoi notification push:', error);
@@ -5974,9 +6079,71 @@ const dailyPnLChartData = useMemo(
                                           👆 Cliquez pour rejoindre instantanément
                                         </button>
                                       </div>
-                                    ) : (
-                                      <p>{message.text}</p>
-                                    )}
+                                    ) : (() => {
+                                      const signalData = formatSignalMessage(message.text);
+                                      if (signalData) {
+                                        return (
+                                          <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
+                                            {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
+                                              <div className="mb-3">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                  <span className="text-xs">📊</span>
+                                                  <span className="text-sm font-semibold text-gray-300">SIGNAL FERMÉ</span>
+                                                </div>
+                                                <div className="text-sm">
+                                                  <div className="flex items-center gap-2 mb-1">
+                                                    <span className={signalData.status === 'WIN' ? 'text-green-400' : 'text-red-400'}>
+                                                      {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
+                                                    </span>
+                                                  </div>
+                                                  {signalData.pnl && (
+                                                    <div className="text-gray-300">
+                                                      P&L: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-400'}>{signalData.pnl}</span>
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              </div>
+                                            ) : (
+                                              <div className="space-y-2">
+                                                <div className="flex items-center gap-2">
+                                                  <span className="text-lg">🚀</span>
+                                                  <span className="font-bold text-white">
+                                                    {signalData.type} {signalData.symbol}
+                                                  </span>
+                                                  {signalData.timeframe && (
+                                                    <span className="text-sm text-gray-400">{signalData.timeframe}</span>
+                                                  )}
+                                                </div>
+                                                {signalData.entry && (
+                                                  <div className="flex items-center gap-2 text-sm">
+                                                    <span className="text-gray-400">📊</span>
+                                                    <span className="text-white">Entry: {signalData.entry}</span>
+                                                  </div>
+                                                )}
+                                                {signalData.tp && signalData.sl && (
+                                                  <div className="flex items-center gap-2 text-sm">
+                                                    <span className="text-white">TP: {signalData.tp} SL: {signalData.sl}</span>
+                                                  </div>
+                                                )}
+                                                {signalData.rr && (
+                                                  <div className="flex items-center gap-2 text-sm">
+                                                    <span className="text-gray-400">🎯</span>
+                                                    <span className="text-white">R:R ≈ {signalData.rr}</span>
+                                                  </div>
+                                                )}
+                                                {signalData.timeframe && (
+                                                  <div className="flex items-center gap-2 text-sm">
+                                                    <span className="text-gray-400">⏰</span>
+                                                    <span className="text-white">{signalData.timeframe}</span>
+                                                  </div>
+                                                )}
+                                              </div>
+                                            )}
+                                          </div>
+                                        );
+                                      }
+                                      return <p className="whitespace-pre-wrap">{message.text}</p>;
+                                    })()}
                                   </div>
                                 )}
                                 {message.attachment_data && (

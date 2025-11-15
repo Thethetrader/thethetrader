@@ -1,13 +1,14 @@
 // Service Worker pour Tradingpourlesnuls PWA
 // Gère les notifications push en arrière-plan
 
-const CACHE_NAME = 'thethetrader-v8-gauges-admin';
+const CACHE_NAME = 'thethetrader-v13-favicon';
 const urlsToCache = [
   '/',
   '/index.html',
   '/src/index.css',
   '/src/main.tsx',
-  '/FAVICON.png'
+  '/FAVICON.png',
+  '/manifest.json'
 ];
 
 // Installation du service worker
@@ -48,6 +49,11 @@ self.addEventListener('activate', (event) => {
 
 // Interception des requêtes réseau
 self.addEventListener('fetch', (event) => {
+  // Laisser passer toutes les requêtes non-GET (POST, PUT...) pour éviter les erreurs
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
   // Ne pas cacher les fichiers JS et CSS pour forcer la mise à jour
   if (event.request.url.includes('/assets/') && (event.request.url.includes('.js') || event.request.url.includes('.css'))) {
     event.respondWith(
@@ -74,7 +80,9 @@ self.addEventListener('fetch', (event) => {
 
 // Gestion des notifications push
 self.addEventListener('push', (event) => {
-  console.log('📱 Notification push reçue:', event);
+  console.log('📱 [SW] Notification push reçue dans le service worker');
+  console.log('📱 [SW] Event data:', event.data);
+  console.log('📱 [SW] Event data type:', typeof event.data);
   
   let title = 'TPLN';
   let body = 'Nouveau signal';
@@ -82,7 +90,7 @@ self.addEventListener('push', (event) => {
   if (event.data) {
     try {
       const payload = event.data.json();
-      console.log('📱 Payload reçu:', payload);
+      console.log('📱 [SW] Payload JSON parsé:', payload);
       
       // Extraire le titre et le body depuis le champ notification de Firebase
       if (payload.notification) {
@@ -96,7 +104,7 @@ self.addEventListener('push', (event) => {
         body = `${data.signalType} ${data.symbol} - Nouveau signal`;
       }
       
-      console.log('📱 Affichage notification:', { title, body });
+      console.log('📱 [SW] Affichage notification:', { title, body });
       
       const options = {
         body: body,
@@ -119,8 +127,16 @@ self.addEventListener('push', (event) => {
         ]
       };
       
+      console.log('📱 [SW] Options de notification:', options);
+      
       event.waitUntil(
         self.registration.showNotification(title, options)
+          .then(() => {
+            console.log('✅ [SW] Notification affichée avec succès');
+          })
+          .catch((error) => {
+            console.error('❌ [SW] Erreur affichage notification:', error);
+          })
       );
       
     } catch (error) {
@@ -162,4 +178,4 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-}); 
+});

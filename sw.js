@@ -80,7 +80,9 @@ self.addEventListener('fetch', (event) => {
 
 // Gestion des notifications push
 self.addEventListener('push', (event) => {
-  console.log('📱 Notification push reçue:', event);
+  console.log('📱 [SW] Notification push reçue dans le service worker');
+  console.log('📱 [SW] Event data:', event.data);
+  console.log('📱 [SW] Event data type:', typeof event.data);
   
   let title = 'TPLN';
   let body = 'Nouveau signal';
@@ -88,7 +90,7 @@ self.addEventListener('push', (event) => {
   if (event.data) {
     try {
       const payload = event.data.json();
-      console.log('📱 Payload reçu:', payload);
+      console.log('📱 [SW] Payload JSON parsé:', payload);
       
       // Extraire le titre et le body depuis le champ notification de Firebase
       if (payload.notification) {
@@ -102,7 +104,7 @@ self.addEventListener('push', (event) => {
         body = `${data.signalType} ${data.symbol} - Nouveau signal`;
       }
       
-      console.log('📱 Affichage notification:', { title, body });
+      console.log('📱 [SW] Affichage notification:', { title, body });
       
       const options = {
         body: body,
@@ -125,8 +127,16 @@ self.addEventListener('push', (event) => {
         ]
       };
       
+      console.log('📱 [SW] Options de notification:', options);
+      
       event.waitUntil(
         self.registration.showNotification(title, options)
+          .then(() => {
+            console.log('✅ [SW] Notification affichée avec succès');
+          })
+          .catch((error) => {
+            console.error('❌ [SW] Erreur affichage notification:', error);
+          })
       );
       
     } catch (error) {

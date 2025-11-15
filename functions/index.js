@@ -91,6 +91,9 @@ exports.sendNotification = onCall(async (request) => {
     let successCount = 0;
     let failureCount = 0;
     
+    logger.info(`Tentative d'envoi de ${tokens.length} notifications`);
+    logger.info(`Signal: ${signal.type} ${signal.symbol} - Entry: ${signal.entry}`);
+    
     for (const token of tokens) {
       try {
         const singleMessage = {
@@ -102,24 +105,40 @@ exports.sendNotification = onCall(async (request) => {
           webpush: message.webpush
         };
         
+        logger.info(`Envoi notification à token: ${token.substring(0, 20)}...`);
         const response = await messaging.send(singleMessage);
-        responses.push({ success: true, messageId: response });
+        logger.info(`✅ Notification envoyée avec succès. MessageId: ${response}`);
+        responses.push({ success: true, messageId: response, token: token.substring(0, 20) + '...' });
         successCount++;
         
       } catch (error) {
-        logger.error(`Erreur envoi notification pour token ${token}:`, error);
-        responses.push({ success: false, error: error.message });
+        logger.error(`❌ Erreur envoi notification pour token ${token.substring(0, 20)}...:`, error);
+        logger.error(`❌ Code erreur: ${error.code}, Message: ${error.message}`);
+        
+        // Si le token est invalide, on devrait le supprimer de la base de données
+        if (error.code === 'messaging/invalid-registration-token' || 
+            error.code === 'messaging/registration-token-not-registered') {
+          logger.warn(`⚠️ Token invalide détecté, devrait être supprimé de la base de données`);
+        }
+        
+        responses.push({ 
+          success: false, 
+          error: error.message,
+          errorCode: error.code,
+          token: token.substring(0, 20) + '...'
+        });
         failureCount++;
       }
     }
     
-    logger.info(`Notification envoyée: ${successCount} succès, ${failureCount} échecs`);
+    logger.info(`📊 Résultat final: ${successCount} succès, ${failureCount} échecs sur ${tokens.length} tokens`);
     
     return {
-      success: true,
+      success: successCount > 0,
       successCount,
       failureCount,
-      responses
+      totalTokens: tokens.length,
+      responses: responses.slice(0, 10) // Limiter les réponses pour éviter des payloads trop gros
     };
     
   } catch (error) {
