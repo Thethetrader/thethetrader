@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import {
   ResponsiveContainer,
-  AreaChart,
+  ComposedChart,
   Area,
   Line,
   XAxis,
@@ -138,7 +138,7 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220 }) => 
         </div>
       ) : (
         <ResponsiveContainer width="100%" height={height}>
-          <AreaChart data={sanitizedData}>
+          <ComposedChart data={sanitizedData}>
             <defs>
               {/* Dégradé vert pour valeurs positives */}
               <linearGradient id="dailyPnlAreaPositive" x1="0" y1="0" x2="0" y2="1">
@@ -188,7 +188,7 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220 }) => 
               dataKey="balance"
               stroke="none"
               fill={isPositive ? "url(#dailyPnlAreaPositive)" : "url(#dailyPnlAreaNegative)"}
-              fillOpacity={0.7}
+              fillOpacity={0.5}
               baseLine={0}
               isAnimationActive={false}
             />
@@ -196,12 +196,14 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220 }) => 
               type="monotone"
               dataKey="balance"
               stroke="#ffffff"
-              strokeWidth={3}
+              strokeWidth={2}
               dot={{ r: 4, stroke: '#ffffff', strokeWidth: 2, fill: '#ffffff' }}
               activeDot={{ r: 5, stroke: '#ffffff', strokeWidth: 2, fill: '#1f2937' }}
               isAnimationActive={false}
+              connectNulls={false}
+              z={10}
             />
-          </AreaChart>
+          </ComposedChart>
         </ResponsiveContainer>
       )}
     </div>
