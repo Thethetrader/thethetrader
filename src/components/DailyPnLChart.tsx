@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
 import {
   ResponsiveContainer,
-  LineChart,
+  AreaChart,
+  Area,
   Line,
   XAxis,
   YAxis,
   Tooltip,
-  Area,
 } from 'recharts';
 
 type DailyPnLPoint = {
@@ -106,6 +106,13 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220 }) => 
     return ticks;
   }, [sanitizedData]);
 
+  // Déterminer si la courbe est positive ou négative (basé sur la dernière valeur)
+  const isPositive = useMemo(() => {
+    if (sanitizedData.length === 0) return true;
+    const lastBalance = sanitizedData[sanitizedData.length - 1]?.balance || 0;
+    return lastBalance >= 0;
+  }, [sanitizedData]);
+
   return (
     <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 shadow-inner">
       <div className="flex items-center justify-between mb-3">
@@ -119,7 +126,7 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220 }) => 
         </div>
         <span
           className="text-gray-400 text-sm border border-gray-600 rounded-full w-5 h-5 flex items-center justify-center"
-          title="Somme cumulée du PnL jusqu’à la date affichée"
+          title="Somme cumulée du PnL jusqu'à la date affichée"
         >
           ?
         </span>
@@ -131,12 +138,19 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220 }) => 
         </div>
       ) : (
         <ResponsiveContainer width="100%" height={height}>
-          <LineChart data={sanitizedData}>
+          <AreaChart data={sanitizedData}>
             <defs>
-              <linearGradient id="dailyPnlArea" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="rgba(226, 232, 240, 0.7)" />
-                <stop offset="60%" stopColor="rgba(148, 163, 184, 0.55)" />
-                <stop offset="100%" stopColor="rgba(51, 65, 85, 0.6)" />
+              {/* Dégradé vert pour valeurs positives */}
+              <linearGradient id="dailyPnlAreaPositive" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="rgba(34, 197, 94, 1)" />
+                <stop offset="50%" stopColor="rgba(22, 163, 74, 0.8)" />
+                <stop offset="100%" stopColor="rgba(20, 83, 45, 0.6)" />
+              </linearGradient>
+              {/* Dégradé rouge pour valeurs négatives */}
+              <linearGradient id="dailyPnlAreaNegative" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="rgba(239, 68, 68, 1)" />
+                <stop offset="50%" stopColor="rgba(220, 38, 38, 0.8)" />
+                <stop offset="100%" stopColor="rgba(153, 27, 27, 0.6)" />
               </linearGradient>
             </defs>
 
@@ -173,18 +187,21 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220 }) => 
               type="monotone"
               dataKey="balance"
               stroke="none"
-              fill="url(#dailyPnlArea)"
-              fillOpacity={1}
+              fill={isPositive ? "url(#dailyPnlAreaPositive)" : "url(#dailyPnlAreaNegative)"}
+              fillOpacity={0.7}
+              baseLine={0}
+              isAnimationActive={false}
             />
             <Line
               type="monotone"
               dataKey="balance"
               stroke="#ffffff"
-              strokeWidth={2}
-              dot={{ r: 3, stroke: '#ffffff', strokeWidth: 2, fill: '#ffffff' }}
-              activeDot={{ r: 4, stroke: '#ffffff', strokeWidth: 2, fill: '#1f2937' }}
+              strokeWidth={3}
+              dot={{ r: 4, stroke: '#ffffff', strokeWidth: 2, fill: '#ffffff' }}
+              activeDot={{ r: 5, stroke: '#ffffff', strokeWidth: 2, fill: '#1f2937' }}
+              isAnimationActive={false}
             />
-          </LineChart>
+          </AreaChart>
         </ResponsiveContainer>
       )}
     </div>

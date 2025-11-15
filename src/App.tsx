@@ -1690,6 +1690,22 @@ const App = () => {
                             <span className="text-green-400 font-bold text-lg">✓</span>
                             <span className="font-semibold text-white">Statistiques personnelles</span>
                           </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-red-400 font-bold text-lg">✗</span>
+                            <span className="font-semibold text-white">Formation Setup</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-red-400 font-bold text-lg">✗</span>
+                            <span className="font-semibold text-white">Signaux</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-red-400 font-bold text-lg">✗</span>
+                            <span className="font-semibold text-white">Live streams</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-red-400 font-bold text-lg">✗</span>
+                            <span className="font-semibold text-white">Accès prioritaire aux nouveaux setups</span>
+                          </li>
                         </ul>
                         <div className="mt-auto flex flex-col" style={{ minHeight: '100px' }}>
                           <button 
@@ -1749,11 +1765,7 @@ const App = () => {
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Journal de trading 1 compte</span>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Statistiques de base</span>
+                            <span className="font-semibold text-white">Journal de trading (Peut ajouter jusqu'à 1 compte)</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400 font-bold text-lg">✓</span>
@@ -1827,10 +1839,6 @@ const App = () => {
                           <li className="flex items-center gap-2">
                             <span className="text-green-400 font-bold text-lg">✓</span>
                             <span className="font-semibold text-white">Journal de trading multi-comptes</span>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Statistiques avancées par setup</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400 font-bold text-lg">✓</span>
@@ -5182,6 +5190,22 @@ const App = () => {
                         <span className="text-green-400 font-bold text-lg">✓</span>
                         <span className="font-semibold text-white">Statistiques personnelles</span>
                       </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-red-400 font-bold text-lg">✗</span>
+                        <span className="font-semibold text-white">Formation Setup</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-red-400 font-bold text-lg">✗</span>
+                        <span className="font-semibold text-white">Signaux</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-red-400 font-bold text-lg">✗</span>
+                        <span className="font-semibold text-white">Live streams</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-red-400 font-bold text-lg">✗</span>
+                        <span className="font-semibold text-white">Accès prioritaire aux nouveaux setups</span>
+                      </li>
                     </ul>
                   </div>
                   <button 
@@ -5252,11 +5276,7 @@ const App = () => {
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Journal de trading (1 compte)</span>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Statistiques (de base)</span>
+                        <span className="font-semibold text-white">Journal de trading (Peut ajouter jusqu'à 1 compte)</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-red-400 font-bold text-lg">✗</span>
@@ -5344,10 +5364,6 @@ const App = () => {
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
                         <span className="font-semibold text-white">Journal de trading multi-comptes</span>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Statistiques avancées par setup</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>

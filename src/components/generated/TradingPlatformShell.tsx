@@ -8361,7 +8361,11 @@ export default function TradingPlatformShell() {
             </p>
             <div className="flex justify-end gap-3">
               <button
-                onClick={() => setShowAccessRestrictedPopup(false)}
+                onClick={() => {
+                  setShowAccessRestrictedPopup(false);
+                  // Revenir à la liste des salons
+                  setMobileView('channels');
+                }}
                 className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium"
               >
                 Fermer
