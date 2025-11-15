@@ -310,7 +310,7 @@ export default function AdminInterface() {
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
-
+    
     return () => {
       observer.disconnect();
     };
@@ -858,8 +858,6 @@ export default function AdminInterface() {
   });
   const [showWeekSignalsModal, setShowWeekSignalsModal] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState<number>(0);
-  const [showNotificationDiagnostic, setShowNotificationDiagnostic] = useState(false);
-  const [diagnosticInfo, setDiagnosticInfo] = useState<any>(null);
   
   // Sauvegarder selectedDate dans localStorage
   useEffect(() => {
@@ -2245,96 +2243,6 @@ const dailyPnLChartData = useMemo(
     };
   };
 
-  // Fonction de diagnostic des notifications
-  const checkNotificationStatus = async () => {
-    const info: any = {
-      serviceWorker: null,
-      notifications: null,
-      fcmToken: null,
-      tokensInFirebase: null,
-      errors: []
-    };
-
-    try {
-      // Vérifier le service worker
-      if ('serviceWorker' in navigator) {
-        const registrations = await navigator.serviceWorker.getRegistrations();
-        info.serviceWorker = {
-          supported: true,
-          registered: registrations.length > 0,
-          count: registrations.length,
-          registrations: registrations.map(reg => ({
-            scope: reg.scope,
-            active: reg.active?.state,
-            installing: reg.installing?.state,
-            waiting: reg.waiting?.state
-          }))
-        };
-      } else {
-        info.serviceWorker = { supported: false };
-        info.errors.push('Service Worker non supporté');
-      }
-
-      // Vérifier les permissions de notifications
-      if ('Notification' in window) {
-        info.notifications = {
-          supported: true,
-          permission: Notification.permission,
-          granted: Notification.permission === 'granted'
-        };
-      } else {
-        info.notifications = { supported: false };
-        info.errors.push('Notifications non supportées');
-      }
-
-      // Vérifier le token FCM local
-      const localToken = localStorage.getItem('fcmToken');
-      info.fcmToken = localToken ? {
-        exists: true,
-        token: localToken.substring(0, 30) + '...'
-      } : { exists: false };
-
-      // Vérifier les tokens dans Firebase
-      try {
-        const fcmTokensRef = ref(database, 'fcm_tokens');
-        const snapshot = await get(fcmTokensRef);
-        if (snapshot.exists()) {
-          const tokensData = snapshot.val();
-          const tokens = Object.values(tokensData).map((t: any) => t.token);
-          info.tokensInFirebase = {
-            count: tokens.length,
-            tokens: tokens.map((t: string) => t.substring(0, 30) + '...')
-          };
-        } else {
-          info.tokensInFirebase = { count: 0 };
-        }
-      } catch (error: any) {
-        info.errors.push(`Erreur récupération tokens Firebase: ${error.message}`);
-      }
-
-      // Test de notification locale
-      if (Notification.permission === 'granted' && 'serviceWorker' in navigator) {
-        try {
-          const registration = await navigator.serviceWorker.ready;
-          await registration.showNotification('Test Diagnostic', {
-            body: 'Si tu vois cette notification, le service worker fonctionne',
-            icon: '/FAVICON.png',
-            tag: 'diagnostic-test'
-          });
-          info.localNotificationTest = { success: true };
-        } catch (error: any) {
-          info.localNotificationTest = { success: false, error: error.message };
-          info.errors.push(`Erreur test notification locale: ${error.message}`);
-        }
-      }
-
-    } catch (error: any) {
-      info.errors.push(`Erreur diagnostic: ${error.message}`);
-    }
-
-    setDiagnosticInfo(info);
-    setShowNotificationDiagnostic(true);
-  };
 
   const getWeeklyBreakdown = () => {
     // Utiliser currentDate au lieu de today
@@ -3053,8 +2961,7 @@ const dailyPnLChartData = useMemo(
     { id: 'livestream', name: 'livestream', emoji: '📺', fullName: 'Livestream' },
 
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' },
-    { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' },
-    { id: 'user-management', name: 'user-management', emoji: '👥', fullName: 'Gestion Utilisateurs' }
+    { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' }
   ];
 
   const handleCreateSignal = () => {
@@ -3452,10 +3359,10 @@ const dailyPnLChartData = useMemo(
         
         if (tokens.length > 0) {
           try {
-            const result = await sendNotification({
-              signal: savedSignal,
-              tokens: tokens
-            });
+          const result = await sendNotification({
+            signal: savedSignal,
+            tokens: tokens
+          });
             console.log('✅ Notification push envoyée:', result.data?.successCount || 0, 'succès');
           } catch (notifError: any) {
             console.error('❌ Erreur envoi notification push:', notifError.message);
@@ -4989,9 +4896,9 @@ const dailyPnLChartData = useMemo(
                       {weekData.week}
                     </div>
                     {selectedChannel.id === 'trading-journal' && (
-                      <div className="text-xs text-gray-400">
-                        {weekData.trades} trade{weekData.trades !== 1 ? 's' : ''}
-                      </div>
+                    <div className="text-xs text-gray-400">
+                      {weekData.trades} trade{weekData.trades !== 1 ? 's' : ''}
+                    </div>
                     )}
                   </div>
                   <div className="flex items-center gap-2">
@@ -4999,17 +4906,17 @@ const dailyPnLChartData = useMemo(
                       {weekData.wins === 0 && weekData.losses === 0 ? (
                         <div className="col-span-2 text-sm text-gray-500 text-center">
                           -
-                        </div>
-                      ) : (
+                      </div>
+                    ) : (
                         <>
                           <div className={`text-sm py-1 rounded-lg font-bold shadow-lg border flex items-center justify-center ${weekData.wins > 0 ? 'bg-green-800/30 text-green-200 border-green-600/20' : 'bg-transparent border-transparent'}`} style={{ width: '40px', height: '28px' }}>
                             {weekData.wins > 0 ? `${weekData.wins}W` : ''}
-                          </div>
+                      </div>
                           <div className={`text-sm py-1 rounded-lg font-bold shadow-lg border flex items-center justify-center ${weekData.losses > 0 ? 'bg-red-800/30 text-red-200 border-red-600/20' : 'bg-transparent border-transparent'}`} style={{ width: '40px', height: '28px' }}>
                             {weekData.losses > 0 ? `${weekData.losses}L` : ''}
                           </div>
                         </>
-                      )}
+                    )}
                     </div>
                     <div className={`text-xs ${
                       weekData.pnl > 0 ? 'text-green-400' : 
@@ -5132,7 +5039,15 @@ const dailyPnLChartData = useMemo(
                 scrollToTop();
               }} className={`w-full text-left px-3 py-2 rounded text-sm ${view === 'calendar' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Journal Perso</button>
-              <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>⭐ Livestream Premium</button>
+              <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>
+                <div className="flex items-start gap-2">
+                  <span>⭐</span>
+                  <div className="flex flex-col">
+                    <span>Livestream</span>
+                    <span>Premium</span>
+                  </div>
+                </div>
+              </button>
               <button onClick={() => {
                 // Utiliser la fonction globale pour naviguer vers livestream
                 if ((window as any).setCurrentPage) {
@@ -5222,22 +5137,9 @@ const dailyPnLChartData = useMemo(
               >
                 📝 Notif Custom
               </button>
-              
-              <button 
-                onClick={checkNotificationStatus}
-                className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
-              >
-                🔍 Diagnostic Notif
-              </button>
             </div>
           </div>
 
-          <div>
-            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">ADMIN</h3>
-            <div className="space-y-1">
-              <button onClick={() => handleChannelChange('user-management', 'user-management')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'user-management' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>👥 Gestion Utilisateurs</button>
-            </div>
-          </div>
 
           {/* Bouton déconnexion en bas de la sidebar - Desktop seulement */}
           <div className="mt-4 pt-4 border-t border-gray-700">
@@ -5324,6 +5226,33 @@ const dailyPnLChartData = useMemo(
             }`}
           >
                         <div className="p-4 space-y-6 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
+              <div className="bg-gray-700 rounded-lg p-4">
+                <h4 className="text-base font-medium mb-3 flex items-center justify-center gap-2 text-white">
+                  <span>📊</span>
+                  <span>Statistiques signaux</span>
+                </h4>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-white">Win Rate:</span>
+                    <span className="text-white">{calculateWinRate()}%</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-white">Signaux actifs:</span>
+                    <span className="text-white">{allSignalsForStats.filter(s => s.status === 'ACTIVE').length}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-white">P&L Total:</span>
+                    <span className={calculateTotalPnL() >= 0 ? 'text-green-400' : 'text-red-400'}>
+                      {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-white">Total Trades:</span>
+                    <span className="text-white">{allSignalsForStats.length}</span>
+                  </div>
+                </div>
+              </div>
+
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">ÉDUCATION</h3>
                 <div className="space-y-2">
@@ -5427,66 +5356,22 @@ const dailyPnLChartData = useMemo(
                       </div>
                     </div>
                   </button>
-                  
-                  <button
-                    onClick={() => {
-                      handleChannelChange('livestream', 'livestream');
-                      setMobileView('content');
-                    }}
-                    className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">📺</span>
-                      <div>
-                        <p className="font-medium text-white">Livestream</p>
-                        <p className="text-sm text-gray-400">Streaming en direct</p>
-                      </div>
-                    </div>
-                  </button>
-                </div>
-              </div>
 
-              <div>
-                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">ADMIN</h3>
-                <div className="space-y-2">
-                  {channels.filter(c => ['user-management'].includes(c.id)).map(channel => (
                     <button
-                      key={channel.id}
                       onClick={() => {
-                        handleChannelChange(channel.id, channel.name);
+                      handleChannelChange('livestream', 'livestream');
                         setMobileView('content');
                       }}
                       className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
                       <div className="flex items-center gap-3">
-                        <span className="text-lg">{channel.emoji}</span>
+                      <span className="text-lg">📺</span>
                         <div>
-                          <p className="font-medium text-white">{channel.fullName}</p>
-                          <p className="text-sm text-gray-400">Gestion des utilisateurs</p>
+                        <p className="font-medium text-white">Livestream</p>
+                        <p className="text-sm text-gray-400">Streaming en direct</p>
                         </div>
                       </div>
                     </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="bg-gray-700 rounded-lg p-4">
-                <h4 className="text-sm font-medium mb-3">Statistiques</h4>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Win Rate:</span>
-                    <span className="text-blue-400">{calculateWinRate()}%</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Signaux actifs:</span>
-                    <span className="text-yellow-400">{allSignalsForStats.filter(s => s.status === 'ACTIVE').length}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">P&L Total:</span>
-                    <span className={calculateTotalPnL() >= 0 ? 'text-green-400' : 'text-red-400'}>
-                      {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
-                    </span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -6225,8 +6110,8 @@ const dailyPnLChartData = useMemo(
                                                       </div>
                                                     )}
                                                   </div>
-                                                </div>
-                                              ) : (
+                                      </div>
+                                    ) : (
                                                 <div className="space-y-2">
                                                   <div className="flex items-center gap-2">
                                                     <span className="text-lg">🚀</span>
@@ -6848,57 +6733,133 @@ const dailyPnLChartData = useMemo(
                             <div 
                               className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words"
                               data-signal-id={message.text.includes('[SIGNAL_ID:') ? message.text.match(/\[SIGNAL_ID:([^\]]+)\]/)?.[1] : undefined}
+                              id={`message-${message.id}`}
                             >
                                 <div className="text-white">
-                                  {message.text.includes('[SIGNAL_ID:') ? (
-                                    <>
-                                      {message.text.split('[SIGNAL_ID:')[0]}
-                                      <span className="text-gray-700 text-xs">[SIGNAL_ID:{message.text.split('[SIGNAL_ID:')[1].split(']')[0]}]</span>
-                                      {message.text.split(']').slice(1).join(']')}
-                                      
-                                      {/* Flèche cliquable pour les messages de fermeture */}
                                       {(() => {
-                                        const isClosureMessage = message.text.includes('SIGNAL FERMÉ');
-                                        console.log('🔍 Debug flèche - message.text:', message.text);
-                                        console.log('🔍 Debug flèche - isClosureMessage:', isClosureMessage);
-                                        return isClosureMessage;
-                                      })() && (
-                                        <span 
-                                          className="ml-2 text-blue-400 hover:text-blue-300 cursor-pointer text-lg transition-colors inline-block"
+                                    const signalData = formatSignalMessage(message.text);
+                                    if (signalData) {
+                                      return (
+                                        <div>
+                                          <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
+                                            {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
+                                              <div className="mb-3">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                  <span className="text-xs">📊</span>
+                                                  <span className="text-sm font-semibold text-gray-300">SIGNAL FERMÉ</span>
+                                                </div>
+                                                <div className="text-sm">
+                                                  <div className="flex items-center gap-2 mb-1">
+                                                    <span className={signalData.status === 'WIN' ? 'text-green-400' : 'text-red-400'}>
+                                                      {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
+                                                    </span>
+                                                    {signalData.pnl && (
+                                                      <span className={`text-sm ${signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-400'}`}>
+                                                        P&L: {signalData.pnl}
+                                                      </span>
+                                                    )}
+                                                  </div>
+                                                  {signalData.status === 'LOSS' && signalData.signalId && (
+                                                    <div className="mt-2 pt-2 border-t border-gray-600">
+                                                      <button
                                           onClick={() => {
-                                            const signalIdMatch = message.text.match(/\[SIGNAL_ID:([^\]]+)\]/);
-                                            const signalId = signalIdMatch ? signalIdMatch[1] : '';
-                                            console.log('🔍 Debug flèche - signalId extrait:', signalId);
-                                            console.log('🔍 Debug flèche - message.text:', message.text);
-                                            
-                                            const originalMessage = document.querySelector(`[data-signal-id="${signalId}"]`);
-                                            console.log('🔍 Debug flèche - élément trouvé:', originalMessage);
+                                                          const currentSignalId = signalData.signalId;
+                                                          console.log('🔍 Flèche cliquée - signalId:', currentSignalId);
+                                                          
+                                                          // Chercher le signal d'origine dans les messages
+                                                          const channelMessages = (chatMessages[selectedChannel.id] || []);
+                                                          const originalMessage = channelMessages.find((msg) => {
+                                                            const msgSignalData = formatSignalMessage(msg.text);
+                                                            return msgSignalData && 
+                                                                   msgSignalData.signalId === currentSignalId && 
+                                                                   msgSignalData.status !== 'CLOSED' && 
+                                                                   msgSignalData.status !== 'WIN' && 
+                                                                   msgSignalData.status !== 'LOSS' &&
+                                                                   msg.id !== message.id;
+                                                          });
+                                                          
+                                                          console.log('🔍 Message original trouvé:', originalMessage);
                                             
                                             if (originalMessage) {
-                                              originalMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                              originalMessage.classList.add('ring-2', 'ring-blue-400', 'ring-opacity-50');
+                                                            const element = document.getElementById(`message-${originalMessage.id}`);
+                                                            console.log('🔍 Élément trouvé par ID:', element);
+                                                            if (element) {
+                                                              element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                              element.style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
                                               setTimeout(() => {
-                                                originalMessage.classList.remove('ring-2', 'ring-blue-400', 'ring-opacity-50');
-                                              }, 3000);
-                                              console.log('✅ Navigation vers le signal original réussie');
+                                                                element.style.backgroundColor = '';
+                                                              }, 2000);
                                             } else {
-                                              console.log('❌ Signal original non trouvé');
-                                            }
-                                          }}
-                                          title="Aller au signal original"
-                                        >
-                                          ⬆️
-                                        </span>
-                                      )}
-                                    </>
-                                  ) : (
-                                    message.text
-                                  )}
+                                                              // Fallback : chercher par data-signal-id
+                                                              const fallbackElement = document.querySelector(`[data-signal-id="${currentSignalId}"]`);
+                                                              console.log('🔍 Élément fallback trouvé:', fallbackElement);
+                                                              if (fallbackElement) {
+                                                                const messageContainer = fallbackElement.closest('[id^="message-"]') || fallbackElement.parentElement;
+                                                                if (messageContainer) {
+                                                                  (messageContainer as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                                  (messageContainer as HTMLElement).style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
+                                                                  setTimeout(() => {
+                                                                    (messageContainer as HTMLElement).style.backgroundColor = '';
+                                                                  }, 2000);
+                                                                }
+                                                              }
+                                                            }
+                                                          } else {
+                                                            console.log('❌ Aucun message original trouvé');
+                                                          }
+                                                        }}
+                                                        className="flex items-center gap-1 text-white hover:text-gray-300 transition-colors text-sm font-medium cursor-pointer"
+                                                        title="Remonter au signal d'origine"
+                                                      >
+                                                        <span className="text-lg">⬆️</span>
+                                                        <span>Voir le signal d'origine</span>
+                                                      </button>
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              </div>
+                                            ) : (
+                                              <div className="space-y-2">
+                                                <div className="flex items-center gap-2">
+                                                  <span className="text-lg">🚀</span>
+                                                  <span className="font-bold text-white">
+                                                    {signalData.type} {signalData.symbol}
+                                                  </span>
+                                                  {signalData.timeframe && (
+                                                    <span className="text-sm text-gray-400">{signalData.timeframe}</span>
+                                                  )}
+                                                </div>
+                                                {signalData.entry && (
+                                                  <div className="flex items-center gap-2 text-sm">
+                                                    <span className="text-gray-400">📊</span>
+                                                    <span className="text-white">Entry: {signalData.entry}</span>
+                                                  </div>
+                                                )}
+                                                {signalData.rr && (
+                                                  <div className="flex items-center gap-2 text-sm">
+                                                    <span className="text-gray-400">🎯</span>
+                                                    <span className="text-white">R:R ≈ {signalData.rr}</span>
+                                                  </div>
+                                                )}
+                                                {signalData.timeframe && (
+                                                  <div className="flex items-center gap-2 text-sm">
+                                                    <span className="text-gray-400">⏰</span>
+                                                    <span className="text-white">{signalData.timeframe}</span>
+                                                  </div>
+                                                )}
+                                              </div>
+                                            )}
+                                          </div>
+                                        </div>
+                                      );
+                                    }
+                                    return message.text;
+                                  })()}
                                 </div>
                                 {message.attachment_data && (
                                   <div className="mt-2">
                                     {true ? (
-                                      <div className="relative">
+                                      <div className="relative flex flex-col items-center">
                                         <img 
                                           src={message.attachment_data} 
                                           alt="Attachment"
@@ -8112,129 +8073,6 @@ const dailyPnLChartData = useMemo(
         </div>
       )}
 
-      {/* Modal de diagnostic des notifications */}
-      {showNotificationDiagnostic && diagnosticInfo && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-white">🔍 Diagnostic des Notifications</h3>
-              <button
-                onClick={() => setShowNotificationDiagnostic(false)}
-                className="text-gray-400 hover:text-white text-2xl"
-              >
-                ×
-              </button>
-            </div>
-            
-            <div className="space-y-4">
-              {/* Service Worker */}
-              <div className="bg-gray-700 rounded-lg p-4">
-                <h4 className="text-white font-semibold mb-2">Service Worker</h4>
-                {diagnosticInfo.serviceWorker?.supported ? (
-                  <div className="text-sm text-gray-300 space-y-1">
-                    <div>✅ Supporté: Oui</div>
-                    <div>{diagnosticInfo.serviceWorker.registered ? '✅' : '❌'} Enregistré: {diagnosticInfo.serviceWorker.registered ? 'Oui' : 'Non'}</div>
-                    <div>Nombre: {diagnosticInfo.serviceWorker.count}</div>
-                    {diagnosticInfo.serviceWorker.registrations?.map((reg: any, i: number) => (
-                      <div key={i} className="ml-4 text-xs">
-                        Scope: {reg.scope}<br/>
-                        État actif: {reg.active || 'N/A'}<br/>
-                        État installation: {reg.installing || 'N/A'}<br/>
-                        État attente: {reg.waiting || 'N/A'}
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-sm text-red-400">❌ Service Worker non supporté</div>
-                )}
-              </div>
-
-              {/* Permissions */}
-              <div className="bg-gray-700 rounded-lg p-4">
-                <h4 className="text-white font-semibold mb-2">Permissions</h4>
-                {diagnosticInfo.notifications?.supported ? (
-                  <div className="text-sm text-gray-300 space-y-1">
-                    <div>✅ Supporté: Oui</div>
-                    <div>Permission: {diagnosticInfo.notifications.permission}</div>
-                    <div>{diagnosticInfo.notifications.granted ? '✅' : '❌'} Accordée: {diagnosticInfo.notifications.granted ? 'Oui' : 'Non'}</div>
-                  </div>
-                ) : (
-                  <div className="text-sm text-red-400">❌ Notifications non supportées</div>
-                )}
-              </div>
-
-              {/* Token FCM Local */}
-              <div className="bg-gray-700 rounded-lg p-4">
-                <h4 className="text-white font-semibold mb-2">Token FCM Local</h4>
-                {diagnosticInfo.fcmToken?.exists ? (
-                  <div className="text-sm text-gray-300">
-                    <div>✅ Token présent</div>
-                    <div className="text-xs text-gray-400 mt-1">{diagnosticInfo.fcmToken.token}</div>
-                  </div>
-                ) : (
-                  <div className="text-sm text-red-400">❌ Aucun token FCM local</div>
-                )}
-              </div>
-
-              {/* Tokens Firebase */}
-              <div className="bg-gray-700 rounded-lg p-4">
-                <h4 className="text-white font-semibold mb-2">Tokens dans Firebase</h4>
-                {diagnosticInfo.tokensInFirebase?.count > 0 ? (
-                  <div className="text-sm text-gray-300 space-y-1">
-                    <div>✅ Nombre de tokens: {diagnosticInfo.tokensInFirebase.count}</div>
-                    {diagnosticInfo.tokensInFirebase.tokens?.map((token: string, i: number) => (
-                      <div key={i} className="text-xs text-gray-400 ml-4">{token}</div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-sm text-red-400">❌ Aucun token dans Firebase</div>
-                )}
-              </div>
-
-              {/* Test notification locale */}
-              {diagnosticInfo.localNotificationTest && (
-                <div className="bg-gray-700 rounded-lg p-4">
-                  <h4 className="text-white font-semibold mb-2">Test Notification Locale</h4>
-                  {diagnosticInfo.localNotificationTest.success ? (
-                    <div className="text-sm text-green-400">✅ Notification locale envoyée avec succès</div>
-                  ) : (
-                    <div className="text-sm text-red-400">
-                      ❌ Erreur: {diagnosticInfo.localNotificationTest.error}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Erreurs */}
-              {diagnosticInfo.errors.length > 0 && (
-                <div className="bg-red-900/30 rounded-lg p-4">
-                  <h4 className="text-red-400 font-semibold mb-2">Erreurs</h4>
-                  <div className="text-sm text-red-300 space-y-1">
-                    {diagnosticInfo.errors.map((error: string, i: number) => (
-                      <div key={i}>• {error}</div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="mt-6 flex gap-3">
-              <button
-                onClick={checkNotificationStatus}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium"
-              >
-                🔄 Actualiser
-              </button>
-              <button
-                onClick={() => setShowNotificationDiagnostic(false)}
-                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium"
-              >
-                Fermer
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Modal de notification livestream personnalisée */}
       {showLivestreamModal && (

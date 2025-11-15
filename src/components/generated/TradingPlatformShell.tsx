@@ -5098,7 +5098,15 @@ export default function TradingPlatformShell() {
                 <button onClick={() => handleChannelChange('journal', 'journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 Trading Journal</button>
               )}
               {channels.find(c => c.id === 'livestream-premium') && (
-                <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>⭐ Livestream Premium</button>
+                <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>
+                  <div className="flex items-start gap-2">
+                    <span>⭐</span>
+                    <div className="flex flex-col">
+                      <span>Livestream</span>
+                      <span>Premium</span>
+                    </div>
+                  </div>
+                </button>
               )}
               {channels.find(c => c.id === 'video') && (
                 <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
@@ -6353,39 +6361,46 @@ export default function TradingPlatformShell() {
                                                           const currentSignalId = signalData.signalId;
                                                           console.log('🔍 Flèche cliquée - signalId:', currentSignalId);
                                                           
-                                                          // Chercher directement par data-signal-id
-                                                          const allElements = document.querySelectorAll(`[data-signal-id="${currentSignalId}"]`);
-                                                          console.log('🔍 Éléments trouvés avec data-signal-id:', allElements.length);
+                                                          // Chercher le signal d'origine dans les messages
+                                                          const channelMessages = (messages[selectedChannel.id] || []);
+                                                          const originalMessage = channelMessages.find((msg) => {
+                                                            const msgSignalData = formatSignalMessage(msg.text);
+                                                            return msgSignalData && 
+                                                                   msgSignalData.signalId === currentSignalId && 
+                                                                   msgSignalData.status !== 'CLOSED' && 
+                                                                   msgSignalData.status !== 'WIN' && 
+                                                                   msgSignalData.status !== 'LOSS' &&
+                                                                   msg.id !== message.id;
+                                                          });
                                                           
-                                                          // Prendre le premier élément qui n'est pas le message actuel
-                                                          let targetElement: HTMLElement | null = null;
-                                                          for (let i = 0; i < allElements.length; i++) {
-                                                            const el = allElements[i] as HTMLElement;
-                                                            // Vérifier que ce n'est pas le message de fermeture actuel
-                                                            const parentMessage = el.closest('[id^="message-"]');
-                                                            if (parentMessage && parentMessage.id !== `message-${message.id}`) {
-                                                              targetElement = el;
-                                                              break;
-                                                            }
-                                                          }
+                                                          console.log('🔍 Message original trouvé:', originalMessage);
                                                           
-                                                          if (!targetElement && allElements.length > 0) {
-                                                            // Si pas trouvé, prendre le premier
-                                                            targetElement = allElements[0] as HTMLElement;
-                                                          }
-                                                          
-                                                          if (targetElement) {
-                                                            console.log('🔍 Élément cible trouvé:', targetElement);
-                                                            const messageContainer = targetElement.closest('[id^="message-"]') || targetElement.parentElement;
-                                                            if (messageContainer) {
-                                                              (messageContainer as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                                              (messageContainer as HTMLElement).style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
+                                                          if (originalMessage) {
+                                                            const element = document.getElementById(`message-${originalMessage.id}`);
+                                                            console.log('🔍 Élément trouvé par ID:', element);
+                                                            if (element) {
+                                                              element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                              element.style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
                                                               setTimeout(() => {
-                                                                (messageContainer as HTMLElement).style.backgroundColor = '';
+                                                                element.style.backgroundColor = '';
                                                               }, 2000);
+                                                            } else {
+                                                              // Fallback : chercher par data-signal-id
+                                                              const fallbackElement = document.querySelector(`[data-signal-id="${currentSignalId}"]`);
+                                                              console.log('🔍 Élément fallback trouvé:', fallbackElement);
+                                                              if (fallbackElement) {
+                                                                const messageContainer = fallbackElement.closest('[id^="message-"]') || fallbackElement.parentElement;
+                                                                if (messageContainer) {
+                                                                  (messageContainer as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                                  (messageContainer as HTMLElement).style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
+                                                                  setTimeout(() => {
+                                                                    (messageContainer as HTMLElement).style.backgroundColor = '';
+                                                                  }, 2000);
+                                                                }
+                                                              }
                                                             }
                                                           } else {
-                                                            console.log('❌ Aucun élément trouvé');
+                                                            console.log('❌ Aucun message original trouvé');
                                                           }
                                                         }}
                                                         className="flex items-center gap-1 text-white hover:text-gray-300 transition-colors text-sm font-medium cursor-pointer"
@@ -7099,39 +7114,46 @@ export default function TradingPlatformShell() {
                                                           const currentSignalId = signalData.signalId;
                                                           console.log('🔍 Flèche cliquée - signalId:', currentSignalId);
                                                           
-                                                          // Chercher directement par data-signal-id
-                                                          const allElements = document.querySelectorAll(`[data-signal-id="${currentSignalId}"]`);
-                                                          console.log('🔍 Éléments trouvés avec data-signal-id:', allElements.length);
+                                                          // Chercher le signal d'origine dans les messages
+                                                          const channelMessages = (messages[selectedChannel.id] || []);
+                                                          const originalMessage = channelMessages.find((msg) => {
+                                                            const msgSignalData = formatSignalMessage(msg.text);
+                                                            return msgSignalData && 
+                                                                   msgSignalData.signalId === currentSignalId && 
+                                                                   msgSignalData.status !== 'CLOSED' && 
+                                                                   msgSignalData.status !== 'WIN' && 
+                                                                   msgSignalData.status !== 'LOSS' &&
+                                                                   msg.id !== message.id;
+                                                          });
                                                           
-                                                          // Prendre le premier élément qui n'est pas le message actuel
-                                                          let targetElement: HTMLElement | null = null;
-                                                          for (let i = 0; i < allElements.length; i++) {
-                                                            const el = allElements[i] as HTMLElement;
-                                                            // Vérifier que ce n'est pas le message de fermeture actuel
-                                                            const parentMessage = el.closest('[id^="message-"]');
-                                                            if (parentMessage && parentMessage.id !== `message-${message.id}`) {
-                                                              targetElement = el;
-                                                              break;
-                                                            }
-                                                          }
+                                                          console.log('🔍 Message original trouvé:', originalMessage);
                                                           
-                                                          if (!targetElement && allElements.length > 0) {
-                                                            // Si pas trouvé, prendre le premier
-                                                            targetElement = allElements[0] as HTMLElement;
-                                                          }
-                                                          
-                                                          if (targetElement) {
-                                                            console.log('🔍 Élément cible trouvé:', targetElement);
-                                                            const messageContainer = targetElement.closest('[id^="message-"]') || targetElement.parentElement;
-                                                            if (messageContainer) {
-                                                              (messageContainer as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                                              (messageContainer as HTMLElement).style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
+                                                          if (originalMessage) {
+                                                            const element = document.getElementById(`message-${originalMessage.id}`);
+                                                            console.log('🔍 Élément trouvé par ID:', element);
+                                                            if (element) {
+                                                              element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                              element.style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
                                                               setTimeout(() => {
-                                                                (messageContainer as HTMLElement).style.backgroundColor = '';
+                                                                element.style.backgroundColor = '';
                                                               }, 2000);
+                                                            } else {
+                                                              // Fallback : chercher par data-signal-id
+                                                              const fallbackElement = document.querySelector(`[data-signal-id="${currentSignalId}"]`);
+                                                              console.log('🔍 Élément fallback trouvé:', fallbackElement);
+                                                              if (fallbackElement) {
+                                                                const messageContainer = fallbackElement.closest('[id^="message-"]') || fallbackElement.parentElement;
+                                                                if (messageContainer) {
+                                                                  (messageContainer as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                                  (messageContainer as HTMLElement).style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
+                                                                  setTimeout(() => {
+                                                                    (messageContainer as HTMLElement).style.backgroundColor = '';
+                                                                  }, 2000);
+                                                                }
+                                                              }
                                                             }
                                                           } else {
-                                                            console.log('❌ Aucun élément trouvé');
+                                                            console.log('❌ Aucun message original trouvé');
                                                           }
                                                         }}
                                                         className="flex items-center gap-1 text-white hover:text-gray-300 transition-colors text-sm font-medium cursor-pointer"
