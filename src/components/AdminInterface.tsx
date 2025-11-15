@@ -4077,8 +4077,8 @@ const dailyPnLChartData = useMemo(
               <select
                 value={selectedAccount}
                 onChange={(e) => handleAccountChange(e.target.value)}
-                className="bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/50 text-yellow-300 hover:text-yellow-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-yellow-500 cursor-pointer h-9"
-                style={{ height: '36px' }}
+                className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-green-500 cursor-pointer h-9"
+                style={{ height: '36px', background: 'rgba(34, 197, 94, 0.2)' }}
               >
                 <option value="Tous les comptes">📊 Tous les comptes</option>
                 {tradingAccounts.map((account) => (
@@ -4099,7 +4099,7 @@ const dailyPnLChartData = useMemo(
               className={`px-3 py-2 rounded-lg text-sm font-medium ${
                 tradingAccounts.length === 0
                   ? 'bg-gray-700 border border-gray-600 text-gray-500 cursor-not-allowed'
-                  : 'bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 text-blue-300 hover:text-blue-200'
+                  : 'bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200'
               }`}
               title="Options du compte"
             >
@@ -4133,8 +4133,8 @@ const dailyPnLChartData = useMemo(
               <select
                 value={selectedAccount}
                 onChange={(e) => handleAccountChange(e.target.value)}
-                    className="bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/50 text-yellow-300 hover:text-yellow-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-yellow-500 cursor-pointer h-9"
-                    style={{ height: '36px' }}
+                    className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-green-500 cursor-pointer h-9"
+                    style={{ height: '36px', background: 'rgba(34, 197, 94, 0.2)' }}
               >
                     <option value="Tous les comptes">📊 Tous les comptes</option>
                 {tradingAccounts.map((account) => (
@@ -4155,7 +4155,7 @@ const dailyPnLChartData = useMemo(
               className={`px-3 py-2 rounded-lg text-sm font-medium ${
                 tradingAccounts.length === 0
                   ? 'bg-gray-700 border border-gray-600 text-gray-500 cursor-not-allowed'
-                  : 'bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 text-blue-300 hover:text-blue-200'
+                  : 'bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200'
               }`}
                   title="Options du compte"
             >
@@ -4703,7 +4703,7 @@ const dailyPnLChartData = useMemo(
 
             {isMobile && dailyPnLChartData.length > 0 && (
               <div className="mt-3">
-                <DailyPnLChart data={dailyPnLChartData} />
+                <DailyPnLChart data={dailyPnLChartData} height={450} />
               </div>
             )}
 
@@ -5127,13 +5127,33 @@ const dailyPnLChartData = useMemo(
                 </div>
               </div>
 
-
+              <div>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">SIGNAUX</h3>
+                <div className="space-y-2">
+                  {channels.filter(c => ['general-chat-2', 'general-chat-3', 'general-chat-4'].includes(c.id)).map(channel => (
+                    <button
+                      key={channel.id}
+                      onClick={() => {
+                        handleChannelChange(channel.id, channel.name);
+                        setMobileView('content');
+                      }}
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">{channel.emoji}</span>
+                        <div>
+                          <p className="font-medium text-white">{channel.fullName}</p>
+                          <p className="text-sm text-gray-400">Signaux de trading</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
 
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">TRADING HUB</h3>
                 <div className="space-y-2">
-                  
-                  
                   <button
                     onClick={() => {
                       // Réinitialiser selectedDate si on quitte le Trading Journal

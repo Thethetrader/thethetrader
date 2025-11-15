@@ -113,6 +113,8 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220 }) => 
     return lastBalance >= 0;
   }, [sanitizedData]);
 
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  
   return (
     <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 shadow-inner">
       <div className="flex items-center justify-between mb-3">
@@ -137,7 +139,13 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220 }) => 
           Aucune donnée disponible pour le mois en cours.
         </div>
       ) : (
-        <ResponsiveContainer width="100%" height={height}>
+        <div style={{ 
+          width: isMobile ? 'calc(100% + 2rem)' : '100%',
+          marginLeft: isMobile ? '-2rem' : '0',
+          marginBottom: isMobile ? '-1rem' : '0',
+          paddingBottom: isMobile ? '1rem' : '0'
+        }}>
+          <ResponsiveContainer width="100%" height={height}>
           <ComposedChart data={sanitizedData}>
             <defs>
               {/* Dégradé vert pour valeurs positives */}
@@ -180,8 +188,39 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220 }) => 
                 borderRadius: '8px',
                 color: '#f8fafc',
               }}
-              formatter={(value: number) => [formatBalance(value), 'Balance']}
-              labelFormatter={(label) => `Date : ${formatXAxisLabel(label)}`}
+              content={({ active, payload, label }) => {
+                if (!active || !payload || !payload.length) return null;
+                
+                const value = payload[0].value as number;
+                const currentIndex = sanitizedData.findIndex(d => d.date === label);
+                const previousBalance = currentIndex > 0 ? sanitizedData[currentIndex - 1].balance : 0;
+                const dailyPnL = value - previousBalance;
+                
+                return (
+                  <div style={{
+                    backgroundColor: '#1f2937',
+                    border: '1px solid #4b5563',
+                    borderRadius: '8px',
+                    padding: '12px',
+                  }}>
+                    <p style={{ margin: '0 0 8px 0', color: '#f8fafc', fontWeight: 'bold' }}>
+                      Date : {formatXAxisLabel(label)}
+                    </p>
+                    <p style={{ margin: '4px 0', color: '#94a3b8' }}>
+                      <span style={{ color: '#f8fafc', marginRight: '8px' }}>PnL:</span>
+                      <span style={{ color: dailyPnL >= 0 ? '#22c55e' : '#ef4444', fontWeight: 'bold' }}>
+                        {formatBalance(dailyPnL)}
+                      </span>
+                    </p>
+                    <p style={{ margin: '4px 0', color: '#94a3b8' }}>
+                      <span style={{ color: '#f8fafc', marginRight: '8px' }}>Balance:</span>
+                      <span style={{ color: value >= 0 ? '#22c55e' : '#ef4444', fontWeight: 'bold' }}>
+                        {formatBalance(value)}
+                      </span>
+                    </p>
+                  </div>
+                );
+              }}
             />
             <Area
               type="monotone"
@@ -205,6 +244,7 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220 }) => 
             />
           </ComposedChart>
         </ResponsiveContainer>
+        </div>
       )}
     </div>
   );

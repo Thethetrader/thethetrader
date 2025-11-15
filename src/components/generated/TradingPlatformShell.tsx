@@ -5355,8 +5355,8 @@ export default function TradingPlatformShell() {
                             <select
                               value={selectedAccount}
                               onChange={(e) => handleAccountChange(e.target.value)}
-                              className="bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/50 text-yellow-300 hover:text-yellow-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-yellow-500 cursor-pointer h-9"
-                  style={{ height: '36px' }}
+                              className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-green-500 cursor-pointer h-9"
+                  style={{ height: '36px', background: 'rgba(34, 197, 94, 0.2)' }}
                             >
                               <option value="Tous les comptes">📊 Tous les comptes</option>
                               {tradingAccounts.map((account) => (
@@ -5377,7 +5377,7 @@ export default function TradingPlatformShell() {
                             className={`px-3 py-2 rounded-lg text-sm font-medium ${
                               tradingAccounts.length === 0
                                 ? 'bg-gray-700 border border-gray-600 text-gray-500 cursor-not-allowed'
-                                : 'bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 text-blue-300 hover:text-blue-200'
+                                : 'bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200'
                             }`}
                             title="Options du compte"
                           >
