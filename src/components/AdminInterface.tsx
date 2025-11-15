@@ -6905,7 +6905,6 @@ const dailyPnLChartData = useMemo(
                                           className="mt-2 max-w-xs max-h-48 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
                                           onClick={() => setSelectedImage(message.attachment_data)}
                                         />
-                                        <div className="text-xs text-gray-400 mt-1">Cliquez pour agrandir</div>
                                       </div>
                                     ) : (
                                       <div className="flex items-center gap-2 text-blue-400">

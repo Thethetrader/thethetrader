@@ -1014,6 +1014,7 @@ export default function TradingPlatformShell() {
   // Fonction pour charger les messages depuis Firebase
   const loadMessages = async (channelId: string, keepPosition: boolean = false) => {
     try {
+      console.log(`🔄 Chargement messages pour ${channelId}...`);
       // Charger TOUS les messages (999999 = illimité)
       const messages = await getMessages(channelId, 999999);
       const isChatChannel = ['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', 'livestream-premium'].includes(channelId);
@@ -1021,33 +1022,59 @@ export default function TradingPlatformShell() {
       // Afficher TOUS les messages directement sans limite
       const limitedMessages = isChatChannel ? messages : messages.reverse();
       
-      const formattedMessages = limitedMessages.map(msg => ({
-        id: msg.id || '',
-        text: msg.content,
-        timestamp: new Date(msg.timestamp || Date.now()).toLocaleString('fr-FR', { 
-          day: '2-digit', 
-          month: '2-digit', 
-          hour: '2-digit', 
-          minute: '2-digit' 
-        }),
-        author: msg.author,
-        author_avatar: msg.author_avatar,
-        attachment: undefined,
-        attachment_data: msg.attachment_data
-      }));
-      
-      setMessages(prev => ({
-        ...prev,
-        [channelId]: formattedMessages.map(msg => ({
-          id: msg.id,
-          text: msg.text,
-          user: msg.author,
+      const formattedMessages = limitedMessages.map(msg => {
+        const originalTimestamp = msg.timestamp || Date.now();
+        return {
+          id: msg.id || '',
+          text: msg.content,
+          timestamp: new Date(originalTimestamp).toLocaleString('fr-FR', { 
+            day: '2-digit', 
+            month: '2-digit', 
+            hour: '2-digit', 
+            minute: '2-digit' 
+          }),
+          originalTimestamp: typeof originalTimestamp === 'number' ? originalTimestamp : new Date(originalTimestamp).getTime(),
           author: msg.author,
           author_avatar: msg.author_avatar,
-          timestamp: msg.timestamp,
+          attachment: undefined,
           attachment_data: msg.attachment_data
-        }))
-      }));
+        };
+      });
+      
+      setMessages(prev => {
+        // Pour les canaux de chat, remplacer complètement pour éviter les doublons
+        // mais préserver les nouveaux messages arrivés entre temps
+        const existingMessages = prev[channelId] || [];
+        const existingIds = new Set(existingMessages.map(m => m.id));
+        
+        // Si on recharge, on remplace mais on garde les nouveaux messages qui ne sont pas dans le chargement
+        const loadedIds = new Set(formattedMessages.map(m => m.id));
+        const newMessagesNotInLoad = existingMessages.filter(m => !loadedIds.has(m.id));
+        
+        // Combiner les messages chargés avec les nouveaux messages
+        const allMessages = [...formattedMessages, ...newMessagesNotInLoad];
+        
+        // Trier par timestamp original pour garder l'ordre chronologique
+        const sortedMessages = allMessages.sort((a, b) => {
+          const timeA = (a as any).originalTimestamp || new Date(a.timestamp).getTime();
+          const timeB = (b as any).originalTimestamp || new Date(b.timestamp).getTime();
+          return timeA - timeB;
+        });
+        
+        return {
+          ...prev,
+          [channelId]: sortedMessages.map(msg => ({
+            id: msg.id,
+            text: msg.text,
+            user: msg.author,
+            author: msg.author,
+            author_avatar: msg.author_avatar,
+            timestamp: msg.timestamp,
+            attachment_data: msg.attachment_data,
+            originalTimestamp: (msg as any).originalTimestamp
+          }))
+        };
+      });
       
       console.log(`✅ Messages chargés pour ${channelId}:`, formattedMessages.length, '/', messages.length);
       
@@ -1208,6 +1235,34 @@ export default function TradingPlatformShell() {
       return subscribeToMessages(channelId, (newMessage) => {
         console.log(`🔄 Nouveau message reçu dans ${channelId}:`, newMessage);
         
+        // Mettre à jour les messages dans l'état
+        setMessages(prev => {
+          const channelMessages = prev[channelId] || [];
+          // Vérifier si le message existe déjà
+          const messageExists = channelMessages.some(msg => msg.id === newMessage.id);
+          if (!messageExists) {
+            const formattedMessage = {
+              id: newMessage.id || '',
+              text: newMessage.content || newMessage.text || '',
+              user: newMessage.author || 'Admin',
+              author: newMessage.author || 'Admin',
+              author_avatar: newMessage.author_avatar,
+              timestamp: new Date(newMessage.timestamp || Date.now()).toLocaleString('fr-FR', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                hour: '2-digit', 
+                minute: '2-digit' 
+              }),
+              attachment_data: newMessage.attachment_data
+            };
+            return {
+              ...prev,
+              [channelId]: [...channelMessages, formattedMessage]
+            };
+          }
+          return prev;
+        });
+        
         // Compter les nouveaux messages seulement si on n'est pas dans ce canal
         if (selectedChannel.id !== channelId) {
           console.log(`📊 Incrementing unread count for ${channelId}`);
@@ -1215,6 +1270,11 @@ export default function TradingPlatformShell() {
             ...prev,
             [channelId]: (prev[channelId] || 0) + 1
           }));
+        } else {
+          // Si on est dans le canal, scroller vers le bas
+          setTimeout(() => {
+            scrollToBottom();
+          }, 100);
         }
       });
     });
@@ -1222,7 +1282,7 @@ export default function TradingPlatformShell() {
     return () => {
       subscriptions.forEach(sub => sub.unsubscribe());
     };
-  }, []); // Supprimer selectedChannel.id de la dépendance
+  }, [selectedChannel.id]); // Ajouter selectedChannel.id pour accéder à la valeur actuelle
 
   // Charger les données quand on change de canal
   useEffect(() => {
@@ -3023,6 +3083,78 @@ export default function TradingPlatformShell() {
     }
     
     return weeks;
+  };
+
+  // Fonction pour formater les messages de signal
+  const formatSignalMessage = (text: string) => {
+    // Détecter si c'est un signal (contient SIGNAL_ID ou format de signal)
+    const signalIdMatch = text.match(/\[SIGNAL_ID[:\s]+([^\]]+)\]/);
+    if (!signalIdMatch) return null;
+
+    // Parser les informations du signal
+    const lines = text.split('\n');
+    let signalType = '';
+    let symbol = '';
+    let entry = '';
+    let tp = '';
+    let sl = '';
+    let timeframe = '';
+    let rr = '';
+    let status = '';
+    let pnl = '';
+    let closeMessage = '';
+
+    lines.forEach(line => {
+      if (line.includes('🚀') || line.includes('**')) {
+        const match = line.match(/\*\*([A-Z]+)\s+([A-Z0-9]+)\**/);
+        if (match) {
+          signalType = match[1];
+          symbol = match[2];
+        }
+      }
+      if (line.includes('Entry:')) {
+        entry = line.split('Entry:')[1]?.trim() || '';
+      }
+      if (line.includes('TP:')) {
+        tp = line.split('TP:')[1]?.split('SL:')[0]?.trim() || '';
+        sl = line.split('SL:')[1]?.trim() || '';
+      }
+      if (line.includes('⏰')) {
+        timeframe = line.split('⏰')[1]?.trim() || '';
+      }
+      if (line.includes('R:R')) {
+        rr = line.split('R:R')[1]?.trim() || '';
+      }
+      if (line.includes('SIGNAL FERMÉ') || line.includes('fermé Résultat:')) {
+        status = 'CLOSED';
+      }
+      if (line.includes('GAGNANT')) {
+        status = 'WIN';
+      }
+      if (line.includes('PERDANT')) {
+        status = 'LOSS';
+      }
+      if (line.includes('P&L:')) {
+        pnl = line.split('P&L:')[1]?.trim() || '';
+      }
+      if (line.includes('fermé Résultat:') && !closeMessage) {
+        closeMessage = line;
+      }
+    });
+
+    return {
+      signalId: signalIdMatch[1],
+      type: signalType,
+      symbol,
+      entry,
+      tp,
+      sl,
+      timeframe,
+      rr,
+      status,
+      pnl,
+      closeMessage
+    };
   };
 
   // Fonction pour ajouter une réaction flamme à un message (côté utilisateur)
@@ -6167,7 +6299,7 @@ export default function TradingPlatformShell() {
                           }
 
                           return (
-                            <div key={message.id}>
+                            <div key={message.id} id={`message-${message.id}`}>
                               {/* Message */}
                               <div className="flex items-start gap-3">
                             <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
@@ -6191,93 +6323,124 @@ export default function TradingPlatformShell() {
                                 data-signal-id={message.text.includes('[SIGNAL_ID:') ? message.text.match(/\[SIGNAL_ID:([^\]]+)\]/)?.[1] : undefined}
                               >
                                 <div className="text-white">
-                                  {message.text.includes('[SIGNAL_ID:') ? (
-                                    <>
-                                      {message.text.split('[SIGNAL_ID:')[0]}
-                                      <span className="text-gray-700 text-xs">[SIGNAL_ID:{message.text.split('[SIGNAL_ID:')[1].split(']')[0]}]</span>
-                                      {message.text.split(']').slice(1).join(']')}
-                                      
-                                      {/* Flèche cliquable pour les messages de fermeture */}
-                                      {(() => {
-                                        const isClosureMessage = message.text.includes('SIGNAL FERMÉ');
-                                        console.log('🔍 Debug flèche USER - message.text:', message.text);
-                                        console.log('🔍 Debug flèche USER - isClosureMessage:', isClosureMessage);
-                                        if (isClosureMessage) {
-                                          console.log('✅ Flèche USER devrait apparaître !');
-                                        }
-                                        return isClosureMessage;
-                                      })() && (
-                                        <span 
-                                          className="ml-2 text-blue-400 hover:text-blue-300 cursor-pointer text-2xl transition-colors inline-block bg-blue-500/20 px-2 py-1 rounded-lg hover:bg-blue-500/30"
-                                          onClick={() => {
-                                            const signalIdMatch = message.text.match(/\[SIGNAL_ID:([^\]]+)\]/);
-                                            const signalId = signalIdMatch ? signalIdMatch[1] : '';
-                                            console.log('🔍 Debug flèche USER - signalId extrait:', signalId);
-                                            console.log('🔍 Debug flèche USER - message.text:', message.text);
-                                            
-                                            const originalMessage = document.querySelector(`[data-signal-id="${signalId}"]`);
-                                            console.log('🔍 Debug flèche USER - élément trouvé:', originalMessage);
-                                            console.log('🔍 Debug flèche USER - sélecteur utilisé:', `[data-signal-id="${signalId}"]`);
-                                            
-                                            // Chercher tous les éléments avec data-signal-id
-                                            const allSignalElements = document.querySelectorAll('[data-signal-id]');
-                                            console.log('🔍 Debug flèche USER - tous les éléments signal:', allSignalElements);
-                                            
-                                            if (originalMessage && (originalMessage as HTMLElement).offsetParent !== null) {
-                                              console.log('🔍 Debug flèche USER - scroll vers élément:', originalMessage);
-                                              console.log('🔍 Debug flèche USER - élément visible:', (originalMessage as HTMLElement).offsetParent !== null);
-                                              console.log('🔍 Debug flèche USER - élément dans viewport:', originalMessage.getBoundingClientRect());
-                                              
-                                              // Forcer le scroll vers le haut de la page d'abord
-                                              window.scrollTo({ top: 0, behavior: 'smooth' });
-                                              
-                                              setTimeout(() => {
-                                                originalMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                                originalMessage.classList.add('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
-                                                setTimeout(() => {
-                                                  originalMessage.classList.remove('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
-                                                }, 5000);
-                                              }, 500);
-                                              
-                                              console.log('✅ Navigation USER vers le signal original réussie');
-                                            } else {
-                                              console.log('❌ Signal original USER non trouvé');
-                                              console.log('🔍 Debug flèche USER - recherche alternative...');
-                                              
-                                              // Recherche simple par contenu dans toute la page
-                                              const allDivs = document.querySelectorAll('div');
-                                              let foundMessage = null;
-                                              
-                                              for (let div of allDivs) {
-                                                if (div.textContent && div.textContent.includes(signalId) && div.classList.contains('bg-gray-700')) {
-                                                  foundMessage = div;
-                                                  console.log('🔍 Debug flèche USER - message trouvé par contenu:', foundMessage);
-                                                  break;
-                                                }
-                                              }
-                                              
-                                              if (foundMessage) {
-                                                // Scroll direct vers le message trouvé
-                                                foundMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                                foundMessage.classList.add('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
-                                                setTimeout(() => {
-                                                  foundMessage.classList.remove('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
-                                                }, 5000);
-                                                console.log('✅ Navigation USER réussie par contenu');
-                                              } else {
-                                                console.log('❌ Aucun message trouvé avec ce signalId dans toute la page');
-                                              }
-                                            }
-                                          }}
-                                          title="Aller au signal original"
-                                        >
-                                          ⬆️
-                                        </span>
-                                      )}
-                                    </>
-                                  ) : (
-                                    message.text
-                                  )}
+                                  {(() => {
+                                    const signalData = formatSignalMessage(message.text);
+                                    if (signalData) {
+                                      return (
+                                        <div>
+                                          <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
+                                            {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
+                                              <div className="mb-3">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                  <span className="text-xs">📊</span>
+                                                  <span className="text-sm font-semibold text-gray-300">SIGNAL FERMÉ</span>
+                                                </div>
+                                                <div className="text-sm">
+                                                  <div className="flex items-center gap-2 mb-1">
+                                                    <span className={signalData.status === 'WIN' ? 'text-green-400' : 'text-red-400'}>
+                                                      {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
+                                                    </span>
+                                                  </div>
+                                                  {signalData.pnl && (
+                                                    <div className="text-gray-300">
+                                                      P&L: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-400'}>{signalData.pnl}</span>
+                                                    </div>
+                                                  )}
+                                                  {signalData.status === 'LOSS' && signalData.signalId && (
+                                                    <div className="mt-2 pt-2 border-t border-gray-600">
+                                                      <button
+                                                        onClick={() => {
+                                                          const currentSignalId = signalData.signalId;
+                                                          console.log('🔍 Flèche cliquée - signalId:', currentSignalId);
+                                                          
+                                                          // Chercher directement par data-signal-id
+                                                          const allElements = document.querySelectorAll(`[data-signal-id="${currentSignalId}"]`);
+                                                          console.log('🔍 Éléments trouvés avec data-signal-id:', allElements.length);
+                                                          
+                                                          // Prendre le premier élément qui n'est pas le message actuel
+                                                          let targetElement: HTMLElement | null = null;
+                                                          for (let i = 0; i < allElements.length; i++) {
+                                                            const el = allElements[i] as HTMLElement;
+                                                            // Vérifier que ce n'est pas le message de fermeture actuel
+                                                            const parentMessage = el.closest('[id^="message-"]');
+                                                            if (parentMessage && parentMessage.id !== `message-${message.id}`) {
+                                                              targetElement = el;
+                                                              break;
+                                                            }
+                                                          }
+                                                          
+                                                          if (!targetElement && allElements.length > 0) {
+                                                            // Si pas trouvé, prendre le premier
+                                                            targetElement = allElements[0] as HTMLElement;
+                                                          }
+                                                          
+                                                          if (targetElement) {
+                                                            console.log('🔍 Élément cible trouvé:', targetElement);
+                                                            const messageContainer = targetElement.closest('[id^="message-"]') || targetElement.parentElement;
+                                                            if (messageContainer) {
+                                                              (messageContainer as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                              (messageContainer as HTMLElement).style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
+                                                              setTimeout(() => {
+                                                                (messageContainer as HTMLElement).style.backgroundColor = '';
+                                                              }, 2000);
+                                                            }
+                                                          } else {
+                                                            console.log('❌ Aucun élément trouvé');
+                                                          }
+                                                        }}
+                                                        className="flex items-center gap-1 text-white hover:text-gray-300 transition-colors text-sm font-medium cursor-pointer"
+                                                        title="Remonter au signal d'origine"
+                                                      >
+                                                        <span className="text-lg">⬆️</span>
+                                                        <span>Voir le signal d'origine</span>
+                                                      </button>
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              </div>
+                                            ) : (
+                                              <div className="space-y-2">
+                                                <div className="flex items-center gap-2">
+                                                  <span className="text-lg">🚀</span>
+                                                  <span className="font-bold text-white">
+                                                    {signalData.type} {signalData.symbol}
+                                                  </span>
+                                                  {signalData.timeframe && (
+                                                    <span className="text-sm text-gray-400">{signalData.timeframe}</span>
+                                                  )}
+                                                </div>
+                                                {signalData.entry && (
+                                                  <div className="flex items-center gap-2 text-sm">
+                                                    <span className="text-gray-400">📊</span>
+                                                    <span className="text-white">Entry: {signalData.entry}</span>
+                                                  </div>
+                                                )}
+                                                {signalData.rr && (
+                                                  <div className="flex items-center gap-2 text-sm">
+                                                    <span className="text-gray-400">🎯</span>
+                                                    <span className="text-white">R:R ≈ {signalData.rr}</span>
+                                                  </div>
+                                                )}
+                                                {signalData.timeframe && (
+                                                  <div className="flex items-center gap-2 text-sm">
+                                                    <span className="text-gray-400">⏰</span>
+                                                    <span className="text-white">{signalData.timeframe}</span>
+                                                  </div>
+                                                )}
+                                              </div>
+                                            )}
+                                          </div>
+                                        </div>
+                                      );
+                                    }
+                                    return message.text.includes('[SIGNAL_ID:') ? (
+                                      <>
+                                        {message.text.split('[SIGNAL_ID:')[0]}
+                                        <span className="text-gray-700 text-xs">[SIGNAL_ID:{message.text.split('[SIGNAL_ID:')[1].split(']')[0]}]</span>
+                                        {message.text.split(']').slice(1).join(']')}
+                                      </>
+                                    ) : message.text;
+                                  })()}
                                 </div>
                                 
                                 {/* Boutons WIN/LOSS/BE pour les messages de signal (pas pour les messages de fermeture) */}
@@ -6305,28 +6468,16 @@ export default function TradingPlatformShell() {
                                            isClosed && currentSignal?.status === 'LOSS' ? '🔴 LOSS' :
                                            isClosed && currentSignal?.status === 'BE' ? '🔵 BE' : '⏳ EN ATTENTE'}
                                         </div>
-                                      </div>
-                                      {isClosed && (
-                                        <div className="mt-2 text-xs text-gray-400">
-                                          <span 
-                                            className="cursor-pointer text-blue-400 hover:text-blue-300 underline"
-                                            onClick={() => {
-                                              // Trouver le message original du signal
-                                              const originalMessage = document.querySelector(`[data-signal-id="${signalId}"]`);
-                                              if (originalMessage && (originalMessage as HTMLElement).offsetParent !== null) {
-                                                originalMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                                // Surligner temporairement
-                                                originalMessage.classList.add('ring-2', 'ring-blue-400', 'ring-opacity-50');
-                                                setTimeout(() => {
-                                                  originalMessage.classList.remove('ring-2', 'ring-blue-400', 'ring-opacity-50');
-                                                }, 3000);
-                                              }
-                                            }}
-                                          >
-                                            Signal {currentSignal?.id || ''} fermé avec {currentSignal?.pnl ? `P&L: ${currentSignal.pnl}` : 'aucun P&L'}
+                                        {isClosed && currentSignal?.pnl && (
+                                          <span className={`text-xs font-medium ${
+                                            currentSignal.status === 'WIN' ? 'text-green-400' :
+                                            currentSignal.status === 'LOSS' ? 'text-red-400' :
+                                            'text-blue-400'
+                                          }`}>
+                                            P&L: {currentSignal.pnl}
                                           </span>
-                                        </div>
-                                      )}
+                                        )}
+                                      </div>
                                     </div>
                                   );
                                 })()}
@@ -6340,7 +6491,6 @@ export default function TradingPlatformShell() {
                                         className="mt-2 w-full max-w-full h-auto max-h-40 md:max-h-96 object-contain rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
                                         onClick={() => setSelectedImage(message.attachment_data)}
                                       />
-                                      <div className="text-xs text-gray-400 mt-1">Cliquez pour agrandir</div>
                                     </div>
                                   </div>
                                 )}
@@ -6895,7 +7045,7 @@ export default function TradingPlatformShell() {
                           }
 
                           return (
-                            <div key={message.id}>
+                            <div key={message.id} id={`message-${message.id}`}>
                               {/* Message */}
                               <div className="flex items-start gap-3">
                             <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
@@ -6919,93 +7069,124 @@ export default function TradingPlatformShell() {
                                 data-signal-id={message.text.includes('[SIGNAL_ID:') ? message.text.match(/\[SIGNAL_ID:([^\]]+)\]/)?.[1] : undefined}
                               >
                                 <div className="text-white">
-                                  {message.text.includes('[SIGNAL_ID:') ? (
-                                    <>
-                                      {message.text.split('[SIGNAL_ID:')[0]}
-                                      <span className="text-gray-700 text-xs">[SIGNAL_ID:{message.text.split('[SIGNAL_ID:')[1].split(']')[0]}]</span>
-                                      {message.text.split(']').slice(1).join(']')}
-                                      
-                                      {/* Flèche cliquable pour les messages de fermeture */}
-                                      {(() => {
-                                        const isClosureMessage = message.text.includes('SIGNAL FERMÉ');
-                                        console.log('🔍 Debug flèche USER - message.text:', message.text);
-                                        console.log('🔍 Debug flèche USER - isClosureMessage:', isClosureMessage);
-                                        if (isClosureMessage) {
-                                          console.log('✅ Flèche USER devrait apparaître !');
-                                        }
-                                        return isClosureMessage;
-                                      })() && (
-                                        <span 
-                                          className="ml-2 text-blue-400 hover:text-blue-300 cursor-pointer text-2xl transition-colors inline-block bg-blue-500/20 px-2 py-1 rounded-lg hover:bg-blue-500/30"
-                                          onClick={() => {
-                                            const signalIdMatch = message.text.match(/\[SIGNAL_ID:([^\]]+)\]/);
-                                            const signalId = signalIdMatch ? signalIdMatch[1] : '';
-                                            console.log('🔍 Debug flèche USER - signalId extrait:', signalId);
-                                            console.log('🔍 Debug flèche USER - message.text:', message.text);
-                                            
-                                            const originalMessage = document.querySelector(`[data-signal-id="${signalId}"]`);
-                                            console.log('🔍 Debug flèche USER - élément trouvé:', originalMessage);
-                                            console.log('🔍 Debug flèche USER - sélecteur utilisé:', `[data-signal-id="${signalId}"]`);
-                                            
-                                            // Chercher tous les éléments avec data-signal-id
-                                            const allSignalElements = document.querySelectorAll('[data-signal-id]');
-                                            console.log('🔍 Debug flèche USER - tous les éléments signal:', allSignalElements);
-                                            
-                                            if (originalMessage && (originalMessage as HTMLElement).offsetParent !== null) {
-                                              console.log('🔍 Debug flèche USER - scroll vers élément:', originalMessage);
-                                              console.log('🔍 Debug flèche USER - élément visible:', (originalMessage as HTMLElement).offsetParent !== null);
-                                              console.log('🔍 Debug flèche USER - élément dans viewport:', originalMessage.getBoundingClientRect());
-                                              
-                                              // Forcer le scroll vers le haut de la page d'abord
-                                              window.scrollTo({ top: 0, behavior: 'smooth' });
-                                              
-                                              setTimeout(() => {
-                                                originalMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                                originalMessage.classList.add('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
-                                                setTimeout(() => {
-                                                  originalMessage.classList.remove('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
-                                                }, 5000);
-                                              }, 500);
-                                              
-                                              console.log('✅ Navigation USER vers le signal original réussie');
-                                            } else {
-                                              console.log('❌ Signal original USER non trouvé');
-                                              console.log('🔍 Debug flèche USER - recherche alternative...');
-                                              
-                                              // Recherche simple par contenu dans toute la page
-                                              const allDivs = document.querySelectorAll('div');
-                                              let foundMessage = null;
-                                              
-                                              for (let div of allDivs) {
-                                                if (div.textContent && div.textContent.includes(signalId) && div.classList.contains('bg-gray-700')) {
-                                                  foundMessage = div;
-                                                  console.log('🔍 Debug flèche USER - message trouvé par contenu:', foundMessage);
-                                                  break;
-                                                }
-                                              }
-                                              
-                                              if (foundMessage) {
-                                                // Scroll direct vers le message trouvé
-                                                foundMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                                foundMessage.classList.add('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
-                                                setTimeout(() => {
-                                                  foundMessage.classList.remove('ring-4', 'ring-yellow-400', 'ring-opacity-100', 'bg-yellow-400/20');
-                                                }, 5000);
-                                                console.log('✅ Navigation USER réussie par contenu');
-                                              } else {
-                                                console.log('❌ Aucun message trouvé avec ce signalId dans toute la page');
-                                              }
-                                            }
-                                          }}
-                                          title="Aller au signal original"
-                                        >
-                                          ⬆️
-                                        </span>
-                                      )}
-                                    </>
-                                  ) : (
-                                    message.text
-                                  )}
+                                  {(() => {
+                                    const signalData = formatSignalMessage(message.text);
+                                    if (signalData) {
+                                      return (
+                                        <div>
+                                          <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
+                                            {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
+                                              <div className="mb-3">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                  <span className="text-xs">📊</span>
+                                                  <span className="text-sm font-semibold text-gray-300">SIGNAL FERMÉ</span>
+                                                </div>
+                                                <div className="text-sm">
+                                                  <div className="flex items-center gap-2 mb-1">
+                                                    <span className={signalData.status === 'WIN' ? 'text-green-400' : 'text-red-400'}>
+                                                      {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
+                                                    </span>
+                                                  </div>
+                                                  {signalData.pnl && (
+                                                    <div className="text-gray-300">
+                                                      P&L: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-400'}>{signalData.pnl}</span>
+                                                    </div>
+                                                  )}
+                                                  {signalData.status === 'LOSS' && signalData.signalId && (
+                                                    <div className="mt-2 pt-2 border-t border-gray-600">
+                                                      <button
+                                                        onClick={() => {
+                                                          const currentSignalId = signalData.signalId;
+                                                          console.log('🔍 Flèche cliquée - signalId:', currentSignalId);
+                                                          
+                                                          // Chercher directement par data-signal-id
+                                                          const allElements = document.querySelectorAll(`[data-signal-id="${currentSignalId}"]`);
+                                                          console.log('🔍 Éléments trouvés avec data-signal-id:', allElements.length);
+                                                          
+                                                          // Prendre le premier élément qui n'est pas le message actuel
+                                                          let targetElement: HTMLElement | null = null;
+                                                          for (let i = 0; i < allElements.length; i++) {
+                                                            const el = allElements[i] as HTMLElement;
+                                                            // Vérifier que ce n'est pas le message de fermeture actuel
+                                                            const parentMessage = el.closest('[id^="message-"]');
+                                                            if (parentMessage && parentMessage.id !== `message-${message.id}`) {
+                                                              targetElement = el;
+                                                              break;
+                                                            }
+                                                          }
+                                                          
+                                                          if (!targetElement && allElements.length > 0) {
+                                                            // Si pas trouvé, prendre le premier
+                                                            targetElement = allElements[0] as HTMLElement;
+                                                          }
+                                                          
+                                                          if (targetElement) {
+                                                            console.log('🔍 Élément cible trouvé:', targetElement);
+                                                            const messageContainer = targetElement.closest('[id^="message-"]') || targetElement.parentElement;
+                                                            if (messageContainer) {
+                                                              (messageContainer as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                              (messageContainer as HTMLElement).style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
+                                                              setTimeout(() => {
+                                                                (messageContainer as HTMLElement).style.backgroundColor = '';
+                                                              }, 2000);
+                                                            }
+                                                          } else {
+                                                            console.log('❌ Aucun élément trouvé');
+                                                          }
+                                                        }}
+                                                        className="flex items-center gap-1 text-white hover:text-gray-300 transition-colors text-sm font-medium cursor-pointer"
+                                                        title="Remonter au signal d'origine"
+                                                      >
+                                                        <span className="text-lg">⬆️</span>
+                                                        <span>Voir le signal d'origine</span>
+                                                      </button>
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              </div>
+                                            ) : (
+                                              <div className="space-y-2">
+                                                <div className="flex items-center gap-2">
+                                                  <span className="text-lg">🚀</span>
+                                                  <span className="font-bold text-white">
+                                                    {signalData.type} {signalData.symbol}
+                                                  </span>
+                                                  {signalData.timeframe && (
+                                                    <span className="text-sm text-gray-400">{signalData.timeframe}</span>
+                                                  )}
+                                                </div>
+                                                {signalData.entry && (
+                                                  <div className="flex items-center gap-2 text-sm">
+                                                    <span className="text-gray-400">📊</span>
+                                                    <span className="text-white">Entry: {signalData.entry}</span>
+                                                  </div>
+                                                )}
+                                                {signalData.rr && (
+                                                  <div className="flex items-center gap-2 text-sm">
+                                                    <span className="text-gray-400">🎯</span>
+                                                    <span className="text-white">R:R ≈ {signalData.rr}</span>
+                                                  </div>
+                                                )}
+                                                {signalData.timeframe && (
+                                                  <div className="flex items-center gap-2 text-sm">
+                                                    <span className="text-gray-400">⏰</span>
+                                                    <span className="text-white">{signalData.timeframe}</span>
+                                                  </div>
+                                                )}
+                                              </div>
+                                            )}
+                                          </div>
+                                        </div>
+                                      );
+                                    }
+                                    return message.text.includes('[SIGNAL_ID:') ? (
+                                      <>
+                                        {message.text.split('[SIGNAL_ID:')[0]}
+                                        <span className="text-gray-700 text-xs">[SIGNAL_ID:{message.text.split('[SIGNAL_ID:')[1].split(']')[0]}]</span>
+                                        {message.text.split(']').slice(1).join(']')}
+                                      </>
+                                    ) : message.text;
+                                  })()}
                                 </div>
                                 
                                 {/* Boutons WIN/LOSS/BE pour les messages de signal (pas pour les messages de fermeture) */}
@@ -7033,28 +7214,16 @@ export default function TradingPlatformShell() {
                                            isClosed && currentSignal?.status === 'LOSS' ? '🔴 LOSS' :
                                            isClosed && currentSignal?.status === 'BE' ? '🔵 BE' : '⏳ EN ATTENTE'}
                                         </div>
-                                      </div>
-                                      {isClosed && (
-                                        <div className="mt-2 text-xs text-gray-400">
-                                          <span 
-                                            className="cursor-pointer text-blue-400 hover:text-blue-300 underline"
-                                            onClick={() => {
-                                              // Trouver le message original du signal
-                                              const originalMessage = document.querySelector(`[data-signal-id="${signalId}"]`);
-                                              if (originalMessage && (originalMessage as HTMLElement).offsetParent !== null) {
-                                                originalMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                                // Surligner temporairement
-                                                originalMessage.classList.add('ring-2', 'ring-blue-400', 'ring-opacity-50');
-                                                setTimeout(() => {
-                                                  originalMessage.classList.remove('ring-2', 'ring-blue-400', 'ring-opacity-50');
-                                                }, 3000);
-                                              }
-                                            }}
-                                          >
-                                            Signal {currentSignal?.id || ''} fermé avec {currentSignal?.pnl ? `P&L: ${currentSignal.pnl}` : 'aucun P&L'}
+                                        {isClosed && currentSignal?.pnl && (
+                                          <span className={`text-xs font-medium ${
+                                            currentSignal.status === 'WIN' ? 'text-green-400' :
+                                            currentSignal.status === 'LOSS' ? 'text-red-400' :
+                                            'text-blue-400'
+                                          }`}>
+                                            P&L: {currentSignal.pnl}
                                           </span>
-                                        </div>
-                                      )}
+                                        )}
+                                      </div>
                                     </div>
                                   );
                                 })()}
@@ -7068,7 +7237,6 @@ export default function TradingPlatformShell() {
                                         className="mt-2 w-full max-w-full h-auto max-h-40 md:max-h-96 object-contain rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
                                         onClick={() => setSelectedImage(message.attachment_data)}
                                       />
-                                      <div className="text-xs text-gray-400 mt-1">Cliquez pour agrandir</div>
                                     </div>
                                   </div>
                                 )}
