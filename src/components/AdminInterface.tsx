@@ -4918,6 +4918,7 @@ const dailyPnLChartData = useMemo(
                 scrollToTop();
               }} className={`w-full text-left px-3 py-2 rounded text-sm ${view === 'calendar' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Journal Perso</button>
+              <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>⭐ Livestream Premium</button>
               <button onClick={() => {
                 // Utiliser la fonction globale pour naviguer vers livestream
                 if ((window as any).setCurrentPage) {
@@ -5166,6 +5167,22 @@ const dailyPnLChartData = useMemo(
                       <div>
                         <p className="font-medium text-white">Journal Perso</p>
                         <p className="text-sm text-gray-400">Journal de trading</p>
+                      </div>
+                    </div>
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      handleChannelChange('livestream-premium', 'livestream-premium');
+                      setMobileView('content');
+                    }}
+                    className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg">⭐</span>
+                      <div>
+                        <p className="font-medium text-white">Livestream Premium</p>
+                        <p className="text-sm text-gray-400">Stream premium</p>
                       </div>
                     </div>
                   </button>

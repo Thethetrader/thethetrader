@@ -4965,11 +4965,11 @@ export default function TradingPlatformShell() {
               {channels.find(c => c.id === 'journal') && (
                 <button onClick={() => handleChannelChange('journal', 'journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 Trading Journal</button>
               )}
-              {channels.find(c => c.id === 'video') && (
-                <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
-              )}
               {channels.find(c => c.id === 'livestream-premium') && (
                 <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>⭐ Livestream Premium</button>
+              )}
+              {channels.find(c => c.id === 'video') && (
+                <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
               )}
             </div>
           </div>
@@ -5237,26 +5237,6 @@ export default function TradingPlatformShell() {
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">TRADING HUB</h3>
                 <div className="space-y-2">
-                  {channels.filter(c => ['video', 'livestream-premium', 'trading-hub'].includes(c.id)).map(channel => (
-                    <button
-                      key={channel.id}
-                      onClick={() => {
-                        handleChannelChange(channel.id, channel.name);
-                        setMobileView('content');
-                      }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="text-lg">{channel.emoji}</span>
-                        <div>
-                          <p className="font-medium text-white">{channel.fullName}</p>
-                          <p className="text-sm text-gray-400">Hub de trading</p>
-                        </div>
-                      </div>
-
-                    </button>
-                  ))}
-                  
                   {channels.find(c => c.id === 'calendrier') && (
                     <button
                       onClick={async () => {
@@ -5304,6 +5284,42 @@ export default function TradingPlatformShell() {
                         <div>
                           <p className="font-medium text-white">Journal Perso</p>
                           <p className="text-sm text-gray-400">Journal personnel</p>
+                        </div>
+                      </div>
+                    </button>
+                  )}
+
+                  {channels.find(c => c.id === 'livestream-premium') && (
+                    <button
+                      onClick={() => {
+                        handleChannelChange('livestream-premium', 'livestream-premium');
+                        setMobileView('content');
+                      }}
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">⭐</span>
+                        <div>
+                          <p className="font-medium text-white">Livestream Premium</p>
+                          <p className="text-sm text-gray-400">Stream premium</p>
+                        </div>
+                      </div>
+                    </button>
+                  )}
+
+                  {channels.find(c => c.id === 'video') && (
+                    <button
+                      onClick={() => {
+                        handleChannelChange('video', 'video');
+                        setMobileView('content');
+                      }}
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">📺</span>
+                        <div>
+                          <p className="font-medium text-white">Livestream</p>
+                          <p className="text-sm text-gray-400">Stream en direct</p>
                         </div>
                       </div>
                     </button>
