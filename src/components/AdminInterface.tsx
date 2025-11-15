@@ -4936,7 +4936,7 @@ const dailyPnLChartData = useMemo(
   };
 
   return (
-    <div className="h-screen w-full bg-gray-900 text-white overflow-hidden flex" style={{ paddingTop: '0px', backgroundColor: '#111827' }}>
+    <div className="h-screen w-full bg-gray-900 text-white overflow-hidden flex" style={{ paddingTop: '0px', backgroundColor: '#111827', minHeight: '100vh' }}>
       {/* Desktop Sidebar */}
       <div className="hidden md:flex w-56 min-w-56 flex-shrink-0 bg-gray-800 flex-col">
         <div className="p-4 border-b border-gray-700">
@@ -5155,7 +5155,7 @@ const dailyPnLChartData = useMemo(
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col bg-gray-900">
+      <div className="flex-1 flex flex-col bg-gray-900" style={{ minHeight: '100vh', backgroundColor: '#111827' }}>
         {/* Mobile Navigation - Fixed */}
         <div className="md:hidden bg-gray-800 border-b border-gray-700 p-3 fixed top-0 left-0 right-0 z-30" style={{ height: '60px', backgroundColor: '#1f2937' }}>
           {mobileView === 'channels' ? (
@@ -5224,6 +5224,7 @@ const dailyPnLChartData = useMemo(
             className={`absolute inset-0 bg-gray-800 transform transition-transform duration-300 ease-in-out z-10 ${
               mobileView === 'channels' ? 'translate-x-0' : '-translate-x-full'
             }`}
+            style={{ backgroundColor: '#1f2937', minHeight: '100vh' }}
           >
                         <div className="p-4 space-y-6 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
               <div className="bg-gray-700 rounded-lg p-4">
@@ -5382,6 +5383,7 @@ const dailyPnLChartData = useMemo(
             className={`absolute inset-0 bg-gray-900 transform transition-transform duration-300 ease-in-out z-10 ${
               mobileView === 'content' ? 'translate-x-0' : 'translate-x-full'
             }`}
+            style={{ backgroundColor: '#111827', minHeight: '100vh' }}
           >
             {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'user-management') ? (
               <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '0px' }}>
