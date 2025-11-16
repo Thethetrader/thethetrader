@@ -2528,10 +2528,41 @@ export default function TradingPlatformShell() {
     const totalCells = Math.ceil((adjustedFirstDay + lastDayOfMonth.getDate()) / 7);
     const today = new Date();
 
+    // Utiliser realTimeSignals qui contient tous les signaux chargés depuis Firebase
     const monthSignals = realTimeSignals.filter(signal => {
-      const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
+      if (!signal) return false;
+      
+      // Convertir le timestamp en Date
+      let signalDate: Date;
+      if (signal.originalTimestamp) {
+        signalDate = typeof signal.originalTimestamp === 'number' 
+          ? new Date(signal.originalTimestamp) 
+          : new Date(signal.originalTimestamp);
+      } else if (signal.timestamp) {
+        signalDate = typeof signal.timestamp === 'number' 
+          ? new Date(signal.timestamp) 
+          : new Date(signal.timestamp);
+      } else {
+        return false;
+      }
+      
+      // Vérifier que la date est valide
+      if (isNaN(signalDate.getTime())) return false;
+      
+      // Comparer mois et année
       return signalDate.getMonth() === month && signalDate.getFullYear() === year;
     });
+
+    console.log(`📊 [WEEKLY] Total signaux chargés:`, realTimeSignals.length);
+    console.log(`📊 [WEEKLY] Signaux du mois ${month + 1}/${year}:`, monthSignals.length);
+    if (monthSignals.length > 0) {
+      console.log(`📊 [WEEKLY] Exemple de signal:`, {
+        id: monthSignals[0].id,
+        status: monthSignals[0].status,
+        timestamp: monthSignals[0].timestamp,
+        originalTimestamp: monthSignals[0].originalTimestamp
+      });
+    }
 
     const weeks = [];
 
@@ -2542,14 +2573,38 @@ export default function TradingPlatformShell() {
       weekEnd.setDate(weekStart.getDate() + 6);
 
       const weekSignals = monthSignals.filter(signal => {
-        const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
-        return signalDate >= weekStart && signalDate <= weekEnd;
+        if (!signal) return false;
+        // Convertir le timestamp en Date (peut être string, number ou Date)
+        let signalDate: Date;
+        if (signal.originalTimestamp) {
+          signalDate = typeof signal.originalTimestamp === 'number' 
+            ? new Date(signal.originalTimestamp) 
+            : new Date(signal.originalTimestamp);
+        } else if (signal.timestamp) {
+          signalDate = typeof signal.timestamp === 'number' 
+            ? new Date(signal.timestamp) 
+            : new Date(signal.timestamp);
+        } else {
+          return false;
+        }
+        
+        // Vérifier que la date est valide
+        if (isNaN(signalDate.getTime())) return false;
+        
+        // Comparer les dates (sans les heures)
+        const signalDateOnly = new Date(signalDate.getFullYear(), signalDate.getMonth(), signalDate.getDate());
+        const weekStartOnly = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate());
+        const weekEndOnly = new Date(weekEnd.getFullYear(), weekEnd.getMonth(), weekEnd.getDate());
+        
+        return signalDateOnly >= weekStartOnly && signalDateOnly <= weekEndOnly;
       });
 
-      const wins = weekSignals.filter(s => s.status === 'WIN').length;
-      const losses = weekSignals.filter(s => s.status === 'LOSS').length;
-      const pnl = weekSignals.reduce((total, signal) => {
-        if (signal.pnl) {
+      // Compter seulement les signaux clôturés (WIN/LOSS/BE)
+      const closedWeekSignals = weekSignals.filter(s => s && s.status !== 'ACTIVE');
+      const wins = closedWeekSignals.filter(s => s.status === 'WIN').length;
+      const losses = closedWeekSignals.filter(s => s.status === 'LOSS').length;
+      const pnl = closedWeekSignals.reduce((total, signal) => {
+        if (signal && signal.pnl) {
           return total + parsePnL(signal.pnl);
         }
         return total;
@@ -2560,7 +2615,7 @@ export default function TradingPlatformShell() {
       weeks.push({
         week: `Week ${weekNum}`,
         weekNum,
-        trades: weekSignals.length,
+        trades: closedWeekSignals.length, // Afficher seulement les trades clôturés
         wins,
         losses,
         pnl: Math.round(pnl),
@@ -2568,6 +2623,7 @@ export default function TradingPlatformShell() {
       });
     }
 
+    console.log(`📊 [WEEKLY] Breakdown calculé:`, weeks);
     return weeks;
   };
 
@@ -3955,21 +4011,47 @@ export default function TradingPlatformShell() {
     // Ajuster pour que lundi soit 0 (comme le calendrier)
     const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
     
-    const weekStart = new Date(year, month, 1);
-    weekStart.setDate(1 - adjustedFirstDay + (weekNum - 1) * 7);
+    const calendarStart = new Date(year, month, 1 - adjustedFirstDay);
+    const weekStart = new Date(calendarStart);
+    weekStart.setDate(calendarStart.getDate() + (weekNum - 1) * 7);
     
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekStart.getDate() + 6);
     
-    return allSignalsForStats.filter(signal => {
-      const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
+    console.log(`🔍 [WEEK-POPUP] Recherche signaux pour semaine ${weekNum}:`, {
+      weekStart: weekStart.toISOString(),
+      weekEnd: weekEnd.toISOString(),
+      totalSignals: realTimeSignals.length
+    });
+    
+    return realTimeSignals.filter(signal => {
+      if (!signal) return false;
+      
+      // Convertir le timestamp en Date
+      let signalDate: Date;
+      if (signal.originalTimestamp) {
+        signalDate = typeof signal.originalTimestamp === 'number' 
+          ? new Date(signal.originalTimestamp) 
+          : new Date(signal.originalTimestamp);
+      } else if (signal.timestamp) {
+        signalDate = typeof signal.timestamp === 'number' 
+          ? new Date(signal.timestamp) 
+          : new Date(signal.timestamp);
+      } else {
+        return false;
+      }
       
       if (isNaN(signalDate.getTime())) {
         return false;
       }
       
-      return signalDate >= weekStart && 
-             signalDate <= weekEnd &&
+      // Comparer les dates (sans les heures)
+      const signalDateOnly = new Date(signalDate.getFullYear(), signalDate.getMonth(), signalDate.getDate());
+      const weekStartOnly = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate());
+      const weekEndOnly = new Date(weekEnd.getFullYear(), weekEnd.getMonth(), weekEnd.getDate());
+      
+      return signalDateOnly >= weekStartOnly && 
+             signalDateOnly <= weekEndOnly &&
              signalDate.getMonth() === month &&
              signalDate.getFullYear() === year;
     });
@@ -5812,7 +5894,7 @@ export default function TradingPlatformShell() {
                       </div>
                     ) : (
                       signals.filter(signal => signal.channel_id === selectedChannel.id).map((signal) => (
-                        <div key={signal.id} className="flex items-start gap-3">
+                        <div key={signal.id} id={`signal-${signal.id}`} className="flex items-start gap-3">
                           <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
                             {profileImage ? (
                               <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
@@ -5870,11 +5952,44 @@ export default function TradingPlatformShell() {
 
                                 {/* Message de fermeture */}
                                 {signal.closeMessage && (
-                                  <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
-                                    <span className="text-yellow-400 text-sm">🔒</span>
-                                    <span className="text-yellow-400 text-sm font-medium">
-                                      {signal.closeMessage}
-                                    </span>
+                                  <div className="flex items-center justify-between pt-2 border-t border-gray-600">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-yellow-400 text-sm">🔒</span>
+                                      <span className="text-yellow-400 text-sm font-medium">
+                                        {signal.closeMessage}
+                                      </span>
+                                    </div>
+                                    {/* Flèche pour remonter au signal initial */}
+                                    {signal.status !== 'ACTIVE' && (
+                                      <button
+                                        onClick={() => {
+                                          // Chercher le signal initial (ACTIVE) avec le même symbol et timeframe
+                                          const allSignals = signals.filter(s => s.channel_id === selectedChannel.id);
+                                          const originalSignal = allSignals.find((s) => 
+                                            s.id !== signal.id && 
+                                            s.symbol === signal.symbol && 
+                                            s.timeframe === signal.timeframe && 
+                                            s.status === 'ACTIVE'
+                                          );
+                                          
+                                          if (originalSignal) {
+                                            const element = document.getElementById(`signal-${originalSignal.id}`);
+                                            if (element) {
+                                              element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                              element.style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
+                                              setTimeout(() => {
+                                                element.style.backgroundColor = '';
+                                              }, 2000);
+                                            }
+                                          }
+                                        }}
+                                        className="flex items-center gap-1 text-yellow-400 hover:text-yellow-300 transition-colors text-sm font-medium cursor-pointer"
+                                        title="Remonter au signal d'origine"
+                                      >
+                                        <span className="text-lg">⬆️</span>
+                                        <span className="text-xs">Voir le signal</span>
+                                      </button>
+                                    )}
                                   </div>
                                 )}
                               </div>
@@ -6354,7 +6469,7 @@ export default function TradingPlatformShell() {
                                                       P&L: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-400'}>{signalData.pnl}</span>
                                                     </div>
                                                   )}
-                                                  {signalData.status === 'LOSS' && signalData.signalId && (
+                                                  {(signalData.status === 'LOSS' || signalData.status === 'WIN') && signalData.signalId && (
                                                     <div className="mt-2 pt-2 border-t border-gray-600">
                                                       <button
                                                         onClick={() => {
@@ -6737,7 +6852,7 @@ export default function TradingPlatformShell() {
                     </div>
                   ) : (
                     signals.filter(signal => signal.channel_id === selectedChannel.id).map((signal) => (
-                      <div key={signal.id} className="flex items-start gap-3">
+                      <div key={signal.id} id={`signal-${signal.id}`} className="flex items-start gap-3">
                         <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
                           {profileImage ? (
                             <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
@@ -6795,11 +6910,44 @@ export default function TradingPlatformShell() {
 
                               {/* Message de fermeture */}
                               {signal.closeMessage && (
-                                <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
-                                  <span className="text-yellow-400 text-sm">🔒</span>
-                                  <span className="text-yellow-400 text-sm font-medium">
-                                    {signal.closeMessage}
-                                  </span>
+                                <div className="flex items-center justify-between pt-2 border-t border-gray-600">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-yellow-400 text-sm">🔒</span>
+                                    <span className="text-yellow-400 text-sm font-medium">
+                                      {signal.closeMessage}
+                                    </span>
+                                  </div>
+                                  {/* Flèche pour remonter au signal initial */}
+                                  {signal.status !== 'ACTIVE' && (
+                                    <button
+                                      onClick={() => {
+                                        // Chercher le signal initial (ACTIVE) avec le même symbol et timeframe
+                                        const allSignals = signals.filter(s => s.channel_id === selectedChannel.id);
+                                        const originalSignal = allSignals.find((s) => 
+                                          s.id !== signal.id && 
+                                          s.symbol === signal.symbol && 
+                                          s.timeframe === signal.timeframe && 
+                                          s.status === 'ACTIVE'
+                                        );
+                                        
+                                        if (originalSignal) {
+                                          const element = document.getElementById(`signal-${originalSignal.id}`);
+                                          if (element) {
+                                            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                            element.style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
+                                            setTimeout(() => {
+                                              element.style.backgroundColor = '';
+                                            }, 2000);
+                                          }
+                                        }
+                                      }}
+                                      className="flex items-center gap-1 text-yellow-400 hover:text-yellow-300 transition-colors text-sm font-medium cursor-pointer"
+                                      title="Remonter au signal d'origine"
+                                    >
+                                      <span className="text-lg">⬆️</span>
+                                      <span className="text-xs">Voir le signal</span>
+                                    </button>
+                                  )}
                                 </div>
                               )}
                             </div>
@@ -7107,7 +7255,7 @@ export default function TradingPlatformShell() {
                                                       P&L: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-400'}>{signalData.pnl}</span>
                                                     </div>
                                                   )}
-                                                  {signalData.status === 'LOSS' && signalData.signalId && (
+                                                  {(signalData.status === 'LOSS' || signalData.status === 'WIN') && signalData.signalId && (
                                                     <div className="mt-2 pt-2 border-t border-gray-600">
                                                       <button
                                                         onClick={() => {

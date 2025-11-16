@@ -54,7 +54,7 @@ export function useStatsSync() {
       
       for (const channelId of channels) {
         try {
-          const channelSignals = await getSignals(channelId, 100);
+          const channelSignals = await getSignals(channelId, 999);
           if (channelSignals && channelSignals.length > 0) {
             console.log(`🔍 [STATS-SYNC] Signaux bruts de ${channelId}:`, channelSignals);
             channelSignals.forEach(signal => {
