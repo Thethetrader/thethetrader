@@ -5375,6 +5375,66 @@ const dailyPnLChartData = useMemo(
                     </button>
                 </div>
               </div>
+
+              {/* Section NOTIFICATIONS */}
+              <div className="mt-6">
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">NOTIFICATIONS</h3>
+                <div className="space-y-1">
+                  <button 
+                    onClick={async () => {
+                      try {
+                        const sendLivestreamNotification = httpsCallable(functions, 'sendLivestreamNotification');
+                        
+                        // Récupérer tous les tokens FCM
+                        const tokens = [];
+                        const fcmTokensRef = ref(database, 'fcm_tokens');
+                        const snapshot = await get(fcmTokensRef);
+                        if (snapshot.exists()) {
+                          const tokensData = snapshot.val();
+                          Object.values(tokensData).forEach((tokenData: any) => {
+                            if (tokenData.token) {
+                              tokens.push(tokenData.token);
+                            }
+                          });
+                        }
+                        
+                        if (tokens.length > 0) {
+                          console.log('📱 Envoi notification livestream à', tokens.length, 'utilisateurs...');
+                          const result = await sendLivestreamNotification({ tokens });
+                          console.log('✅ Notification livestream envoyée:', result.data);
+                          alert(`✅ Notification envoyée à ${(result.data as any).successCount} utilisateurs!`);
+                        } else {
+                          alert('⚠️ Aucun utilisateur avec notifications activées');
+                        }
+                      } catch (error) {
+                        console.error('❌ Erreur envoi notification livestream:', error);
+                        
+                        // Afficher tous les détails de l'erreur
+                        let errorMessage = '❌ ERREUR DÉTAILLÉE:\n\n';
+                        errorMessage += 'Message: ' + error.message + '\n';
+                        errorMessage += 'Code: ' + (error.code || 'N/A') + '\n';
+                        errorMessage += 'Name: ' + (error.name || 'N/A') + '\n';
+                        
+                        if (error.details) {
+                          errorMessage += '\nDetails: ' + JSON.stringify(error.details, null, 2);
+                        }
+                        
+                        alert(errorMessage);
+                      }
+                    }}
+                    className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
+                  >
+                    🔴 Livestream
+                  </button>
+                  
+                  <button 
+                    onClick={() => setShowLivestreamModal(true)}
+                    className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
+                  >
+                    📝 Notif Custom
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
