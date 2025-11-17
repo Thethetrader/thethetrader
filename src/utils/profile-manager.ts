@@ -1,4 +1,4 @@
-import { supabase, getCurrentUser } from './supabase-setup';
+import { supabase, getCurrentUser } from '../lib/supabase';
 
 export interface UserProfile {
   id?: string;
