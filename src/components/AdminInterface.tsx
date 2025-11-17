@@ -729,13 +729,21 @@ export default function AdminInterface() {
       console.log('📱 PWA Mode:', window.matchMedia('(display-mode: standalone)').matches);
       console.log('🌐 User Agent:', navigator.userAgent.includes('Mobile') ? 'MOBILE' : 'DESKTOP');
       
-      // Charger depuis localStorage directement
+      // Charger depuis localStorage d'abord, puis Supabase si vide
       const localImage = localStorage.getItem('adminProfileImage');
       if (localImage) {
         setProfileImage(localImage);
-        console.log('✅ Photo de profil admin chargée depuis localStorage:', localImage);
+        console.log('✅ Photo de profil admin chargée depuis localStorage');
       } else {
-        console.log('❌ Aucune photo de profil admin trouvée');
+        // Si pas dans localStorage, chercher dans Supabase
+        console.log('🔍 Recherche de la photo dans Supabase...');
+        const supabaseImage = await getProfileImage('admin');
+        if (supabaseImage) {
+          setProfileImage(supabaseImage);
+          console.log('✅ Photo de profil admin chargée depuis Supabase');
+        } else {
+          console.log('❌ Aucune photo de profil admin trouvée');
+        }
       }
 
       // Charger le nom d'utilisateur admin (Supabase d'abord, puis localStorage)
@@ -746,6 +754,13 @@ export default function AdminInterface() {
           
           const { data } = await getUserProfileByType('admin');
           console.log('📦 Profil admin récupéré de Supabase:', data);
+          
+          // Charger la photo depuis le profil si disponible
+          if (data?.avatar_url && !profileImage) {
+            setProfileImage(data.avatar_url);
+            localStorage.setItem('adminProfileImage', data.avatar_url);
+            console.log('✅ Photo de profil admin chargée depuis Supabase (via getUserProfileByType)');
+          }
           
           if (data?.name) {
             setCurrentUsername(data.name);

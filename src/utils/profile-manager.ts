@@ -1,4 +1,4 @@
-import { supabase } from './supabase-setup';
+import { supabase, getCurrentUser } from './supabase-setup';
 
 export interface UserProfile {
   id?: string;
@@ -21,39 +21,34 @@ export const syncProfileImage = async (userType: 'user' | 'admin', imageBase64: 
     console.log('💾 Sauvegardé dans localStorage');
     
     // 2. Sauvegarder dans Supabase pour synchronisation cross-device
-    const userId = userType === 'admin' ? 'admin_user' : 'default_user';
-    
-    // Vérifier si le profil existe
-    const { data: existingProfile } = await supabase
-      .from('user_profiles')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('user_type', userType)
-      .single();
-    
-    if (existingProfile) {
-      // Mettre à jour le profil existant
-      await supabase
-        .from('user_profiles')
-        .update({ 
-          profile_image: imageBase64,
-          updated_at: new Date().toISOString()
-        })
-        .eq('user_id', userId);
-      console.log('🔄 Profil mis à jour dans Supabase');
-    } else {
-      // Créer un nouveau profil
-      await supabase
-        .from('user_profiles')
-        .insert({
-          user_id: userId,
-          user_type: userType,
-          profile_image: imageBase64,
-          display_name: userType === 'admin' ? 'Admin' : 'TheTheTrader'
-        });
-      console.log('✨ Nouveau profil créé dans Supabase');
+    // Utiliser le vrai userId de l'utilisateur connecté
+    const user = await getCurrentUser();
+    if (!user) {
+      console.error('❌ Utilisateur non connecté');
+      return { success: false, error: 'Utilisateur non connecté' };
     }
     
+    const userId = user.id;
+    console.log('👤 Utilisateur ID:', userId);
+    
+    // Mettre à jour le profil avec upsert (crée ou met à jour)
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .upsert({
+        id: userId,
+        avatar_url: imageBase64,
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'id'
+      })
+      .select();
+    
+    if (error) {
+      console.error('❌ Erreur Supabase:', error);
+      return { success: false, error };
+    }
+    
+    console.log('✅ Profil synchronisé dans Supabase:', data);
     return { success: true };
   } catch (error) {
     console.error('❌ Erreur sync profile:', error);
@@ -73,20 +68,25 @@ export const getProfileImage = async (userType: 'user' | 'admin'): Promise<strin
       return localImage;
     }
     
-    // 2. Si pas dans localStorage, chercher dans Supabase
-    const userId = userType === 'admin' ? 'admin_user' : 'default_user';
+    // 2. Si pas dans localStorage, chercher dans Supabase avec le vrai userId
+    const user = await getCurrentUser();
+    if (!user) {
+      console.log('❌ Utilisateur non connecté');
+      return null;
+    }
+    
+    const userId = user.id;
     const { data: profile } = await supabase
       .from('user_profiles')
-      .select('profile_image')
-      .eq('user_id', userId)
-      .eq('user_type', userType)
-      .single();
+      .select('avatar_url')
+      .eq('id', userId)
+      .maybeSingle();
     
-    if (profile?.profile_image) {
+    if (profile?.avatar_url) {
       // Sauvegarder dans localStorage pour la prochaine fois
-      localStorage.setItem(localKey, profile.profile_image);
+      localStorage.setItem(localKey, profile.avatar_url);
       console.log('☁️ Photo trouvée dans Supabase et sauvegardée localement');
-      return profile.profile_image;
+      return profile.avatar_url;
     }
     
     console.log('❌ Aucune photo de profil trouvée');
