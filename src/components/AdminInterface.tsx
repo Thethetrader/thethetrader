@@ -423,6 +423,7 @@ export default function AdminInterface() {
   const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [usernameInput, setUsernameInput] = useState('');
   const [currentUsername, setCurrentUsername] = useState('Admin');
+  const usernameTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // État pour les réactions aux messages (côté admin)
   const [messageReactions, setMessageReactions] = useState<{[messageId: string]: {fire: number, users: string[]}}>({});
@@ -4987,19 +4988,35 @@ const dailyPnLChartData = useMemo(
               ) : (
                 <div className="flex items-center gap-2">
                   <div>
-                    <p className="text-sm font-medium">{currentUsername}</p>
+                    <p 
+                      className="text-sm font-medium cursor-pointer hover:text-blue-300 transition-colors"
+                      onContextMenu={(e) => {
+                        e.preventDefault();
+                        setUsernameInput(currentUsername);
+                        setIsEditingUsername(true);
+                      }}
+                      onTouchStart={(e) => {
+                        if (usernameTimeoutRef.current) {
+                          clearTimeout(usernameTimeoutRef.current);
+                        }
+                        usernameTimeoutRef.current = setTimeout(() => {
+                          setUsernameInput(currentUsername);
+                          setIsEditingUsername(true);
+                          usernameTimeoutRef.current = null;
+                        }, 500);
+                      }}
+                      onTouchEnd={(e) => {
+                        if (usernameTimeoutRef.current) {
+                          clearTimeout(usernameTimeoutRef.current);
+                          usernameTimeoutRef.current = null;
+                        }
+                      }}
+                      title="Appui long pour modifier"
+                    >
+                      {currentUsername}
+                    </p>
                     <p className="text-xs text-gray-400">En ligne</p>
                   </div>
-                  <button
-                    onClick={() => {
-                      setUsernameInput(currentUsername);
-                      setIsEditingUsername(true);
-                    }}
-                    className="text-xs text-gray-400 hover:text-white px-1 py-0.5 rounded hover:bg-gray-700 flex items-center"
-                    title="Modifier le nom"
-                  >
-                    ✏️
-                  </button>
                 </div>
               )}
             </div>
@@ -5178,18 +5195,34 @@ const dailyPnLChartData = useMemo(
                 </label>
                 <div className="flex items-center gap-2">
                   <div>
-                    <p className="text-sm font-medium">{isEditingUsername ? currentUsername : currentUsername}</p>
+                    <p 
+                      className="text-sm font-medium cursor-pointer hover:text-blue-300 transition-colors"
+                      onContextMenu={(e) => {
+                        e.preventDefault();
+                        setUsernameInput(currentUsername);
+                        setIsEditingUsername(true);
+                      }}
+                      onTouchStart={(e) => {
+                        if (usernameTimeoutRef.current) {
+                          clearTimeout(usernameTimeoutRef.current);
+                        }
+                        usernameTimeoutRef.current = setTimeout(() => {
+                          setUsernameInput(currentUsername);
+                          setIsEditingUsername(true);
+                          usernameTimeoutRef.current = null;
+                        }, 500);
+                      }}
+                      onTouchEnd={(e) => {
+                        if (usernameTimeoutRef.current) {
+                          clearTimeout(usernameTimeoutRef.current);
+                          usernameTimeoutRef.current = null;
+                        }
+                      }}
+                      title="Appui long pour modifier"
+                    >
+                      {currentUsername}
+                    </p>
                   </div>
-                  <button
-                    onClick={() => {
-                      setUsernameInput(currentUsername);
-                      setIsEditingUsername(true);
-                    }}
-                    className="text-xs text-gray-400 hover:text-white px-1 py-0.5 rounded hover:bg-gray-700"
-                    title="Modifier le nom"
-                  >
-                    ✏️
-                  </button>
                 </div>
               </div>
               <button onClick={handleLogout} className="text-gray-400 hover:text-white">
