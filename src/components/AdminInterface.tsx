@@ -1227,22 +1227,28 @@ export default function AdminInterface() {
     const account = tradingAccounts.find(acc => acc.account_name === accountName);
     if (!account) return;
 
-    const currentBalance = account.initial_balance || 0;
+    const currentInitialBalance = account.initial_balance || 0;
+    const currentCurrentBalance = account.current_balance !== null && account.current_balance !== undefined ? account.current_balance : '';
     const currentMinimum = account.minimum_balance || 0;
 
-    const newBalance = prompt(`Balance initiale pour "${accountName}":`, currentBalance.toString());
-    if (newBalance === null) return; // Annulé
+    const newInitialBalance = prompt(`Balance initiale pour "${accountName}":`, currentInitialBalance.toString());
+    if (newInitialBalance === null) return; // Annulé
+
+    const newCurrentBalance = prompt(`Balance actuelle pour "${accountName}" (optionnel, laisse vide si pas encore commencé):`, currentCurrentBalance.toString());
+    if (newCurrentBalance === null) return; // Annulé
 
     const newMinimum = prompt(`Stop-loss (minimum) pour "${accountName}":`, currentMinimum.toString());
     if (newMinimum === null) return; // Annulé
 
-    const balanceValue = parseFloat(newBalance) || 0;
+    const initialBalanceValue = parseFloat(newInitialBalance) || 0;
+    const currentBalanceValue = newCurrentBalance.trim() === '' ? null : (parseFloat(newCurrentBalance) || null);
     const minimumValue = parseFloat(newMinimum) || 0;
 
     try {
       // Mettre à jour dans Supabase
       const updatedAccount = await updateUserAccount(account.id, {
-        initial_balance: balanceValue,
+        initial_balance: initialBalanceValue,
+        current_balance: currentBalanceValue,
         minimum_balance: minimumValue
       });
 
@@ -1250,11 +1256,12 @@ export default function AdminInterface() {
         // Mettre à jour l'état local
         const updatedAccounts = tradingAccounts.map(acc =>
           acc.id === account.id
-            ? { ...acc, initial_balance: balanceValue, minimum_balance: minimumValue }
+            ? { ...acc, initial_balance: initialBalanceValue, current_balance: currentBalanceValue, minimum_balance: minimumValue }
             : acc
         );
         setTradingAccounts(updatedAccounts);
         console.log('✅ [ADMIN] Paramètres du compte mis à jour');
+        alert('✅ Paramètres du compte mis à jour avec succès !');
       }
     } catch (error) {
       console.error('❌ [ADMIN] Erreur mise à jour paramètres:', error);

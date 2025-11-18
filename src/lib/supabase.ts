@@ -1132,6 +1132,7 @@ export interface UserAccount {
   account_name: string;
   is_default: boolean;
   initial_balance?: number;
+  current_balance?: number | null;
   minimum_balance?: number;
   created_at: string;
   updated_at: string;
