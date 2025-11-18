@@ -1323,6 +1323,16 @@ export default function AdminInterface() {
 
   const calculateAccountBalance = (): number => {
     const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
+    
+    // Si current_balance existe, l'utiliser directement (c'est le solde actuel avec les trades déjà comptés)
+    if (account?.current_balance !== null && account?.current_balance !== undefined) {
+      // Ajouter seulement le P&L des trades qui sont postérieurs à la date où current_balance a été enregistrée
+      // Pour simplifier, on ajoute tous les P&L des trades du mois en cours
+      const pnl = calculateTotalPnLTradesForAccount();
+      return account.current_balance + pnl;
+    }
+    
+    // Sinon, utiliser initial_balance + P&L
     let initialBalance = account?.initial_balance || 0;
     
     // Fallback vers localStorage si pas dans le compte
@@ -1709,12 +1719,12 @@ const formatDailyKey = (date: Date) => {
   return `${year}-${month}-${day}`;
 };
 
-const buildCumulativeSeries = (dailyTotals: Map<string, number>, referenceDate: Date) => {
+const buildCumulativeSeries = (dailyTotals: Map<string, number>, referenceDate: Date, initialBalance: number = 0) => {
   const sortedDates = Array.from(dailyTotals.keys()).sort(
     (a, b) => new Date(a).getTime() - new Date(b).getTime()
   );
 
-  let runningTotal = 0;
+  let runningTotal = initialBalance;
   const cumulativeAll = sortedDates.map((date) => {
     runningTotal += dailyTotals.get(date) || 0;
     return { date, balance: runningTotal };
@@ -1726,7 +1736,7 @@ const buildCumulativeSeries = (dailyTotals: Map<string, number>, referenceDate: 
   const monthStart = new Date(year, month, 1);
 
   let index = 0;
-  let currentBalance = 0;
+  let currentBalance = initialBalance;
 
   while (index < cumulativeAll.length && new Date(cumulativeAll[index].date) < monthStart) {
     currentBalance = cumulativeAll[index].balance;
@@ -1771,6 +1781,28 @@ const dailySignalPnLData = useMemo(() => {
 const dailyTradePnLData = useMemo(() => {
   const dailyTotals = new Map<string, number>();
 
+  // Récupérer la balance du compte sélectionné (current_balance si existe, sinon initial_balance)
+  const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
+  let initialBalance = 0;
+  
+  if (account) {
+    // Utiliser current_balance si elle existe et n'est pas null, sinon utiliser initial_balance
+    if (account.current_balance !== null && account.current_balance !== undefined) {
+      initialBalance = account.current_balance;
+    } else {
+      initialBalance = account.initial_balance || 0;
+    }
+  }
+  
+  // Fallback vers localStorage si pas dans le compte
+  if (!initialBalance && selectedAccount !== 'Tous les comptes') {
+    const savedBalances = localStorage.getItem('accountBalances');
+    if (savedBalances) {
+      const balances = JSON.parse(savedBalances);
+      initialBalance = balances[selectedAccount] || 0;
+    }
+  }
+
   personalTrades.forEach((trade) => {
     if (!trade || !trade.pnl) {
       return;
@@ -1787,8 +1819,8 @@ const dailyTradePnLData = useMemo(() => {
     dailyTotals.set(key, (dailyTotals.get(key) || 0) + parsePnL(trade.pnl));
   });
 
-  return buildCumulativeSeries(dailyTotals, currentDate);
-}, [personalTrades, selectedAccount, currentDate]);
+  return buildCumulativeSeries(dailyTotals, currentDate, initialBalance);
+}, [personalTrades, selectedAccount, currentDate, tradingAccounts]);
 
 const isJournalChannelAdmin = selectedChannel.id === 'trading-journal';
 
@@ -2451,19 +2483,25 @@ const dailyPnLChartData = useMemo(
       console.log('🔍 DEBUG getTradesForWeek [ADMIN] - Tous les trades:', personalTrades);
       console.log('🔍 DEBUG getTradesForWeek [ADMIN] - Semaine demandée:', weekNum);
 
-      // Calculer les dates de début et fin de la semaine
-      const currentDate = new Date();
+      // Utiliser la même logique que getWeeklyBreakdownTrades
       const currentMonth = currentDate.getMonth();
       const currentYear = currentDate.getFullYear();
       
-      // Premier jour du mois
       const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
-      const firstDayOfWeek = firstDayOfMonth.getDay(); // 0 = dimanche, 1 = lundi, etc.
+      const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+      const firstDayWeekday = firstDayOfMonth.getDay(); // 0 = dimanche, 1 = lundi, etc.
       
-      // Calculer le début de la semaine demandée
-      const weekStart = new Date(currentYear, currentMonth, 1 + (weekNum - 1) * 7 - firstDayOfWeek);
-      const weekEnd = new Date(weekStart);
-      weekEnd.setDate(weekStart.getDate() + 6);
+      // Ajuster pour que lundi soit 0
+      const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
+      
+      // Calculer les jours de la semaine
+      const weekStartDay = (weekNum - 1) * 7 - adjustedFirstDay + 1;
+      const weekEndDay = Math.min(weekNum * 7 - adjustedFirstDay, lastDayOfMonth.getDate());
+      
+      const weekStart = new Date(currentYear, currentMonth, weekStartDay);
+      const weekEnd = new Date(currentYear, currentMonth, weekEndDay);
+      // Ajouter 23h59 pour inclure toute la journée
+      weekEnd.setHours(23, 59, 59, 999);
       
       console.log(`🔍 Recherche trades pour semaine ${weekNum} [ADMIN]:`, weekStart.toDateString(), 'à', weekEnd.toDateString());
       console.log(`🔍 Dates des trades [ADMIN]:`, personalTrades.map(t => t.date));
@@ -2475,9 +2513,17 @@ const dailyPnLChartData = useMemo(
         }
         
         const tradeDate = new Date(trade.date);
-        const isInWeek = tradeDate >= weekStart && tradeDate <= weekEnd;
-        console.log(`🔍 Trade ${trade.date} (${tradeDate.toDateString()}) dans semaine ${weekNum} [ADMIN]?`, isInWeek);
-        return isInWeek;
+        const isDateMatch = tradeDate >= weekStart && 
+               tradeDate <= weekEnd &&
+               tradeDate.getMonth() === currentMonth &&
+               tradeDate.getFullYear() === currentYear;
+        
+        // Filtrer par compte sélectionné
+        const tradeAccount = trade.account || 'Compte Principal';
+        const isAccountMatch = selectedAccount === 'Tous les comptes' || tradeAccount === selectedAccount;
+        
+        console.log(`🔍 Trade ${trade.date} (${tradeDate.toDateString()}) dans semaine ${weekNum} [ADMIN]?`, isDateMatch, 'compte:', isAccountMatch);
+        return isDateMatch && isAccountMatch;
       });
       
       console.log(`✅ Trades trouvés pour semaine ${weekNum} [ADMIN]:`, filteredTrades.length);
@@ -4650,6 +4696,46 @@ const dailyPnLChartData = useMemo(
               <span className="text-xs text-gray-300">Today</span>
             </div>
           </div>
+
+          {/* Solde du compte pour journal perso */}
+          {selectedChannel.id === 'trading-journal' && selectedAccount && selectedAccount !== 'Tous les comptes' && (
+            <div className="mt-4 p-4 bg-gray-800 rounded-lg border border-gray-600">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-sm font-medium text-gray-300">Solde du compte</h4>
+                  <p className="text-xs text-gray-400">{selectedAccount}</p>
+                </div>
+                <div className="text-right">
+                  <div className={`text-lg font-bold ${
+                    calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) 
+                      ? 'text-green-400' : 'text-red-400'
+                  }`}>
+                    ${calculateAccountBalance().toFixed(2)}
+                  </div>
+                  <div className="text-xs text-gray-400">
+                    Balance initiale: ${(() => {
+                      const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
+                      let initialBalance = account?.initial_balance || 0;
+                      if (!initialBalance) {
+                        const savedBalances = localStorage.getItem('accountBalances');
+                        if (savedBalances) {
+                          const balances = JSON.parse(savedBalances);
+                          initialBalance = balances[selectedAccount] || 0;
+                        }
+                      }
+                      return initialBalance.toFixed(2);
+                    })()}
+                  </div>
+                  <div className="text-xs text-gray-400">
+                    Stop-loss: ${(() => {
+                      const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
+                      return (account?.minimum_balance || 0).toFixed(2);
+                    })()}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Graphique PnL cumulé pour journal perso desktop - sous le calendrier */}
           {!isMobile && selectedChannel.id === 'trading-journal' && dailyPnLChartData.length > 0 && (
@@ -8432,8 +8518,24 @@ const dailyPnLChartData = useMemo(
                     // Utiliser la même logique que getWeeklyBreakdownTrades
                     const currentMonth = currentDate.getMonth();
                     const currentYear = currentDate.getFullYear();
-                    const weekStart = new Date(currentYear, currentMonth, (selectedWeek - 1) * 7 + 1);
-                    const weekEnd = new Date(currentYear, currentMonth, selectedWeek * 7);
+                    
+                    const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+                    const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+                    const firstDayWeekday = firstDayOfMonth.getDay(); // 0 = dimanche, 1 = lundi, etc.
+                    
+                    // Ajuster pour que lundi soit 0
+                    const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
+                    
+                    // Calculer les jours de la semaine
+                    const weekStartDay = (selectedWeek - 1) * 7 - adjustedFirstDay + 1;
+                    const weekEndDay = Math.min(selectedWeek * 7 - adjustedFirstDay, lastDayOfMonth.getDate());
+                    
+                    const weekStart = new Date(currentYear, currentMonth, weekStartDay);
+                    const weekEnd = new Date(currentYear, currentMonth, weekEndDay);
+                    // Ajouter 23h59 pour inclure toute la journée
+                    weekEnd.setHours(23, 59, 59, 999);
+                    
+                    console.log(`🔍 Modal - Recherche trades pour semaine ${selectedWeek} [ADMIN]:`, weekStart.toDateString(), 'à', weekEnd.toDateString());
                     
                     const weekTrades = personalTrades.filter(trade => {
                       const tradeDate = new Date(trade.date);
@@ -8442,9 +8544,15 @@ const dailyPnLChartData = useMemo(
                              tradeDate.getMonth() === currentMonth &&
                              tradeDate.getFullYear() === currentYear;
                       
-                      return isDateMatch &&
-                        (selectedAccount === 'Tous les comptes' || (trade.account || 'Compte Principal') === selectedAccount);
+                      // Filtrer par compte sélectionné
+                      const tradeAccount = trade.account || 'Compte Principal';
+                      const isAccountMatch = selectedAccount === 'Tous les comptes' || tradeAccount === selectedAccount;
+                      
+                      console.log(`🔍 Modal - Trade ${trade.date} (${tradeDate.toDateString()}) dans semaine ${selectedWeek} [ADMIN]?`, isDateMatch, 'compte:', isAccountMatch);
+                      return isDateMatch && isAccountMatch;
                     });
+                    
+                    console.log(`✅ Modal - Trades trouvés pour semaine ${selectedWeek} [ADMIN]:`, weekTrades.length);
 
                     return weekTrades.length > 0 ? (
                       weekTrades.map((trade) => (

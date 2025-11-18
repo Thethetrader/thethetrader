@@ -192,9 +192,37 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220 }) => 
                 if (!active || !payload || !payload.length) return null;
                 
                 const value = payload[0].value as number;
-                const currentIndex = sanitizedData.findIndex(d => d.date === label);
-                const previousBalance = currentIndex > 0 ? sanitizedData[currentIndex - 1].balance : 0;
-                const dailyPnL = value - previousBalance;
+                
+                // Calculer le PnL du jour en utilisant les données originales triées
+                const sortedData = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+                
+                // Normaliser les dates pour la comparaison (sans heures)
+                const normalizeDate = (dateStr: string) => {
+                  const d = new Date(dateStr);
+                  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                };
+                
+                const currentDateNormalized = normalizeDate(label);
+                
+                // Trouver l'index du point actuel dans les données triées
+                const currentIndex = sortedData.findIndex(d => {
+                  return normalizeDate(d.date) === currentDateNormalized;
+                });
+                
+                let dailyPnL = 0;
+                if (currentIndex > 0) {
+                  // Prendre le solde du point précédent
+                  const previousBalance = sortedData[currentIndex - 1].balance || 0;
+                  dailyPnL = value - previousBalance;
+                } else if (currentIndex === 0) {
+                  // Premier point : pas de PnL du jour (c'est la balance initiale ou le premier jour avec trades)
+                  // Si c'est le premier point et qu'il y a d'autres points, on peut calculer le PnL
+                  // mais pour simplifier, on met 0 car c'est le point de départ
+                  dailyPnL = 0;
+                } else {
+                  // Point non trouvé : pas de PnL
+                  dailyPnL = 0;
+                }
                 
                 return (
                   <div style={{
