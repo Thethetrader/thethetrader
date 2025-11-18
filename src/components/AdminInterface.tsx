@@ -10,7 +10,7 @@ import { httpsCallable } from 'firebase/functions';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 import { LOSS_REASONS, getLossReasonLabel } from '../config/loss-reasons';
 import { signOutAdmin } from '../utils/admin-utils';
-import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount } from '../lib/supabase';
+import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, supabase } from '../lib/supabase';
 import DailyPnLChart from './DailyPnLChart';
 
 // Composant Profit Factor Gauge
@@ -1286,27 +1286,60 @@ export default function AdminInterface() {
     
     try {
       const account = tradingAccounts.find(acc => acc.account_name === oldName);
-      if (account) {
-        const updatedAccounts = tradingAccounts.map(acc => 
-          acc.id === account.id 
-            ? { ...acc, account_name: newName.trim() }
-            : acc
-        );
-        setTradingAccounts(updatedAccounts);
-        
-        if (selectedAccount === oldName) {
-          setSelectedAccount(newName.trim());
-        }
-        
-        setPersonalTrades(prev => prev.map(trade => 
-          (trade.account || 'Compte Principal') === oldName 
-            ? { ...trade, account: newName.trim() }
-            : trade
-        ));
-        console.log('✅ [ADMIN] Compte renommé:', oldName, '->', newName);
+      if (!account) {
+        console.error('❌ [ADMIN] Compte non trouvé');
+        return;
       }
+
+      // Mettre à jour dans Supabase
+      const updatedAccount = await updateUserAccount(account.id, {
+        account_name: newName.trim()
+      });
+
+      if (!updatedAccount) {
+        alert('Erreur lors de la mise à jour du compte dans la base de données');
+        return;
+      }
+
+      // Mettre à jour les trades associés dans Supabase
+      const user = await getCurrentUser();
+      if (user) {
+        const { error: updateTradesError } = await supabase
+          .from('personal_trades')
+          .update({ account: newName.trim() })
+          .eq('user_id', user.id)
+          .eq('account', oldName);
+
+        if (updateTradesError) {
+          console.error('❌ [ADMIN] Erreur mise à jour trades:', updateTradesError);
+        } else {
+          console.log('✅ [ADMIN] Trades mis à jour dans Supabase');
+        }
+      }
+
+      // Mettre à jour le state local
+      const updatedAccounts = tradingAccounts.map(acc => 
+        acc.id === account.id 
+          ? { ...acc, account_name: newName.trim() }
+          : acc
+      );
+      setTradingAccounts(updatedAccounts);
+      
+      if (selectedAccount === oldName) {
+        setSelectedAccount(newName.trim());
+        localStorage.setItem('selectedAccount', newName.trim());
+      }
+      
+      setPersonalTrades(prev => prev.map(trade => 
+        (trade.account || 'Compte Principal') === oldName 
+          ? { ...trade, account: newName.trim() }
+          : trade
+      ));
+      
+      console.log('✅ [ADMIN] Compte renommé:', oldName, '->', newName);
     } catch (error) {
       console.error('❌ [ADMIN] Erreur renommage compte:', error);
+      alert('Erreur lors du renommage du compte');
     }
   };
 
