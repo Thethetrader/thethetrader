@@ -1048,10 +1048,15 @@ export default function AdminInterface() {
         setNewAccountMinimum('');
         setShowAddAccountModal(false);
         console.log('✅ [ADMIN] Compte ajouté avec succès');
+        alert('✅ Compte créé avec succès !');
+      } else {
+        console.error('❌ [ADMIN] addUserAccount a retourné null');
+        alert('❌ Erreur: Impossible de créer le compte. Vérifiez la console pour plus de détails.');
       }
     } catch (error) {
       console.error('❌ [ADMIN] Erreur ajout compte:', error);
-      alert('Erreur lors de l\'ajout du compte');
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
+      alert(`❌ Erreur lors de l'ajout du compte: ${errorMessage}`);
     }
   };
 
@@ -2661,13 +2666,13 @@ const dailyPnLChartData = useMemo(
         console.log('✅ ADMIN Photo de profil préservée pendant la déconnexion');
       }
 
-      console.log('🏠 Redirection vers la page d\'accueil...');
-      // Rediriger vers la landing page
-      window.location.href = '/';
+      console.log('🏠 Redirection vers la page de connexion admin...');
+      // Rediriger vers la page de connexion admin
+      window.location.href = '/admin';
     } catch (error) {
       console.error('❌ Erreur lors de la déconnexion:', error);
-      // En cas d'erreur, forcer quand même la redirection
-      window.location.href = '/';
+      // En cas d'erreur, forcer quand même la redirection vers la page admin
+      window.location.href = '/admin';
     }
   };
 
