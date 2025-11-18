@@ -863,7 +863,18 @@ export default function AdminInterface() {
   const [showLossReasonsModal, setShowLossReasonsModal] = useState(false);
   const [customLossReasons, setCustomLossReasons] = useState(() => {
     const saved = localStorage.getItem('customLossReasons');
-    return saved ? JSON.parse(saved) : LOSS_REASONS;
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Vérifier si ce sont les anciennes raisons (détection par une ancienne raison)
+      const hasOldReasons = parsed.some((r: any) => r.value === 'mauvais_entree' || r.value === 'news_impact' || r.value === 'analyse_technique');
+      if (hasOldReasons) {
+        // Remplacer par les nouvelles raisons
+        localStorage.setItem('customLossReasons', JSON.stringify(LOSS_REASONS));
+        return LOSS_REASONS;
+      }
+      return parsed;
+    }
+    return LOSS_REASONS;
   });
   const [newReason, setNewReason] = useState({ value: '', emoji: '', label: '' });
   const [editingIndex, setEditingIndex] = useState<number | null>(null);

@@ -17,49 +17,39 @@ export interface LossReason {
 
 export const LOSS_REASONS: LossReason[] = [
   {
-    value: 'mauvais_entree',
-    emoji: '🎯',
-    label: 'Mauvais point d\'entrée'
-  },
-  {
-    value: 'stop_trop_serre',
-    emoji: '⚠️',
-    label: 'Stop-loss trop serré'
-  },
-  {
-    value: 'news_impact',
-    emoji: '📰',
-    label: 'Impact de news/événements'
-  },
-  {
-    value: 'psychologie',
-    emoji: '🧠',
-    label: 'Erreur psychologique (FOMO/Panic)'
-  },
-  {
-    value: 'analyse_technique',
+    value: 'crt_contre_crt_htf',
     emoji: '📊',
-    label: 'Erreur d\'analyse technique'
+    label: 'CRT Contre crt htf'
   },
   {
-    value: 'gestion_risque',
-    emoji: '💰',
-    label: 'Mauvaise gestion du risque'
-  },
-  {
-    value: 'timing',
-    emoji: '⏰',
-    label: 'Mauvais timing'
-  },
-  {
-    value: 'volatilite',
+    value: 'contre_sma',
     emoji: '📈',
-    label: 'Volatilité excessive'
+    label: 'Contre sma'
   },
   {
-    value: 'autre',
-    emoji: '🔧',
-    label: 'Autre raison'
+    value: 'pas_extremite',
+    emoji: '📍',
+    label: 'Pas extrémité'
+  },
+  {
+    value: 'erreur_psychologique',
+    emoji: '🧠',
+    label: 'Erreur psychologique (fomo / panic)'
+  },
+  {
+    value: 'stop_loss_trop_serre',
+    emoji: '⚠️',
+    label: 'Stop loss trop serré'
+  },
+  {
+    value: 'manip_sans_fvg',
+    emoji: '🔄',
+    label: 'Manip sans fvg'
+  },
+  {
+    value: 'faible_itmss',
+    emoji: '📉',
+    label: 'Faible ITMSS'
   }
 ];
 
