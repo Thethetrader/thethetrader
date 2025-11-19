@@ -10,7 +10,7 @@ import { httpsCallable } from 'firebase/functions';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 import { LOSS_REASONS, getLossReasonLabel } from '../config/loss-reasons';
 import { signOutAdmin } from '../utils/admin-utils';
-import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, supabase } from '../lib/supabase';
+import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, supabase, getPersonalTrades as getPersonalTradesFromSupabase } from '../lib/supabase';
 import DailyPnLChart from './DailyPnLChart';
 
 // Composant Profit Factor Gauge
@@ -1263,17 +1263,20 @@ export default function AdminInterface() {
         minimum_balance: minimumValue
       });
 
-      if (updatedAccount) {
-        // Mettre à jour l'état local
-        const updatedAccounts = tradingAccounts.map(acc =>
-          acc.id === account.id
-            ? { ...acc, initial_balance: initialBalanceValue, current_balance: currentBalanceValue, minimum_balance: minimumValue }
-            : acc
-        );
-        setTradingAccounts(updatedAccounts);
-        console.log('✅ [ADMIN] Paramètres du compte mis à jour');
-        alert('✅ Paramètres du compte mis à jour avec succès !');
+      if (!updatedAccount) {
+        alert('❌ Erreur: Impossible de mettre à jour le compte dans la base de données');
+        return;
       }
+
+      // Mettre à jour l'état local
+      const updatedAccounts = tradingAccounts.map(acc =>
+        acc.id === account.id
+          ? { ...acc, initial_balance: initialBalanceValue, current_balance: currentBalanceValue, minimum_balance: minimumValue }
+          : acc
+      );
+      setTradingAccounts(updatedAccounts);
+      console.log('✅ [ADMIN] Paramètres du compte mis à jour');
+      alert('✅ Paramètres du compte mis à jour avec succès !');
     } catch (error) {
       console.error('❌ [ADMIN] Erreur mise à jour paramètres:', error);
       alert('Erreur lors de la mise à jour des paramètres');
@@ -1284,40 +1287,61 @@ export default function AdminInterface() {
     const newName = prompt(`Renommer "${oldName}" en:`, oldName);
     if (!newName || newName.trim() === '' || newName === oldName) return;
     
+    console.log('🔍 [ADMIN] Début renommage:', oldName, '->', newName.trim());
+    
     try {
       const account = tradingAccounts.find(acc => acc.account_name === oldName);
       if (!account) {
-        console.error('❌ [ADMIN] Compte non trouvé');
+        console.error('❌ [ADMIN] Compte non trouvé dans la liste locale');
+        alert('❌ Compte non trouvé');
         return;
       }
 
+      console.log('📋 [ADMIN] Compte trouvé:', account.id, account.account_name);
+
       // Mettre à jour dans Supabase
+      console.log('💾 [ADMIN] Sauvegarde dans Supabase...');
       const updatedAccount = await updateUserAccount(account.id, {
         account_name: newName.trim()
       });
 
+      console.log('📥 [ADMIN] Réponse Supabase:', updatedAccount);
+
       if (!updatedAccount) {
-        alert('Erreur lors de la mise à jour du compte dans la base de données');
+        console.error('❌ [ADMIN] updateUserAccount a retourné null');
+        alert('❌ Erreur: Impossible de mettre à jour le compte dans la base de données. Vérifiez la console pour plus de détails.');
         return;
       }
+
+      console.log('✅ [ADMIN] Compte mis à jour dans Supabase:', updatedAccount);
 
       // Mettre à jour les trades associés dans Supabase
       const user = await getCurrentUser();
       if (user) {
-        const { error: updateTradesError } = await supabase
+        console.log('🔄 [ADMIN] Mise à jour des trades associés...');
+        const { data: tradesData, error: updateTradesError } = await supabase
           .from('personal_trades')
           .update({ account: newName.trim() })
           .eq('user_id', user.id)
-          .eq('account', oldName);
+          .eq('account', oldName)
+          .select();
 
         if (updateTradesError) {
           console.error('❌ [ADMIN] Erreur mise à jour trades:', updateTradesError);
         } else {
-          console.log('✅ [ADMIN] Trades mis à jour dans Supabase');
+          console.log('✅ [ADMIN] Trades mis à jour dans Supabase:', tradesData?.length || 0, 'trades');
         }
+      } else {
+        console.warn('⚠️ [ADMIN] Utilisateur non trouvé, impossible de mettre à jour les trades');
       }
 
-      // Mettre à jour le state local
+      // Recharger les trades depuis Supabase pour avoir les données à jour
+      console.log('🔄 [ADMIN] Rechargement des trades depuis Supabase...');
+      const reloadedTrades = await getPersonalTradesFromSupabase(1000);
+      setPersonalTrades(reloadedTrades);
+      console.log('✅ [ADMIN] Trades rechargés:', reloadedTrades.length);
+
+      // Mettre à jour le state local des comptes
       const updatedAccounts = tradingAccounts.map(acc => 
         acc.id === account.id 
           ? { ...acc, account_name: newName.trim() }
@@ -1330,16 +1354,11 @@ export default function AdminInterface() {
         localStorage.setItem('selectedAccount', newName.trim());
       }
       
-      setPersonalTrades(prev => prev.map(trade => 
-        (trade.account || 'Compte Principal') === oldName 
-          ? { ...trade, account: newName.trim() }
-          : trade
-      ));
-      
-      console.log('✅ [ADMIN] Compte renommé:', oldName, '->', newName);
+      console.log('✅ [ADMIN] Compte renommé avec succès:', oldName, '->', newName);
+      alert('✅ Compte renommé avec succès !');
     } catch (error) {
       console.error('❌ [ADMIN] Erreur renommage compte:', error);
-      alert('Erreur lors du renommage du compte');
+      alert('❌ Erreur lors du renommage du compte. Vérifiez la console pour plus de détails.');
     }
   };
 
@@ -2490,7 +2509,7 @@ const dailyPnLChartData = useMemo(
         
         // Filtrer par compte sélectionné
         const tradeAccount = t.account || 'Compte Principal';
-        const isAccountMatch = tradeAccount === selectedAccount;
+        const isAccountMatch = selectedAccount === 'Tous les comptes' || tradeAccount === selectedAccount;
         
         return isDateMatch && isAccountMatch;
       });
