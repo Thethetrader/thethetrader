@@ -3,14 +3,14 @@ import ProfitLoss from './ProfitLoss';
 import ChatZone from './ChatZone';
 import RumbleTalk from './RumbleTalk';
 import ChatCommunauteAdmin from './ChatCommunauteAdmin';
-import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, addPersonalTrade, getPersonalTrades, PersonalTrade, syncUserId, listenToPersonalTrades, deleteMessage, deletePersonalTrade, functions } from '../utils/firebase-setup';
+import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, deleteMessage, functions } from '../utils/firebase-setup';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, sendLocalNotification } from '../utils/push-notifications';
 import { ref, update, onValue, get, remove, push, set } from 'firebase/database';
 import { httpsCallable } from 'firebase/functions';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 import { LOSS_REASONS, getLossReasonLabel } from '../config/loss-reasons';
 import { signOutAdmin } from '../utils/admin-utils';
-import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, supabase, getPersonalTrades as getPersonalTradesFromSupabase } from '../lib/supabase';
+import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, supabase, getPersonalTrades as getPersonalTradesFromSupabase, addPersonalTrade as addPersonalTradeToSupabase, listenToPersonalTrades, PersonalTrade, deletePersonalTrade } from '../lib/supabase';
 import DailyPnLChart from './DailyPnLChart';
 
 // Composant Profit Factor Gauge
@@ -967,14 +967,7 @@ export default function AdminInterface() {
     image2: null as File | null
   });
   
-  // Synchroniser l'ID utilisateur au démarrage de l'application
-  useEffect(() => {
-    const syncUser = async () => {
-      const userId = await syncUserId();
-      console.log('🔄 ID utilisateur synchronisé au démarrage ADMIN:', userId);
-    };
-    syncUser();
-  }, []); // Une seule fois au démarrage
+  // Plus besoin de synchroniser l'ID utilisateur avec Supabase (géré automatiquement)
   
   // Synchronisation temps réel des trades personnels
   useEffect(() => {
@@ -3137,12 +3130,12 @@ const dailyPnLChartData = useMemo(
       notes: tradeData.notes,
       image1: tradeData.image1,
       image2: tradeData.image2,
-        timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-        account: selectedAccount // Added selectedAccount
+      timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+      account: selectedAccount === 'Tous les comptes' ? 'Compte Principal' : selectedAccount
     };
 
-    // Sauvegarder dans Firebase
-    const savedTrade = await addPersonalTrade(newTrade as any);
+    // Sauvegarder dans Supabase
+    const savedTrade = await addPersonalTradeToSupabase(newTrade as any);
     
     if (savedTrade) {
       // Le listener temps réel va automatiquement ajouter le trade à la liste
@@ -3163,7 +3156,7 @@ const dailyPnLChartData = useMemo(
         image2: null
       });
       setShowTradeModal(false);
-      console.log('✅ Trade ajouté avec succès dans Firebase !');
+      console.log('✅ Trade ajouté avec succès dans Supabase !');
     } else {
       console.error('❌ Erreur lors de la sauvegarde du trade');
     }
@@ -5667,12 +5660,12 @@ const dailyPnLChartData = useMemo(
                       <button 
                         onClick={async () => {
                           console.log('🔄 Rechargement des trades...');
-                          const trades = await getPersonalTrades();
+                          const trades = await getPersonalTradesFromSupabase(1000);
                           setPersonalTrades(trades);
-                          console.log(`✅ ${trades.length} trades rechargés depuis Firebase`);
+                          console.log(`✅ ${trades.length} trades rechargés depuis Supabase`);
                         }}
                         className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg text-sm font-medium"
-                        title="Recharger les trades depuis Firebase"
+                        title="Recharger les trades depuis Supabase"
                       >
                         🔄 Recharger
                       </button>
