@@ -3117,6 +3117,8 @@ const dailyPnLChartData = useMemo(
       return `${year}-${month}-${day}`;
     };
 
+    const accountName = selectedAccount === 'Tous les comptes' ? 'Compte Principal' : selectedAccount;
+    
     const newTrade = {
       date: selectedDate ? getDateString(selectedDate) : getDateString(new Date()),
       symbol: tradeData.symbol,
@@ -3131,15 +3133,40 @@ const dailyPnLChartData = useMemo(
       image1: tradeData.image1,
       image2: tradeData.image2,
       timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-      account: selectedAccount === 'Tous les comptes' ? 'Compte Principal' : selectedAccount
+      account: accountName
     };
+
+    console.log('🔍 [ADMIN] Ajout trade avec compte:', accountName, 'selectedAccount:', selectedAccount);
+    console.log('🔍 [ADMIN] Trade data:', newTrade);
 
     // Sauvegarder dans Supabase
     const savedTrade = await addPersonalTradeToSupabase(newTrade as any);
     
     if (savedTrade) {
-      // Le listener temps réel va automatiquement ajouter le trade à la liste
-      // Pas besoin de setPersonalTrades ici pour éviter les doublons
+      console.log('✅ [ADMIN] Trade sauvegardé dans Supabase:', savedTrade);
+      
+      // Attendre un peu pour laisser le temps à Supabase de traiter
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Recharger les trades depuis Supabase pour être sûr qu'ils sont à jour
+      console.log('🔄 [ADMIN] Rechargement des trades après ajout...');
+      const reloadedTrades = await getPersonalTradesFromSupabase(1000);
+      console.log('📊 [ADMIN] Trades rechargés:', reloadedTrades.length);
+      console.log('📋 [ADMIN] Dernier trade:', reloadedTrades[0]);
+      
+      // Vérifier si le nouveau trade est dans la liste
+      const newTradeFound = reloadedTrades.find(t => t.id === savedTrade.id);
+      if (newTradeFound) {
+        console.log('✅ [ADMIN] Nouveau trade trouvé dans la liste rechargée');
+        setPersonalTrades(reloadedTrades);
+      } else {
+        console.warn('⚠️ [ADMIN] Nouveau trade non trouvé dans la liste, rechargement supplémentaire...');
+        // Attendre encore un peu et recharger
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        const reloadedTrades2 = await getPersonalTradesFromSupabase(1000);
+        setPersonalTrades(reloadedTrades2);
+        console.log('✅ [ADMIN] Trades rechargés (2ème tentative):', reloadedTrades2.length);
+      }
       
       // Reset form
       setTradeData({
@@ -3158,7 +3185,8 @@ const dailyPnLChartData = useMemo(
       setShowTradeModal(false);
       console.log('✅ Trade ajouté avec succès dans Supabase !');
     } else {
-      console.error('❌ Erreur lors de la sauvegarde du trade');
+      console.error('❌ [ADMIN] Erreur lors de la sauvegarde du trade - addPersonalTradeToSupabase a retourné null');
+      alert('❌ Erreur lors de la sauvegarde du trade. Vérifiez la console pour plus de détails.');
     }
   };
 
