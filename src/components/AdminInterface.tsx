@@ -1234,6 +1234,7 @@ export default function AdminInterface() {
     const currentInitialBalance = account.initial_balance || 0;
     const currentCurrentBalance = account.current_balance !== null && account.current_balance !== undefined ? account.current_balance : '';
     const currentMinimum = account.minimum_balance || 0;
+    const currentMaxDrawdown = 1250; // Valeur par défaut, à remplacer par account.max_drawdown quand ajouté
 
     const newInitialBalance = prompt(`Balance initiale pour "${accountName}":`, currentInitialBalance.toString());
     if (newInitialBalance === null) return; // Annulé
@@ -1244,9 +1245,13 @@ export default function AdminInterface() {
     const newMinimum = prompt(`Stop-loss (minimum) pour "${accountName}":`, currentMinimum.toString());
     if (newMinimum === null) return; // Annulé
 
+    const newMaxDrawdown = prompt(`DD Max (drawdown maximum) pour "${accountName}":`, currentMaxDrawdown.toString());
+    if (newMaxDrawdown === null) return; // Annulé
+
     const initialBalanceValue = parseFloat(newInitialBalance) || 0;
     const currentBalanceValue = newCurrentBalance.trim() === '' ? null : (parseFloat(newCurrentBalance) || null);
     const minimumValue = parseFloat(newMinimum) || 0;
+    const maxDrawdownValue = parseFloat(newMaxDrawdown) || 1250;
 
     try {
       // Mettre à jour dans Supabase
@@ -1261,6 +1266,9 @@ export default function AdminInterface() {
         return;
       }
 
+      // Sauvegarder le DD max dans localStorage (temporaire jusqu'à ajout dans la DB)
+      localStorage.setItem(`maxDrawdown_${accountName}`, maxDrawdownValue.toString());
+      
       // Mettre à jour l'état local
       const updatedAccounts = tradingAccounts.map(acc =>
         acc.id === account.id
@@ -4782,44 +4790,89 @@ const dailyPnLChartData = useMemo(
           </div>
 
           {/* Solde du compte pour journal perso */}
-          {selectedChannel.id === 'trading-journal' && selectedAccount && selectedAccount !== 'Tous les comptes' && (
-            <div className="mt-4 p-4 bg-gray-800 rounded-lg border border-gray-600">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="text-sm font-medium text-gray-300">Solde du compte</h4>
-                  <p className="text-xs text-gray-400">{selectedAccount}</p>
+          {selectedChannel.id === 'trading-journal' && selectedAccount && selectedAccount !== 'Tous les comptes' && (() => {
+            const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
+            const currentBalance = calculateAccountBalance();
+            const initialBalance = account?.initial_balance || 0;
+            const minimumBalance = account?.minimum_balance || 0;
+            
+            // DD max - utiliser une valeur du compte si disponible, sinon 1250 par défaut
+            // Pour l'instant, on utilise 1250 par défaut, mais on peut ajouter un champ max_drawdown plus tard
+            // On peut stocker temporairement dans localStorage jusqu'à ce qu'on ajoute le champ dans la DB
+            const savedMaxDrawdown = localStorage.getItem(`maxDrawdown_${selectedAccount}`);
+            const maxDrawdown = savedMaxDrawdown ? parseFloat(savedMaxDrawdown) : 1250;
+            
+            // Calculer les pertes depuis le solde initial
+            // Si currentBalance >= initialBalance, on n'a PAS perdu, donc jauge à 0
+            let drawdownPercentage = 0;
+            let losses = 0;
+            
+            if (initialBalance > 0 && currentBalance < initialBalance) {
+              // On a perdu de l'argent
+              losses = initialBalance - currentBalance;
+              // Calculer le pourcentage : plus on perd, plus la jauge avance vers la droite
+              // La jauge avance progressivement : si on perd 50$ sur un DD max de 100$, on est à 50%
+              drawdownPercentage = maxDrawdown > 0 
+                ? Math.min(100, (losses / maxDrawdown) * 100)
+                : 0;
+            }
+            // Sinon, drawdownPercentage reste à 0 (pas de pertes ou solde initial non défini)
+            
+            return (
+              <div className="mt-4 space-y-3">
+                <div className="p-4 bg-gray-800 rounded-lg border border-gray-600">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-300">Solde du compte</h4>
+                      <p className="text-xs text-gray-400">{selectedAccount}</p>
+                    </div>
+                    <div className="text-right">
+                      <div className={`text-lg font-bold ${
+                        currentBalance >= initialBalance 
+                          ? 'text-green-400' : 'text-red-400'
+                      }`}>
+                        ${currentBalance.toFixed(2)}
+                      </div>
+                      <div className="text-xs text-gray-400">
+                        Balance initiale: ${initialBalance.toFixed(2)}
+                      </div>
+                      <div className="text-xs text-gray-400">
+                        Stop-loss: ${minimumBalance.toFixed(2)}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <div className={`text-lg font-bold ${
-                    calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) 
-                      ? 'text-green-400' : 'text-red-400'
-                  }`}>
-                    ${calculateAccountBalance().toFixed(2)}
+                
+                {/* Jauge de drawdown maximum */}
+                <div className="p-4 bg-gray-800 rounded-lg border border-gray-600">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-medium text-white">DD Max</span>
+                    <span className="text-sm font-bold text-white">{drawdownPercentage.toFixed(1)}%</span>
                   </div>
-                  <div className="text-xs text-gray-400">
-                    Balance initiale: ${(() => {
-                      const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
-                      let initialBalance = account?.initial_balance || 0;
-                      if (!initialBalance) {
-                        const savedBalances = localStorage.getItem('accountBalances');
-                        if (savedBalances) {
-                          const balances = JSON.parse(savedBalances);
-                          initialBalance = balances[selectedAccount] || 0;
-                        }
-                      }
-                      return initialBalance.toFixed(2);
-                    })()}
+                  <div className="relative w-full h-8 bg-gray-700 rounded-full overflow-hidden">
+                    {/* Barre de progression rouge */}
+                    {drawdownPercentage > 0 && (
+                      <div 
+                        className="absolute left-0 top-0 h-full bg-red-800/70 transition-all duration-300 rounded-full"
+                        style={{ width: `${drawdownPercentage}%` }}
+                      />
+                    )}
+                    {/* Indicateur rouge circulaire - seulement si on a des pertes */}
+                    {drawdownPercentage > 0 && (
+                      <div 
+                        className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-red-700 rounded-full border-2 border-white shadow-lg z-10"
+                        style={{ left: `calc(${Math.max(0, drawdownPercentage)}% - 8px)` }}
+                      />
+                    )}
                   </div>
-                  <div className="text-xs text-gray-400">
-                    Stop-loss: ${(() => {
-                      const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
-                      return (account?.minimum_balance || 0).toFixed(2);
-                    })()}
+                  <div className="flex items-center justify-between mt-2 text-xs">
+                    <span className="text-white font-medium">${losses.toFixed(2)}</span>
+                    <span className="text-white font-medium">${maxDrawdown.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* Graphique PnL cumulé pour journal perso desktop - sous le calendrier */}
           {!isMobile && selectedChannel.id === 'trading-journal' && dailyPnLChartData.length > 0 && (
@@ -7919,23 +7972,39 @@ const dailyPnLChartData = useMemo(
                     {(trade.image1 || trade.image2) && (
                       <div className="mb-3">
                         <span className="text-sm text-gray-400">Images:</span>
-                        <div className="flex gap-2 mt-2">
+                        <div className="mt-2 space-y-3 flex flex-col items-center">
                           {trade.image1 && (
-                            <div className="relative">
-                              <img 
-                                src={trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1} 
-                                alt="Trade image 1" 
-                                className="w-20 h-20 object-cover rounded border border-gray-600"
-                              />
+                            <div className="flex flex-col items-center">
+                              <span className="text-xs text-gray-500">📸 Image 1:</span>
+                              <div className="mt-1">
+                                <img 
+                                  src={trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1} 
+                                  alt="Trade image 1"
+                                  className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    const imageSrc = trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1;
+                                    setSelectedImage(imageSrc);
+                                  }}
+                                />
+                              </div>
                             </div>
                           )}
                           {trade.image2 && (
-                            <div className="relative">
-                              <img 
-                                src={trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2} 
-                                alt="Trade image 2" 
-                                className="w-20 h-20 object-cover rounded border border-gray-600"
-                              />
+                            <div className="flex flex-col items-center">
+                              <span className="text-xs text-gray-500">📸 Image 2:</span>
+                              <div className="mt-1">
+                                <img 
+                                  src={trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2} 
+                                  alt="Trade image 2"
+                                  className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    const imageSrc = trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2;
+                                    setSelectedImage(imageSrc);
+                                  }}
+                                />
+                              </div>
                             </div>
                           )}
                         </div>
@@ -8099,7 +8168,7 @@ const dailyPnLChartData = useMemo(
                                 <img 
                                   src={signal.attachment_data} 
                                   alt="Signal screenshot"
-                                  className="max-w-2xl rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                                  className="max-w-xs max-h-64 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity object-contain"
                                   onClick={() => setSelectedImage(signal.attachment_data)}
                                 />
                               </div>
@@ -8112,7 +8181,7 @@ const dailyPnLChartData = useMemo(
                                 <img 
                                   src={signal.closure_image} 
                                   alt="Signal closure screenshot"
-                                  className="max-w-2xl rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                                  className="max-w-xs max-h-64 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity object-contain"
                                   onClick={() => setSelectedImage(signal.closure_image)}
                                 />
                               </div>
