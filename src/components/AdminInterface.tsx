@@ -4877,7 +4877,14 @@ const dailyPnLChartData = useMemo(
           {/* Graphique PnL cumulé pour journal perso desktop - sous le calendrier */}
           {!isMobile && selectedChannel.id === 'trading-journal' && dailyPnLChartData.length > 0 && (
             <div className="mt-4">
-              <DailyPnLChart data={dailyPnLChartData} height={450} />
+              <DailyPnLChart 
+                data={dailyPnLChartData} 
+                height={450} 
+                stopLoss={(() => {
+                  const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
+                  return account?.minimum_balance || undefined;
+                })()}
+              />
             </div>
           )}
 
@@ -5073,7 +5080,14 @@ const dailyPnLChartData = useMemo(
 
             {isMobile && dailyPnLChartData.length > 0 && (
               <div className="mt-3">
-                <DailyPnLChart data={dailyPnLChartData} height={450} />
+                <DailyPnLChart 
+                  data={dailyPnLChartData} 
+                  height={450}
+                  stopLoss={selectedChannel.id === 'trading-journal' ? (() => {
+                    const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
+                    return account?.minimum_balance || undefined;
+                  })() : undefined}
+                />
               </div>
             )}
 
