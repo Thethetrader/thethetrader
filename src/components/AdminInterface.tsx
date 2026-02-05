@@ -246,6 +246,7 @@ export default function AdminInterface() {
   // États pour la gestion des comptes
   const [tradingAccounts, setTradingAccounts] = useState<UserAccount[]>([]);
   const [selectedAccount, setSelectedAccount] = useState('Compte Principal');
+  const [tradeAddAccount, setTradeAddAccount] = useState<string>('Compte Principal');
   const [showAddAccountModal, setShowAddAccountModal] = useState(false);
   const [newAccountName, setNewAccountName] = useState('');
   const [newAccountBalance, setNewAccountBalance] = useState('');
@@ -3108,6 +3109,7 @@ const dailyPnLChartData = useMemo(
 
   // Fonctions pour le journal de trading personnalisé
   const handleAddTrade = () => {
+    setTradeAddAccount(selectedAccount === 'Tous les comptes' ? (tradingAccounts[0]?.account_name || 'Compte Principal') : selectedAccount);
     setShowTradeModal(true);
   };
 
@@ -3125,56 +3127,44 @@ const dailyPnLChartData = useMemo(
       return `${year}-${month}-${day}`;
     };
 
-    const accountName = selectedAccount === 'Tous les comptes' ? 'Compte Principal' : selectedAccount;
-    
-    const newTrade = {
-      date: selectedDate ? getDateString(selectedDate) : getDateString(new Date()),
-      symbol: tradeData.symbol,
-      type: tradeData.type,
-      entry: tradeData.entry,
-      exit: tradeData.exit,
-      stopLoss: tradeData.stopLoss,
-      pnl: tradeData.pnl,
-      status: tradeData.status,
-      lossReason: tradeData.lossReason,
-      notes: tradeData.notes,
-      image1: tradeData.image1,
-      image2: tradeData.image2,
-      timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-      account: accountName
-    };
+    const accountsToAdd = tradeAddAccount === 'Tous les comptes'
+      ? (tradingAccounts.length > 0 ? tradingAccounts.map(a => a.account_name) : ['Compte Principal'])
+      : [tradeAddAccount];
 
-    console.log('🔍 [ADMIN] Ajout trade avec compte:', accountName, 'selectedAccount:', selectedAccount);
-    console.log('🔍 [ADMIN] Trade data:', newTrade);
+    console.log('🔍 [ADMIN] Ajout trade - comptes:', accountsToAdd);
 
-    // Sauvegarder dans Supabase
-    const savedTrade = await addPersonalTradeToSupabase(newTrade as any);
-    
-    if (savedTrade) {
-      console.log('✅ [ADMIN] Trade sauvegardé dans Supabase:', savedTrade);
+    // Sauvegarder dans Supabase (un trade par compte)
+    let successCount = 0;
+    for (const accountName of accountsToAdd) {
+      const newTrade = {
+        date: selectedDate ? getDateString(selectedDate) : getDateString(new Date()),
+        symbol: tradeData.symbol,
+        type: tradeData.type,
+        entry: tradeData.entry,
+        exit: tradeData.exit,
+        stopLoss: tradeData.stopLoss,
+        pnl: tradeData.pnl,
+        status: tradeData.status,
+        lossReason: tradeData.lossReason,
+        notes: tradeData.notes,
+        image1: tradeData.image1,
+        image2: tradeData.image2,
+        timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        account: accountName
+      };
+      const savedTrade = await addPersonalTradeToSupabase(newTrade as any);
+      if (savedTrade) successCount++;
+    }
+
+    if (successCount > 0) {
+      console.log('✅ [ADMIN] Trades sauvegardés:', successCount, '/', accountsToAdd.length);
       
       // Attendre un peu pour laisser le temps à Supabase de traiter
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Recharger les trades depuis Supabase pour être sûr qu'ils sont à jour
-      console.log('🔄 [ADMIN] Rechargement des trades après ajout...');
+      // Recharger les trades depuis Supabase
       const reloadedTrades = await getPersonalTradesFromSupabase(1000);
-      console.log('📊 [ADMIN] Trades rechargés:', reloadedTrades.length);
-      console.log('📋 [ADMIN] Dernier trade:', reloadedTrades[0]);
-      
-      // Vérifier si le nouveau trade est dans la liste
-      const newTradeFound = reloadedTrades.find(t => t.id === savedTrade.id);
-      if (newTradeFound) {
-        console.log('✅ [ADMIN] Nouveau trade trouvé dans la liste rechargée');
-        setPersonalTrades(reloadedTrades);
-      } else {
-        console.warn('⚠️ [ADMIN] Nouveau trade non trouvé dans la liste, rechargement supplémentaire...');
-        // Attendre encore un peu et recharger
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        const reloadedTrades2 = await getPersonalTradesFromSupabase(1000);
-        setPersonalTrades(reloadedTrades2);
-        console.log('✅ [ADMIN] Trades rechargés (2ème tentative):', reloadedTrades2.length);
-      }
+      setPersonalTrades(reloadedTrades);
       
       // Reset form
       setTradeData({
@@ -3193,8 +3183,11 @@ const dailyPnLChartData = useMemo(
       setShowTradeModal(false);
       console.log('✅ Trade ajouté avec succès dans Supabase !');
     } else {
-      console.error('❌ [ADMIN] Erreur lors de la sauvegarde du trade - addPersonalTradeToSupabase a retourné null');
+      console.error('❌ [ADMIN] Erreur lors de la sauvegarde du trade');
       alert('❌ Erreur lors de la sauvegarde du trade. Vérifiez la console pour plus de détails.');
+    }
+    if (successCount > 0 && successCount < accountsToAdd.length) {
+      alert(`Trade ajouté à ${successCount}/${accountsToAdd.length} comptes. Vérifiez les erreurs en console.`);
     }
   };
 
@@ -3426,7 +3419,8 @@ const dailyPnLChartData = useMemo(
         }
         const tradeAccount = trade.account || 'Compte Principal';
         const isDateMatch = trade.date === dateStr;
-        const isAccountMatch = tradeAccount === selectedAccount;
+        // Si "Tous les comptes" est sélectionné, ne pas filtrer par compte
+        const isAccountMatch = selectedAccount === 'Tous les comptes' || tradeAccount === selectedAccount;
         console.log('Trade date:', trade.date, 'Compte:', tradeAccount, 'Recherche:', dateStr, 'Match date:', isDateMatch, 'Match compte:', isAccountMatch);
         return isDateMatch && isAccountMatch;
       });
@@ -4600,21 +4594,25 @@ const dailyPnLChartData = useMemo(
                 let tradeCount = 0;
 
                 if (selectedChannel.id === 'trading-journal') {
-                  // Logique pour les trades personnels
+                  // Logique pour les trades personnels - basée sur PnL
                   if (dayTrades.length > 0) {
                     tradeCount = dayTrades.length;
                     
-                    // Déterminer la couleur selon les statuts des trades
-                    const hasWin = dayTrades.some(t => t.status === 'WIN');
-                    const hasLoss = dayTrades.some(t => t.status === 'LOSS');
-                    const hasBE = dayTrades.some(t => t.status === 'BE');
+                    // Calculer le PnL total pour ce jour
+                    const totalPnL = dayTrades.reduce((total, trade) => {
+                      if (trade.pnl) {
+                        return total + parsePnL(trade.pnl);
+                      }
+                      return total;
+                    }, 0);
                     
-                    if (hasWin && !hasLoss) {
-                      bgColor = 'bg-green-400/40 border-green-300/30 text-white'; // WIN - vert plus pale
-                    } else if (hasLoss && !hasWin) {
-                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // LOSS
-                    } else if (hasBE || (hasWin && hasLoss)) {
-                      bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // BE ou mixte
+                    // Déterminer la couleur selon le PnL total
+                    if (totalPnL > 0) {
+                      bgColor = 'bg-green-400/40 border-green-300/30 text-white'; // PnL positif - vert plus pale
+                    } else if (totalPnL < 0) {
+                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif
+                    } else {
+                      bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
                     }
                   }
                 } else {
@@ -4664,15 +4662,12 @@ const dailyPnLChartData = useMemo(
                         if (selectedChannel.id === 'trading-journal') {
                           setSelectedDate(clickedDate);
                           
-                          // Ouvrir le popup des trades si il y en a
+                          // Ouvrir le popup des trades (toujours, même s'il n'y en a pas)
                           const tradesForDate = getTradesForDate(clickedDate);
                           console.log('Clic sur jour:', dayNumber, 'Trades trouvés:', tradesForDate.length);
                           
-                          if (tradesForDate.length > 0) {
-                            console.log('Trades trouvés, ouverture modal...');
-                            setSelectedTradesDate(clickedDate);
-                            setShowTradesModal(true);
-                          }
+                          setSelectedTradesDate(clickedDate);
+                          setShowTradesModal(true);
                         } else {
                           // Ouvrir le popup des signaux si il y en a
                           const signalsForDate = getSignalsForDate(clickedDate);
@@ -4877,14 +4872,7 @@ const dailyPnLChartData = useMemo(
           {/* Graphique PnL cumulé pour journal perso desktop - sous le calendrier */}
           {!isMobile && selectedChannel.id === 'trading-journal' && dailyPnLChartData.length > 0 && (
             <div className="mt-4">
-              <DailyPnLChart 
-                data={dailyPnLChartData} 
-                height={450} 
-                stopLoss={(() => {
-                  const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
-                  return account?.minimum_balance || undefined;
-                })()}
-              />
+              <DailyPnLChart data={dailyPnLChartData} height={450} />
             </div>
           )}
 
@@ -5080,14 +5068,7 @@ const dailyPnLChartData = useMemo(
 
             {isMobile && dailyPnLChartData.length > 0 && (
               <div className="mt-3">
-                <DailyPnLChart 
-                  data={dailyPnLChartData} 
-                  height={450}
-                  stopLoss={selectedChannel.id === 'trading-journal' ? (() => {
-                    const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
-                    return account?.minimum_balance || undefined;
-                  })() : undefined}
-                />
+                <DailyPnLChart data={dailyPnLChartData} height={450} />
               </div>
             )}
 
@@ -7710,6 +7691,24 @@ const dailyPnLChartData = useMemo(
                   <p className="text-xs text-gray-400 mt-1">Collez directement depuis TradingView</p>
                 </div>
 
+                {/* Compte destination */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Compte</label>
+                  <select
+                    value={tradeAddAccount}
+                    onChange={(e) => setTradeAddAccount(e.target.value)}
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="Tous les comptes">📊 Tous les comptes</option>
+                    {tradingAccounts.map((account) => (
+                      <option key={account.id} value={account.account_name}>
+                        {account.account_name}
+                      </option>
+                    ))}
+                    {tradingAccounts.length === 0 && <option value="Compte Principal">Compte Principal</option>}
+                  </select>
+                </div>
+
                 {/* Type de trade */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">Type</label>
@@ -7894,9 +7893,9 @@ const dailyPnLChartData = useMemo(
       )}
 
       {/* Modal des Trades */}
-      {showTradesModal && selectedTradesDate && getTradesForDate(selectedTradesDate).length > 0 && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+      {showTradesModal && selectedTradesDate && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-white">
@@ -7916,7 +7915,12 @@ const dailyPnLChartData = useMemo(
               </div>
 
               <div className="space-y-4">
-                {getTradesForDate(selectedTradesDate).map((trade) => (
+                {getTradesForDate(selectedTradesDate).length === 0 ? (
+                  <div className="text-center py-8 text-gray-400">
+                    Aucun trade pour cette date
+                  </div>
+                ) : (
+                  getTradesForDate(selectedTradesDate).map((trade) => (
                   <div key={trade.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
@@ -7993,13 +7997,9 @@ const dailyPnLChartData = useMemo(
                               <div className="mt-1">
                                 <img 
                                   src={trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1} 
-                                  alt="Trade image 1"
+                                  alt="Trade image 1" 
                                   className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    const imageSrc = trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1;
-                                    setSelectedImage(imageSrc);
-                                  }}
+                                  onClick={() => setSelectedImage(trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1)}
                                 />
                               </div>
                             </div>
@@ -8010,13 +8010,9 @@ const dailyPnLChartData = useMemo(
                               <div className="mt-1">
                                 <img 
                                   src={trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2} 
-                                  alt="Trade image 2"
+                                  alt="Trade image 2" 
                                   className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    const imageSrc = trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2;
-                                    setSelectedImage(imageSrc);
-                                  }}
+                                  onClick={() => setSelectedImage(trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2)}
                                 />
                               </div>
                             </div>
@@ -8029,7 +8025,8 @@ const dailyPnLChartData = useMemo(
                       <span>Ajouté le {trade.timestamp}</span>
                     </div>
                   </div>
-                ))}
+                  ))
+                )}
               </div>
 
               <div className="mt-6 pt-4 border-t border-gray-600">

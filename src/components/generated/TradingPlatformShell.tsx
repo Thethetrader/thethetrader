@@ -1807,6 +1807,7 @@ export default function TradingPlatformShell() {
     image1: null as File | null,
     image2: null as File | null
   });
+  const [tradeAddAccount, setTradeAddAccount] = useState<string>('Compte Principal');
   
   // Synchroniser l'ID utilisateur au démarrage de l'application
   useEffect(() => {
@@ -3616,6 +3617,7 @@ export default function TradingPlatformShell() {
 
   // Fonctions pour le journal de trading personnalisé
   const handleAddTrade = () => {
+    setTradeAddAccount(selectedAccount === 'Tous les comptes' ? (tradingAccounts[0]?.account_name || 'Compte Principal') : selectedAccount);
     setShowTradeModal(true);
   };
 
@@ -3633,29 +3635,36 @@ export default function TradingPlatformShell() {
       return `${year}-${month}-${day}`;
     };
 
-    const newTrade = {
-      date: selectedDate ? getDateString(selectedDate) : getDateString(new Date()),
-      symbol: tradeData.symbol,
-      type: tradeData.type,
-      entry: tradeData.entry,
-      exit: tradeData.exit,
-      stopLoss: tradeData.stopLoss,
-      pnl: tradeData.pnl,
-      status: tradeData.status,
-      lossReason: tradeData.lossReason,
-      lossReasons: tradeData.lossReasons,
-      notes: tradeData.notes,
-      image1: tradeData.image1,
-      image2: tradeData.image2,
-      timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-      account: selectedAccount
-    };
+    const accountsToAdd = tradeAddAccount === 'Tous les comptes'
+      ? (tradingAccounts.length > 0 ? tradingAccounts.map(a => a.account_name) : ['Compte Principal'])
+      : [tradeAddAccount];
 
-    // Sauvegarder dans Supabase
+    // Sauvegarder dans Supabase (un trade par compte)
     try {
-      const savedTrade = await addPersonalTrade(newTrade as any);
-      
-      if (savedTrade) {
+      let successCount = 0;
+      for (const accountName of accountsToAdd) {
+        const newTrade = {
+          date: selectedDate ? getDateString(selectedDate) : getDateString(new Date()),
+          symbol: tradeData.symbol,
+          type: tradeData.type,
+          entry: tradeData.entry,
+          exit: tradeData.exit,
+          stopLoss: tradeData.stopLoss,
+          pnl: tradeData.pnl,
+          status: tradeData.status,
+          lossReason: tradeData.lossReason,
+          lossReasons: tradeData.lossReasons,
+          notes: tradeData.notes,
+          image1: tradeData.image1,
+          image2: tradeData.image2,
+          timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+          account: accountName
+        };
+        const savedTrade = await addPersonalTrade(newTrade as any);
+        if (savedTrade) successCount++;
+      }
+
+      if (successCount > 0) {
         // Le listener temps réel va automatiquement ajouter le trade à la liste
         // Mais si ça ne marche pas, on recharge manuellement après un délai
         setTimeout(async () => {
@@ -3687,6 +3696,9 @@ export default function TradingPlatformShell() {
         setShowTradeModal(false);
       } else {
         alert('Erreur lors de la sauvegarde du trade');
+      }
+      if (successCount > 0 && successCount < accountsToAdd.length) {
+        alert(`Trade ajouté à ${successCount}/${accountsToAdd.length} comptes. Vérifiez les erreurs en console.`);
       }
     } catch (error) {
       console.error('❌ Erreur lors de la sauvegarde du trade:', error);
@@ -4571,15 +4583,12 @@ export default function TradingPlatformShell() {
                         if (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') {
                           setSelectedDate(clickedDate);
                           
-                          // Ouvrir le popup des trades si il y en a
+                          // Ouvrir le popup des trades (toujours, même s'il n'y en a pas)
                           const tradesForDate = getTradesForDate(clickedDate);
                           console.log('Clic sur jour:', dayNumber, 'Trades trouvés:', tradesForDate.length);
                           
-                          if (tradesForDate.length > 0) {
-                            console.log('Trades trouvés, ouverture modal...');
-                            setSelectedTradesDate(clickedDate);
-                            setShowTradesModal(true);
-                          }
+                          setSelectedTradesDate(clickedDate);
+                          setShowTradesModal(true);
                         } else {
                           // Ouvrir le popup des signaux si il y en a
                           const signalsForDate = getSignalsForDate(clickedDate);
@@ -7833,6 +7842,24 @@ export default function TradingPlatformShell() {
                   <p className="text-xs text-gray-400 mt-1">Collez directement depuis TradingView</p>
                 </div>
 
+                {/* Compte destination */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Compte</label>
+                  <select
+                    value={tradeAddAccount}
+                    onChange={(e) => setTradeAddAccount(e.target.value)}
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="Tous les comptes">📊 Tous les comptes</option>
+                    {tradingAccounts.map((account) => (
+                      <option key={account.id} value={account.account_name}>
+                        {account.account_name}
+                      </option>
+                    ))}
+                    {tradingAccounts.length === 0 && <option value="Compte Principal">Compte Principal</option>}
+                  </select>
+                </div>
+
                 {/* Type de trade */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">Type</label>
@@ -8054,8 +8081,8 @@ export default function TradingPlatformShell() {
       )}
       {/* Modal des Trades */}
       {showTradesModal && selectedTradesDate && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-white">
@@ -8075,7 +8102,12 @@ export default function TradingPlatformShell() {
               </div>
 
               <div className="space-y-4">
-                {getTradesForDate(selectedTradesDate).map((trade) => (
+                {getTradesForDate(selectedTradesDate).length === 0 ? (
+                  <div className="text-center py-8 text-gray-400">
+                    Aucun trade pour cette date
+                  </div>
+                ) : (
+                  getTradesForDate(selectedTradesDate).map((trade) => (
                   <div key={trade.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
@@ -8180,7 +8212,8 @@ export default function TradingPlatformShell() {
                       <span>Ajouté le {trade.timestamp}</span>
                     </div>
                   </div>
-                ))}
+                  ))
+                )}
               </div>
 
               <div className="mt-6 pt-4 border-t border-gray-600">

@@ -17,7 +17,6 @@ type DailyPnLPoint = {
 interface DailyPnLChartProps {
   data: DailyPnLPoint[];
   height?: number;
-  stopLoss?: number; // Stop loss pour définir le minimum de l'axe Y
 }
 
 const formatXAxisLabel = (value: string) => {
@@ -41,7 +40,7 @@ const formatBalance = (value: number) => {
   return `${prefix}$${rounded.toLocaleString('en-US')}`;
 };
 
-const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220, stopLoss }) => {
+const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220 }) => {
   const sanitizedData = useMemo(() => {
     if (!Array.isArray(data)) {
       return [];
@@ -116,31 +115,6 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220, stopL
 
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   
-  // Calculer le domaine Y avec le stop loss comme minimum si fourni
-  const yAxisDomain = useMemo(() => {
-    if (sanitizedData.length === 0) {
-      return ['auto', 'auto'];
-    }
-    
-    const balances = sanitizedData.map(d => d.balance);
-    const maxBalance = Math.max(...balances);
-    const minBalance = Math.min(...balances);
-    
-    if (stopLoss && stopLoss > 0) {
-      // Utiliser le stop loss comme minimum, avec un peu de marge en bas
-      const margin = (maxBalance - stopLoss) * 0.1; // 10% de marge
-      const domainMin = Math.max(0, stopLoss - margin);
-      const domainMax = maxBalance + (maxBalance - domainMin) * 0.1; // 10% de marge en haut
-      return [domainMin, domainMax];
-    }
-    
-    // Si pas de stop loss, utiliser auto
-    return ['auto', 'auto'];
-  }, [sanitizedData, stopLoss]);
-  
-  // Calculer la ligne de base pour l'Area (stop loss ou 0)
-  const areaBaseLine = stopLoss && stopLoss > 0 ? stopLoss : 0;
-  
   return (
     <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 shadow-inner">
       <div className="flex items-center justify-between mb-3">
@@ -205,7 +179,6 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220, stopL
               tickLine={{ stroke: '#475569' }}
               tickFormatter={(value) => value.toLocaleString('en-US')}
               width={60}
-              domain={yAxisDomain}
             />
             <Tooltip
               cursor={{ stroke: '#64748b', strokeDasharray: '4 4' }}
@@ -283,7 +256,7 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220, stopL
               stroke="none"
               fill={isPositive ? "url(#dailyPnlAreaPositive)" : "url(#dailyPnlAreaNegative)"}
               fillOpacity={0.5}
-              baseLine={areaBaseLine}
+              baseLine={0}
               isAnimationActive={false}
             />
             <Line
