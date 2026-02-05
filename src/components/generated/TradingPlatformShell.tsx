@@ -2219,6 +2219,16 @@ export default function TradingPlatformShell() {
   const dailyTradePnLData = useMemo(() => {
     const dailyTotals = new Map<string, number>();
 
+    const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
+    let initialBalance = account?.initial_balance || 0;
+    if (!initialBalance && selectedAccount !== 'Tous les comptes') {
+      const savedBalances = localStorage.getItem('accountBalances');
+      if (savedBalances) {
+        const balances = JSON.parse(savedBalances);
+        initialBalance = balances[selectedAccount] || 0;
+      }
+    }
+
     personalTrades.forEach((trade) => {
       if (!trade || !trade.pnl) {
         return;
@@ -2239,7 +2249,7 @@ export default function TradingPlatformShell() {
       (a, b) => new Date(a).getTime() - new Date(b).getTime()
     );
 
-    let runningTotal = 0;
+    let runningTotal = initialBalance;
     const cumulativeAll = sortedDates.map((date) => {
       runningTotal += dailyTotals.get(date) || 0;
       return { date, balance: runningTotal };
@@ -2251,7 +2261,7 @@ export default function TradingPlatformShell() {
     const monthStart = new Date(year, month, 1);
 
     let index = 0;
-    let currentBalance = 0;
+    let currentBalance = initialBalance;
 
     while (index < cumulativeAll.length && new Date(cumulativeAll[index].date) < monthStart) {
       currentBalance = cumulativeAll[index].balance;
@@ -2273,7 +2283,7 @@ export default function TradingPlatformShell() {
     }
 
     return results;
-  }, [personalTrades, selectedAccount, currentDate]);
+  }, [personalTrades, selectedAccount, currentDate, tradingAccounts]);
 
   const isJournalChannel = selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal';
 
@@ -4709,8 +4719,8 @@ export default function TradingPlatformShell() {
             </div>
           )}
 
-          {/* Boutons Tous les WIN / Tous les LOSS - TPLN model uniquement */}
-          {selectedChannel.id === 'tpln-model' && (
+          {/* Boutons Tous les WIN / Tous les LOSS - Journal perso et TPLN model */}
+          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') && (
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => {
@@ -4852,7 +4862,11 @@ export default function TradingPlatformShell() {
 
               {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && dailyPnLChartData.length > 0 && (
                 <div className="mt-3">
-                  <DailyPnLChart data={dailyPnLChartData} height={450} />
+                  <DailyPnLChart 
+                    data={dailyPnLChartData} 
+                    height={450} 
+                    initialBalance={selectedAccount !== 'Tous les comptes' ? (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance ?? (() => { try { const s = localStorage.getItem('accountBalances'); return s ? JSON.parse(s)[selectedAccount] : undefined; } catch { return undefined; } })()) : undefined} 
+                  />
                 </div>
               )}
             </div>
@@ -4918,7 +4932,11 @@ export default function TradingPlatformShell() {
 
               {dailyPnLChartData.length > 0 && (
                 <div className="mt-4">
-                  <DailyPnLChart data={dailyPnLChartData} height={450} />
+                  <DailyPnLChart 
+                    data={dailyPnLChartData} 
+                    height={450} 
+                    initialBalance={(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes' ? (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance ?? (() => { try { const s = localStorage.getItem('accountBalances'); return s ? JSON.parse(s)[selectedAccount] : undefined; } catch { return undefined; } })()) : undefined} 
+                  />
                 </div>
               )}
             </>
@@ -4928,20 +4946,28 @@ export default function TradingPlatformShell() {
         <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6" style={{ paddingTop: 'calc(1rem + 1cm - 1mm)', paddingBottom: 'calc(1rem - 0.5cm)' }} key={`stats-${selectedAccount}-${currentDate.getMonth()}-${currentDate.getFullYear()}-${statsUpdateTrigger}`}>
           {/* Métriques principales */}
           <div className="space-y-2 mb-8">
-            {/* P&L Total / Solde (pas sur TPLN model) */}
+            {/* Solde du compte (Journal perso) ou P&L Total (Signaux) - pas sur TPLN model */}
             {selectedChannel.id !== 'tpln-model' && (
             <div className={`border rounded-lg p-4 border ${
-              ((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 
-                ? 'bg-green-600/20 border-green-500/30' 
-                : 'bg-red-600/20 border-red-500/30'
+              (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes'
+                ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'bg-green-600/20 border-green-500/30' : 'bg-red-600/20 border-red-500/30')
+                : (((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 ? 'bg-green-600/20 border-green-500/30' : 'bg-red-600/20 border-red-500/30')
             }`}>
               <div className={`text-sm mb-1 ${
-                ((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-300' : 'text-red-300'
-              }`}>P&L Total</div>
-              <div className={`text-2xl font-bold ${
-                ((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-200' : 'text-red-200'
+                (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes'
+                  ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'text-green-300' : 'text-red-300')
+                  : (((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-300' : 'text-red-300')
               }`}>
-                {((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 ? '+' : ''}${(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()}
+                {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes' ? 'Solde du compte' : 'P&L Total'}
+              </div>
+              <div className={`text-2xl font-bold ${
+                (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes'
+                  ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'text-green-200' : 'text-red-200')
+                  : (((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-200' : 'text-red-200')
+              }`}>
+                {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes'
+                  ? `$${calculateAccountBalance().toFixed(2)}`
+                  : `${((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 ? '+' : ''}$${(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()}`}
               </div>
             </div>
             )}

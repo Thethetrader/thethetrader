@@ -17,6 +17,8 @@ type DailyPnLPoint = {
 interface DailyPnLChartProps {
   data: DailyPnLPoint[];
   height?: number;
+  /** Balance initiale du compte - la courbe et l'axe Y démarrent à cette valeur */
+  initialBalance?: number;
 }
 
 const formatXAxisLabel = (value: string) => {
@@ -40,7 +42,7 @@ const formatBalance = (value: number) => {
   return `${prefix}$${rounded.toLocaleString('en-US')}`;
 };
 
-const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220 }) => {
+const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220, initialBalance }) => {
   const sanitizedData = useMemo(() => {
     if (!Array.isArray(data)) {
       return [];
@@ -56,36 +58,19 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220 }) => 
       return [];
     }
 
-    let startIndex = 0;
-    for (let i = 1; i < sorted.length; i++) {
-      if (sorted[i].balance !== sorted[i - 1].balance) {
-        startIndex = i;
-        break;
+    const result: { date: string; balance: number }[] = [];
+    for (let i = 0; i < sorted.length; i++) {
+      if (i === 0 || sorted[i].balance !== sorted[i - 1].balance) {
+        result.push(sorted[i]);
       }
     }
-
-    let endIndex = sorted.length - 1;
-    for (let i = sorted.length - 1; i > 0; i--) {
-      if (sorted[i].balance !== sorted[i - 1].balance) {
-        endIndex = i;
-        break;
-      }
+    if (result.length === 1 && sorted.length > 1) {
+      return [sorted[0], sorted[sorted.length - 1]];
     }
-
-    const trimmed = sorted.slice(startIndex, endIndex + 1);
-
-    if (trimmed.length === 0) {
-      return sorted.slice(-1);
+    if (result.length >= 2 && result[result.length - 1].date !== sorted[sorted.length - 1].date) {
+      result.push(sorted[sorted.length - 1]);
     }
-
-    const deduplicated = trimmed.filter((point, index) => {
-      if (index === 0) {
-        return true;
-      }
-      return point.balance !== trimmed[index - 1].balance;
-    });
-
-    return deduplicated.length > 0 ? deduplicated : trimmed;
+    return result.length > 0 ? result : sorted;
   }, [data]);
 
   const tradeTicks = useMemo(() => {
@@ -106,12 +91,45 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220 }) => 
     return ticks;
   }, [sanitizedData]);
 
-  // Déterminer si la courbe est positive ou négative (basé sur la dernière valeur)
+  // Déterminer si la courbe est positive (vert) ou négative (rouge) - rouge si en dessous de la balance initiale
   const isPositive = useMemo(() => {
     if (sanitizedData.length === 0) return true;
     const lastBalance = sanitizedData[sanitizedData.length - 1]?.balance || 0;
+    if (Number.isFinite(initialBalance)) {
+      return lastBalance >= initialBalance;
+    }
     return lastBalance >= 0;
-  }, [sanitizedData]);
+  }, [sanitizedData, initialBalance]);
+
+  const yDomain = useMemo(() => {
+    if (sanitizedData.length === 0) return undefined;
+    const minBalance = Math.min(...sanitizedData.map((p) => p.balance));
+    const maxBalance = Math.max(...sanitizedData.map((p) => p.balance));
+    if (Number.isFinite(initialBalance)) {
+      const base = Math.min(initialBalance, minBalance);
+      const range = Math.max(maxBalance - base, 500);
+      return [Math.round(base - range * 0.05), Math.round(maxBalance + range * 0.1)];
+    }
+    const base = Math.min(0, minBalance);
+    const range = Math.max(maxBalance - base, 500);
+    return [Math.round(base - range * 0.05), Math.round(maxBalance + range * 0.05)];
+  }, [sanitizedData, initialBalance]);
+
+  const areaBase = useMemo(() => {
+    if (Number.isFinite(initialBalance)) return initialBalance;
+    if (sanitizedData.length === 0) return 0;
+    const minB = Math.min(...sanitizedData.map((p) => p.balance));
+    return minB <= 0 ? 0 : minB;
+  }, [sanitizedData, initialBalance]);
+
+  const chartData = useMemo(() => {
+    if (!Number.isFinite(initialBalance)) return sanitizedData;
+    return sanitizedData.map((p) => ({
+      ...p,
+      upperFill: p.balance >= initialBalance! ? p.balance : initialBalance!,
+      lowerFill: p.balance < initialBalance! ? p.balance : initialBalance!,
+    }));
+  }, [sanitizedData, initialBalance]);
 
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   
@@ -146,7 +164,7 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220 }) => 
           paddingBottom: isMobile ? '1rem' : '0'
         }}>
           <ResponsiveContainer width="100%" height={height}>
-          <ComposedChart data={sanitizedData}>
+          <ComposedChart data={chartData}>
             <defs>
               {/* Dégradé vert pour valeurs positives */}
               <linearGradient id="dailyPnlAreaPositive" x1="0" y1="0" x2="0" y2="1">
@@ -174,6 +192,7 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220 }) => 
               ticks={tradeTicks.length > 0 ? tradeTicks : undefined}
             />
             <YAxis
+              domain={yDomain}
               tick={{ fill: '#94a3b8', fontSize: 12 }}
               axisLine={{ stroke: '#475569' }}
               tickLine={{ stroke: '#475569' }}
@@ -250,15 +269,14 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220 }) => 
                 );
               }}
             />
-            <Area
-              type="monotone"
-              dataKey="balance"
-              stroke="none"
-              fill={isPositive ? "url(#dailyPnlAreaPositive)" : "url(#dailyPnlAreaNegative)"}
-              fillOpacity={0.5}
-              baseLine={0}
-              isAnimationActive={false}
-            />
+            {Number.isFinite(initialBalance) ? (
+              <>
+                <Area type="monotone" dataKey="upperFill" stroke="none" fill="url(#dailyPnlAreaPositive)" fillOpacity={0.5} baseValue={initialBalance} isAnimationActive={false} />
+                <Area type="monotone" dataKey="lowerFill" stroke="none" fill="url(#dailyPnlAreaNegative)" fillOpacity={0.5} baseValue={initialBalance} isAnimationActive={false} />
+              </>
+            ) : (
+              <Area type="monotone" dataKey="balance" stroke="none" fill={isPositive ? "url(#dailyPnlAreaPositive)" : "url(#dailyPnlAreaNegative)"} fillOpacity={0.5} baseValue={areaBase} isAnimationActive={false} />
+            )}
             <Line
               type="monotone"
               dataKey="balance"

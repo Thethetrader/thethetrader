@@ -4750,8 +4750,8 @@ const dailyPnLChartData = useMemo(
             </div>
           </div>
 
-          {/* Boutons Tous les WIN / Tous les LOSS - TPLN model uniquement */}
-          {selectedChannel.id === 'tpln-model' && (
+          {/* Boutons Tous les WIN / Tous les LOSS - Journal perso et TPLN model */}
+          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') && (
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => {
@@ -4866,7 +4866,11 @@ const dailyPnLChartData = useMemo(
           {/* Graphique PnL cumulé pour journal perso desktop - sous le calendrier (pas sur TPLN model) */}
           {!isMobile && selectedChannel.id === 'trading-journal' && dailyPnLChartData.length > 0 && (
             <div className="mt-4">
-              <DailyPnLChart data={dailyPnLChartData} height={450} />
+              <DailyPnLChart 
+                data={dailyPnLChartData} 
+                height={450} 
+                initialBalance={selectedAccount && selectedAccount !== 'Tous les comptes' ? (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance ?? (() => { try { const s = localStorage.getItem('accountBalances'); return s ? JSON.parse(s)[selectedAccount] : undefined; } catch { return undefined; } })()) : undefined} 
+              />
             </div>
           )}
 
@@ -4959,20 +4963,28 @@ const dailyPnLChartData = useMemo(
         <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6" style={{ paddingTop: (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? 'calc(1rem + 1cm)' : '1rem' }}>
           {/* Métriques principales */}
           <div className="space-y-2 mb-8">
-            {/* P&L Total (pas sur TPLN model) */}
+            {/* Solde du compte (Journal perso) ou P&L Total (Signaux) - pas sur TPLN model */}
             {selectedChannel.id !== 'tpln-model' && (
             <div className={`border rounded-lg p-4 border ${
-              ((selectedChannel.id === 'trading-journal') ? calculateTotalPnLTrades() : calculateTotalPnL()) >= 0 
-                ? 'bg-green-600/20 border-green-500/30' 
-                : 'bg-red-600/20 border-red-500/30'
+              selectedChannel.id === 'trading-journal'
+                ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'bg-green-600/20 border-green-500/30' : 'bg-red-600/20 border-red-500/30')
+                : (calculateTotalPnL() >= 0 ? 'bg-green-600/20 border-green-500/30' : 'bg-red-600/20 border-red-500/30')
             }`}>
               <div className={`text-sm mb-1 ${
-                ((selectedChannel.id === 'trading-journal') ? calculateTotalPnLTrades() : calculateTotalPnL()) >= 0 ? 'text-green-300' : 'text-red-300'
-              }`}>P&L Total</div>
-              <div className={`text-2xl font-bold ${
-                ((selectedChannel.id === 'trading-journal') ? calculateTotalPnLTrades() : calculateTotalPnL()) >= 0 ? 'text-green-200' : 'text-red-200'
+                selectedChannel.id === 'trading-journal'
+                  ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'text-green-300' : 'text-red-300')
+                  : (calculateTotalPnL() >= 0 ? 'text-green-300' : 'text-red-300')
               }`}>
-                {((selectedChannel.id === 'trading-journal') ? calculateTotalPnLTrades() : calculateTotalPnL()) >= 0 ? '+' : ''}${selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnL()}
+                {selectedChannel.id === 'trading-journal' && selectedAccount && selectedAccount !== 'Tous les comptes' ? 'Solde du compte' : 'P&L Total'}
+              </div>
+              <div className={`text-2xl font-bold ${
+                selectedChannel.id === 'trading-journal'
+                  ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'text-green-200' : 'text-red-200')
+                  : (calculateTotalPnL() >= 0 ? 'text-green-200' : 'text-red-200')
+              }`}>
+                {selectedChannel.id === 'trading-journal' && selectedAccount && selectedAccount !== 'Tous les comptes'
+                  ? `$${calculateAccountBalance().toFixed(2)}`
+                  : `${(selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnL()) >= 0 ? '+' : ''}$${selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnL()}`}
               </div>
             </div>
             )}
@@ -5062,7 +5074,11 @@ const dailyPnLChartData = useMemo(
 
             {isMobile && selectedChannel.id !== 'tpln-model' && dailyPnLChartData.length > 0 && (
               <div className="mt-3">
-                <DailyPnLChart data={dailyPnLChartData} height={450} />
+                <DailyPnLChart 
+                  data={dailyPnLChartData} 
+                  height={450} 
+                  initialBalance={selectedChannel.id === 'trading-journal' && selectedAccount && selectedAccount !== 'Tous les comptes' ? (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance ?? (() => { try { const s = localStorage.getItem('accountBalances'); return s ? JSON.parse(s)[selectedAccount] : undefined; } catch { return undefined; } })()) : undefined} 
+                />
               </div>
             )}
 
