@@ -288,6 +288,7 @@ export default function TradingPlatformShell() {
     { id: 'livestream-premium', name: 'livestream-premium', emoji: '⭐', fullName: 'Livestream Premium' },
     { id: 'journal', name: 'journal', emoji: '📓', fullName: 'Journal Perso' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📓', fullName: 'Journal Perso' },
+    { id: 'tpln-model', name: 'tpln-model', emoji: '📋', fullName: 'TPLN model' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' }
   ];
 
@@ -829,6 +830,9 @@ export default function TradingPlatformShell() {
   const [selectedSignalsDate, setSelectedSignalsDate] = useState<Date | null>(null);
   const [pasteArea, setPasteArea] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [showWinsLossModal, setShowWinsLossModal] = useState(false);
+  const [winsLossFilter, setWinsLossFilter] = useState<'WIN' | 'LOSS' | null>(null);
+  const [winsLossTradeIndex, setWinsLossTradeIndex] = useState(0);
   const [imageZoom, setImageZoom] = useState(1);
   const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -1079,7 +1083,7 @@ export default function TradingPlatformShell() {
       console.log(`✅ Messages chargés pour ${channelId}:`, formattedMessages.length, '/', messages.length);
       
       // Scroll vers le bas après chargement des messages (sauf si on garde la position)
-      if (!keepPosition && !['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux', 'fondamentaux', 'letsgooo-model'].includes(channelId)) {
+      if (!keepPosition && !['calendrier', 'trading-journal', 'tpln-model', 'forex-signaux', 'crypto-signaux', 'futures-signaux', 'fondamentaux', 'letsgooo-model'].includes(channelId)) {
         setTimeout(() => {
           scrollToBottom();
         }, 100);
@@ -1184,7 +1188,7 @@ export default function TradingPlatformShell() {
       // Les notifications seront envoyées seulement pour les nouveaux signaux en temps réel
       
       // Scroll automatique après chargement des signaux (sauf pour calendrier, journal perso et éducation)
-      if (!['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux', 'fondamentaux', 'letsgooo-model'].includes(channelId)) {
+      if (!['calendrier', 'trading-journal', 'tpln-model', 'forex-signaux', 'crypto-signaux', 'futures-signaux', 'fondamentaux', 'letsgooo-model'].includes(channelId)) {
         setTimeout(() => {
           scrollToBottom();
         }, 100);
@@ -1364,7 +1368,7 @@ export default function TradingPlatformShell() {
       }
       
       // Scroll automatique (sauf pour calendrier, journal perso et éducation)
-      if (!['calendrier', 'trading-journal', 'forex-signaux', 'crypto-signaux', 'futures-signaux', 'fondamentaux', 'letsgooo-model'].includes(selectedChannel.id)) {
+      if (!['calendrier', 'trading-journal', 'tpln-model', 'forex-signaux', 'crypto-signaux', 'futures-signaux', 'fondamentaux', 'letsgooo-model'].includes(selectedChannel.id)) {
         setTimeout(() => {
           scrollToBottom();
         }, 100);
@@ -2675,6 +2679,17 @@ export default function TradingPlatformShell() {
 
   // Fonctions pour les statistiques des trades personnels (filtrées par compte)
   const getTradesForSelectedAccount = () => {
+    // Sur TPLN model, afficher uniquement les trades du compte TPLN model
+    if (selectedChannel.id === 'tpln-model') {
+      const seen = new Set<string>();
+      return personalTrades.filter(trade => {
+        if ((trade.account || 'Compte Principal') !== 'TPLN model') return false;
+        const key = `${trade.date}|${trade.symbol}|${trade.entry}|${trade.exit}|${trade.pnl}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
     // Si "Tous les comptes" est sélectionné, retourner tous les trades
     if (selectedAccount === 'Tous les comptes') {
       return personalTrades;
@@ -3010,13 +3025,14 @@ export default function TradingPlatformShell() {
       const weekEnd = new Date(weekStart);
       weekEnd.setDate(weekStart.getDate() + 6);
       
-      const weekTrades = getTradesForSelectedAccount().filter(t => {
-        const tradeDate = new Date(t.date);
-        return tradeDate >= weekStart && 
-               tradeDate <= weekEnd &&
-               tradeDate.getMonth() === month &&
-               tradeDate.getFullYear() === year;
-      });
+      // Construire les dates YYYY-MM-DD de la semaine (dans le mois) pour éviter les bugs timezone
+      const weekDateStrs = new Set<string>();
+      for (let d = new Date(weekStart); d <= weekEnd; d.setDate(d.getDate() + 1)) {
+        if (d.getMonth() === month && d.getFullYear() === year) {
+          weekDateStrs.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
+        }
+      }
+      const weekTrades = getTradesForSelectedAccount().filter(t => t.date && weekDateStrs.has(t.date));
       
       const weekPnL = weekTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0);
       const wins = weekTrades.filter(t => t.status === 'WIN').length;
@@ -3617,7 +3633,10 @@ export default function TradingPlatformShell() {
 
   // Fonctions pour le journal de trading personnalisé
   const handleAddTrade = () => {
-    setTradeAddAccount(selectedAccount === 'Tous les comptes' ? (tradingAccounts[0]?.account_name || 'Compte Principal') : selectedAccount);
+    const defaultAccount = selectedChannel.id === 'tpln-model'
+      ? 'TPLN model'
+      : (selectedAccount === 'Tous les comptes' ? (tradingAccounts[0]?.account_name || 'Compte Principal') : selectedAccount);
+    setTradeAddAccount(defaultAccount);
     setShowTradeModal(true);
   };
 
@@ -3635,8 +3654,11 @@ export default function TradingPlatformShell() {
       return `${year}-${month}-${day}`;
     };
 
+    // Depuis TPLN model : "Tous les comptes" = uniquement TPLN model (1 trade). Depuis Journal Perso : tous les comptes + TPLN model.
     const accountsToAdd = tradeAddAccount === 'Tous les comptes'
-      ? (tradingAccounts.length > 0 ? tradingAccounts.map(a => a.account_name) : ['Compte Principal'])
+      ? (selectedChannel.id === 'tpln-model'
+          ? ['TPLN model']
+          : [...(tradingAccounts.length > 0 ? tradingAccounts.map(a => a.account_name) : ['Compte Principal']), 'TPLN model'])
       : [tradeAddAccount];
 
     // Sauvegarder dans Supabase (un trade par compte)
@@ -4344,7 +4366,7 @@ export default function TradingPlatformShell() {
   const getTradingCalendar = () => {
     console.log('🔥 getTradingCalendar appelé pour channel:', selectedChannel.id);
     console.log('🔥 personalTrades dans calendrier:', personalTrades.length);
-    const isJournalPerso = selectedChannel.id === 'journal' || selectedChannel.id === 'trading-journal';
+    const isJournalPerso = selectedChannel.id === 'journal' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model';
     const isMobile = window.innerWidth < 768;
     return (
     <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: (isMobile && isJournalPerso) ? '20px' : '0px', marginTop: (isMobile && !isJournalPerso) ? '-9px' : '0px', touchAction: 'pan-y', maxWidth: '100%' }}>
@@ -4353,14 +4375,14 @@ export default function TradingPlatformShell() {
         <div className="hidden md:flex md:items-center md:gap-6">
           <div>
             <h1 className="text-2xl font-bold text-white">
-              {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'Trading Journal' : 'Journal des Signaux'}
+              {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? (selectedChannel.id === 'tpln-model' ? 'TPLN model' : 'Trading Journal') : 'Journal des Signaux'}
             </h1>
             <p className="text-sm text-gray-400 mt-1">
-              {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'Journal tous tes trades' : 'Suivi des performances des signaux'}
+              {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? (selectedChannel.id === 'tpln-model' ? 'Calendrier et stats du model' : 'Journal tous tes trades') : 'Suivi des performances des signaux'}
             </p>
           </div>
           
-          {/* Sélecteur de compte - DESKTOP */}
+          {/* Sélecteur de compte - DESKTOP (pas sur TPLN model) */}
           {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && (
             <div className="flex items-center gap-2">
               {tradingAccounts.length > 0 ? (
@@ -4422,7 +4444,7 @@ export default function TradingPlatformShell() {
           )}
         </div>
         
-        <div className={`flex items-center ${(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'gap-4' : ''}`}>
+        <div className={`flex items-center ${(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? 'gap-4' : ''}`}>
           <div className="flex items-center gap-3 text-white">
             <button 
               onClick={goToPreviousMonth}
@@ -4441,7 +4463,7 @@ export default function TradingPlatformShell() {
               ›
             </button>
           </div>
-          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && (
+          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') && (
             <button 
               onClick={handleAddTrade}
               className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
@@ -4494,16 +4516,12 @@ export default function TradingPlatformShell() {
                   return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700" style={{minHeight: '64px'}}></div>;
                 }
               
-                              // Vérifier s'il y a des trades personnels ou des signaux pour ce jour
-                const dayTrades = (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 
-                  getTradesForSelectedAccount().filter(trade => {
-                    const tradeDate = new Date(trade.date);
-                    return tradeDate.getDate() === dayNumber && 
-                           tradeDate.getMonth() === currentDate.getMonth() && 
-                           tradeDate.getFullYear() === currentDate.getFullYear();
-                  }) : [];
+                              // Vérifier s'il y a des trades personnels ou des signaux pour ce jour (comparaison string comme getTradesForDate pour éviter les bugs timezone)
+                const dateStrForDay = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
+                const dayTrades = (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? 
+                  getTradesForSelectedAccount().filter(trade => trade.date === dateStrForDay) : [];
 
-                const daySignals = (selectedChannel.id !== 'trading-journal' && selectedChannel.id !== 'journal') ? 
+                const daySignals = (selectedChannel.id !== 'trading-journal' && selectedChannel.id !== 'journal' && selectedChannel.id !== 'tpln-model') ? 
                   realTimeSignals.filter(signal => {
                     // Utiliser le timestamp original pour déterminer la vraie date
                     const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
@@ -4524,7 +4542,7 @@ export default function TradingPlatformShell() {
                 let bgColor = 'bg-gray-700 border-gray-600 text-gray-400'; // No trade par défaut
                 let tradeCount = 0;
 
-                if (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') {
+                if (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') {
                   // Logique pour les trades personnels - basée sur PnL total
                   if (dayTrades.length > 0) {
                     tradeCount = dayTrades.length;
@@ -4580,7 +4598,7 @@ export default function TradingPlatformShell() {
                         
                         const clickedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNumber);
                         
-                        if (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') {
+                        if (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') {
                           setSelectedDate(clickedDate);
                           
                           // Ouvrir le popup des trades (toujours, même s'il n'y en a pas)
@@ -4606,7 +4624,7 @@ export default function TradingPlatformShell() {
                     border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 cursor-pointer transition-all hover:shadow-md
                       ${bgColor}
                     ${isToday ? 'ring-2 ring-blue-400' : ''}
-                      ${selectedChannel.id === 'trading-journal' && selectedDate && 
+                      ${(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') && selectedDate && 
                         selectedDate.getDate() === dayNumber && 
                         selectedDate.getMonth() === currentDate.getMonth() && 
                         selectedDate.getFullYear() === currentDate.getFullYear() 
@@ -4618,14 +4636,8 @@ export default function TradingPlatformShell() {
                       {(() => {
                         let totalPnL = 0;
                         let tradeCount = 0;
-                        if (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') {
-                          // Pour les trades personnels - utiliser le compte sélectionné
-                          const dayTrades = getTradesForSelectedAccount().filter(trade => {
-                            const tradeDate = new Date(trade.date);
-                            return tradeDate.getDate() === dayNumber && 
-                                   tradeDate.getMonth() === currentDate.getMonth() && 
-                                   tradeDate.getFullYear() === currentDate.getFullYear();
-                          });
+                        if (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') {
+                          const dayTrades = getTradesForSelectedAccount().filter(trade => trade.date === dateStrForDay);
                           tradeCount = dayTrades.length;
                           totalPnL = dayTrades.reduce((total, trade) => {
                             if (trade.pnl) {
@@ -4672,7 +4684,7 @@ export default function TradingPlatformShell() {
             </div>
 
           {/* Légende - directement sous le calendrier pour journal perso */}
-          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && (
+          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') && (
             <div className="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-gray-600">
               <div className="flex items-center gap-1">
                 <div className="w-3 h-3 bg-green-500/60 border border-green-400/50 rounded"></div>
@@ -4697,7 +4709,33 @@ export default function TradingPlatformShell() {
             </div>
           )}
 
-          {/* Solde du compte et indicateur de risque */}
+          {/* Boutons Tous les WIN / Tous les LOSS - TPLN model uniquement */}
+          {selectedChannel.id === 'tpln-model' && (
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => {
+                  setWinsLossFilter('WIN');
+                  setWinsLossTradeIndex(0);
+                  setShowWinsLossModal(true);
+                }}
+                className="px-4 py-2 rounded-lg bg-green-600/30 border border-green-500/50 text-green-300 hover:bg-green-600/50 transition-colors"
+              >
+                📈 Tous les WIN ({getTradesForSelectedAccount().filter(t => t.status === 'WIN').length})
+              </button>
+              <button
+                onClick={() => {
+                  setWinsLossFilter('LOSS');
+                  setWinsLossTradeIndex(0);
+                  setShowWinsLossModal(true);
+                }}
+                className="px-4 py-2 rounded-lg bg-red-600/30 border border-red-500/50 text-red-300 hover:bg-red-600/50 transition-colors"
+              >
+                📉 Tous les LOSS ({getTradesForSelectedAccount().filter(t => t.status === 'LOSS').length})
+              </button>
+            </div>
+          )}
+
+          {/* Solde du compte et indicateur de risque (pas sur TPLN model) */}
           {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && (
             <div className="mt-4 space-y-3">
               {/* Solde principal - masqué pour "Tous les comptes" */}
@@ -4820,7 +4858,7 @@ export default function TradingPlatformShell() {
             </div>
           )}
 
-          {selectedChannel.id !== 'trading-journal' && selectedChannel.id !== 'journal' && (
+          {selectedChannel.id !== 'trading-journal' && selectedChannel.id !== 'journal' && selectedChannel.id !== 'tpln-model' && (
             <>
               <div className="border-t border-gray-700 mt-6 pt-4 flex items-center justify-center gap-3">
                 <div className="flex items-center gap-2 text-xs">
@@ -4890,7 +4928,8 @@ export default function TradingPlatformShell() {
         <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6" style={{ paddingTop: 'calc(1rem + 1cm - 1mm)', paddingBottom: 'calc(1rem - 0.5cm)' }} key={`stats-${selectedAccount}-${currentDate.getMonth()}-${currentDate.getFullYear()}-${statsUpdateTrigger}`}>
           {/* Métriques principales */}
           <div className="space-y-2 mb-8">
-            {/* P&L Total */}
+            {/* P&L Total / Solde (pas sur TPLN model) */}
+            {selectedChannel.id !== 'tpln-model' && (
             <div className={`border rounded-lg p-4 border ${
               ((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 
                 ? 'bg-green-600/20 border-green-500/30' 
@@ -4905,25 +4944,25 @@ export default function TradingPlatformShell() {
                 {((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()) >= 0 ? '+' : ''}${(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForMonth() : calculateTotalPnLForMonth()}
               </div>
             </div>
+            )}
 
             {/* Win Rate */}
             <div className="bg-blue-600/20 border-blue-500/30 rounded-lg py-1 px-4 border flex items-center justify-between">
               <div className="flex-1">
                 <div className="text-sm text-blue-300 mb-1">Win Rate</div>
                 <div className="text-2xl font-bold text-blue-200">
-                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateWinRateTradesForMonth() : calculateWinRateForMonth()}%
+                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? calculateWinRateTradesForMonth() : calculateWinRateForMonth()}%
                 </div>
               </div>
               <div style={{ marginLeft: '-4cm' }}>
                 <WinRateGauge 
-                  {...((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') 
-                    ? getWinsAndLossesTradesForMonth() 
-                    : getWinsAndLossesForMonth())} 
+                  {...((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? getWinsAndLossesTradesForMonth() : getWinsAndLossesForMonth())} 
                 />
               </div>
             </div>
 
-            {/* Profit Factor */}
+            {/* Profit Factor (pas sur TPLN model) */}
+            {selectedChannel.id !== 'tpln-model' && (
             <div className="bg-gray-700 rounded-lg p-4 border border-gray-600 flex items-center justify-between">
               <div className="flex-1">
                 <div className="text-sm text-gray-400 mb-1 flex items-center gap-1">
@@ -4936,7 +4975,7 @@ export default function TradingPlatformShell() {
                   </div>
                 </div>
                 <div className="text-2xl font-bold text-white">
-                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 
+                  {((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 
                     (() => {
                       const { totalWins, totalLosses } = getProfitFactorDataTradesForMonth();
                       return totalLosses > 0 ? (totalWins / totalLosses).toFixed(2) : totalWins > 0 ? '∞' : '0.00';
@@ -4944,28 +4983,27 @@ export default function TradingPlatformShell() {
                     (() => {
                       const { totalWins, totalLosses } = getProfitFactorDataForMonth();
                       return totalLosses > 0 ? (totalWins / totalLosses).toFixed(2) : totalWins > 0 ? '∞' : '0.00';
-                    })()
+                    })())
                   }
                 </div>
               </div>
               <ProfitFactorGauge 
-                {...((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') 
-                  ? getProfitFactorDataTradesForMonth() 
-                  : getProfitFactorDataForMonth())} 
+                {...((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? getProfitFactorDataTradesForMonth() : getProfitFactorDataForMonth())} 
               />
             </div>
+            )}
             
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Aujourd'hui</div>
                 <div className="text-lg font-bold text-blue-400">
-                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? getTodayTradesForMonth().length : getTodaySignalsForMonth()}
+                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? getTodayTradesForMonth().length : getTodaySignalsForMonth()}
                 </div>
               </div>
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Ce mois</div>
                 <div className="text-lg font-bold text-white">
-                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? getThisMonthTradesForMonth().length : getThisMonthSignalsForMonth()}
+                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? getThisMonthTradesForMonth().length : getThisMonthSignalsForMonth()}
                 </div>
               </div>
             </div>
@@ -4974,7 +5012,7 @@ export default function TradingPlatformShell() {
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Avg Win</div>
                 <div className="text-lg font-bold text-green-400">
-                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 
+                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? 
                     (calculateAvgWinTradesForMonth() > 0 ? `+$${calculateAvgWinTradesForMonth()}` : '-') :
                     (getCalendarMonthlyStats(currentDate).avgWin > 0 ? `+$${getCalendarMonthlyStats(currentDate).avgWin}` : '-')
                   }
@@ -4983,7 +5021,7 @@ export default function TradingPlatformShell() {
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Avg Loss</div>
                 <div className="text-lg font-bold text-red-400">
-                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 
+                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? 
                     (calculateAvgLossTradesForMonth() > 0 ? `-$${calculateAvgLossTradesForMonth()}` : '-') :
                     (getCalendarMonthlyStats(currentDate).avgLoss > 0 ? `-$${getCalendarMonthlyStats(currentDate).avgLoss}` : '-')
                   }
@@ -4997,7 +5035,7 @@ export default function TradingPlatformShell() {
           <div>
             <h4 className="text-sm font-semibold text-gray-300 mb-4">Weekly Breakdown</h4>
             <div className="space-y-2">
-              {((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? getWeeklyBreakdownTradesForMonth() : getWeeklyBreakdownForMonth()).map((weekData, index) => (
+              {((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? getWeeklyBreakdownTradesForMonth() : getWeeklyBreakdownForMonth()).map((weekData, index) => (
                 <div 
                   key={index} 
                   className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer hover:bg-gray-600/50 transition-colors ${
@@ -5176,6 +5214,12 @@ export default function TradingPlatformShell() {
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">TRADING HUB</h3>
             <div className="space-y-1">
+              {channels.find(c => c.id === 'tpln-model') && (
+                <button onClick={() => {
+                  handleChannelChange('tpln-model', 'tpln-model');
+                  setView('signals');
+                }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'tpln-model' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📋 TPLN model</button>
+              )}
               {channels.find(c => c.id === 'calendrier') && (
                 <button onClick={async () => {
                   console.log('🔵 Desktop: Clic sur Journal Signaux');
@@ -5194,10 +5238,10 @@ export default function TradingPlatformShell() {
                   }
                   handleChannelChange('calendrier', 'calendrier');
                   setView('signals');
-                }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
+                }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : selectedChannel.id === 'tpln-model' ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               )}
               {channels.find(c => c.id === 'journal') && (
-                <button onClick={() => handleChannelChange('journal', 'journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 Trading Journal</button>
+                <button onClick={() => handleChannelChange('journal', 'journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' ? 'bg-gray-700 text-white' : selectedChannel.id === 'tpln-model' ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 Trading Journal</button>
               )}
               {channels.find(c => c.id === 'livestream-premium') && (
                 <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>
@@ -5257,7 +5301,7 @@ export default function TradingPlatformShell() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Mobile Navigation - Fixed */}
-        <div className={`md:hidden bg-gray-800 p-3 fixed top-0 left-0 right-0 z-30 ${selectedChannel.id === 'calendrier' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' ? '' : 'border-b border-gray-700'}`} style={{ height: '60px' }}>
+        <div className={`md:hidden bg-gray-800 p-3 fixed top-0 left-0 right-0 z-30 ${selectedChannel.id === 'calendrier' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model' ? '' : 'border-b border-gray-700'}`} style={{ height: '60px' }}>
           {mobileView === 'channels' ? (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -5377,6 +5421,7 @@ export default function TradingPlatformShell() {
                 </svg>
                 <span className="text-sm font-medium">
                   {view === 'calendar' ? '📅 Journal Signaux' : 
+                   selectedChannel.id === 'tpln-model' ? '📋 TPLN model' :
                    channels.find(c => c.id === selectedChannel.id)?.fullName || selectedChannel.name}
                 </span>
               </button>
@@ -5479,6 +5524,23 @@ export default function TradingPlatformShell() {
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">TRADING HUB</h3>
                 <div className="space-y-2">
+                  {channels.find(c => c.id === 'tpln-model') && (
+                    <button
+                      onClick={() => {
+                        handleChannelChange('tpln-model', 'tpln-model');
+                        setView('signals');
+                        setMobileView('content');
+                      }}
+                      className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'tpln-model' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">📋</span>
+                        <div>
+                          <p className="font-medium text-white">TPLN model</p>
+                        </div>
+                      </div>
+                    </button>
+                  )}
                   {channels.find(c => c.id === 'calendrier') && (
                     <button
                       onClick={async () => {
@@ -5578,9 +5640,9 @@ export default function TradingPlatformShell() {
               mobileView === 'content' ? 'translate-x-0 pointer-events-auto' : 'translate-x-full pointer-events-none'
             }`}
           >
-            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'video' || selectedChannel.id === 'livestream-premium' || selectedChannel.id === 'journal') ? (
+            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'video' || selectedChannel.id === 'livestream-premium' || selectedChannel.id === 'journal') ? (
               <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '0px', WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}>
-                {/* Header avec sélecteur de compte et bouton Ajouter Trade pour Trading Journal */}
+                {/* Header avec sélecteur de compte et bouton Ajouter Trade pour Trading Journal (pas sur TPLN model) */}
                 {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? (
                   <div className="mb-4 md:mb-6 border-b border-gray-600 pb-4">
                     <div className="space-y-4">
@@ -5654,8 +5716,8 @@ export default function TradingPlatformShell() {
                   </div>
                 )}
                 
-                {/* Affichage du calendrier */}
-                {(selectedChannel.id === 'calendrier' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && getTradingCalendar()}
+                {/* Affichage du calendrier (Journal Perso, Journal Signaux, TPLN model) */}
+                {(selectedChannel.id === 'calendrier' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') && getTradingCalendar()}
                 
                 {/* Interface Livestream pour mobile */}
                 {(selectedChannel.id === 'video' || selectedChannel.id === 'livestream-premium') && (
@@ -5762,9 +5824,12 @@ export default function TradingPlatformShell() {
                                 <button
                                   onClick={async () => {
                                     if (confirm('Supprimer ce trade ?')) {
-                                      const success = await deletePersonalTrade(trade.id);
-                                      if (success) {
-                                        setPersonalTrades(prev => prev.filter(t => t.id !== trade.id));
+                                      const tradesToDelete = selectedAccount === 'Tous les comptes'
+                                        ? personalTrades.filter(t => t.date === trade.date && t.symbol === trade.symbol && t.entry === trade.entry && t.exit === trade.exit && t.pnl === trade.pnl)
+                                        : [trade];
+                                      for (const t of tradesToDelete) {
+                                        const success = await deletePersonalTrade(t.id);
+                                        if (success) setPersonalTrades(prev => prev.filter(x => x.id !== t.id));
                                       }
                                     }
                                   }}
@@ -6851,7 +6916,7 @@ export default function TradingPlatformShell() {
         </div>
         {/* Desktop Content Area */}
         <div className="hidden md:block flex-1 overflow-y-auto overflow-x-hidden">
-          {(view === 'calendar' || selectedChannel.id === 'trading-journal') ? (
+          {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? (
             getTradingCalendar()
           ) : (
             <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '80px' }}>
@@ -7851,6 +7916,7 @@ export default function TradingPlatformShell() {
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500"
                   >
                     <option value="Tous les comptes">📊 Tous les comptes</option>
+                    <option value="TPLN model">📋 TPLN model</option>
                     {tradingAccounts.map((account) => (
                       <option key={account.id} value={account.account_name}>
                         {account.account_name}
@@ -8127,9 +8193,12 @@ export default function TradingPlatformShell() {
                         <button
                           onClick={async () => {
                             if (confirm('Supprimer ce trade ?')) {
-                              const success = await deletePersonalTrade(trade.id);
-                              if (success) {
-                                setPersonalTrades(prev => prev.filter(t => t.id !== trade.id));
+                              const tradesToDelete = selectedAccount === 'Tous les comptes'
+                                ? personalTrades.filter(t => t.date === trade.date && t.symbol === trade.symbol && t.entry === trade.entry && t.exit === trade.exit && t.pnl === trade.pnl)
+                                : [trade];
+                              for (const t of tradesToDelete) {
+                                const success = await deletePersonalTrade(t.id);
+                                if (success) setPersonalTrades(prev => prev.filter(x => x.id !== t.id));
                               }
                             }
                           }}
@@ -8225,6 +8294,71 @@ export default function TradingPlatformShell() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Tous les WIN / Tous les LOSS - TPLN model */}
+      {showWinsLossModal && winsLossFilter && (
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4" onClick={() => setShowWinsLossModal(false)}>
+          <div className="bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
+            {(() => {
+              const filteredTrades = getTradesForSelectedAccount().filter(t => t.status === winsLossFilter);
+              const currentTrade = filteredTrades[winsLossTradeIndex];
+              if (!currentTrade) {
+                return (
+                  <div className="p-6">
+                    <div className="flex justify-between items-center mb-4">
+                      <h2 className="text-xl font-bold text-white">
+                        {winsLossFilter === 'WIN' ? '📈 Tous les WIN' : '📉 Tous les LOSS'}
+                      </h2>
+                      <button onClick={() => setShowWinsLossModal(false)} className="text-gray-400 hover:text-white text-2xl">×</button>
+                    </div>
+                    <div className="text-center py-12 text-gray-400">Aucun trade {winsLossFilter === 'WIN' ? 'gagnant' : 'perdant'}</div>
+                  </div>
+                );
+              }
+              const imgSrc = currentTrade.image1 || currentTrade.image2;
+              const imgUrl = imgSrc ? (typeof imgSrc === 'string' ? imgSrc : URL.createObjectURL(imgSrc as any)) : null;
+              return (
+                <>
+                  <div className="flex justify-between items-center p-4 border-b border-gray-700">
+                    <h2 className="text-xl font-bold text-white">
+                      {winsLossFilter === 'WIN' ? '📈 Tous les WIN' : '📉 Tous les LOSS'} ({winsLossTradeIndex + 1}/{filteredTrades.length})
+                    </h2>
+                    <button onClick={() => setShowWinsLossModal(false)} className="text-gray-400 hover:text-white text-2xl">×</button>
+                  </div>
+                  <div className="flex-1 flex items-center justify-between gap-4 p-4 overflow-hidden">
+                    <button
+                      onClick={() => setWinsLossTradeIndex(i => (i <= 0 ? filteredTrades.length - 1 : i - 1))}
+                      className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-2xl text-white"
+                    >
+                      ←
+                    </button>
+                    <div className="flex-1 flex flex-col items-center min-w-0">
+                      {imgUrl ? (
+                        <img src={imgUrl} alt="Trade" className="max-w-full max-h-[60vh] object-contain rounded-lg border border-gray-600" />
+                      ) : (
+                        <div className="w-96 h-96 flex items-center justify-center bg-gray-700 rounded-lg text-gray-500">Pas d'image</div>
+                      )}
+                      <div className="mt-4 text-center">
+                        <span className="text-lg font-bold text-white">{currentTrade.symbol}</span>
+                        <span className={`ml-2 text-lg font-bold ${currentTrade.pnl && parseFloat(currentTrade.pnl) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          {(currentTrade.pnl && parseFloat(currentTrade.pnl) >= 0 ? '+' : '')}{currentTrade.pnl || '0'}$
+                        </span>
+                        <span className="ml-2 text-gray-400 text-sm">{currentTrade.date}</span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setWinsLossTradeIndex(i => (i >= filteredTrades.length - 1 ? 0 : i + 1))}
+                      className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-2xl text-white"
+                    >
+                      →
+                    </button>
+                  </div>
+                </>
+              );
+            })()}
           </div>
         </div>
       )}
@@ -8404,7 +8538,7 @@ export default function TradingPlatformShell() {
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-white">
-                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 'Trades de la Semaine' : 'Signaux de la Semaine'} {selectedWeek}
+                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? 'Trades de la Semaine' : 'Signaux de la Semaine'} {selectedWeek}
                 </h2>
                 <button
                   onClick={() => setShowWeekSignalsModal(false)}
@@ -8415,7 +8549,7 @@ export default function TradingPlatformShell() {
               </div>
 
               <div className="space-y-4">
-                {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? (
+                {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? (
                   // Affichage des trades pour le journal perso
                   getTradesForWeek(selectedWeek).length > 0 ? (
                     getTradesForWeek(selectedWeek).map((trade) => (
