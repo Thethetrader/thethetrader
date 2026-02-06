@@ -248,6 +248,8 @@ export default function AdminInterface() {
   const [selectedAccount, setSelectedAccount] = useState('Compte Principal');
   const [tradeAddAccount, setTradeAddAccount] = useState<string>('Compte Principal');
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
+  const [currentPdfPage, setCurrentPdfPage] = useState(1);
+  const totalPdfPages = 16;
   const [showAddAccountModal, setShowAddAccountModal] = useState(false);
   const [newAccountName, setNewAccountName] = useState('');
   const [newAccountBalance, setNewAccountBalance] = useState('');
@@ -6195,15 +6197,54 @@ const dailyPnLChartData = useMemo(
                                         {/* Messages de chat */}
                     <div ref={messagesContainerRef} className={`flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 ${selectedChannel.id === 'fondamentaux' ? '' : 'pb-32'}`}>
                       
-                      {/* PDF Viewer pour Fondamentaux */}
+                      {/* Header Fondamentaux */}
                       {selectedChannel.id === 'fondamentaux' && (
-                        <div className="w-full flex justify-center" style={{ overflow: 'auto', WebkitOverflowScrolling: 'touch' }}>
-                          <iframe 
-                            src="/trading pour les nuls.pdf#view=FitH" 
-                            className="w-full border-0 rounded-lg"
-                            style={{ height: 'calc(100vh - 100px)', minHeight: '800px', touchAction: 'pan-y' }}
-                            title="Trading pour les nuls"
-                          />
+                        <div className="mb-4">
+                          <h1 className="text-xl md:text-2xl font-bold text-white">📚 Fondamentaux</h1>
+                          <p className="text-sm text-gray-400 mt-1">Guide complet du trading - Page {currentPdfPage}/{totalPdfPages}</p>
+                        </div>
+                      )}
+                      
+                      {/* Image Viewer pour Fondamentaux */}
+                      {selectedChannel.id === 'fondamentaux' && (
+                        <div className="w-full">
+                          {/* Navigation */}
+                          <div className="flex justify-between items-center mb-4">
+                            <button
+                              onClick={() => setCurrentPdfPage(Math.max(1, currentPdfPage - 1))}
+                              disabled={currentPdfPage === 1}
+                              className={`px-4 py-2 rounded-lg font-medium ${
+                                currentPdfPage === 1
+                                  ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+                              }`}
+                            >
+                              ← Précédent
+                            </button>
+                            <span className="text-white font-medium">
+                              Page {currentPdfPage} / {totalPdfPages}
+                            </span>
+                            <button
+                              onClick={() => setCurrentPdfPage(Math.min(totalPdfPages, currentPdfPage + 1))}
+                              disabled={currentPdfPage === totalPdfPages}
+                              className={`px-4 py-2 rounded-lg font-medium ${
+                                currentPdfPage === totalPdfPages
+                                  ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+                              }`}
+                            >
+                              Suivant →
+                            </button>
+                          </div>
+                          
+                          {/* Image de la page */}
+                          <div className="w-full flex justify-center bg-gray-800 rounded-lg p-4">
+                            <img 
+                              src={`/fondamentaux/page-${currentPdfPage}.jpg`}
+                              alt={`Page ${currentPdfPage}`}
+                              className="w-full max-w-4xl rounded-lg shadow-lg"
+                            />
+                          </div>
                         </div>
                       )}
                       
