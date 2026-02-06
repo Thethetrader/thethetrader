@@ -6302,18 +6302,6 @@ export default function TradingPlatformShell() {
                     {/* Messages de chat */}
                     <div ref={messagesContainerRef} className={`flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 ${selectedChannel.id === 'fondamentaux' ? '' : 'pb-32'}`}>
                       
-                      {/* PDF Viewer pour Fondamentaux */}
-                      {selectedChannel.id === 'fondamentaux' && (
-                        <div className="w-full flex justify-center" style={{ overflow: 'auto', WebkitOverflowScrolling: 'touch' }}>
-                          <iframe 
-                            src="/trading pour les nuls.pdf#view=FitH" 
-                            className="w-full border-0 rounded-lg"
-                            style={{ height: 'calc(100vh - 100px)', minHeight: '800px', touchAction: 'pan-y' }}
-                            title="Trading pour les nuls"
-                          />
-                        </div>
-                      )}
-                      
                       {(messages[selectedChannel.id] || []).length > 0 && 
                         (messages[selectedChannel.id] || []).map((message, index) => {
                           // Vérifier si c'est un nouveau jour par rapport au message précédent
@@ -6927,27 +6915,7 @@ export default function TradingPlatformShell() {
               ) : ['fondamentaux', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}
-                  <div ref={messagesContainerRef} className={`flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 ${selectedChannel.id === 'fondamentaux' ? 'pt-20' : 'pb-32'}`}>
-                      
-                      {/* Header Fondamentaux */}
-                      {selectedChannel.id === 'fondamentaux' && (
-                        <div className="mb-4">
-                          <h1 className="text-xl md:text-2xl font-bold text-white">📚 Fondamentaux</h1>
-                          <p className="text-sm text-gray-400 mt-1">Guide complet du trading</p>
-                        </div>
-                      )}
-                      
-                      {/* PDF Viewer pour Fondamentaux */}
-                      {selectedChannel.id === 'fondamentaux' && (
-                        <div className="w-full flex justify-center">
-                          <iframe 
-                            src="/trading pour les nuls.pdf#view=FitH" 
-                            className="w-full border-0 rounded-lg"
-                            style={{ height: '500px' }}
-                            title="Trading pour les nuls"
-                          />
-                        </div>
-                      )}
+                  <div ref={messagesContainerRef} className={`flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 ${selectedChannel.id === 'fondamentaux' ? '' : 'pb-32'}`}>
                       
                       {(messages[selectedChannel.id] || []).length > 0 && 
                         (messages[selectedChannel.id] || []).map((message, index) => {
