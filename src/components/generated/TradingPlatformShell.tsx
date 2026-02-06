@@ -6917,6 +6917,25 @@ export default function TradingPlatformShell() {
                   {/* Messages de chat */}
                   <div ref={messagesContainerRef} className={`flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 ${selectedChannel.id === 'fondamentaux' ? '' : 'pb-32'}`}>
                       
+                      {/* Galerie verticale pour Fondamentaux */}
+                      {selectedChannel.id === 'fondamentaux' && (
+                        <div className="w-full space-y-6">
+                          {Array.from({ length: 16 }, (_, i) => i + 1).map((pageNum) => (
+                            <div key={pageNum} className="w-full flex flex-col items-center">
+                              <div className="text-center mb-2">
+                                <span className="text-sm font-medium text-gray-400">Page {pageNum}/16</span>
+                              </div>
+                              <img 
+                                src={`/fondamentaux/page-${pageNum}.jpg`}
+                                alt={`Page ${pageNum}`}
+                                className="w-full max-w-3xl rounded-lg shadow-lg border border-gray-700"
+                                loading="lazy"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      
                       {(messages[selectedChannel.id] || []).length > 0 && 
                         (messages[selectedChannel.id] || []).map((message, index) => {
                           // Vérifier si c'est un nouveau jour par rapport au message précédent
