@@ -4721,31 +4721,6 @@ export default function TradingPlatformShell() {
             </div>
           )}
 
-          {/* Boutons Tous les WIN / Tous les LOSS - Journal perso, TPLN model, et Journal Signaux */}
-          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'calendrier') && (
-            <div className="flex gap-3 mt-6">
-              <button
-                onClick={() => {
-                  setWinsLossFilter('WIN');
-                  setWinsLossTradeIndex(0);
-                  setShowWinsLossModal(true);
-                }}
-                className="px-4 py-2 rounded-lg bg-green-600/30 border border-green-500/50 text-green-300 hover:bg-green-600/50 transition-colors"
-              >
-                📈 Tous les WIN ({selectedChannel.id === 'calendrier' ? signals.filter(s => s.status === 'WIN' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount().filter(t => t.status === 'WIN').length})
-              </button>
-              <button
-                onClick={() => {
-                  setWinsLossFilter('LOSS');
-                  setWinsLossTradeIndex(0);
-                  setShowWinsLossModal(true);
-                }}
-                className="px-4 py-2 rounded-lg bg-red-600/30 border border-red-500/50 text-red-300 hover:bg-red-600/50 transition-colors"
-              >
-                📉 Tous les LOSS ({selectedChannel.id === 'calendrier' ? signals.filter(s => s.status === 'LOSS' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount().filter(t => t.status === 'LOSS').length})
-              </button>
-            </div>
-          )}
 
           {/* Solde du compte et indicateur de risque (pas sur TPLN model ni TPLN button) */}
           {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && activeJournalButton !== 'tpln' && (
@@ -5101,6 +5076,32 @@ export default function TradingPlatformShell() {
               ))}
             </div>
           </div>
+
+          {/* Boutons Tous les WIN / Tous les LOSS - Journal perso, TPLN model, et Journal Signaux */}
+          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'calendrier') && (
+            <div className="flex flex-col gap-2 mt-4">
+              <button
+                onClick={() => {
+                  setWinsLossFilter('WIN');
+                  setWinsLossTradeIndex(0);
+                  setShowWinsLossModal(true);
+                }}
+                className="w-full px-3 py-2 rounded-lg bg-green-600/30 border border-green-500/50 text-green-300 hover:bg-green-600/50 transition-colors text-sm font-medium"
+              >
+                📈 Tous les WIN ({selectedChannel.id === 'calendrier' ? signals.filter(s => s.status === 'WIN' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount().filter(t => t.status === 'WIN').length})
+              </button>
+              <button
+                onClick={() => {
+                  setWinsLossFilter('LOSS');
+                  setWinsLossTradeIndex(0);
+                  setShowWinsLossModal(true);
+                }}
+                className="w-full px-3 py-2 rounded-lg bg-red-600/30 border border-red-500/50 text-red-300 hover:bg-red-600/50 transition-colors text-sm font-medium"
+              >
+                📉 Tous les LOSS ({selectedChannel.id === 'calendrier' ? signals.filter(s => s.status === 'LOSS' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount().filter(t => t.status === 'LOSS').length})
+              </button>
+            </div>
+          )}
           
           {/* Espace supplémentaire en bas pour éviter que la dernière ligne soit cachée */}
           <div className="h-24 md:h-32"></div>
