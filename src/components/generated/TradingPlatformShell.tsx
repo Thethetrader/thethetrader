@@ -1812,6 +1812,7 @@ export default function TradingPlatformShell() {
     image2: null as File | null
   });
   const [tradeAddAccount, setTradeAddAccount] = useState<string>('Compte Principal');
+  const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
   
   // Synchroniser l'ID utilisateur au démarrage de l'application
   useEffect(() => {
@@ -3647,6 +3648,7 @@ export default function TradingPlatformShell() {
       ? 'TPLN'
       : (selectedAccount === 'Tous les comptes' ? (tradingAccounts[0]?.account_name || 'Compte Principal') : selectedAccount);
     setTradeAddAccount(defaultAccount);
+    setSelectedAccounts([defaultAccount]);
     setShowTradeModal(true);
   };
 
@@ -3664,12 +3666,8 @@ export default function TradingPlatformShell() {
       return `${year}-${month}-${day}`;
     };
 
-    // Depuis TPLN model : "Tous les comptes" = uniquement TPLN (1 trade). Depuis Journal Perso : tous les comptes + TPLN.
-    const accountsToAdd = tradeAddAccount === 'Tous les comptes'
-      ? (selectedChannel.id === 'tpln-model'
-          ? ['TPLN']
-          : [...(tradingAccounts.length > 0 ? tradingAccounts.map(a => a.account_name) : ['Compte Principal']), 'TPLN'])
-      : [tradeAddAccount];
+    // Utiliser les comptes sélectionnés
+    const accountsToAdd = selectedAccounts.length > 0 ? selectedAccounts : [tradeAddAccount];
 
     // Sauvegarder dans Supabase (un trade par compte)
     try {
@@ -3725,6 +3723,7 @@ export default function TradingPlatformShell() {
           image1: null,
           image2: null
         });
+        setSelectedAccounts([]);
         setShowTradeModal(false);
       } else {
         alert('Erreur lors de la sauvegarde du trade');
@@ -4413,7 +4412,7 @@ export default function TradingPlatformShell() {
                   }}
                 >
                   <option value="Tous les comptes">📊 Tous les comptes</option>
-                  <option value="TPLN">📋 TPLN</option>
+                  <option value="TPLN">📋 TPLN model</option>
                   {tradingAccounts.map((account) => (
                     <option key={account.id} value={account.account_name}>
                       {account.account_name}
@@ -4947,8 +4946,8 @@ export default function TradingPlatformShell() {
         <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6" style={{ paddingTop: 'calc(1rem + 1cm - 1mm)', paddingBottom: 'calc(1rem - 0.5cm)' }} key={`stats-${selectedAccount}-${currentDate.getMonth()}-${currentDate.getFullYear()}-${statsUpdateTrigger}`}>
           {/* Métriques principales */}
           <div className="space-y-2 mb-8">
-            {/* Solde du compte (Journal perso) ou P&L Total (Signaux) - pas sur TPLN model */}
-            {selectedChannel.id !== 'tpln-model' && (
+            {/* Solde du compte (Journal perso) ou P&L Total (Signaux) - pas sur TPLN model ni TPLN button */}
+            {selectedChannel.id !== 'tpln-model' && activeJournalButton !== 'tpln' && (
             <div className={`border rounded-lg p-4 border ${
               (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes'
                 ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'bg-green-600/20 border-green-500/30' : 'bg-red-600/20 border-red-500/30')
@@ -5261,7 +5260,7 @@ export default function TradingPlatformShell() {
               {channels.find(c => c.id === 'journal') && (
                 <>
                   <button onClick={() => { handleChannelChange('journal', 'journal'); setActiveJournalButton('trading-journal'); }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' && activeJournalButton === 'trading-journal' ? 'bg-gray-700 text-white' : selectedChannel.id === 'tpln-model' ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 Trading Journal</button>
-                  <button onClick={() => { handleChannelChange('journal', 'journal'); setActiveJournalButton('tpln'); }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' && activeJournalButton === 'tpln' ? 'bg-gray-700 text-white' : selectedChannel.id === 'tpln-model' ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 TPLN</button>
+                  <button onClick={() => { handleChannelChange('journal', 'journal'); setActiveJournalButton('tpln'); }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' && activeJournalButton === 'tpln' ? 'bg-gray-700 text-white' : selectedChannel.id === 'tpln-model' ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 TPLN model</button>
                 </>
               )}
               {channels.find(c => c.id === 'livestream-premium') && (
@@ -5608,7 +5607,7 @@ export default function TradingPlatformShell() {
                         <div className="flex items-center gap-3">
                           <span className="text-lg">📓</span>
                           <div>
-                            <p className="font-medium text-white">TPLN</p>
+                            <p className="font-medium text-white">TPLN model</p>
                             <p className="text-sm text-gray-400">Calendrier et stats du modèle</p>
                           </div>
                         </div>
@@ -5687,7 +5686,7 @@ export default function TradingPlatformShell() {
                   style={{ height: '36px', background: 'rgba(34, 197, 94, 0.2)' }}
                             >
                               <option value="Tous les comptes">📊 Tous les comptes</option>
-                              <option value="TPLN">📋 TPLN</option>
+                              <option value="TPLN">📋 TPLN model</option>
                               {tradingAccounts.map((account) => (
                                 <option key={account.id} value={account.account_name}>
                                   {account.account_name}
@@ -7574,7 +7573,7 @@ export default function TradingPlatformShell() {
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-semibold text-white">Ajouter un trade</h2>
                 <button 
-                  onClick={() => setShowTradeModal(false)}
+                  onClick={() => { setSelectedAccounts([]); setShowTradeModal(false); }}
                   className="text-gray-400 hover:text-white"
                 >
                   ✕
@@ -7617,21 +7616,79 @@ export default function TradingPlatformShell() {
 
                 {/* Compte destination */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Compte</label>
-                  <select
-                    value={tradeAddAccount}
-                    onChange={(e) => setTradeAddAccount(e.target.value)}
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500"
-                  >
-                    <option value="Tous les comptes">📊 Tous les comptes</option>
-                    <option value="TPLN">📋 TPLN</option>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Comptes (sélectionner plusieurs)</label>
+                  <div className="space-y-2 max-h-48 overflow-y-auto bg-gray-700 border border-gray-600 rounded p-3">
+                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-600 p-2 rounded">
+                      <input
+                        type="checkbox"
+                        checked={selectedAccounts.includes('Tous les comptes')}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            const allAccounts = ['TPLN', ...(tradingAccounts.length > 0 ? tradingAccounts.map(a => a.account_name) : ['Compte Principal'])];
+                            setSelectedAccounts(allAccounts);
+                          } else {
+                            setSelectedAccounts([]);
+                          }
+                        }}
+                        className="w-4 h-4"
+                      />
+                      <span className="text-white text-sm">📊 Tous les comptes</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-600 p-2 rounded">
+                      <input
+                        type="checkbox"
+                        checked={selectedAccounts.includes('TPLN')}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedAccounts([...selectedAccounts.filter(a => a !== 'Tous les comptes'), 'TPLN']);
+                          } else {
+                            setSelectedAccounts(selectedAccounts.filter(a => a !== 'TPLN'));
+                          }
+                        }}
+                        className="w-4 h-4"
+                      />
+                      <span className="text-white text-sm">📋 TPLN model</span>
+                    </label>
                     {tradingAccounts.map((account) => (
-                      <option key={account.id} value={account.account_name}>
-                        {account.account_name}
-                      </option>
+                      <label key={account.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-600 p-2 rounded">
+                        <input
+                          type="checkbox"
+                          checked={selectedAccounts.includes(account.account_name)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedAccounts([...selectedAccounts.filter(a => a !== 'Tous les comptes'), account.account_name]);
+                            } else {
+                              setSelectedAccounts(selectedAccounts.filter(a => a !== account.account_name));
+                            }
+                          }}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-white text-sm">{account.account_name}</span>
+                      </label>
                     ))}
-                    {tradingAccounts.length === 0 && <option value="Compte Principal">Compte Principal</option>}
-                  </select>
+                    {tradingAccounts.length === 0 && (
+                      <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-600 p-2 rounded">
+                        <input
+                          type="checkbox"
+                          checked={selectedAccounts.includes('Compte Principal')}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedAccounts([...selectedAccounts.filter(a => a !== 'Tous les comptes'), 'Compte Principal']);
+                            } else {
+                              setSelectedAccounts(selectedAccounts.filter(a => a !== 'Compte Principal'));
+                            }
+                          }}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-white text-sm">Compte Principal</span>
+                      </label>
+                    )}
+                  </div>
+                  {selectedAccounts.length > 0 && (
+                    <p className="text-xs text-gray-400 mt-2">
+                      {selectedAccounts.length} compte{selectedAccounts.length > 1 ? 's' : ''} sélectionné{selectedAccounts.length > 1 ? 's' : ''}
+                    </p>
+                  )}
                 </div>
 
                 {/* Type de trade */}
@@ -7836,7 +7893,7 @@ export default function TradingPlatformShell() {
                 {/* Boutons */}
                 <div className="flex gap-3 pt-4">
                   <button
-                    onClick={() => setShowTradeModal(false)}
+                    onClick={() => { setSelectedAccounts([]); setShowTradeModal(false); }}
                     className="flex-1 bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
                   >
                     Annuler

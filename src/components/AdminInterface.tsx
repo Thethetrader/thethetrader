@@ -247,6 +247,7 @@ export default function AdminInterface() {
   const [tradingAccounts, setTradingAccounts] = useState<UserAccount[]>([]);
   const [selectedAccount, setSelectedAccount] = useState('Compte Principal');
   const [tradeAddAccount, setTradeAddAccount] = useState<string>('Compte Principal');
+  const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
   const [showAddAccountModal, setShowAddAccountModal] = useState(false);
   const [newAccountName, setNewAccountName] = useState('');
   const [newAccountBalance, setNewAccountBalance] = useState('');
@@ -3129,6 +3130,7 @@ const dailyPnLChartData = useMemo(
       ? 'TPLN model' 
       : (selectedAccount === 'Tous les comptes' ? (tradingAccounts[0]?.account_name || 'Compte Principal') : selectedAccount);
     setTradeAddAccount(defaultAccount);
+    setSelectedAccounts([defaultAccount]);
     setShowTradeModal(true);
   };
 
@@ -3146,12 +3148,8 @@ const dailyPnLChartData = useMemo(
       return `${year}-${month}-${day}`;
     };
 
-    // Depuis TPLN model : "Tous les comptes" = uniquement TPLN model (1 trade). Depuis Journal Perso : tous les comptes + TPLN model.
-    const accountsToAdd = tradeAddAccount === 'Tous les comptes'
-      ? (selectedChannel.id === 'tpln-model' 
-          ? ['TPLN model'] 
-          : [...(tradingAccounts.length > 0 ? tradingAccounts.map(a => a.account_name) : ['Compte Principal']), 'TPLN model'])
-      : [tradeAddAccount];
+    // Utiliser les comptes sélectionnés
+    const accountsToAdd = selectedAccounts.length > 0 ? selectedAccounts : [tradeAddAccount];
 
     console.log('🔍 [ADMIN] Ajout trade - comptes:', accountsToAdd);
 
@@ -3202,6 +3200,7 @@ const dailyPnLChartData = useMemo(
         image1: null,
         image2: null
       });
+      setSelectedAccounts([]);
       setShowTradeModal(false);
       console.log('✅ Trade ajouté avec succès dans Supabase !');
     } else {
@@ -7529,7 +7528,7 @@ const dailyPnLChartData = useMemo(
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-semibold text-white">Ajouter un trade</h2>
                 <button 
-                  onClick={() => setShowTradeModal(false)}
+                  onClick={() => { setSelectedAccounts([]); setShowTradeModal(false); }}
                   className="text-gray-400 hover:text-white"
                 >
                   ✕
@@ -7572,21 +7571,79 @@ const dailyPnLChartData = useMemo(
 
                 {/* Compte destination */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Compte</label>
-                  <select
-                    value={tradeAddAccount}
-                    onChange={(e) => setTradeAddAccount(e.target.value)}
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500"
-                  >
-                    <option value="Tous les comptes">📊 Tous les comptes</option>
-                    <option value="TPLN model">📋 TPLN model</option>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Comptes (sélectionner plusieurs)</label>
+                  <div className="space-y-2 max-h-48 overflow-y-auto bg-gray-700 border border-gray-600 rounded p-3">
+                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-600 p-2 rounded">
+                      <input
+                        type="checkbox"
+                        checked={selectedAccounts.includes('Tous les comptes')}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            const allAccounts = ['TPLN model', ...(tradingAccounts.length > 0 ? tradingAccounts.map(a => a.account_name) : ['Compte Principal'])];
+                            setSelectedAccounts(allAccounts);
+                          } else {
+                            setSelectedAccounts([]);
+                          }
+                        }}
+                        className="w-4 h-4"
+                      />
+                      <span className="text-white text-sm">📊 Tous les comptes</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-600 p-2 rounded">
+                      <input
+                        type="checkbox"
+                        checked={selectedAccounts.includes('TPLN model')}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedAccounts([...selectedAccounts.filter(a => a !== 'Tous les comptes'), 'TPLN model']);
+                          } else {
+                            setSelectedAccounts(selectedAccounts.filter(a => a !== 'TPLN model'));
+                          }
+                        }}
+                        className="w-4 h-4"
+                      />
+                      <span className="text-white text-sm">📋 TPLN model</span>
+                    </label>
                     {tradingAccounts.map((account) => (
-                      <option key={account.id} value={account.account_name}>
-                        {account.account_name}
-                      </option>
+                      <label key={account.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-600 p-2 rounded">
+                        <input
+                          type="checkbox"
+                          checked={selectedAccounts.includes(account.account_name)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedAccounts([...selectedAccounts.filter(a => a !== 'Tous les comptes'), account.account_name]);
+                            } else {
+                              setSelectedAccounts(selectedAccounts.filter(a => a !== account.account_name));
+                            }
+                          }}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-white text-sm">{account.account_name}</span>
+                      </label>
                     ))}
-                    {tradingAccounts.length === 0 && <option value="Compte Principal">Compte Principal</option>}
-                  </select>
+                    {tradingAccounts.length === 0 && (
+                      <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-600 p-2 rounded">
+                        <input
+                          type="checkbox"
+                          checked={selectedAccounts.includes('Compte Principal')}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedAccounts([...selectedAccounts.filter(a => a !== 'Tous les comptes'), 'Compte Principal']);
+                            } else {
+                              setSelectedAccounts(selectedAccounts.filter(a => a !== 'Compte Principal'));
+                            }
+                          }}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-white text-sm">Compte Principal</span>
+                      </label>
+                    )}
+                  </div>
+                  {selectedAccounts.length > 0 && (
+                    <p className="text-xs text-gray-400 mt-2">
+                      {selectedAccounts.length} compte{selectedAccounts.length > 1 ? 's' : ''} sélectionné{selectedAccounts.length > 1 ? 's' : ''}
+                    </p>
+                  )}
                 </div>
 
                 {/* Type de trade */}
@@ -7754,7 +7811,7 @@ const dailyPnLChartData = useMemo(
                 {/* Boutons */}
                 <div className="flex gap-3 pt-4">
                   <button
-                    onClick={() => setShowTradeModal(false)}
+                    onClick={() => { setSelectedAccounts([]); setShowTradeModal(false); }}
                     className="flex-1 bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
                   >
                     Annuler
