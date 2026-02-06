@@ -6233,8 +6233,9 @@ export default function TradingPlatformShell() {
                               <img 
                                 src={`/fondamentaux/page-${pageNum}.jpg`}
                                 alt={`Page ${pageNum}`}
-                                className="w-full max-w-3xl rounded-lg shadow-lg border border-gray-700"
+                                className="w-full max-w-3xl rounded-lg shadow-lg border border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
                                 loading="lazy"
+                                onClick={() => setSelectedImage(`/fondamentaux/page-${pageNum}.jpg`)}
                               />
                             </div>
                           ))}
@@ -6878,8 +6879,9 @@ export default function TradingPlatformShell() {
                               <img 
                                 src={`/fondamentaux/page-${pageNum}.jpg`}
                                 alt={`Page ${pageNum}`}
-                                className="w-full max-w-3xl rounded-lg shadow-lg border border-gray-700"
+                                className="w-full max-w-3xl rounded-lg shadow-lg border border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
                                 loading="lazy"
+                                onClick={() => setSelectedImage(`/fondamentaux/page-${pageNum}.jpg`)}
                               />
                             </div>
                           ))}
