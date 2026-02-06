@@ -6927,7 +6927,7 @@ export default function TradingPlatformShell() {
               ) : ['fondamentaux', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}
-                  <div ref={messagesContainerRef} className={`flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 ${selectedChannel.id === 'fondamentaux' ? '' : 'pb-32'}`} style={selectedChannel.id === 'fondamentaux' ? { paddingTop: 'calc(6rem + 1cm)' } : {}}>
+                  <div ref={messagesContainerRef} className={`flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 ${selectedChannel.id === 'fondamentaux' ? 'pt-20' : 'pb-32'}`}>
                       
                       {/* Header Fondamentaux */}
                       {selectedChannel.id === 'fondamentaux' && (
