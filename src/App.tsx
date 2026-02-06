@@ -1314,7 +1314,7 @@ const App = () => {
     <div className={`min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 ${isPWA && currentPage === 'home' && !user ? 'pwa-landing-no-scroll' : isPWA && user ? 'pwa-connected-scroll' : ''}`}>
       {/* Navigation - Masquée en PWA */}
       {!isPWA && (
-        <nav className="flex items-center justify-between px-4 py-3 sm:px-6 sm:py-3 fixed top-0 left-0 right-0 z-50 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 border-b border-purple-800/20 h-16">
+        <nav className="app-fixed-header flex items-center justify-between px-4 py-3 sm:px-6 sm:py-3 z-50 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 border-b border-purple-800/20 h-16" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}>
           <div className="flex items-center h-full">
             <img 
               src="/logo-removebg-preview.png" 
@@ -1571,18 +1571,18 @@ const App = () => {
           {user && (
             <>
               {/* Hero Section complète */}
-              <div className="text-center pt-20 sm:pt-32 pb-0 px-4 sm:px-6">
-                <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 sm:mb-8">
+              <div className="text-center pt-28 sm:pt-40 pb-0 px-4 sm:px-6">
+                <h1 className="font-bold mb-6 sm:mb-8 leading-tight" style={{ fontSize: 'clamp(1.6rem, 8vw, 4.5rem)' }}>
                   <span className="text-white">Arrête de perdre ton argent.</span>
                   <br />
                   <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
                     Apprends à trader.
                   </span>
                 </h1>
-                <p className="text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed">
-                  Tu n'as pas besoin d'être un expert pour trader efficacement. Tu as juste besoin de la bonne méthode — simple, directe, et conçue pour t'apprendre à penser comme un pro.
+                <p className="text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed text-center" style={isPWA ? undefined : { transform: 'translateX(calc(35% + 5mm))' }}>
+                  Tu n'as pas besoin d'être un expert pour trader efficacement. Tu as juste besoin de la bonne méthode, simple, directe, et conçue pour t'apprendre à penser comme un pro.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8">
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mt-6 mb-8">
                   <button 
                     onClick={() => handleScrollToSection('pricing')}
                     className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
@@ -1600,14 +1600,14 @@ const App = () => {
                     <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
                       APPRENTISSAGE
                     </div>
-                    <h2 className="text-4xl md:text-6xl font-bold mb-6">
+                    <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                       <span className="text-white">Adoptez mon approche</span>
                       <br />
                       <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
                         précise
                       </span>
                     </h2>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
                       Découvre ma méthode de scalping : analyse graphique pure, zéro indicateurs, zéro blabla. 
                       Un setup précis qui se répète sans fin pour des trades rapides et efficaces.
                     </p>
@@ -1890,18 +1890,18 @@ const App = () => {
       ) : (
         <>
           {/* Hero Section - Mobile Optimized */}
-          <div className="text-center pt-20 sm:pt-32 pb-0 px-4 sm:px-6">
-            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 sm:mb-8">
+          <div className="text-center pt-28 sm:pt-40 pb-0 px-4 sm:px-6">
+            <h1 className="font-bold mb-6 sm:mb-8 leading-tight" style={{ fontSize: 'clamp(1.6rem, 8vw, 4.5rem)' }}>
               <span className="text-white">Arrête de perdre ton argent.</span>
               <br />
               <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
                 Apprends à trader.
               </span>
             </h1>
-            <p className="text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed">
-              Tu n'as pas besoin d'être un expert pour trader efficacement. Tu as juste besoin de la bonne méthode — simple, directe, et conçue pour t'apprendre à penser comme un pro.
+            <p className="text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed text-center" style={isPWA ? undefined : { transform: 'translateX(calc(35% + 5mm))' }}>
+              Tu n'as pas besoin d'être un expert pour trader efficacement. Tu as juste besoin de la bonne méthode, simple, directe, et conçue pour t'apprendre à penser comme un pro.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mt-6 mb-8">
               <button 
                 onClick={() => handleScrollToSection('pricing')}
                 className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
@@ -1916,7 +1916,7 @@ const App = () => {
             {/* Nos Services - Navigation Horizontale */}
             <div id="services" className="w-full mb-10 sm:mb-16">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-12 sm:mb-20">
-                <h2 className="text-4xl sm:text-5xl font-bold text-center">
+                <h2 className="font-bold text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                   <div className="text-white">Les services</div>
                   <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
                     de TPLN
@@ -2458,14 +2458,14 @@ const App = () => {
                     <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
                       APPRENTISSAGE
                     </div>
-                    <h2 className="text-4xl md:text-6xl font-bold mb-6">
+                    <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                       <span className="text-white">Adoptez mon approche</span>
                       <br />
                       <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
                         précise
                       </span>
                     </h2>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
                       Découvre ma méthode de scalping : analyse graphique pure, zéro indicateurs, zéro blabla. 
                       Un setup précis qui se répète sans fin pour des trades rapides et efficaces.
                     </p>
@@ -2505,14 +2505,14 @@ const App = () => {
                     <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
                       SIGNAUX
                     </div>
-                    <h2 className="text-4xl md:text-6xl font-bold mb-6">
+                    <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                       <span className="text-white">Reçois mes signaux</span>
                       <br />
                       <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
                         en temps réel
                       </span>
                     </h2>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
                       Reçois des signaux Forex, Crypto, Indices avec des charts annotés pour assimiler mon modèle étape par étape. Le but : ta maîtrise du marché.
                     </p>
                   </div>
@@ -2548,14 +2548,14 @@ const App = () => {
                     <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
                       JOURNAL
                     </div>
-                    <h2 className="text-4xl md:text-6xl font-bold mb-6">
+                    <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                       <span className="text-white">Journal de</span>
                       <br />
                       <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
                         trading
                       </span>
                     </h2>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
                       Un journal complet et personnalisable pour suivre vos signaux, gérer plusieurs comptes, et analyser vos performances avec précision. Suivez vos statistiques, étudiez vos stop loss et transformez chaque trade — gagnant comme perdant — en véritable source d'apprentissage.
                     </p>
                   </div>
@@ -2641,14 +2641,14 @@ const App = () => {
                     <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
                       LIVE
                     </div>
-                    <h2 className="text-4xl md:text-6xl font-bold mb-6">
+                    <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                       <span className="text-white">Session de live</span>
                       <br />
                       <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
                         trading
                       </span>
                     </h2>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
                       Rejoins mes sessions de trading, apprends en direct avec mes annotations qui expliquent chaque décision au fur et à mesure.
                     </p>
                   </div>
@@ -2683,14 +2683,14 @@ const App = () => {
                     <div className="text-sm font-semibold text-purple-400 mb-2 tracking-wider">
                       APP
                     </div>
-                    <h2 className="text-4xl md:text-6xl font-bold mb-3">
+                    <h2 className="font-bold mb-3 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                       <span className="text-white">Application</span>
                       <br />
                       <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
                         mobile
                       </span>
                     </h2>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-2">
+                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-2 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
                       Installe l'app et reçois des notifications instantanées pour chaque signal. 
                       Accède au livestream, consulte tes journaux personnels. 
                       TPLN est 100% responsive, partout avec toi.
