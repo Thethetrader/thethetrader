@@ -6197,11 +6197,11 @@ const dailyPnLChartData = useMemo(
                       
                       {/* PDF Viewer pour Fondamentaux */}
                       {selectedChannel.id === 'fondamentaux' && (
-                        <div className="w-full flex justify-center">
+                        <div className="w-full flex justify-center" style={{ overflow: 'auto', WebkitOverflowScrolling: 'touch' }}>
                           <iframe 
-                            src="/trading pour les nuls.pdf" 
+                            src="/trading pour les nuls.pdf#view=FitH" 
                             className="w-full border-0 rounded-lg"
-                            style={{ height: 'calc(100vh - 100px)', minHeight: '800px' }}
+                            style={{ height: 'calc(100vh - 100px)', minHeight: '800px', touchAction: 'pan-y' }}
                             title="Trading pour les nuls"
                           />
                         </div>
