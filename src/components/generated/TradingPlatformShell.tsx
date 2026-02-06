@@ -4721,8 +4721,8 @@ export default function TradingPlatformShell() {
             </div>
           )}
 
-          {/* Boutons Tous les WIN / Tous les LOSS - Journal perso et TPLN model */}
-          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') && (
+          {/* Boutons Tous les WIN / Tous les LOSS - Journal perso, TPLN model, et Journal Signaux */}
+          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'calendrier') && (
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => {
@@ -4732,7 +4732,7 @@ export default function TradingPlatformShell() {
                 }}
                 className="px-4 py-2 rounded-lg bg-green-600/30 border border-green-500/50 text-green-300 hover:bg-green-600/50 transition-colors"
               >
-                📈 Tous les WIN ({getTradesForSelectedAccount().filter(t => t.status === 'WIN').length})
+                📈 Tous les WIN ({selectedChannel.id === 'calendrier' ? signals.filter(s => s.status === 'WIN' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount().filter(t => t.status === 'WIN').length})
               </button>
               <button
                 onClick={() => {
@@ -4742,7 +4742,7 @@ export default function TradingPlatformShell() {
                 }}
                 className="px-4 py-2 rounded-lg bg-red-600/30 border border-red-500/50 text-red-300 hover:bg-red-600/50 transition-colors"
               >
-                📉 Tous les LOSS ({getTradesForSelectedAccount().filter(t => t.status === 'LOSS').length})
+                📉 Tous les LOSS ({selectedChannel.id === 'calendrier' ? signals.filter(s => s.status === 'LOSS' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount().filter(t => t.status === 'LOSS').length})
               </button>
             </div>
           )}
@@ -6913,6 +6913,17 @@ export default function TradingPlatformShell() {
                             </div>
                           )}
 
+                          {signal.closure_image && (
+                            <div className="mt-2">
+                              <div className="text-xs text-gray-400 mb-1">📸 Photo de clôture:</div>
+                              <img 
+                                src={signal.closure_image} 
+                                alt="Closure screenshot"
+                                className="max-w-full md:max-w-2xl rounded-lg border border-gray-600"
+                              />
+                            </div>
+                          )}
+
                           {/* Boutons de statut supprimés - seul admin peut changer WIN/LOSS/BE */}
 
 
@@ -8069,14 +8080,19 @@ export default function TradingPlatformShell() {
         </div>
       )}
 
-      {/* Modal Tous les WIN / Tous les LOSS - TPLN model */}
+      {/* Modal Tous les WIN / Tous les LOSS - Journal perso, TPLN model, et Journal Signaux */}
       {showWinsLossModal && winsLossFilter && (
         <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4" onClick={() => setShowWinsLossModal(false)}>
           <div className="bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
             {(() => {
-              const filteredTrades = getTradesForSelectedAccount().filter(t => t.status === winsLossFilter);
-              const currentTrade = filteredTrades[winsLossTradeIndex];
-              if (!currentTrade) {
+              // Pour le calendrier (signaux) ou les trades (journal perso/TPLN)
+              const isSignalsMode = selectedChannel.id === 'calendrier';
+              const filteredItems = isSignalsMode 
+                ? signals.filter(s => s.status === winsLossFilter && s.channel_id === 'calendrier')
+                : getTradesForSelectedAccount().filter(t => t.status === winsLossFilter);
+              const currentItem = filteredItems[winsLossTradeIndex];
+              
+              if (!currentItem) {
                 return (
                   <div className="p-6">
                     <div className="flex justify-between items-center mb-4">
@@ -8085,43 +8101,56 @@ export default function TradingPlatformShell() {
                       </h2>
                       <button onClick={() => setShowWinsLossModal(false)} className="text-gray-400 hover:text-white text-2xl">×</button>
                     </div>
-                    <div className="text-center py-12 text-gray-400">Aucun trade {winsLossFilter === 'WIN' ? 'gagnant' : 'perdant'}</div>
+                    <div className="text-center py-12 text-gray-400">Aucun {isSignalsMode ? 'signal' : 'trade'} {winsLossFilter === 'WIN' ? 'gagnant' : 'perdant'}</div>
                   </div>
                 );
               }
-              const imgSrc = currentTrade.image1 || currentTrade.image2;
+              
+              // Image: pour les signaux, utiliser image ou closure_image; pour les trades, utiliser image1 ou image2
+              const imgSrc = isSignalsMode 
+                ? (currentItem as any).image || (currentItem as any).closure_image
+                : (currentItem as any).image1 || (currentItem as any).image2;
               const imgUrl = imgSrc ? (typeof imgSrc === 'string' ? imgSrc : URL.createObjectURL(imgSrc as any)) : null;
+              
               return (
                 <>
                   <div className="flex justify-between items-center p-4 border-b border-gray-700">
                     <h2 className="text-xl font-bold text-white">
-                      {winsLossFilter === 'WIN' ? '📈 Tous les WIN' : '📉 Tous les LOSS'} ({winsLossTradeIndex + 1}/{filteredTrades.length})
+                      {winsLossFilter === 'WIN' ? '📈 Tous les WIN' : '📉 Tous les LOSS'} ({winsLossTradeIndex + 1}/{filteredItems.length})
                     </h2>
                     <button onClick={() => setShowWinsLossModal(false)} className="text-gray-400 hover:text-white text-2xl">×</button>
                   </div>
                   <div className="flex-1 flex items-center justify-between gap-4 p-4 overflow-hidden">
                     <button
-                      onClick={() => setWinsLossTradeIndex(i => (i <= 0 ? filteredTrades.length - 1 : i - 1))}
+                      onClick={() => setWinsLossTradeIndex(i => (i <= 0 ? filteredItems.length - 1 : i - 1))}
                       className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-2xl text-white"
                     >
                       ←
                     </button>
                     <div className="flex-1 flex flex-col items-center min-w-0">
-                      {imgUrl ? (
-                        <img src={imgUrl} alt="Trade" className="max-w-full max-h-[60vh] object-contain rounded-lg border border-gray-600" />
-                      ) : (
-                        <div className="w-96 h-96 flex items-center justify-center bg-gray-700 rounded-lg text-gray-500">Pas d'image</div>
-                      )}
+                      <div className="space-y-4">
+                        {imgUrl ? (
+                          <img src={imgUrl} alt={isSignalsMode ? "Signal" : "Trade"} className="max-w-full max-h-[60vh] object-contain rounded-lg border border-gray-600" />
+                        ) : (
+                          <div className="w-96 h-96 flex items-center justify-center bg-gray-700 rounded-lg text-gray-500">Pas d'image</div>
+                        )}
+                        {isSignalsMode && (currentItem as any).closure_image && (currentItem as any).image && (
+                          <div>
+                            <div className="text-xs text-gray-400 mb-1">📸 Photo de clôture:</div>
+                            <img src={(currentItem as any).closure_image} alt="Closure" className="max-w-full max-h-[60vh] object-contain rounded-lg border border-gray-600" />
+                          </div>
+                        )}
+                      </div>
                       <div className="mt-4 text-center">
-                        <span className="text-lg font-bold text-white">{currentTrade.symbol}</span>
-                        <span className={`ml-2 text-lg font-bold ${currentTrade.pnl && parseFloat(currentTrade.pnl) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          {(currentTrade.pnl && parseFloat(currentTrade.pnl) >= 0 ? '+' : '')}{currentTrade.pnl || '0'}$
+                        <span className="text-lg font-bold text-white">{currentItem.symbol}</span>
+                        <span className={`ml-2 text-lg font-bold ${currentItem.pnl && parseFloat(currentItem.pnl) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          {(currentItem.pnl && parseFloat(currentItem.pnl) >= 0 ? '+' : '')}{currentItem.pnl || '0'}$
                         </span>
-                        <span className="ml-2 text-gray-400 text-sm">{currentTrade.date}</span>
+                        <span className="ml-2 text-gray-400 text-sm">{isSignalsMode ? new Date((currentItem as any).timestamp).toLocaleDateString() : (currentItem as any).date}</span>
                       </div>
                     </div>
                     <button
-                      onClick={() => setWinsLossTradeIndex(i => (i >= filteredTrades.length - 1 ? 0 : i + 1))}
+                      onClick={() => setWinsLossTradeIndex(i => (i >= filteredItems.length - 1 ? 0 : i + 1))}
                       className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-2xl text-white"
                     >
                       →
