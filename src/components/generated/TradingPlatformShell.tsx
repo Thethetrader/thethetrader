@@ -6927,6 +6927,14 @@ export default function TradingPlatformShell() {
                   {/* Messages de chat */}
                   <div ref={messagesContainerRef} className={`flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 ${selectedChannel.id === 'fondamentaux' ? '' : 'pb-32'}`}>
                       
+                      {/* Header Fondamentaux */}
+                      {selectedChannel.id === 'fondamentaux' && (
+                        <div className="mb-4">
+                          <h1 className="text-xl md:text-2xl font-bold text-white">📚 Fondamentaux</h1>
+                          <p className="text-sm text-gray-400 mt-1">Guide complet du trading</p>
+                        </div>
+                      )}
+                      
                       {/* PDF Viewer pour Fondamentaux */}
                       {selectedChannel.id === 'fondamentaux' && (
                         <div className="w-full flex justify-center" style={{ overflow: 'auto', WebkitOverflowScrolling: 'touch' }}>
