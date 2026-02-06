@@ -1311,7 +1311,7 @@ const App = () => {
 
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 ${isPWA && currentPage === 'home' && !user ? 'pwa-landing-no-scroll' : isPWA && user ? 'pwa-connected-scroll' : ''}`}>
+    <div className={`min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 ${isPWA && currentPage === 'home' && !user ? 'pwa-landing-no-scroll' : isPWA && user ? 'pwa-connected-scroll' : ''}`} data-pwa={isPWA ? "true" : undefined}>
       {/* Navigation - Masquée en PWA */}
       {!isPWA && (
         <nav className="app-fixed-header flex items-center justify-between px-4 py-3 sm:px-6 sm:py-3 z-50 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 border-b border-purple-800/20 h-16" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}>
@@ -1571,7 +1571,7 @@ const App = () => {
           {user && (
             <>
               {/* Hero Section complète */}
-              <div className="text-center pt-28 sm:pt-40 pb-0 px-4 sm:px-6">
+              <div className={`text-center pt-28 sm:pt-40 pb-0 px-4 sm:px-6 ${isPWA ? 'w-full max-w-full box-border' : ''}`}>
                 <h1 className="font-bold mb-6 sm:mb-8 leading-tight" style={{ fontSize: 'clamp(1.6rem, 8vw, 4.5rem)' }}>
                   <span className="text-white">Arrête de perdre ton argent.</span>
                   <br />
@@ -1579,7 +1579,7 @@ const App = () => {
                     Apprends à trader.
                   </span>
                 </h1>
-                <p className="text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed text-center" style={isPWA ? undefined : { transform: 'translateX(calc(35% + 5mm))' }}>
+                <p className={`hero-intro-p text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-4xl leading-relaxed ${isPWA ? 'pwa-hero-left' : 'mx-auto text-center'}`} style={isPWA ? undefined : { transform: 'translateX(calc(35% + 5mm))' }}>
                   Tu n'as pas besoin d'être un expert pour trader efficacement. Tu as juste besoin de la bonne méthode, simple, directe, et conçue pour t'apprendre à penser comme un pro.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mt-6 mb-8">
@@ -1607,7 +1607,7 @@ const App = () => {
                         précise
                       </span>
                     </h2>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
+                    <p className="section-intro-p text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
                       Découvre ma méthode de scalping : analyse graphique pure, zéro indicateurs, zéro blabla. 
                       Un setup précis qui se répète sans fin pour des trades rapides et efficaces.
                     </p>
@@ -1898,7 +1898,7 @@ const App = () => {
                 Apprends à trader.
               </span>
             </h1>
-            <p className="text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed text-center" style={isPWA ? undefined : { transform: 'translateX(calc(35% + 5mm))' }}>
+            <p className={`hero-intro-p text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-4xl leading-relaxed ${isPWA ? 'pwa-hero-left' : 'mx-auto text-center'}`} style={isPWA ? undefined : { transform: 'translateX(calc(35% + 5mm))' }}>
               Tu n'as pas besoin d'être un expert pour trader efficacement. Tu as juste besoin de la bonne méthode, simple, directe, et conçue pour t'apprendre à penser comme un pro.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mt-6 mb-8">
@@ -2465,7 +2465,7 @@ const App = () => {
                         précise
                       </span>
                     </h2>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
+                    <p className="section-intro-p text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
                       Découvre ma méthode de scalping : analyse graphique pure, zéro indicateurs, zéro blabla. 
                       Un setup précis qui se répète sans fin pour des trades rapides et efficaces.
                     </p>
@@ -2512,7 +2512,7 @@ const App = () => {
                         en temps réel
                       </span>
                     </h2>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
+                    <p className="section-intro-p text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
                       Reçois des signaux Forex, Crypto, Indices avec des charts annotés pour assimiler mon modèle étape par étape. Le but : ta maîtrise du marché.
                     </p>
                   </div>
@@ -2555,7 +2555,7 @@ const App = () => {
                         trading
                       </span>
                     </h2>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
+                    <p className="section-intro-p text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
                       Un journal complet et personnalisable pour suivre vos signaux, gérer plusieurs comptes, et analyser vos performances avec précision. Suivez vos statistiques, étudiez vos stop loss et transformez chaque trade — gagnant comme perdant — en véritable source d'apprentissage.
                     </p>
                   </div>
@@ -2648,7 +2648,7 @@ const App = () => {
                         trading
                       </span>
                     </h2>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
+                    <p className="section-intro-p text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
                       Rejoins mes sessions de trading, apprends en direct avec mes annotations qui expliquent chaque décision au fur et à mesure.
                     </p>
                   </div>
@@ -2690,7 +2690,7 @@ const App = () => {
                         mobile
                       </span>
                     </h2>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-2 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
+                    <p className="section-intro-p text-gray-400 text-lg max-w-2xl mx-auto mb-2 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
                       Installe l'app et reçois des notifications instantanées pour chaque signal. 
                       Accède au livestream, consulte tes journaux personnels. 
                       TPLN est 100% responsive, partout avec toi.

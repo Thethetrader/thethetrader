@@ -83,6 +83,66 @@ html {
   margin: 0 !important;
 }
 
+/* PWA : hero paragraphe à gauche, visible (pas coupé à droite) */
+.pwa-hero-left {
+  text-align: left !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0.5rem !important;
+  padding-right: 1rem !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  transform: none !important;
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+}
+
+/* PWA standalone : même chose (sans dépendre du JS) */
+@media (display-mode: standalone) {
+  .hero-intro-p {
+    text-align: left !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0.5rem !important;
+    padding-right: 1rem !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    transform: none !important;
+    overflow-wrap: break-word !important;
+    word-wrap: break-word !important;
+  }
+}
+
+/* Mobile / petit écran : texte hero et sections toujours visibles, centrés (pas de transform qui coupe) */
+@media (max-width: 768px) {
+  .hero-intro-p {
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    box-sizing: border-box !important;
+    overflow-wrap: break-word !important;
+  }
+  .section-intro-p {
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    box-sizing: border-box !important;
+    overflow-wrap: break-word !important;
+  }
+}
+
 /* Classe pour utiliser les variables sans propriétés invalides */
 .theme-inline {
   background: var(--background);
