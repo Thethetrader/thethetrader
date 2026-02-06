@@ -33,9 +33,29 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="TheTheTrader">
+    <style>
+      /* Style minimal pour le contenu SEO statique (flash avant React) */
+      #root main { background:#0f172a; color:#fff; padding:2rem; min-height:100vh; font-family:system-ui,sans-serif; }
+      #root h1 { font-size:1.5rem; margin-bottom:0.5rem; }
+      #root h2 { font-size:1.2rem; margin:1.5rem 0 0.5rem; }
+      #root p { margin:0.5rem 0; color:#94a3b8; }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Contenu statique pour SEO - remplacé par React au chargement -->
+      <main>
+        <header>
+          <h1>TPLN - Trading Pour Les Nuls</h1>
+          <p>La plateforme de trading en temps réel pour apprendre et suivre les signaux.</p>
+        </header>
+        <section>
+          <h2>Plateforme de trading complète</h2>
+          <p>Signaux Forex, Crypto et Indices. Journal de trading personnel. Formation aux fondamentaux. Livestream en direct.</p>
+          <p>Commencer maintenant - Les services TPLN : plans Journal, Basic et Premium.</p>
+        </section>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
