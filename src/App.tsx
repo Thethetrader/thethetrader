@@ -2475,14 +2475,16 @@ const App = () => {
                   <div className="max-w-6xl mx-auto mb-12 relative">
                     <img 
                       src="/model.png" 
-                      alt="Model de trading" 
+                      alt="Aperçu de l'application TPLN - Modèle de trading"
                       className="w-full rounded-xl shadow-2xl"
+                      loading="lazy"
                     />
                     {/* Image Model2 en bas à droite format iPhone */}
                     <img 
                       src="/model2.png" 
-                      alt="Model iPhone" 
+                      alt="Application TPLN sur iPhone"
                       className="absolute bottom-4 right-8 sm:right-12 w-16 sm:w-48 rounded-2xl shadow-2xl"
+                      loading="lazy"
                       style={{ aspectRatio: '9/19.5' }}
                     />
                   </div>
@@ -2617,8 +2619,9 @@ const App = () => {
                     <div className="bg-white/95 backdrop-blur-sm rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-white/20">
                       <img 
                         src="/journal.png?v=2" 
-                        alt="Journal de trading" 
+                        alt="Journal de trading TPLN - Suivi des trades"
                         className="w-full h-auto"
+                        loading="lazy"
                       />
                     </div>
                   </div>
@@ -2702,7 +2705,8 @@ const App = () => {
                         {/* Photo du cadre iPhone */}
                         <img 
                           src="/FOndiphone.png" 
-                          alt="Cadre iPhone" 
+                          alt="Application TPLN sur iPhone - Fondamentaux"
+                          loading="lazy"
                           className="w-full h-auto scale-125 sm:scale-100"
                           style={{
                             display: 'block',
@@ -3113,7 +3117,8 @@ const App = () => {
                                 <div className="mt-2">
                                   <img 
                                     src="/images/tradingview-chart.png" 
-                                    alt="Signal screenshot" 
+                                    alt="Graphique TradingView - Exemple de signal"
+                                    loading="lazy" 
                                     className="w-full rounded-lg border border-gray-600"
                                   />
                                 </div>
@@ -3182,7 +3187,8 @@ const App = () => {
                                 <div className="mt-2">
                                   <img 
                                     src="/images/tradingview-chart.png" 
-                                    alt="Signal screenshot" 
+                                    alt="Graphique TradingView - Exemple de signal"
+                                    loading="lazy" 
                                     className="w-full rounded-lg border border-gray-600"
                                   />
                                 </div>
@@ -3256,7 +3262,8 @@ const App = () => {
                                 <div className="mt-2">
                                   <img 
                                     src="/images/tradingview-chart.png" 
-                                    alt="Signal screenshot" 
+                                    alt="Graphique TradingView - Exemple de signal"
+                                    loading="lazy" 
                                     className="w-full rounded-lg border border-gray-600"
                                   />
                                 </div>
@@ -3325,7 +3332,8 @@ const App = () => {
                                 <div className="mt-2">
                                   <img 
                                     src="/images/tradingview-chart.png" 
-                                    alt="Signal screenshot" 
+                                    alt="Graphique TradingView - Exemple de signal"
+                                    loading="lazy" 
                                     className="w-full rounded-lg border border-gray-600"
                                   />
                                 </div>
@@ -3399,7 +3407,8 @@ const App = () => {
                                 <div className="mt-2">
                                   <img 
                                     src="/images/tradingview-chart.png" 
-                                    alt="Signal screenshot" 
+                                    alt="Graphique TradingView - Exemple de signal"
+                                    loading="lazy" 
                                     className="w-full rounded-lg border border-gray-600"
                                   />
                                 </div>
@@ -3468,7 +3477,8 @@ const App = () => {
                                 <div className="mt-2">
                                   <img 
                                     src="/images/tradingview-chart.png" 
-                                    alt="Signal screenshot" 
+                                    alt="Graphique TradingView - Exemple de signal"
+                                    loading="lazy" 
                                     className="w-full rounded-lg border border-gray-600"
                                   />
                                 </div>
@@ -3953,7 +3963,7 @@ const App = () => {
                                 </div>
                               </div>
 
-                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
+                              <img src="/signal.png" alt="Exemple de signal trading TPLN" className="w-full h-72 object-contain rounded mb-3" loading="lazy" />
                               <div className="flex items-center gap-2">
                                 <span className="text-gray-400 text-xs">⚡ 24</span>
                                 <span className="text-gray-400 text-xs">🔥 18</span>
@@ -3986,7 +3996,7 @@ const App = () => {
                                 </div>
                               </div>
 
-                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
+                              <img src="/signal.png" alt="Exemple de signal trading TPLN" className="w-full h-72 object-contain rounded mb-3" loading="lazy" />
                               <div className="flex items-center gap-2">
                                 <span className="text-gray-400 text-xs">⚡ 16</span>
                                 <span className="text-gray-400 text-xs">📉 12</span>
@@ -4019,7 +4029,7 @@ const App = () => {
                                 </div>
                               </div>
 
-                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
+                              <img src="/signal.png" alt="Exemple de signal trading TPLN" className="w-full h-72 object-contain rounded mb-3" loading="lazy" />
                               <div className="flex items-center gap-2">
                                 <span className="text-gray-400 text-xs">🔥 42</span>
                                 <span className="text-gray-400 text-xs">🚀 28</span>
@@ -4052,7 +4062,7 @@ const App = () => {
                                 </div>
                               </div>
 
-                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
+                              <img src="/signal.png" alt="Exemple de signal trading TPLN" className="w-full h-72 object-contain rounded mb-3" loading="lazy" />
                               <div className="flex items-center gap-2">
                                 <span className="text-gray-400 text-xs">📉 23</span>
                                 <span className="text-gray-400 text-xs">🔻 18</span>
@@ -4102,7 +4112,7 @@ const App = () => {
                                 </div>
                               </div>
 
-                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
+                              <img src="/signal.png" alt="Exemple de signal trading TPLN" className="w-full h-72 object-contain rounded mb-3" loading="lazy" />
                               <div className="flex items-center gap-2">
                                 <span className="text-gray-400 text-xs">📉 31</span>
                                 <span className="text-gray-400 text-xs">🔻 22</span>
@@ -4135,7 +4145,7 @@ const App = () => {
                                 </div>
                               </div>
 
-                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
+                              <img src="/signal.png" alt="Exemple de signal trading TPLN" className="w-full h-72 object-contain rounded mb-3" loading="lazy" />
                               <div className="flex items-center gap-2">
                                 <span className="text-gray-400 text-xs">📈 28</span>
                                 <span className="text-gray-400 text-xs">🚀 19</span>
@@ -4168,7 +4178,7 @@ const App = () => {
                                 </div>
                               </div>
 
-                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
+                              <img src="/signal.png" alt="Exemple de signal trading TPLN" className="w-full h-72 object-contain rounded mb-3" loading="lazy" />
                               <div className="flex items-center gap-2">
                                 <span className="text-gray-400 text-xs">🥇 38</span>
                                 <span className="text-gray-400 text-xs">📈 25</span>
@@ -4201,7 +4211,7 @@ const App = () => {
                                 </div>
                               </div>
 
-                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
+                              <img src="/signal.png" alt="Exemple de signal trading TPLN" className="w-full h-72 object-contain rounded mb-3" loading="lazy" />
                               <div className="flex items-center gap-2">
                                 <span className="text-gray-400 text-xs">🛢️ 19</span>
                                 <span className="text-gray-400 text-xs">📉 14</span>
@@ -4253,7 +4263,7 @@ const App = () => {
                                 </div>
                               </div>
 
-                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
+                              <img src="/signal.png" alt="Exemple de signal trading TPLN" className="w-full h-72 object-contain rounded mb-3" loading="lazy" />
                               <div className="flex items-center gap-2">
                                 <span className="text-gray-400 text-xs">💶 42</span>
                                 <span className="text-gray-400 text-xs">📊 28</span>
@@ -4286,7 +4296,7 @@ const App = () => {
                                 </div>
                               </div>
 
-                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
+                              <img src="/signal.png" alt="Exemple de signal trading TPLN" className="w-full h-72 object-contain rounded mb-3" loading="lazy" />
                               <div className="flex items-center gap-2">
                                 <span className="text-gray-400 text-xs">🇬🇧 24</span>
                                 <span className="text-gray-400 text-xs">🇯🇵 18</span>
@@ -4319,7 +4329,7 @@ const App = () => {
                                 </div>
                               </div>
 
-                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
+                              <img src="/signal.png" alt="Exemple de signal trading TPLN" className="w-full h-72 object-contain rounded mb-3" loading="lazy" />
                               <div className="flex items-center gap-2">
                                 <span className="text-gray-400 text-xs">🇯🇵 34</span>
                                 <span className="text-gray-400 text-xs">📈 22</span>
@@ -4351,7 +4361,7 @@ const App = () => {
                                 </div>
                               </div>
 
-                              <img src="/signal.png" alt="Signal Chart" className="w-full h-72 object-contain rounded mb-3" />
+                              <img src="/signal.png" alt="Exemple de signal trading TPLN" className="w-full h-72 object-contain rounded mb-3" loading="lazy" />
                               <div className="flex items-center gap-2">
                                 <span className="text-gray-400 text-xs">🇦🇺 19</span>
                                 <span className="text-gray-400 text-xs">📉 15</span>
@@ -5067,7 +5077,7 @@ const App = () => {
                 Ce qu'ils en pensent
                   </h2>
               <div className="flex items-center justify-center gap-2 mb-8 sm:mb-12">
-                <img src="https://cdn.trustpilot.net/brand-assets/4.1.0/logo-white.svg" alt="Trustpilot" className="h-8" />
+                <img src="https://cdn.trustpilot.net/brand-assets/4.1.0/logo-white.svg" alt="Avis vérifiés Trustpilot" className="h-8" loading="lazy" />
                 <span className="text-gray-300 text-lg">Vérifié par Trustpilot</span>
                   </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">

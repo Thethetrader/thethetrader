@@ -33,12 +33,39 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="TheTheTrader">
+    
+    <!-- Structured Data (Schema.org) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": "https://thethetrader.com/#organization",
+      "name": "TPLN - Trading Pour Les Nuls",
+      "url": "https://thethetrader.com",
+      "logo": "https://thethetrader.com/FAVICONcarre.jpg",
+      "description": "Le trading simple. Setup facile à apprendre, livestreams en direct. Signaux Forex et Crypto."
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "TPLN - Trading Pour Les Nuls",
+      "url": "https://thethetrader.com",
+      "description": "Plateforme de trading simple - setup facile, signaux, journal, livestreams.",
+      "publisher": { "@id": "https://thethetrader.com/#organization" }
+    }
+    </script>
+    
     <style>
       /* Style minimal pour le contenu SEO statique (flash avant React) */
       #root main { background:#0f172a; color:#fff; padding:2rem; min-height:100vh; font-family:system-ui,sans-serif; }
       #root h1 { font-size:1.5rem; margin-bottom:0.5rem; }
       #root h2 { font-size:1.2rem; margin:1.5rem 0 0.5rem; }
       #root p { margin:0.5rem 0; color:#94a3b8; }
+      #root nav { margin-top:1rem; }
+      #root a { color:#60a5fa; text-decoration:none; }
+      #root a:hover { text-decoration:underline; }
     </style>
   </head>
   <body>
@@ -53,6 +80,9 @@
           <h2>Simplicité avant tout</h2>
           <p>Pas de complication : un setup clair, des signaux Forex et Crypto, ton journal de trading. Et des streams où j'applique tout en direct.</p>
           <p>Les services TPLN : plans Journal, Basic et Premium.</p>
+          <nav>
+            <a href="#pricing">Voir les prix</a> · <a href="#section-app">Découvrir la plateforme</a>
+          </nav>
         </section>
       </main>
     </div>
