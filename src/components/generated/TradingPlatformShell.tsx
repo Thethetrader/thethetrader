@@ -1814,7 +1814,7 @@ export default function TradingPlatformShell() {
   const [tradeAddAccount, setTradeAddAccount] = useState<string>('Compte Principal');
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
   const [currentPdfPage, setCurrentPdfPage] = useState(1);
-  const totalPdfPages = 50; // Mettre à jour avec le nombre réel de pages
+  const totalPdfPages = 16;
   
   // Synchroniser l'ID utilisateur au démarrage de l'application
   useEffect(() => {
