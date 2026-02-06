@@ -248,8 +248,6 @@ export default function AdminInterface() {
   const [selectedAccount, setSelectedAccount] = useState('Compte Principal');
   const [tradeAddAccount, setTradeAddAccount] = useState<string>('Compte Principal');
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
-  const [currentPdfPage, setCurrentPdfPage] = useState(1);
-  const totalPdfPages = 16;
   const [showAddAccountModal, setShowAddAccountModal] = useState(false);
   const [newAccountName, setNewAccountName] = useState('');
   const [newAccountBalance, setNewAccountBalance] = useState('');
@@ -6201,50 +6199,26 @@ const dailyPnLChartData = useMemo(
                       {selectedChannel.id === 'fondamentaux' && (
                         <div className="mb-4">
                           <h1 className="text-xl md:text-2xl font-bold text-white">📚 Fondamentaux</h1>
-                          <p className="text-sm text-gray-400 mt-1">Guide complet du trading - Page {currentPdfPage}/{totalPdfPages}</p>
+                          <p className="text-sm text-gray-400 mt-1">Guide complet du trading - 16 pages</p>
                         </div>
                       )}
                       
-                      {/* Image Viewer pour Fondamentaux */}
+                      {/* Galerie verticale pour Fondamentaux */}
                       {selectedChannel.id === 'fondamentaux' && (
-                        <div className="w-full">
-                          {/* Navigation */}
-                          <div className="flex justify-between items-center mb-4">
-                            <button
-                              onClick={() => setCurrentPdfPage(Math.max(1, currentPdfPage - 1))}
-                              disabled={currentPdfPage === 1}
-                              className={`px-4 py-2 rounded-lg font-medium ${
-                                currentPdfPage === 1
-                                  ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
-                                  : 'bg-blue-600 hover:bg-blue-700 text-white'
-                              }`}
-                            >
-                              ← Précédent
-                            </button>
-                            <span className="text-white font-medium">
-                              Page {currentPdfPage} / {totalPdfPages}
-                            </span>
-                            <button
-                              onClick={() => setCurrentPdfPage(Math.min(totalPdfPages, currentPdfPage + 1))}
-                              disabled={currentPdfPage === totalPdfPages}
-                              className={`px-4 py-2 rounded-lg font-medium ${
-                                currentPdfPage === totalPdfPages
-                                  ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
-                                  : 'bg-blue-600 hover:bg-blue-700 text-white'
-                              }`}
-                            >
-                              Suivant →
-                            </button>
-                          </div>
-                          
-                          {/* Image de la page */}
-                          <div className="w-full flex justify-center bg-gray-800 rounded-lg p-4">
-                            <img 
-                              src={`/fondamentaux/page-${currentPdfPage}.jpg`}
-                              alt={`Page ${currentPdfPage}`}
-                              className="w-full max-w-4xl rounded-lg shadow-lg"
-                            />
-                          </div>
+                        <div className="w-full space-y-6">
+                          {Array.from({ length: 16 }, (_, i) => i + 1).map((pageNum) => (
+                            <div key={pageNum} className="w-full flex flex-col items-center">
+                              <div className="text-center mb-2">
+                                <span className="text-sm font-medium text-gray-400">Page {pageNum}/16</span>
+                              </div>
+                              <img 
+                                src={`/fondamentaux/page-${pageNum}.jpg`}
+                                alt={`Page ${pageNum}`}
+                                className="w-full max-w-3xl rounded-lg shadow-lg border border-gray-700"
+                                loading="lazy"
+                              />
+                            </div>
+                          ))}
                         </div>
                       )}
                       
