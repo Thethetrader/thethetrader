@@ -4721,134 +4721,6 @@ export default function TradingPlatformShell() {
             </div>
           )}
 
-
-          {/* Solde du compte et indicateur de risque (pas sur TPLN model ni TPLN button) */}
-          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && activeJournalButton !== 'tpln' && (
-            <div className="mt-4 space-y-3">
-              {/* Solde principal - masqué pour "Tous les comptes" */}
-              {selectedAccount !== 'Tous les comptes' && (
-                <div className="p-4 bg-gray-800 rounded-lg border border-gray-600">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-300">Solde du compte</h4>
-                      <p className="text-xs text-gray-400">{selectedAccount}</p>
-                    </div>
-                    <div className="text-right">
-                      <div className={`text-lg font-bold ${
-                        calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) 
-                          ? 'text-green-400' : 'text-red-400'
-                      }`}>
-                        ${calculateAccountBalance().toFixed(2)}
-                      </div>
-                  <div className="text-xs text-gray-400">
-                    Balance initiale: ${(() => {
-                      const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
-                      let initialBalance = account?.initial_balance || 0;
-                      if (!initialBalance) {
-                        const savedBalances = localStorage.getItem('accountBalances');
-                        if (savedBalances) {
-                          const balances = JSON.parse(savedBalances);
-                          initialBalance = balances[selectedAccount] || 0;
-                        }
-                      }
-                      return initialBalance.toFixed(2);
-                    })()}
-                  </div>
-                  <div className="text-xs text-gray-400">
-                    Stop-loss: ${(() => {
-                      const stopLoss = calculateTrailingStopLoss();
-                      return stopLoss.currentStopLoss?.toFixed(2) || 'Non défini';
-                    })()}
-                  </div>
-                  <div className="text-xs text-gray-400">
-                    Marge de sécurité: ${(() => {
-                      const stopLoss = calculateTrailingStopLoss();
-                      return stopLoss.remaining?.toFixed(2) || 'N/A';
-                    })()}
-                  </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-              
-              {/* Analyse des pertes - déplacée sous le Solde du compte */}
-              {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && (() => {
-                if (lossAnalysisState.totalLosses > 0) {
-                  return (
-                    <div key={`${refreshKey}-${currentDate.getMonth()}-${currentDate.getFullYear()}`} className="bg-gray-800 rounded-lg border border-gray-600 p-4 mt-3">
-                      <div className="flex items-center justify-between mb-4">
-                        <h4 className="text-base font-medium text-red-300">📊 Analyse des Pertes</h4>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              console.log('🔄 BOUTON CLICKÉ - Mise à jour manuelle analyse des pertes');
-                              const newAnalysis = getLossAnalysis();
-                              console.log('📊 Nouvelle analyse:', newAnalysis);
-                              setLossAnalysisState(newAnalysis);
-                              setRefreshKey(prev => prev + 1);
-                            }}
-                            className="text-gray-400 hover:text-white transition-colors text-lg cursor-pointer"
-                            title="Mettre à jour l'analyse"
-                            type="button"
-                          >
-                            🔄
-                          </button>
-                          <button
-                            onClick={() => setShowLossReasonsModal(true)}
-                            className="text-gray-400 hover:text-white transition-colors"
-                            title="Gérer les raisons de perte"
-                          >
-                            ⚙️
-                          </button>
-                        </div>
-                      </div>
-                      <div className="space-y-3">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-400">Total pertes:</span>
-                          <span className="text-red-300 font-medium">{lossAnalysisState.totalLosses}</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-400">P&L total pertes:</span>
-                          <span className="text-red-300 font-medium">${lossAnalysisState.totalLossPnl}</span>
-                        </div>
-                        {lossAnalysisState.reasons.length > 0 ? (
-                          <div className="mt-3">
-                            <div className="text-xs text-gray-500 mb-2">Raisons des pertes:</div>
-                            <div className="space-y-2">
-                              {lossAnalysisState.reasons.map((reason, index) => (
-                                <div key={reason.reason} className="flex justify-between text-sm">
-                                  <span className="text-gray-300">{getCustomLossReasonLabel(reason.reason)}</span>
-                                  <span className="text-red-300 font-medium">{reason.count} ({reason.percentage}%)</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="text-xs text-gray-500 italic">
-                            Ajoute des raisons aux pertes pour voir l'analyse
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                }
-                return null;
-              })()}
-
-              {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && activeJournalButton !== 'tpln' && dailyPnLChartData.length > 0 && (
-                <div className="mt-3">
-                  <DailyPnLChart 
-                    data={dailyPnLChartData} 
-                    height={450} 
-                    initialBalance={selectedAccount !== 'Tous les comptes' ? (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance ?? (() => { try { const s = localStorage.getItem('accountBalances'); return s ? JSON.parse(s)[selectedAccount] : undefined; } catch { return undefined; } })()) : undefined} 
-                  />
-                </div>
-              )}
-            </div>
-          )}
-
           {selectedChannel.id !== 'trading-journal' && selectedChannel.id !== 'journal' && selectedChannel.id !== 'tpln-model' && (
             <>
               <div className="border-t border-gray-700 mt-6 pt-4 flex items-center justify-center gap-3">
@@ -5100,6 +4972,63 @@ export default function TradingPlatformShell() {
               >
                 📉 Tous les LOSS ({selectedChannel.id === 'calendrier' ? signals.filter(s => s.status === 'LOSS' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount().filter(t => t.status === 'LOSS').length})
               </button>
+            </div>
+          )}
+
+          {/* Solde du compte - Journal perso uniquement (pas TPLN ni Tous les comptes) */}
+          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && activeJournalButton !== 'tpln' && selectedAccount !== 'Tous les comptes' && (
+            <div className="mt-4">
+              <div className="p-3 bg-gray-800 rounded-lg border border-gray-600">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="text-xs font-medium text-gray-300">Solde du compte</h4>
+                  <div className={`text-base font-bold ${
+                    calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) 
+                      ? 'text-green-400' : 'text-red-400'
+                  }`}>
+                    ${calculateAccountBalance().toFixed(2)}
+                  </div>
+                </div>
+                <p className="text-xs text-gray-400">{selectedAccount}</p>
+                <div className="mt-2 space-y-1">
+                  <div className="text-xs text-gray-400">
+                    Balance initiale: ${(() => {
+                      const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
+                      let initialBalance = account?.initial_balance || 0;
+                      if (!initialBalance) {
+                        const savedBalances = localStorage.getItem('accountBalances');
+                        if (savedBalances) {
+                          const balances = JSON.parse(savedBalances);
+                          initialBalance = balances[selectedAccount] || 0;
+                        }
+                      }
+                      return initialBalance.toFixed(2);
+                    })()}
+                  </div>
+                  <div className="text-xs text-gray-400">
+                    Stop-loss: ${(() => {
+                      const stopLoss = calculateTrailingStopLoss();
+                      return stopLoss.currentStopLoss?.toFixed(2) || 'Non défini';
+                    })()}
+                  </div>
+                  <div className="text-xs text-gray-400">
+                    Marge de sécurité: ${(() => {
+                      const stopLoss = calculateTrailingStopLoss();
+                      return stopLoss.remaining?.toFixed(2) || 'N/A';
+                    })()}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Courbe P&L - Journal perso uniquement */}
+          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && activeJournalButton !== 'tpln' && dailyPnLChartData.length > 0 && (
+            <div className="mt-4">
+              <DailyPnLChart 
+                data={dailyPnLChartData} 
+                height={250} 
+                initialBalance={selectedAccount !== 'Tous les comptes' ? (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance ?? (() => { try { const s = localStorage.getItem('accountBalances'); return s ? JSON.parse(s)[selectedAccount] : undefined; } catch { return undefined; } })()) : undefined} 
+              />
             </div>
           )}
           
