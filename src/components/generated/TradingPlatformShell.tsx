@@ -4931,16 +4931,6 @@ export default function TradingPlatformShell() {
                   </div>
                 </div>
               )}
-
-              {dailyPnLChartData.length > 0 && (
-                <div className="mt-4">
-                  <DailyPnLChart 
-                    data={dailyPnLChartData} 
-                    height={450} 
-                    initialBalance={(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes' ? (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance ?? (() => { try { const s = localStorage.getItem('accountBalances'); return s ? JSON.parse(s)[selectedAccount] : undefined; } catch { return undefined; } })()) : undefined} 
-                  />
-                </div>
-              )}
             </>
           )}
         </div>
@@ -4948,8 +4938,8 @@ export default function TradingPlatformShell() {
         <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6" style={{ paddingTop: 'calc(1rem + 1cm - 1mm)', paddingBottom: 'calc(1rem - 0.5cm)' }} key={`stats-${selectedAccount}-${currentDate.getMonth()}-${currentDate.getFullYear()}-${statsUpdateTrigger}`}>
           {/* Métriques principales */}
           <div className="space-y-2 mb-8">
-            {/* Solde du compte (Journal perso) ou P&L Total (Signaux) - pas sur TPLN model ni TPLN button */}
-            {selectedChannel.id !== 'tpln-model' && activeJournalButton !== 'tpln' && (
+            {/* Solde du compte (Journal perso) - pas sur TPLN model, ni TPLN button, ni Journal Signaux */}
+            {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && activeJournalButton !== 'tpln' && (
             <div className={`border rounded-lg p-4 border ${
               (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes'
                 ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'bg-green-600/20 border-green-500/30' : 'bg-red-600/20 border-red-500/30')
@@ -4989,8 +4979,8 @@ export default function TradingPlatformShell() {
               </div>
             </div>
 
-            {/* Profit Factor (pas sur TPLN model ni TPLN button) */}
-            {selectedChannel.id !== 'tpln-model' && activeJournalButton !== 'tpln' && (
+            {/* Profit Factor (pas sur TPLN model, ni TPLN button, ni Journal Signaux) */}
+            {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && activeJournalButton !== 'tpln' && (
             <div className="bg-gray-700 rounded-lg p-4 border border-gray-600 flex items-center justify-between">
               <div className="flex-1">
                 <div className="text-sm text-gray-400 mb-1 flex items-center gap-1">

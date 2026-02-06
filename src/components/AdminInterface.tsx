@@ -4950,20 +4950,14 @@ const dailyPnLChartData = useMemo(
                   </div>
                 );
               })()}
-
-          {!isMobile && selectedChannel.id !== 'trading-journal' && selectedChannel.id !== 'tpln-model' && dailyPnLChartData.length > 0 && (
-            <div className="mt-4">
-              <DailyPnLChart data={dailyPnLChartData} height={450} />
-            </div>
-          )}
         </div>
 
         {/* Panneau des statistiques */}
         <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6" style={{ paddingTop: (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? 'calc(1rem + 1cm)' : '1rem' }}>
           {/* Métriques principales */}
           <div className="space-y-2 mb-8">
-            {/* Solde du compte (Journal perso) ou P&L Total (Signaux) - pas sur TPLN model */}
-            {selectedChannel.id !== 'tpln-model' && (
+            {/* Solde du compte (Journal perso uniquement) - pas sur TPLN model ni Journal Signaux */}
+            {selectedChannel.id === 'trading-journal' && (
             <div className={`border rounded-lg p-4 border ${
               selectedChannel.id === 'trading-journal'
                 ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'bg-green-600/20 border-green-500/30' : 'bg-red-600/20 border-red-500/30')
