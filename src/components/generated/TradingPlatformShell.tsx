@@ -280,7 +280,6 @@ export default function TradingPlatformShell() {
   // Définition des channels
   const allChannels = [
     { id: 'fondamentaux', name: 'fondamentaux', emoji: '📚', fullName: 'Fondamentaux' },
-    { id: 'letsgooo-model', name: 'letsgooo-model', emoji: '🚀', fullName: 'Letsgooo-model' },
     { id: 'general-chat-2', name: 'general-chat-2', emoji: '📈', fullName: 'Indices' },
     { id: 'general-chat-3', name: 'general-chat-3', emoji: '🪙', fullName: 'Crypto' },
     { id: 'general-chat-4', name: 'general-chat-4', emoji: '💱', fullName: 'Forex' },
@@ -461,6 +460,7 @@ export default function TradingPlatformShell() {
   };
 
   const [selectedChannel, setSelectedChannel] = useState({ id: 'general-chat', name: 'general-chat' });
+  const [activeJournalButton, setActiveJournalButton] = useState<'trading-journal' | 'tpln' | null>(null);
 
   const [view, setView] = useState<'signals' | 'calendar'>('signals');
   const [mobileView, setMobileView] = useState<'channels' | 'content'>('channels');
@@ -943,7 +943,7 @@ export default function TradingPlatformShell() {
       try {
         console.log('📊 [USER] Chargement de TOUS les signaux pour calendrier...');
         
-        const channels = ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'];
+        const channels = ['fondamentaux', 'general-chat-2', 'general-chat-3', 'general-chat-4'];
         let allSignals: any[] = [];
         
         for (const channelId of channels) {
@@ -1083,7 +1083,7 @@ export default function TradingPlatformShell() {
       console.log(`✅ Messages chargés pour ${channelId}:`, formattedMessages.length, '/', messages.length);
       
       // Scroll vers le bas après chargement des messages (sauf si on garde la position)
-      if (!keepPosition && !['calendrier', 'trading-journal', 'tpln-model', 'forex-signaux', 'crypto-signaux', 'futures-signaux', 'fondamentaux', 'letsgooo-model'].includes(channelId)) {
+      if (!keepPosition && !['calendrier', 'trading-journal', 'tpln-model', 'forex-signaux', 'crypto-signaux', 'futures-signaux', 'fondamentaux'].includes(channelId)) {
         setTimeout(() => {
           scrollToBottom();
         }, 100);
@@ -1188,7 +1188,7 @@ export default function TradingPlatformShell() {
       // Les notifications seront envoyées seulement pour les nouveaux signaux en temps réel
       
       // Scroll automatique après chargement des signaux (sauf pour calendrier, journal perso et éducation)
-      if (!['calendrier', 'trading-journal', 'tpln-model', 'forex-signaux', 'crypto-signaux', 'futures-signaux', 'fondamentaux', 'letsgooo-model'].includes(channelId)) {
+      if (!['calendrier', 'trading-journal', 'tpln-model', 'forex-signaux', 'crypto-signaux', 'futures-signaux', 'fondamentaux'].includes(channelId)) {
         setTimeout(() => {
           scrollToBottom();
         }, 100);
@@ -1233,7 +1233,7 @@ export default function TradingPlatformShell() {
 
   // Subscription globale pour tous les canaux (ne se recrée pas à chaque changement de canal)
   useEffect(() => {
-    const channels = ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'];
+    const channels = ['fondamentaux', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'];
     
     const subscriptions = channels.map(channelId => {
       return subscribeToMessages(channelId, (newMessage) => {
@@ -1368,7 +1368,7 @@ export default function TradingPlatformShell() {
       }
       
       // Scroll automatique (sauf pour calendrier, journal perso et éducation)
-      if (!['calendrier', 'trading-journal', 'tpln-model', 'forex-signaux', 'crypto-signaux', 'futures-signaux', 'fondamentaux', 'letsgooo-model'].includes(selectedChannel.id)) {
+      if (!['calendrier', 'trading-journal', 'tpln-model', 'forex-signaux', 'crypto-signaux', 'futures-signaux', 'fondamentaux'].includes(selectedChannel.id)) {
         setTimeout(() => {
           scrollToBottom();
         }, 100);
@@ -1600,7 +1600,7 @@ export default function TradingPlatformShell() {
 
   // Subscription globale pour compter les messages non lus
   useEffect(() => {
-    const allChannels = ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'trading-journal'];
+    const allChannels = ['fondamentaux', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'trading-journal'];
     
     const subscriptions = allChannels.map(channelId => {
       return subscribeToMessages(channelId, (newMessage) => {
@@ -1673,7 +1673,7 @@ export default function TradingPlatformShell() {
 
   // Initialiser les dernières heures de lecture depuis localStorage
   useEffect(() => {
-    const channels = ['crypto', 'forex', 'indices', 'fondamentaux', 'letsgooo-model'];
+    const channels = ['crypto', 'forex', 'indices', 'fondamentaux'];
     const lastReads = {};
     
     channels.forEach(channelId => {
@@ -2299,7 +2299,7 @@ export default function TradingPlatformShell() {
         console.log('📊 Chargement de TOUS les signaux pour statistiques et calendrier...');
         
         // Charger les signaux de tous les canaux individuellement
-                  const channels = ['fondamentaux', 'letsgooo-model'];
+                  const channels = ['fondamentaux'];
         let allSignals: any[] = [];
         
         for (const channelId of channels) {
@@ -2689,11 +2689,11 @@ export default function TradingPlatformShell() {
 
   // Fonctions pour les statistiques des trades personnels (filtrées par compte)
   const getTradesForSelectedAccount = () => {
-    // Sur TPLN model, afficher uniquement les trades du compte TPLN model
+    // Sur TPLN model, afficher uniquement les trades du compte TPLN
     if (selectedChannel.id === 'tpln-model') {
       const seen = new Set<string>();
       return personalTrades.filter(trade => {
-        if ((trade.account || 'Compte Principal') !== 'TPLN model') return false;
+        if ((trade.account || 'Compte Principal') !== 'TPLN') return false;
         const key = `${trade.date}|${trade.symbol}|${trade.entry}|${trade.exit}|${trade.pnl}`;
         if (seen.has(key)) return false;
         seen.add(key);
@@ -3329,7 +3329,7 @@ export default function TradingPlatformShell() {
 
   const scrollToTop = () => {
     // Pour les salons de chat, scroller dans le conteneur de messages
-          if (messagesContainerRef.current && ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', 'livestream-premium'].includes(selectedChannel.id)) {
+          if (messagesContainerRef.current && ['fondamentaux', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', 'livestream-premium'].includes(selectedChannel.id)) {
       messagesContainerRef.current.scrollTop = 0;
     } else {
       // Pour les autres vues, scroller la page
@@ -3644,7 +3644,7 @@ export default function TradingPlatformShell() {
   // Fonctions pour le journal de trading personnalisé
   const handleAddTrade = () => {
     const defaultAccount = selectedChannel.id === 'tpln-model'
-      ? 'TPLN model'
+      ? 'TPLN'
       : (selectedAccount === 'Tous les comptes' ? (tradingAccounts[0]?.account_name || 'Compte Principal') : selectedAccount);
     setTradeAddAccount(defaultAccount);
     setShowTradeModal(true);
@@ -3664,11 +3664,11 @@ export default function TradingPlatformShell() {
       return `${year}-${month}-${day}`;
     };
 
-    // Depuis TPLN model : "Tous les comptes" = uniquement TPLN model (1 trade). Depuis Journal Perso : tous les comptes + TPLN model.
+    // Depuis TPLN model : "Tous les comptes" = uniquement TPLN (1 trade). Depuis Journal Perso : tous les comptes + TPLN.
     const accountsToAdd = tradeAddAccount === 'Tous les comptes'
       ? (selectedChannel.id === 'tpln-model'
-          ? ['TPLN model']
-          : [...(tradingAccounts.length > 0 ? tradingAccounts.map(a => a.account_name) : ['Compte Principal']), 'TPLN model'])
+          ? ['TPLN']
+          : [...(tradingAccounts.length > 0 ? tradingAccounts.map(a => a.account_name) : ['Compte Principal']), 'TPLN'])
       : [tradeAddAccount];
 
     // Sauvegarder dans Supabase (un trade par compte)
@@ -4385,15 +4385,15 @@ export default function TradingPlatformShell() {
         <div className="hidden md:flex md:items-center md:gap-6">
           <div>
             <h1 className="text-2xl font-bold text-white">
-              {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? (selectedChannel.id === 'tpln-model' ? 'TPLN model' : 'Trading Journal') : 'Journal des Signaux'}
+              {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? (selectedChannel.id === 'tpln-model' || activeJournalButton === 'tpln' ? 'TPLN model' : 'Trading Journal') : 'Journal des Signaux'}
             </h1>
             <p className="text-sm text-gray-400 mt-1">
-              {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? (selectedChannel.id === 'tpln-model' ? 'Calendrier et stats du model' : 'Journal tous tes trades') : 'Suivi des performances des signaux'}
+              {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? (selectedChannel.id === 'tpln-model' || activeJournalButton === 'tpln' ? 'Calendrier et stats du modèle' : 'Journal tous tes trades') : 'Suivi des performances des signaux'}
             </p>
           </div>
           
-          {/* Sélecteur de compte - DESKTOP (pas sur TPLN model) */}
-          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && (
+          {/* Sélecteur de compte - DESKTOP (pas sur TPLN model ni TPLN button) */}
+          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && activeJournalButton !== 'tpln' && (
             <div className="flex items-center gap-2">
               {tradingAccounts.length > 0 ? (
                 <select
@@ -4413,6 +4413,7 @@ export default function TradingPlatformShell() {
                   }}
                 >
                   <option value="Tous les comptes">📊 Tous les comptes</option>
+                  <option value="TPLN">📋 TPLN</option>
                   {tradingAccounts.map((account) => (
                     <option key={account.id} value={account.account_name}>
                       {account.account_name}
@@ -4745,8 +4746,8 @@ export default function TradingPlatformShell() {
             </div>
           )}
 
-          {/* Solde du compte et indicateur de risque (pas sur TPLN model) */}
-          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && (
+          {/* Solde du compte et indicateur de risque (pas sur TPLN model ni TPLN button) */}
+          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && activeJournalButton !== 'tpln' && (
             <div className="mt-4 space-y-3">
               {/* Solde principal - masqué pour "Tous les comptes" */}
               {selectedAccount !== 'Tous les comptes' && (
@@ -4860,7 +4861,7 @@ export default function TradingPlatformShell() {
                 return null;
               })()}
 
-              {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && dailyPnLChartData.length > 0 && (
+              {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && activeJournalButton !== 'tpln' && dailyPnLChartData.length > 0 && (
                 <div className="mt-3">
                   <DailyPnLChart 
                     data={dailyPnLChartData} 
@@ -4987,8 +4988,8 @@ export default function TradingPlatformShell() {
               </div>
             </div>
 
-            {/* Profit Factor (pas sur TPLN model) */}
-            {selectedChannel.id !== 'tpln-model' && (
+            {/* Profit Factor (pas sur TPLN model ni TPLN button) */}
+            {selectedChannel.id !== 'tpln-model' && activeJournalButton !== 'tpln' && (
             <div className="bg-gray-700 rounded-lg p-4 border border-gray-600 flex items-center justify-between">
               <div className="flex-1">
                 <div className="text-sm text-gray-400 mb-1 flex items-center gap-1">
@@ -5216,9 +5217,6 @@ export default function TradingPlatformShell() {
               {channels.find(c => c.id === 'fondamentaux') && (
                 <button onClick={() => handleChannelChange('fondamentaux', 'fondamentaux')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'fondamentaux' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📚 Fondamentaux</button>
               )}
-              {channels.find(c => c.id === 'letsgooo-model') && (
-                <button onClick={() => handleChannelChange('letsgooo-model', 'letsgooo-model')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'letsgooo-model' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>🚀 Letsgooo-model</button>
-              )}
             </div>
           </div>
 
@@ -5240,12 +5238,6 @@ export default function TradingPlatformShell() {
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">TRADING HUB</h3>
             <div className="space-y-1">
-              {channels.find(c => c.id === 'tpln-model') && (
-                <button onClick={() => {
-                  handleChannelChange('tpln-model', 'tpln-model');
-                  setView('signals');
-                }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'tpln-model' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📋 TPLN model</button>
-              )}
               {channels.find(c => c.id === 'calendrier') && (
                 <button onClick={async () => {
                   console.log('🔵 Desktop: Clic sur Journal Signaux');
@@ -5267,7 +5259,10 @@ export default function TradingPlatformShell() {
                 }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : selectedChannel.id === 'tpln-model' ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               )}
               {channels.find(c => c.id === 'journal') && (
-                <button onClick={() => handleChannelChange('journal', 'journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' ? 'bg-gray-700 text-white' : selectedChannel.id === 'tpln-model' ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 Trading Journal</button>
+                <>
+                  <button onClick={() => { handleChannelChange('journal', 'journal'); setActiveJournalButton('trading-journal'); }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' && activeJournalButton === 'trading-journal' ? 'bg-gray-700 text-white' : selectedChannel.id === 'tpln-model' ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 Trading Journal</button>
+                  <button onClick={() => { handleChannelChange('journal', 'journal'); setActiveJournalButton('tpln'); }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' && activeJournalButton === 'tpln' ? 'bg-gray-700 text-white' : selectedChannel.id === 'tpln-model' ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 TPLN</button>
+                </>
               )}
               {channels.find(c => c.id === 'livestream-premium') && (
                 <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>
@@ -5499,7 +5494,7 @@ export default function TradingPlatformShell() {
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">ÉDUCATION</h3>
                 <div className="space-y-2">
-                  {channels.filter(c => ['fondamentaux', 'letsgooo-model'].includes(c.id)).map(channel => (
+                  {channels.filter(c => ['fondamentaux'].includes(c.id)).map(channel => (
                     <button
                       key={channel.id}
                       onClick={() => {
@@ -5550,23 +5545,6 @@ export default function TradingPlatformShell() {
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">TRADING HUB</h3>
                 <div className="space-y-2">
-                  {channels.find(c => c.id === 'tpln-model') && (
-                    <button
-                      onClick={() => {
-                        handleChannelChange('tpln-model', 'tpln-model');
-                        setView('signals');
-                        setMobileView('content');
-                      }}
-                      className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'tpln-model' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="text-lg">📋</span>
-                        <div>
-                          <p className="font-medium text-white">TPLN model</p>
-                        </div>
-                      </div>
-                    </button>
-                  )}
                   {channels.find(c => c.id === 'calendrier') && (
                     <button
                       onClick={async () => {
@@ -5602,21 +5580,40 @@ export default function TradingPlatformShell() {
                   )}
                   
                   {channels.find(c => c.id === 'journal') && (
-                    <button
-                      onClick={() => {
-                        handleChannelChange('journal', 'journal');
-                        setMobileView('content');
-                      }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="text-lg">📓</span>
-                        <div>
-                          <p className="font-medium text-white">Journal Perso</p>
-                          <p className="text-sm text-gray-400">Journal personnel</p>
+                    <>
+                      <button
+                        onClick={() => {
+                          handleChannelChange('journal', 'journal');
+                          setActiveJournalButton('trading-journal');
+                          setMobileView('content');
+                        }}
+                        className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'journal' && activeJournalButton === 'trading-journal' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-lg">📓</span>
+                          <div>
+                            <p className="font-medium text-white">Journal Perso</p>
+                            <p className="text-sm text-gray-400">Journal personnel</p>
+                          </div>
                         </div>
-                      </div>
-                    </button>
+                      </button>
+                      <button
+                        onClick={() => {
+                          handleChannelChange('journal', 'journal');
+                          setActiveJournalButton('tpln');
+                          setMobileView('content');
+                        }}
+                        className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'journal' && activeJournalButton === 'tpln' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-lg">📓</span>
+                          <div>
+                            <p className="font-medium text-white">TPLN</p>
+                            <p className="text-sm text-gray-400">Calendrier et stats du modèle</p>
+                          </div>
+                        </div>
+                      </button>
+                    </>
                   )}
 
                   {channels.find(c => c.id === 'livestream-premium') && (
@@ -5674,11 +5671,12 @@ export default function TradingPlatformShell() {
                     <div className="space-y-4">
                       {/* Titre */}
                       <div>
-                        <h1 className="text-xl md:text-2xl font-bold text-white">Trading Journal</h1>
-                        <p className="text-sm text-gray-400 mt-1">Journal tous tes trades</p>
+                        <h1 className="text-xl md:text-2xl font-bold text-white">{activeJournalButton === 'tpln' ? 'TPLN model' : 'Trading Journal'}</h1>
+                        <p className="text-sm text-gray-400 mt-1">{activeJournalButton === 'tpln' ? 'Calendrier et stats du modèle' : 'Journal tous tes trades'}</p>
                       </div>
                       
-                      {/* Sélecteur de compte et boutons */}
+                      {/* Sélecteur de compte et boutons (pas sur TPLN) */}
+                      {activeJournalButton !== 'tpln' && (
                       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
                         <div className="flex items-center gap-2">
                           {tradingAccounts.length > 0 ? (
@@ -5689,6 +5687,7 @@ export default function TradingPlatformShell() {
                   style={{ height: '36px', background: 'rgba(34, 197, 94, 0.2)' }}
                             >
                               <option value="Tous les comptes">📊 Tous les comptes</option>
+                              <option value="TPLN">📋 TPLN</option>
                               {tradingAccounts.map((account) => (
                                 <option key={account.id} value={account.account_name}>
                                   {account.account_name}
@@ -5728,6 +5727,7 @@ export default function TradingPlatformShell() {
                           </button>
                         </div>
                       </div>
+                      )}
                     </div>
                   </div>
                 ) : null}
@@ -5932,7 +5932,7 @@ export default function TradingPlatformShell() {
                 ) : null}
                 
                 {/* Affichage des signaux */}
-                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', 'livestream-premium', '', 'calendrier', 'journal'].includes(selectedChannel.id) ? (
+                      {view === 'signals' && !['fondamentaux', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', 'livestream-premium', '', 'calendrier', 'journal'].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
                     {/* Bouton Voir plus fixe en haut */}
                     <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
@@ -6296,181 +6296,22 @@ export default function TradingPlatformShell() {
                       </div>
                     </div>
                   </div>
-                ) : ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
+                ) : ['fondamentaux', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
                   <div className="flex flex-col h-full">
                     {/* Messages de chat */}
-                    <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
-                      {/* Cours Scalping pour le salon Fondamentaux */}
+                    <div ref={messagesContainerRef} className={`flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 ${selectedChannel.id === 'fondamentaux' ? '' : 'pb-32'}`}>
+                      
+                      {/* PDF Viewer pour Fondamentaux */}
                       {selectedChannel.id === 'fondamentaux' && (
-                        <div className="bg-gray-800 rounded-lg p-6 mb-6">
-                          <div className="text-center mb-8 p-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white">
-                            <div className="flex justify-center mb-0">
-                  <img 
-                    src="/formation.jpeg" 
-                    alt="Trading pour les nuls" 
-                    className="hidden sm:block h-48 w-auto object-cover"
-                  />
-                  <img 
-                    src="/logo-removebg-preview.png" 
-                    alt="Trading pour les nuls" 
-                    className="sm:hidden h-48 w-auto object-cover"
-                    style={{ clipPath: 'inset(10% 5% 15% 5%)' }}
-                  />
-                </div>
-                            <p className="text-xl opacity-90 -mt-3">Guide complet des concepts fondamentaux et stratégies avancées</p>
-                          </div>
-                          
-                          <div className="space-y-6 text-gray-300">
-                            <div className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4">
-                              <p className="text-yellow-200"><strong>📖 Avertissement :</strong> Ce guide présente un ensemble de concepts appris et expérimentés sur les marchés financiers. Il ne s'agit pas d'inventions originales, mais d'un setup personnel basé sur l'observation et l'expérience pratique.</p>
-                            </div>
-                            
-                            <div>
-                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">1. 📚 Introduction</h2>
-                              <p>Ce document vous présente les fondamentaux essentiels pour comprendre comment les charts évoluent et ce qui influence leurs mouvements. L'objectif est de construire une base solide avant d'aborder les stratégies avancées.</p>
-                            </div>
-                            
-                            <div>
-                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">2. 🧠 Fondamentaux des Charts</h2>
-                              <div className="bg-gray-700 rounded-lg p-4 mb-4">
-                                <h3 className="text-lg font-semibold text-green-400 mb-2">📈 Qu'est-ce qu'une Chart ?</h3>
-                                <p className="mb-3">Une chart (ou graphique) est une représentation visuelle du prix d'un actif financier dans le temps (Bitcoin, or, actions, etc.).</p>
-                                <div className="bg-gray-600 rounded p-3">
-                                  <h4 className="font-semibold text-blue-300 mb-2">Elle permet de :</h4>
-                                  <ul className="space-y-1 text-sm">
-                                    <li>→ Voir comment le prix évolue</li>
-                                    <li>→ Trouver des points d'entrée/sortie</li>
-                                    <li>→ Comprendre le comportement du marché</li>
-                                  </ul>
-                                </div>
-                              </div>
-                              
-                              <div className="bg-gray-700 rounded-lg p-4">
-                                <h3 className="text-lg font-semibold text-green-400 mb-2">🕯️ Comprendre les Bougies</h3>
-                                <p className="mb-3">Chaque bougie montre l'évolution du prix sur une période donnée (1 min, 1h, 1 jour, etc.)</p>
-                                <div className="bg-gray-600 rounded p-3">
-                                  <h4 className="font-semibold text-blue-300 mb-2">Composition d'une bougie :</h4>
-                                  <ul className="space-y-1 text-sm">
-                                    <li>→ <strong>Le corps (body) :</strong> différence entre ouverture et clôture</li>
-                                    <li>→ <strong>Les mèches (wicks) :</strong> les plus hauts et plus bas atteints</li>
-                                    <li>→ <strong>Couleur :</strong> verte/blanche si clôture &gt; ouverture, rouge/noire si clôture &lt; ouverture</li>
-                                  </ul>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div>
-                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">3. 🧠 Mouvement des Prix (Modèle AMD)</h2>
-                              <div className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4 mb-4">
-                                <p><strong>🚗💨 Analogie :</strong> Le prix, c'est comme un voyage de A à B. Pour avancer, il a besoin de liquidité, comme une voiture a besoin d'essence.</p>
-                              </div>
-                              
-                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                                <div className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4 text-center">
-                                  <div className="text-2xl font-bold mb-2">1️⃣</div>
-                                  <div className="font-semibold mb-2">Accumulation</div>
-                                  <p className="text-sm">Le prix se prépare 🛑⛽</p>
-                                </div>
-                                <div className="bg-red-600/20 border border-red-600/30 rounded-lg p-4 text-center">
-                                  <div className="text-2xl font-bold mb-2">2️⃣</div>
-                                  <div className="font-semibold mb-2">Manipulation</div>
-                                  <p className="text-sm">Il piège les traders 🎯🪤</p>
-                                </div>
-                                <div className="bg-green-600/20 border border-green-600/30 rounded-lg p-4 text-center">
-                                  <div className="text-2xl font-bold mb-2">3️⃣</div>
-                                  <div className="font-semibold mb-2">Distribution</div>
-                                  <p className="text-sm">Le vrai mouvement 🚀📈</p>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div>
-                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">4. 📈 Support et Résistance</h2>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="bg-green-600/20 border border-green-600/30 rounded-lg p-4 text-center">
-                                  <strong className="text-green-300">🔹 Support</strong><br/>
-                                  <span className="text-sm">Zone où le prix rebondit vers le haut 🔼</span>
-                                </div>
-                                <div className="bg-red-600/20 border border-red-600/30 rounded-lg p-4 text-center">
-                                  <strong className="text-red-300">🔹 Résistance</strong><br/>
-                                  <span className="text-sm">Zone où le prix bloque et redescend 🔽</span>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div>
-                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">5. 🔬 Concepts Avancés</h2>
-                              <div className="space-y-4">
-                                <div className="bg-gray-700 rounded-lg p-4">
-                                  <h3 className="text-lg font-semibold text-purple-400 mb-2">🧱 ORDER BLOCK (OB)</h3>
-                                  <p className="mb-2">Un Order Block représente la dernière bougie haussière (ou baissière) avant un mouvement impulsif majeur dans la direction opposée.</p>
-                                  <div className="text-sm text-blue-300">
-                                    → Ces zones deviennent des repères de liquidité<br/>
-                                    → Souvent retestées par le prix<br/>
-                                    → Offrent des points d'entrée à fort potentiel
-                                  </div>
-                                </div>
-                                
-                                <div className="bg-gray-700 rounded-lg p-4">
-                                  <h3 className="text-lg font-semibold text-purple-400 mb-2">⚡📉📈 FVG – Fair Value Gap</h3>
-                                  <p className="mb-2">Un FVG est une zone de déséquilibre créée lors d'un mouvement rapide et violent du marché 🚀.</p>
-                                  <div className="text-sm text-blue-300">
-                                    → Le prix revient fréquemment combler ces gaps<br/>
-                                    → Zones intéressantes pour entrer ou sortir d'une position
-                                  </div>
-                                </div>
-                                
-                                <div className="bg-gray-700 rounded-lg p-4">
-                                  <h3 className="text-lg font-semibold text-purple-400 mb-2">🦄 Unicorn</h3>
-                                  <p className="mb-2">C'est un setup formé par l'association d'un Breaker (BRKR) ⚡ et d'un Fair Value Gap (FVG) 📉.</p>
-                                  <div className="text-sm text-blue-300">
-                                    → Zone à forte probabilité de réaction du prix<br/>
-                                    → Rassemble deux zones institutionnelles clés<br/>
-                                    → Point d'entrée ou de prise de profit idéal
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div>
-                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">6. 🕵️ CRT – Candle Range Theory</h2>
-                              <p className="mb-4">La Candle Range Theory (CRT) est une méthode d'analyse basée sur 3 bougies consécutives.</p>
-                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4 text-center">
-                                  <div className="text-2xl font-bold mb-2">1️⃣</div>
-                                  <div className="font-semibold mb-2">La Range</div>
-                                  <p className="text-sm">Bougie avec grand corps<br/>Zone de stagnation</p>
-                                </div>
-                                <div className="bg-red-600/20 border border-red-600/30 rounded-lg p-4 text-center">
-                                  <div className="text-2xl font-bold mb-2">2️⃣</div>
-                                  <div className="font-semibold mb-2">Manipulation</div>
-                                  <p className="text-sm">Va chercher la liquidité<br/>Piège les traders</p>
-                                </div>
-                                <div className="bg-green-600/20 border border-green-600/30 rounded-lg p-4 text-center">
-                                  <div className="text-2xl font-bold mb-2">3️⃣</div>
-                                  <div className="font-semibold mb-2">Distribution</div>
-                                  <p className="text-sm">Bougie directionnelle<br/>Zone d'entrée</p>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div>
-                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">7. 📌 Le Setup "A+"</h2>
-                              <div className="bg-green-600/20 border border-green-600/30 rounded-lg p-4 mb-4">
-                                <h3 className="font-semibold mb-2">PRINCIPE DU MODÈLE</h3>
-                                <p className="mb-2">Le principe du modèle, c'est de prendre position après la phase de manipulation ⏸️, sur la timeframe basse (LTF) du contexte défini sur la timeframe haute (HTF) 📊.</p>
-                                <p>🎯 Cela permet d'éviter les pièges des faux breakouts 🚫 et de s'aligner avec la vraie direction du mouvement ➡️.</p>
-                              </div>
-                            </div>
-                            
-                            <div className="bg-red-600/20 border border-red-600/30 rounded-lg p-4">
-                              <h4 className="font-semibold mb-2">⚠️ Avertissement Légal</h4>
-                              <p className="text-sm">Ce document est fourni à des fins éducatives uniquement. Le trading comporte des risques significatifs de perte financière. Il est essentiel de bien comprendre les risques avant de trader et ne jamais risquer plus que ce que vous pouvez vous permettre de perdre.</p>
-                            </div>
-                          </div>
+                        <div className="w-full flex justify-center">
+                          <iframe 
+                            src="/trading pour les nuls.pdf" 
+                            className="w-full border-0 rounded-lg"
+                            style={{ height: 'calc(100vh - 100px)', minHeight: '800px' }}
+                            title="Trading pour les nuls"
+                          />
                         </div>
                       )}
-                      
                       
                       {(messages[selectedChannel.id] || []).length > 0 && 
                         (messages[selectedChannel.id] || []).map((message, index) => {
@@ -6954,7 +6795,7 @@ export default function TradingPlatformShell() {
               ) : null}
               
               {/* Affichage des signaux */}
-                              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', 'livestream-premium', 'trading-hub', '', 'calendrier', 'journal'].includes(selectedChannel.id) ? (
+                              {view === 'signals' && !['fondamentaux', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', 'livestream-premium', 'trading-hub', '', 'calendrier', 'journal'].includes(selectedChannel.id) ? (
                 <div className="space-y-4">
                   {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                     <div className="text-center py-8">
@@ -7082,181 +6923,22 @@ export default function TradingPlatformShell() {
                     ))
                   )}
                 </div>
-              ) : ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
+              ) : ['fondamentaux', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
                 <div className="flex flex-col h-full">
                   {/* Messages de chat */}
-                  <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
-                    {/* Cours Scalping pour le salon Fondamentaux */}
-                    {selectedChannel.id === 'fondamentaux' && (
-                      <div className="bg-gray-800 rounded-lg p-6 mb-6">
-                        <div className="text-center mb-8 p-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white">
-                          <div className="flex justify-center mb-0">
-                  <img 
-                    src="/formation.jpeg" 
-                    alt="Trading pour les nuls" 
-                    className="hidden sm:block h-48 w-auto object-cover"
-                  />
-                  <img 
-                    src="/logo-removebg-preview.png" 
-                    alt="Trading pour les nuls" 
-                    className="sm:hidden h-48 w-auto object-cover"
-                    style={{ clipPath: 'inset(10% 5% 15% 5%)' }}
-                  />
-                </div>
-                            <p className="text-xl opacity-90 -mt-3">Guide complet des concepts fondamentaux et stratégies avancées</p>
-                          </div>
-                          
-                          <div className="space-y-6 text-gray-300">
-                            <div className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4">
-                              <p className="text-yellow-200"><strong>📖 Avertissement :</strong> Ce guide présente un ensemble de concepts appris et expérimentés sur les marchés financiers. Il ne s'agit pas d'inventions originales, mais d'un setup personnel basé sur l'observation et l'expérience pratique.</p>
-                            </div>
-                            
-                            <div>
-                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">1. 📚 Introduction</h2>
-                              <p>Ce document vous présente les fondamentaux essentiels pour comprendre comment les charts évoluent et ce qui influence leurs mouvements. L'objectif est de construire une base solide avant d'aborder les stratégies avancées.</p>
-                            </div>
-                            
-                            <div>
-                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">2. 🧠 Fondamentaux des Charts</h2>
-                              <div className="bg-gray-700 rounded-lg p-4 mb-4">
-                                <h3 className="text-lg font-semibold text-green-400 mb-2">📈 Qu'est-ce qu'une Chart ?</h3>
-                                <p className="mb-3">Une chart (ou graphique) est une représentation visuelle du prix d'un actif financier dans le temps (Bitcoin, or, actions, etc.).</p>
-                                <div className="bg-gray-600 rounded p-3">
-                                  <h4 className="font-semibold text-blue-300 mb-2">Elle permet de :</h4>
-                                  <ul className="space-y-1 text-sm">
-                                    <li>→ Voir comment le prix évolue</li>
-                                    <li>→ Trouver des points d'entrée/sortie</li>
-                                    <li>→ Comprendre le comportement du marché</li>
-                                  </ul>
-                                </div>
-                              </div>
-                              
-                              <div className="bg-gray-700 rounded-lg p-4">
-                                <h3 className="text-lg font-semibold text-green-400 mb-2">🕯️ Comprendre les Bougies</h3>
-                                <p className="mb-3">Chaque bougie montre l'évolution du prix sur une période donnée (1 min, 1h, 1 jour, etc.)</p>
-                                <div className="bg-gray-600 rounded p-3">
-                                  <h4 className="font-semibold text-blue-300 mb-2">Composition d'une bougie :</h4>
-                                  <ul className="space-y-1 text-sm">
-                                    <li>→ <strong>Le corps (body) :</strong> différence entre ouverture et clôture</li>
-                                    <li>→ <strong>Les mèches (wicks) :</strong> les plus hauts et plus bas atteints</li>
-                                    <li>→ <strong>Couleur :</strong> verte/blanche si clôture &gt; ouverture, rouge/noire si clôture &lt; ouverture</li>
-                                  </ul>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div>
-                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">3. 🧠 Mouvement des Prix (Modèle AMD)</h2>
-                              <div className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4 mb-4">
-                                <p><strong>🚗💨 Analogie :</strong> Le prix, c'est comme un voyage de A à B. Pour avancer, il a besoin de liquidité, comme une voiture a besoin d'essence.</p>
-                              </div>
-                              
-                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                                <div className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4 text-center">
-                                  <div className="text-2xl font-bold mb-2">1️⃣</div>
-                                  <div className="font-semibold mb-2">Accumulation</div>
-                                  <p className="text-sm">Le prix se prépare 🛑⛽</p>
-                                </div>
-                                <div className="bg-red-600/20 border border-red-600/30 rounded-lg p-4 text-center">
-                                  <div className="text-2xl font-bold mb-2">2️⃣</div>
-                                  <div className="font-semibold mb-2">Manipulation</div>
-                                  <p className="text-sm">Il piège les traders 🎯🪤</p>
-                                </div>
-                                <div className="bg-green-600/20 border border-green-600/30 rounded-lg p-4 text-center">
-                                  <div className="text-2xl font-bold mb-2">3️⃣</div>
-                                  <div className="font-semibold mb-2">Distribution</div>
-                                  <p className="text-sm">Le vrai mouvement 🚀📈</p>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div>
-                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">4. 📈 Support et Résistance</h2>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="bg-green-600/20 border border-green-600/30 rounded-lg p-4 text-center">
-                                  <strong className="text-green-300">🔹 Support</strong><br/>
-                                  <span className="text-sm">Zone où le prix rebondit vers le haut 🔼</span>
-                                </div>
-                                <div className="bg-red-600/20 border border-red-600/30 rounded-lg p-4 text-center">
-                                  <strong className="text-red-300">🔹 Résistance</strong><br/>
-                                  <span className="text-sm">Zone où le prix bloque et redescend 🔽</span>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div>
-                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">5. 🔬 Concepts Avancés</h2>
-                              <div className="space-y-4">
-                                <div className="bg-gray-700 rounded-lg p-4">
-                                  <h3 className="text-lg font-semibold text-purple-400 mb-2">🧱 ORDER BLOCK (OB)</h3>
-                                  <p className="mb-2">Un Order Block représente la dernière bougie haussière (ou baissière) avant un mouvement impulsif majeur dans la direction opposée.</p>
-                                  <div className="text-sm text-blue-300">
-                                    → Ces zones deviennent des repères de liquidité<br/>
-                                    → Souvent retestées par le prix<br/>
-                                    → Offrent des points d'entrée à fort potentiel
-                                  </div>
-                                </div>
-                                
-                                <div className="bg-gray-700 rounded-lg p-4">
-                                  <h3 className="text-lg font-semibold text-purple-400 mb-2">⚡📉📈 FVG – Fair Value Gap</h3>
-                                  <p className="mb-2">Un FVG est une zone de déséquilibre créée lors d'un mouvement rapide et violent du marché 🚀.</p>
-                                  <div className="text-sm text-blue-300">
-                                    → Le prix revient fréquemment combler ces gaps<br/>
-                                    → Zones intéressantes pour entrer ou sortir d'une position
-                                  </div>
-                                </div>
-                                
-                                <div className="bg-gray-700 rounded-lg p-4">
-                                  <h3 className="text-lg font-semibold text-purple-400 mb-2">🦄 Unicorn</h3>
-                                  <p className="mb-2">C'est un setup formé par l'association d'un Breaker (BRKR) ⚡ et d'un Fair Value Gap (FVG) 📉.</p>
-                                  <div className="text-sm text-blue-300">
-                                    → Zone à forte probabilité de réaction du prix<br/>
-                                    → Rassemble deux zones institutionnelles clés<br/>
-                                    → Point d'entrée ou de prise de profit idéal
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div>
-                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">6. 🕵️ CRT – Candle Range Theory</h2>
-                              <p className="mb-4">La Candle Range Theory (CRT) est une méthode d'analyse basée sur 3 bougies consécutives.</p>
-                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4 text-center">
-                                  <div className="text-2xl font-bold mb-2">1️⃣</div>
-                                  <div className="font-semibold mb-2">La Range</div>
-                                  <p className="text-sm">Bougie avec grand corps<br/>Zone de stagnation</p>
-                                </div>
-                                <div className="bg-red-600/20 border border-red-600/30 rounded-lg p-4 text-center">
-                                  <div className="text-2xl font-bold mb-2">2️⃣</div>
-                                  <div className="font-semibold mb-2">Manipulation</div>
-                                  <p className="text-sm">Va chercher la liquidité<br/>Piège les traders</p>
-                                </div>
-                                <div className="bg-green-600/20 border border-green-600/30 rounded-lg p-4 text-center">
-                                  <div className="text-2xl font-bold mb-2">3️⃣</div>
-                                  <div className="font-semibold mb-2">Distribution</div>
-                                  <p className="text-sm">Bougie directionnelle<br/>Zone d'entrée</p>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div>
-                              <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">7. 📌 Le Setup "A+"</h2>
-                              <div className="bg-green-600/20 border border-green-600/30 rounded-lg p-4 mb-4">
-                                <h3 className="font-semibold mb-2">PRINCIPE DU MODÈLE</h3>
-                                <p className="mb-2">Le principe du modèle, c'est de prendre position après la phase de manipulation ⏸️, sur la timeframe basse (LTF) du contexte défini sur la timeframe haute (HTF) 📊.</p>
-                                <p>🎯 Cela permet d'éviter les pièges des faux breakouts 🚫 et de s'aligner avec la vraie direction du mouvement ➡️.</p>
-                              </div>
-                            </div>
-                            
-                            <div className="bg-red-600/20 border border-red-600/30 rounded-lg p-4">
-                              <h4 className="font-semibold mb-2">⚠️ Avertissement Légal</h4>
-                              <p className="text-sm">Ce document est fourni à des fins éducatives uniquement. Le trading comporte des risques significatifs de perte financière. Il est essentiel de bien comprendre les risques avant de trader et ne jamais risquer plus que ce que vous pouvez vous permettre de perdre.</p>
-                            </div>
-                          </div>
+                  <div ref={messagesContainerRef} className={`flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 ${selectedChannel.id === 'fondamentaux' ? '' : 'pb-32'}`}>
+                      
+                      {/* PDF Viewer pour Fondamentaux */}
+                      {selectedChannel.id === 'fondamentaux' && (
+                        <div className="w-full flex justify-center">
+                          <iframe 
+                            src="/trading pour les nuls.pdf" 
+                            className="w-full border-0 rounded-lg"
+                            style={{ height: 'calc(100vh - 100px)', minHeight: '800px' }}
+                            title="Trading pour les nuls"
+                          />
                         </div>
                       )}
-                      
                       
                       {(messages[selectedChannel.id] || []).length > 0 && 
                         (messages[selectedChannel.id] || []).map((message, index) => {
@@ -7942,7 +7624,7 @@ export default function TradingPlatformShell() {
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500"
                   >
                     <option value="Tous les comptes">📊 Tous les comptes</option>
-                    <option value="TPLN model">📋 TPLN model</option>
+                    <option value="TPLN">📋 TPLN</option>
                     {tradingAccounts.map((account) => (
                       <option key={account.id} value={account.account_name}>
                         {account.account_name}
