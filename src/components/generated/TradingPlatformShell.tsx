@@ -6933,67 +6933,19 @@ export default function TradingPlatformShell() {
                       {selectedChannel.id === 'fondamentaux' && (
                         <div className="mb-4">
                           <h1 className="text-xl md:text-2xl font-bold text-white">📚 Fondamentaux</h1>
-                          <p className="text-sm text-gray-400 mt-1">Guide complet du trading - Page {currentPdfPage}/{totalPdfPages}</p>
+                          <p className="text-sm text-gray-400 mt-1">Guide complet du trading</p>
                         </div>
                       )}
                       
-                      {/* Image Viewer pour Fondamentaux */}
+                      {/* PDF Viewer pour Fondamentaux */}
                       {selectedChannel.id === 'fondamentaux' && (
-                        <div className="w-full">
-                          {/* Navigation */}
-                          <div className="flex justify-between items-center mb-4">
-                            <button
-                              onClick={() => setCurrentPdfPage(Math.max(1, currentPdfPage - 1))}
-                              disabled={currentPdfPage === 1}
-                              className={`px-4 py-2 rounded-lg font-medium ${
-                                currentPdfPage === 1
-                                  ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
-                                  : 'bg-blue-600 hover:bg-blue-700 text-white'
-                              }`}
-                            >
-                              ← Précédent
-                            </button>
-                            <span className="text-white font-medium">
-                              Page {currentPdfPage} / {totalPdfPages}
-                            </span>
-                            <button
-                              onClick={() => setCurrentPdfPage(Math.min(totalPdfPages, currentPdfPage + 1))}
-                              disabled={currentPdfPage === totalPdfPages}
-                              className={`px-4 py-2 rounded-lg font-medium ${
-                                currentPdfPage === totalPdfPages
-                                  ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
-                                  : 'bg-blue-600 hover:bg-blue-700 text-white'
-                              }`}
-                            >
-                              Suivant →
-                            </button>
-                          </div>
-                          
-                          {/* Image de la page */}
-                          <div className="w-full flex justify-center bg-gray-800 rounded-lg p-4">
-                            <img 
-                              src={`/fondamentaux/page-${currentPdfPage}.jpg`}
-                              alt={`Page ${currentPdfPage}`}
-                              className="w-full max-w-4xl rounded-lg shadow-lg"
-                              onError={(e) => {
-                                // Si l'image n'existe pas, afficher le PDF original
-                                e.currentTarget.style.display = 'none';
-                                const fallback = document.getElementById('pdf-fallback');
-                                if (fallback) fallback.style.display = 'block';
-                              }}
-                            />
-                            <div id="pdf-fallback" style={{ display: 'none' }} className="w-full">
-                              <iframe 
-                                src="/trading pour les nuls.pdf#view=FitH" 
-                                className="w-full border-0 rounded-lg"
-                                style={{ height: 'calc(100vh - 200px)', minHeight: '600px' }}
-                                title="Trading pour les nuls"
-                              />
-                              <p className="text-center text-gray-400 text-sm mt-2">
-                                Les images ne sont pas encore converties. Affichage du PDF original.
-                              </p>
-                            </div>
-                          </div>
+                        <div className="w-full flex justify-center">
+                          <iframe 
+                            src="/trading pour les nuls.pdf#view=FitH" 
+                            className="w-full border-0 rounded-lg"
+                            style={{ height: '500px' }}
+                            title="Trading pour les nuls"
+                          />
                         </div>
                       )}
                       
