@@ -1593,8 +1593,8 @@ const App = () => {
 
               </div>
 
-              {/* Section Apprentissage */}
-              <div id="interface" className="py-16 sm:py-24 px-4 sm:px-6">
+              {/* Section Apprentissage (cible du clic Formation en PWA) */}
+              <div id="section-formation" className="py-16 sm:py-24 px-4 sm:px-6">
                 <div className="max-w-6xl mx-auto">
                   <div className="text-center mb-8">
                     <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">

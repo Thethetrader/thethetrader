@@ -5452,7 +5452,7 @@ export default function TradingPlatformShell() {
                       <div className="flex items-center gap-3">
                         <span className="text-lg">{channel.emoji}</span>
                         <div>
-                          <p className="font-medium text-white">{channel.fullName}</p>
+                          <p className="font-semibold text-white">{channel.fullName}</p>
                           <p className="text-sm text-gray-400">Canal de signaux</p>
                         </div>
                       </div>
@@ -5493,7 +5493,7 @@ export default function TradingPlatformShell() {
                       <div className="flex items-center gap-3">
                         <span className="text-lg">📅</span>
                         <div>
-                          <p className="font-medium text-white">Journal Signaux</p>
+                          <p className="font-semibold text-white">Journal Signaux</p>
                           <p className="text-sm text-gray-400">Suivi des performances</p>
                         </div>
                       </div>
@@ -5513,7 +5513,7 @@ export default function TradingPlatformShell() {
                         <div className="flex items-center gap-3">
                           <span className="text-lg">📓</span>
                           <div>
-                            <p className="font-medium text-white">Journal Perso</p>
+                            <p className="font-semibold text-white">Journal Perso</p>
                             <p className="text-sm text-gray-400">Journal personnel</p>
                           </div>
                         </div>
@@ -5529,7 +5529,7 @@ export default function TradingPlatformShell() {
                         <div className="flex items-center gap-3">
                           <span className="text-lg">📓</span>
                           <div>
-                            <p className="font-medium text-white">TPLN model</p>
+                            <p className="font-semibold text-white">TPLN model</p>
                             <p className="text-sm text-gray-400">Calendrier et stats du modèle</p>
                           </div>
                         </div>
@@ -5548,7 +5548,7 @@ export default function TradingPlatformShell() {
                       <div className="flex items-center gap-3">
                         <span className="text-lg">⭐</span>
                         <div>
-                          <p className="font-medium text-white">Livestream Premium</p>
+                          <p className="font-semibold text-white">Livestream Premium</p>
                           <p className="text-sm text-gray-400">Stream premium</p>
                         </div>
                       </div>
@@ -5566,7 +5566,7 @@ export default function TradingPlatformShell() {
                       <div className="flex items-center gap-3">
                         <span className="text-lg">📺</span>
                         <div>
-                          <p className="font-medium text-white">Livestream</p>
+                          <p className="font-semibold text-white">Livestream</p>
                           <p className="text-sm text-gray-400">Stream en direct</p>
                         </div>
                       </div>
