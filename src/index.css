@@ -143,6 +143,22 @@ html {
   }
 }
 
+/* Ordinateur uniquement : hero et paragraphes section centrés */
+@media (min-width: 769px) {
+  .hero-intro-p {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    transform: none !important;
+  }
+  .section-intro-p {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    transform: none !important;
+  }
+}
+
 /* Classe pour utiliser les variables sans propriétés invalides */
 .theme-inline {
   background: var(--background);
