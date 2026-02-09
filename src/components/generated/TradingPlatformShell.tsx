@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, Signal, syncUserId, database } from '../../utils/firebase-setup';
 import { ref, onValue, push } from 'firebase/database';
-import { addPersonalTrade, getPersonalTrades, deletePersonalTrade, PersonalTrade, listenToPersonalTrades, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, getUserSubscription } from '../../lib/supabase';
+import { addPersonalTrade, getPersonalTrades, deletePersonalTrade, PersonalTrade, listenToPersonalTrades, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, getUserSubscription, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, type FinSessionData } from '../../lib/supabase';
 import ProfitLoss from '../ProfitLoss';
 import { createClient } from '@supabase/supabase-js';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
@@ -1634,6 +1634,12 @@ export default function TradingPlatformShell() {
 
   // États pour le journal de trading personnalisé
   const [showTradeModal, setShowTradeModal] = useState(false);
+  const [showFinSessionModal, setShowFinSessionModal] = useState(false);
+  const [finSessionCache, setFinSessionCache] = useState<Record<string, FinSessionData>>({});
+  const [finSessionRespectPlan, setFinSessionRespectPlan] = useState<'Oui' | 'Non' | 'Partiel' | ''>('');
+  const [finSessionQualiteDecisions, setFinSessionQualiteDecisions] = useState<'Lecture' | 'Mixte' | 'Émotion' | ''>('');
+  const [finSessionGestionErreur, setFinSessionGestionErreur] = useState<'Oui' | 'Non' | ''>('');
+  const [finSessionPression, setFinSessionPression] = useState<number | ''>('');
   const [showLossReasonsModal, setShowLossReasonsModal] = useState(false);
   const [customLossReasons, setCustomLossReasons] = useState(() => {
     const saved = localStorage.getItem('customLossReasons');
@@ -3653,6 +3659,49 @@ export default function TradingPlatformShell() {
 
   // Fonction supprimée - seul admin peut créer des signaux
 
+  // Helpers stats fin de session (Supabase + cache)
+  const getDateKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const getFinSessionForDate = (d: Date): FinSessionData | null => finSessionCache[getDateKey(d)] ?? null;
+  const saveFinSessionForDate = async (d: Date, data: FinSessionData) => {
+    const key = getDateKey(d);
+    const ok = await upsertFinSessionStatToSupabase(key, data);
+    if (ok) setFinSessionCache(prev => ({ ...prev, [key]: data }));
+    return ok;
+  };
+  /** Note moyenne 1-5 à partir des 4 stats psy (pour affichage calendrier). */
+  const getNoteMoyenneForDate = (d: Date): number | null => {
+    const fs = getFinSessionForDate(d);
+    if (!fs || !fs.respectPlan || !fs.qualiteDecisions || !fs.gestionErreur || fs.pression == null) return null;
+    const r = fs.respectPlan === 'Oui' ? 5 : fs.respectPlan === 'Partiel' ? 3 : 1;
+    const q = fs.qualiteDecisions === 'Lecture' ? 5 : fs.qualiteDecisions === 'Mixte' ? 3 : 1;
+    const g = fs.gestionErreur === 'Oui' ? 5 : 1;
+    const p = 6 - fs.pression; // 1 calme -> 5, 5 tendu -> 1
+    return Math.round(((r + q + g + p) / 4) * 10) / 10;
+  };
+  // Charger le cache des stats fin de session depuis Supabase (journal/tpln)
+  useEffect(() => {
+    if (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') {
+      getFinSessionStatsFromSupabase().then(setFinSessionCache);
+    }
+  }, [selectedChannel.id]);
+
+  useEffect(() => {
+    if (showFinSessionModal) {
+      const today = getFinSessionForDate(new Date());
+      if (today) {
+        setFinSessionRespectPlan(today.respectPlan as 'Oui' | 'Non' | 'Partiel');
+        setFinSessionQualiteDecisions(today.qualiteDecisions as 'Lecture' | 'Mixte' | 'Émotion');
+        setFinSessionGestionErreur(today.gestionErreur as 'Oui' | 'Non');
+        setFinSessionPression(today.pression);
+      } else {
+        setFinSessionRespectPlan('');
+        setFinSessionQualiteDecisions('');
+        setFinSessionGestionErreur('');
+        setFinSessionPression('');
+      }
+    }
+  }, [showFinSessionModal, finSessionCache]);
+
   // Fonctions pour le journal de trading personnalisé
   const handleAddTrade = () => {
     const defaultAccount = selectedChannel.id === 'tpln-model'
@@ -4411,7 +4460,7 @@ export default function TradingPlatformShell() {
                 <select
                   value={selectedAccount}
                   onChange={(e) => handleAccountChange(e.target.value)}
-                  className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 rounded-lg px-3 text-sm font-medium focus:outline-none focus:border-green-500 cursor-pointer h-9 appearance-none text-center"
+                  className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 rounded-lg text-sm font-medium focus:outline-none focus:border-green-500 cursor-pointer h-9 appearance-none text-center min-w-[10rem]"
                   style={{ 
                     backgroundImage: 'none',
                     WebkitAppearance: 'none',
@@ -4420,8 +4469,10 @@ export default function TradingPlatformShell() {
                     boxShadow: 'none',
                     textAlign: 'center',
                     lineHeight: '36px',
-                    paddingTop: '0',
-                    paddingBottom: '0'
+                    paddingTop: 0,
+                    paddingBottom: 0,
+                    paddingLeft: '1.75rem',
+                    paddingRight: '1.25rem'
                   }}
                 >
                   <option value="Tous les comptes">📊 Tous les comptes</option>
@@ -4487,12 +4538,21 @@ export default function TradingPlatformShell() {
             </button>
           </div>
           {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') && (
+            <>
             <button 
               onClick={handleAddTrade}
               className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
             >
               + Ajouter Trade
             </button>
+            <button 
+              onClick={() => setShowFinSessionModal(true)}
+              className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg text-sm font-medium"
+              title="Statistiques en fin de session"
+            >
+              Fin session
+            </button>
+            </>
           )}
         </div>
       </div>
@@ -4684,8 +4744,15 @@ export default function TradingPlatformShell() {
                             return total;
                           }, 0);
                         }
+                        const dayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNumber);
+                        const noteMoy = (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? getNoteMoyenneForDate(dayDate) : null;
                         return (
                           <div className="flex flex-col items-center space-y-1">
+                            {noteMoy !== null && (
+                              <div className="text-xs font-bold text-amber-400/90" title="Note psy fin de session">
+                                ★ {noteMoy}
+                              </div>
+                            )}
                             {totalPnL !== 0 && (
                               <div className="text-xs font-bold text-center">
                                 ${totalPnL.toFixed(0)}
@@ -7921,6 +7988,127 @@ export default function TradingPlatformShell() {
           </div>
         </div>
       )}
+
+      {/* Modal Fin session - 4 stats psy */}
+      {showFinSessionModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-lg w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold text-white">🧠 LES 4 STATS PSY ESSENTIELLES (fin de session)</h2>
+                <button onClick={() => setShowFinSessionModal(false)} className="text-gray-400 hover:text-white">✕</button>
+              </div>
+              <div className="space-y-6">
+                {/* 1. Respect du plan */}
+                <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-7 h-7 rounded bg-gray-600 text-gray-300 text-sm font-bold flex items-center justify-center">1</span>
+                    <span className="font-medium text-white">Respect du plan</span>
+                    <span className="text-yellow-400">⭐⭐⭐</span>
+                  </div>
+                  <p className="text-sm text-gray-300 mb-1"><strong>Question :</strong> <em>Ai-je respecté mon plan du début à la fin ?</em></p>
+                  <div className="flex gap-2 flex-wrap mb-2">
+                    {(['Oui', 'Non', 'Partiel'] as const).map((opt) => (
+                      <button
+                        key={opt}
+                        onClick={() => setFinSessionRespectPlan(opt)}
+                        className={`px-3 py-1.5 rounded text-sm ${finSessionRespectPlan === opt ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-gray-400">👍 Stat n°1 absolue. Un trader peut perdre en respectant → journée réussie.</p>
+                </div>
+                {/* 2. Qualité des décisions */}
+                <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-7 h-7 rounded bg-gray-600 text-gray-300 text-sm font-bold flex items-center justify-center">2</span>
+                    <span className="font-medium text-white">Qualité des décisions</span>
+                    <span className="text-yellow-400">⭐⭐</span>
+                  </div>
+                  <p className="text-sm text-gray-300 mb-1"><strong>Question :</strong> <em>Mes trades étaient-ils pris par lecture ou par émotion ?</em></p>
+                  <div className="flex gap-2 flex-wrap mb-2">
+                    {(['Lecture', 'Mixte', 'Émotion'] as const).map((opt) => (
+                      <button
+                        key={opt}
+                        onClick={() => setFinSessionQualiteDecisions(opt)}
+                        className={`px-3 py-1.5 rounded text-sm ${finSessionQualiteDecisions === opt ? (opt === 'Émotion' ? 'bg-red-600 text-white' : 'bg-blue-600 text-white') : opt === 'Émotion' ? 'bg-gray-600 text-red-300 hover:bg-gray-500' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                  {finSessionQualiteDecisions === 'Émotion' && <p className="text-sm text-red-400 font-medium">⚠️ Alerte : émotion détectée.</p>}
+                  <p className="text-xs text-gray-400">👍 Si &quot;émotion&quot; apparaît → alerte.</p>
+                </div>
+                {/* 3. Gestion après erreur */}
+                <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-7 h-7 rounded bg-gray-600 text-gray-300 text-sm font-bold flex items-center justify-center">3</span>
+                    <span className="font-medium text-white">Gestion après erreur</span>
+                    <span className="text-yellow-400">⭐⭐⭐</span>
+                  </div>
+                  <p className="text-sm text-gray-300 mb-1"><strong>Question :</strong> <em>Après une erreur (SL, entrée ratée), ai-je gardé le contrôle ?</em></p>
+                  <div className="flex gap-2 flex-wrap mb-2">
+                    {(['Oui', 'Non'] as const).map((opt) => (
+                      <button
+                        key={opt}
+                        onClick={() => setFinSessionGestionErreur(opt)}
+                        className={`px-3 py-1.5 rounded text-sm ${finSessionGestionErreur === opt ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-gray-400">👍 C&apos;est LA stat qui prédit la régularité future.</p>
+                </div>
+                {/* 4. Niveau de pression ressenti */}
+                <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-7 h-7 rounded bg-gray-600 text-gray-300 text-sm font-bold flex items-center justify-center">4</span>
+                    <span className="font-medium text-white">Niveau de pression ressenti</span>
+                    <span className="text-yellow-400">⭐⭐</span>
+                  </div>
+                  <p className="text-sm text-gray-300 mb-1"><strong>Auto-note :</strong> 1 = très calme → 5 = très tendu</p>
+                  <div className="flex gap-2 flex-wrap mb-2">
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <button
+                        key={n}
+                        onClick={() => setFinSessionPression(n)}
+                        className={`w-10 h-10 rounded text-sm font-bold ${finSessionPression === n ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
+                      >
+                        {n}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-gray-400">Tu veux voir : pression ≤ 3 les bons jours, pression maîtrisée même les jours rouges.</p>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 pt-4">
+                <button onClick={() => setShowFinSessionModal(false)} className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white text-sm">
+                  Fermer
+                </button>
+                <button
+                  onClick={async () => {
+                    if (finSessionRespectPlan && finSessionQualiteDecisions && finSessionGestionErreur && finSessionPression !== '') {
+                      const ok = await saveFinSessionForDate(new Date(), { respectPlan: finSessionRespectPlan, qualiteDecisions: finSessionQualiteDecisions, gestionErreur: finSessionGestionErreur, pression: finSessionPression });
+                      if (ok) setShowFinSessionModal(false);
+                      else alert('Erreur enregistrement. Vérifie ta connexion.');
+                    } else {
+                      alert('Remplis les 4 stats pour enregistrer.');
+                    }
+                  }}
+                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white text-sm"
+                >
+                  Enregistrer (aujourd&apos;hui)
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modal des Trades */}
       {showTradesModal && selectedTradesDate && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
@@ -7942,6 +8130,40 @@ export default function TradingPlatformShell() {
                   ×
                 </button>
               </div>
+
+              {/* Stats fin de session pour ce jour (en haut) */}
+              {(() => {
+                const fs = getFinSessionForDate(selectedTradesDate);
+                if (!fs) return null;
+                const dateKey = getDateKey(selectedTradesDate);
+                return (
+                  <div className="mb-6 p-4 bg-gray-700/70 rounded-lg border border-gray-600 relative">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-sm font-semibold text-gray-300">🧠 Stats fin de session</h3>
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          if (confirm('Supprimer ces stats fin de session pour ce jour ?')) {
+                            const ok = await deleteFinSessionStatFromSupabase(dateKey);
+                            if (ok) setFinSessionCache(prev => { const next = { ...prev }; delete next[dateKey]; return next; });
+                          }
+                        }}
+                        className="text-gray-400 hover:text-white p-1 rounded"
+                        title="Supprimer ces stats"
+                        aria-label="Supprimer"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div><span className="text-gray-400">Respect du plan:</span> <span className="text-white font-medium">{fs.respectPlan}</span></div>
+                      <div><span className="text-gray-400">Qualité décisions:</span> <span className={fs.qualiteDecisions === 'Émotion' ? 'text-red-400 font-medium' : 'text-white font-medium'}>{fs.qualiteDecisions}</span></div>
+                      <div><span className="text-gray-400">Gestion après erreur:</span> <span className="text-white font-medium">{fs.gestionErreur}</span></div>
+                      <div><span className="text-gray-400">Pression (1-5):</span> <span className="text-white font-medium">{fs.pression}</span></div>
+                    </div>
+                  </div>
+                );
+              })()}
 
               <div className="space-y-4">
                 {getTradesForDate(selectedTradesDate).length === 0 ? (

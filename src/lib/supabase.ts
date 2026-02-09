@@ -1130,6 +1130,111 @@ export const listenToPersonalTrades = (
   };
 };
 
+// Stats fin de session (4 stats psy par jour)
+export interface FinSessionStatRow {
+  id: string;
+  user_id: string;
+  date: string; // YYYY-MM-DD
+  respect_plan: string | null;
+  qualite_decisions: string | null;
+  gestion_erreur: string | null;
+  pression: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface FinSessionData {
+  respectPlan: string;
+  qualiteDecisions: string;
+  gestionErreur: string;
+  pression: number;
+}
+
+/** Récupère toutes les stats fin de session de l'utilisateur (pour cache calendrier). */
+export const getFinSessionStatsFromSupabase = async (): Promise<Record<string, FinSessionData>> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) return {};
+    const { data, error } = await supabase
+      .from('fin_session_stats')
+      .select('date, respect_plan, qualite_decisions, gestion_erreur, pression')
+      .eq('user_id', user.id);
+    if (error) {
+      console.error('❌ Erreur getFinSessionStats:', error);
+      return {};
+    }
+    const record: Record<string, FinSessionData> = {};
+    (data || []).forEach((row: { date: string; respect_plan: string | null; qualite_decisions: string | null; gestion_erreur: string | null; pression: number | null }) => {
+      if (row.date && row.respect_plan != null && row.qualite_decisions != null && row.gestion_erreur != null && row.pression != null) {
+        record[row.date] = {
+          respectPlan: row.respect_plan,
+          qualiteDecisions: row.qualite_decisions,
+          gestionErreur: row.gestion_erreur,
+          pression: row.pression
+        };
+      }
+    });
+    return record;
+  } catch (e) {
+    console.error('❌ getFinSessionStatsFromSupabase:', e);
+    return {};
+  }
+};
+
+/** Enregistre ou met à jour les stats fin de session pour une date. */
+export const upsertFinSessionStatToSupabase = async (dateStr: string, data: FinSessionData): Promise<boolean> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      console.error('❌ Utilisateur non connecté');
+      return false;
+    }
+    const { error } = await supabase
+      .from('fin_session_stats')
+      .upsert(
+        {
+          user_id: user.id,
+          date: dateStr,
+          respect_plan: data.respectPlan,
+          qualite_decisions: data.qualiteDecisions,
+          gestion_erreur: data.gestionErreur,
+          pression: data.pression,
+          updated_at: new Date().toISOString()
+        },
+        { onConflict: 'user_id,date' }
+      );
+    if (error) {
+      console.error('❌ Erreur upsertFinSessionStat:', error);
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.error('❌ upsertFinSessionStatToSupabase:', e);
+    return false;
+  }
+};
+
+/** Supprime les stats fin de session pour une date. */
+export const deleteFinSessionStatFromSupabase = async (dateStr: string): Promise<boolean> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) return false;
+    const { error } = await supabase
+      .from('fin_session_stats')
+      .delete()
+      .eq('user_id', user.id)
+      .eq('date', dateStr);
+    if (error) {
+      console.error('❌ Erreur deleteFinSessionStat:', error);
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.error('❌ deleteFinSessionStatFromSupabase:', e);
+    return false;
+  }
+};
+
 // Interface pour les comptes utilisateur
 export interface UserAccount {
   id: string;
