@@ -4532,12 +4532,21 @@ const dailyPnLChartData = useMemo(
             </button>
           </div>
           {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') && (
+            <>
             <button 
               onClick={handleAddTrade}
               className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
             >
               + Ajouter Trade
             </button>
+            <button 
+              onClick={() => setShowFinSessionModal(true)}
+              className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg text-sm font-medium"
+              title="Statistiques en fin de session"
+            >
+              Fin session
+            </button>
+            </>
           )}
           </div>
         </div>
