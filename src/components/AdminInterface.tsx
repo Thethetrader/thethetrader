@@ -5036,40 +5036,6 @@ const dailyPnLChartData = useMemo(
               />
             </div>
             )}
-
-            {/* Perf par session (taux de réussite %): gauche Asian + London | droite NY AM + NY PM - Journal perso et TPLN model */}
-            {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') && (
-            <div className="bg-gray-700 rounded-lg p-4 border border-gray-600 grid grid-cols-2 gap-3">
-              <div className="flex flex-col gap-2">
-                <div>
-                  <div className="text-xs text-gray-400 mb-0.5">Asian</div>
-                  <div className="text-base font-bold text-white">
-                    {getWinRateForSessionAdmin(['18h', 'Open Asian']) !== null ? `${getWinRateForSessionAdmin(['18h', 'Open Asian'])}%` : '–'}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-xs text-gray-400 mb-0.5">London</div>
-                  <div className="text-base font-bold text-white">
-                    {getWinRateForSessionAdmin(['London']) !== null ? `${getWinRateForSessionAdmin(['London'])}%` : '–'}
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <div>
-                  <div className="text-xs text-gray-400 mb-0.5">NY AM</div>
-                  <div className="text-base font-bold text-white">
-                    {getWinRateForSessionAdmin(['NY AM']) !== null ? `${getWinRateForSessionAdmin(['NY AM'])}%` : '–'}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-xs text-gray-400 mb-0.5">NY PM</div>
-                  <div className="text-base font-bold text-white">
-                    {getWinRateForSessionAdmin(['NY PM']) !== null ? `${getWinRateForSessionAdmin(['NY PM'])}%` : '–'}
-                  </div>
-                </div>
-              </div>
-            </div>
-            )}
             
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
@@ -5106,6 +5072,40 @@ const dailyPnLChartData = useMemo(
                 </div>
               </div>
             </div>
+
+            {/* Perf par session (taux de réussite %): sous Avg Win - Asian/London | NY AM/NY PM */}
+            {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') && (
+            <div className="bg-gray-700 rounded-lg p-4 border border-gray-600 grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-2">
+                <div>
+                  <div className="text-xs text-gray-400 mb-0.5">Asian</div>
+                  <div className="text-base font-bold text-white">
+                    {getWinRateForSessionAdmin(['18h', 'Open Asian']) !== null ? `${getWinRateForSessionAdmin(['18h', 'Open Asian'])}%` : '–'}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-400 mb-0.5">London</div>
+                  <div className="text-base font-bold text-white">
+                    {getWinRateForSessionAdmin(['London']) !== null ? `${getWinRateForSessionAdmin(['London'])}%` : '–'}
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <div>
+                  <div className="text-xs text-gray-400 mb-0.5">NY AM</div>
+                  <div className="text-base font-bold text-white">
+                    {getWinRateForSessionAdmin(['NY AM']) !== null ? `${getWinRateForSessionAdmin(['NY AM'])}%` : '–'}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-400 mb-0.5">NY PM</div>
+                  <div className="text-base font-bold text-white">
+                    {getWinRateForSessionAdmin(['NY PM']) !== null ? `${getWinRateForSessionAdmin(['NY PM'])}%` : '–'}
+                  </div>
+                </div>
+              </div>
+            </div>
+            )}
 
             {isMobile && selectedChannel.id !== 'tpln-model' && dailyPnLChartData.length > 0 && (
               <div className="mt-3">
