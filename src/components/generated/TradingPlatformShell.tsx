@@ -1809,7 +1809,8 @@ export default function TradingPlatformShell() {
     lossReasons: [] as string[],
     notes: '',
     image1: null as File | null,
-    image2: null as File | null
+    image2: null as File | null,
+    session: '' as string
   });
   const [tradeAddAccount, setTradeAddAccount] = useState<string>('Compte Principal');
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
@@ -2841,6 +2842,14 @@ export default function TradingPlatformShell() {
     return Math.round(totalLossPnL / lossTrades.length);
   };
 
+  // Taux de réussite (win rate %) par session, mois en cours
+  const getWinRateForSession = (sessions: string[]): number | null => {
+    const monthTrades = getTradesForMonth(currentDate).filter(t => t.session && sessions.includes(t.session));
+    if (monthTrades.length === 0) return null;
+    const wins = monthTrades.filter(t => t.status === 'WIN').length;
+    return Math.round((wins / monthTrades.length) * 100);
+  };
+
   // Fonctions pour analyser les pertes par raison
   const getLossAnalysis = () => {
     // Utiliser la même logique que le calendrier
@@ -3690,7 +3699,8 @@ export default function TradingPlatformShell() {
           image1: tradeData.image1,
           image2: tradeData.image2,
           timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-          account: accountName
+          account: accountName,
+          session: tradeData.session || undefined
         };
         const savedTrade = await addPersonalTrade(newTrade as any);
         if (savedTrade) successCount++;
@@ -3723,7 +3733,8 @@ export default function TradingPlatformShell() {
           lossReasons: [],
           notes: '',
           image1: null,
-          image2: null
+          image2: null,
+          session: ''
         });
         setSelectedAccounts([]);
         setShowTradeModal(false);
@@ -4855,6 +4866,40 @@ export default function TradingPlatformShell() {
               <ProfitFactorGauge 
                 {...((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? getProfitFactorDataTradesForMonth() : getProfitFactorDataForMonth())} 
               />
+            </div>
+            )}
+
+            {/* Perf par session (taux de réussite %): gauche Asian + London | droite NY AM + NY PM - Journal perso et TPLN model */}
+            {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') && (
+            <div className="bg-gray-700 rounded-lg p-4 border border-gray-600 grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-2">
+                <div>
+                  <div className="text-xs text-gray-400 mb-0.5">Asian</div>
+                  <div className="text-base font-bold text-white">
+                    {getWinRateForSession(['18h', 'Open Asian']) !== null ? `${getWinRateForSession(['18h', 'Open Asian'])}%` : '–'}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-400 mb-0.5">London</div>
+                  <div className="text-base font-bold text-white">
+                    {getWinRateForSession(['London']) !== null ? `${getWinRateForSession(['London'])}%` : '–'}
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <div>
+                  <div className="text-xs text-gray-400 mb-0.5">NY AM</div>
+                  <div className="text-base font-bold text-white">
+                    {getWinRateForSession(['NY AM']) !== null ? `${getWinRateForSession(['NY AM'])}%` : '–'}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-400 mb-0.5">NY PM</div>
+                  <div className="text-base font-bold text-white">
+                    {getWinRateForSession(['NY PM']) !== null ? `${getWinRateForSession(['NY PM'])}%` : '–'}
+                  </div>
+                </div>
+              </div>
             </div>
             )}
             
@@ -7657,6 +7702,23 @@ export default function TradingPlatformShell() {
                       📉 SELL
                     </button>
                   </div>
+                </div>
+
+                {/* Session */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Session</label>
+                  <select
+                    value={tradeData.session}
+                    onChange={(e) => setTradeData({...tradeData, session: e.target.value})}
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
+                  >
+                    <option value="">— Choisir —</option>
+                    <option value="18h">18h</option>
+                    <option value="Open Asian">Open Asian</option>
+                    <option value="London">London</option>
+                    <option value="NY AM">NY AM</option>
+                    <option value="NY PM">NY PM</option>
+                  </select>
                 </div>
 
                 {/* Symbol */}

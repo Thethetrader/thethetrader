@@ -879,6 +879,7 @@ export interface PersonalTrade {
   created_at?: string;
   updated_at?: string;
   account?: string; // Nom du compte de trading
+  session?: string; // Session: 18h, Open Asian, London, NY AM, NY PM
 }
 
 /**
@@ -939,6 +940,9 @@ export const addPersonalTrade = async (trade: Omit<PersonalTrade, 'id' | 'user_i
     // Ajouter account seulement si fourni (pour compatibilité avec migration)
     if (trade.account) {
       tradeData.account = trade.account;
+    }
+    if (trade.session) {
+      tradeData.session = trade.session;
     }
 
     const { data, error } = await supabase
@@ -1023,6 +1027,7 @@ export const getPersonalTrades = async (limit: number = 100): Promise<PersonalTr
         image2: trade.image2 || undefined,
         timestamp: trade.timestamp || undefined,
         account: trade.account || 'Compte Principal',
+        session: trade.session || undefined,
         created_at: trade.created_at,
         updated_at: trade.updated_at
       };

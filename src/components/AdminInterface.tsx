@@ -969,7 +969,8 @@ export default function AdminInterface() {
     lossReason: '',
     notes: '',
     image1: null as File | null,
-    image2: null as File | null
+    image2: null as File | null,
+    session: '' as string
   });
   
   // Plus besoin de synchroniser l'ID utilisateur avec Supabase (géré automatiquement)
@@ -2296,6 +2297,13 @@ const dailyPnLChartData = useMemo(
     return { totalWins, totalLosses };
   };
 
+  const getWinRateForSessionAdmin = (sessions: string[]): number | null => {
+    const monthTrades = getThisMonthTrades().filter(t => t.session && sessions.includes(t.session));
+    if (monthTrades.length === 0) return null;
+    const wins = monthTrades.filter(t => t.status === 'WIN').length;
+    return Math.round((wins / monthTrades.length) * 100);
+  };
+
   const calculateRiskReward = (entry: string, takeProfit: string, stopLoss: string): string => {
     const entryNum = parseFloat(entry);
     const tpNum = parseFloat(takeProfit);
@@ -3170,7 +3178,8 @@ const dailyPnLChartData = useMemo(
         image1: tradeData.image1,
         image2: tradeData.image2,
         timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-        account: accountName
+        account: accountName,
+        session: tradeData.session || undefined
       };
       const savedTrade = await addPersonalTradeToSupabase(newTrade as any);
       if (savedTrade) successCount++;
@@ -3198,7 +3207,8 @@ const dailyPnLChartData = useMemo(
         lossReason: '',
         notes: '',
         image1: null,
-        image2: null
+        image2: null,
+        session: ''
       });
       setSelectedAccounts([]);
       setShowTradeModal(false);
@@ -5024,6 +5034,40 @@ const dailyPnLChartData = useMemo(
               <ProfitFactorGauge 
                 {...((selectedChannel.id === 'trading-journal') ? getProfitFactorDataTrades() : getProfitFactorData())} 
               />
+            </div>
+            )}
+
+            {/* Perf par session (taux de réussite %): gauche Asian + London | droite NY AM + NY PM - Journal perso et TPLN model */}
+            {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') && (
+            <div className="bg-gray-700 rounded-lg p-4 border border-gray-600 grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-2">
+                <div>
+                  <div className="text-xs text-gray-400 mb-0.5">Asian</div>
+                  <div className="text-base font-bold text-white">
+                    {getWinRateForSessionAdmin(['18h', 'Open Asian']) !== null ? `${getWinRateForSessionAdmin(['18h', 'Open Asian'])}%` : '–'}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-400 mb-0.5">London</div>
+                  <div className="text-base font-bold text-white">
+                    {getWinRateForSessionAdmin(['London']) !== null ? `${getWinRateForSessionAdmin(['London'])}%` : '–'}
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <div>
+                  <div className="text-xs text-gray-400 mb-0.5">NY AM</div>
+                  <div className="text-base font-bold text-white">
+                    {getWinRateForSessionAdmin(['NY AM']) !== null ? `${getWinRateForSessionAdmin(['NY AM'])}%` : '–'}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-400 mb-0.5">NY PM</div>
+                  <div className="text-base font-bold text-white">
+                    {getWinRateForSessionAdmin(['NY PM']) !== null ? `${getWinRateForSessionAdmin(['NY PM'])}%` : '–'}
+                  </div>
+                </div>
+              </div>
             </div>
             )}
             
@@ -7692,6 +7736,23 @@ const dailyPnLChartData = useMemo(
                       📉 SELL
                     </button>
                   </div>
+                </div>
+
+                {/* Session */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Session</label>
+                  <select
+                    value={tradeData.session}
+                    onChange={(e) => setTradeData({...tradeData, session: e.target.value})}
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
+                  >
+                    <option value="">— Choisir —</option>
+                    <option value="18h">18h</option>
+                    <option value="Open Asian">Open Asian</option>
+                    <option value="London">London</option>
+                    <option value="NY AM">NY AM</option>
+                    <option value="NY PM">NY PM</option>
+                  </select>
                 </div>
 
                 {/* Symbol */}
