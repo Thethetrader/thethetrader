@@ -331,6 +331,7 @@ export default function AdminInterface() {
   const [showWinsLossModal, setShowWinsLossModal] = useState(false);
   const [winsLossFilter, setWinsLossFilter] = useState<'WIN' | 'LOSS' | null>(null);
   const [winsLossTradeIndex, setWinsLossTradeIndex] = useState(0);
+  const [showPerformanceTableModal, setShowPerformanceTableModal] = useState(false);
   const [imageZoom, setImageZoom] = useState(1);
   const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -871,6 +872,7 @@ export default function AdminInterface() {
   const [finSessionQualiteDecisions, setFinSessionQualiteDecisions] = useState<'Lecture' | 'Mixte' | 'Émotion' | ''>('');
   const [finSessionGestionErreur, setFinSessionGestionErreur] = useState<'Oui' | 'Non' | ''>('');
   const [finSessionPression, setFinSessionPression] = useState<number | ''>('');
+  const [finSessionMaxDrawdown, setFinSessionMaxDrawdown] = useState<string>('');
   const [showLossReasonsModal, setShowLossReasonsModal] = useState(false);
   const [customLossReasons, setCustomLossReasons] = useState(() => {
     const saved = localStorage.getItem('customLossReasons');
@@ -896,7 +898,8 @@ export default function AdminInterface() {
   });
   const [showWeekSignalsModal, setShowWeekSignalsModal] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState<number>(0);
-  
+  const [statsPeriod, setStatsPeriod] = useState<'mois' | 'jour'>('mois');
+
   // Sauvegarder selectedDate dans localStorage
   useEffect(() => {
     if (selectedDate) {
@@ -1393,9 +1396,12 @@ export default function AdminInterface() {
         return true;
       });
     }
-    // Si "Tous les comptes" est sélectionné, retourner tous les trades
+    // Si "Tous les comptes" est sélectionné, retourner tous les trades sauf TPLN model (évite doublons)
     if (selectedAccount === 'Tous les comptes') {
-      return personalTrades;
+      return personalTrades.filter(trade => {
+        const acc = trade.account || 'Compte Principal';
+        return acc !== 'TPLN' && acc !== 'TPLN model';
+      });
     }
     
     return personalTrades.filter(trade => {
@@ -2310,6 +2316,121 @@ const dailyPnLChartData = useMemo(
     return Math.round((wins / monthTrades.length) * 100);
   };
 
+  // Trades pour l’affichage des stats (mois ou jour selon statsPeriod) - Journal perso & TPLN
+  const getTradesForStatsDisplay = () => statsPeriod === 'jour' ? getTodayTrades() : getThisMonthTrades();
+  const calculateTotalPnLTradesForDisplay = (): number => getTradesForStatsDisplay().reduce((total, t) => total + parsePnL(t.pnl), 0);
+  const calculateWinRateTradesForDisplay = (): number => {
+    const trades = getTradesForStatsDisplay();
+    if (trades.length === 0) return 0;
+    return Math.round((trades.filter(t => t.status === 'WIN').length / trades.length) * 100);
+  };
+  const getWinsAndLossesTradesForDisplay = () => {
+    const trades = getTradesForStatsDisplay();
+    return { wins: trades.filter(t => t.status === 'WIN').length, losses: trades.filter(t => t.status === 'LOSS').length };
+  };
+  const getProfitFactorDataTradesForDisplay = () => {
+    const trades = getTradesForStatsDisplay();
+    const totalWins = trades.filter(t => t.status === 'WIN' && t.pnl).reduce((s, t) => s + parsePnL(t.pnl), 0);
+    const totalLosses = trades.filter(t => t.status === 'LOSS' && t.pnl).reduce((s, t) => s + Math.abs(parsePnL(t.pnl)), 0);
+    return { totalWins, totalLosses };
+  };
+  const calculateAvgWinTradesForDisplay = (): number => {
+    const winTrades = getTradesForStatsDisplay().filter(t => t.status === 'WIN');
+    if (winTrades.length === 0) return 0;
+    return Math.round(winTrades.reduce((s, t) => s + parsePnL(t.pnl), 0) / winTrades.length);
+  };
+  const calculateAvgLossTradesForDisplay = (): number => {
+    const lossTrades = getTradesForStatsDisplay().filter(t => t.status === 'LOSS');
+    if (lossTrades.length === 0) return 0;
+    return Math.round(lossTrades.reduce((s, t) => s + Math.abs(parsePnL(t.pnl)), 0) / lossTrades.length);
+  };
+  const getWinRateForSessionDisplay = (sessions: string[]): number | null => {
+    const trades = getTradesForStatsDisplay().filter(t => t.session && sessions.includes(t.session));
+    if (trades.length === 0) return null;
+    return Math.round((trades.filter(t => t.status === 'WIN').length / trades.length) * 100);
+  };
+
+  const MONTH_LABELS_ADMIN = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
+  type MonthlyPerfRowAdmin = { monthKey: string; monthLabel: string; trades: number; pnl: number; wr: number; pf: number; maxDdPnl: number | null };
+  const monthlyPerformanceDataAdmin = useMemo((): MonthlyPerfRowAdmin[] => {
+    const isSignals = selectedChannel.id === 'calendrier';
+    const items = isSignals
+      ? signals.filter((s: { channel_id?: string; status?: string; pnl?: string }) => s.channel_id === 'calendrier' && s.status !== 'ACTIVE' && s.pnl != null)
+      : getTradesForSelectedAccount();
+    if (items.length === 0) return [];
+    const byMonth = new Map<string, { pnl: number; wins: number; losses: number; totalWinPnL: number; totalLossPnL: number; entries: { date: string; pnl: number }[] }>();
+    const getMonthKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    if (isSignals) {
+      (items as { timestamp: number | string; pnl?: string; status: string }[]).forEach((s) => {
+        const d = new Date(s.timestamp);
+        if (Number.isNaN(d.getTime())) return;
+        const key = getMonthKey(d);
+        const pnlVal = parsePnL(s.pnl || '0');
+        if (!byMonth.has(key)) byMonth.set(key, { pnl: 0, wins: 0, losses: 0, totalWinPnL: 0, totalLossPnL: 0, entries: [] });
+        const row = byMonth.get(key)!;
+        row.pnl += pnlVal;
+        row.entries.push({ date: d.toISOString().slice(0, 10), pnl: pnlVal });
+        if (s.status === 'WIN') { row.wins++; row.totalWinPnL += pnlVal; } else if (s.status === 'LOSS') { row.losses++; row.totalLossPnL += Math.abs(pnlVal); }
+      });
+    } else {
+      (items as { date: string; pnl?: string; status: string }[]).forEach((t) => {
+        const key = t.date.slice(0, 7);
+        const pnlVal = parsePnL(t.pnl || '0');
+        if (!byMonth.has(key)) byMonth.set(key, { pnl: 0, wins: 0, losses: 0, totalWinPnL: 0, totalLossPnL: 0, entries: [] });
+        const row = byMonth.get(key)!;
+        row.pnl += pnlVal;
+        row.entries.push({ date: t.date, pnl: pnlVal });
+        if (t.status === 'WIN') { row.wins++; row.totalWinPnL += pnlVal; } else if (t.status === 'LOSS') { row.losses++; row.totalLossPnL += Math.abs(pnlVal); }
+      });
+    }
+    const monthKeys = Array.from(byMonth.keys()).sort();
+    let startBalance = 0;
+    if (!isSignals && monthKeys.length > 0) {
+      const acc = tradingAccounts.find((a: { account_name: string }) => a.account_name === selectedAccount);
+      startBalance = (acc as { initial_balance?: number })?.initial_balance ?? 0;
+      if (selectedAccount === 'Tous les comptes') {
+        startBalance = tradingAccounts
+          .filter((a: { account_name: string }) => a.account_name !== 'TPLN' && a.account_name !== 'TPLN model')
+          .reduce((s: number, a: { initial_balance?: number }) => s + (a.initial_balance || 0), 0);
+      }
+    }
+    const rows: MonthlyPerfRowAdmin[] = monthKeys.map((key) => {
+      const r = byMonth.get(key)!;
+      const total = r.wins + r.losses;
+      const wr = total > 0 ? Math.round((r.wins / total) * 100) : 0;
+      const pf = r.totalLossPnL > 0 ? r.totalWinPnL / r.totalLossPnL : (r.totalWinPnL > 0 ? Infinity : 0);
+      const [y, m] = key.split('-').map(Number);
+      const monthLabel = `${MONTH_LABELS_ADMIN[m - 1]} ${y}`;
+      let maxDdPnl: number | null = null;
+      if (!isSignals && startBalance !== undefined && r.entries.length > 0) {
+        r.entries.sort((a, b) => a.date.localeCompare(b.date));
+        let peak = startBalance;
+        let running = startBalance;
+        let maxDd = 0;
+        r.entries.forEach((e) => {
+          running += e.pnl;
+          peak = Math.max(peak, running);
+          if (peak > running) maxDd = Math.max(maxDd, peak - running);
+        });
+        if (maxDd > 0) maxDdPnl = -maxDd;
+      }
+      if (!isSignals) {
+        const monthPrefix = key + '-';
+        const sessionDds = Object.keys(finSessionCache)
+          .filter((k) => k.startsWith(monthPrefix))
+          .map((k) => (finSessionCache[k] as FinSessionData)?.maxDrawdown)
+          .filter((v): v is number => v != null && !Number.isNaN(v) && v < 0);
+        if (sessionDds.length > 0) {
+          const worstSessionDd = Math.min(...sessionDds);
+          maxDdPnl = maxDdPnl != null ? Math.min(maxDdPnl, worstSessionDd) : worstSessionDd;
+        }
+      }
+      startBalance += r.pnl;
+      return { monthKey: key, monthLabel, trades: total, pnl: r.pnl, wr, pf, maxDdPnl };
+    });
+    return rows.reverse();
+  }, [selectedChannel.id, selectedAccount, personalTrades, signals, tradingAccounts, finSessionCache]);
+
   const calculateRiskReward = (entry: string, takeProfit: string, stopLoss: string): string => {
     const entryNum = parseFloat(entry);
     const tpNum = parseFloat(takeProfit);
@@ -3143,9 +3264,9 @@ const dailyPnLChartData = useMemo(
   const getFinSessionForDate = (d: Date): FinSessionData | null => finSessionCache[getDateKey(d)] ?? null;
   const saveFinSessionForDate = async (d: Date, data: FinSessionData) => {
     const key = getDateKey(d);
-    const ok = await upsertFinSessionStatToSupabase(key, data);
-    if (ok) setFinSessionCache(prev => ({ ...prev, [key]: data }));
-    return ok;
+    const result = await upsertFinSessionStatToSupabase(key, data);
+    if (result.ok) setFinSessionCache(prev => ({ ...prev, [key]: data }));
+    return result;
   };
   /** Note moyenne 1-5 à partir des 4 stats psy (pour affichage calendrier). */
   const getNoteMoyenneForDate = (d: Date): number | null => {
@@ -3156,6 +3277,17 @@ const dailyPnLChartData = useMemo(
     const g = fs.gestionErreur === 'Oui' ? 5 : 1;
     const p = 6 - fs.pression; // 1 calme -> 5, 5 tendu -> 1
     return Math.round(((r + q + g + p) / 4) * 10) / 10;
+  };
+  /** Code couleur étoile discipline (score /5) : 4-5 PRO (vert), 2.5-4 OK/fragile (jaune), <2.5 rouge. */
+  const getDisciplineColorForScore = (score: number): 'green' | 'yellow' | 'red' => {
+    if (score >= 4) return 'green';
+    if (score >= 2.5) return 'yellow';
+    return 'red';
+  };
+  const getDisciplineLabelForScore = (score: number): string => {
+    if (score >= 4) return 'Journée PRO';
+    if (score >= 2.5) return 'Journée OK / fragile';
+    return 'À améliorer';
   };
   // Charger le cache des stats fin de session depuis Supabase (journal/tpln)
   useEffect(() => {
@@ -3172,11 +3304,13 @@ const dailyPnLChartData = useMemo(
         setFinSessionQualiteDecisions(today.qualiteDecisions as 'Lecture' | 'Mixte' | 'Émotion');
         setFinSessionGestionErreur(today.gestionErreur as 'Oui' | 'Non');
         setFinSessionPression(today.pression);
+        setFinSessionMaxDrawdown(today.maxDrawdown != null ? String(today.maxDrawdown) : '');
       } else {
         setFinSessionRespectPlan('');
         setFinSessionQualiteDecisions('');
         setFinSessionGestionErreur('');
         setFinSessionPression('');
+        setFinSessionMaxDrawdown('');
       }
     }
   }, [showFinSessionModal, finSessionCache]);
@@ -4731,7 +4865,7 @@ const dailyPnLChartData = useMemo(
                       }
                     }}
                     className={`
-                      border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 cursor-pointer transition-all hover:shadow-md
+                      border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 cursor-pointer transition-all hover:shadow-md relative
                       ${bgColor}
                       ${isToday ? 'ring-2 ring-blue-400' : ''}
                       ${(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') && selectedDate && 
@@ -4773,24 +4907,31 @@ const dailyPnLChartData = useMemo(
                         }
                         const dayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNumber);
                         const noteMoy = (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? getNoteMoyenneForDate(dayDate) : null;
+                        const discColor = noteMoy != null ? getDisciplineColorForScore(noteMoy) : null;
+                        const discTitle = noteMoy != null ? getDisciplineLabelForScore(noteMoy) : '';
                         return (
-                          <div className="flex flex-col items-center space-y-1">
+                          <>
+                            <div className="flex flex-col items-center space-y-1">
+                              {totalPnL !== 0 && (
+                                <div className="text-xs font-bold text-center">
+                                  ${totalPnL.toFixed(0)}
+                                </div>
+                              )}
+                              {tradeCount > 0 && (
+                                <div className="text-xs font-bold text-right self-end">
+                                  {tradeCount}
+                                </div>
+                              )}
+                            </div>
                             {noteMoy !== null && (
-                              <div className="text-xs font-bold text-amber-400/90" title="Note psy fin de session">
+                              <div
+                                className={`absolute bottom-1 left-1 text-xs font-bold ${discColor === 'green' ? 'text-green-400' : discColor === 'yellow' ? 'text-yellow-400' : 'text-red-400'}`}
+                                title={`Étoile discipline (sur 5): ${noteMoy} – ${discTitle}`}
+                              >
                                 ★ {noteMoy}
                               </div>
                             )}
-                            {totalPnL !== 0 && (
-                              <div className="text-xs font-bold text-center">
-                                ${totalPnL.toFixed(0)}
-                              </div>
-                            )}
-                            {tradeCount > 0 && (
-                              <div className="text-xs font-bold text-right self-end">
-                                {tradeCount}
-                              </div>
-                            )}
-                          </div>
+                          </>
                         );
                       })()}
                     </div>
@@ -4846,6 +4987,12 @@ const dailyPnLChartData = useMemo(
                 className="px-4 py-2 rounded-lg bg-red-600/30 border border-red-500/50 text-red-300 hover:bg-red-600/50 transition-colors"
               >
                 📉 Tous les LOSS ({selectedChannel.id === 'calendrier' ? signals.filter(s => s.status === 'LOSS' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount().filter(t => t.status === 'LOSS').length})
+              </button>
+              <button
+                onClick={() => setShowPerformanceTableModal(true)}
+                className="px-4 py-2 rounded-lg bg-gray-600/50 border border-gray-500/50 text-gray-200 hover:bg-gray-600 transition-colors"
+              >
+                📊 TABLEAU DE PERFORMANCE
               </button>
             </div>
           )}
@@ -5029,6 +5176,25 @@ const dailyPnLChartData = useMemo(
         <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6" style={{ paddingTop: (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? 'calc(1rem + 1cm)' : '1rem' }}>
           {/* Métriques principales */}
           <div className="space-y-2 mb-8">
+            {/* Mois / Jour - uniquement Journal perso et TPLN model */}
+            {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') && (
+              <div className="flex gap-2 mb-4">
+                <button
+                  type="button"
+                  onClick={() => setStatsPeriod('mois')}
+                  className={`flex-1 py-2 rounded-lg text-sm font-medium ${statsPeriod === 'mois' ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
+                >
+                  Mois
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatsPeriod('jour')}
+                  className={`flex-1 py-2 rounded-lg text-sm font-medium ${statsPeriod === 'jour' ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
+                >
+                  Jour
+                </button>
+              </div>
+            )}
             {/* Solde du compte (Journal perso uniquement) - pas sur TPLN model ni Journal Signaux */}
             {selectedChannel.id === 'trading-journal' && (
             <div className={`border rounded-lg p-4 border ${
@@ -5038,19 +5204,19 @@ const dailyPnLChartData = useMemo(
             }`}>
               <div className={`text-sm mb-1 ${
                 selectedChannel.id === 'trading-journal'
-                  ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'text-green-300' : 'text-red-300')
+                  ? (selectedAccount && selectedAccount !== 'Tous les comptes' ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'text-green-300' : 'text-red-300') : (calculateTotalPnLTradesForDisplay() >= 0 ? 'text-green-300' : 'text-red-300'))
                   : (calculateTotalPnL() >= 0 ? 'text-green-300' : 'text-red-300')
               }`}>
-                {selectedChannel.id === 'trading-journal' && selectedAccount && selectedAccount !== 'Tous les comptes' ? 'Solde du compte' : 'P&L Total'}
+                {selectedChannel.id === 'trading-journal' && selectedAccount && selectedAccount !== 'Tous les comptes' ? 'Solde du compte' : (statsPeriod === 'jour' ? 'P&L du jour' : 'P&L Total')}
               </div>
               <div className={`text-2xl font-bold ${
                 selectedChannel.id === 'trading-journal'
-                  ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'text-green-200' : 'text-red-200')
+                  ? (selectedAccount && selectedAccount !== 'Tous les comptes' ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'text-green-200' : 'text-red-200') : (calculateTotalPnLTradesForDisplay() >= 0 ? 'text-green-200' : 'text-red-200'))
                   : (calculateTotalPnL() >= 0 ? 'text-green-200' : 'text-red-200')
               }`}>
                 {selectedChannel.id === 'trading-journal' && selectedAccount && selectedAccount !== 'Tous les comptes'
                   ? `$${calculateAccountBalance().toFixed(2)}`
-                  : `${(selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnL()) >= 0 ? '+' : ''}$${selectedChannel.id === 'trading-journal' ? calculateTotalPnLTrades() : calculateTotalPnL()}`}
+                  : `${(selectedChannel.id === 'trading-journal' ? calculateTotalPnLTradesForDisplay() : calculateTotalPnL()) >= 0 ? '+' : ''}$${selectedChannel.id === 'trading-journal' ? calculateTotalPnLTradesForDisplay() : calculateTotalPnL()}`}
               </div>
             </div>
             )}
@@ -5060,12 +5226,12 @@ const dailyPnLChartData = useMemo(
               <div className="flex-1">
               <div className="text-sm text-blue-300 mb-1">Win Rate</div>
               <div className="text-2xl font-bold text-blue-200">
-                {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? calculateWinRateTrades() : calculateWinRate()}%
+                {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? calculateWinRateTradesForDisplay() : calculateWinRate()}%
                 </div>
               </div>
               <div style={{ marginLeft: '-4cm' }}>
                 <WinRateGauge 
-                  {...((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? getWinsAndLossesTrades() : getWinsAndLosses())} 
+                  {...((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? getWinsAndLossesTradesForDisplay() : getWinsAndLosses())} 
                 />
               </div>
             </div>
@@ -5086,7 +5252,7 @@ const dailyPnLChartData = useMemo(
                 <div className="text-2xl font-bold text-white">
                   {((selectedChannel.id === 'trading-journal') ? 
                     (() => {
-                      const { totalWins, totalLosses } = getProfitFactorDataTrades();
+                      const { totalWins, totalLosses } = getProfitFactorDataTradesForDisplay();
                       return totalLosses > 0 ? (totalWins / totalLosses).toFixed(2) : totalWins > 0 ? '∞' : '0.00';
                     })() :
                     (() => {
@@ -5097,7 +5263,7 @@ const dailyPnLChartData = useMemo(
                 </div>
               </div>
               <ProfitFactorGauge 
-                {...((selectedChannel.id === 'trading-journal') ? getProfitFactorDataTrades() : getProfitFactorData())} 
+                {...((selectedChannel.id === 'trading-journal') ? getProfitFactorDataTradesForDisplay() : getProfitFactorData())} 
               />
             </div>
             )}
@@ -5122,7 +5288,7 @@ const dailyPnLChartData = useMemo(
                 <div className="text-xs text-gray-400 mb-1">Avg Win</div>
                 <div className="text-lg font-bold text-green-400">
                   {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? 
-                    (calculateAvgWinTrades() > 0 ? `+$${calculateAvgWinTrades()}` : '-') :
+                    (calculateAvgWinTradesForDisplay() > 0 ? `+$${calculateAvgWinTradesForDisplay()}` : '-') :
                     (calculateAvgWin() > 0 ? `+$${calculateAvgWin()}` : '-')
                   }
                 </div>
@@ -5131,7 +5297,7 @@ const dailyPnLChartData = useMemo(
                 <div className="text-xs text-gray-400 mb-1">Avg Loss</div>
                 <div className="text-lg font-bold text-red-400">
                   {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? 
-                    (calculateAvgLossTrades() > 0 ? `-$${calculateAvgLossTrades()}` : '-') :
+                    (calculateAvgLossTradesForDisplay() > 0 ? `-$${calculateAvgLossTradesForDisplay()}` : '-') :
                     (calculateAvgLoss() > 0 ? `-$${calculateAvgLoss()}` : '-')
                   }
                 </div>
@@ -5145,13 +5311,13 @@ const dailyPnLChartData = useMemo(
                 <div>
                   <div className="text-xs text-gray-400 mb-0.5">Asian</div>
                   <div className="text-base font-bold text-white">
-                    {getWinRateForSessionAdmin(['18h', 'Open Asian']) !== null ? `${getWinRateForSessionAdmin(['18h', 'Open Asian'])}%` : '–'}
+                    {getWinRateForSessionDisplay(['18h', 'Open Asian']) !== null ? `${getWinRateForSessionDisplay(['18h', 'Open Asian'])}%` : '–'}
                   </div>
                 </div>
                 <div>
                   <div className="text-xs text-gray-400 mb-0.5">London</div>
                   <div className="text-base font-bold text-white">
-                    {getWinRateForSessionAdmin(['London']) !== null ? `${getWinRateForSessionAdmin(['London'])}%` : '–'}
+                    {getWinRateForSessionDisplay(['London']) !== null ? `${getWinRateForSessionDisplay(['London'])}%` : '–'}
                   </div>
                 </div>
               </div>
@@ -5159,13 +5325,13 @@ const dailyPnLChartData = useMemo(
                 <div>
                   <div className="text-xs text-gray-400 mb-0.5">NY AM</div>
                   <div className="text-base font-bold text-white">
-                    {getWinRateForSessionAdmin(['NY AM']) !== null ? `${getWinRateForSessionAdmin(['NY AM'])}%` : '–'}
+                    {getWinRateForSessionDisplay(['NY AM']) !== null ? `${getWinRateForSessionDisplay(['NY AM'])}%` : '–'}
                   </div>
                 </div>
                 <div>
                   <div className="text-xs text-gray-400 mb-0.5">NY PM</div>
                   <div className="text-base font-bold text-white">
-                    {getWinRateForSessionAdmin(['NY PM']) !== null ? `${getWinRateForSessionAdmin(['NY PM'])}%` : '–'}
+                    {getWinRateForSessionDisplay(['NY PM']) !== null ? `${getWinRateForSessionDisplay(['NY PM'])}%` : '–'}
                   </div>
                 </div>
               </div>
@@ -8086,6 +8252,21 @@ const dailyPnLChartData = useMemo(
                   </div>
                   <p className="text-xs text-gray-400">Tu veux voir : pression ≤ 3 les bons jours, pression maîtrisée même les jours rouges.</p>
                 </div>
+                {/* 5. Max Drawdown (DD) */}
+                <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-7 h-7 rounded bg-gray-600 text-gray-300 text-sm font-bold flex items-center justify-center">5</span>
+                    <span className="font-medium text-white">Max Drawdown (DD)</span>
+                  </div>
+                  <p className="text-sm text-gray-300 mb-2">Drawdown max de la session ($, ex: -50)</p>
+                  <input
+                    type="number"
+                    placeholder="-50"
+                    value={finSessionMaxDrawdown}
+                    onChange={(e) => setFinSessionMaxDrawdown(e.target.value)}
+                    className="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                  />
+                </div>
               </div>
               <div className="flex justify-end gap-2 pt-4">
                 <button onClick={() => setShowFinSessionModal(false)} className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white text-sm">
@@ -8094,9 +8275,10 @@ const dailyPnLChartData = useMemo(
                 <button
                   onClick={async () => {
                     if (finSessionRespectPlan && finSessionQualiteDecisions && finSessionGestionErreur && finSessionPression !== '') {
-                      const ok = await saveFinSessionForDate(new Date(), { respectPlan: finSessionRespectPlan, qualiteDecisions: finSessionQualiteDecisions, gestionErreur: finSessionGestionErreur, pression: finSessionPression });
-                      if (ok) setShowFinSessionModal(false);
-                      else alert('Erreur enregistrement. Vérifie ta connexion.');
+                      const maxDd = finSessionMaxDrawdown.trim() === '' ? undefined : parseFloat(finSessionMaxDrawdown);
+                      const result = await saveFinSessionForDate(new Date(), { respectPlan: finSessionRespectPlan, qualiteDecisions: finSessionQualiteDecisions, gestionErreur: finSessionGestionErreur, pression: finSessionPression, ...(maxDd != null && !Number.isNaN(maxDd) && { maxDrawdown: maxDd }) });
+                      if (result.ok) setShowFinSessionModal(false);
+                      else alert(result.reason === 'non_connecte' ? 'Tu n’es pas connecté. Déconnecte-toi puis reconnecte-toi (Supabase).' : `Erreur enregistrement. ${result.message ? result.message : 'Vérifie ta connexion ou réessaie.'}`);
                     } else {
                       alert('Remplis les 4 stats pour enregistrer.');
                     }
@@ -8162,6 +8344,7 @@ const dailyPnLChartData = useMemo(
                       <div><span className="text-gray-400">Qualité décisions:</span> <span className={fs.qualiteDecisions === 'Émotion' ? 'text-red-400 font-medium' : 'text-white font-medium'}>{fs.qualiteDecisions}</span></div>
                       <div><span className="text-gray-400">Gestion après erreur:</span> <span className="text-white font-medium">{fs.gestionErreur}</span></div>
                       <div><span className="text-gray-400">Pression (1-5):</span> <span className="text-white font-medium">{fs.pression}</span></div>
+                      {fs.maxDrawdown != null && <div className="col-span-2"><span className="text-gray-400">Max Drawdown (DD):</span> <span className={fs.maxDrawdown < 0 ? 'text-red-400 font-medium' : 'text-white font-medium'}>{fs.maxDrawdown}$</span></div>}
                     </div>
                   </div>
                 );
@@ -8377,6 +8560,50 @@ const dailyPnLChartData = useMemo(
                 </>
               );
             })()}
+          </div>
+        </div>
+      )}
+
+      {/* Modal Tableau de performance */}
+      {showPerformanceTableModal && (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'calendrier') && (
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4" onClick={() => setShowPerformanceTableModal(false)}>
+          <div className="bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-gray-600" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center p-4 border-b border-gray-600">
+              <h2 className="text-xl font-bold text-white">Tableau de performance</h2>
+              <button onClick={() => setShowPerformanceTableModal(false)} className="text-gray-400 hover:text-white text-2xl">×</button>
+            </div>
+            <div className="overflow-auto p-4">
+              {monthlyPerformanceDataAdmin.length === 0 ? (
+                <p className="text-gray-400 text-center py-8">Aucune donnée</p>
+              ) : (
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-gray-600">
+                      <th className="py-2 pr-4 text-gray-400 font-medium">Mois</th>
+                      <th className="py-2 pr-4 text-gray-400 font-medium text-right">Trades</th>
+                      <th className="py-2 pr-4 text-gray-400 font-medium text-right">P&L ($)</th>
+                      <th className="py-2 pr-4 text-gray-400 font-medium text-right">WR</th>
+                      <th className="py-2 pr-4 text-gray-400 font-medium text-right">PF</th>
+                      <th className="py-2 text-gray-400 font-medium text-right">Max DD ($)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {monthlyPerformanceDataAdmin.map(row => (
+                      <tr key={row.monthKey} className="border-b border-gray-700">
+                        <td className="py-2 pr-4 text-white">{row.monthLabel}</td>
+                        <td className="py-2 pr-4 text-white text-right">{row.trades}</td>
+                        <td className={`py-2 pr-4 text-right font-medium ${row.pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          {row.pnl >= 0 ? '+' : ''}{row.pnl.toFixed(0)}
+                        </td>
+                        <td className="py-2 pr-4 text-white text-right">{row.wr} %</td>
+                        <td className="py-2 pr-4 text-white text-right">{row.pf === Infinity ? '∞' : row.pf.toFixed(1)}</td>
+                        <td className="py-2 text-right text-red-400">{row.maxDdPnl != null ? `$${row.maxDdPnl}` : '–'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
           </div>
         </div>
       )}

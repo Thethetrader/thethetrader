@@ -1139,6 +1139,7 @@ export interface FinSessionStatRow {
   qualite_decisions: string | null;
   gestion_erreur: string | null;
   pression: number | null;
+  max_drawdown: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -1148,6 +1149,7 @@ export interface FinSessionData {
   qualiteDecisions: string;
   gestionErreur: string;
   pression: number;
+  maxDrawdown?: number | null;
 }
 
 /** Récupère toutes les stats fin de session de l'utilisateur (pour cache calendrier). */
@@ -1157,20 +1159,21 @@ export const getFinSessionStatsFromSupabase = async (): Promise<Record<string, F
     if (!user) return {};
     const { data, error } = await supabase
       .from('fin_session_stats')
-      .select('date, respect_plan, qualite_decisions, gestion_erreur, pression')
+      .select('date, respect_plan, qualite_decisions, gestion_erreur, pression, max_drawdown')
       .eq('user_id', user.id);
     if (error) {
       console.error('❌ Erreur getFinSessionStats:', error);
       return {};
     }
     const record: Record<string, FinSessionData> = {};
-    (data || []).forEach((row: { date: string; respect_plan: string | null; qualite_decisions: string | null; gestion_erreur: string | null; pression: number | null }) => {
+    (data || []).forEach((row: { date: string; respect_plan: string | null; qualite_decisions: string | null; gestion_erreur: string | null; pression: number | null; max_drawdown?: number | null }) => {
       if (row.date && row.respect_plan != null && row.qualite_decisions != null && row.gestion_erreur != null && row.pression != null) {
         record[row.date] = {
           respectPlan: row.respect_plan,
           qualiteDecisions: row.qualite_decisions,
           gestionErreur: row.gestion_erreur,
-          pression: row.pression
+          pression: row.pression,
+          ...(row.max_drawdown != null && { maxDrawdown: row.max_drawdown })
         };
       }
     });
@@ -1181,36 +1184,36 @@ export const getFinSessionStatsFromSupabase = async (): Promise<Record<string, F
   }
 };
 
-/** Enregistre ou met à jour les stats fin de session pour une date. */
-export const upsertFinSessionStatToSupabase = async (dateStr: string, data: FinSessionData): Promise<boolean> => {
+/** Enregistre ou met à jour les stats fin de session pour une date. Retourne { ok: true } ou { ok: false, reason, message? }. */
+export const upsertFinSessionStatToSupabase = async (dateStr: string, data: FinSessionData): Promise<{ ok: boolean; reason?: string; message?: string }> => {
   try {
     const user = await getCurrentUser();
     if (!user) {
-      console.error('❌ Utilisateur non connecté');
-      return false;
+      console.error('❌ Fin session: utilisateur non connecté (Supabase Auth)');
+      return { ok: false, reason: 'non_connecte' };
     }
+    const payload: Record<string, unknown> = {
+      user_id: user.id,
+      date: dateStr,
+      respect_plan: data.respectPlan,
+      qualite_decisions: data.qualiteDecisions,
+      gestion_erreur: data.gestionErreur,
+      pression: data.pression,
+      updated_at: new Date().toISOString()
+    };
+    if (data.maxDrawdown != null) payload.max_drawdown = data.maxDrawdown;
     const { error } = await supabase
       .from('fin_session_stats')
-      .upsert(
-        {
-          user_id: user.id,
-          date: dateStr,
-          respect_plan: data.respectPlan,
-          qualite_decisions: data.qualiteDecisions,
-          gestion_erreur: data.gestionErreur,
-          pression: data.pression,
-          updated_at: new Date().toISOString()
-        },
-        { onConflict: 'user_id,date' }
-      );
+      .upsert(payload, { onConflict: 'user_id,date' });
     if (error) {
-      console.error('❌ Erreur upsertFinSessionStat:', error);
-      return false;
+      console.error('❌ Erreur upsertFinSessionStat:', error.message, error.details);
+      return { ok: false, reason: 'erreur_serveur', message: error.message };
     }
-    return true;
-  } catch (e) {
+    return { ok: true };
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e);
     console.error('❌ upsertFinSessionStatToSupabase:', e);
-    return false;
+    return { ok: false, reason: 'erreur_serveur', message: msg };
   }
 };
 
