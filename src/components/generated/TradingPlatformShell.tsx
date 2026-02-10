@@ -5216,38 +5216,6 @@ export default function TradingPlatformShell() {
             </div>
           </div>
 
-          {/* Boutons Tous les WIN / Tous les LOSS - Journal perso, TPLN model, et Journal Signaux */}
-          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'calendrier') && (
-            <div className="flex flex-col gap-2 mt-4">
-              <button
-                onClick={() => {
-                  setWinsLossFilter('WIN');
-                  setWinsLossTradeIndex(0);
-                  setShowWinsLossModal(true);
-                }}
-                className="w-full px-3 py-2 rounded-lg bg-green-600/30 border border-green-500/50 text-green-300 hover:bg-green-600/50 transition-colors text-sm font-medium"
-              >
-                📈 Tous les WIN ({selectedChannel.id === 'calendrier' ? signals.filter(s => s.status === 'WIN' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount().filter(t => t.status === 'WIN').length})
-              </button>
-              <button
-                onClick={() => {
-                  setWinsLossFilter('LOSS');
-                  setWinsLossTradeIndex(0);
-                  setShowWinsLossModal(true);
-                }}
-                className="w-full px-3 py-2 rounded-lg bg-red-600/30 border border-red-500/50 text-red-300 hover:bg-red-600/50 transition-colors text-sm font-medium"
-              >
-                📉 Tous les LOSS ({selectedChannel.id === 'calendrier' ? signals.filter(s => s.status === 'LOSS' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount().filter(t => t.status === 'LOSS').length})
-              </button>
-              <button
-                onClick={() => setShowPerformanceTableModal(true)}
-                className="w-full px-3 py-2 rounded-lg bg-gray-600/50 border border-gray-500/50 text-gray-200 hover:bg-gray-600 transition-colors text-sm font-medium"
-              >
-                📊 TABLEAU DE PERFORMANCE
-              </button>
-            </div>
-          )}
-
           {/* Solde du compte - Journal perso uniquement (pas TPLN ni Tous les comptes) */}
           {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && activeJournalButton !== 'tpln' && selectedAccount !== 'Tous les comptes' && (
             <div className="mt-4">
@@ -5302,6 +5270,38 @@ export default function TradingPlatformShell() {
                 height={250} 
                 initialBalance={selectedAccount !== 'Tous les comptes' ? (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance ?? (() => { try { const s = localStorage.getItem('accountBalances'); return s ? JSON.parse(s)[selectedAccount] : undefined; } catch { return undefined; } })()) : undefined} 
               />
+            </div>
+          )}
+
+          {/* Boutons Tous les WIN / LOSS / Tableau - tout en bas, en colonne */}
+          {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'calendrier') && (
+            <div className="flex flex-col gap-2 mt-6">
+              <button
+                onClick={() => {
+                  setWinsLossFilter('WIN');
+                  setWinsLossTradeIndex(0);
+                  setShowWinsLossModal(true);
+                }}
+                className="w-full px-3 py-2 rounded-lg bg-green-600/30 border border-green-500/50 text-green-300 hover:bg-green-600/50 transition-colors text-sm font-medium"
+              >
+                📈 Tous les WIN ({selectedChannel.id === 'calendrier' ? signals.filter(s => s.status === 'WIN' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount().filter(t => t.status === 'WIN').length})
+              </button>
+              <button
+                onClick={() => {
+                  setWinsLossFilter('LOSS');
+                  setWinsLossTradeIndex(0);
+                  setShowWinsLossModal(true);
+                }}
+                className="w-full px-3 py-2 rounded-lg bg-red-600/30 border border-red-500/50 text-red-300 hover:bg-red-600/50 transition-colors text-sm font-medium"
+              >
+                📉 Tous les LOSS ({selectedChannel.id === 'calendrier' ? signals.filter(s => s.status === 'LOSS' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount().filter(t => t.status === 'LOSS').length})
+              </button>
+              <button
+                onClick={() => setShowPerformanceTableModal(true)}
+                className="w-full px-3 py-2 rounded-lg bg-gray-600/50 border border-gray-500/50 text-gray-200 hover:bg-gray-600 transition-colors text-sm font-medium"
+              >
+                📊 TABLEAU DE PERFORMANCE
+              </button>
             </div>
           )}
           
@@ -8159,6 +8159,21 @@ export default function TradingPlatformShell() {
                 <h2 className="text-lg font-semibold text-white">🧠 LES 4 STATS PSY ESSENTIELLES (fin de session)</h2>
                 <button onClick={() => setShowFinSessionModal(false)} className="text-gray-400 hover:text-white">✕</button>
               </div>
+              {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && tradingAccounts.length > 0 && (
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Compte</label>
+                  <select
+                    value={selectedAccount}
+                    onChange={(e) => setSelectedAccount(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  >
+                    <option value="Tous les comptes">Tous les comptes</option>
+                    {tradingAccounts.filter(a => a.account_name !== 'TPLN').map((account) => (
+                      <option key={account.id} value={account.account_name}>{account.account_name}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
               <div className="space-y-6">
                 {/* 1. Respect du plan */}
                 <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
