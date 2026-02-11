@@ -5887,6 +5887,7 @@ const dailyPnLChartData = useMemo(
                       <span className="text-lg">📋</span>
                       <div>
                         <p className="font-medium text-white">TPLN model</p>
+                        <p className="text-sm text-gray-400">Calendrier et stats du modèle</p>
                       </div>
                     </div>
                   </button>
@@ -6047,7 +6048,7 @@ const dailyPnLChartData = useMemo(
             }`}
             style={{ backgroundColor: '#111827', minHeight: '100vh' }}
           >
-            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'user-management') ? (
+            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'user-management' || selectedChannel.id === 'check-trade') ? (
               <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '0px' }}>
                 {/* Header avec bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
                 {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') && (
@@ -6941,7 +6942,7 @@ const dailyPnLChartData = useMemo(
 
         {/* Desktop Content Area */}
         <div className="hidden md:block flex-1 overflow-y-auto overflow-x-hidden">
-          {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'user-management') ? (
+          {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'user-management' || selectedChannel.id === 'check-trade') ? (
             getTradingCalendar()
           ) : (
             <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '80px' }}>
