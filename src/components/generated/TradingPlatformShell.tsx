@@ -14,6 +14,7 @@ import { useStatsSync } from '../../hooks/useStatsSync';
 import { useCalendarSync } from '../../hooks/useCalendarSync';
 import RumbleTalk from '../RumbleTalk';
 import DailyPnLChart from '../DailyPnLChart';
+import CheckTradeChecklist from '../CheckTradeChecklist';
 
 // Configuration Supabase
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
@@ -281,14 +282,15 @@ export default function TradingPlatformShell() {
   const allChannels = [
     { id: 'fondamentaux', name: 'fondamentaux', emoji: '📚', fullName: 'Fondamentaux' },
     { id: 'general-chat-2', name: 'general-chat-2', emoji: '📈', fullName: 'Indices' },
-    { id: 'general-chat-3', name: 'general-chat-3', emoji: '🪙', fullName: 'Crypto' },
-    { id: 'general-chat-4', name: 'general-chat-4', emoji: '💱', fullName: 'Forex' },
+    { id: 'general-chat-3', name: 'general-chat-3', emoji: '₿', fullName: 'Crypto' },
+    { id: 'general-chat-4', name: 'general-chat-4', emoji: '💵', fullName: 'Forex' },
     { id: 'video', name: 'video', emoji: '📺', fullName: 'Livestream' },
     { id: 'livestream-premium', name: 'livestream-premium', emoji: '⭐', fullName: 'Livestream Premium' },
     { id: 'journal', name: 'journal', emoji: '📓', fullName: 'Journal Perso' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📓', fullName: 'Journal Perso' },
     { id: 'tpln-model', name: 'tpln-model', emoji: '📋', fullName: 'TPLN model' },
-    { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' }
+    { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' },
+    { id: 'check-trade', name: 'check-trade', emoji: '✅', fullName: 'Check Trade' }
   ];
 
   // Filtrer les canaux selon le plan de l'utilisateur
@@ -4566,6 +4568,15 @@ export default function TradingPlatformShell() {
   const getTradingCalendar = () => {
     console.log('🔥 getTradingCalendar appelé pour channel:', selectedChannel.id);
     console.log('🔥 personalTrades dans calendrier:', personalTrades.length);
+    
+    if (selectedChannel.id === 'check-trade') {
+      return (
+        <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '0px' }}>
+          <CheckTradeChecklist />
+        </div>
+      );
+    }
+    
     const isJournalPerso = selectedChannel.id === 'journal' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model';
     const isMobile = window.innerWidth < 768;
     return (
@@ -5458,6 +5469,9 @@ export default function TradingPlatformShell() {
                   <button onClick={() => { handleChannelChange('journal', 'journal'); setActiveJournalButton('tpln'); }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' && activeJournalButton === 'tpln' ? 'bg-gray-700 text-white' : selectedChannel.id === 'tpln-model' ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 TPLN model</button>
                 </>
               )}
+              {channels.find(c => c.id === 'check-trade') && (
+                <button onClick={() => handleChannelChange('check-trade', 'check-trade')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'check-trade' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>✅ Check Trade</button>
+              )}
               {channels.find(c => c.id === 'livestream-premium') && (
                 <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>
                   <div className="flex items-start gap-2">
@@ -5810,6 +5824,24 @@ export default function TradingPlatformShell() {
                     </>
                   )}
 
+                  {channels.find(c => c.id === 'check-trade') && (
+                    <button
+                      onClick={() => {
+                        handleChannelChange('check-trade', 'check-trade');
+                        setMobileView('content');
+                      }}
+                      className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'check-trade' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">✅</span>
+                        <div>
+                          <p className="font-semibold text-white">Check Trade</p>
+                          <p className="text-sm text-gray-400">Checklist de trade</p>
+                        </div>
+                      </div>
+                    </button>
+                  )}
+
                   {channels.find(c => c.id === 'livestream-premium') && (
                     <button
                       onClick={() => {
@@ -5936,8 +5968,8 @@ export default function TradingPlatformShell() {
                   </div>
                 )}
                 
-                {/* Affichage du calendrier (Journal Perso, Journal Signaux, TPLN model) */}
-                {(selectedChannel.id === 'calendrier' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') && getTradingCalendar()}
+                {/* Affichage du calendrier (Journal Perso, Journal Signaux, TPLN model, Check Trade) */}
+                {(selectedChannel.id === 'calendrier' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'check-trade') && getTradingCalendar()}
                 
                 {/* Interface Livestream pour mobile */}
                 {(selectedChannel.id === 'video' || selectedChannel.id === 'livestream-premium') && (
@@ -6121,12 +6153,12 @@ export default function TradingPlatformShell() {
 
 
                 {/* Affichage du calendrier pour le canal calendrier */}
-                {view === 'signals' && (selectedChannel.id === 'calendrier' || selectedChannel.id === 'journal') ? (
+                {view === 'signals' && (selectedChannel.id === 'calendrier' || selectedChannel.id === 'journal' || selectedChannel.id === 'check-trade') ? (
                   getTradingCalendar()
                 ) : null}
                 
                 {/* Affichage des signaux */}
-                      {view === 'signals' && !['fondamentaux', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', 'livestream-premium', '', 'calendrier', 'journal'].includes(selectedChannel.id) ? (
+                      {view === 'signals' && !['fondamentaux', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', 'livestream-premium', '', 'calendrier', 'journal', 'check-trade'].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
                     {/* Bouton Voir plus fixe en haut */}
                     <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
@@ -6985,19 +7017,19 @@ export default function TradingPlatformShell() {
         </div>
         {/* Desktop Content Area */}
         <div className="hidden md:block flex-1 overflow-y-auto overflow-x-hidden">
-          {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? (
+          {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'check-trade') ? (
             getTradingCalendar()
           ) : (
             <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '80px' }}>
               {/* Bouton + Signal supprimé - seul admin peut créer des signaux */}
 
               {/* Affichage du calendrier pour le canal calendrier */}
-              {view === 'signals' && (selectedChannel.id === 'calendrier' || selectedChannel.id === 'journal') ? (
+              {view === 'signals' && (selectedChannel.id === 'calendrier' || selectedChannel.id === 'journal' || selectedChannel.id === 'check-trade') ? (
                 getTradingCalendar()
               ) : null}
               
               {/* Affichage des signaux */}
-                              {view === 'signals' && !['fondamentaux', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', 'livestream-premium', 'trading-hub', '', 'calendrier', 'journal'].includes(selectedChannel.id) ? (
+                              {view === 'signals' && !['fondamentaux', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', 'livestream-premium', 'trading-hub', '', 'calendrier', 'journal', 'check-trade'].includes(selectedChannel.id) ? (
                 <div className="space-y-4">
                   {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                     <div className="text-center py-8">

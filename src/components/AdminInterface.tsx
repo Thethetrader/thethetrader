@@ -12,6 +12,7 @@ import { LOSS_REASONS, getLossReasonLabel } from '../config/loss-reasons';
 import { signOutAdmin } from '../utils/admin-utils';
 import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, supabase, getPersonalTrades as getPersonalTradesFromSupabase, addPersonalTrade as addPersonalTradeToSupabase, listenToPersonalTrades, PersonalTrade, deletePersonalTrade, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, type FinSessionData } from '../lib/supabase';
 import DailyPnLChart from './DailyPnLChart';
+import CheckTradeChecklist from './CheckTradeChecklist';
 
 // Composant Profit Factor Gauge
 function ProfitFactorGauge({ totalWins, totalLosses }: { totalWins: number; totalLosses: number }) {
@@ -3244,15 +3245,16 @@ const dailyPnLChartData = useMemo(
 
   const channels = [
     { id: 'general-chat-2', name: 'general-chat-2', emoji: '📊', fullName: 'Indices' },
-    { id: 'general-chat-3', name: 'general-chat-3', emoji: '🪙', fullName: 'Crypto' },
-    { id: 'general-chat-4', name: 'general-chat-4', emoji: '💱', fullName: 'Forex' },
+    { id: 'general-chat-3', name: 'general-chat-3', emoji: '₿', fullName: 'Crypto' },
+    { id: 'general-chat-4', name: 'general-chat-4', emoji: '💵', fullName: 'Forex' },
     { id: 'fondamentaux', name: 'fondamentaux', emoji: '📚', fullName: 'Fondamentaux' },
     { id: 'letsgooo-model', name: 'letsgooo-model', emoji: '🚀', fullName: 'Letsgooo model' },
     { id: 'livestream', name: 'livestream', emoji: '📺', fullName: 'Livestream' },
 
     { id: 'tpln-model', name: 'tpln-model', emoji: '📋', fullName: 'TPLN model' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' },
-    { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' }
+    { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' },
+    { id: 'check-trade', name: 'check-trade', emoji: '✅', fullName: 'Check Trade' }
   ];
 
   const handleCreateSignal = () => {
@@ -4355,6 +4357,14 @@ const dailyPnLChartData = useMemo(
 
   const getTradingCalendar = () => {
     // Si c'est la gestion des utilisateurs, afficher l'interface dédiée
+    if (selectedChannel.id === 'check-trade') {
+      return (
+        <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
+          <CheckTradeChecklist />
+        </div>
+      );
+    }
+
     if (selectedChannel.id === 'user-management') {
       const stats = getUserStats();
       const filteredUsers = getFilteredUsers();
@@ -5556,8 +5566,8 @@ const dailyPnLChartData = useMemo(
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">SIGNAUX</h3>
             <div className="space-y-1">
               <button onClick={() => handleChannelChange('general-chat-2', 'general-chat-2')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat-2' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📊 Indices</button>
-              <button onClick={() => handleChannelChange('general-chat-3', 'general-chat-3')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat-3' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>🪙 Crypto</button>
-              <button onClick={() => handleChannelChange('general-chat-4', 'general-chat-4')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat-4' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💱 Forex</button>
+              <button onClick={() => handleChannelChange('general-chat-3', 'general-chat-3')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat-3' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>₿ Crypto</button>
+              <button onClick={() => handleChannelChange('general-chat-4', 'general-chat-4')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat-4' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💵 Forex</button>
             </div>
           </div>
 
@@ -5580,6 +5590,7 @@ const dailyPnLChartData = useMemo(
                 scrollToTop();
               }} className={`w-full text-left px-3 py-2 rounded text-sm ${view === 'calendar' && selectedChannel.id === 'calendar' ? 'bg-gray-700 text-white' : selectedChannel.id === 'tpln-model' ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : selectedChannel.id === 'tpln-model' ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Journal Perso</button>
+              <button onClick={() => handleChannelChange('check-trade', 'check-trade')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'check-trade' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>✅ Check Trade</button>
               <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>
                 <div className="flex items-start gap-2">
                   <span>⭐</span>
@@ -5913,6 +5924,22 @@ const dailyPnLChartData = useMemo(
                       <div>
                         <p className="font-medium text-white">Journal Perso</p>
                         <p className="text-sm text-gray-400">Journal de trading</p>
+                      </div>
+                    </div>
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      handleChannelChange('check-trade', 'check-trade');
+                      setMobileView('content');
+                    }}
+                    className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'check-trade' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg">✅</span>
+                      <div>
+                        <p className="font-medium text-white">Check Trade</p>
+                        <p className="text-sm text-gray-400">Checklist de trade</p>
                       </div>
                     </div>
                   </button>
