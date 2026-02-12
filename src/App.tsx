@@ -1780,7 +1780,7 @@ const App = () => {
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-red-400 font-bold text-lg">✗</span>
-                            <span className="font-semibold text-white">Contact direct</span>
+                            <span className="font-semibold text-white">Contact direct avec TheTheTrader</span>
                           </li>
                         </ul>
                         <div className="mt-auto flex flex-col" style={{ minHeight: '100px' }}>
@@ -5290,7 +5290,7 @@ const App = () => {
                       
                       <li className="flex items-center gap-2">
                         <span className="text-red-400 font-bold text-lg">✗</span>
-                        <span className="font-semibold text-white">Contact direct</span>
+                        <span className="font-semibold text-white">Contact direct avec TheTheTrader</span>
                       </li>
                     </ul>
                   </div>
