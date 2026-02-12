@@ -4572,7 +4572,7 @@ export default function TradingPlatformShell() {
     
     if (selectedChannel.id === 'check-trade') {
       return (
-        <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '0px' }}>
+        <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '72px' }}>
           <CheckTradeChecklist />
         </div>
       );
