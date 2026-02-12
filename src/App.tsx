@@ -1764,7 +1764,7 @@ const App = () => {
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Journal de trading</span>
+                            <span className="font-semibold text-white">Journal de trading (1 compte)</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400 font-bold text-lg">✓</span>
@@ -5265,7 +5265,7 @@ const App = () => {
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Journal de trading</span>
+                        <span className="font-semibold text-white">Journal de trading (1 compte)</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-red-400 font-bold text-lg">✗</span>
