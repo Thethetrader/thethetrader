@@ -961,7 +961,11 @@ export default function AdminInterface() {
     setSelectedChannel({id: channelId, name: channelName});
     setView('signals');
     setCalendarKey(prev => prev + 1);
-    scrollToTop();
+    
+    // Ne pas scroller pour check-trade car c'est une vue statique
+    if (channelId !== 'check-trade') {
+      scrollToTop();
+    }
     
     console.log(`✅ [ADMIN] Channel changed to ${channelId}`);
     
