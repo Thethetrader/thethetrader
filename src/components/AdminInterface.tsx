@@ -4361,11 +4361,13 @@ const dailyPnLChartData = useMemo(
   };
 
   const getTradingCalendar = () => {
-    // Si c'est la gestion des utilisateurs, afficher l'interface dédiée
+    // Si c'est check-trade, afficher la checklist sans scroll automatique
     if (selectedChannel.id === 'check-trade') {
       return (
-        <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
-          <CheckTradeChecklist />
+        <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto">
+          <div style={{ paddingTop: '80px' }}>
+            <CheckTradeChecklist />
+          </div>
         </div>
       );
     }
