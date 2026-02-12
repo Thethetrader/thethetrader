@@ -1768,7 +1768,7 @@ const App = () => {
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Signaux standard</span>
+                            <span className="font-semibold text-white">Signaux crypto forex futur (sans explications)</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400 font-bold text-lg">✓</span>
@@ -5277,7 +5277,7 @@ const App = () => {
                         </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Signaux (standard)</span>
+                        <span className="font-semibold text-white">Signaux crypto forex futur (sans explications)</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
