@@ -1753,6 +1753,9 @@ const App = () => {
                         <div className="text-gray-400 text-sm mb-4 h-[20px] flex items-center">
                           {paymentType === 'yearly' ? 'Best for beginner traders' : <>&nbsp;</>}
                         </div>
+                        <div className="text-gray-400 text-sm mb-4 h-[20px] flex items-center">
+                          {paymentType === 'yearly' ? 'Best for beginner traders' : <>&nbsp;</>}
+                        </div>
                         <ul className="text-gray-300 text-base space-y-4 mb-8 text-left flex-grow">
                           <li className="flex items-center gap-2">
                             <span className="text-green-400 font-bold text-lg">✓</span>
@@ -1760,7 +1763,7 @@ const App = () => {
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Signaux crypto forex futur (sans explications)</span>
+                            <span className="font-semibold text-white">Signaux crypto forex futur<br/>(sans explications)</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400 font-bold text-lg">✓</span>
@@ -5174,6 +5177,9 @@ const App = () => {
                         🎉 Première semaine à<br />8€ seulement !
                       </div>
                     </div>
+                    {paymentType === 'yearly' && (
+                      <div className="text-gray-400 text-sm mb-4">Best for personal tracking</div>
+                    )}
                     <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
@@ -5265,7 +5271,7 @@ const App = () => {
                         </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Signaux crypto forex futur (sans explications)</span>
+                        <span className="font-semibold text-white">Signaux crypto forex futur<br/>(sans explications)</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
@@ -5276,10 +5282,9 @@ const App = () => {
                         <span className="font-semibold text-white">Journal de trading (1 compte)</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-red-400 font-bold text-lg">✗</span>
+                        <span className="text-green-400 font-bold text-lg">✓</span>
                         <span className="font-semibold text-white">Live streams (1 jour / semaine)</span>
                       </li>
-                      
                       <li className="flex items-center gap-2">
                         <span className="text-red-400 font-bold text-lg">✗</span>
                         <span className="font-semibold text-white">Contact direct avec TheTheTrader</span>
