@@ -1683,15 +1683,15 @@ const App = () => {
                         <ul className="text-gray-300 text-base space-y-4 mb-8 text-left flex-grow">
                           <li className="flex items-center gap-2">
                             <span className="text-green-400 font-bold text-lg">✓</span>
+                            <span className="font-semibold text-white">Journal de trading personnel</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-green-400 font-bold text-lg">✓</span>
                             <span className="font-semibold text-white">Compte illimité</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400 font-bold text-lg">✓</span>
                             <span className="font-semibold text-white">Analyse des pertes</span>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Journal de trading</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-red-400 font-bold text-lg">✗</span>
@@ -5173,15 +5173,15 @@ const App = () => {
                     <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
+                        <span className="font-semibold text-white">Journal de trading personnel</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-green-400 font-bold text-lg">✓</span>
                         <span className="font-semibold text-white">Compte illimité</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
                         <span className="font-semibold text-white">Analyse des pertes</span>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Journal de trading personnel</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-red-400 font-bold text-lg">✗</span>
