@@ -977,7 +977,7 @@ export const addPersonalTrade = async (trade: Omit<PersonalTrade, 'id' | 'user_i
 /**
  * Récupérer tous les trades personnels depuis Supabase
  */
-export const getPersonalTrades = async (limit: number = 100): Promise<PersonalTrade[]> => {
+export const getPersonalTrades = async (limit: number = 50): Promise<PersonalTrade[]> => {
   try {
     const user = await getCurrentUser();
     if (!user) {
@@ -1002,11 +1002,6 @@ export const getPersonalTrades = async (limit: number = 100): Promise<PersonalTr
 
     console.log('✅ Trades personnels récupérés:', data.length);
     
-    // LOG TEMPORAIRE - Afficher les 3 premiers trades bruts
-    if (data.length > 0) {
-      console.log('🔍 PREMIER TRADE BRUT:', JSON.stringify(data[0], null, 2));
-    }
-
     // Convertir les nombres en strings pour la compatibilité avec l'interface
     const trades: PersonalTrade[] = data.map(trade => {
       const mappedTrade: PersonalTrade = {
@@ -1079,6 +1074,7 @@ export const listenToPersonalTrades = (
   onError?: (error: any) => void
 ) => {
   let userId: string | null = null;
+  let activeChannel: ReturnType<typeof supabase.channel> | null = null;
 
   // Obtenir l'ID utilisateur
   getCurrentUser().then(user => {
@@ -1092,12 +1088,12 @@ export const listenToPersonalTrades = (
     console.log('👂 Démarrage écoute temps réel trades Supabase pour user:', userId);
 
     // Charger les trades initiaux
-    getPersonalTrades().then(trades => {
+    getPersonalTrades(50).then(trades => {
       onTradesChange(trades);
     });
 
     // S'abonner aux changements UNIQUEMENT pour cet utilisateur
-    const channel = supabase
+    activeChannel = supabase
       .channel(`personal_trades_changes_${userId}`)
       .on(
         'postgres_changes',
@@ -1108,9 +1104,9 @@ export const listenToPersonalTrades = (
           filter: `user_id=eq.${userId}`
         },
         (payload) => {
-          console.log('🔄 Changement détecté pour user:', payload);
+          console.log('🔄 Changement détecté pour user');
           // Recharger seulement les trades de cet utilisateur
-          getPersonalTrades().then(trades => {
+          getPersonalTrades(50).then(trades => {
             onTradesChange(trades);
           });
         }
@@ -1123,7 +1119,9 @@ export const listenToPersonalTrades = (
   // Retourner une fonction pour se désabonner
   return () => {
     console.log('🛑 Arrêt écoute temps réel trades Supabase');
-    supabase.channel('personal_trades_changes').unsubscribe();
+    if (activeChannel) {
+      activeChannel.unsubscribe();
+    }
   };
 };
 
