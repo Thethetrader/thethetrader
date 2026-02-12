@@ -1779,8 +1779,8 @@ const App = () => {
                             <span className="font-semibold text-white">Live streams (1/semaine)</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-gray-300 font-semibold">Standard</span>
-                            <span className="font-semibold text-white">Support standard</span>
+                            <span className="text-red-400 font-bold text-lg">✗</span>
+                            <span className="font-semibold text-white">Contact direct</span>
                           </li>
                         </ul>
                         <div className="mt-auto flex flex-col" style={{ minHeight: '100px' }}>
@@ -5289,8 +5289,8 @@ const App = () => {
                       </li>
                       
                       <li className="flex items-center gap-2">
-                        <span className="text-gray-300 font-semibold">Standard</span>
-                        <span className="font-semibold text-white">Support standard</span>
+                        <span className="text-red-400 font-bold text-lg">✗</span>
+                        <span className="font-semibold text-white">Contact direct</span>
                       </li>
                     </ul>
                   </div>
