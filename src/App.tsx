@@ -1694,14 +1694,6 @@ const App = () => {
                             <span className="font-semibold text-white">Journal de trading</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Suivi de tes trades</span>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Statistiques personnelles</span>
-                          </li>
-                          <li className="flex items-center gap-2">
                             <span className="text-red-400 font-bold text-lg">✗</span>
                             <span className="font-semibold text-white">Formation TPLN model</span>
                           </li>
@@ -5190,14 +5182,6 @@ const App = () => {
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
                         <span className="font-semibold text-white">Journal de trading personnel</span>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Suivi de tes trades</span>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Statistiques personnelles</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-red-400 font-bold text-lg">✗</span>
