@@ -1674,7 +1674,7 @@ const App = () => {
                             ) : null}
                           </div>
                           <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full text-center">
-                            🎉 Premier mois à<br />10€ seulement !
+                            🎉 Première semaine à<br />8€ seulement !
                           </div>
                         </div>
                         <div className="text-gray-400 text-sm mb-4 h-[20px] flex items-center">
@@ -1747,7 +1747,7 @@ const App = () => {
                             ) : null}
                           </div>
                           <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full text-center">
-                            🎉 Première semaine à<br />4€ seulement !
+                            🎉 Première semaine à<br />15€ seulement !
                           </div>
                         </div>
                         <div className="text-gray-400 text-sm mb-4 h-[20px] flex items-center">
@@ -1816,7 +1816,7 @@ const App = () => {
                             ) : null}
                           </div>
                           <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full text-center">
-                            🎉 Première semaine à<br />4€ seulement !
+                            🎉 Première semaine à<br />15€ seulement !
                           </div>
                         </div>
                         <div className="text-gray-400 text-sm mb-4 h-[20px] flex items-center">
@@ -5167,7 +5167,7 @@ const App = () => {
                         </div>
                       )}
                       <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full text-center">
-                        🎉 Premier mois à<br />10€ seulement !
+                        🎉 Première semaine à<br />8€ seulement !
                       </div>
                     </div>
                     <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
@@ -5248,7 +5248,7 @@ const App = () => {
                         </div>
                       )}
                       <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full text-center">
-                        🎉 Première semaine à<br />4€ seulement !
+                        🎉 Première semaine à<br />8€ seulement !
                       </div>
                     </div>
                     {paymentType === 'yearly' && (
@@ -5331,7 +5331,7 @@ const App = () => {
                         </div>
                       )}
                       <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full text-center">
-                        🎉 Première semaine à<br />4€ seulement !
+                        🎉 Première semaine à<br />15€ seulement !
                       </div>
                     </div>
                     {paymentType === 'yearly' && (
