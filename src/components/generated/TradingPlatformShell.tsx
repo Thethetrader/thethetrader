@@ -1639,6 +1639,7 @@ export default function TradingPlatformShell() {
   const [showTradeModal, setShowTradeModal] = useState(false);
   const [showFinSessionModal, setShowFinSessionModal] = useState(false);
   const [finSessionCache, setFinSessionCache] = useState<Record<string, FinSessionData>>({});
+  const [finSessionSelectedSession, setFinSessionSelectedSession] = useState<string>('18h');
   const [finSessionRespectPlan, setFinSessionRespectPlan] = useState<'Oui' | 'Non' | 'Partiel' | ''>('');
   const [finSessionQualiteDecisions, setFinSessionQualiteDecisions] = useState<'Lecture' | 'Mixte' | 'Émotion' | ''>('');
   const [finSessionGestionErreur, setFinSessionGestionErreur] = useState<'Oui' | 'Non' | ''>('');
@@ -8191,6 +8192,20 @@ export default function TradingPlatformShell() {
                 <h2 className="text-lg font-semibold text-white">🧠 LES 4 STATS PSY ESSENTIELLES (fin de session)</h2>
                 <button onClick={() => setShowFinSessionModal(false)} className="text-gray-400 hover:text-white">✕</button>
               </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-300 mb-2">Session</label>
+                <select
+                  value={finSessionSelectedSession}
+                  onChange={(e) => setFinSessionSelectedSession(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                >
+                  <option value="18h">18h</option>
+                  <option value="Open Asian">Open Asian</option>
+                  <option value="London">London</option>
+                  <option value="NY AM">NY AM</option>
+                  <option value="NY PM">NY PM</option>
+                </select>
+              </div>
               {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && tradingAccounts.length > 0 && (
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-300 mb-2">Compte</label>
@@ -8316,7 +8331,7 @@ export default function TradingPlatformShell() {
                   onClick={async () => {
                     if (finSessionRespectPlan && finSessionQualiteDecisions && finSessionGestionErreur && finSessionPression !== '') {
                       const maxDd = finSessionMaxDrawdown.trim() === '' ? undefined : parseFloat(finSessionMaxDrawdown);
-                      const result = await saveFinSessionForDate(new Date(), { respectPlan: finSessionRespectPlan, qualiteDecisions: finSessionQualiteDecisions, gestionErreur: finSessionGestionErreur, pression: finSessionPression, ...(maxDd != null && !Number.isNaN(maxDd) && { maxDrawdown: maxDd }) });
+                      const result = await saveFinSessionForDate(new Date(), { respectPlan: finSessionRespectPlan, qualiteDecisions: finSessionQualiteDecisions, gestionErreur: finSessionGestionErreur, pression: finSessionPression, sessionType: finSessionSelectedSession, ...(maxDd != null && !Number.isNaN(maxDd) && { maxDrawdown: maxDd }) });
                       if (result.ok) setShowFinSessionModal(false);
                       else alert(result.reason === 'non_connecte' ? 'Tu n’es pas connecté. Déconnecte-toi puis reconnecte-toi (Supabase).' : `Erreur enregistrement. ${result.message ? result.message : 'Vérifie ta connexion ou réessaie.'}`);
                     } else {
@@ -8325,7 +8340,7 @@ export default function TradingPlatformShell() {
                   }}
                   className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white text-sm"
                 >
-                  Enregistrer (aujourd&apos;hui)
+                  Enregistrer ({finSessionSelectedSession})
                 </button>
               </div>
             </div>
