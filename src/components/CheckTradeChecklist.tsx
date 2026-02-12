@@ -1,19 +1,21 @@
 import { useState } from 'react';
 
 export default function CheckTradeChecklist() {
-  // États pour les 4 critères
+  // États pour les 5 critères
   const [b1, setB1] = useState(false);
-  const [b2, setB2] = useState(false);
+  const [b2a, setB2a] = useState(false);
+  const [b2b, setB2b] = useState(false);
   const [b3, setB3] = useState(false);
   const [rr, setRr] = useState(false);
   
   // Vérifier si tout est coché
-  const allOk = b1 && b2 && b3 && rr;
+  const allOk = b1 && b2a && b2b && b3 && rr;
   
   // Reset
   const handleReset = () => {
     setB1(false);
-    setB2(false);
+    setB2a(false);
+    setB2b(false);
     setB3(false);
     setRr(false);
   };
@@ -27,7 +29,7 @@ export default function CheckTradeChecklist() {
       }`}>
         <h2 className={`text-sm font-semibold mb-4 text-center uppercase tracking-wide ${
           allOk ? 'text-green-300' : 'text-red-300'
-        }`}>TPLN Checklist</h2>
+        }`}>TPLN CHECK</h2>
         
         {/* Checklist */}
         <div className="space-y-1 mb-4">
@@ -45,19 +47,31 @@ export default function CheckTradeChecklist() {
           
           <label className="flex items-center gap-3 p-2.5 cursor-pointer hover:bg-gray-800/50 transition-colors rounded">
             <span className="text-white text-base font-medium">
-              ✓ B2 Extrémité / Sweep ITH + Disp
+              ✓ B2 Extrémité / Sweep ITHL + Disp
             </span>
             <input
               type="checkbox"
-              checked={b2}
-              onChange={(e) => setB2(e.target.checked)}
+              checked={b2a}
+              onChange={(e) => setB2a(e.target.checked)}
               className="ml-auto w-5 h-5 rounded border-gray-600 bg-gray-700 text-green-500 focus:ring-green-500 focus:ring-2"
             />
           </label>
           
           <label className="flex items-center gap-3 p-2.5 cursor-pointer hover:bg-gray-800/50 transition-colors rounded">
             <span className="text-white text-base font-medium">
-              ✓ B3 Sweep ITH timing
+              ✓ B2 Fake MSS / ITMSS
+            </span>
+            <input
+              type="checkbox"
+              checked={b2b}
+              onChange={(e) => setB2b(e.target.checked)}
+              className="ml-auto w-5 h-5 rounded border-gray-600 bg-gray-700 text-green-500 focus:ring-green-500 focus:ring-2"
+            />
+          </label>
+          
+          <label className="flex items-center gap-3 p-2.5 cursor-pointer hover:bg-gray-800/50 transition-colors rounded">
+            <span className="text-white text-base font-medium">
+              ✓ B3 Sweep ITHL (fin C2 / open C3)
             </span>
             <input
               type="checkbox"
