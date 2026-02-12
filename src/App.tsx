@@ -1713,10 +1713,6 @@ const App = () => {
                             <span className="text-red-400 font-bold text-lg">✗</span>
                             <span className="font-semibold text-white">Live streams</span>
                           </li>
-                          <li className="flex items-center gap-2">
-                            <span className="text-red-400 font-bold text-lg">✗</span>
-                            <span className="font-semibold text-white">Accès prioritaire aux nouveaux setups</span>
-                          </li>
                         </ul>
                         <div className="mt-auto flex flex-col" style={{ minHeight: '100px' }}>
                           <button 
@@ -1781,10 +1777,6 @@ const App = () => {
                           <li className="flex items-center gap-2">
                             <span className="text-green-400 font-bold text-lg">✓</span>
                             <span className="font-semibold text-white">Live streams (1/semaine)</span>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <span className="text-red-400 font-bold text-lg">✗</span>
-                            <span className="font-semibold text-white">Accès prioritaire aux nouveaux setups</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-gray-300 font-semibold">Standard</span>
@@ -1854,10 +1846,6 @@ const App = () => {
                           <li className="flex items-center gap-2">
                             <span className="text-green-400 font-bold text-lg">✓</span>
                             <span className="font-semibold text-white">Live streams (5 jours/semaine)</span>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Accès prioritaire aux nouveaux setups</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-green-400 font-bold text-lg">✓</span>
@@ -5223,10 +5211,6 @@ const App = () => {
                         <span className="text-red-400 font-bold text-lg">✗</span>
                         <span className="font-semibold text-white">Live streams</span>
                       </li>
-                      <li className="flex items-center gap-2">
-                        <span className="text-red-400 font-bold text-lg">✗</span>
-                        <span className="font-semibold text-white">Accès prioritaire aux nouveaux setups</span>
-                      </li>
                     </ul>
                   </div>
                   <button 
@@ -5304,10 +5288,6 @@ const App = () => {
                         <span className="font-semibold text-white">Live streams (1/semaine)</span>
                       </li>
                       
-                      <li className="flex items-center gap-2">
-                        <span className="text-red-400 font-bold text-lg">✗</span>
-                        <span className="font-semibold text-white">Accès prioritaire aux nouveaux setups</span>
-                      </li>
                       <li className="flex items-center gap-2">
                         <span className="text-gray-300 font-semibold">Standard</span>
                         <span className="font-semibold text-white">Support standard</span>
@@ -5389,10 +5369,6 @@ const App = () => {
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
                         <span className="font-semibold text-white">Live streams (5 jours/semaine)</span>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Accès prioritaire aux nouveaux setups</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
