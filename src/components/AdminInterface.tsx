@@ -1518,6 +1518,7 @@ export default function AdminInterface() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
   // Fonction utilitaire pour créer une note d'ajout
   const createNoteAddition = (extracted: Record<string, any>) => {
@@ -5561,7 +5562,7 @@ const dailyPnLChartData = useMemo(
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div ref={sidebarRef} className="flex-1 overflow-y-auto p-4 space-y-4">
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">ÉDUCATION</h3>
             <div className="space-y-1">
@@ -5597,7 +5598,17 @@ const dailyPnLChartData = useMemo(
                 scrollToTop();
               }} className={`w-full text-left px-3 py-2 rounded text-sm ${view === 'calendar' && selectedChannel.id === 'calendar' ? 'bg-gray-700 text-white' : selectedChannel.id === 'tpln-model' ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : selectedChannel.id === 'tpln-model' ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Journal Perso</button>
-              <button onClick={() => handleChannelChange('check-trade', 'check-trade')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'check-trade' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>✅ Check Trade</button>
+              <button onClick={() => {
+                // Sauvegarder la position du scroll de la sidebar
+                const scrollPos = sidebarRef.current?.scrollTop || 0;
+                handleChannelChange('check-trade', 'check-trade');
+                // Restaurer la position du scroll après le changement
+                setTimeout(() => {
+                  if (sidebarRef.current) {
+                    sidebarRef.current.scrollTop = scrollPos;
+                  }
+                }, 0);
+              }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'check-trade' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>✅ Check Trade</button>
               <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>
                 <div className="flex items-start gap-2">
                   <span>⭐</span>
