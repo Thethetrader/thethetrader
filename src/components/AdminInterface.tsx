@@ -1389,8 +1389,8 @@ export default function AdminInterface() {
     loadAccounts();
   }, []);
 
-  // Fonctions pour les calculs de balance et stop-loss
-  const getTradesForSelectedAccount = () => {
+  // Fonctions pour les calculs de balance et stop-loss (optimisé avec useMemo)
+  const getTradesForSelectedAccount = useMemo(() => {
     // Sur TPLN model, afficher uniquement les trades du compte TPLN model
     if (selectedChannel.id === 'tpln-model') {
       const seen = new Set<string>();
@@ -1412,15 +1412,12 @@ export default function AdminInterface() {
     
     return personalTrades.filter(trade => {
       const tradeAccount = trade.account || 'Compte Principal';
-      // Debug: vérifier tous les trades pour voir s'ils ont un compte
-      if (!trade.account) {
-        console.log('🚨 Trade sans compte détecté:', trade.symbol, trade.date, '-> assigné à Compte Principal');
-      }
       return tradeAccount === selectedAccount;
     });
-  };
+  }, [personalTrades, selectedAccount, selectedChannel.id]);
 
   const calculateAccountBalance = (): number => {
+    const accountTrades = getTradesForSelectedAccount;
     const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
     
     // Si current_balance existe, l'utiliser directement (c'est le solde actuel avec les trades déjà comptés)
@@ -1477,7 +1474,7 @@ export default function AdminInterface() {
   };
 
   const calculateTotalPnLTradesForAccount = (): number => {
-    return getTradesForSelectedAccount().reduce((total, trade) => total + parseFloat(trade.pnl || '0'), 0);
+    return getTradesForSelectedAccount.reduce((total, trade) => total + parseFloat(trade.pnl || '0'), 0);
   };
 
   // Debug: Afficher les trades au chargement
@@ -2154,7 +2151,7 @@ const dailyPnLChartData = useMemo(
 
   // Fonctions pour les statistiques des trades personnels - DYNAMIQUES selon mois sélectionné
   const calculateTotalPnLTrades = (): number => {
-    const monthTrades = getTradesForSelectedAccount().filter(t => {
+    const monthTrades = getTradesForSelectedAccount.filter(t => {
       const tradeDate = new Date(t.date);
       return tradeDate.getMonth() === currentDate.getMonth() &&
              tradeDate.getFullYear() === currentDate.getFullYear();
@@ -2163,7 +2160,7 @@ const dailyPnLChartData = useMemo(
   };
 
   const calculateWinRateTrades = (): number => {
-    const monthTrades = getTradesForSelectedAccount().filter(t => {
+    const monthTrades = getTradesForSelectedAccount.filter(t => {
       const tradeDate = new Date(t.date);
       return tradeDate.getMonth() === currentDate.getMonth() &&
              tradeDate.getFullYear() === currentDate.getFullYear();
@@ -2175,7 +2172,7 @@ const dailyPnLChartData = useMemo(
 
 
   const calculateAvgWinTrades = (): number => {
-    const monthTrades = getTradesForSelectedAccount().filter(t => {
+    const monthTrades = getTradesForSelectedAccount.filter(t => {
       const tradeDate = new Date(t.date);
       return tradeDate.getMonth() === currentDate.getMonth() &&
              tradeDate.getFullYear() === currentDate.getFullYear();
@@ -2187,7 +2184,7 @@ const dailyPnLChartData = useMemo(
   };
 
   const calculateAvgLossTrades = (): number => {
-    const monthTrades = getTradesForSelectedAccount().filter(t => {
+    const monthTrades = getTradesForSelectedAccount.filter(t => {
       const tradeDate = new Date(t.date);
       return tradeDate.getMonth() === currentDate.getMonth() &&
              tradeDate.getFullYear() === currentDate.getFullYear();
@@ -2200,7 +2197,7 @@ const dailyPnLChartData = useMemo(
 
   // Fonctions pour analyser les pertes par raison
   const getLossAnalysis = () => {
-    const accountTrades = getTradesForSelectedAccount();
+    const accountTrades = getTradesForSelectedAccount;
     
     // Filtrer par mois sélectionné (utiliser currentDate du calendrier)
     const selectedMonth = currentDate.getMonth();
@@ -2259,13 +2256,13 @@ const dailyPnLChartData = useMemo(
 
   const getTodayTrades = () => {
     const currentDateStr = currentDate.toISOString().split('T')[0];
-    return getTradesForSelectedAccount().filter(t => 
+    return getTradesForSelectedAccount.filter(t => 
       t.date === currentDateStr
     );
   };
 
   const getThisMonthTrades = () => {
-    return getTradesForSelectedAccount().filter(t => {
+    return getTradesForSelectedAccount.filter(t => {
       const tradeDate = new Date(t.date);
       return tradeDate.getMonth() === currentDate.getMonth() &&
              tradeDate.getFullYear() === currentDate.getFullYear();
@@ -2363,7 +2360,7 @@ const dailyPnLChartData = useMemo(
     const isSignals = selectedChannel.id === 'calendrier';
     const items = isSignals
       ? signals.filter((s: { channel_id?: string; status?: string; pnl?: string }) => s.channel_id === 'calendrier' && s.status !== 'ACTIVE' && s.pnl != null)
-      : getTradesForSelectedAccount();
+      : getTradesForSelectedAccount;
     if (items.length === 0) return [];
     const byMonth = new Map<string, { pnl: number; wins: number; losses: number; totalWinPnL: number; totalLossPnL: number; entries: { date: string; pnl: number }[] }>();
     const getMonthKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
@@ -3626,7 +3623,7 @@ const dailyPnLChartData = useMemo(
       const day = String(date.getDate()).padStart(2, '0');
       const dateStr = `${year}-${month}-${day}`;
       
-      const accountTrades = getTradesForSelectedAccount();
+      const accountTrades = getTradesForSelectedAccount;
       if (!Array.isArray(accountTrades)) return [];
       
       return accountTrades.filter(trade => trade && trade.date && trade.date === dateStr);
@@ -4766,7 +4763,7 @@ const dailyPnLChartData = useMemo(
                 
                 const dateStrForDay = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
                 const dayTrades = (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? 
-                  getTradesForSelectedAccount().filter(trade => trade.date === dateStrForDay) : [];
+                  getTradesForSelectedAccount.filter(trade => trade.date === dateStrForDay) : [];
 
                 const daySignals = selectedChannel.id !== 'trading-journal' ? 
                   allSignalsForStats.filter(signal => {
@@ -4899,7 +4896,7 @@ const dailyPnLChartData = useMemo(
                         let totalPnL = 0;
                         let tradeCount = 0;
                         if (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') {
-                          const dayTrades = getTradesForSelectedAccount().filter(trade => trade.date === dateStrForDay);
+                          const dayTrades = getTradesForSelectedAccount.filter(trade => trade.date === dateStrForDay);
                           tradeCount = dayTrades.length;
                           totalPnL = dayTrades.reduce((total, trade) => {
                             if (trade.pnl) {
@@ -5449,7 +5446,7 @@ const dailyPnLChartData = useMemo(
                 }}
                 className="w-full px-3 py-2 rounded-lg bg-green-600/30 border border-green-500/50 text-green-300 hover:bg-green-600/50 transition-colors text-sm font-medium"
               >
-                📈 Tous les WIN ({(selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendar') ? signals.filter(s => s.status === 'WIN' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount().filter(t => t.status === 'WIN').length})
+                📈 Tous les WIN ({(selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendar') ? signals.filter(s => s.status === 'WIN' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount.filter(t => t.status === 'WIN').length})
               </button>
               <button
                 onClick={() => {
@@ -5459,7 +5456,7 @@ const dailyPnLChartData = useMemo(
                 }}
                 className="w-full px-3 py-2 rounded-lg bg-red-600/30 border border-red-500/50 text-red-300 hover:bg-red-600/50 transition-colors text-sm font-medium"
               >
-                📉 Tous les LOSS ({(selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendar') ? signals.filter(s => s.status === 'LOSS' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount().filter(t => t.status === 'LOSS').length})
+                📉 Tous les LOSS ({(selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendar') ? signals.filter(s => s.status === 'LOSS' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount.filter(t => t.status === 'LOSS').length})
               </button>
               <button
                 onClick={() => setShowPerformanceTableModal(true)}
@@ -8565,7 +8562,7 @@ const dailyPnLChartData = useMemo(
               const isSignalsMode = selectedChannel.id === 'calendrier';
               const filteredItems = isSignalsMode 
                 ? signals.filter(s => s.status === winsLossFilter && s.channel_id === 'calendrier')
-                : getTradesForSelectedAccount().filter(t => t.status === winsLossFilter);
+                : getTradesForSelectedAccount.filter(t => t.status === winsLossFilter);
               const currentItem = filteredItems[winsLossTradeIndex];
               
               if (!currentItem) {

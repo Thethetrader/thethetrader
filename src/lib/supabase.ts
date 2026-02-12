@@ -1096,26 +1096,23 @@ export const listenToPersonalTrades = (
       onTradesChange(trades);
     });
 
-    // S'abonner aux changements (sans filter pour éviter les problèmes)
+    // S'abonner aux changements UNIQUEMENT pour cet utilisateur
     const channel = supabase
-      .channel('personal_trades_changes')
+      .channel(`personal_trades_changes_${userId}`)
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
-          table: 'personal_trades'
+          table: 'personal_trades',
+          filter: `user_id=eq.${userId}`
         },
         (payload) => {
-          console.log('🔄 Changement détecté dans trades:', payload);
-          // Vérifier si c'est pour notre utilisateur
-          if (payload.new?.user_id === userId || payload.old?.user_id === userId) {
-            console.log('✅ Changement pour notre utilisateur, rechargement...');
-            // Recharger tous les trades
-            getPersonalTrades().then(trades => {
-              onTradesChange(trades);
-            });
-          }
+          console.log('🔄 Changement détecté pour user:', payload);
+          // Recharger seulement les trades de cet utilisateur
+          getPersonalTrades().then(trades => {
+            onTradesChange(trades);
+          });
         }
       )
       .subscribe();

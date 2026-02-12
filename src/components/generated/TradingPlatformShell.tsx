@@ -2703,8 +2703,8 @@ export default function TradingPlatformShell() {
     setStatsUpdateTrigger(prev => prev + 1);
   }, [selectedAccount, personalTrades]);
 
-  // Fonctions pour les statistiques des trades personnels (filtrées par compte)
-  const getTradesForSelectedAccount = () => {
+  // Fonctions pour les statistiques des trades personnels (optimisé avec useMemo)
+  const getTradesForSelectedAccount = useMemo(() => {
     // Sur TPLN model, afficher uniquement les trades du compte TPLN
     if (selectedChannel.id === 'tpln-model') {
       const seen = new Set<string>();
@@ -2724,7 +2724,7 @@ export default function TradingPlatformShell() {
     return personalTrades.filter(trade => 
       (trade.account || 'Compte Principal') === selectedAccount
     );
-  };
+  }, [personalTrades, selectedAccount, selectedChannel.id]);
 
   // Calculer le solde total du compte (balance initiale + P&L des trades)
   const calculateAccountBalance = (): number => {
@@ -2775,17 +2775,17 @@ export default function TradingPlatformShell() {
   };
 
   const calculateTotalPnLTrades = (): number => {
-    return getTradesForSelectedAccount().reduce((total, trade) => total + parsePnL(trade.pnl), 0);
+    return getTradesForSelectedAccount.reduce((total, trade) => total + parsePnL(trade.pnl), 0);
   };
 
   const calculateWinRateTrades = (): number => {
-    const accountTrades = getTradesForSelectedAccount();
+    const accountTrades = getTradesForSelectedAccount;
     if (accountTrades.length === 0) return 0;
     const wins = accountTrades.filter(t => t.status === 'WIN').length;
     return Math.round((wins / accountTrades.length) * 100);
   };
   const calculateAvgWinTrades = (): number => {
-    const accountTrades = getTradesForSelectedAccount();
+    const accountTrades = getTradesForSelectedAccount;
     const winTrades = accountTrades.filter(t => t.status === 'WIN');
     if (winTrades.length === 0) return 0;
     const totalWinPnL = winTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0);
@@ -2793,7 +2793,7 @@ export default function TradingPlatformShell() {
   };
 
   const calculateAvgLossTrades = (): number => {
-    const accountTrades = getTradesForSelectedAccount();
+    const accountTrades = getTradesForSelectedAccount;
     const lossTrades = accountTrades.filter(t => t.status === 'LOSS');
     if (lossTrades.length === 0) return 0;
     const totalLossPnL = lossTrades.reduce((total, trade) => total + Math.abs(parsePnL(trade.pnl)), 0);
@@ -2802,12 +2802,12 @@ export default function TradingPlatformShell() {
 
   const getTodayTrades = () => {
     const today = new Date().toISOString().split('T')[0];
-    return getTradesForSelectedAccount().filter(t => t.date === today);
+    return getTradesForSelectedAccount.filter(t => t.date === today);
   };
 
   const getThisMonthTrades = () => {
     const today = new Date();
-    return getTradesForSelectedAccount().filter(t => {
+    return getTradesForSelectedAccount.filter(t => {
       const tradeDate = new Date(t.date);
       return tradeDate.getMonth() === today.getMonth() &&
              tradeDate.getFullYear() === today.getFullYear();
@@ -2816,7 +2816,7 @@ export default function TradingPlatformShell() {
 
   // Fonctions pour calculer les stats du mois affiché dans le calendrier (trades personnels)
   const getTradesForMonth = (date: Date) => {
-    return getTradesForSelectedAccount().filter(t => {
+    return getTradesForSelectedAccount.filter(t => {
       const tradeDate = new Date(t.date);
       return tradeDate.getMonth() === date.getMonth() &&
              tradeDate.getFullYear() === date.getFullYear();
@@ -2902,7 +2902,7 @@ export default function TradingPlatformShell() {
     const isSignals = selectedChannel.id === 'calendrier';
     const items = isSignals
       ? signals.filter(s => s.channel_id === 'calendrier' && s.status !== 'ACTIVE' && s.pnl != null)
-      : getTradesForSelectedAccount();
+      : getTradesForSelectedAccount;
     if (items.length === 0) return [];
     const byMonth = new Map<string, { pnl: number; wins: number; losses: number; totalWinPnL: number; totalLossPnL: number; entries: { date: string; pnl: number }[] }>();
     const getMonthKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
@@ -2978,7 +2978,7 @@ export default function TradingPlatformShell() {
   // Fonctions pour analyser les pertes par raison
   const getLossAnalysis = () => {
     // Utiliser la même logique que le calendrier
-    const accountTrades = getTradesForSelectedAccount();
+    const accountTrades = getTradesForSelectedAccount;
     
     // Filtrer par mois sélectionné (utiliser currentDate du calendrier)
     const selectedMonth = currentDate.getMonth();
@@ -3179,7 +3179,7 @@ export default function TradingPlatformShell() {
           weekDateStrs.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
         }
       }
-      const weekTrades = getTradesForSelectedAccount().filter(t => t.date && weekDateStrs.has(t.date));
+      const weekTrades = getTradesForSelectedAccount.filter(t => t.date && weekDateStrs.has(t.date));
       
       const weekPnL = weekTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0);
       const wins = weekTrades.filter(t => t.status === 'WIN').length;
@@ -4163,7 +4163,7 @@ export default function TradingPlatformShell() {
       console.log('Recherche trades pour date:', dateStr, 'Compte:', selectedAccount);
       
       // Utiliser les trades du compte sélectionné au lieu de tous les trades
-      const accountTrades = getTradesForSelectedAccount();
+      const accountTrades = getTradesForSelectedAccount;
       console.log('Trades du compte:', accountTrades);
       
       if (!Array.isArray(accountTrades)) {
@@ -4189,7 +4189,7 @@ export default function TradingPlatformShell() {
   const getTradesForWeek = (weekNum: number) => {
     try {
       // Utiliser les trades du compte sélectionné
-      const accountTrades = getTradesForSelectedAccount();
+      const accountTrades = getTradesForSelectedAccount;
       
       if (!Array.isArray(accountTrades)) {
         console.error('accountTrades n\'est pas un tableau:', accountTrades);
@@ -4743,7 +4743,7 @@ export default function TradingPlatformShell() {
                               // Vérifier s'il y a des trades personnels ou des signaux pour ce jour (comparaison string comme getTradesForDate pour éviter les bugs timezone)
                 const dateStrForDay = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
                 const dayTrades = (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? 
-                  getTradesForSelectedAccount().filter(trade => trade.date === dateStrForDay) : [];
+                  getTradesForSelectedAccount.filter(trade => trade.date === dateStrForDay) : [];
 
                 const daySignals = (selectedChannel.id !== 'trading-journal' && selectedChannel.id !== 'journal' && selectedChannel.id !== 'tpln-model') ? 
                   realTimeSignals.filter(signal => {
@@ -4861,7 +4861,7 @@ export default function TradingPlatformShell() {
                         let totalPnL = 0;
                         let tradeCount = 0;
                         if (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') {
-                          const dayTrades = getTradesForSelectedAccount().filter(trade => trade.date === dateStrForDay);
+                          const dayTrades = getTradesForSelectedAccount.filter(trade => trade.date === dateStrForDay);
                           tradeCount = dayTrades.length;
                           totalPnL = dayTrades.reduce((total, trade) => {
                             if (trade.pnl) {
@@ -5296,7 +5296,7 @@ export default function TradingPlatformShell() {
                 }}
                 className="w-full px-3 py-2 rounded-lg bg-green-600/30 border border-green-500/50 text-green-300 hover:bg-green-600/50 transition-colors text-sm font-medium"
               >
-                📈 Tous les WIN ({selectedChannel.id === 'calendrier' ? signals.filter(s => s.status === 'WIN' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount().filter(t => t.status === 'WIN').length})
+                📈 Tous les WIN ({selectedChannel.id === 'calendrier' ? signals.filter(s => s.status === 'WIN' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount.filter(t => t.status === 'WIN').length})
               </button>
               <button
                 onClick={() => {
@@ -5306,7 +5306,7 @@ export default function TradingPlatformShell() {
                 }}
                 className="w-full px-3 py-2 rounded-lg bg-red-600/30 border border-red-500/50 text-red-300 hover:bg-red-600/50 transition-colors text-sm font-medium"
               >
-                📉 Tous les LOSS ({selectedChannel.id === 'calendrier' ? signals.filter(s => s.status === 'LOSS' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount().filter(t => t.status === 'LOSS').length})
+                📉 Tous les LOSS ({selectedChannel.id === 'calendrier' ? signals.filter(s => s.status === 'LOSS' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount.filter(t => t.status === 'LOSS').length})
               </button>
               <button
                 onClick={() => setShowPerformanceTableModal(true)}
@@ -8545,7 +8545,7 @@ export default function TradingPlatformShell() {
               const isSignalsMode = selectedChannel.id === 'calendrier';
               const filteredItems = isSignalsMode 
                 ? signals.filter(s => s.status === winsLossFilter && s.channel_id === 'calendrier')
-                : getTradesForSelectedAccount().filter(t => t.status === winsLossFilter);
+                : getTradesForSelectedAccount.filter(t => t.status === winsLossFilter);
               const currentItem = filteredItems[winsLossTradeIndex];
               
               if (!currentItem) {
