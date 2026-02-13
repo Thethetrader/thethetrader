@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './index.css';
 import TradingPlatformShell from './components/generated/TradingPlatformShell';
 import AdminLogin from './components/AdminLogin';
@@ -43,6 +43,18 @@ const App = () => {
   const [showInstallPopup, setShowInstallPopup] = useState(false);
   const [ugcSoundOn, setUgcSoundOn] = useState(false);
   const [ugc2SoundOn, setUgc2SoundOn] = useState(false);
+  const ugc1VideoRef = useRef<HTMLVideoElement>(null);
+  const ugc2VideoRef = useRef<HTMLVideoElement>(null);
+
+  // Lancer la lecture des vidéos UGC sur mobile (autoplay souvent ignoré)
+  useEffect(() => {
+    if (currentPage !== 'home') return;
+    const t = setTimeout(() => {
+      ugc1VideoRef.current?.play().catch(() => {});
+      ugc2VideoRef.current?.play().catch(() => {});
+    }, 500);
+    return () => clearTimeout(t);
+  }, [currentPage]);
 
   const handleScrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -5079,12 +5091,14 @@ const App = () => {
               <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-stretch max-w-4xl mx-auto">
                 <div className="relative flex-1 min-w-0 rounded-xl overflow-hidden shadow-2xl bg-gray-900">
                   <video
+                    ref={ugc1VideoRef}
                     className="w-full aspect-video object-cover"
                     src="/ugc1.MOV"
                     autoPlay
                     playsInline
                     loop
                     muted={!ugcSoundOn}
+                    onLoadedData={(e) => { e.currentTarget.play().catch(() => {}); }}
                   />
                   <button
                     type="button"
@@ -5106,12 +5120,14 @@ const App = () => {
                 </div>
                 <div className="relative flex-1 min-w-0 rounded-xl overflow-hidden shadow-2xl bg-gray-900">
                   <video
+                    ref={ugc2VideoRef}
                     className="w-full aspect-video object-cover"
                     src="/ugc2.MOV"
                     autoPlay
                     playsInline
                     loop
                     muted={!ugc2SoundOn}
+                    onLoadedData={(e) => { e.currentTarget.play().catch(() => {}); }}
                   />
                   <button
                     type="button"
