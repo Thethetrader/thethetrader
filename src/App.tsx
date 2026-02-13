@@ -41,6 +41,8 @@ const App = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showInstallPopup, setShowInstallPopup] = useState(false);
+  const [ugcSoundOn, setUgcSoundOn] = useState(false);
+  const [ugc2SoundOn, setUgc2SoundOn] = useState(false);
 
   const handleScrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -5069,56 +5071,65 @@ const App = () => {
               </button>
             </div>
 
-            {/* Section Avis Clients */}
+            {/* Section Ce qu'ils en pensent - Vidéos UGC côte à côte */}
             <div className="max-w-7xl mx-auto mb-10 px-4 sm:px-6">
-              <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-4">
+              <h2 className="text-4xl sm:text-5xl font-bold text-white text-center mb-6 sm:mb-8">
                 Ce qu'ils en pensent
-                  </h2>
-              <div className="flex items-center justify-center gap-2 mb-8 sm:mb-12">
-                <img src="https://cdn.trustpilot.net/brand-assets/4.1.0/logo-white.svg" alt="Avis vérifiés Trustpilot" className="h-8" loading="lazy" />
-                <span className="text-gray-300 text-lg">Vérifié par Trustpilot</span>
-                  </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                {/* Avis 1 - Simplicité interface */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-400 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-2xl text-yellow-400 mb-4 group-hover:scale-110 transition-transform duration-300">⭐⭐⭐⭐⭐</div>
-                  <div className="text-xl font-bold text-white mb-2 group-hover:text-purple-400 transition-colors duration-300">CryptoWolf</div>
-                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Interface ultra simple ! Tout est à portée de main, pas besoin d'être expert pour s'y retrouver.</div>
+              </h2>
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-stretch max-w-4xl mx-auto">
+                <div className="relative flex-1 min-w-0 rounded-xl overflow-hidden shadow-2xl bg-gray-900">
+                  <video
+                    className="w-full aspect-video object-cover"
+                    src="/ugc1.MOV"
+                    autoPlay
+                    playsInline
+                    loop
+                    muted={!ugcSoundOn}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setUgcSoundOn((on) => !on)}
+                    className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/60 hover:bg-black/80 flex items-center justify-center text-white transition-colors"
+                    title={ugcSoundOn ? 'Couper le son' : 'Activer le son'}
+                    aria-label={ugcSoundOn ? 'Couper le son' : 'Activer le son'}
+                  >
+                    {ugcSoundOn ? (
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" />
+                      </svg>
+                    )}
+                  </button>
                 </div>
-
-                {/* Avis 2 - Qualité app mobile */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25 hover:border-blue-400 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-2xl text-yellow-400 mb-4 group-hover:scale-110 transition-transform duration-300">⭐⭐⭐⭐⭐</div>
-                  <div className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors duration-300">iOSTrader</div>
-                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">L'app iOS est parfaite ! Notifications instantanées pour les signaux, interface fluide. Je ne rate plus jamais un live !</div>
-                          </div>
-
-                {/* Avis 3 - Qualité explications live */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 hover:border-green-400 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-2xl text-yellow-400 mb-4 group-hover:scale-110 transition-transform duration-300">⭐⭐⭐⭐⭐</div>
-                  <div className="text-xl font-bold text-white mb-2 group-hover:text-green-400 transition-colors duration-300">ForexMaster</div>
-                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Les lives sont incroyables ! TheThe explique tout clairement, même les concepts complexes deviennent simples.</div>
-                        </div>
-
-                {/* Avis 4 - Proximité avec TheThe */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-400 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-2xl text-yellow-400 mb-4 group-hover:scale-110 transition-transform duration-300">⭐⭐⭐⭐⭐</div>
-                  <div className="text-xl font-bold text-white mb-2 group-hover:text-purple-400 transition-colors duration-300">TraderPro23</div>
-                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">J'apprécie vraiment la proximité avec TheThe. Il répond à nos questions et nous guide personnellement.</div>
-                </div>
-
-                {/* Avis 5 - Simplicité setup */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25 hover:border-blue-400 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-2xl text-yellow-400 mb-4 group-hover:scale-110 transition-transform duration-300">⭐⭐⭐⭐⭐</div>
-                  <div className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors duration-300">PipHunter</div>
-                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Setup ultra simple ! En 5 minutes j'étais connecté et je recevais déjà les signaux. Parfait pour débuter.</div>
-                </div>
-
-                {/* Avis 6 - Bénéfices globaux */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 hover:border-green-400 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-2xl text-yellow-400 mb-4 group-hover:scale-110 transition-transform duration-300">⭐⭐⭐⭐⭐</div>
-                  <div className="text-xl font-bold text-white mb-2 group-hover:text-green-400 transition-colors duration-300">BullRunner</div>
-                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Grâce à TheThe, j'ai enfin une approche structurée du trading. Interface claire, explications parfaites !</div>
+                <div className="relative flex-1 min-w-0 rounded-xl overflow-hidden shadow-2xl bg-gray-900">
+                  <video
+                    className="w-full aspect-video object-cover"
+                    src="/ugc2.MOV"
+                    autoPlay
+                    playsInline
+                    loop
+                    muted={!ugc2SoundOn}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setUgc2SoundOn((on) => !on)}
+                    className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/60 hover:bg-black/80 flex items-center justify-center text-white transition-colors"
+                    title={ugc2SoundOn ? 'Couper le son' : 'Activer le son'}
+                    aria-label={ugc2SoundOn ? 'Couper le son' : 'Activer le son'}
+                  >
+                    {ugc2SoundOn ? (
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" />
+                      </svg>
+                    )}
+                  </button>
                 </div>
               </div>
             </div>
