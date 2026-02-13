@@ -43,8 +43,11 @@ const App = () => {
   const [showInstallPopup, setShowInstallPopup] = useState(false);
   const [ugcSoundOn, setUgcSoundOn] = useState(false);
   const [ugc2SoundOn, setUgc2SoundOn] = useState(false);
+  const [ugc1Fallback, setUgc1Fallback] = useState(false);
+  const [ugc2Fallback, setUgc2Fallback] = useState(false);
   const ugc1VideoRef = useRef<HTMLVideoElement>(null);
   const ugc2VideoRef = useRef<HTMLVideoElement>(null);
+  const isMobileUgc = typeof navigator !== 'undefined' && /iPhone|iPad|Android|webOS|Mobile/i.test(navigator.userAgent);
 
   // Lancer la lecture des vidéos UGC sur mobile (autoplay souvent ignoré)
   useEffect(() => {
@@ -5093,12 +5096,14 @@ const App = () => {
                   <video
                     ref={ugc1VideoRef}
                     className="w-full aspect-video object-cover"
-                    src="/ugc1.MOV"
+                    src={isMobileUgc && !ugc1Fallback ? '/ugc1-mobile.mp4' : '/UGC%20HD.MOV'}
                     autoPlay
                     playsInline
                     loop
                     muted={!ugcSoundOn}
+                    preload="auto"
                     onLoadedData={(e) => { e.currentTarget.play().catch(() => {}); }}
+                    onError={() => { if (isMobileUgc) setUgc1Fallback(true); }}
                   />
                   <button
                     type="button"
@@ -5122,12 +5127,14 @@ const App = () => {
                   <video
                     ref={ugc2VideoRef}
                     className="w-full aspect-video object-cover"
-                    src="/ugc2.MOV"
+                    src={isMobileUgc && !ugc2Fallback ? '/ugc2-mobile.mp4' : '/UGC%202%20HD.MOV'}
                     autoPlay
                     playsInline
                     loop
                     muted={!ugc2SoundOn}
+                    preload="auto"
                     onLoadedData={(e) => { e.currentTarget.play().catch(() => {}); }}
+                    onError={() => { if (isMobileUgc) setUgc2Fallback(true); }}
                   />
                   <button
                     type="button"
