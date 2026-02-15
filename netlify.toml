@@ -6,6 +6,13 @@
   NODE_VERSION = "20"
   NPM_VERSION = "10"
 
+# Ne pas réécrire les fonctions Netlify vers index.html (évite 404 sur "Je m'abonne")
+[[redirects]]
+  from = "/.netlify/functions/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

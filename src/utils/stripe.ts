@@ -25,8 +25,14 @@ export const redirectToCheckout = async (
     }
     console.log('✅ Clé Stripe trouvée');
 
-    // Appeler la fonction Netlify pour créer la session
-    const response = await fetch('/.netlify/functions/create-checkout-session', {
+    // En local (Vite) les fonctions Netlify n'existent pas → appeler le site en prod
+    const base =
+      typeof window !== 'undefined' && window.location?.hostname !== 'localhost' && window.location?.hostname !== '127.0.0.1'
+        ? ''
+        : (import.meta.env.VITE_SITE_URL || 'https://tradingpourlesnuls.com').replace(/\/$/, '');
+    const url = `${base}/.netlify/functions/create-checkout-session`;
+
+    const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ planType, billingCycle }),

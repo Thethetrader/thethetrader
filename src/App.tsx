@@ -1646,6 +1646,15 @@ const App = () => {
                     <h2 className="text-5xl md:text-7xl font-bold text-center mb-8 sm:mb-12 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
                       Les services de TPLN
                     </h2>
+
+                    {/* Encadré 100 premiers - couleurs site (violet/bleu/rose) */}
+                    <div className="max-w-2xl mx-auto mb-6 sm:mb-8 rounded-xl border border-purple-500/40 bg-gray-800/60 px-5 py-3.5 text-center backdrop-blur-sm">
+                      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
+                        <span className="text-white font-semibold text-base sm:text-lg">Offre réservée aux</span>
+                        <span className="inline-flex items-center justify-center min-w-[2.5rem] px-2.5 py-0.5 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold text-lg">100</span>
+                        <span className="text-white font-semibold text-base sm:text-lg">premiers utilisateurs</span>
+                      </div>
+                    </div>
                     
                     {/* Payment Type Selector */}
                     <div className="flex justify-center mb-8">
@@ -1680,6 +1689,7 @@ const App = () => {
                       <div className={`bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 sm:p-8 relative border-2 transition-all duration-500 flex flex-col h-full ${isTransitioning ? 'border-purple-500 shadow-[0_0_30px_rgba(147,51,234,0.3)] scale-105 rotate-y-3 brightness-110 backdrop-blur-sm' : 'border-gray-700 hover:border-purple-500 hover:shadow-[0_0_30px_rgba(147,51,234,0.3)] hover:scale-105 hover:rotate-y-3 hover:brightness-110 hover:backdrop-blur-sm'} transform-gpu`}>
                         <h3 className="text-xl font-bold text-white mb-3 h-8 flex items-center">TRADING JOURNAL</h3>
                         <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 flex flex-col ${isTransitioning ? 'scale-110' : 'scale-100'}`} style={{ height: '140px', justifyContent: 'flex-start' }}>
+                          <div className="text-gray-500 text-xl mb-1"><span className="line-through">25€</span></div>
                           <div className="h-auto">
                             <span className="text-2xl align-top text-gray-300">€</span>
                             {paymentType === 'monthly' ? '15' : '12,5'}
@@ -1753,6 +1763,7 @@ const App = () => {
                         </div>
                         <h3 className="text-xl font-bold text-white mb-3 h-8 flex items-center">BASIC</h3>
                         <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 flex flex-col ${isTransitioning ? 'scale-110' : 'scale-100'}`} style={{ height: '140px', justifyContent: 'flex-start' }}>
+                          <div className="text-gray-500 text-xl mb-1"><span className="line-through">49€</span></div>
                           <div className="h-auto">
                             <span className="text-2xl align-top text-gray-300">€</span>
                             {paymentType === 'monthly' ? '39' : '34,83'}
@@ -1829,6 +1840,7 @@ const App = () => {
                         </div>
                         <h3 className="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent mb-3 h-8 flex items-center">PREMIUM</h3>
                         <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 flex flex-col ${isTransitioning ? 'scale-110' : 'scale-100'}`} style={{ height: '140px', justifyContent: 'flex-start' }}>
+                          <div className="text-gray-500 text-xl mb-1"><span className="line-through">89€</span></div>
                           <div className="h-auto">
                             <span className="text-2xl align-top text-gray-300">€</span>
                             {paymentType === 'monthly' ? '79' : '57,5'}
@@ -5162,6 +5174,15 @@ const App = () => {
               <h2 className="text-5xl md:text-7xl font-bold text-center mb-8 sm:mb-12 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
                 Les services de TPLN
               </h2>
+
+              {/* Encadré 100 premiers - couleurs site (violet/bleu/rose) */}
+              <div className="max-w-2xl mx-auto mb-6 sm:mb-8 rounded-xl border border-purple-500/40 bg-gray-800/60 px-5 py-3.5 text-center backdrop-blur-sm">
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
+                  <span className="text-white font-semibold text-base sm:text-lg">Offre réservée aux</span>
+                  <span className="inline-flex items-center justify-center min-w-[2.5rem] px-2.5 py-0.5 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold text-lg">100</span>
+                  <span className="text-white font-semibold text-base sm:text-lg">premiers utilisateurs</span>
+                </div>
+              </div>
               
               {/* Payment Type Selector */}
               <div className="flex justify-center mb-8">
@@ -5199,6 +5220,7 @@ const App = () => {
                   <div className="text-center">
                     <h3 className="text-xl font-bold text-white mb-3">TRADING JOURNAL</h3>
                     <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
+                      <div className="text-gray-500 text-xl mb-1"><span className="line-through">25€</span></div>
                       <span className="text-2xl align-top text-gray-300">€</span>
                       {paymentType === 'monthly' ? '15' : '12,5'}
                       <span className="text-lg text-gray-400 font-normal"> / mois</span>
@@ -5283,6 +5305,7 @@ const App = () => {
                     </div>
                     <h3 className="text-xl font-bold text-white mb-3">BASIC</h3>
                     <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
+                      <div className="text-gray-500 text-xl mb-1"><span className="line-through">49€</span></div>
                       <span className="text-2xl align-top text-gray-300">€</span>
                       {paymentType === 'monthly' ? '39' : '34,83'}
                       <span className="text-lg text-gray-400 font-normal"> / mois</span>
@@ -5369,6 +5392,7 @@ const App = () => {
                   <div className="text-center">
                     <h3 className="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent mb-3">PREMIUM</h3>
                     <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
+                      <div className="text-gray-500 text-xl mb-1"><span className="line-through">89€</span></div>
                       <span className="text-2xl align-top text-gray-300">€</span>
                       {paymentType === 'monthly' ? '79' : '57,5'}
                       <span className="text-lg text-gray-400 font-normal"> / mois</span>
