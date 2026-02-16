@@ -1,10 +1,14 @@
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-12-18.acacia',
-});
+const getStripeKey = () => process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SK || '';
 
 export const handler = async (event) => {
+  const key = getStripeKey();
+  if (!key || !key.startsWith('sk_')) {
+    return { statusCode: 500, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'STRIPE_SECRET_KEY manquante' }) };
+  }
+  const stripe = new Stripe(key, { apiVersion: '2024-12-18.acacia' });
+
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',

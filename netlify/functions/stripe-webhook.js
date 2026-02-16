@@ -1,9 +1,7 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-12-18.acacia',
-});
+const getStripeKey = () => process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SK || '';
 
 const supabaseAdmin = createClient(
   process.env.SUPABASE_URL || '',
@@ -17,6 +15,13 @@ const supabase = createClient(
 );
 
 export const handler = async (event) => {
+  const secretKey = getStripeKey();
+  if (!secretKey || !secretKey.startsWith('sk_')) {
+    console.error('STRIPE_SECRET_KEY / STRIPE_SK manquante');
+    return { statusCode: 500, body: JSON.stringify({ error: 'Stripe non configuré' }) };
+  }
+  const stripe = new Stripe(secretKey, { apiVersion: '2024-12-18.acacia' });
+
   const sig = event.headers['stripe-signature'];
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
