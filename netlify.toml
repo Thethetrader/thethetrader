@@ -1,13 +1,13 @@
 [build]
-  # Exclure STRIPE_SK du build pour qu'elle ne fuie pas dans le bundle (elle reste dispo pour les functions au runtime)
-  command = "env -u STRIPE_SK npm run build"
+  # Exclure la clé Stripe du build pour éviter la fuite dans le bundle (reste dispo pour les functions au runtime)
+  command = "env -u STRIPE_SECRET_KEY npm run build"
   publish = "dist"
 
 [build.environment]
   NODE_VERSION = "20"
   NPM_VERSION = "10"
   SECRETS_SCAN_ENABLED = "false"
-  SECRETS_SCAN_OMIT_KEYS = "STRIPE_SK"
+  SECRETS_SCAN_OMIT_KEYS = "STRIPE_SECRET_KEY"
 
 # Ne pas réécrire les fonctions Netlify vers index.html (évite 404 sur "Je m'abonne")
 [[redirects]]
