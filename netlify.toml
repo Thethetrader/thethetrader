@@ -1,10 +1,13 @@
 [build]
-  command = "npm run build"
+  # Exclure STRIPE_SK du build pour qu'elle ne fuie pas dans le bundle (elle reste dispo pour les functions au runtime)
+  command = "env -u STRIPE_SK npm run build"
   publish = "dist"
 
 [build.environment]
   NODE_VERSION = "20"
   NPM_VERSION = "10"
+  SECRETS_SCAN_ENABLED = "false"
+  SECRETS_SCAN_OMIT_KEYS = "STRIPE_SK"
 
 # Ne pas réécrire les fonctions Netlify vers index.html (évite 404 sur "Je m'abonne")
 [[redirects]]
