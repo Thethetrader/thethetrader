@@ -1,8 +1,6 @@
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-12-18.acacia',
-});
+const getStripeKey = () => process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SK || '';
 
 export const handler = async (event) => {
   const headers = {
@@ -24,6 +22,17 @@ export const handler = async (event) => {
   }
 
   try {
+    const secretKey = getStripeKey();
+    if (!secretKey || !secretKey.startsWith('sk_')) {
+      console.error('STRIPE_SECRET_KEY / STRIPE_SK manquante ou invalide dans Netlify Environment variables');
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ error: 'Stripe non configuré: ajoute STRIPE_SECRET_KEY dans Netlify > Environment variables' }),
+      };
+    }
+    const stripe = new Stripe(secretKey, { apiVersion: '2024-12-18.acacia' });
+
     const { planType, billingCycle } = JSON.parse(event.body);
 
     if (!planType || !billingCycle) {
