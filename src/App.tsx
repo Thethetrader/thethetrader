@@ -1283,7 +1283,7 @@ const App = () => {
 
     const page = pages[currentPage];
     return (
-      <div className={`min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 ${isPWA && currentPage === 'home' && !user ? 'pwa-landing-no-scroll' : isPWA && user ? 'pwa-connected-scroll' : ''}`}>
+      <div className={`min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 ${isPWA && currentPage === 'home' && !user ? 'pwa-landing-no-scroll' : isPWA && user ? 'pwa-connected-scroll' : ''}`}>
         {/* Header with back button */}
         <nav className="flex items-center justify-between p-4 sm:p-6 relative z-50 border-b border-purple-700/50">
           <button 
@@ -1357,10 +1357,10 @@ const App = () => {
 
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 ${isPWA && currentPage === 'home' && !user ? 'pwa-landing-no-scroll' : isPWA && user ? 'pwa-connected-scroll' : ''}`} data-pwa={isPWA ? "true" : undefined}>
+    <div className={`min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 ${isPWA && currentPage === 'home' && !user ? 'pwa-landing-no-scroll' : isPWA && user ? 'pwa-connected-scroll' : ''}`} data-pwa={isPWA ? "true" : undefined}>
       {/* Navigation - Masquée en PWA */}
       {!isPWA && (
-        <nav className="app-fixed-header relative flex items-center justify-between px-4 py-3 sm:px-6 sm:py-3 z-50 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 border-b border-purple-800/20 h-16" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}>
+        <nav className="app-fixed-header relative flex items-center justify-between px-4 py-3 sm:px-6 sm:py-3 z-50 bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 border-b border-purple-800/20 h-16" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}>
           <div className="flex items-center h-full flex-shrink-0">
             <img 
               src="/logo-removebg-preview.png" 
@@ -1424,14 +1424,14 @@ const App = () => {
       
       {/* Menu Mobile Dropdown */}
       {!isPWA && showMobileMenu && (
-        <div className="fixed top-16 left-0 right-0 bg-slate-900/95 backdrop-blur-lg border-b border-purple-800/20 z-40 md:hidden">
-          <div className="flex flex-col p-6 space-y-4">
+        <div className="fixed top-16 left-0 right-0 bg-slate-900/95 backdrop-blur-lg border-b border-purple-800/20 z-40 md:hidden max-h-[70vh] overflow-y-auto">
+          <div className="flex flex-col px-4 py-3 space-y-0.5">
             <button 
               onClick={() => {
                 setShowMobileMenu(false);
                 handleScrollToSection('services');
               }}
-              className="text-gray-300 hover:text-white transition-all duration-200 py-2 text-lg font-medium"
+              className="text-gray-300 hover:text-white transition-all duration-200 py-1.5 text-base font-medium text-left"
             >
               Services
             </button>
@@ -1440,7 +1440,7 @@ const App = () => {
                 setShowMobileMenu(false);
                 handleScrollToSection('about-thethetrader');
               }}
-              className="text-gray-300 hover:text-white transition-all duration-200 py-2 text-lg font-medium"
+              className="text-gray-300 hover:text-white transition-all duration-200 py-1.5 text-base font-medium text-left"
             >
               À propos
             </button>
@@ -1449,7 +1449,7 @@ const App = () => {
                 setShowMobileMenu(false);
                 handleScrollToSection('section-app');
               }}
-              className="text-gray-300 hover:text-white transition-all duration-200 py-2 text-lg font-medium"
+              className="text-gray-300 hover:text-white transition-all duration-200 py-1.5 text-base font-medium text-left"
             >
               La plateforme
             </button>
@@ -1458,23 +1458,23 @@ const App = () => {
                 setShowMobileMenu(false);
                 handleScrollToSection('pricing');
               }}
-              className="text-gray-300 hover:text-white transition-all duration-200 py-2 text-lg font-medium"
+              className="text-gray-300 hover:text-white transition-all duration-200 py-1.5 text-base font-medium text-left"
             >
               Prix
             </button>
-            <div className="pt-3 border-t border-purple-800/20 flex flex-col space-y-3">
+            <div className="pt-2 mt-2 border-t border-purple-800/20 flex flex-col gap-2">
               <button 
                 onClick={(e) => {
                   e.preventDefault();
                   setShowMobileMenu(false);
                   setShowInstallPopup(true);
                 }}
-                className="bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 text-base flex items-center justify-center gap-2"
+                className="bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 text-sm flex items-center justify-center gap-2"
               >
-                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
                   <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
                 </svg>
-                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
                   <path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/>
                 </svg>
                 Télécharger l'app
@@ -1484,7 +1484,7 @@ const App = () => {
                   setShowMobileMenu(false);
                   setShowAuthModal(true);
                 }}
-                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 text-center text-base"
+                className="bg-gradient-to-r from-blue-600 to-purple-700 hover:from-blue-700 hover:to-purple-800 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 text-center text-sm"
               >
                 Se connecter
               </button>
@@ -1582,7 +1582,7 @@ const App = () => {
 
       {/* Version PWA - Page scrollable quand connecté */}
       {isPWA ? (
-        <div className={`w-screen ${user ? 'min-h-screen' : 'h-screen overflow-hidden flex items-center justify-center'} bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900`}>
+        <div className={`w-screen ${user ? 'min-h-screen' : 'h-screen overflow-hidden flex items-center justify-center'} bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950`}>
           {/* Hero Section - Centré verticalement quand pas connecté, scrollable quand connecté */}
           <div className={`text-center ${user ? 'pt-20 pb-8' : 'w-full'} px-4 sm:px-6 max-w-full`}>
             <div className="mb-0 flex justify-center hover:scale-105 transition-transform duration-300">
@@ -1615,12 +1615,12 @@ const App = () => {
                 href="https://x.com/thethetrader" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-5 py-2.5 rounded-lg font-medium transition-all duration-200 hover:scale-105 text-sm"
+                className="inline-flex items-center gap-2 justify-center bg-black hover:bg-gray-900 text-white px-3 py-2 rounded-lg font-medium transition-all duration-200 hover:scale-[1.02] border border-white/10 shadow text-xs"
               >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                 </svg>
-                Suivez @thethetrader
+                <span>Suivez @thethetrader</span>
               </a>
             </div>
           </div>
@@ -1642,7 +1642,7 @@ const App = () => {
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mt-6 mb-8">
                   <button 
                     onClick={() => handleScrollToSection('pricing')}
-                    className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="bg-gradient-to-r from-blue-600 to-purple-700 hover:from-blue-700 hover:to-purple-800 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
                   >
                     Commencer Maintenant
                   </button>
@@ -1945,7 +1945,7 @@ const App = () => {
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mt-6 mb-8">
               <button 
                 onClick={() => handleScrollToSection('pricing')}
-                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="bg-gradient-to-r from-blue-600 to-purple-700 hover:from-blue-700 hover:to-purple-800 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 Commencer Maintenant
               </button>
@@ -2417,34 +2417,34 @@ const App = () => {
                       href="https://x.com/thethetrader" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                      className="inline-flex items-center gap-2 w-full sm:w-auto justify-center bg-black hover:bg-gray-900 text-white px-3 py-2 rounded-lg font-medium text-sm transition-all duration-200 hover:scale-[1.02] border border-white/10 shadow"
                     >
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                       </svg>
-                      Suivez @thethetrader
+                      <span>Suivez @thethetrader</span>
                     </a>
                     <a 
                       href="https://www.instagram.com/tradingpourlesnuls_/" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                      className="inline-flex items-center gap-2 w-full sm:w-auto justify-center bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 hover:from-purple-500 hover:via-pink-400 hover:to-orange-300 text-white px-3 py-2 rounded-lg font-medium text-sm transition-all duration-200 hover:scale-[1.02] shadow border border-white/20"
                     >
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3._encode.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s与应用-.644-1.44-1.439-1.44z"/>
+                      <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                       </svg>
-                      Suivez @tradingpourlesnuls_
+                      <span>Suivez @tradingpourlesnuls_</span>
                     </a>
                     <a 
                       href="https://www.tiktok.com/@tradingpourlesnuls_?_t=ZN-90uWKmkvqoI&_r=1" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                      className="inline-flex items-center gap-2 w-full sm:w-auto justify-center bg-gray-900 hover:bg-black text-white px-3 py-2 rounded-lg font-medium text-sm transition-all duration-200 hover:scale-[1.02] border border-cyan-500/30 shadow"
                     >
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
                       </svg>
-                      Suivez @tradingpourlesnuls_
+                      <span>Suivez @tradingpourlesnuls_</span>
                     </a>
                   </div>
                 </div>
@@ -2514,20 +2514,24 @@ const App = () => {
 
                   {/* Image Model */}
                   <div className="max-w-6xl mx-auto mb-12 relative">
-                    <img 
-                      src="/model.png" 
-                      alt="Aperçu de l'application TPLN - Modèle de trading"
-                      className="w-full rounded-xl shadow-2xl"
-                      loading="lazy"
-                    />
+                    <div className="rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-white p-0">
+                      <img 
+                        src="/model.png" 
+                        alt="Aperçu de l'application TPLN - Modèle de trading"
+                        className="w-full rounded-lg"
+                        loading="lazy"
+                      />
+                    </div>
                     {/* Image Model2 en bas à droite format iPhone */}
-                    <img 
-                      src="/model2.png" 
-                      alt="Application TPLN sur iPhone"
-                      className="absolute bottom-4 right-8 sm:right-12 w-16 sm:w-48 rounded-2xl shadow-2xl"
-                      loading="lazy"
-                      style={{ aspectRatio: '9/19.5' }}
-                    />
+                    <div className="absolute bottom-4 right-8 sm:right-12 w-16 sm:w-48 rounded-2xl overflow-hidden shadow-2xl border border-white p-0">
+                      <img 
+                        src="/model2.png" 
+                        alt="Application TPLN sur iPhone"
+                        className="w-full h-auto rounded-lg"
+                        loading="lazy"
+                        style={{ aspectRatio: '9/19.5' }}
+                      />
+                    </div>
                   </div>
 
               </div>
@@ -2559,9 +2563,9 @@ const App = () => {
                   </div>
 
                   {/* Vidéo complète */}
-                  <div className="max-w-6xl mx-auto">
+                  <div className="max-w-6xl mx-auto rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-white p-0">
                     <video 
-                      className="w-full rounded-xl shadow-2xl"
+                      className="w-full rounded-lg"
                       autoPlay
                       loop
                       muted
@@ -2597,13 +2601,13 @@ const App = () => {
                       </span>
                     </h2>
                     <p className="section-intro-p text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
-                      Un journal complet et personnalisable pour suivre vos signaux, gérer plusieurs comptes, et analyser vos performances avec précision. Suivez vos statistiques, étudiez vos stop loss et transformez chaque trade — gagnant comme perdant — en véritable source d'apprentissage.
+                      Un journal complet et personnalisable pour suivre vos signaux, gérer plusieurs comptes, et analyser vos performances avec précision. Suivez vos statistiques, étudiez vos stop loss et transformez chaque trade gagnant comme perdant en véritable source d'apprentissage.
                     </p>
                   </div>
 
                   {/* 3 textes au-dessus de l'image */}
                   <div className="max-w-7xl mx-auto mb-12">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-12">
+                    <div className="grid grid-cols-1 md:grid-cols-3 mb-12 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
                       {/* Carte 1 - Statistiques */}
                       <div className="group relative rounded-2xl p-[3px] overflow-visible transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1">
                         {/* Faisceau lumineux animé autour */}
@@ -2624,21 +2628,21 @@ const App = () => {
                           {/* Ombres internes */}
                           <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 via-transparent to-black/20"></div>
                         
-                          <div className="relative z-10 p-8">
+                          <div className="relative z-10 p-4 sm:p-6 md:p-8">
                             {/* Icône avec carré arrondi autour */}
-                            <div className="flex items-center justify-center mb-6">
-                              <div className="w-16 h-16 bg-purple-200/30 rounded-2xl flex items-center justify-center p-2 group-hover:scale-110 transition-transform duration-300">
-                                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/50">
-                                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <div className="flex items-center justify-center mb-3 md:mb-6">
+                              <div className="w-12 h-12 md:w-16 md:h-16 bg-purple-200/30 rounded-2xl flex items-center justify-center p-2 group-hover:scale-110 transition-transform duration-300">
+                                <div className="w-9 h-9 md:w-12 md:h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/50">
+                                  <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                   </svg>
                                 </div>
                               </div>
                             </div>
-                            <h3 className="text-2xl font-bold text-white mb-4 text-center group-hover:text-purple-200 transition-colors duration-300">
+                            <h3 className="font-bold text-white text-center group-hover:text-purple-200 transition-colors duration-300 text-xl mb-2 md:text-2xl md:mb-4">
                               Analysez vos statistiques
                             </h3>
-                            <p className="text-gray-300 text-base text-center leading-relaxed group-hover:text-gray-200 transition-colors duration-300">
+                            <p className="text-gray-300 text-center leading-relaxed group-hover:text-gray-200 transition-colors duration-300 text-sm md:text-base">
                               Visualisez vos performances avec plus de 50 rapports détaillés pour comprendre vos résultats.
                             </p>
                           </div>
@@ -2665,21 +2669,21 @@ const App = () => {
                           {/* Ombres internes */}
                           <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 via-transparent to-black/20"></div>
                           
-                          <div className="relative z-10 p-8">
+                          <div className="relative z-10 p-4 sm:p-6 md:p-8">
                             {/* Icône avec carré arrondi autour */}
-                            <div className="flex items-center justify-center mb-6">
-                              <div className="w-16 h-16 bg-blue-200/30 rounded-2xl flex items-center justify-center p-2 group-hover:scale-110 transition-transform duration-300">
-                                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/50">
-                                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <div className="flex items-center justify-center mb-3 md:mb-6">
+                              <div className="w-12 h-12 md:w-16 md:h-16 bg-blue-200/30 rounded-2xl flex items-center justify-center p-2 group-hover:scale-110 transition-transform duration-300">
+                                <div className="w-9 h-9 md:w-12 md:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/50">
+                                  <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
                                   </svg>
                                 </div>
                               </div>
                             </div>
-                            <h3 className="text-2xl font-bold text-white mb-4 text-center group-hover:text-blue-200 transition-colors duration-300">
+                            <h3 className="font-bold text-white text-center group-hover:text-blue-200 transition-colors duration-300 text-xl mb-2 md:text-2xl md:mb-4">
                               Comprenez vos erreurs
                             </h3>
-                            <p className="text-gray-300 text-base text-center leading-relaxed group-hover:text-gray-200 transition-colors duration-300">
+                            <p className="text-gray-300 text-center leading-relaxed group-hover:text-gray-200 transition-colors duration-300 text-sm md:text-base">
                               Identifiez vos points faibles en analysant vos pertes pour améliorer votre gestion du risque.
                             </p>
                           </div>
@@ -2706,21 +2710,21 @@ const App = () => {
                           {/* Ombres internes */}
                           <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 via-transparent to-black/20"></div>
                           
-                          <div className="relative z-10 p-8">
+                          <div className="relative z-10 p-4 sm:p-6 md:p-8">
                             {/* Icône avec carré arrondi autour */}
-                            <div className="flex items-center justify-center mb-6">
-                              <div className="w-16 h-16 bg-emerald-200/30 rounded-2xl flex items-center justify-center p-2 group-hover:scale-110 transition-transform duration-300">
-                                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/50">
-                                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <div className="flex items-center justify-center mb-3 md:mb-6">
+                              <div className="w-12 h-12 md:w-16 md:h-16 bg-emerald-200/30 rounded-2xl flex items-center justify-center p-2 group-hover:scale-110 transition-transform duration-300">
+                                <div className="w-9 h-9 md:w-12 md:h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/50">
+                                  <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
                                   </svg>
                                 </div>
                               </div>
                             </div>
-                            <h3 className="text-2xl font-bold text-white mb-4 text-center group-hover:text-emerald-200 transition-colors duration-300">
+                            <h3 className="font-bold text-white text-center group-hover:text-emerald-200 transition-colors duration-300 text-xl mb-2 md:text-2xl md:mb-4">
                               Suivez votre progression
                             </h3>
-                            <p className="text-gray-300 text-base text-center leading-relaxed group-hover:text-gray-200 transition-colors duration-300">
+                            <p className="text-gray-300 text-center leading-relaxed group-hover:text-gray-200 transition-colors duration-300 text-sm md:text-base">
                               Obtenez une vue d'ensemble de vos performances mensuelles pour mesurer votre évolution.
                             </p>
                           </div>
@@ -2729,7 +2733,7 @@ const App = () => {
                     </div>
                     
                     {/* Image journal */}
-                    <div className="bg-white/95 backdrop-blur-sm rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-white/20">
+                    <div className="rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-white p-0">
                       <img 
                         src="/journal2.png" 
                         alt="Journal de trading TPLN - Suivi des trades"
@@ -2767,9 +2771,9 @@ const App = () => {
                   </div>
 
                   {/* Vidéo complète */}
-                  <div className="max-w-6xl mx-auto">
+                  <div className="max-w-6xl mx-auto rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-white p-0">
                     <video 
-                      className="w-full rounded-xl shadow-2xl"
+                      className="w-full rounded-lg"
                       autoPlay
                       loop
                       muted
@@ -2870,34 +2874,34 @@ const App = () => {
                       href="https://x.com/thethetrader" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                      className="inline-flex items-center gap-2 w-full sm:w-auto justify-center bg-black hover:bg-gray-900 text-white px-3 py-2 rounded-lg font-medium text-sm transition-all duration-200 hover:scale-[1.02] border border-white/10 shadow"
                     >
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                       </svg>
-                      Suivez @thethetrader
+                      <span>Suivez @thethetrader</span>
                     </a>
                     <a 
                       href="https://www.instagram.com/tradingpourlesnuls_/" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                      className="inline-flex items-center gap-2 w-full sm:w-auto justify-center bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 hover:from-purple-500 hover:via-pink-400 hover:to-orange-300 text-white px-3 py-2 rounded-lg font-medium text-sm transition-all duration-200 hover:scale-[1.02] shadow border border-white/20"
                     >
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3._encode.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s与应用-.644-1.44-1.439-1.44z"/>
+                      <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                       </svg>
-                      Suivez @tradingpourlesnuls_
+                      <span>Suivez @tradingpourlesnuls_</span>
                     </a>
                     <a 
                       href="https://www.tiktok.com/@tradingpourlesnuls_?_t=ZN-90uWKmkvqoI&_r=1" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                      className="inline-flex items-center gap-2 w-full sm:w-auto justify-center bg-gray-900 hover:bg-black text-white px-3 py-2 rounded-lg font-medium text-sm transition-all duration-200 hover:scale-[1.02] border border-cyan-500/30 shadow"
                     >
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
                       </svg>
-                      Suivez @tradingpourlesnuls_
+                      <span>Suivez @tradingpourlesnuls_</span>
                     </a>
                   </div>
                 </div>
@@ -2914,33 +2918,33 @@ const App = () => {
                   TPLN ?
                 </div>
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
                 {/* Carte 1 */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-400 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-4xl text-purple-600 mb-4 group-hover:scale-110 transition-transform duration-300">⚡</div>
-                  <div className="text-xl font-bold text-white mb-2 group-hover:text-purple-400 transition-colors duration-300">Simplicité</div>
-                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Approche simple et efficace. Pas de jargon compliqué, juste des résultats concrets.</div>
+                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-4 sm:p-6 md:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-400 transition-all duration-300 transform cursor-pointer group">
+                  <div className="text-3xl sm:text-4xl text-purple-600 mb-2 sm:mb-4 group-hover:scale-110 transition-transform duration-300">⚡</div>
+                  <div className="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2 group-hover:text-purple-400 transition-colors duration-300">Simplicité</div>
+                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300 leading-snug">Approche simple et efficace. Pas de jargon compliqué, juste des résultats concrets.</div>
                 </div>
 
                 {/* Carte 2 */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25 hover:border-blue-400 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-4xl text-purple-600 mb-4 group-hover:scale-110 transition-transform duration-300">🎯</div>
-                  <div className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors duration-300">Résultats</div>
-                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Signaux précis et formation qui transforme les débutants en traders confirmés.</div>
+                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-4 sm:p-6 md:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25 hover:border-blue-400 transition-all duration-300 transform cursor-pointer group">
+                  <div className="text-3xl sm:text-4xl text-purple-600 mb-2 sm:mb-4 group-hover:scale-110 transition-transform duration-300">🎯</div>
+                  <div className="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2 group-hover:text-blue-400 transition-colors duration-300">Résultats</div>
+                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300 leading-snug">Signaux précis et formation qui transforme les débutants en traders confirmés.</div>
                 </div>
 
                 {/* Carte 3 */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 hover:border-green-400 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-4xl text-purple-600 mb-4 group-hover:scale-110 transition-transform duration-300">🤝</div>
-                  <div className="text-xl font-bold text-white mb-2 group-hover:text-green-400 transition-colors duration-300">Communauté</div>
-                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Rejoignez une communauté active de traders qui partagent et s'entraident.</div>
+                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-4 sm:p-6 md:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 hover:border-green-400 transition-all duration-300 transform cursor-pointer group">
+                  <div className="text-3xl sm:text-4xl text-purple-600 mb-2 sm:mb-4 group-hover:scale-110 transition-transform duration-300">🤝</div>
+                  <div className="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2 group-hover:text-green-400 transition-colors duration-300">Communauté</div>
+                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300 leading-snug">Rejoignez une communauté active de traders qui partagent et s'entraident.</div>
                 </div>
 
                 {/* Carte 4 - Journal de Trading */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-500/25 hover:border-yellow-400 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-4xl text-purple-600 mb-4 group-hover:scale-110 transition-transform duration-300">📔</div>
-                  <div className="text-xl font-bold text-white mb-2 group-hover:text-yellow-400 transition-colors duration-300">Journal Personnel</div>
-                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Chacun a son propre journal de trading pour suivre ses trades et analyser ses performances.</div>
+                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-4 sm:p-6 md:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-500/25 hover:border-yellow-400 transition-all duration-300 transform cursor-pointer group">
+                  <div className="text-3xl sm:text-4xl text-purple-600 mb-2 sm:mb-4 group-hover:scale-110 transition-transform duration-300">📔</div>
+                  <div className="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2 group-hover:text-yellow-400 transition-colors duration-300">Journal Personnel</div>
+                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300 leading-snug">Chacun a son propre journal de trading pour suivre ses trades et analyser ses performances.</div>
                 </div>
               </div>
             </div>
@@ -5178,7 +5182,7 @@ const App = () => {
                     pricingSection.scrollIntoView({ behavior: 'smooth' });
                   }
                 }}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 sm:px-12 py-5 sm:py-6 rounded-lg text-xl sm:text-2xl font-semibold hover:opacity-90"
+                className="bg-gradient-to-r from-blue-600 to-purple-700 text-white px-10 sm:px-12 py-5 sm:py-6 rounded-lg text-xl sm:text-2xl font-semibold hover:from-blue-700 hover:to-purple-800 transition-all duration-200"
               >
                 Commencer Maintenant
               </button>
@@ -5958,7 +5962,7 @@ const App = () => {
 
           {/* Footer - Mobile Optimized - Masqué en PWA */}
           {!isPWA && (
-            <footer className="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-12 sm:py-20 px-4 sm:px-6 mt-0">
+            <footer className="bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 py-12 sm:py-20 px-4 sm:px-6 mt-0">
               <div className="max-w-7xl mx-auto">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
                   {/* Légal - Éléments essentiels */}
