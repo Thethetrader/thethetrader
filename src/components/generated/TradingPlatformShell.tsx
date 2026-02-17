@@ -3930,6 +3930,7 @@ export default function TradingPlatformShell() {
 
       const accountsToAdd = selectedAccounts.length > 0 ? selectedAccounts : [tradeAddAccount];
       let successCount = 0;
+      const savedTrades: PersonalTrade[] = [];
       for (const accountName of accountsToAdd) {
         const newTrade = {
           date: selectedDate ? getDateString(selectedDate) : getDateString(new Date()),
@@ -3952,6 +3953,7 @@ export default function TradingPlatformShell() {
         const savedTrade = await addPersonalTrade(newTrade as any);
         if (savedTrade) {
           successCount++;
+          savedTrades.push(savedTrade);
           console.log('✅ Trade sauvegardé:', savedTrade.id, savedTrade.date);
         } else {
           console.error('❌ Échec sauvegarde trade pour compte:', accountName);
@@ -3959,6 +3961,8 @@ export default function TradingPlatformShell() {
       }
 
       if (successCount > 0) {
+        // Afficher tout de suite les nouveaux trades (évite liste vide si le refetch tarde)
+        setPersonalTrades(prev => [...savedTrades, ...prev]);
         // Fermer le modal d'abord
         setTradeData({
           symbol: '', type: 'BUY', entry: '', exit: '', stopLoss: '', pnl: '', status: 'WIN',
@@ -3975,23 +3979,17 @@ export default function TradingPlatformShell() {
             console.log(`📊 Trades récupérés: ${trades.length}`);
             console.log('📊 Détails des trades:', trades.map(t => ({ id: t.id, date: t.date, symbol: t.symbol })));
             
-            // Toujours mettre à jour avec les nouveaux trades
+            // Ne jamais vider la liste si on avait des trades (évite bug "plus rien" après ajout)
             setPersonalTrades(prevTrades => {
               console.log(`📊 Trades précédents: ${prevTrades.length}, nouveaux: ${trades.length}`);
-              
-              // Si on a des nouveaux trades, les utiliser
               if (trades.length > 0) {
                 console.log('✅ Mise à jour avec nouveaux trades');
                 return trades;
               }
-              
-              // Si vide mais qu'on avait des trades avant, garder les anciens temporairement
-              if (prevTrades.length > 0 && attempt < 3) {
-                console.log('⚠️ Aucun nouveau trade trouvé, garde les anciens temporairement');
+              if (prevTrades.length > 0) {
+                console.log('⚠️ Refetch vide, on garde la liste existante');
                 return prevTrades;
               }
-              
-              // Sinon utiliser les nouveaux (même si vide)
               return trades;
             });
             
