@@ -1846,19 +1846,34 @@ export default function TradingPlatformShell() {
     const unsubscribe = listenToPersonalTrades(
       (trades) => {
         console.log('🔄 Mise à jour trades reçue [PWA]:', trades.length);
-        // Si pas de vraies données, garder les données fictives pour screenshots
-        if (trades.length === 0) {
+        // Toujours mettre à jour avec les trades reçus, même si vide
+        // Ne pas remplacer par mockTrades si on a déjà des trades existants
+        setPersonalTrades(prevTrades => {
+          // Si on reçoit des trades, les utiliser
+          if (trades.length > 0) {
+            return trades;
+          }
+          // Si on reçoit un tableau vide mais qu'on avait déjà des trades, garder les anciens
+          if (prevTrades.length > 0) {
+            console.log('⚠️ Tableau vide reçu mais trades existants conservés:', prevTrades.length);
+            return prevTrades;
+          }
+          // Seulement si on n'avait pas de trades avant, utiliser mockTrades pour screenshots
           console.log('📊 Pas de vraies données, garde les données fictives pour screenshots');
-          setPersonalTrades(mockTrades);
-        } else {
-          setPersonalTrades(trades);
-        }
+          return mockTrades;
+        });
       },
       (error) => {
         console.error('❌ Erreur synchronisation temps réel [PWA]:', error);
-        // En cas d'erreur, garder les données fictives
-        console.log('📊 Erreur, garde les données fictives pour screenshots');
-        setPersonalTrades(mockTrades);
+        // En cas d'erreur, ne pas remplacer les trades existants
+        setPersonalTrades(prevTrades => {
+          if (prevTrades.length > 0) {
+            console.log('⚠️ Erreur mais trades existants conservés:', prevTrades.length);
+            return prevTrades;
+          }
+          console.log('📊 Erreur, garde les données fictives pour screenshots');
+          return mockTrades;
+        });
       }
     );
     
@@ -3939,14 +3954,30 @@ export default function TradingPlatformShell() {
       }
 
       if (successCount > 0) {
-        setTimeout(async () => {
+        // Recharger les trades avec plusieurs tentatives pour s'assurer qu'ils sont bien chargés
+        const reloadTrades = async (attempt = 1) => {
           try {
-            const trades = await getPersonalTrades();
-            setPersonalTrades(trades);
+            const trades = await getPersonalTrades(1000);
+            if (trades.length > 0 || attempt >= 3) {
+              // Si on a des trades ou qu'on a fait 3 tentatives, mettre à jour
+              setPersonalTrades(trades);
+              console.log('✅ Trades rechargés:', trades.length);
+            } else {
+              // Sinon, réessayer après un délai plus long
+              console.log(`⏳ Tentative ${attempt}/3 - Réessai dans ${attempt * 500}ms...`);
+              setTimeout(() => reloadTrades(attempt + 1), attempt * 500);
+            }
           } catch (error) {
             console.error('❌ Erreur rechargement trades:', error);
+            if (attempt < 3) {
+              setTimeout(() => reloadTrades(attempt + 1), attempt * 500);
+            }
           }
-        }, 1000);
+        };
+        
+        // Première tentative après 500ms, puis retry si nécessaire
+        setTimeout(() => reloadTrades(1), 500);
+        
         setTradeData({
           symbol: '', type: 'BUY', entry: '', exit: '', stopLoss: '', pnl: '', status: 'WIN',
           lossReason: '', lossReasons: [], notes: '', image1: null, image2: null, session: ''
