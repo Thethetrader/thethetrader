@@ -3950,40 +3950,76 @@ export default function TradingPlatformShell() {
           session: tradeData.session || undefined
         };
         const savedTrade = await addPersonalTrade(newTrade as any);
-        if (savedTrade) successCount++;
+        if (savedTrade) {
+          successCount++;
+          console.log('✅ Trade sauvegardé:', savedTrade.id, savedTrade.date);
+        } else {
+          console.error('❌ Échec sauvegarde trade pour compte:', accountName);
+        }
       }
 
       if (successCount > 0) {
-        // Recharger les trades avec plusieurs tentatives pour s'assurer qu'ils sont bien chargés
-        const reloadTrades = async (attempt = 1) => {
-          try {
-            const trades = await getPersonalTrades(1000);
-            if (trades.length > 0 || attempt >= 3) {
-              // Si on a des trades ou qu'on a fait 3 tentatives, mettre à jour
-              setPersonalTrades(trades);
-              console.log('✅ Trades rechargés:', trades.length);
-            } else {
-              // Sinon, réessayer après un délai plus long
-              console.log(`⏳ Tentative ${attempt}/3 - Réessai dans ${attempt * 500}ms...`);
-              setTimeout(() => reloadTrades(attempt + 1), attempt * 500);
-            }
-          } catch (error) {
-            console.error('❌ Erreur rechargement trades:', error);
-            if (attempt < 3) {
-              setTimeout(() => reloadTrades(attempt + 1), attempt * 500);
-            }
-          }
-        };
-        
-        // Première tentative après 500ms, puis retry si nécessaire
-        setTimeout(() => reloadTrades(1), 500);
-        
+        // Fermer le modal d'abord
         setTradeData({
           symbol: '', type: 'BUY', entry: '', exit: '', stopLoss: '', pnl: '', status: 'WIN',
           lossReason: '', lossReasons: [], notes: '', image1: null, image2: null, session: ''
         });
         setSelectedAccounts([]);
         setShowTradeModal(false);
+        
+        // Recharger les trades avec plusieurs tentatives pour s'assurer qu'ils sont bien chargés
+        const reloadTrades = async (attempt = 1) => {
+          try {
+            console.log(`🔄 Tentative ${attempt} de rechargement des trades...`);
+            const trades = await getPersonalTrades(1000);
+            console.log(`📊 Trades récupérés: ${trades.length}`);
+            console.log('📊 Détails des trades:', trades.map(t => ({ id: t.id, date: t.date, symbol: t.symbol })));
+            
+            // Toujours mettre à jour avec les nouveaux trades
+            setPersonalTrades(prevTrades => {
+              console.log(`📊 Trades précédents: ${prevTrades.length}, nouveaux: ${trades.length}`);
+              
+              // Si on a des nouveaux trades, les utiliser
+              if (trades.length > 0) {
+                console.log('✅ Mise à jour avec nouveaux trades');
+                return trades;
+              }
+              
+              // Si vide mais qu'on avait des trades avant, garder les anciens temporairement
+              if (prevTrades.length > 0 && attempt < 3) {
+                console.log('⚠️ Aucun nouveau trade trouvé, garde les anciens temporairement');
+                return prevTrades;
+              }
+              
+              // Sinon utiliser les nouveaux (même si vide)
+              return trades;
+            });
+            
+            // Si on a des trades, c'est bon
+            if (trades.length > 0) {
+              console.log('✅ Trades rechargés avec succès:', trades.length);
+              return;
+            }
+            
+            // Si vide et qu'on n'a pas fait toutes les tentatives, réessayer
+            if (attempt < 5) {
+              const delay = attempt * 1000; // Délai progressif : 1000ms, 2000ms, 3000ms, 4000ms
+              console.log(`⏳ Aucun trade trouvé, réessai dans ${delay}ms...`);
+              setTimeout(() => reloadTrades(attempt + 1), delay);
+            } else {
+              console.warn('⚠️ Aucun trade trouvé après 5 tentatives');
+            }
+          } catch (error) {
+            console.error('❌ Erreur rechargement trades:', error);
+            if (attempt < 5) {
+              const delay = attempt * 1000;
+              setTimeout(() => reloadTrades(attempt + 1), delay);
+            }
+          }
+        };
+        
+        // Première tentative après 500ms pour laisser Supabase traiter, puis retry si nécessaire
+        setTimeout(() => reloadTrades(1), 500);
       } else {
         alert('Erreur lors de la sauvegarde du trade');
       }

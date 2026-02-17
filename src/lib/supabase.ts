@@ -1239,11 +1239,17 @@ export const listenToPersonalTrades = (
           filter: `user_id=eq.${userId}`
         },
         (payload) => {
-          console.log('🔄 Changement détecté pour user');
-          // Recharger seulement les trades de cet utilisateur
-          getPersonalTrades(50).then(trades => {
-            onTradesChange(trades);
-          });
+          console.log('🔄 Changement détecté pour user:', payload.eventType);
+          // Attendre un peu pour laisser Supabase traiter l'insertion
+          setTimeout(() => {
+            // Recharger seulement les trades de cet utilisateur avec une limite plus élevée
+            getPersonalTrades(1000).then(trades => {
+              console.log('📊 Trades rechargés via écoute temps réel:', trades.length);
+              onTradesChange(trades);
+            }).catch(error => {
+              console.error('❌ Erreur rechargement via écoute temps réel:', error);
+            });
+          }, 300);
         }
       )
       .subscribe();
