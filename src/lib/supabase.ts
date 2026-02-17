@@ -988,38 +988,22 @@ export const getPersonalTrades = async (limit: number = 50): Promise<PersonalTra
 
     console.log('📊 Récupération trades personnels Supabase...');
 
-    // Liste sans image1/image2 pour aller plus vite (sinon fallback select *)
-    let data: any[];
-    let error: any;
-    const res = await supabase
+    const { data, error } = await supabase
       .from('personal_trades')
-      .select('id, user_id, date, symbol, type, entry, exit, stop_loss, pnl, status, loss_reason, loss_reasons, notes, account, session, created_at, updated_at')
+      .select('*')
       .eq('user_id', user.id)
       .order('date', { ascending: false })
       .order('created_at', { ascending: false })
       .limit(limit);
-    data = res.data ?? [];
-    error = res.error;
 
     if (error) {
-      console.warn('⚠️ Select colonnes échoué, fallback select *:', error.message);
-      const fallback = await supabase
-        .from('personal_trades')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('date', { ascending: false })
-        .order('created_at', { ascending: false })
-        .limit(limit);
-      if (fallback.error) {
-        console.error('❌ Erreur récupération trades Supabase:', fallback.error);
-        return [];
-      }
-      data = fallback.data ?? [];
+      console.error('❌ Erreur récupération trades Supabase:', error);
+      return [];
     }
 
-    console.log('✅ Trades personnels récupérés:', data.length);
+    console.log('✅ Trades personnels récupérés:', data?.length ?? 0);
 
-    const trades: PersonalTrade[] = data.map((trade: any) => {
+    const trades: PersonalTrade[] = (data ?? []).map((trade: any) => {
       let lossReasons: string[] | undefined;
       if (trade.loss_reasons != null && trade.loss_reasons !== '') {
         try {
@@ -1042,8 +1026,8 @@ export const getPersonalTrades = async (limit: number = 50): Promise<PersonalTra
         lossReason: trade.loss_reason || undefined,
         lossReasons,
         notes: trade.notes || undefined,
-        image1: undefined,
-        image2: undefined,
+        image1: trade.image1 || undefined,
+        image2: trade.image2 || undefined,
         timestamp: trade.timestamp || undefined,
         account: trade.account || 'Compte Principal',
         session: trade.session || undefined,
