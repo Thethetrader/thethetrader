@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, Signal, syncUserId, database } from '../../utils/firebase-setup';
 import { ref, onValue, push } from 'firebase/database';
-import { addPersonalTrade, getPersonalTrades, deletePersonalTrade, updatePersonalTrade, PersonalTrade, listenToPersonalTrades, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, getUserSubscription, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, type FinSessionData } from '../../lib/supabase';
+import { addPersonalTrade, getPersonalTrades, getPersonalTradeById, deletePersonalTrade, updatePersonalTrade, PersonalTrade, listenToPersonalTrades, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, getUserSubscription, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, type FinSessionData } from '../../lib/supabase';
 import ProfitLoss from '../ProfitLoss';
 import { createClient } from '@supabase/supabase-js';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
@@ -3846,6 +3846,31 @@ export default function TradingPlatformShell() {
     setShowTradeModal(true);
   };
 
+  const handleEditTrade = async (trade: PersonalTrade) => {
+    const full = await getPersonalTradeById(trade.id);
+    if (!full) return;
+    const [y, m, d] = (full.date || '').split('-').map(Number);
+    if (y && m) setSelectedDate(new Date(y, m - 1, d || 1));
+    setTradeData({
+      symbol: full.symbol || '',
+      type: full.type || 'BUY',
+      entry: full.entry || '',
+      exit: full.exit || '',
+      stopLoss: full.stopLoss || '',
+      pnl: full.pnl || '',
+      status: full.status || 'WIN',
+      lossReason: full.lossReason || '',
+      lossReasons: Array.isArray(full.lossReasons) ? full.lossReasons : [],
+      notes: full.notes || '',
+      image1: full.image1 ?? null,
+      image2: full.image2 ?? null,
+      session: full.session || ''
+    });
+    setSelectedAccounts([full.account || 'Compte Principal']);
+    setEditingTrade(full);
+    setShowTradeModal(true);
+  };
+
   const handleTradeSubmit = async () => {
     if (!tradeData.symbol || !tradeData.entry || !tradeData.exit || !tradeData.pnl) {
       alert('Veuillez remplir les champs obligatoires (Symbol, Entry, Exit, PnL)');
@@ -6085,28 +6110,7 @@ export default function TradingPlatformShell() {
                                   {parseFloat(trade.pnl) >= 0 ? '+' : ''}{trade.pnl}$
                                 </span>
                                 <button
-                                  onClick={() => {
-                                    const [y, m, d] = (trade.date || '').split('-').map(Number);
-                                    if (y && m) setSelectedDate(new Date(y, m - 1, d || 1));
-                                    setTradeData({
-                                      symbol: trade.symbol || '',
-                                      type: trade.type || 'BUY',
-                                      entry: trade.entry || '',
-                                      exit: trade.exit || '',
-                                      stopLoss: trade.stopLoss || '',
-                                      pnl: trade.pnl || '',
-                                      status: trade.status || 'WIN',
-                                      lossReason: trade.lossReason || '',
-                                      lossReasons: Array.isArray(trade.lossReasons) ? trade.lossReasons : [],
-                                      notes: trade.notes || '',
-                                      image1: trade.image1 ?? null,
-                                      image2: trade.image2 ?? null,
-                                      session: trade.session || ''
-                                    });
-                                    setSelectedAccounts([trade.account || 'Compte Principal']);
-                                    setEditingTrade(trade);
-                                    setShowTradeModal(true);
-                                  }}
+                                  onClick={() => handleEditTrade(trade)}
                                   className="px-3 py-1 rounded text-sm bg-gray-600 hover:bg-gray-500 text-white"
                                   title="Modifier ce trade"
                                 >
@@ -8475,28 +8479,9 @@ export default function TradingPlatformShell() {
                           {(trade.pnl && parseFloat(trade.pnl) >= 0) ? '+' : ''}{trade.pnl || '0'}$
                         </span>
                         <button
-                          onClick={() => {
-                            const [y, m, d] = (trade.date || '').split('-').map(Number);
-                            if (y && m) setSelectedDate(new Date(y, m - 1, d || 1));
-                            setTradeData({
-                              symbol: trade.symbol || '',
-                              type: trade.type || 'BUY',
-                              entry: trade.entry || '',
-                              exit: trade.exit || '',
-                              stopLoss: trade.stopLoss || '',
-                              pnl: trade.pnl || '',
-                              status: trade.status || 'WIN',
-                              lossReason: trade.lossReason || '',
-                              lossReasons: Array.isArray(trade.lossReasons) ? trade.lossReasons : [],
-                              notes: trade.notes || '',
-                              image1: trade.image1 ?? null,
-                              image2: trade.image2 ?? null,
-                              session: trade.session || ''
-                            });
-                            setSelectedAccounts([trade.account || 'Compte Principal']);
-                            setEditingTrade(trade);
+                          onClick={async () => {
                             setShowTradesModal(false);
-                            setShowTradeModal(true);
+                            await handleEditTrade(trade);
                           }}
                           className="px-3 py-1 rounded text-sm bg-gray-600 hover:bg-gray-500 text-white"
                           title="Modifier ce trade"
@@ -8949,28 +8934,7 @@ export default function TradingPlatformShell() {
                               {trade.status}
                             </span>
                             <button
-                              onClick={() => {
-                                const [y, m, d] = (trade.date || '').split('-').map(Number);
-                                if (y && m) setSelectedDate(new Date(y, m - 1, d || 1));
-                                setTradeData({
-                                  symbol: trade.symbol || '',
-                                  type: trade.type || 'BUY',
-                                  entry: trade.entry || '',
-                                  exit: trade.exit || '',
-                                  stopLoss: trade.stopLoss || '',
-                                  pnl: trade.pnl || '',
-                                  status: trade.status || 'WIN',
-                                  lossReason: trade.lossReason || '',
-                                  lossReasons: Array.isArray(trade.lossReasons) ? trade.lossReasons : [],
-                                  notes: trade.notes || '',
-                                  image1: trade.image1 ?? null,
-                                  image2: trade.image2 ?? null,
-                                  session: trade.session || ''
-                                });
-                                setSelectedAccounts([trade.account || 'Compte Principal']);
-                                setEditingTrade(trade);
-                                setShowTradeModal(true);
-                              }}
+                              onClick={() => handleEditTrade(trade)}
                               className="px-3 py-1 rounded text-sm bg-gray-600 hover:bg-gray-500 text-white"
                               title="Modifier ce trade"
                             >

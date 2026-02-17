@@ -988,52 +988,124 @@ export const getPersonalTrades = async (limit: number = 50): Promise<PersonalTra
 
     console.log('📊 Récupération trades personnels Supabase...');
 
-    const { data, error } = await supabase
+    // Liste sans image1/image2 pour aller plus vite (sinon fallback select *)
+    let data: any[];
+    let error: any;
+    const res = await supabase
       .from('personal_trades')
-      .select('*')
+      .select('id, user_id, date, symbol, type, entry, exit, stop_loss, pnl, status, loss_reason, loss_reasons, notes, account, session, created_at, updated_at')
       .eq('user_id', user.id)
       .order('date', { ascending: false })
       .order('created_at', { ascending: false })
       .limit(limit);
+    data = res.data ?? [];
+    error = res.error;
 
     if (error) {
-      console.error('❌ Erreur récupération trades Supabase:', error);
-      return [];
+      console.warn('⚠️ Select colonnes échoué, fallback select *:', error.message);
+      const fallback = await supabase
+        .from('personal_trades')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('date', { ascending: false })
+        .order('created_at', { ascending: false })
+        .limit(limit);
+      if (fallback.error) {
+        console.error('❌ Erreur récupération trades Supabase:', fallback.error);
+        return [];
+      }
+      data = fallback.data ?? [];
     }
 
     console.log('✅ Trades personnels récupérés:', data.length);
-    
-    // Convertir les nombres en strings pour la compatibilité avec l'interface
-    const trades: PersonalTrade[] = data.map(trade => {
-      const mappedTrade: PersonalTrade = {
+
+    const trades: PersonalTrade[] = data.map((trade: any) => {
+      let lossReasons: string[] | undefined;
+      if (trade.loss_reasons != null && trade.loss_reasons !== '') {
+        try {
+          lossReasons = JSON.parse(trade.loss_reasons);
+        } catch {
+          lossReasons = undefined;
+        }
+      }
+      return {
         id: trade.id,
         user_id: trade.user_id,
         date: trade.date,
         symbol: trade.symbol,
         type: trade.type,
-        entry: trade.entry.toString(),
-        exit: trade.exit.toString(),
-        stopLoss: trade.stop_loss ? trade.stop_loss.toString() : undefined,
-        pnl: trade.pnl.toString(),
+        entry: trade.entry != null ? String(trade.entry) : '',
+        exit: trade.exit != null ? String(trade.exit) : '',
+        stopLoss: trade.stop_loss != null ? String(trade.stop_loss) : undefined,
+        pnl: trade.pnl != null ? String(trade.pnl) : '',
         status: (trade.status === 'BREAKEVEN' ? 'BE' : trade.status) as 'WIN' | 'LOSS' | 'BREAKEVEN',
         lossReason: trade.loss_reason || undefined,
-        lossReasons: trade.loss_reasons ? JSON.parse(trade.loss_reasons) : undefined,
+        lossReasons,
         notes: trade.notes || undefined,
-        image1: trade.image1 || undefined,
-        image2: trade.image2 || undefined,
+        image1: undefined,
+        image2: undefined,
         timestamp: trade.timestamp || undefined,
         account: trade.account || 'Compte Principal',
         session: trade.session || undefined,
         created_at: trade.created_at,
         updated_at: trade.updated_at
       };
-      return mappedTrade;
     });
 
     return trades;
   } catch (error) {
     console.error('❌ Erreur récupération trades personnels Supabase:', error);
     return [];
+  }
+};
+
+/**
+ * Récupérer un trade par ID (avec images, pour détail / édition)
+ */
+export const getPersonalTradeById = async (tradeId: string): Promise<PersonalTrade | null> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) return null;
+    const { data, error } = await supabase
+      .from('personal_trades')
+      .select('*')
+      .eq('id', tradeId)
+      .eq('user_id', user.id)
+      .single();
+    if (error || !data) return null;
+    let lossReasons: string[] | undefined;
+    if (data.loss_reasons != null && data.loss_reasons !== '') {
+      try {
+        lossReasons = JSON.parse(data.loss_reasons);
+      } catch {
+        lossReasons = undefined;
+      }
+    }
+    return {
+      id: data.id,
+      user_id: data.user_id,
+      date: data.date,
+      symbol: data.symbol,
+      type: data.type,
+      entry: data.entry != null ? String(data.entry) : '',
+      exit: data.exit != null ? String(data.exit) : '',
+      stopLoss: data.stop_loss != null ? String(data.stop_loss) : undefined,
+      pnl: data.pnl != null ? String(data.pnl) : '',
+      status: (data.status === 'BREAKEVEN' ? 'BE' : data.status) as 'WIN' | 'LOSS' | 'BREAKEVEN',
+      lossReason: data.loss_reason || undefined,
+      lossReasons,
+      notes: data.notes || undefined,
+      image1: data.image1 || undefined,
+      image2: data.image2 || undefined,
+      timestamp: data.timestamp || undefined,
+      account: data.account || 'Compte Principal',
+      session: data.session || undefined,
+      created_at: data.created_at,
+      updated_at: data.updated_at
+    };
+  } catch (e) {
+    console.error('❌ getPersonalTradeById:', e);
+    return null;
   }
 };
 
