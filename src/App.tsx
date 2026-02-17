@@ -2731,7 +2731,7 @@ const App = () => {
                     {/* Image journal */}
                     <div className="bg-white/95 backdrop-blur-sm rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-white/20">
                       <img 
-                        src="/journal.png?v=2" 
+                        src="/journal2.png" 
                         alt="Journal de trading TPLN - Suivi des trades"
                         className="w-full h-auto"
                         loading="lazy"
