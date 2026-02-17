@@ -869,7 +869,7 @@ export interface PersonalTrade {
   exit: string;
   stopLoss?: string;
   pnl: string;
-  status: 'WIN' | 'LOSS' | 'BREAKEVEN';
+  status: 'WIN' | 'LOSS' | 'BE' | 'BREAKEVEN';
   lossReason?: string;
   lossReasons?: string[];
   notes?: string;
@@ -928,7 +928,7 @@ export const addPersonalTrade = async (trade: Omit<PersonalTrade, 'id' | 'user_i
       exit: parseFloat(trade.exit),
       stop_loss: trade.stopLoss ? parseFloat(trade.stopLoss) : null,
       pnl: parseFloat(trade.pnl),
-      status: trade.status,
+      status: trade.status === 'BE' ? 'BREAKEVEN' : trade.status,
       loss_reason: trade.lossReason || null,
       loss_reasons: trade.lossReasons ? JSON.stringify(trade.lossReasons) : null,
       notes: trade.notes || null,
@@ -964,7 +964,8 @@ export const addPersonalTrade = async (trade: Omit<PersonalTrade, 'id' | 'user_i
       entry: data.entry.toString(),
       exit: data.exit.toString(),
       stopLoss: data.stop_loss ? data.stop_loss.toString() : undefined,
-      pnl: data.pnl.toString()
+      pnl: data.pnl.toString(),
+      status: (data.status === 'BREAKEVEN' ? 'BE' : data.status) as 'WIN' | 'LOSS' | 'BREAKEVEN'
     };
     
     return savedTrade;
@@ -1014,7 +1015,7 @@ export const getPersonalTrades = async (limit: number = 50): Promise<PersonalTra
         exit: trade.exit.toString(),
         stopLoss: trade.stop_loss ? trade.stop_loss.toString() : undefined,
         pnl: trade.pnl.toString(),
-        status: trade.status,
+        status: (trade.status === 'BREAKEVEN' ? 'BE' : trade.status) as 'WIN' | 'LOSS' | 'BREAKEVEN',
         lossReason: trade.loss_reason || undefined,
         lossReasons: trade.loss_reasons ? JSON.parse(trade.loss_reasons) : undefined,
         notes: trade.notes || undefined,
@@ -1087,7 +1088,7 @@ export const updatePersonalTrade = async (
     if (updates.exit != null) tradeData.exit = parseFloat(updates.exit);
     if (updates.stopLoss !== undefined) tradeData.stop_loss = updates.stopLoss ? parseFloat(updates.stopLoss) : null;
     if (updates.pnl != null) tradeData.pnl = parseFloat(updates.pnl);
-    if (updates.status != null) tradeData.status = updates.status;
+    if (updates.status != null) tradeData.status = updates.status === 'BE' ? 'BREAKEVEN' : updates.status;
     if (updates.lossReason !== undefined) tradeData.loss_reason = updates.lossReason || null;
     if (updates.lossReasons !== undefined) tradeData.loss_reasons = updates.lossReasons?.length ? JSON.stringify(updates.lossReasons) : null;
     if (updates.notes !== undefined) tradeData.notes = updates.notes || null;
@@ -1134,7 +1135,8 @@ export const updatePersonalTrade = async (
       entry: data.entry.toString(),
       exit: data.exit.toString(),
       stopLoss: data.stop_loss ? data.stop_loss.toString() : undefined,
-      pnl: data.pnl.toString()
+      pnl: data.pnl.toString(),
+      status: (data.status === 'BREAKEVEN' ? 'BE' : data.status) as 'WIN' | 'LOSS' | 'BREAKEVEN'
     };
     return savedTrade;
   } catch (error) {
