@@ -161,6 +161,14 @@ const App = () => {
           filter: blur(12px);
         }
       }
+      @keyframes videoLightRotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
     `;
     document.head.appendChild(style);
     return () => {
@@ -1622,10 +1630,10 @@ const App = () => {
               {/* Hero Section complète */}
               <div className={`text-center pt-28 sm:pt-40 pb-0 px-4 sm:px-6 ${isPWA ? 'w-full max-w-full box-border' : ''}`}>
                 <h1 className="font-bold mb-6 sm:mb-8 leading-tight" style={{ fontSize: 'clamp(1.6rem, 8vw, 4.5rem)' }}>
-                  <span className="text-white">Arrête de perdre ton argent.</span>
+                  <span className="text-white">Arrête de trader au hasard.</span>
                   <br />
                   <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-                    Apprends à trader.
+                    Apprends à lire le marché.
                   </span>
                 </h1>
                 <p className={`hero-intro-p text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-4xl leading-relaxed ${isPWA ? 'pwa-hero-left' : 'mx-auto text-center'}`} style={isPWA ? undefined : { transform: 'translateX(calc(35% + 5mm))' }}>
@@ -1940,10 +1948,10 @@ const App = () => {
           {/* Hero Section - Mobile Optimized */}
           <div className="text-center pt-28 sm:pt-40 pb-0 px-4 sm:px-6">
             <h1 className="font-bold mb-6 sm:mb-8 leading-tight" style={{ fontSize: 'clamp(1.6rem, 8vw, 4.5rem)' }}>
-              <span className="text-white">Arrête de perdre ton argent.</span>
+              <span className="text-white">Arrête de trader au hasard.</span>
               <br />
               <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-                Apprends à trader.
+                Apprends à lire le marché.
               </span>
             </h1>
             <p className={`hero-intro-p text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-4xl leading-relaxed ${isPWA ? 'pwa-hero-left' : 'mx-auto text-center'}`} style={isPWA ? undefined : { transform: 'translateX(calc(35% + 5mm))' }}>
@@ -5197,67 +5205,89 @@ const App = () => {
                 Ce qu'ils en pensent
               </h2>
               <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-stretch max-w-4xl mx-auto">
-                <div className="relative flex-1 min-w-0 rounded-xl overflow-hidden shadow-2xl bg-gray-900">
-                  <video
-                    ref={ugc1VideoRef}
-                    className="w-full aspect-video object-cover"
-                    src={isMobileUgc && !ugc1Fallback ? '/ugc1-mobile.mp4' : '/UGC%20HD.MOV'}
-                    autoPlay
-                    playsInline
-                    loop
-                    muted={!ugcSoundOn}
-                    preload="auto"
-                    onLoadedData={(e) => { e.currentTarget.play().catch(() => {}); }}
-                    onError={() => { if (isMobileUgc) setUgc1Fallback(true); }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setUgcSoundOn((on) => !on)}
-                    className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/60 hover:bg-black/80 flex items-center justify-center text-white transition-colors"
-                    title={ugcSoundOn ? 'Couper le son' : 'Activer le son'}
-                    aria-label={ugcSoundOn ? 'Couper le son' : 'Activer le son'}
-                  >
-                    {ugcSoundOn ? (
-                      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
-                      </svg>
-                    ) : (
-                      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" />
-                      </svg>
-                    )}
-                  </button>
+                <div className="relative flex-1 min-w-0 rounded-xl" style={{ padding: '3px' }}>
+                  {/* Faisceau lumineux qui tourne autour */}
+                  <div className="absolute inset-0 rounded-xl" style={{
+                    background: 'conic-gradient(from 0deg at 50% 50%, transparent 0deg, transparent 340deg, rgba(255,255,255,0.9) 350deg, rgba(255,255,255,1) 360deg)',
+                    animation: 'videoLightRotate 3s linear infinite',
+                    zIndex: 1,
+                    pointerEvents: 'none',
+                    WebkitMask: 'radial-gradient(farthest-side, transparent calc(100% - 3px), black calc(100% - 3px))',
+                    mask: 'radial-gradient(farthest-side, transparent calc(100% - 3px), black calc(100% - 3px))'
+                  }}></div>
+                  <div className="relative rounded-xl overflow-hidden shadow-2xl bg-gray-900 z-10">
+                    <video
+                      ref={ugc1VideoRef}
+                      className="w-full aspect-video object-cover"
+                      src={isMobileUgc && !ugc1Fallback ? '/ugc1-mobile.mp4' : '/UGC%20HD.MOV'}
+                      autoPlay
+                      playsInline
+                      loop
+                      muted={!ugcSoundOn}
+                      preload="auto"
+                      onLoadedData={(e) => { e.currentTarget.play().catch(() => {}); }}
+                      onError={() => { if (isMobileUgc) setUgc1Fallback(true); }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setUgcSoundOn((on) => !on)}
+                      className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/60 hover:bg-black/80 flex items-center justify-center text-white transition-colors z-20"
+                      title={ugcSoundOn ? 'Couper le son' : 'Activer le son'}
+                      aria-label={ugcSoundOn ? 'Couper le son' : 'Activer le son'}
+                    >
+                      {ugcSoundOn ? (
+                        <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+                        </svg>
+                      ) : (
+                        <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
                 </div>
-                <div className="relative flex-1 min-w-0 rounded-xl overflow-hidden shadow-2xl bg-gray-900">
-                  <video
-                    ref={ugc2VideoRef}
-                    className="w-full aspect-video object-cover"
-                    src={isMobileUgc && !ugc2Fallback ? '/ugc2-mobile.mp4' : '/UGC%202%20HD.MOV'}
-                    autoPlay
-                    playsInline
-                    loop
-                    muted={!ugc2SoundOn}
-                    preload="auto"
-                    onLoadedData={(e) => { e.currentTarget.play().catch(() => {}); }}
-                    onError={() => { if (isMobileUgc) setUgc2Fallback(true); }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setUgc2SoundOn((on) => !on)}
-                    className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/60 hover:bg-black/80 flex items-center justify-center text-white transition-colors"
-                    title={ugc2SoundOn ? 'Couper le son' : 'Activer le son'}
-                    aria-label={ugc2SoundOn ? 'Couper le son' : 'Activer le son'}
-                  >
-                    {ugc2SoundOn ? (
-                      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
-                      </svg>
-                    ) : (
-                      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" />
-                      </svg>
-                    )}
-                  </button>
+                <div className="relative flex-1 min-w-0 rounded-xl" style={{ padding: '3px' }}>
+                  {/* Faisceau lumineux qui tourne autour */}
+                  <div className="absolute inset-0 rounded-xl" style={{
+                    background: 'conic-gradient(from 0deg at 50% 50%, transparent 0deg, transparent 340deg, rgba(255,255,255,0.9) 350deg, rgba(255,255,255,1) 360deg)',
+                    animation: 'videoLightRotate 3s linear infinite',
+                    zIndex: 1,
+                    pointerEvents: 'none',
+                    WebkitMask: 'radial-gradient(farthest-side, transparent calc(100% - 3px), black calc(100% - 3px))',
+                    mask: 'radial-gradient(farthest-side, transparent calc(100% - 3px), black calc(100% - 3px))'
+                  }}></div>
+                  <div className="relative rounded-xl overflow-hidden shadow-2xl bg-gray-900 z-10">
+                    <video
+                      ref={ugc2VideoRef}
+                      className="w-full aspect-video object-cover"
+                      src={isMobileUgc && !ugc2Fallback ? '/ugc2-mobile.mp4' : '/UGC%202%20HD.MOV'}
+                      autoPlay
+                      playsInline
+                      loop
+                      muted={!ugc2SoundOn}
+                      preload="auto"
+                      onLoadedData={(e) => { e.currentTarget.play().catch(() => {}); }}
+                      onError={() => { if (isMobileUgc) setUgc2Fallback(true); }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setUgc2SoundOn((on) => !on)}
+                      className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/60 hover:bg-black/80 flex items-center justify-center text-white transition-colors z-20"
+                      title={ugc2SoundOn ? 'Couper le son' : 'Activer le son'}
+                      aria-label={ugc2SoundOn ? 'Couper le son' : 'Activer le son'}
+                    >
+                      {ugc2SoundOn ? (
+                        <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+                        </svg>
+                      ) : (
+                        <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
