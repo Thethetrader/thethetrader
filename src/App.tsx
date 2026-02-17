@@ -140,6 +140,27 @@ const App = () => {
           transform: translateX(200%) skewX(-15deg);
         }
       }
+      @keyframes neonRotate {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+      @keyframes neonGlow {
+        0%, 100% {
+          opacity: 0.6;
+          filter: blur(8px);
+        }
+        50% {
+          opacity: 1;
+          filter: blur(12px);
+        }
+      }
     `;
     document.head.appendChild(style);
     return () => {
@@ -2591,54 +2612,126 @@ const App = () => {
                   <div className="max-w-7xl mx-auto mb-12">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-12">
                       {/* Carte 1 - Statistiques */}
-                      <div className="group relative bg-gradient-to-br from-purple-900/30 via-purple-800/20 to-blue-900/30 rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-purple-500/30 backdrop-blur-sm hover:border-purple-400/60 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20 hover:scale-105 transform">
-                        <div className="flex items-center justify-center mb-4">
-                          <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                            <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
+                      <div className="group relative rounded-2xl p-[3px] overflow-visible transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1">
+                        {/* Faisceau lumineux animé autour */}
+                        <div className="absolute -inset-[3px] rounded-2xl opacity-75 group-hover:opacity-100 transition-opacity duration-500" style={{
+                          background: 'linear-gradient(90deg, transparent, rgba(168,85,247,0.8), rgba(192,132,252,1), rgba(168,85,247,0.8), transparent)',
+                          backgroundSize: '200% 100%',
+                          animation: 'neonRotate 3s ease-in-out infinite',
+                          filter: 'blur(8px)',
+                          zIndex: -1
+                        }}></div>
+                        <div className="relative rounded-2xl overflow-hidden h-full">
+                          {/* Fond avec gradient radial */}
+                          <div className="absolute inset-0 opacity-90" style={{background: 'radial-gradient(circle at top left, rgba(88, 28, 135, 0.8), #4C208B, #3A1870)'}}></div>
+                          {/* Bordure lumineuse */}
+                          <div className="absolute inset-0 rounded-2xl border-2 border-purple-400/60 shadow-[0_0_25px_rgba(168,85,247,0.4),inset_0_0_25px_rgba(168,85,247,0.1)] group-hover:border-purple-300/80 group-hover:shadow-[0_0_40px_rgba(168,85,247,0.6),inset_0_0_30px_rgba(168,85,247,0.2)] transition-all duration-500" style={{
+                            animation: 'neonGlow 2s ease-in-out infinite'
+                          }}></div>
+                          {/* Ombres internes */}
+                          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 via-transparent to-black/20"></div>
+                        
+                          <div className="relative z-10 p-8">
+                            {/* Icône avec carré arrondi autour */}
+                            <div className="flex items-center justify-center mb-6">
+                              <div className="w-16 h-16 bg-purple-200/30 rounded-2xl flex items-center justify-center p-2 group-hover:scale-110 transition-transform duration-300">
+                                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/50">
+                                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <h3 className="text-2xl font-bold text-white mb-4 text-center group-hover:text-purple-200 transition-colors duration-300">
+                              Analysez vos statistiques
+                            </h3>
+                            <p className="text-gray-300 text-base text-center leading-relaxed group-hover:text-gray-200 transition-colors duration-300">
+                              Visualisez vos performances avec plus de 50 rapports détaillés pour comprendre vos résultats.
+                            </p>
                           </div>
                         </div>
-                        <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 text-center group-hover:text-purple-300 transition-colors duration-300">
-                          Analysez vos statistiques
-                        </h3>
-                        <p className="text-gray-300 text-sm sm:text-base text-center group-hover:text-gray-200 transition-colors duration-300 leading-relaxed">
-                          Visualisez vos performances avec plus de 50 rapports détaillés pour comprendre vos résultats.
-                        </p>
                       </div>
 
                       {/* Carte 2 - Erreurs */}
-                      <div className="group relative bg-gradient-to-br from-blue-900/30 via-blue-800/20 to-indigo-900/30 rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-blue-500/30 backdrop-blur-sm hover:border-blue-400/60 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20 hover:scale-105 transform">
-                        <div className="flex items-center justify-center mb-4">
-                          <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                            <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                              <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
-                            </svg>
+                      <div className="group relative rounded-2xl p-[3px] overflow-visible transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1">
+                        {/* Faisceau lumineux animé autour */}
+                        <div className="absolute -inset-[3px] rounded-2xl opacity-75 group-hover:opacity-100 transition-opacity duration-500" style={{
+                          background: 'linear-gradient(90deg, transparent, rgba(59,130,246,0.8), rgba(96,165,250,1), rgba(59,130,246,0.8), transparent)',
+                          backgroundSize: '200% 100%',
+                          animation: 'neonRotate 3s ease-in-out infinite',
+                          filter: 'blur(8px)',
+                          zIndex: -1
+                        }}></div>
+                        <div className="relative rounded-2xl overflow-hidden h-full">
+                          {/* Fond avec gradient radial */}
+                          <div className="absolute inset-0 opacity-90" style={{background: 'radial-gradient(circle at top left, rgba(30, 58, 138, 0.8), #4C208B, #3A1870)'}}></div>
+                          {/* Bordure lumineuse */}
+                          <div className="absolute inset-0 rounded-2xl border-2 border-blue-400/60 shadow-[0_0_25px_rgba(59,130,246,0.4),inset_0_0_25px_rgba(59,130,246,0.1)] group-hover:border-blue-300/80 group-hover:shadow-[0_0_40px_rgba(59,130,246,0.6),inset_0_0_30px_rgba(59,130,246,0.2)] transition-all duration-500" style={{
+                            animation: 'neonGlow 2s ease-in-out infinite'
+                          }}></div>
+                          {/* Ombres internes */}
+                          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 via-transparent to-black/20"></div>
+                          
+                          <div className="relative z-10 p-8">
+                            {/* Icône avec carré arrondi autour */}
+                            <div className="flex items-center justify-center mb-6">
+                              <div className="w-16 h-16 bg-blue-200/30 rounded-2xl flex items-center justify-center p-2 group-hover:scale-110 transition-transform duration-300">
+                                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/50">
+                                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <h3 className="text-2xl font-bold text-white mb-4 text-center group-hover:text-blue-200 transition-colors duration-300">
+                              Comprenez vos erreurs
+                            </h3>
+                            <p className="text-gray-300 text-base text-center leading-relaxed group-hover:text-gray-200 transition-colors duration-300">
+                              Identifiez vos points faibles en analysant vos pertes pour améliorer votre gestion du risque.
+                            </p>
                           </div>
                         </div>
-                        <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 text-center group-hover:text-blue-300 transition-colors duration-300">
-                          Comprenez vos erreurs
-                        </h3>
-                        <p className="text-gray-300 text-sm sm:text-base text-center group-hover:text-gray-200 transition-colors duration-300 leading-relaxed">
-                          Identifiez vos points faibles en analysant vos pertes pour améliorer votre gestion du risque.
-                        </p>
                       </div>
 
                       {/* Carte 3 - Progression */}
-                      <div className="group relative bg-gradient-to-br from-emerald-900/30 via-emerald-800/20 to-teal-900/30 rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-emerald-500/30 backdrop-blur-sm hover:border-emerald-400/60 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/20 hover:scale-105 transform">
-                        <div className="flex items-center justify-center mb-4">
-                          <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                            <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
-                            </svg>
+                      <div className="group relative rounded-2xl p-[3px] overflow-visible transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1">
+                        {/* Faisceau lumineux animé autour */}
+                        <div className="absolute -inset-[3px] rounded-2xl opacity-75 group-hover:opacity-100 transition-opacity duration-500" style={{
+                          background: 'linear-gradient(90deg, transparent, rgba(16,185,129,0.8), rgba(52,211,153,1), rgba(16,185,129,0.8), transparent)',
+                          backgroundSize: '200% 100%',
+                          animation: 'neonRotate 3s ease-in-out infinite',
+                          filter: 'blur(8px)',
+                          zIndex: -1
+                        }}></div>
+                        <div className="relative rounded-2xl overflow-hidden h-full">
+                          {/* Fond avec gradient radial */}
+                          <div className="absolute inset-0 opacity-90" style={{background: 'radial-gradient(circle at top left, rgba(6, 78, 59, 0.8), #4C208B, #3A1870)'}}></div>
+                          {/* Bordure lumineuse */}
+                          <div className="absolute inset-0 rounded-2xl border-2 border-emerald-400/60 shadow-[0_0_25px_rgba(16,185,129,0.4),inset_0_0_25px_rgba(16,185,129,0.1)] group-hover:border-emerald-300/80 group-hover:shadow-[0_0_40px_rgba(16,185,129,0.6),inset_0_0_30px_rgba(16,185,129,0.2)] transition-all duration-500" style={{
+                            animation: 'neonGlow 2s ease-in-out infinite'
+                          }}></div>
+                          {/* Ombres internes */}
+                          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 via-transparent to-black/20"></div>
+                          
+                          <div className="relative z-10 p-8">
+                            {/* Icône avec carré arrondi autour */}
+                            <div className="flex items-center justify-center mb-6">
+                              <div className="w-16 h-16 bg-emerald-200/30 rounded-2xl flex items-center justify-center p-2 group-hover:scale-110 transition-transform duration-300">
+                                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/50">
+                                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <h3 className="text-2xl font-bold text-white mb-4 text-center group-hover:text-emerald-200 transition-colors duration-300">
+                              Suivez votre progression
+                            </h3>
+                            <p className="text-gray-300 text-base text-center leading-relaxed group-hover:text-gray-200 transition-colors duration-300">
+                              Obtenez une vue d'ensemble de vos performances mensuelles pour mesurer votre évolution.
+                            </p>
                           </div>
                         </div>
-                        <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 text-center group-hover:text-emerald-300 transition-colors duration-300">
-                          Suivez votre progression
-                        </h3>
-                        <p className="text-gray-300 text-sm sm:text-base text-center group-hover:text-gray-200 transition-colors duration-300 leading-relaxed">
-                          Obtenez une vue d'ensemble de vos performances mensuelles pour mesurer votre évolution.
-                        </p>
                       </div>
                     </div>
                     
