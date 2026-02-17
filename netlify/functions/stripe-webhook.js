@@ -48,13 +48,8 @@ export const handler = async (event) => {
     switch (stripeEvent.type) {
       case 'checkout.session.completed': {
         const session = stripeEvent.data.object;
-        const planType = session.metadata?.plan_type;
-        const billingCycle = session.metadata?.billing_cycle;
-
-        if (!planType || !billingCycle) {
-          console.error('❌ Missing metadata in checkout session');
-          break;
-        }
+        let planType = session.metadata?.plan_type;
+        let billingCycle = session.metadata?.billing_cycle;
 
         const subscriptionId = session.subscription;
         if (!subscriptionId) {
@@ -63,6 +58,28 @@ export const handler = async (event) => {
         }
 
         const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+
+        // Si metadata manquants, déduire plan_type / billing_cycle depuis le Price ID Stripe
+        if (!planType || !billingCycle) {
+          const priceId = subscription.items?.data?.[0]?.price?.id;
+          const priceIds = {
+            journal: { monthly: process.env.STRIPE_PRICE_ID_JOURNAL_MONTHLY, yearly: process.env.STRIPE_PRICE_ID_JOURNAL_YEARLY },
+            basic: { monthly: process.env.STRIPE_PRICE_ID_BASIC_MONTHLY, yearly: process.env.STRIPE_PRICE_ID_BASIC_YEARLY },
+            premium: { monthly: process.env.STRIPE_PRICE_ID_PREMIUM_MONTHLY, yearly: process.env.STRIPE_PRICE_ID_PREMIUM_YEARLY },
+          };
+          for (const [plan, ids] of Object.entries(priceIds)) {
+            if (ids.monthly === priceId) { planType = plan; billingCycle = 'monthly'; break; }
+            if (ids.yearly === priceId) { planType = plan; billingCycle = 'yearly'; break; }
+          }
+          if (planType && billingCycle) {
+            console.log('📌 Plan déduit depuis Price ID:', planType, billingCycle);
+          }
+        }
+
+        if (!planType || !billingCycle) {
+          console.error('❌ Missing metadata and could not deduce plan from price');
+          break;
+        }
         const customerEmail = session.customer_email || session.customer_details?.email;
 
         if (!customerEmail) {
@@ -127,19 +144,22 @@ export const handler = async (event) => {
           ? new Date(subscription.current_period_end * 1000).toISOString()
           : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(); // +30 jours par défaut
 
-        await supabaseAdmin.from('subscriptions').upsert({
-          user_id: user.id,
-          stripe_customer_id: session.customer,
-          stripe_subscription_id: subscriptionId,
-          plan_type: planType,
-          billing_cycle: billingCycle,
-          status: subscription.status,
-          current_period_start: periodStart,
-          current_period_end: periodEnd,
-          cancel_at_period_end: subscription.cancel_at_period_end || false,
-        });
+        await supabaseAdmin.from('subscriptions').upsert(
+          {
+            user_id: user.id,
+            stripe_customer_id: session.customer,
+            stripe_subscription_id: subscriptionId,
+            plan_type: planType,
+            billing_cycle: billingCycle,
+            status: subscription.status,
+            current_period_start: periodStart,
+            current_period_end: periodEnd,
+            cancel_at_period_end: subscription.cancel_at_period_end || false,
+          },
+          { onConflict: 'user_id' }
+        );
 
-        console.log('✅ Subscription created for:', customerEmail);
+        console.log('✅ Subscription created/updated for:', customerEmail, 'plan_type:', planType);
         break;
       }
 

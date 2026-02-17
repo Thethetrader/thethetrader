@@ -1067,6 +1067,83 @@ export const deletePersonalTrade = async (tradeId: string): Promise<boolean> => 
 };
 
 /**
+ * Mettre à jour un trade personnel
+ */
+export const updatePersonalTrade = async (
+  tradeId: string,
+  updates: Partial<Omit<PersonalTrade, 'id' | 'user_id' | 'created_at' | 'updated_at'>>
+): Promise<PersonalTrade | null> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      console.error('❌ Utilisateur non connecté');
+      return null;
+    }
+
+    const tradeData: any = {};
+    if (updates.symbol != null) tradeData.symbol = updates.symbol;
+    if (updates.type != null) tradeData.type = updates.type;
+    if (updates.entry != null) tradeData.entry = parseFloat(updates.entry);
+    if (updates.exit != null) tradeData.exit = parseFloat(updates.exit);
+    if (updates.stopLoss !== undefined) tradeData.stop_loss = updates.stopLoss ? parseFloat(updates.stopLoss) : null;
+    if (updates.pnl != null) tradeData.pnl = parseFloat(updates.pnl);
+    if (updates.status != null) tradeData.status = updates.status;
+    if (updates.lossReason !== undefined) tradeData.loss_reason = updates.lossReason || null;
+    if (updates.lossReasons !== undefined) tradeData.loss_reasons = updates.lossReasons?.length ? JSON.stringify(updates.lossReasons) : null;
+    if (updates.notes !== undefined) tradeData.notes = updates.notes || null;
+    if (updates.session !== undefined) tradeData.session = updates.session || null;
+
+    if (updates.image1 !== undefined) {
+      if (updates.image1 && typeof updates.image1 === 'object') {
+        tradeData.image1 = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.readAsDataURL(updates.image1 as any);
+        });
+      } else {
+        tradeData.image1 = updates.image1;
+      }
+    }
+    if (updates.image2 !== undefined) {
+      if (updates.image2 && typeof updates.image2 === 'object') {
+        tradeData.image2 = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.readAsDataURL(updates.image2 as any);
+        });
+      } else {
+        tradeData.image2 = updates.image2;
+      }
+    }
+
+    const { data, error } = await supabase
+      .from('personal_trades')
+      .update(tradeData)
+      .eq('id', tradeId)
+      .eq('user_id', user.id)
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('❌ Erreur mise à jour trade Supabase:', error);
+      return null;
+    }
+
+    const savedTrade: PersonalTrade = {
+      ...data,
+      entry: data.entry.toString(),
+      exit: data.exit.toString(),
+      stopLoss: data.stop_loss ? data.stop_loss.toString() : undefined,
+      pnl: data.pnl.toString()
+    };
+    return savedTrade;
+  } catch (error) {
+    console.error('❌ Erreur updatePersonalTrade Supabase:', error);
+    return null;
+  }
+};
+
+/**
  * Écouter les changements de trades personnels en temps réel
  */
 export const listenToPersonalTrades = (

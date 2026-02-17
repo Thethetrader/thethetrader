@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, Signal, syncUserId, database } from '../../utils/firebase-setup';
 import { ref, onValue, push } from 'firebase/database';
-import { addPersonalTrade, getPersonalTrades, deletePersonalTrade, PersonalTrade, listenToPersonalTrades, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, getUserSubscription, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, type FinSessionData } from '../../lib/supabase';
+import { addPersonalTrade, getPersonalTrades, deletePersonalTrade, updatePersonalTrade, PersonalTrade, listenToPersonalTrades, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, getUserSubscription, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, type FinSessionData } from '../../lib/supabase';
 import ProfitLoss from '../ProfitLoss';
 import { createClient } from '@supabase/supabase-js';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
@@ -1823,6 +1823,7 @@ export default function TradingPlatformShell() {
     image2: null as File | null,
     session: '' as string
   });
+  const [editingTrade, setEditingTrade] = useState<PersonalTrade | null>(null);
   const [tradeAddAccount, setTradeAddAccount] = useState<string>('Compte Principal');
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
   const [currentPdfPage, setCurrentPdfPage] = useState(1);
@@ -3841,6 +3842,7 @@ export default function TradingPlatformShell() {
       : (selectedAccount === 'Tous les comptes' ? (tradingAccounts[0]?.account_name || 'Compte Principal') : selectedAccount);
     setTradeAddAccount(defaultAccount);
     setSelectedAccounts([defaultAccount]);
+    setEditingTrade(null);
     setShowTradeModal(true);
   };
 
@@ -3850,7 +3852,6 @@ export default function TradingPlatformShell() {
       return;
     }
 
-    // Utiliser la date locale pour éviter le décalage UTC
     const getDateString = (date: Date) => {
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -3858,11 +3859,36 @@ export default function TradingPlatformShell() {
       return `${year}-${month}-${day}`;
     };
 
-    // Utiliser les comptes sélectionnés
-    const accountsToAdd = selectedAccounts.length > 0 ? selectedAccounts : [tradeAddAccount];
-
-    // Sauvegarder dans Supabase (un trade par compte)
     try {
+      if (editingTrade) {
+        const updated = await updatePersonalTrade(editingTrade.id, {
+          symbol: tradeData.symbol,
+          type: tradeData.type,
+          entry: tradeData.entry,
+          exit: tradeData.exit,
+          stopLoss: tradeData.stopLoss,
+          pnl: tradeData.pnl,
+          status: tradeData.status,
+          lossReason: tradeData.lossReason,
+          lossReasons: tradeData.lossReasons,
+          notes: tradeData.notes,
+          image1: tradeData.image1,
+          image2: tradeData.image2,
+          session: tradeData.session || undefined
+        });
+        if (updated) {
+          setPersonalTrades(prev => prev.map(t => t.id === editingTrade.id ? { ...updated, date: editingTrade.date, account: editingTrade.account } : t));
+          setEditingTrade(null);
+          setTradeData({ symbol: '', type: 'BUY', entry: '', exit: '', stopLoss: '', pnl: '', status: 'WIN', lossReason: '', lossReasons: [], notes: '', image1: null, image2: null, session: '' });
+          setSelectedAccounts([]);
+          setShowTradeModal(false);
+        } else {
+          alert('Erreur lors de la mise à jour du trade');
+        }
+        return;
+      }
+
+      const accountsToAdd = selectedAccounts.length > 0 ? selectedAccounts : [tradeAddAccount];
       let successCount = 0;
       for (const accountName of accountsToAdd) {
         const newTrade = {
@@ -3888,34 +3914,17 @@ export default function TradingPlatformShell() {
       }
 
       if (successCount > 0) {
-        // Le listener temps réel va automatiquement ajouter le trade à la liste
-        // Mais si ça ne marche pas, on recharge manuellement après un délai
         setTimeout(async () => {
-          console.log('🔄 Rechargement manuel des trades après ajout...');
           try {
             const trades = await getPersonalTrades();
-            console.log('📊 Trades rechargés:', trades.length);
             setPersonalTrades(trades);
           } catch (error) {
             console.error('❌ Erreur rechargement trades:', error);
           }
-        }, 1000); // Attendre 1 seconde pour laisser le temps au listener
-        
-        // Reset form
+        }, 1000);
         setTradeData({
-          symbol: '',
-          type: 'BUY',
-          entry: '',
-          exit: '',
-          stopLoss: '',
-          pnl: '',
-          status: 'WIN',
-          lossReason: '',
-          lossReasons: [],
-          notes: '',
-          image1: null,
-          image2: null,
-          session: ''
+          symbol: '', type: 'BUY', entry: '', exit: '', stopLoss: '', pnl: '', status: 'WIN',
+          lossReason: '', lossReasons: [], notes: '', image1: null, image2: null, session: ''
         });
         setSelectedAccounts([]);
         setShowTradeModal(false);
@@ -4645,7 +4654,7 @@ export default function TradingPlatformShell() {
               
               <button
                 onClick={() => {
-                  if (userPlan === 'basic') {
+                  if (userPlan === 'basic' && tradingAccounts.length >= 1) {
                     setShowPremiumPopup(true);
                   } else {
                     setShowAddAccountModal(true);
@@ -5433,9 +5442,10 @@ export default function TradingPlatformShell() {
                 <button 
                   key={channel.id}
                   onClick={() => handleChannelChange(channel.id, channel.name)} 
-                  className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === channel.id ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
+                  className={`w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2 ${selectedChannel.id === channel.id ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
                 >
-                  {channel.emoji} {channel.fullName}
+                  <span className="inline-block w-5 text-center shrink-0">{channel.emoji}</span>
+                  {channel.fullName}
                 </button>
               ))}
             </div>
@@ -5738,7 +5748,7 @@ export default function TradingPlatformShell() {
                       className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
                       <div className="flex items-center gap-3">
-                        <span className="text-lg">{channel.emoji}</span>
+                        <span className="text-lg w-6 text-center shrink-0">{channel.emoji}</span>
                         <div>
                           <p className="font-semibold text-white">{channel.fullName}</p>
                           <p className="text-sm text-gray-400">Canal de signaux</p>
@@ -5942,7 +5952,7 @@ export default function TradingPlatformShell() {
                           
                           <button
                             onClick={() => {
-                              if (userPlan === 'basic') {
+                              if (userPlan === 'basic' && tradingAccounts.length >= 1) {
                                 setShowPremiumPopup(true);
                               } else {
                                 setShowAddAccountModal(true);
@@ -6074,6 +6084,34 @@ export default function TradingPlatformShell() {
                                 }`}>
                                   {parseFloat(trade.pnl) >= 0 ? '+' : ''}{trade.pnl}$
                                 </span>
+                                <button
+                                  onClick={() => {
+                                    const [y, m, d] = (trade.date || '').split('-').map(Number);
+                                    if (y && m) setSelectedDate(new Date(y, m - 1, d || 1));
+                                    setTradeData({
+                                      symbol: trade.symbol || '',
+                                      type: trade.type || 'BUY',
+                                      entry: trade.entry || '',
+                                      exit: trade.exit || '',
+                                      stopLoss: trade.stopLoss || '',
+                                      pnl: trade.pnl || '',
+                                      status: trade.status || 'WIN',
+                                      lossReason: trade.lossReason || '',
+                                      lossReasons: Array.isArray(trade.lossReasons) ? trade.lossReasons : [],
+                                      notes: trade.notes || '',
+                                      image1: trade.image1 ?? null,
+                                      image2: trade.image2 ?? null,
+                                      session: trade.session || ''
+                                    });
+                                    setSelectedAccounts([trade.account || 'Compte Principal']);
+                                    setEditingTrade(trade);
+                                    setShowTradeModal(true);
+                                  }}
+                                  className="px-3 py-1 rounded text-sm bg-gray-600 hover:bg-gray-500 text-white"
+                                  title="Modifier ce trade"
+                                >
+                                  Modifier
+                                </button>
                                 <button
                                   onClick={async () => {
                                     if (confirm('Supprimer ce trade ?')) {
@@ -7826,9 +7864,9 @@ export default function TradingPlatformShell() {
           <div className="bg-gray-800 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-white">Ajouter un trade</h2>
+                <h2 className="text-lg font-semibold text-white">{editingTrade ? 'Modifier le trade' : 'Ajouter un trade'}</h2>
                 <button 
-                  onClick={() => { setSelectedAccounts([]); setShowTradeModal(false); }}
+                  onClick={() => { setSelectedAccounts([]); setEditingTrade(null); setShowTradeModal(false); }}
                   className="text-gray-400 hover:text-white"
                 >
                   ✕
@@ -8067,44 +8105,45 @@ export default function TradingPlatformShell() {
                   </div>
                 </div>
 
-                {/* Sélection multiple des raisons du stop-loss (affiché seulement si LOSS) */}
-                {tradeData.status === 'LOSS' && (
+                {/* Sélection multiple des raisons (affiché si LOSS ou BE) */}
+                {(tradeData.status === 'LOSS' || tradeData.status === 'BE') && (
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Raisons du Stop-Loss (max 3)
+                      {tradeData.status === 'LOSS' ? 'Raisons du Stop-Loss' : 'Raisons du BE'}
                     </label>
                     <div className="space-y-2">
-                      {[0, 1, 2].map(index => (
-                        <div key={index} className="flex items-center space-x-2">
+                      {(tradeData.lossReasons.length === 0 ? [''].slice(0, 1) : [...tradeData.lossReasons, '']).map((_, index) => (
+                        <div key={index} className="flex items-center gap-2">
                           <select
-                            value={tradeData.lossReasons[index] || ''}
+                            value={tradeData.lossReasons[index] ?? ''}
                             onChange={(e) => {
                               const newLossReasons = [...tradeData.lossReasons];
+                              if (index >= newLossReasons.length) newLossReasons.push('');
                               if (e.target.value) {
                                 newLossReasons[index] = e.target.value;
                               } else {
                                 newLossReasons.splice(index, 1);
                               }
-                              setTradeData({...tradeData, lossReasons: newLossReasons});
+                              setTradeData({...tradeData, lossReasons: newLossReasons.filter(Boolean)});
                             }}
                             className="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
                           >
-                            <option value="">{index === 0 ? 'Sélectionner une raison...' : 'Optionnel...'}</option>
+                            <option value="">{index === 0 ? 'Sélectionner une raison...' : 'Autre raison...'}</option>
                             {customLossReasons.map(reason => (
                               <option key={reason.value} value={reason.value}>
                                 {reason.emoji} {reason.label}
                               </option>
                             ))}
                           </select>
-                          {index > 0 && tradeData.lossReasons[index] && (
+                          {(index > 0 || (tradeData.lossReasons[index] && tradeData.lossReasons.length > 1)) && (
                             <button
                               type="button"
                               onClick={() => {
-                                const newLossReasons = [...tradeData.lossReasons];
-                                newLossReasons.splice(index, 1);
+                                const newLossReasons = tradeData.lossReasons.filter((_, i) => i !== index);
                                 setTradeData({...tradeData, lossReasons: newLossReasons});
                               }}
-                              className="text-red-400 hover:text-red-300 px-2"
+                              className="text-red-400 hover:text-red-300 px-2 shrink-0"
+                              title="Supprimer cette raison"
                             >
                               ✕
                             </button>
@@ -8112,9 +8151,16 @@ export default function TradingPlatformShell() {
                         </div>
                       ))}
                     </div>
-                    {tradeData.lossReasons.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setTradeData({...tradeData, lossReasons: [...tradeData.lossReasons, '']})}
+                      className="mt-2 text-sm text-purple-400 hover:text-purple-300"
+                    >
+                      + Ajouter une raison
+                    </button>
+                    {tradeData.lossReasons.filter(Boolean).length > 0 && (
                       <div className="mt-2 text-sm text-gray-400">
-                        Raisons sélectionnées: {tradeData.lossReasons.map(reason => {
+                        Raisons sélectionnées: {tradeData.lossReasons.filter(Boolean).map(reason => {
                           const reasonObj = customLossReasons.find(r => r.value === reason);
                           return reasonObj ? `${reasonObj.emoji} ${reasonObj.label}` : reason;
                         }).join(', ')}
@@ -8165,7 +8211,7 @@ export default function TradingPlatformShell() {
                 {/* Boutons */}
                 <div className="flex gap-3 pt-4">
                   <button
-                    onClick={() => { setSelectedAccounts([]); setShowTradeModal(false); }}
+                    onClick={() => { setSelectedAccounts([]); setEditingTrade(null); setShowTradeModal(false); }}
                     className="flex-1 bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
                   >
                     Annuler
@@ -8174,7 +8220,7 @@ export default function TradingPlatformShell() {
                     onClick={handleTradeSubmit}
                     className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white"
                   >
-                    Ajouter le trade
+                    {editingTrade ? 'Modifier le trade' : 'Ajouter le trade'}
                   </button>
                 </div>
               </div>
@@ -8428,6 +8474,35 @@ export default function TradingPlatformShell() {
                         }`}>
                           {(trade.pnl && parseFloat(trade.pnl) >= 0) ? '+' : ''}{trade.pnl || '0'}$
                         </span>
+                        <button
+                          onClick={() => {
+                            const [y, m, d] = (trade.date || '').split('-').map(Number);
+                            if (y && m) setSelectedDate(new Date(y, m - 1, d || 1));
+                            setTradeData({
+                              symbol: trade.symbol || '',
+                              type: trade.type || 'BUY',
+                              entry: trade.entry || '',
+                              exit: trade.exit || '',
+                              stopLoss: trade.stopLoss || '',
+                              pnl: trade.pnl || '',
+                              status: trade.status || 'WIN',
+                              lossReason: trade.lossReason || '',
+                              lossReasons: Array.isArray(trade.lossReasons) ? trade.lossReasons : [],
+                              notes: trade.notes || '',
+                              image1: trade.image1 ?? null,
+                              image2: trade.image2 ?? null,
+                              session: trade.session || ''
+                            });
+                            setSelectedAccounts([trade.account || 'Compte Principal']);
+                            setEditingTrade(trade);
+                            setShowTradesModal(false);
+                            setShowTradeModal(true);
+                          }}
+                          className="px-3 py-1 rounded text-sm bg-gray-600 hover:bg-gray-500 text-white"
+                          title="Modifier ce trade"
+                        >
+                          Modifier
+                        </button>
                         <button
                           onClick={async () => {
                             if (confirm('Supprimer ce trade ?')) {
@@ -8864,14 +8939,44 @@ export default function TradingPlatformShell() {
                             <span className="text-lg font-bold text-white">{trade.symbol}</span>
                             <span className="text-sm text-gray-400">{trade.date}</span>
                           </div>
-                          <span className={`px-2 py-1 rounded text-xs ${
-                            trade.status === 'WIN' ? 'bg-green-600 text-white' :
-                            trade.status === 'LOSS' ? 'bg-red-600 text-white' :
-                            trade.status === 'BE' ? 'bg-blue-600 text-white' :
-                            'bg-yellow-600 text-white'
-                          }`}>
-                            {trade.status}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className={`px-2 py-1 rounded text-xs ${
+                              trade.status === 'WIN' ? 'bg-green-600 text-white' :
+                              trade.status === 'LOSS' ? 'bg-red-600 text-white' :
+                              trade.status === 'BE' ? 'bg-blue-600 text-white' :
+                              'bg-yellow-600 text-white'
+                            }`}>
+                              {trade.status}
+                            </span>
+                            <button
+                              onClick={() => {
+                                const [y, m, d] = (trade.date || '').split('-').map(Number);
+                                if (y && m) setSelectedDate(new Date(y, m - 1, d || 1));
+                                setTradeData({
+                                  symbol: trade.symbol || '',
+                                  type: trade.type || 'BUY',
+                                  entry: trade.entry || '',
+                                  exit: trade.exit || '',
+                                  stopLoss: trade.stopLoss || '',
+                                  pnl: trade.pnl || '',
+                                  status: trade.status || 'WIN',
+                                  lossReason: trade.lossReason || '',
+                                  lossReasons: Array.isArray(trade.lossReasons) ? trade.lossReasons : [],
+                                  notes: trade.notes || '',
+                                  image1: trade.image1 ?? null,
+                                  image2: trade.image2 ?? null,
+                                  session: trade.session || ''
+                                });
+                                setSelectedAccounts([trade.account || 'Compte Principal']);
+                                setEditingTrade(trade);
+                                setShowTradeModal(true);
+                              }}
+                              className="px-3 py-1 rounded text-sm bg-gray-600 hover:bg-gray-500 text-white"
+                              title="Modifier ce trade"
+                            >
+                              Modifier
+                            </button>
+                          </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4 mb-3">
