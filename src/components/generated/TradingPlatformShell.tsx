@@ -833,7 +833,7 @@ export default function TradingPlatformShell() {
   const [pasteArea, setPasteArea] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [showWinsLossModal, setShowWinsLossModal] = useState(false);
-  const [winsLossFilter, setWinsLossFilter] = useState<'WIN' | 'LOSS' | null>(null);
+  const [winsLossFilter, setWinsLossFilter] = useState<'WIN' | 'LOSS' | 'BE' | null>(null);
   const [showPerformanceTableModal, setShowPerformanceTableModal] = useState(false);
   const [winsLossTradeIndex, setWinsLossTradeIndex] = useState(0);
   const [imageZoom, setImageZoom] = useState(1);
@@ -5207,6 +5207,33 @@ export default function TradingPlatformShell() {
             </div>
             )}
 
+            {/* Raisons des SL (trades du mois) - sous Avg Win/Loss et sessions */}
+            {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') && lossAnalysisState.totalLosses > 0 && (
+              <div className="bg-gray-700 rounded-lg p-4 border border-gray-600 mt-4">
+                <h4 className="text-sm font-semibold text-red-300 mb-3">Raisons des SL</h4>
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-gray-400">Pertes ce mois:</span>
+                  <span className="text-red-300 font-medium">{lossAnalysisState.totalLosses} trades</span>
+                </div>
+                <div className="flex justify-between text-sm mb-3">
+                  <span className="text-gray-400">PnL total:</span>
+                  <span className="text-red-300 font-medium">${Math.round(lossAnalysisState.totalLossPnl)}</span>
+                </div>
+                {lossAnalysisState.reasons.length > 0 ? (
+                  <div className="space-y-2">
+                    {lossAnalysisState.reasons.map((r) => (
+                      <div key={r.reason} className="flex justify-between text-sm">
+                        <span className="text-gray-300">{getCustomLossReasonLabel(r.reason)}</span>
+                        <span className="text-red-300 font-medium">{r.count} ({r.percentage}%)</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-xs text-gray-500 italic">Aucune raison renseignée</div>
+                )}
+              </div>
+            )}
+
           </div>
 
           {/* Résumé hebdomadaire */}
@@ -5341,6 +5368,16 @@ export default function TradingPlatformShell() {
                 className="w-full px-3 py-2 rounded-lg bg-red-600/30 border border-red-500/50 text-red-300 hover:bg-red-600/50 transition-colors text-sm font-medium"
               >
                 📉 Tous les LOSS ({selectedChannel.id === 'calendrier' ? signals.filter(s => s.status === 'LOSS' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount.filter(t => t.status === 'LOSS').length})
+              </button>
+              <button
+                onClick={() => {
+                  setWinsLossFilter('BE');
+                  setWinsLossTradeIndex(0);
+                  setShowWinsLossModal(true);
+                }}
+                className="w-full px-3 py-2 rounded-lg bg-blue-600/30 border border-blue-500/50 text-blue-300 hover:bg-blue-600/50 transition-colors text-sm font-medium"
+              >
+                🔵 Tous les BE ({selectedChannel.id === 'calendrier' ? signals.filter(s => s.status === 'BE' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount.filter(t => t.status === 'BE').length})
               </button>
               <button
                 onClick={() => setShowPerformanceTableModal(true)}
@@ -6135,7 +6172,16 @@ export default function TradingPlatformShell() {
                                 </button>
                               </div>
                             </div>
-                            
+                            {selectedChannel.id === 'tpln-model' && (trade.status === 'LOSS' || trade.status === 'BE') && (() => {
+                              const reasons = trade.lossReasons?.length ? trade.lossReasons : (trade.lossReason ? [trade.lossReason] : []);
+                              if (reasons.length === 0) return null;
+                              const labels = reasons.map(v => customLossReasons.find(r => r.value === v)).filter(Boolean);
+                              return (
+                                <div className="mb-2 text-sm text-gray-400">
+                                  Raisons {trade.status === 'LOSS' ? 'SL' : 'BE'}: {labels.map((r: any) => `${r.emoji} ${r.label}`).join(', ')}
+                                </div>
+                              );
+                            })()}
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                               <div>
                                 <span className="text-gray-400">Entry:</span>
@@ -8532,7 +8578,16 @@ export default function TradingPlatformShell() {
                         </span>
                       </div>
                     </div>
-
+                    {selectedChannel.id === 'tpln-model' && (trade.status === 'LOSS' || trade.status === 'BE') && (() => {
+                      const reasons = trade.lossReasons?.length ? trade.lossReasons : (trade.lossReason ? [trade.lossReason] : []);
+                      if (reasons.length === 0) return null;
+                      const labels = reasons.map(v => customLossReasons.find(r => r.value === v)).filter(Boolean);
+                      return (
+                        <div className="mb-3 text-sm text-gray-400">
+                          Raisons {trade.status === 'LOSS' ? 'SL' : 'BE'}: {labels.map((r: any) => `${r.emoji} ${r.label}`).join(', ')}
+                        </div>
+                      );
+                    })()}
                     {trade.notes && (
                       <div className="mb-3">
                         <span className="text-sm text-gray-400">Notes:</span>
@@ -8613,11 +8668,11 @@ export default function TradingPlatformShell() {
                   <div className="p-6">
                     <div className="flex justify-between items-center mb-4">
                       <h2 className="text-xl font-bold text-white">
-                        {winsLossFilter === 'WIN' ? '📈 Tous les WIN' : '📉 Tous les LOSS'}
+                        {winsLossFilter === 'WIN' ? '📈 Tous les WIN' : winsLossFilter === 'LOSS' ? '📉 Tous les LOSS' : '🔵 Tous les BE'}
                       </h2>
                       <button onClick={() => setShowWinsLossModal(false)} className="text-gray-400 hover:text-white text-2xl">×</button>
                     </div>
-                    <div className="text-center py-12 text-gray-400">Aucun {isSignalsMode ? 'signal' : 'trade'} {winsLossFilter === 'WIN' ? 'gagnant' : 'perdant'}</div>
+                    <div className="text-center py-12 text-gray-400">Aucun {isSignalsMode ? 'signal' : 'trade'} {winsLossFilter === 'WIN' ? 'gagnant' : winsLossFilter === 'LOSS' ? 'perdant' : 'break-even'}</div>
                   </div>
                 );
               }
@@ -8632,7 +8687,7 @@ export default function TradingPlatformShell() {
                 <>
                   <div className="flex justify-between items-center p-4 border-b border-gray-700">
                     <h2 className="text-xl font-bold text-white">
-                      {winsLossFilter === 'WIN' ? '📈 Tous les WIN' : '📉 Tous les LOSS'} ({winsLossTradeIndex + 1}/{filteredItems.length})
+                      {winsLossFilter === 'WIN' ? '📈 Tous les WIN' : winsLossFilter === 'LOSS' ? '📉 Tous les LOSS' : '🔵 Tous les BE'} ({winsLossTradeIndex + 1}/{filteredItems.length})
                     </h2>
                     <button onClick={() => setShowWinsLossModal(false)} className="text-gray-400 hover:text-white text-2xl">×</button>
                   </div>
@@ -8942,7 +8997,16 @@ export default function TradingPlatformShell() {
                             </button>
                           </div>
                         </div>
-
+                        {selectedChannel.id === 'tpln-model' && (trade.status === 'LOSS' || trade.status === 'BE') && (() => {
+                          const reasons = trade.lossReasons?.length ? trade.lossReasons : (trade.lossReason ? [trade.lossReason] : []);
+                          if (reasons.length === 0) return null;
+                          const labels = reasons.map(v => customLossReasons.find(r => r.value === v)).filter(Boolean);
+                          return (
+                            <div className="mb-2 text-sm text-gray-400">
+                              Raisons {trade.status === 'LOSS' ? 'SL' : 'BE'}: {labels.map((r: any) => `${r.emoji} ${r.label}`).join(', ')}
+                            </div>
+                          );
+                        })()}
                         <div className="grid grid-cols-2 gap-4 mb-3">
                           <div>
                             <span className="text-sm text-gray-400">Entry:</span>

@@ -10,7 +10,7 @@ import { httpsCallable } from 'firebase/functions';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 import { LOSS_REASONS, getLossReasonLabel } from '../config/loss-reasons';
 import { signOutAdmin } from '../utils/admin-utils';
-import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, supabase, getPersonalTrades as getPersonalTradesFromSupabase, addPersonalTrade as addPersonalTradeToSupabase, listenToPersonalTrades, PersonalTrade, deletePersonalTrade, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, type FinSessionData } from '../lib/supabase';
+import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, supabase, getPersonalTrades as getPersonalTradesFromSupabase, getPersonalTradeById, addPersonalTrade as addPersonalTradeToSupabase, updatePersonalTrade, listenToPersonalTrades, PersonalTrade, deletePersonalTrade, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, type FinSessionData } from '../lib/supabase';
 import DailyPnLChart from './DailyPnLChart';
 import CheckTradeChecklist from './CheckTradeChecklist';
 
@@ -330,7 +330,7 @@ export default function AdminInterface() {
   const [pasteArea, setPasteArea] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [showWinsLossModal, setShowWinsLossModal] = useState(false);
-  const [winsLossFilter, setWinsLossFilter] = useState<'WIN' | 'LOSS' | null>(null);
+  const [winsLossFilter, setWinsLossFilter] = useState<'WIN' | 'LOSS' | 'BE' | null>(null);
   const [winsLossTradeIndex, setWinsLossTradeIndex] = useState(0);
   const [showPerformanceTableModal, setShowPerformanceTableModal] = useState(false);
   const [imageZoom, setImageZoom] = useState(1);
@@ -867,6 +867,7 @@ export default function AdminInterface() {
 
   // États pour le journal de trading personnalisé
   const [showTradeModal, setShowTradeModal] = useState(false);
+  const [editingTrade, setEditingTrade] = useState<PersonalTrade | null>(null);
   const [showFinSessionModal, setShowFinSessionModal] = useState(false);
   const [finSessionCache, setFinSessionCache] = useState<Record<string, FinSessionData>>({});
   const [finSessionSelectedSession, setFinSessionSelectedSession] = useState<string>('18h');
@@ -982,6 +983,7 @@ export default function AdminInterface() {
     pnl: '',
     status: 'WIN' as 'WIN' | 'LOSS' | 'BE',
     lossReason: '',
+    lossReasons: [] as string[],
     notes: '',
     image1: null as File | null,
     image2: null as File | null,
@@ -3327,6 +3329,32 @@ const dailyPnLChartData = useMemo(
       : (selectedAccount === 'Tous les comptes' ? (tradingAccounts[0]?.account_name || 'Compte Principal') : selectedAccount);
     setTradeAddAccount(defaultAccount);
     setSelectedAccounts([defaultAccount]);
+    setEditingTrade(null);
+    setShowTradeModal(true);
+  };
+
+  const handleEditTrade = async (trade: PersonalTrade) => {
+    const full = await getPersonalTradeById(trade.id);
+    if (!full) return;
+    const [y, m, d] = (full.date || '').split('-').map(Number);
+    if (y && m) setSelectedDate(new Date(y, m - 1, d || 1));
+    setTradeData({
+      symbol: full.symbol || '',
+      type: full.type || 'BUY',
+      entry: full.entry || '',
+      exit: full.exit || '',
+      stopLoss: full.stopLoss || '',
+      pnl: full.pnl || '',
+      status: full.status || 'WIN',
+      lossReason: Array.isArray(full.lossReasons) && full.lossReasons.length > 0 ? full.lossReasons[0] : (full.lossReason || ''),
+      lossReasons: Array.isArray(full.lossReasons) ? full.lossReasons : (full.lossReason ? [full.lossReason] : []),
+      notes: full.notes || '',
+      image1: full.image1 ?? null,
+      image2: full.image2 ?? null,
+      session: full.session || ''
+    });
+    setSelectedAccounts([full.account || 'Compte Principal']);
+    setEditingTrade(full);
     setShowTradeModal(true);
   };
 
@@ -3336,7 +3364,6 @@ const dailyPnLChartData = useMemo(
       return;
     }
 
-    // Utiliser la date locale pour éviter le décalage UTC
     const getDateString = (date: Date) => {
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -3344,12 +3371,38 @@ const dailyPnLChartData = useMemo(
       return `${year}-${month}-${day}`;
     };
 
-    // Utiliser les comptes sélectionnés
-    const accountsToAdd = selectedAccounts.length > 0 ? selectedAccounts : [tradeAddAccount];
+    if (editingTrade) {
+      const updated = await updatePersonalTrade(editingTrade.id, {
+        symbol: tradeData.symbol,
+        type: tradeData.type,
+        entry: tradeData.entry,
+        exit: tradeData.exit,
+        stopLoss: tradeData.stopLoss,
+        pnl: tradeData.pnl,
+        status: tradeData.status,
+        lossReason: tradeData.lossReasons?.[0] ?? tradeData.lossReason,
+        lossReasons: tradeData.lossReasons?.length ? tradeData.lossReasons : undefined,
+        notes: tradeData.notes,
+        image1: tradeData.image1,
+        image2: tradeData.image2,
+        session: tradeData.session || undefined
+      });
+      if (updated) {
+        const reloadedTrades = await getPersonalTradesFromSupabase(1000);
+        setPersonalTrades(reloadedTrades);
+        setEditingTrade(null);
+        setTradeData({ symbol: '', type: 'BUY', entry: '', exit: '', stopLoss: '', pnl: '', status: 'WIN', lossReason: '', lossReasons: [], notes: '', image1: null, image2: null, session: '' });
+        setSelectedAccounts([]);
+        setShowTradeModal(false);
+      } else {
+        alert('Erreur lors de la mise à jour du trade');
+      }
+      return;
+    }
 
+    const accountsToAdd = selectedAccounts.length > 0 ? selectedAccounts : [tradeAddAccount];
     console.log('🔍 [ADMIN] Ajout trade - comptes:', accountsToAdd);
 
-    // Sauvegarder dans Supabase (un trade par compte)
     let successCount = 0;
     for (const accountName of accountsToAdd) {
       const newTrade = {
@@ -3361,7 +3414,8 @@ const dailyPnLChartData = useMemo(
         stopLoss: tradeData.stopLoss,
         pnl: tradeData.pnl,
         status: tradeData.status,
-        lossReason: tradeData.lossReason,
+        lossReason: tradeData.lossReasons?.[0] ?? tradeData.lossReason,
+        lossReasons: tradeData.lossReasons?.length ? tradeData.lossReasons : undefined,
         notes: tradeData.notes,
         image1: tradeData.image1,
         image2: tradeData.image2,
@@ -3393,6 +3447,7 @@ const dailyPnLChartData = useMemo(
         pnl: '',
         status: 'WIN',
         lossReason: '',
+        lossReasons: [],
         notes: '',
         image1: null,
         image2: null,
@@ -5459,6 +5514,16 @@ const dailyPnLChartData = useMemo(
                 📉 Tous les LOSS ({(selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendar') ? signals.filter(s => s.status === 'LOSS' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount.filter(t => t.status === 'LOSS').length})
               </button>
               <button
+                onClick={() => {
+                  setWinsLossFilter('BE');
+                  setWinsLossTradeIndex(0);
+                  setShowWinsLossModal(true);
+                }}
+                className="w-full px-3 py-2 rounded-lg bg-blue-600/30 border border-blue-500/50 text-blue-300 hover:bg-blue-600/50 transition-colors text-sm font-medium"
+              >
+                🔵 Tous les BE ({(selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendar') ? signals.filter(s => s.status === 'BE' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount.filter(t => t.status === 'BE').length})
+              </button>
+              <button
                 onClick={() => setShowPerformanceTableModal(true)}
                 className="w-full px-3 py-2 rounded-lg bg-gray-600/50 border border-gray-500/50 text-gray-200 hover:bg-gray-600 transition-colors text-sm font-medium"
               >
@@ -6262,6 +6327,13 @@ const dailyPnLChartData = useMemo(
                                 }`}>
                                   {parseFloat(trade.pnl) >= 0 ? '+' : ''}{trade.pnl}$
                                 </span>
+                                <button
+                                  onClick={() => handleEditTrade(trade)}
+                                  className="px-3 py-1 rounded text-sm bg-gray-600 hover:bg-gray-500 text-white"
+                                  title="Modifier ce trade"
+                                >
+                                  Modifier
+                                </button>
                                 <button
                                   onClick={async () => {
                                     if (confirm('Supprimer ce trade ?')) {
@@ -7880,9 +7952,9 @@ const dailyPnLChartData = useMemo(
           <div className="bg-gray-800 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-white">Ajouter un trade</h2>
+                <h2 className="text-lg font-semibold text-white">{editingTrade ? 'Modifier le trade' : 'Ajouter un trade'}</h2>
                 <button 
-                  onClick={() => { setSelectedAccounts([]); setShowTradeModal(false); }}
+                  onClick={() => { setSelectedAccounts([]); setEditingTrade(null); setShowTradeModal(false); }}
                   className="text-gray-400 hover:text-white"
                 >
                   ✕
@@ -8121,22 +8193,67 @@ const dailyPnLChartData = useMemo(
                   </div>
                 </div>
 
-                {/* Menu déroulant pour la raison du stop-loss (affiché seulement si LOSS) */}
-                {tradeData.status === 'LOSS' && (
+                {/* Raisons du stop-loss ou du BE (plusieurs raisons possibles) */}
+                {(tradeData.status === 'LOSS' || tradeData.status === 'BE') && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Raison du Stop-Loss</label>
-                    <select
-                      value={tradeData.lossReason}
-                      onChange={(e) => setTradeData({...tradeData, lossReason: e.target.value})}
-                      className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
-                    >
-                      <option value="">Sélectionner une raison...</option>
-                      {customLossReasons.map(reason => (
-                        <option key={reason.value} value={reason.value}>
-                          {reason.emoji} {reason.label}
-                        </option>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      {tradeData.status === 'LOSS' ? 'Raisons du Stop-Loss' : 'Raisons du BE'}
+                    </label>
+                    <div className="space-y-2">
+                      {(tradeData.lossReasons.length === 0 ? [''].slice(0, 1) : [...tradeData.lossReasons, '']).map((_, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <select
+                            value={tradeData.lossReasons[index] ?? ''}
+                            onChange={(e) => {
+                              const newReasons = [...tradeData.lossReasons];
+                              if (index >= newReasons.length) newReasons.push('');
+                              if (e.target.value) {
+                                newReasons[index] = e.target.value;
+                              } else {
+                                newReasons.splice(index, 1);
+                              }
+                              setTradeData({ ...tradeData, lossReasons: newReasons.filter(Boolean) });
+                            }}
+                            className="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
+                          >
+                            <option value="">{index === 0 ? 'Sélectionner une raison...' : 'Autre raison...'}</option>
+                            {customLossReasons.map(reason => (
+                              <option key={reason.value} value={reason.value}>
+                                {reason.emoji} {reason.label}
+                              </option>
+                            ))}
+                          </select>
+                          {(index > 0 || (tradeData.lossReasons[index] && tradeData.lossReasons.length > 1)) && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newReasons = tradeData.lossReasons.filter((_, i) => i !== index);
+                                setTradeData({ ...tradeData, lossReasons: newReasons });
+                              }}
+                              className="text-red-400 hover:text-red-300 px-2 shrink-0"
+                              title="Supprimer cette raison"
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
                       ))}
-                    </select>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setTradeData({ ...tradeData, lossReasons: [...tradeData.lossReasons, ''] })}
+                      className="mt-2 text-sm text-purple-400 hover:text-purple-300"
+                    >
+                      + Ajouter une raison
+                    </button>
+                    {tradeData.lossReasons.filter(Boolean).length > 0 && (
+                      <div className="mt-2 text-sm text-gray-400">
+                        Raisons sélectionnées: {tradeData.lossReasons.filter(Boolean).map(r => {
+                          const obj = customLossReasons.find(x => x.value === r);
+                          return obj ? `${obj.emoji} ${obj.label}` : r;
+                        }).join(', ')}
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -8182,7 +8299,7 @@ const dailyPnLChartData = useMemo(
                 {/* Boutons */}
                 <div className="flex gap-3 pt-4">
                   <button
-                    onClick={() => { setSelectedAccounts([]); setShowTradeModal(false); }}
+                    onClick={() => { setSelectedAccounts([]); setEditingTrade(null); setShowTradeModal(false); }}
                     className="flex-1 bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
                   >
                     Annuler
@@ -8191,7 +8308,7 @@ const dailyPnLChartData = useMemo(
                     onClick={handleTradeSubmit}
                     className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white"
                   >
-                    Ajouter le trade
+                    {editingTrade ? 'Modifier le trade' : 'Ajouter le trade'}
                   </button>
                 </div>
               </div>
@@ -8447,6 +8564,16 @@ const dailyPnLChartData = useMemo(
                         </span>
                         <button
                           onClick={async () => {
+                            setShowTradesModal(false);
+                            await handleEditTrade(trade);
+                          }}
+                          className="px-3 py-1 rounded text-sm bg-gray-600 hover:bg-gray-500 text-white"
+                          title="Modifier ce trade"
+                        >
+                          Modifier
+                        </button>
+                        <button
+                          onClick={async () => {
                             if (confirm('Supprimer ce trade ?')) {
                               const tradesToDelete = selectedAccount === 'Tous les comptes'
                                 ? personalTrades.filter(t => t.date === trade.date && t.symbol === trade.symbol && t.entry === trade.entry && t.exit === trade.exit && t.pnl === trade.pnl)
@@ -8570,11 +8697,11 @@ const dailyPnLChartData = useMemo(
                   <div className="p-6">
                     <div className="flex justify-between items-center mb-4">
                       <h2 className="text-xl font-bold text-white">
-                        {winsLossFilter === 'WIN' ? '📈 Tous les WIN' : '📉 Tous les LOSS'}
+                        {winsLossFilter === 'WIN' ? '📈 Tous les WIN' : winsLossFilter === 'LOSS' ? '📉 Tous les LOSS' : '🔵 Tous les BE'}
                       </h2>
                       <button onClick={() => setShowWinsLossModal(false)} className="text-gray-400 hover:text-white text-2xl">×</button>
                     </div>
-                    <div className="text-center py-12 text-gray-400">Aucun {isSignalsMode ? 'signal' : 'trade'} {winsLossFilter === 'WIN' ? 'gagnant' : 'perdant'}</div>
+                    <div className="text-center py-12 text-gray-400">Aucun {isSignalsMode ? 'signal' : 'trade'} {winsLossFilter === 'WIN' ? 'gagnant' : winsLossFilter === 'LOSS' ? 'perdant' : 'break-even'}</div>
                   </div>
                 );
               }
@@ -8589,7 +8716,7 @@ const dailyPnLChartData = useMemo(
                 <>
                   <div className="flex justify-between items-center p-4 border-b border-gray-700">
                     <h2 className="text-xl font-bold text-white">
-                      {winsLossFilter === 'WIN' ? '📈 Tous les WIN' : '📉 Tous les LOSS'} ({winsLossTradeIndex + 1}/{filteredItems.length})
+                      {winsLossFilter === 'WIN' ? '📈 Tous les WIN' : winsLossFilter === 'LOSS' ? '📉 Tous les LOSS' : '🔵 Tous les BE'} ({winsLossTradeIndex + 1}/{filteredItems.length})
                     </h2>
                     <button onClick={() => setShowWinsLossModal(false)} className="text-gray-400 hover:text-white text-2xl">×</button>
                   </div>
@@ -9369,14 +9496,23 @@ const dailyPnLChartData = useMemo(
                               <span className="text-lg font-bold text-white">{trade.symbol}</span>
                               <span className="text-sm text-gray-400">{trade.date}</span>
                             </div>
-                            <span className={`px-2 py-1 rounded text-xs ${
-                              trade.status === 'WIN' ? 'bg-green-600 text-white' :
-                              trade.status === 'LOSS' ? 'bg-red-600 text-white' :
-                              trade.status === 'BE' ? 'bg-blue-600 text-white' :
-                              'bg-yellow-600 text-white'
-                            }`}>
-                              {trade.status}
-                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className={`px-2 py-1 rounded text-xs ${
+                                trade.status === 'WIN' ? 'bg-green-600 text-white' :
+                                trade.status === 'LOSS' ? 'bg-red-600 text-white' :
+                                trade.status === 'BE' ? 'bg-blue-600 text-white' :
+                                'bg-yellow-600 text-white'
+                              }`}>
+                                {trade.status}
+                              </span>
+                              <button
+                                onClick={() => handleEditTrade(trade)}
+                                className="px-3 py-1 rounded text-sm bg-gray-600 hover:bg-gray-500 text-white"
+                                title="Modifier ce trade"
+                              >
+                                Modifier
+                              </button>
+                            </div>
                           </div>
 
                           <div className="grid grid-cols-2 gap-4 mb-3">
