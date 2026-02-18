@@ -182,11 +182,8 @@ function WinRateGauge({ wins, losses }: { wins: number; losses: number }) {
     };
   };
   
-  const lossLabelPos = getLabelPos(lossLabelAngle, 15);
+  const lossLabelPos = getLabelPos(lossLabelAngle, 18);
   const winLabelPos = getLabelPos(winLabelAngle, 22);
-  // Éviter que le chiffre rouge soit coupé à gauche : minimum x = 15
-  const lossTextX = Math.max(15, lossLabelPos.x);
-  const lossTextY = lossLabelPos.y;
 
   return (
     <div className="flex-shrink-0 w-24 h-24 relative overflow-visible min-w-[6rem]">
@@ -200,12 +197,14 @@ function WinRateGauge({ wins, losses }: { wins: number; losses: number }) {
               strokeWidth="8"
               strokeLinecap="round"
             />
+            <circle cx={lossLabelPos.x} cy={lossLabelPos.y} r="8" fill="#1f2937" />
             <text
-              x={lossTextX}
-              y={lossTextY}
+              x={lossLabelPos.x}
+              y={lossLabelPos.y + 2}
               textAnchor="middle"
-              dominantBaseline="central"
-              className="text-xs font-bold fill-red-400"
+              fontSize="10"
+              fontWeight="bold"
+              fill="white"
             >
               {losses}
             </text>
@@ -221,12 +220,14 @@ function WinRateGauge({ wins, losses }: { wins: number; losses: number }) {
               strokeWidth="8"
               strokeLinecap="round"
             />
+            <circle cx={winLabelPos.x} cy={winLabelPos.y} r="8" fill="#1f2937" />
             <text
               x={winLabelPos.x}
-              y={winLabelPos.y}
+              y={winLabelPos.y + 2}
               textAnchor="middle"
-              dominantBaseline="central"
-              className="text-xs font-bold fill-green-400"
+              fontSize="10"
+              fontWeight="bold"
+              fill="white"
             >
               {wins}
             </text>
@@ -5655,9 +5656,9 @@ const dailyPnLChartData = useMemo(
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">SIGNAUX</h3>
             <div className="space-y-1">
-              <button onClick={() => handleChannelChange('general-chat-2', 'general-chat-2')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat-2' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📊 Indices</button>
-              <button onClick={() => handleChannelChange('general-chat-3', 'general-chat-3')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat-3' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>₿ Crypto</button>
-              <button onClick={() => handleChannelChange('general-chat-4', 'general-chat-4')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'general-chat-4' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>💵 Forex</button>
+              <button onClick={() => handleChannelChange('general-chat-2', 'general-chat-2')} className={`w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2 ${selectedChannel.id === 'general-chat-2' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}><span className="inline-flex items-center justify-center w-5 h-5 shrink-0 text-center text-sm">📊</span>Indices</button>
+              <button onClick={() => handleChannelChange('general-chat-3', 'general-chat-3')} className={`w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2 ${selectedChannel.id === 'general-chat-3' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}><span className="inline-flex items-center justify-center w-5 h-5 shrink-0 text-center text-sm">₿</span>Crypto</button>
+              <button onClick={() => handleChannelChange('general-chat-4', 'general-chat-4')} className={`w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2 ${selectedChannel.id === 'general-chat-4' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}><span className="inline-flex items-center justify-center w-5 h-5 shrink-0 text-center text-sm">💵</span>Forex</button>
             </div>
           </div>
 
@@ -5960,7 +5961,7 @@ const dailyPnLChartData = useMemo(
                       className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
                       <div className="flex items-center gap-3">
-                        <span className="text-lg">{channel.emoji}</span>
+                        <span className="inline-flex items-center justify-center w-6 h-6 shrink-0 text-center text-lg">{channel.emoji}</span>
                         <div>
                           <p className="font-medium text-white">{channel.fullName}</p>
                           <p className="text-sm text-gray-400">Signaux de trading</p>

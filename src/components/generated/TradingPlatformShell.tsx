@@ -5581,7 +5581,7 @@ export default function TradingPlatformShell() {
                   onClick={() => handleChannelChange(channel.id, channel.name)} 
                   className={`w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2 ${selectedChannel.id === channel.id ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
                 >
-                  <span className="inline-block w-5 text-center shrink-0">{channel.emoji}</span>
+                  <span className="inline-flex items-center justify-center w-5 h-5 shrink-0 text-center text-sm">{channel.emoji}</span>
                   {channel.fullName}
                 </button>
               ))}
@@ -5885,7 +5885,7 @@ export default function TradingPlatformShell() {
                       className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
                       <div className="flex items-center gap-3">
-                        <span className="text-lg w-6 text-center shrink-0">{channel.emoji}</span>
+                        <span className="inline-flex items-center justify-center w-6 h-6 shrink-0 text-center text-lg">{channel.emoji}</span>
                         <div>
                           <p className="font-semibold text-white">{channel.fullName}</p>
                           <p className="text-sm text-gray-400">Canal de signaux</p>
