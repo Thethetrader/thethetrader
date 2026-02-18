@@ -2330,7 +2330,7 @@ const App = () => {
                   </div>
 
                   {/* Image journal2 */}
-                  <div className="max-w-6xl mx-auto rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-white p-0">
+                  <div className="max-w-6xl mx-auto rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl p-0">
                     <img 
                       src="/journal2.webp" 
                       alt="Journal TPLN"
@@ -2445,9 +2445,6 @@ const App = () => {
                         complète.
                       </span>
                     </h2>
-                    <p className="section-intro-p text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
-                      Rejoins mes sessions de trading, apprends en direct avec mes annotations qui expliquent chaque décision au fur et à mesure.
-                    </p>
                   </div>
 
                   {/* Cadre formation */}
@@ -2481,19 +2478,24 @@ const App = () => {
                           <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>L'analyse post-trade</span>
                         </li>
                       </ul>
-                      
-                      <div>
-                        <div className="text-[#F2F4F8] text-base font-semibold mb-1" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                          Prix :
-                        </div>
-                        <div className="text-lg bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent font-bold">
-                          49€/mois
-                        </div>
+                    </div>
+                    
+                    {/* Texte au-dessus du bouton */}
+                    <div className="mt-6 mb-3">
+                      <p className="text-gray-400 text-base text-center" style={{ fontFamily: 'Inter, sans-serif' }}>
+                        Un cadre reproductible. Sans indicateurs inutiles. Sans complexité artificielle.
+                      </p>
+                    </div>
+                    
+                    {/* Prix */}
+                    <div className="mb-4 text-center">
+                      <div className="text-lg bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent font-bold" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
+                        49€/mois
                       </div>
                     </div>
                     
                     {/* Bouton */}
-                    <div className="flex justify-center mt-6">
+                    <div className="flex justify-center">
                       <button className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-8 py-3 rounded-[14px] font-medium transition-all duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
                         Accéder à la méthode
                       </button>
@@ -2501,7 +2503,7 @@ const App = () => {
                   </div>
 
                   {/* Vidéo complète */}
-                  <div className="max-w-6xl mx-auto rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-white p-0">
+                  <div className="max-w-6xl mx-auto rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl p-0">
                     <video 
                       className="w-full rounded-lg"
                       autoPlay
@@ -2517,6 +2519,95 @@ const App = () => {
                   </div>
                 </div>
               </div>
+              
+              {/* Section 4 - Live (Dupliquée) */}
+              <div id="section-live-2" className="mt-16 sm:mt-20">
+                <div className="relative">
+                  {/* Numéro 4 en haut à gauche */}
+                  <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
+                    4
+                  </div>
+                  
+                  {/* Titre principal */}
+                  <div className="text-center mb-8">
+                    <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
+                      <span className="text-white">Exécution</span>
+                      <br />
+                      <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
+                        en temps réel.
+                      </span>
+                    </h2>
+                  </div>
+
+                  {/* Cadre complément formation */}
+                  <div className="max-w-2xl mx-auto mb-8">
+                    <div className="bg-[#141821] border border-[#222836] rounded-[14px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
+                      
+                      <h3 className="text-[#F2F4F8] text-lg font-semibold mb-4" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                        En complément de la formation :
+                      </h3>
+                      
+                      <ul className="space-y-2.5">
+                        <li className="flex items-center gap-2.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Livestream structuré</span>
+                        </li>
+                        <li className="flex items-center gap-2.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Validation checklist en direct</span>
+                        </li>
+                        <li className="flex items-center gap-2.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Contexte expliqué</span>
+                        </li>
+                        <li className="flex items-center gap-2.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Gestion du risque associée</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  {/* Texte sous le cadre */}
+                  <div className="max-w-2xl mx-auto mb-6">
+                    <p className="text-gray-400 text-base text-center" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      Ce n'est pas un service de copie. C'est une exécution expliquée.
+                    </p>
+                  </div>
+                  
+                  {/* Vidéo complète */}
+                  <div className="max-w-6xl mx-auto mb-4 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl p-0">
+                    <video 
+                      className="w-full rounded-lg"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="auto"
+                      controls={false}
+                    >
+                      <source src="/TPLN2.mp4" type="video/mp4" />
+                      Votre navigateur ne supporte pas la lecture de vidéos.
+                    </video>
+                  </div>
+                  
+                  {/* Prix */}
+                  <div className="max-w-2xl mx-auto mb-4 text-center">
+                    <div className="text-lg bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent font-bold" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
+                      99€/mois
+                    </div>
+                  </div>
+                  
+                  {/* Bouton */}
+                  <div className="max-w-2xl mx-auto mb-8 flex justify-center">
+                    <button className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-8 py-3 rounded-[14px] font-medium transition-all duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                      Accéder au plan Pro
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
               {/* Section 5 - App */}
               <div id="section-app" className="mt-16 sm:mt-20">
                 <div className="relative">
