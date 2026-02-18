@@ -8903,93 +8903,96 @@ export default function TradingPlatformShell() {
                     
                     return signals.map((signal) => (
                       <div key={signal.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-3">
-                            <span className={`px-2 py-1 rounded text-xs font-bold ${
-                              signal.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
-                            }`}>
-                              {signal.type}
-                            </span>
-                            <span className="text-lg font-bold text-white">{signal.symbol}</span>
-                            <span className="text-sm text-gray-400">{signal.timeframe}</span>
-                          </div>
-                          <span className={`px-2 py-1 rounded text-xs ${
-                            signal.status === 'WIN' ? 'bg-green-600 text-white' :
-                            signal.status === 'LOSS' ? 'bg-red-600 text-white' :
-                            signal.status === 'BE' ? 'bg-blue-600 text-white' :
-                            'bg-yellow-600 text-white'
-                          }`}>
-                            {signal.status}
-                          </span>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4 mb-3">
-                          <div>
-                            <span className="text-sm text-gray-400">Entry:</span>
-                            <span className="text-white ml-2">{signal.entry}</span>
-                          </div>
-                          <div>
-                            <span className="text-sm text-gray-400">Take Profit:</span>
-                            <span className="text-white ml-2">{signal.takeProfit}</span>
-                          </div>
-                          <div>
-                            <span className="text-sm text-gray-400">Stop Loss:</span>
-                            <span className="text-white ml-2">{signal.stopLoss}</span>
-                          </div>
-                          <div>
-                            <span className="text-sm text-gray-400">PnL:</span>
-                            <span className={`ml-2 font-bold ${
-                              signal.pnl && signal.pnl.includes('-') ? 'text-red-400' : 'text-green-400'
-                            }`}>
-                              {signal.pnl || 'N/A'}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Description */}
-                        {signal.description && (
-                          <div className="mb-3">
-                            <span className="text-sm text-gray-400">Description:</span>
-                            <p className="text-white mt-1 whitespace-pre-wrap">{signal.description}</p>
-                          </div>
-                        )}
-
-                        {/* Affichage des images */}
-                        {(signal.image || signal.attachment_data || signal.closure_image) && (
-                          <div className="mb-3">
-                            <span className="text-sm text-gray-400">Images:</span>
-                            <div className="mt-2 space-y-3 flex flex-col items-center">
-                              {(signal.image || signal.attachment_data) && (
-                                <div className="flex flex-col items-center">
-                                  <span className="text-xs text-gray-500">📸 Image de création:</span>
-                                  <div className="mt-1">
-                                    <img 
-                                      src={signal.image || signal.attachment_data}
-                                      alt="Signal image"
-                                      className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
-                                      onClick={() => setSelectedImage(signal.image || signal.attachment_data)}
-                                    />
-                                  </div>
-                                </div>
-                              )}
-                              {signal.closure_image && (
-                                <div className="flex flex-col items-center">
-                                  <span className="text-xs text-gray-500">📸 Image de fermeture:</span>
-                                  <div className="mt-1">
-                                    <img 
-                                      src={signal.closure_image}
-                                      alt="Signal closure image"
-                                      className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
-                                      onClick={() => setSelectedImage(signal.closure_image)}
-                                    />
-                                  </div>
-                                </div>
-                              )}
+                        <div className="flex flex-col sm:flex-row gap-4">
+                          {/* Cadres à gauche : infos du signal */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-3">
+                                <span className={`px-2 py-1 rounded text-xs font-bold ${
+                                  signal.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+                                }`}>
+                                  {signal.type}
+                                </span>
+                                <span className="text-lg font-bold text-white">{signal.symbol}</span>
+                                <span className="text-sm text-gray-400">{signal.timeframe}</span>
+                              </div>
+                              <span className={`px-2 py-1 rounded text-xs ${
+                                signal.status === 'WIN' ? 'bg-green-600 text-white' :
+                                signal.status === 'LOSS' ? 'bg-red-600 text-white' :
+                                signal.status === 'BE' ? 'bg-blue-600 text-white' :
+                                'bg-yellow-600 text-white'
+                              }`}>
+                                {signal.status}
+                              </span>
                             </div>
+
+                            <div className="grid grid-cols-2 gap-4 mb-3">
+                              <div>
+                                <span className="text-sm text-gray-400">Entry:</span>
+                                <span className="text-white ml-2">{signal.entry}</span>
+                              </div>
+                              <div>
+                                <span className="text-sm text-gray-400">Take Profit:</span>
+                                <span className="text-white ml-2">{signal.takeProfit}</span>
+                              </div>
+                              <div>
+                                <span className="text-sm text-gray-400">Stop Loss:</span>
+                                <span className="text-white ml-2">{signal.stopLoss}</span>
+                              </div>
+                              <div>
+                                <span className="text-sm text-gray-400">PnL:</span>
+                                <span className={`ml-2 font-bold ${
+                                  signal.pnl && signal.pnl.includes('-') ? 'text-red-400' : 'text-green-400'
+                                }`}>
+                                  {signal.pnl || 'N/A'}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Description */}
+                            {signal.description && (
+                              <div className="mb-3">
+                                <span className="text-sm text-gray-400">Description:</span>
+                                <p className="text-white mt-1 whitespace-pre-wrap">{signal.description}</p>
+                              </div>
+                            )}
                           </div>
-                        )}
 
-
+                          {/* Images à droite des cadres */}
+                          {(signal.image || signal.attachment_data || signal.closure_image) && (
+                            <div className="flex-shrink-0 flex flex-col gap-3">
+                              <span className="text-sm text-gray-400">Images:</span>
+                              <div className="flex flex-col gap-3">
+                                {(signal.image || signal.attachment_data) && (
+                                  <div className="flex flex-col">
+                                    <span className="text-xs text-gray-500">📸 Image de création:</span>
+                                    <div className="mt-1">
+                                      <img 
+                                        src={signal.image || signal.attachment_data}
+                                        alt="Signal image"
+                                        className="max-w-[200px] sm:max-w-[240px] h-auto max-h-64 object-contain rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                        onClick={() => setSelectedImage(signal.image || signal.attachment_data)}
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+                                {signal.closure_image && (
+                                  <div className="flex flex-col">
+                                    <span className="text-xs text-gray-500">📸 Image de fermeture:</span>
+                                    <div className="mt-1">
+                                      <img 
+                                        src={signal.closure_image}
+                                        alt="Signal closure image"
+                                        className="max-w-[200px] sm:max-w-[240px] h-auto max-h-64 object-contain rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                        onClick={() => setSelectedImage(signal.closure_image)}
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     ));
                   })()
