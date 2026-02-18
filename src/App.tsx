@@ -1664,27 +1664,24 @@ const App = () => {
               <div id="section-formation" className="py-16 sm:py-24 px-4 sm:px-6">
                 <div className="max-w-6xl mx-auto">
                   <div className="text-center mb-8">
-                    <div className="text-sm font-semibold mb-4 tracking-wider bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                      APPRENTISSAGE
-                    </div>
                     <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                      <span className="text-white">Adoptez mon approche</span>
-                      <br />
                       <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
-                        précise
+                        UN CADRE CLAIR
                       </span>
                     </h2>
                     <p className="section-intro-p text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
-                      Découvre ma méthode de scalping : analyse graphique pure, zéro indicateurs, zéro blabla. 
-                      Un setup précis qui se répète sans fin pour des trades rapides et efficaces.
+                      TPLN repose sur une structure définie. Chaque décision suit des critères stricts.
+                      <br />
+                      <br />
+                      Les opportunités sont validées par une checklist binaire. Si les conditions sont réunies, le trade est exécuté. Sinon, il est rejeté.
+                      <br />
+                      <br />
+                      Pas d'improvisation. La constance dépend du cadre.
                     </p>
                   </div>
 
                   {/* Plans de prix - Mobile Optimized */}
                   <div id="pricing" className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
-                    <h2 className="text-5xl md:text-7xl font-bold text-center mb-8 sm:mb-12 text-[#F2F4F8]" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, lineHeight: 1.1 }}>
-                      Les services de TPLN
-                    </h2>
 
                     {/* Encadré 100 premiers - couleurs site (violet/bleu/rose) */}
                     <div className="max-w-2xl mx-auto mb-6 sm:mb-8 rounded-[16px] border border-[#222836] bg-[#141821] px-5 py-3.5 text-center">
@@ -1970,190 +1967,7 @@ const App = () => {
             {/* Nos Services - Navigation Horizontale */}
             <div id="services" className="w-full mb-10 sm:mb-16">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-12 sm:mb-20">
-                <h2 className="font-bold text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                  <div className="text-white">Les services</div>
-                  <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
-                    de TPLN
-                  </span>
-              </h2>
                 </div>
-
-              {/* Barre de navigation horizontale - Full width sur mobile */}
-              <div className="w-screen bg-white/5 backdrop-blur-sm border-y border-white/10 -mx-4 sm:mx-0 sm:w-full overflow-hidden">
-                <div className="flex items-center justify-between px-0 sm:px-4 py-6 w-full">
-                  {/* Flèche gauche - Masquée sur mobile */}
-                  <button className="hidden sm:block text-gray-400 hover:text-white transition-colors p-2 flex-shrink-0">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                  </button>
-
-                  {/* Services avec icônes - Scroll horizontal sur mobile */}
-                  <div 
-                    className="flex items-center gap-6 sm:gap-8 overflow-x-auto sm:overflow-x-visible scrollbar-hide w-full sm:w-auto px-4 sm:px-0"
-                    style={{
-                      WebkitOverflowScrolling: 'touch',
-                      overflowX: 'auto',
-                      display: 'flex',
-                      flexWrap: 'nowrap'
-                    }}
-                  >
-                    {/* Formation */}
-                    <div 
-                      className="flex flex-col items-center cursor-pointer group flex-shrink-0"
-                      onClick={() => {
-                        setSelectedService('formation');
-                        scrollToSection('section-formation');
-                      }}
-                      style={{ scrollSnapAlign: 'start' }}
-                    >
-                      <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
-                        selectedService === 'formation' ? 'bg-[#2E6BFF]' : 'bg-[#141821] group-hover:bg-[#171C26]'
-                      }`}>
-                        <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                        </svg>
-                      </div>
-                      <span className={`text-xs sm:text-base transition-colors ${
-                        selectedService === 'formation' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
-                      }`}>Formation</span>
-                </div>
-
-                    {/* Signaux */}
-                    <div 
-                      className="flex flex-col items-center cursor-pointer group flex-shrink-0"
-                      onClick={() => {
-                        setSelectedService('signaux');
-                        scrollToSection('section-signaux');
-                      }}
-                      style={{ scrollSnapAlign: 'start' }}
-                    >
-                      <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
-                        selectedService === 'signaux' ? 'bg-[#2E6BFF]' : 'bg-[#141821] group-hover:bg-[#171C26]'
-                      }`}>
-                        <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
-                      </div>
-                      <span className={`text-xs sm:text-base transition-colors ${
-                        selectedService === 'signaux' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
-                      }`}>Signaux</span>
-                </div>
-
-                    {/* Journal */}
-                    <div 
-                      className="flex flex-col items-center cursor-pointer group flex-shrink-0"
-                      onClick={() => {
-                        setSelectedService('journal');
-                        scrollToSection('section-journal');
-                      }}
-                      style={{ scrollSnapAlign: 'start' }}
-                    >
-                      <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
-                        selectedService === 'journal' ? 'bg-[#2E6BFF]' : 'bg-[#141821] group-hover:bg-[#171C26]'
-                      }`}>
-                        <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                      </div>
-                      <span className={`text-xs sm:text-base transition-colors ${
-                        selectedService === 'journal' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
-                      }`}>Journal</span>
-                </div>
-
-                    {/* Live Trading */}
-                    <div 
-                      className="flex flex-col items-center cursor-pointer group flex-shrink-0"
-                      onClick={() => {
-                        setSelectedService('live');
-                        scrollToSection('section-live');
-                      }}
-                      style={{ scrollSnapAlign: 'start' }}
-                    >
-                      <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
-                        selectedService === 'live' ? 'bg-[#2E6BFF]' : 'bg-[#141821] group-hover:bg-[#171C26]'
-                      }`}>
-                        <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                </div>
-                      <span className={`text-xs sm:text-base transition-colors ${
-                        selectedService === 'live' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
-                      }`}>Live</span>
-              </div>
-
-                    {/* App Mobile */}
-                    <div 
-                      className="flex flex-col items-center cursor-pointer group flex-shrink-0"
-                      onClick={() => {
-                        setSelectedService('app');
-                        scrollToSection('section-app');
-                      }}
-                      style={{ scrollSnapAlign: 'start' }}
-                    >
-                      <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
-                        selectedService === 'app' ? 'bg-[#2E6BFF]' : 'bg-[#141821] group-hover:bg-[#171C26]'
-                      }`}>
-                        <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                      <span className={`text-xs sm:text-base transition-colors ${
-                        selectedService === 'app' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
-                      }`}>App</span>
-                    </div>
-
-                    {/* Analytics */}
-                    <div 
-                      className="flex flex-col items-center cursor-pointer group flex-shrink-0"
-                      onClick={() => {
-                        setSelectedService('analytics');
-                        scrollToSection('section-app');
-                      }}
-                      style={{ scrollSnapAlign: 'start' }}
-                    >
-                      <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
-                        selectedService === 'analytics' ? 'bg-[#2E6BFF]' : 'bg-[#141821] group-hover:bg-[#171C26]'
-                      }`}>
-                        <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                      <span className={`text-xs sm:text-base transition-colors ${
-                        selectedService === 'analytics' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
-                      }`}>Analytics</span>
-                    </div>
-
-                    {/* Chat */}
-                    <div 
-                      className="flex flex-col items-center cursor-pointer group flex-shrink-0"
-                      onClick={() => {
-                        setSelectedService('chat');
-                        scrollToSection('section-app');
-                      }}
-                      style={{ scrollSnapAlign: 'start' }}
-                    >
-                      <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
-                        selectedService === 'chat' ? 'bg-[#2E6BFF]' : 'bg-[#141821] group-hover:bg-[#171C26]'
-                      }`}>
-                        <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
-                      </div>
-                      <span className={`text-xs sm:text-base transition-colors ${
-                        selectedService === 'chat' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
-                      }`}>Chat</span>
-                    </div>
-                  </div>
-
-                  {/* Flèche droite - Masquée sur mobile */}
-                  <button className="hidden sm:block text-gray-400 hover:text-white transition-colors p-2 flex-shrink-0">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
 
               {/* Sections des services - Déplacées vers le haut */}
               <div className="w-screen -mx-4 sm:mx-0 sm:w-full mt-8">
@@ -2361,47 +2175,22 @@ const App = () => {
                   
                   {/* Titre principal */}
                   <div className="text-center mb-8">
-                    <div className="text-sm font-semibold mb-4 tracking-wider bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                      APPRENTISSAGE
-                    </div>
                     <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                      <span className="text-white">Adoptez mon approche</span>
-                      <br />
                       <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
-                        précise
+                        UN CADRE CLAIR
                       </span>
                     </h2>
                     <p className="section-intro-p text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
-                      Découvre ma méthode de scalping : analyse graphique pure, zéro indicateurs, zéro blabla. 
-                      Un setup précis qui se répète sans fin pour des trades rapides et efficaces.
+                      TPLN repose sur une structure définie. Chaque décision suit des critères stricts.
+                      <br />
+                      <br />
+                      Les opportunités sont validées par une checklist binaire. Si les conditions sont réunies, le trade est exécuté. Sinon, il est rejeté.
+                      <br />
+                      <br />
+                      Pas d'improvisation. La constance dépend du cadre.
                     </p>
                   </div>
 
-                  {/* Image Model */}
-                  <div className="max-w-6xl mx-auto mb-12 relative">
-                    <div className="rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-white p-0">
-                      <img 
-                        src="/model.png" 
-                        alt="Aperçu de l'application TPLN - Modèle de trading"
-                        width={606}
-                        height={380}
-                        className="w-full rounded-lg"
-                        loading="lazy"
-                      />
-                    </div>
-                    {/* Image Model2 en bas à droite format iPhone */}
-                    <div className="absolute bottom-4 right-8 sm:right-12 w-16 sm:w-48 rounded-2xl overflow-hidden shadow-2xl border border-white p-0">
-                      <img 
-                        src="/model2.png" 
-                        alt="Application TPLN sur iPhone"
-                        width={164}
-                        height={235}
-                        className="w-full h-auto rounded-lg"
-                        loading="lazy"
-                        style={{ aspectRatio: '9/19.5' }}
-                      />
-                    </div>
-                  </div>
 
               </div>
             </div>
@@ -2416,35 +2205,138 @@ const App = () => {
                   
                   {/* Titre principal */}
                   <div className="text-center mb-8">
-                    <div className="text-sm font-semibold mb-4 tracking-wider bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                      SIGNAUX
-                    </div>
                     <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                      <span className="text-white">Reçois mes signaux</span>
-                      <br />
                       <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
-                        en temps réel
+                        CE QUI SE MESURE S'AMÉLIORE
                       </span>
                     </h2>
-                    <p className="section-intro-p text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
-                      Reçois des signaux Forex, Crypto, Indices avec des charts annotés pour assimiler mon modèle étape par étape. Le but : ta maîtrise du marché.
-                    </p>
+                    {/* Premium Fintech Feature Block */}
+                    <div className="max-w-[1100px] mx-auto mb-16 sm:mb-20">
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
+                        {/* Left: Intro Text */}
+                        <div className="max-w-[480px]">
+                          <h3 className="text-[#F2F4F8] text-4xl sm:text-5xl font-bold mb-6 leading-[1.1]" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
+                            Mesure ta performance réelle.
+                          </h3>
+                          <div className="text-[#AAB3C2] text-lg leading-[1.5]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                            <p className="mb-2">
+                              Le journal TPLN ne mesure pas seulement le résultat.
+                            </p>
+                            <p className="mb-4">
+                              Il mesure la qualité de ta prise de décision.
+                            </p>
+                            <div className="space-y-1.5">
+                              <p>Ce que tu exécutes.</p>
+                              <p>Ce que tu répètes.</p>
+                              <p>Ce que tu dois corriger.</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right: Feature Grid - 2 columns, 3 rows */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                          {/* Performance chiffrée */}
+                          <div 
+                            className="bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden"
+                            style={{ animation: 'fadeIn 0.6s ease-out' }}
+                          >
+                            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
+                            <div className="w-10 h-10 rounded-[12px] bg-[rgba(46,107,255,0.15)] flex items-center justify-center mb-4">
+                              <svg className="w-5 h-5 text-[#2E6BFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                              </svg>
+                            </div>
+                            <h4 className="text-[#F2F4F8] text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Performance chiffrée</h4>
+                            <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Métriques précises de tes résultats</p>
+                          </div>
+
+                          {/* Discipline par session */}
+                          <div 
+                            className="bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden"
+                            style={{ animation: 'fadeIn 0.7s ease-out' }}
+                          >
+                            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
+                            <div className="w-10 h-10 rounded-[12px] bg-[rgba(46,107,255,0.15)] flex items-center justify-center mb-4">
+                              <svg className="w-5 h-5 text-[#2E6BFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                            </div>
+                            <h4 className="text-[#F2F4F8] text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Discipline par session</h4>
+                            <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Suivi de ta rigueur opérationnelle</p>
+                          </div>
+
+                          {/* Erreurs récurrentes */}
+                          <div 
+                            className="bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden"
+                            style={{ animation: 'fadeIn 0.8s ease-out' }}
+                          >
+                            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
+                            <div className="w-10 h-10 rounded-[12px] bg-[rgba(46,107,255,0.15)] flex items-center justify-center mb-4">
+                              <svg className="w-5 h-5 text-[#2E6BFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                              </svg>
+                            </div>
+                            <h4 className="text-[#F2F4F8] text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Erreurs récurrentes</h4>
+                            <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Identification des patterns négatifs</p>
+                          </div>
+
+                          {/* Drawdown maximum */}
+                          <div 
+                            className="bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden"
+                            style={{ animation: 'fadeIn 0.9s ease-out' }}
+                          >
+                            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
+                            <div className="w-10 h-10 rounded-[12px] bg-[rgba(46,107,255,0.15)] flex items-center justify-center mb-4">
+                              <svg className="w-5 h-5 text-[#2E6BFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                              </svg>
+                            </div>
+                            <h4 className="text-[#F2F4F8] text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Drawdown maximum</h4>
+                            <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Mesure de ton risque maximal</p>
+                          </div>
+
+                          {/* Win rate & profit factor */}
+                          <div 
+                            className="bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden"
+                            style={{ animation: 'fadeIn 1s ease-out' }}
+                          >
+                            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
+                            <div className="w-10 h-10 rounded-[12px] bg-[rgba(46,107,255,0.15)] flex items-center justify-center mb-4">
+                              <svg className="w-5 h-5 text-[#2E6BFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                            </div>
+                            <h4 className="text-[#F2F4F8] text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Win rate & profit factor</h4>
+                            <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Ratio de réussite et rentabilité</p>
+                          </div>
+
+                          {/* Qualité d'exécution */}
+                          <div 
+                            className="bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden"
+                            style={{ animation: 'fadeIn 1.1s ease-out' }}
+                          >
+                            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
+                            <div className="w-10 h-10 rounded-[12px] bg-[rgba(46,107,255,0.15)] flex items-center justify-center mb-4">
+                              <svg className="w-5 h-5 text-[#2E6BFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
+                            <h4 className="text-[#F2F4F8] text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Qualité d'exécution</h4>
+                            <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Précision de tes entrées et sorties</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Vidéo complète */}
+                  {/* Image journal2 */}
                   <div className="max-w-6xl mx-auto rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-white p-0">
-                    <video 
+                    <img 
+                      src="/journal2.webp" 
+                      alt="Journal TPLN"
                       className="w-full rounded-lg"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      preload="auto"
-                      controls={false}
-                    >
-                      <source src="/videodemo copie.mp4" type="video/mp4" />
-                      Votre navigateur ne supporte pas la lecture de vidéos.
-                    </video>
+                      loading="lazy"
+                    />
                   </div>
                 </div>
               </div>
@@ -2459,160 +2351,80 @@ const App = () => {
                   
                   {/* Titre principal */}
                   <div className="text-center mb-8">
-                    <div className="text-sm font-semibold mb-4 tracking-wider bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                      JOURNAL
-                    </div>
                     <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                      <span className="text-white">Journal de</span>
+                      <span className="text-white">Journal TPLN</span>
                       <br />
                       <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
-                        trading
+                        Structure et précision.
                       </span>
                     </h2>
                     <p className="section-intro-p text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
-                      Un journal complet et personnalisable pour suivre vos signaux, gérer plusieurs comptes, et analyser vos performances avec précision. Suivez vos statistiques, étudiez vos stop loss et transformez chaque trade gagnant comme perdant en véritable source d'apprentissage.
+                      Un système complet d'analyse conçu pour traders structurés.
                     </p>
                   </div>
 
-                  {/* 3 textes au-dessus de l'image */}
-                  <div className="max-w-7xl mx-auto mb-12">
-                    <div className="grid grid-cols-1 md:grid-cols-3 mb-12 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
-                      {/* Carte 1 - Statistiques */}
-                      <div className="group relative rounded-2xl p-[3px] overflow-visible transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1">
-                        {/* Faisceau lumineux animé autour */}
-                        <div className="absolute -inset-[3px] rounded-2xl opacity-75 group-hover:opacity-100 transition-opacity duration-500" style={{
-                          background: 'linear-gradient(90deg, transparent, rgba(168,85,247,0.8), rgba(192,132,252,1), rgba(168,85,247,0.8), transparent)',
-                          backgroundSize: '200% 100%',
-                          animation: 'neonRotate 3s ease-in-out infinite',
-                          filter: 'blur(8px)',
-                          zIndex: -1
-                        }}></div>
-                        <div className="relative rounded-2xl overflow-hidden h-full">
-                          {/* Fond avec gradient radial */}
-                          <div className="absolute inset-0 opacity-90" style={{background: 'radial-gradient(circle at top left, rgba(88, 28, 135, 0.8), #4C208B, #3A1870)'}}></div>
-                          {/* Bordure lumineuse */}
-                          <div className="absolute inset-0 rounded-[16px] border border-[#222836] group-hover:border-[#2A2F3F] transition-all duration-200" style={{
-                            animation: 'neonGlow 2s ease-in-out infinite'
-                          }}></div>
-                          {/* Ombres internes */}
-                          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 via-transparent to-black/20"></div>
-                        
-                          <div className="relative z-10 p-4 sm:p-6 md:p-8">
-                            {/* Icône avec carré arrondi autour */}
-                            <div className="flex items-center justify-center mb-3 md:mb-6">
-                              <div className="w-12 h-12 md:w-16 md:h-16 bg-[rgba(46,107,255,0.15)] rounded-[16px] flex items-center justify-center p-2 transition-transform duration-200">
-                                <div className="w-9 h-9 md:w-12 md:h-12 bg-[#2E6BFF] rounded-[12px] flex items-center justify-center">
-                                  <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                  </svg>
-                                </div>
-                              </div>
-                            </div>
-                            <h3 className="font-bold text-[#F2F4F8] text-center transition-colors duration-200 text-xl mb-2 md:text-2xl md:mb-4" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                              Analysez vos statistiques
-                            </h3>
-                            <p className="text-gray-300 text-center leading-relaxed group-hover:text-gray-200 transition-colors duration-300 text-sm md:text-base">
-                              Visualisez vos performances avec plus de 50 rapports détaillés pour comprendre vos résultats.
-                            </p>
-                          </div>
-                        </div>
+                  {/* 2 cadres pricing */}
+                  <div className="max-w-3xl mx-auto mb-12">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Version Essentielle */}
+                      <div className="bg-[#141821] border border-[#222836] rounded-[14px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
+                        <h3 className="text-[#F2F4F8] text-lg font-semibold mb-3 leading-tight" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                          <span>Version Essentielle</span>
+                          <span className="block mt-1 text-base bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent font-bold">29€</span>
+                        </h3>
+                        <ul className="space-y-2">
+                          <li className="flex items-center gap-2.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                            <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>1 compte</span>
+                          </li>
+                          <li className="flex items-center gap-2.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                            <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Statistiques complètes</span>
+                          </li>
+                          <li className="flex items-center gap-2.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                            <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Suivi discipline</span>
+                          </li>
+                          <li className="flex items-center gap-2.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                            <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Analyse erreurs</span>
+                          </li>
+                        </ul>
                       </div>
 
-                      {/* Carte 2 - Erreurs */}
-                      <div className="group relative rounded-2xl p-[3px] overflow-visible transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1">
-                        {/* Faisceau lumineux animé autour */}
-                        <div className="absolute -inset-[3px] rounded-2xl opacity-75 group-hover:opacity-100 transition-opacity duration-500" style={{
-                          background: 'linear-gradient(90deg, transparent, rgba(59,130,246,0.8), rgba(96,165,250,1), rgba(59,130,246,0.8), transparent)',
-                          backgroundSize: '200% 100%',
-                          animation: 'neonRotate 3s ease-in-out infinite',
-                          filter: 'blur(8px)',
-                          zIndex: -1
-                        }}></div>
-                        <div className="relative rounded-2xl overflow-hidden h-full">
-                          {/* Fond avec gradient radial */}
-                          <div className="absolute inset-0 opacity-90" style={{background: 'radial-gradient(circle at top left, rgba(30, 58, 138, 0.8), #4C208B, #3A1870)'}}></div>
-                          {/* Bordure lumineuse */}
-                          <div className="absolute inset-0 rounded-2xl border-2 border-blue-400/60 shadow-[0_0_25px_rgba(59,130,246,0.4),inset_0_0_25px_rgba(59,130,246,0.1)] group-hover:border-blue-300/80 group-hover:shadow-[0_0_40px_rgba(59,130,246,0.6),inset_0_0_30px_rgba(59,130,246,0.2)] transition-all duration-500" style={{
-                            animation: 'neonGlow 2s ease-in-out infinite'
-                          }}></div>
-                          {/* Ombres internes */}
-                          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 via-transparent to-black/20"></div>
-                          
-                          <div className="relative z-10 p-4 sm:p-6 md:p-8">
-                            {/* Icône avec carré arrondi autour */}
-                            <div className="flex items-center justify-center mb-3 md:mb-6">
-                              <div className="w-12 h-12 md:w-16 md:h-16 bg-blue-200/30 rounded-2xl flex items-center justify-center p-2 group-hover:scale-110 transition-transform duration-300">
-                                <div className="w-9 h-9 md:w-12 md:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/50">
-                                  <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
-                                  </svg>
-                                </div>
-                              </div>
-                            </div>
-                            <h3 className="font-bold text-white text-center group-hover:text-blue-200 transition-colors duration-300 text-xl mb-2 md:text-2xl md:mb-4">
-                              Comprenez vos erreurs
-                            </h3>
-                            <p className="text-gray-300 text-center leading-relaxed group-hover:text-gray-200 transition-colors duration-300 text-sm md:text-base">
-                              Identifiez vos points faibles en analysant vos pertes pour améliorer votre gestion du risque.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Carte 3 - Progression */}
-                      <div className="group relative rounded-2xl p-[3px] overflow-visible transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1">
-                        {/* Faisceau lumineux animé autour */}
-                        <div className="absolute -inset-[3px] rounded-2xl opacity-75 group-hover:opacity-100 transition-opacity duration-500" style={{
-                          background: 'linear-gradient(90deg, transparent, rgba(16,185,129,0.8), rgba(52,211,153,1), rgba(16,185,129,0.8), transparent)',
-                          backgroundSize: '200% 100%',
-                          animation: 'neonRotate 3s ease-in-out infinite',
-                          filter: 'blur(8px)',
-                          zIndex: -1
-                        }}></div>
-                        <div className="relative rounded-2xl overflow-hidden h-full">
-                          {/* Fond avec gradient radial */}
-                          <div className="absolute inset-0 opacity-90" style={{background: 'radial-gradient(circle at top left, rgba(6, 78, 59, 0.8), #4C208B, #3A1870)'}}></div>
-                          {/* Bordure lumineuse */}
-                          <div className="absolute inset-0 rounded-2xl border-2 border-emerald-400/60 shadow-[0_0_25px_rgba(16,185,129,0.4),inset_0_0_25px_rgba(16,185,129,0.1)] group-hover:border-emerald-300/80 group-hover:shadow-[0_0_40px_rgba(16,185,129,0.6),inset_0_0_30px_rgba(16,185,129,0.2)] transition-all duration-500" style={{
-                            animation: 'neonGlow 2s ease-in-out infinite'
-                          }}></div>
-                          {/* Ombres internes */}
-                          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 via-transparent to-black/20"></div>
-                          
-                          <div className="relative z-10 p-4 sm:p-6 md:p-8">
-                            {/* Icône avec carré arrondi autour */}
-                            <div className="flex items-center justify-center mb-3 md:mb-6">
-                              <div className="w-12 h-12 md:w-16 md:h-16 bg-emerald-200/30 rounded-2xl flex items-center justify-center p-2 group-hover:scale-110 transition-transform duration-300">
-                                <div className="w-9 h-9 md:w-12 md:h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/50">
-                                  <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
-                                  </svg>
-                                </div>
-                              </div>
-                            </div>
-                            <h3 className="font-bold text-white text-center group-hover:text-emerald-200 transition-colors duration-300 text-xl mb-2 md:text-2xl md:mb-4">
-                              Suivez votre progression
-                            </h3>
-                            <p className="text-gray-300 text-center leading-relaxed group-hover:text-gray-200 transition-colors duration-300 text-sm md:text-base">
-                              Obtenez une vue d'ensemble de vos performances mensuelles pour mesurer votre évolution.
-                            </p>
-                          </div>
-                        </div>
+                      {/* Version Pro */}
+                      <div className="bg-[#141821] border border-[#222836] rounded-[14px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
+                        <h3 className="text-[#F2F4F8] text-lg font-semibold mb-3 leading-tight" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                          <span>Version Pro</span>
+                          <span className="block mt-1 text-base bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent font-bold">49€</span>
+                        </h3>
+                        <ul className="space-y-2">
+                          <li className="flex items-center gap-2.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                            <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Comptes illimités</span>
+                          </li>
+                          <li className="flex items-center gap-2.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                            <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Comparaison performance</span>
+                          </li>
+                          <li className="flex items-center gap-2.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                            <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Optimisé multi-comptes</span>
+                          </li>
+                        </ul>
                       </div>
                     </div>
                     
-                    {/* Image journal */}
-                    <div className="rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-white p-0">
-                      <img 
-                        src="/journal2.png" 
-                        alt="Journal de trading TPLN - Suivi des trades"
-                        width={606}
-                        height={379}
-                        className="w-full h-auto"
-                        loading="lazy"
-                      />
+                    {/* Bouton */}
+                    <div className="flex justify-center mt-8">
+                      <button className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-8 py-3 rounded-[14px] font-medium transition-all duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                        Obtenir le Journal
+                      </button>
                     </div>
                   </div>
+
                 </div>
               </div>
 
@@ -2626,19 +2438,66 @@ const App = () => {
                   
                   {/* Titre principal */}
                   <div className="text-center mb-8">
-                    <div className="text-sm font-semibold mb-4 tracking-wider bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                      LIVE
-                    </div>
                     <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                      <span className="text-white">Session de live</span>
+                      <span className="text-white">La méthode</span>
                       <br />
                       <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
-                        trading
+                        complète.
                       </span>
                     </h2>
                     <p className="section-intro-p text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
                       Rejoins mes sessions de trading, apprends en direct avec mes annotations qui expliquent chaque décision au fur et à mesure.
                     </p>
+                  </div>
+
+                  {/* Cadre formation */}
+                  <div className="max-w-2xl mx-auto mb-8">
+                    <div className="bg-[#141821] border border-[#222836] rounded-[14px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
+                      
+                      <h3 className="text-[#F2F4F8] text-lg font-semibold mb-3" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                        La formation TPLN détaille :
+                      </h3>
+                      
+                      <ul className="space-y-2 mb-4">
+                        <li className="flex items-center gap-2.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>La structure du modèle</span>
+                        </li>
+                        <li className="flex items-center gap-2.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Les critères précis de validation</span>
+                        </li>
+                        <li className="flex items-center gap-2.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>La gestion du risque</span>
+                        </li>
+                        <li className="flex items-center gap-2.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>L'exécution disciplinée</span>
+                        </li>
+                        <li className="flex items-center gap-2.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>L'analyse post-trade</span>
+                        </li>
+                      </ul>
+                      
+                      <div>
+                        <div className="text-[#F2F4F8] text-base font-semibold mb-1" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                          Prix :
+                        </div>
+                        <div className="text-lg bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent font-bold">
+                          49€/mois
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Bouton */}
+                    <div className="flex justify-center mt-6">
+                      <button className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-8 py-3 rounded-[14px] font-medium transition-all duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                        Accéder à la méthode
+                      </button>
+                    </div>
                   </div>
 
                   {/* Vidéo complète */}
