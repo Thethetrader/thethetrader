@@ -1731,60 +1731,55 @@ const App = () => {
                     {/* Pricing Cards */}
                     <div className={`grid md:grid-cols-[0.8fr_0.9fr_1.1fr] gap-6 sm:gap-8 items-stretch transition-all duration-400 ease-out ${isTransitioning ? 'opacity-0 scale-75 rotate-3 blur-md translate-y-20 transform-gpu perspective-1000' : 'opacity-100 scale-100 rotate-0 blur-0 translate-y-0 transform-gpu perspective-1000'}`} style={{ transformStyle: 'preserve-3d', perspective: '1000px' }}>
                       
-                      {/* Journal Perso Plan */}
+                      {/* Journal Pro Plan */}
                       <div className={`bg-[#141821] rounded-[16px] p-6 sm:p-8 relative border border-[#222836] transition-all duration-200 flex flex-col h-full hover:bg-[#171C26] hover:border-[#2A2F3F]`} style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
-                        <h3 className="text-xl font-bold text-[#F2F4F8] mb-3 h-8 flex items-center" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>TRADING JOURNAL</h3>
-                        <div className={`text-4xl font-bold text-[#F2F4F8] mb-6 transition-all duration-200 flex flex-col`} style={{ height: '140px', justifyContent: 'flex-start', fontVariantNumeric: 'tabular-nums' }}>
-                          <div className="text-[#7F8AA1] text-xl mb-1"><span className="line-through">25€</span></div>
+                        <h3 className="text-xl font-bold text-[#F2F4F8] mb-3 h-8 flex items-center" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>JOURNAL PRO</h3>
+                        <div className={`text-4xl font-bold text-[#F2F4F8] mb-6 transition-all duration-200 flex flex-col`} style={{ height: '80px', justifyContent: 'flex-start', fontVariantNumeric: 'tabular-nums' }}>
                           <div className="h-auto">
                             <span className="text-2xl align-top text-[#AAB3C2]">€</span>
-                            {paymentType === 'monthly' ? '15' : '12,5'}
+                            {paymentType === 'monthly' ? '29' : '26'}
                             <span className="text-lg text-[#7F8AA1] font-normal"> / mois</span>
                           </div>
-                          <div className="h-[24px] mt-2 flex items-center">
-                            {paymentType === 'yearly' ? (
-                              <div className="text-[#AAB3C2] text-sm font-normal">Facturé 150€ / an</div>
-                            ) : null}
-                          </div>
-                          <div className="text-[#F5A524] text-sm font-medium mt-2 bg-[rgba(245,165,36,0.12)] px-3 py-1 rounded-[12px] text-center">
-                            🎉 Première semaine à<br />8€ seulement !
-                          </div>
-                        </div>
-                        <div className="text-[#7F8AA1] text-sm mb-4 h-[20px] flex items-center">
-                          {paymentType === 'yearly' ? '' : <>&nbsp;</>}
+                          {paymentType === 'yearly' && (
+                            <div className="text-[#AAB3C2] text-sm font-normal mt-2">Facturé 312€ / an</div>
+                          )}
                         </div>
                         <ul className="text-[#AAB3C2] text-base space-y-4 mb-8 text-left flex-grow" style={{ fontFamily: 'Inter, sans-serif' }}>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
-                            <span className="font-medium text-[#F2F4F8]">Journal de trading personnel</span>
+                            <span className="font-medium text-[#F2F4F8]">Journal personnel</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
-                            <span className="font-medium text-[#F2F4F8]">Compte illimité</span>
+                            <span className="font-medium text-[#F2F4F8]">Comptes illimités</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
-                            <span className="font-medium text-[#F2F4F8]">Analyse des pertes</span>
+                            <span className="font-medium text-[#F2F4F8]">Analyse avancée</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-[#13C26B] font-bold text-lg">✓</span>
+                            <span className="font-medium text-[#F2F4F8]">Comparaison de comptes</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-[#EF4444] font-bold text-lg">✗</span>
-                            <span className="font-medium text-[#F2F4F8]">Formation TPLN model</span>
+                            <span className="font-medium text-[#F2F4F8]">Méthode TPLN</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-[#EF4444] font-bold text-lg">✗</span>
-                            <span className="font-medium text-[#F2F4F8]">Signaux</span>
+                            <span className="font-medium text-[#F2F4F8]">Exécutions partagées</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-[#EF4444] font-bold text-lg">✗</span>
-                            <span className="font-medium text-[#F2F4F8]">Live streams</span>
+                            <span className="font-medium text-[#F2F4F8]">Live</span>
                           </li>
                         </ul>
                         <div className="mt-auto flex flex-col" style={{ minHeight: '100px' }}>
                           <button 
                             onClick={async () => {
                               try {
-                                console.log('🖱️ Clic sur bouton Journal Perso');
-                                await redirectToCheckout('journal', 'monthly');
+                                console.log('🖱️ Clic sur bouton Journal Pro');
+                                await redirectToCheckout('journal', paymentType);
                               } catch (error: any) {
                                 console.error('Erreur:', error);
                                 alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
@@ -1793,63 +1788,51 @@ const App = () => {
                             className="w-full bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white py-3 px-6 rounded-[14px] font-medium transition-all duration-200 h-12 flex items-center justify-center"
                             style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}
                           >
-                            Je m'abonne
+                            Accéder au Journal Pro
                           </button>
                         </div>
                       </div>
                       
-                      {/* Basic Plan */}
+                      {/* Basic Plan - Méthode */}
                       <div className={`bg-[#141821] rounded-[16px] p-6 sm:p-8 relative border border-[#222836] transition-all duration-200 flex flex-col h-full hover:bg-[#171C26] hover:border-[#2A2F3F]`} style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
                         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#2E6BFF] text-white px-4 py-1 rounded-[12px] text-xs font-medium md:hidden">
                           {paymentType === 'yearly' ? '💎 ÉCONOMISE 50€' : ''}
                         </div>
-                        <h3 className="text-xl font-bold text-[#F2F4F8] mb-3 h-8 flex items-center" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>BASIC</h3>
-                        <div className={`text-4xl font-bold text-[#F2F4F8] mb-6 transition-all duration-200 flex flex-col`} style={{ height: '140px', justifyContent: 'flex-start', fontVariantNumeric: 'tabular-nums' }}>
-                          <div className="text-[#7F8AA1] text-xl mb-1"><span className="line-through">49€</span></div>
+                        <h3 className="text-xl font-bold text-[#F2F4F8] mb-3 h-8 flex items-center" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>MÉTHODE TPLN</h3>
+                        <div className={`text-4xl font-bold text-[#F2F4F8] mb-6 transition-all duration-200 flex flex-col`} style={{ height: '80px', justifyContent: 'flex-start', fontVariantNumeric: 'tabular-nums' }}>
                           <div className="h-auto">
                             <span className="text-2xl align-top text-[#AAB3C2]">€</span>
-                            {paymentType === 'monthly' ? '39' : '34,83'}
+                            {paymentType === 'monthly' ? '49' : '44'}
                             <span className="text-lg text-[#7F8AA1] font-normal"> / mois</span>
                           </div>
-                          <div className="h-[24px] mt-2 flex items-center">
-                            {paymentType === 'yearly' ? (
-                              <div className="text-[#AAB3C2] text-sm font-normal">Facturé 418€ / an</div>
-                            ) : null}
-                          </div>
-                          <div className="text-[#F5A524] text-sm font-medium mt-2 bg-[rgba(245,165,36,0.12)] px-3 py-1 rounded-[12px] text-center">
-                            🎉 Première semaine à<br />15€ seulement !
-                          </div>
-                        </div>
-                        <div className="text-[#7F8AA1] text-sm mb-4 h-[20px] flex items-center">
-                          {paymentType === 'yearly' ? 'Best for beginner traders' : <>&nbsp;</>}
-                        </div>
-                        <div className="text-[#7F8AA1] text-sm mb-4 h-[20px] flex items-center">
-                          {paymentType === 'yearly' ? 'Best for beginner traders' : <>&nbsp;</>}
+                          {paymentType === 'yearly' && (
+                            <div className="text-[#AAB3C2] text-sm font-normal mt-2">Facturé 528€ / an</div>
+                          )}
                         </div>
                         <ul className="text-[#AAB3C2] text-base space-y-4 mb-8 text-left flex-grow" style={{ fontFamily: 'Inter, sans-serif' }}>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
-                            <span className="font-medium text-[#F2F4F8]">Formation TPLN model</span>
+                            <span className="font-medium text-[#F2F4F8]">Formation TPLN complète</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
-                            <span className="font-medium text-[#F2F4F8]">Signaux crypto forex futur<br/>(sans explications)</span>
+                            <span className="font-medium text-[#F2F4F8]">Journal (1 compte inclus)</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
-                            <span className="font-medium text-[#F2F4F8]">Journal des signaux</span>
+                            <span className="font-medium text-[#F2F4F8]">Structure + gestion du risque</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
-                            <span className="font-medium text-[#F2F4F8]">Journal de trading (1 compte)</span>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <span className="text-[#13C26B] font-bold text-lg">✓</span>
-                            <span className="font-medium text-[#F2F4F8]">Live streams (1 jour / semaine)</span>
+                            <span className="font-medium text-[#F2F4F8]">Exécution disciplinée</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-[#EF4444] font-bold text-lg">✗</span>
-                            <span className="font-medium text-[#F2F4F8]">Contact direct avec TheTheTrader</span>
+                            <span className="font-medium text-[#F2F4F8]">Pas de live</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-[#EF4444] font-bold text-lg">✗</span>
+                            <span className="font-medium text-[#F2F4F8]">Pas d'opportunités en temps réel</span>
                           </li>
                         </ul>
                         <div className="mt-auto flex flex-col" style={{ minHeight: '100px' }}>
@@ -1871,51 +1854,49 @@ const App = () => {
                         </div>
                       </div>
 
-                      {/* Premium Plan */}
+                      {/* Premium Plan - L'environnement complet TPLN */}
                       <div className={`bg-[#141821] rounded-[16px] p-6 sm:p-8 relative border border-[#2E6BFF] transition-all duration-200 flex flex-col h-full hover:bg-[#171C26] hover:border-[#2558D6]`} style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
-                        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#2E6BFF] text-white px-4 py-1 rounded-[12px] text-xs font-medium md:hidden">
-                          {paymentType === 'yearly' ? '💎 ÉCONOMISE 100€' : '⭐ RECOMMANDÉ'}
+                        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#2E6BFF] text-white px-4 py-1 rounded-[12px] text-xs font-medium">
+                          ⭐ RECOMMANDÉ
                         </div>
-                        <h3 className="text-xl font-bold mb-3 h-8 flex items-center bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>PREMIUM</h3>
-                        <div className={`text-4xl font-bold text-[#F2F4F8] mb-6 transition-all duration-200 flex flex-col`} style={{ height: '140px', justifyContent: 'flex-start', fontVariantNumeric: 'tabular-nums' }}>
-                          <div className="text-[#7F8AA1] text-xl mb-1"><span className="line-through">89€</span></div>
+                        <h3 className="text-xl font-bold mb-3 h-8 flex items-center bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent uppercase" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>L'environnement complet TPLN</h3>
+                        <div className={`text-4xl font-bold text-[#F2F4F8] mb-6 transition-all duration-200 flex flex-col`} style={{ height: '100px', justifyContent: 'flex-start', fontVariantNumeric: 'tabular-nums' }}>
                           <div className="h-auto">
                             <span className="text-2xl align-top text-[#AAB3C2]">€</span>
                             {paymentType === 'monthly' ? '79' : '57,5'}
                             <span className="text-lg text-[#7F8AA1] font-normal"> / mois</span>
                           </div>
-                          <div className="h-[24px] mt-2 flex items-center">
-                            {paymentType === 'yearly' ? (
-                              <div className="text-[#AAB3C2] text-sm font-normal">Facturé 690€ / an</div>
-                            ) : null}
-                          </div>
-                          <div className="text-[#F5A524] text-sm font-medium mt-2 bg-[rgba(245,165,36,0.12)] px-3 py-1 rounded-[12px] text-center">
-                            🎉 Première semaine à<br />15€ seulement !
-                          </div>
+                          {paymentType === 'yearly' && (
+                            <div className="text-[#AAB3C2] text-sm font-normal mt-2">Facturé 690€ / an</div>
+                          )}
                         </div>
                         <div className="text-[#7F8AA1] text-sm mb-4 h-[20px] flex items-center">
-                          {paymentType === 'yearly' ? 'Best for advanced traders' : <>&nbsp;</>}
+                          {paymentType === 'yearly' ? '' : <>&nbsp;</>}
                         </div>
                         <ul className="text-[#AAB3C2] text-base space-y-4 mb-8 text-left flex-grow" style={{ fontFamily: 'Inter, sans-serif' }}>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
-                            <span className="font-medium text-[#F2F4F8]">Formation TPLN model</span>
+                            <span className="font-medium text-[#F2F4F8]">Méthode complète</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
-                            <span className="font-medium text-[#F2F4F8]">Signaux crypto forex futur<br/>(détaillé avec image)</span>
+                            <span className="font-medium text-[#F2F4F8]">Journal illimité</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
-                            <span className="font-medium text-[#F2F4F8]">Journal de trading compte illimité</span>
+                            <span className="font-medium text-[#F2F4F8]">Opportunités expliquées en temps réel</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
-                            <span className="font-medium text-[#F2F4F8]">Live streams (5 jours/semaine)</span>
+                            <span className="font-medium text-[#F2F4F8]">Notifications instantanées</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
-                            <span className="font-medium text-[#F2F4F8]">Contact direct avec TheTheTrader</span>
+                            <span className="font-medium text-[#F2F4F8]">Live 5j / semaine</span>
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="text-[#13C26B] font-bold text-lg">✓</span>
+                            <span className="font-medium text-[#F2F4F8]">Contact direct</span>
                           </li>
                         </ul>
                         <div className="mt-auto flex flex-col" style={{ minHeight: '100px' }}>
@@ -1932,7 +1913,7 @@ const App = () => {
                             className="w-full bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white py-3 px-6 rounded-[14px] font-medium transition-all duration-200 h-12 flex items-center justify-center"
                             style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}
                           >
-                            Je m'abonne
+                            Rejoindre l'environnement complet
                           </button>
                         </div>
                       </div>
@@ -2193,36 +2174,6 @@ const App = () => {
                 </div>
               </div>
               
-              {/* Section 1 - Formation */}
-              <div id="section-formation" className="mt-16 sm:mt-20">
-                <div className="relative">
-                  {/* Numéro 1 en haut à gauche */}
-                  <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                    1
-                  </div>
-                  
-                  {/* Titre principal */}
-                  <div className="text-center mb-8">
-                    <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                      <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
-                        UN CADRE CLAIR
-                      </span>
-                    </h2>
-                    <p className="section-intro-p text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
-                      TPLN repose sur une structure définie. Chaque décision suit des critères stricts.
-                      <br />
-                      <br />
-                      Les opportunités sont validées par une checklist binaire. Si les conditions sont réunies, le trade est exécuté. Sinon, il est rejeté.
-                      <br />
-                      <br />
-                      Pas d'improvisation. La constance dépend du cadre.
-                    </p>
-                  </div>
-
-
-              </div>
-            </div>
-
               {/* Section 2 - Signaux */}
               <div id="section-signaux" className="mt-16 sm:mt-20">
                 <div className="relative">
@@ -2234,8 +2185,10 @@ const App = () => {
                   {/* Titre principal */}
                   <div className="text-center mb-8">
                     <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
+                      <span className="text-white">Journal TPLN</span>
+                      <br />
                       <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
-                        CE QUI SE MESURE S'AMÉLIORE
+                        Structure. Discipline. Clarté.
                       </span>
                     </h2>
                     {/* Premium Fintech Feature Block */}
@@ -2366,93 +2319,30 @@ const App = () => {
                       loading="lazy"
                     />
                   </div>
-                </div>
-              </div>
 
-              {/* Section 3 - Journal */}
-              <div id="section-journal" className="mt-16 sm:mt-20">
-                <div className="relative">
-                  {/* Numéro 3 en haut à gauche */}
-                  <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                    3
-                  </div>
-                  
-                  {/* Titre principal */}
-                  <div className="text-center mb-8">
-                    <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                      <span className="text-white">Journal TPLN</span>
-                      <br />
-                      <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
-                        Structure et précision.
-                      </span>
-                    </h2>
-                    <p className="section-intro-p text-gray-400 text-lg max-w-2xl mx-auto mb-8 text-center" style={isPWA ? undefined : { transform: 'translateX(calc(39% + 5mm))' }}>
-                      Un système complet d'analyse conçu pour traders structurés.
-                    </p>
-                  </div>
-
-                  {/* 2 cadres pricing */}
-                  <div className="max-w-3xl mx-auto mb-12">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Version Essentielle */}
-                      <div className="bg-[#141821] border border-[#222836] rounded-[14px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
-                        <h3 className="text-[#F2F4F8] text-lg font-semibold mb-3 leading-tight" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                          <span>Version Essentielle</span>
-                          <span className="block mt-1 text-base bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent font-bold">29€</span>
-                        </h3>
-                        <ul className="space-y-2">
-                          <li className="flex items-center gap-2.5">
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                            <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>1 compte</span>
-                          </li>
-                          <li className="flex items-center gap-2.5">
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                            <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Statistiques complètes</span>
-                          </li>
-                          <li className="flex items-center gap-2.5">
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                            <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Suivi discipline</span>
-                          </li>
-                          <li className="flex items-center gap-2.5">
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                            <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Analyse erreurs</span>
-                          </li>
-                        </ul>
-                      </div>
-
-                      {/* Version Pro */}
-                      <div className="bg-[#141821] border border-[#222836] rounded-[14px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
-                        <h3 className="text-[#F2F4F8] text-lg font-semibold mb-3 leading-tight" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                          <span>Version Pro</span>
-                          <span className="block mt-1 text-base bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent font-bold">49€</span>
-                        </h3>
-                        <ul className="space-y-2">
-                          <li className="flex items-center gap-2.5">
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                            <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Comptes illimités</span>
-                          </li>
-                          <li className="flex items-center gap-2.5">
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                            <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Comparaison performance</span>
-                          </li>
-                          <li className="flex items-center gap-2.5">
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                            <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Optimisé multi-comptes</span>
-                          </li>
-                        </ul>
+                  {/* Accès Journal - sous la photo */}
+                  <div className="max-w-2xl mx-auto mt-8 text-center">
+                    <div className="mb-5">
+                      <p className="text-gray-400 text-base leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>
+                        Accès complet au Journal TPLN. Sans limite de comptes.
+                      </p>
+                    </div>
+                    <div className="mb-2">
+                      <div className="text-2xl sm:text-3xl bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent font-bold" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
+                        29€
                       </div>
                     </div>
-                    
-                    {/* Bouton */}
-                    <div className="flex justify-center mt-8">
-                      <button className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-8 py-3 rounded-[14px] font-medium transition-all duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                    <div className="mb-6">
+                      <p className="text-gray-400 text-base" style={{ fontFamily: 'Inter, sans-serif' }}>
+                        Annulable à tout moment
+                      </p>
+                    </div>
+                    <div className="flex justify-center">
+                      <button className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-8 py-4 rounded-[14px] font-medium transition-all duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
                         Obtenir le Journal
                       </button>
                     </div>
                   </div>
-
                 </div>
               </div>
 
@@ -2466,60 +2356,70 @@ const App = () => {
                   
                   {/* Titre principal */}
                   <div className="text-center mb-8">
-                    <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                      <span className="text-white">La méthode</span>
-                      <br />
-                      <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
-                        complète.
-                      </span>
+                    <h2 className="font-bold mb-8 text-center leading-tight text-white" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
+                      La méthode TPLN
                     </h2>
+                    <p className="text-white text-base leading-relaxed text-center mt-6 mb-4" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      Un cadre structuré que tu comprends.<br />
+                      Un journal avancé pour mesurer ce que tu exécutes.
+                    </p>
+                    <p className="text-white text-base leading-relaxed text-center" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      Tu apprends.<br />
+                      Tu appliques.<br />
+                      Tu mesures.
+                    </p>
                   </div>
 
-                  {/* Cadre formation */}
+                  {/* Cadre formation - Inclus dans l'abonnement */}
                   <div className="max-w-2xl mx-auto mb-8">
                     <div className="bg-[#141821] border border-[#222836] rounded-[16px] p-8 hover:border-[#2E6BFF]/50 hover:shadow-[0_12px_32px_rgba(46,107,255,0.2)] transition-all duration-300 relative overflow-hidden">
                       <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
                       
-                      <h3 className="text-[#F2F4F8] text-xl font-semibold mb-6 text-center" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                        Formation TPLN
+                      <h3 className="text-[#F2F4F8] text-xl font-semibold mb-6 text-left" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                        Inclus dans l'abonnement :
                       </h3>
                       
                       <ul className="space-y-3.5">
-                        <li className="flex items-center gap-3 group">
-                          <div className="w-2 h-2 rounded-full bg-[#2E6BFF] flex-shrink-0 group-hover:scale-125 transition-transform duration-200"></div>
-                          <span className="text-[#AAB3C2] text-base leading-relaxed group-hover:text-[#F2F4F8] transition-colors duration-200 text-left" style={{ fontFamily: 'Inter, sans-serif' }}>La structure du modèle</span>
+                        <li className="flex items-start gap-3">
+                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Formation complète au modèle TPLN</span>
                         </li>
-                        <li className="flex items-center gap-3 group">
-                          <div className="w-2 h-2 rounded-full bg-[#2E6BFF] flex-shrink-0 group-hover:scale-125 transition-transform duration-200"></div>
-                          <span className="text-[#AAB3C2] text-base leading-relaxed group-hover:text-[#F2F4F8] transition-colors duration-200 text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Les critères précis de validation</span>
+                        <li className="flex items-start gap-3">
+                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Checklist de validation détaillée</span>
                         </li>
-                        <li className="flex items-center gap-3 group">
-                          <div className="w-2 h-2 rounded-full bg-[#2E6BFF] flex-shrink-0 group-hover:scale-125 transition-transform duration-200"></div>
-                          <span className="text-[#AAB3C2] text-base leading-relaxed group-hover:text-[#F2F4F8] transition-colors duration-200 text-left" style={{ fontFamily: 'Inter, sans-serif' }}>La gestion du risque</span>
+                        <li className="flex items-start gap-3">
+                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Gestion du risque structurée</span>
                         </li>
-                        <li className="flex items-center gap-3 group">
-                          <div className="w-2 h-2 rounded-full bg-[#2E6BFF] flex-shrink-0 group-hover:scale-125 transition-transform duration-200"></div>
-                          <span className="text-[#AAB3C2] text-base leading-relaxed group-hover:text-[#F2F4F8] transition-colors duration-200 text-left" style={{ fontFamily: 'Inter, sans-serif' }}>L'exécution disciplinée</span>
+                        <li className="flex items-start gap-3">
+                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Journal de performance intégré</span>
                         </li>
-                        <li className="flex items-center gap-3 group">
-                          <div className="w-2 h-2 rounded-full bg-[#2E6BFF] flex-shrink-0 group-hover:scale-125 transition-transform duration-200"></div>
-                          <span className="text-[#AAB3C2] text-base leading-relaxed group-hover:text-[#F2F4F8] transition-colors duration-200 text-left" style={{ fontFamily: 'Inter, sans-serif' }}>L'analyse post-trade</span>
+                        <li className="flex items-start gap-3">
+                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Analyse des erreurs et discipline</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Suivi win rate, profit factor, drawdown</span>
                         </li>
                       </ul>
                     </div>
                     
-                    {/* Texte au-dessus du bouton */}
-                    <div className="mt-6 mb-3">
-                      <p className="text-gray-400 text-base text-center" style={{ fontFamily: 'Inter, sans-serif' }}>
-                        Un cadre reproductible. Sans indicateurs inutiles. Sans complexité artificielle.
-                      </p>
-                    </div>
+                    <p className="text-white text-base leading-relaxed text-center mt-6" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      Ce n'est pas juste une formation.<br />
+                      C'est un système complet : apprendre + exécuter + mesurer.
+                    </p>
                     
                     {/* Prix */}
                     <div className="mb-4 text-center">
                       <div className="text-lg bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent font-bold" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
                         49€/mois
                       </div>
+                      <p className="text-white text-sm mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>
+                        Accès à la méthode + journal inclus.
+                      </p>
                     </div>
                     
                     {/* Bouton */}
@@ -2608,12 +2508,14 @@ const App = () => {
                   </div>
                   <div className="text-center mb-8">
                     <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                      <span className="text-white">Exécution</span>
+                      <span className="text-white">Application mobile</span>
                       <br />
                       <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
-                        en temps réel.
+                        TPLN
                       </span>
                     </h2>
+                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Reste connecté à ton exécution.</p>
+                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Reçois des alertes instantanées à chaque opportunité validée.<br />Accède aux analyses détaillées, au live et à ton journal depuis ton téléphone.</p>
                   </div>
                   <div className="max-w-2xl mx-auto mb-8">
                     <div className="bg-[#141821] border border-[#222836] rounded-[14px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden">
@@ -2692,12 +2594,14 @@ const App = () => {
                   </div>
                   <div className="text-center mb-8">
                     <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                      <span className="text-white">Exécution</span>
+                      <span className="text-white">Application mobile</span>
                       <br />
                       <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
-                        en temps réel.
+                        TPLN
                       </span>
                     </h2>
+                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Reste connecté à ton exécution.</p>
+                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Reçois des alertes instantanées à chaque opportunité validée.<br />Accède aux analyses détaillées, au live et à ton journal depuis ton téléphone.</p>
                   </div>
                   <div className="max-w-2xl mx-auto mb-8">
                     <div className="bg-[#141821] border border-[#222836] rounded-[14px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden">
@@ -2779,88 +2683,56 @@ const App = () => {
                   {/* Titre principal */}
                   <div className="text-center mb-8 sm:mb-2">
                     <h2 className="font-bold mb-3 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                      <span className="text-white">Application</span>
+                      <span className="text-white">Application mobile</span>
                       <br />
                       <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
-                        mobile
+                        TPLN
                       </span>
                     </h2>
+                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Reste connecté à ton exécution.</p>
+                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Reçois des alertes instantanées à chaque opportunité validée.<br />Accède aux analyses détaillées, au live et à ton journal depuis ton téléphone.</p>
                   </div>
 
                   {/* Liste des fonctionnalités */}
                   <div className="max-w-6xl mb-8 mt-8 sm:mt-12">
-                    <div className="flex flex-col lg:flex-row gap-8 items-center">
-                      {/* Colonne gauche - Cadres */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-[600px]">
-                        {/* Carte 1 - Performance chiffrée */}
-                        <div className="w-full max-w-[280px] aspect-[4/3] bg-[#141821] border border-[#222836] rounded-[14px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 flex flex-col items-center text-center">
-                          <div className="w-10 h-10 rounded-lg bg-[#2E6BFF]/20 flex items-center justify-center mb-4">
-                            <svg className="w-5 h-5 text-[#2E6BFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                            </svg>
-                          </div>
-                          <h4 className="text-white font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Performance chiffrée</h4>
-                          <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Métriques précises de tes résultats</p>
+                    <div className={`flex flex-col lg:flex-row gap-8 ${isPWA ? 'items-start' : 'items-center'}`}>
+                      {/* Colonne gauche - Bloc unique */}
+                      <div className={`w-full max-w-md order-2 lg:order-1 ${isPWA ? 'text-left' : ''}`}>
+                        <div className={`bg-[#141821] border border-[#222836] rounded-[14px] p-6 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'text-left' : ''}`}>
+                          <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
+                          <h3 className={`text-[#F2F4F8] text-lg font-semibold mb-4 ${isPWA ? 'text-left' : ''}`} style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Tout en temps réel.</h3>
+                          <ul className={`space-y-2.5 ${isPWA ? 'text-left' : ''}`}>
+                            <li className="flex items-start gap-2.5">
+                              <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0 mt-1.5"></div>
+                              <span className="text-[#AAB3C2] text-sm leading-snug min-w-0 text-left flex-1" style={{ fontFamily: 'Inter, sans-serif' }}>Alertes push instantanées</span>
+                            </li>
+                            <li className="flex items-start gap-2.5">
+                              <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0 mt-1.5"></div>
+                              <span className="text-[#AAB3C2] text-sm leading-snug min-w-0 text-left flex-1" style={{ fontFamily: 'Inter, sans-serif' }}>Opportunités expliquées avec graphique détaillé</span>
+                            </li>
+                            <li className="flex items-start gap-2.5">
+                              <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0 mt-1.5"></div>
+                              <span className="text-[#AAB3C2] text-sm leading-snug min-w-0 text-left flex-1" style={{ fontFamily: 'Inter, sans-serif' }}>Accès au livestream</span>
+                            </li>
+                            <li className="flex items-start gap-2.5">
+                              <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0 mt-1.5"></div>
+                              <span className="text-[#AAB3C2] text-sm leading-snug min-w-0 text-left flex-1" style={{ fontFamily: 'Inter, sans-serif' }}>Journal de performance intégré</span>
+                            </li>
+                            <li className="flex items-start gap-2.5">
+                              <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0 mt-1.5"></div>
+                              <span className="text-[#AAB3C2] text-sm leading-snug min-w-0 text-left flex-1" style={{ fontFamily: 'Inter, sans-serif' }}>Historique complet des exécutions</span>
+                            </li>
+                          </ul>
                         </div>
-
-                        {/* Carte 2 - Discipline par session */}
-                        <div className="w-full max-w-[280px] aspect-[4/3] bg-[#141821] border border-[#222836] rounded-[14px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 flex flex-col items-center text-center">
-                          <div className="w-10 h-10 rounded-lg bg-[#2E6BFF]/20 flex items-center justify-center mb-4">
-                            <svg className="w-5 h-5 text-[#2E6BFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                          </div>
-                          <h4 className="text-white font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Discipline par session</h4>
-                          <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Suivi de ta rigueur opérationnelle</p>
-                        </div>
-
-                        {/* Carte 3 - Erreurs récurrentes */}
-                        <div className="w-full max-w-[280px] aspect-[4/3] bg-[#141821] border border-[#222836] rounded-[14px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 flex flex-col items-center text-center">
-                          <div className="w-10 h-10 rounded-lg bg-[#2E6BFF]/20 flex items-center justify-center mb-4">
-                            <svg className="w-5 h-5 text-[#2E6BFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                          </div>
-                          <h4 className="text-white font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Erreurs récurrentes</h4>
-                          <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Identification des patterns négatifs</p>
-                        </div>
-
-                        {/* Carte 4 - Drawdown maximum */}
-                        <div className="w-full max-w-[280px] aspect-[4/3] bg-[#141821] border border-[#222836] rounded-[14px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 flex flex-col items-center text-center">
-                          <div className="w-10 h-10 rounded-lg bg-[#2E6BFF]/20 flex items-center justify-center mb-4">
-                            <svg className="w-5 h-5 text-[#2E6BFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                            </svg>
-                          </div>
-                          <h4 className="text-white font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Drawdown maximum</h4>
-                          <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Mesure de ton risque maximal</p>
-                        </div>
-
-                        {/* Carte 5 - Win rate & profit factor */}
-                        <div className="w-full max-w-[280px] aspect-[4/3] bg-[#141821] border border-[#222836] rounded-[14px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 flex flex-col items-center text-center">
-                          <div className="w-10 h-10 rounded-lg bg-[#2E6BFF]/20 flex items-center justify-center mb-4">
-                            <svg className="w-5 h-5 text-[#2E6BFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                          </div>
-                          <h4 className="text-white font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Win rate & profit factor</h4>
-                          <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Ratio de réussite et rentabilité</p>
-                        </div>
-
-                        {/* Carte 6 - Qualité d'exécution */}
-                        <div className="w-full max-w-[280px] aspect-[4/3] bg-[#141821] border border-[#222836] rounded-[14px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 flex flex-col items-center text-center">
-                          <div className="w-10 h-10 rounded-lg bg-[#2E6BFF]/20 flex items-center justify-center mb-4">
-                            <svg className="w-5 h-5 text-[#2E6BFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                          </div>
-                          <h4 className="text-white font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Qualité d'exécution</h4>
-                          <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Précision de tes entrées et sorties</p>
-                        </div>
+                        <p className={`text-[#AAB3C2] text-base mt-4 leading-relaxed ${isPWA ? 'text-left' : ''}`} style={{ fontFamily: 'Inter, sans-serif' }}>
+                          TPLN n'est pas seulement une formation ou un live.<br />
+                          C'est un environnement structuré accessible à tout moment.<br />
+                          L'accès à l'application est intégré à l'écosystème TPLN.
+                        </p>
                       </div>
 
                       {/* Colonne droite - Vidéo iPhone */}
-                      <div className="flex-1 flex items-center justify-center lg:justify-start">
+                      <div className="flex-1 flex items-center justify-center lg:justify-start order-1 lg:order-2">
                         <div className="w-full sm:max-w-lg lg:max-w-xl xl:max-w-2xl relative">
                           {/* Cadre iPhone avec photo */}
                           <div className="relative">
@@ -2871,7 +2743,7 @@ const App = () => {
                               width={1024}
                               height={1024}
                               loading="lazy"
-                              className="w-full h-auto scale-125 sm:scale-110 lg:scale-125"
+                              className={`w-full h-auto ${isPWA ? 'scale-150' : 'scale-95 sm:scale-110 lg:scale-125'}`}
                               style={{
                                 display: 'block',
                                 maxWidth: '100%',
@@ -2884,7 +2756,7 @@ const App = () => {
                             
                             {/* Vidéo superposée */}
                             <video 
-                              className={`absolute left-1/2 transform -translate-x-1/2 w-[56%] aspect-[9/16] rounded-[2rem] sm:rounded-[4rem] scale-125 sm:scale-100 ${isPWA && !user ? 'top-1.5' : '-top-1'} sm:-top-1`}
+                              className={`absolute left-1/2 transform -translate-x-1/2 w-[56%] aspect-[9/16] rounded-[2rem] sm:rounded-[4rem] scale-100 sm:scale-100 ${isPWA && !user ? 'top-1.5' : '-top-1'} sm:-top-1`}
                               autoPlay
                               loop
                               muted
@@ -2899,20 +2771,6 @@ const App = () => {
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Texte au-dessus du trait - cadre harmonisé */}
-                  <div className="max-w-4xl mx-auto mt-8 mb-8">
-                    <div className="bg-[#141821] border border-[#222836] rounded-[14px] px-6 py-5 text-center relative overflow-hidden hover:border-[#2E6BFF]/30 transition-colors">
-                      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent" />
-                      <p className="text-[#E8EAED] text-lg sm:text-xl leading-relaxed" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                        TPLN n'est pas seulement une formation ou un live.
-                        <br />
-                        C'est un environnement structuré accessible à tout moment.
-                        <br />
-                        L'accès à l'application est intégré à l'écosystème TPLN.
-                      </p>
                     </div>
                   </div>
 
@@ -2982,47 +2840,6 @@ const App = () => {
                         <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
                       </svg>
                     </a>
-                </div>
-              </div>
-            </div>
-
-            {/* Avantages clés - Mobile Optimized */}
-            <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
-              <h2 className="text-4xl sm:text-5xl font-bold text-center mb-8 sm:mb-12">
-                <div className="text-white">
-                  Pourquoi choisir
-                </div>
-                <div className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                  TPLN ?
-                </div>
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
-                {/* Carte 1 */}
-                <div className="bg-[#141821] rounded-[16px] p-4 sm:p-6 md:p-8 text-center border border-[#222836] hover:bg-[#171C26] hover:border-[#2A2F3F] transition-all duration-200 cursor-pointer group" style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
-                  <div className="text-3xl sm:text-4xl text-[#2E6BFF] mb-2 sm:mb-4 transition-transform duration-200">⚡</div>
-                  <div className="text-lg sm:text-xl font-bold text-[#F2F4F8] mb-1 sm:mb-2 transition-colors duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Simplicité</div>
-                  <div className="text-[#AAB3C2] text-sm sm:text-base transition-colors duration-200 leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Approche simple et efficace. Pas de jargon compliqué, juste des résultats concrets.</div>
-                </div>
-
-                {/* Carte 2 */}
-                <div className="bg-[#141821] rounded-[16px] p-4 sm:p-6 md:p-8 text-center border border-[#222836] hover:bg-[#171C26] hover:border-[#2A2F3F] transition-all duration-200 cursor-pointer group" style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
-                  <div className="text-3xl sm:text-4xl text-[#2E6BFF] mb-2 sm:mb-4 transition-transform duration-200">🎯</div>
-                  <div className="text-lg sm:text-xl font-bold text-[#F2F4F8] mb-1 sm:mb-2 transition-colors duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Résultats</div>
-                  <div className="text-[#AAB3C2] text-sm sm:text-base transition-colors duration-200 leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Signaux précis et formation qui transforme les débutants en traders confirmés.</div>
-                </div>
-
-                {/* Carte 3 */}
-                <div className="bg-[#141821] rounded-[16px] p-4 sm:p-6 md:p-8 text-center border border-[#222836] hover:bg-[#171C26] hover:border-[#2A2F3F] transition-all duration-200 cursor-pointer group" style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
-                  <div className="text-3xl sm:text-4xl text-[#2E6BFF] mb-2 sm:mb-4 transition-transform duration-200">🤝</div>
-                  <div className="text-lg sm:text-xl font-bold text-[#F2F4F8] mb-1 sm:mb-2 transition-colors duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Communauté</div>
-                  <div className="text-[#AAB3C2] text-sm sm:text-base transition-colors duration-200 leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Rejoignez une communauté active de traders qui partagent et s'entraident.</div>
-                </div>
-
-                {/* Carte 4 - Journal de Trading */}
-                <div className="bg-[#141821] rounded-[16px] p-4 sm:p-6 md:p-8 text-center border border-[#222836] hover:bg-[#171C26] hover:border-[#2A2F3F] transition-all duration-200 cursor-pointer group" style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
-                  <div className="text-3xl sm:text-4xl text-[#2E6BFF] mb-2 sm:mb-4 transition-transform duration-200">📔</div>
-                  <div className="text-lg sm:text-xl font-bold text-[#F2F4F8] mb-1 sm:mb-2 transition-colors duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Journal Personnel</div>
-                  <div className="text-[#AAB3C2] text-sm sm:text-base transition-colors duration-200 leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Chacun a son propre journal de trading pour suivre ses trades et analyser ses performances.</div>
                 </div>
               </div>
             </div>
@@ -5405,63 +5222,60 @@ const App = () => {
               </div>
 
               <div className={`grid grid-cols-1 md:grid-cols-[0.8fr_0.9fr_1.1fr] gap-8 md:gap-0 max-w-6xl mx-auto transition-all duration-400 ease-out ${isTransitioning ? 'opacity-0 scale-75 rotate-3 blur-md translate-y-20 transform-gpu perspective-1000' : 'opacity-100 scale-100 rotate-0 blur-0 translate-y-0 transform-gpu perspective-1000'}`} style={{ transformStyle: 'preserve-3d', perspective: '1000px' }}>
-                {/* Plan Journal Perso */}
+                {/* Plan Journal Pro */}
                 <div className={`bg-[#141821] px-8 py-6 sm:px-12 sm:py-8 rounded-[16px] md:rounded-l-[16px] md:rounded-r-none border border-[#222836] flex flex-col transition-all duration-200 ${
                   isTransitioning 
                     ? 'border-[#2E6BFF] scale-105' 
                     : 'hover:border-[#2A2F3F] hover:bg-[#171C26]'
                 }`} style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
                   <div className="text-center">
-                    <h3 className="text-xl font-bold text-white mb-3">TRADING JOURNAL</h3>
+                    <h3 className="text-xl font-bold text-white mb-3">JOURNAL PRO</h3>
                     <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
-                      <div className="text-gray-500 text-xl mb-1"><span className="line-through">25€</span></div>
                       <span className="text-2xl align-top text-gray-300">€</span>
-                      {paymentType === 'monthly' ? '15' : '12,5'}
+                      {paymentType === 'monthly' ? '29' : '26'}
                       <span className="text-lg text-gray-400 font-normal"> / mois</span>
                       {paymentType === 'yearly' && (
                         <div className="text-gray-300 text-sm font-normal mt-2">
-                          Facturé 150€ / an
+                          Facturé 312€ / an
                         </div>
                       )}
-                      <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full text-center">
-                        🎉 Première semaine à<br />8€ seulement !
-                      </div>
                     </div>
-                    {paymentType === 'yearly' && (
-                      <div className="text-gray-400 text-sm mb-4">Best for personal tracking</div>
-                    )}
                     <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Journal de trading personnel</span>
+                        <span className="font-semibold text-white">Journal personnel</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Compte illimité</span>
+                        <span className="font-semibold text-white">Comptes illimités</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Analyse des pertes</span>
+                        <span className="font-semibold text-white">Analyse avancée</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-green-400 font-bold text-lg">✓</span>
+                        <span className="font-semibold text-white">Comparaison de comptes</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-red-400 font-bold text-lg">✗</span>
-                        <span className="font-semibold text-white">Formation TPLN model</span>
+                        <span className="font-semibold text-white">Méthode TPLN</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-red-400 font-bold text-lg">✗</span>
-                        <span className="font-semibold text-white">Signaux</span>
+                        <span className="font-semibold text-white">Exécutions partagées</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-red-400 font-bold text-lg">✗</span>
-                        <span className="font-semibold text-white">Live streams</span>
+                        <span className="font-semibold text-white">Live</span>
                       </li>
                     </ul>
                   </div>
                   <button 
                     onClick={async () => {
                       try {
-                        console.log('🖱️ Clic sur bouton Journal Perso (mobile)');
-                        await redirectToCheckout('journal', 'monthly');
+                        console.log('🖱️ Clic sur bouton Journal Pro (mobile)');
+                        await redirectToCheckout('journal', paymentType);
                       } catch (error: any) {
                         console.error('Erreur:', error);
                         alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
@@ -5473,12 +5287,12 @@ const App = () => {
                         : ''
                     }`}
                   >
-                    Je m'abonne
+                    Accéder au Journal Pro
                   </button>
                   
                 </div>
 
-                {/* Plan Starter */}
+                {/* Plan Starter - Méthode */}
                 <div className={`bg-[#141821] px-8 py-6 sm:px-12 sm:py-8 rounded-[16px] md:rounded-none border border-[#222836] flex flex-col transition-all duration-200 ${
                   isTransitioning 
                     ? 'border-[#2E6BFF] scale-105' 
@@ -5486,50 +5300,43 @@ const App = () => {
                 }`}>
                   <div className="text-center">
                     <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#2E6BFF] text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg md:hidden" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                      {paymentType === 'yearly' ? '💎 ÉCONOMISE 50€' : '⭐ RECOMMANDÉ'}
+                      {paymentType === 'yearly' ? '💎 ÉCONOMISE 50€' : ''}
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-3">BASIC</h3>
+                    <h3 className="text-xl font-bold text-white mb-3">MÉTHODE TPLN</h3>
                     <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
-                      <div className="text-gray-500 text-xl mb-1"><span className="line-through">49€</span></div>
                       <span className="text-2xl align-top text-gray-300">€</span>
-                      {paymentType === 'monthly' ? '39' : '34,83'}
+                      {paymentType === 'monthly' ? '49' : '44'}
                       <span className="text-lg text-gray-400 font-normal"> / mois</span>
                       {paymentType === 'yearly' && (
                         <div className="text-gray-300 text-sm font-normal mt-2">
-                          Facturé 418€ / an
+                          Facturé 528€ / an
                         </div>
                       )}
-                      <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full text-center">
-                        🎉 Première semaine à<br />8€ seulement !
-                      </div>
                     </div>
-                    {paymentType === 'yearly' && (
-                      <div className="text-gray-400 text-sm mb-4">Best for beginner traders</div>
-                    )}
                                           <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
                         <li className="flex items-center gap-2">
                           <span className="text-green-400 font-bold text-lg">✓</span>
-                          <span className="font-semibold text-white">Formation TPLN model</span>
+                          <span className="font-semibold text-white">Formation TPLN complète</span>
                         </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Signaux crypto forex futur<br/>(sans explications)</span>
+                        <span className="font-semibold text-white">Journal (1 compte inclus)</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Journal des signaux</span>
+                        <span className="font-semibold text-white">Structure + gestion du risque</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Journal de trading (1 compte)</span>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Live streams (1 jour / semaine)</span>
+                        <span className="font-semibold text-white">Exécution disciplinée</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-red-400 font-bold text-lg">✗</span>
-                        <span className="font-semibold text-white">Contact direct avec TheTheTrader</span>
+                        <span className="font-semibold text-white">Pas de live</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-red-400 font-bold text-lg">✗</span>
+                        <span className="font-semibold text-white">Pas d'opportunités en temps réel</span>
                       </li>
                     </ul>
                   </div>
@@ -5554,21 +5361,20 @@ const App = () => {
                   
                 </div>
 
-                {/* Plan Pro */}
+                {/* Plan Pro - L'environnement complet TPLN */}
                 <div 
-                  className={`bg-[#141821] p-8 sm:p-12 rounded-[16px] md:rounded-r-[16px] md:rounded-l-none border border-[#222836] relative flex flex-col justify-between transition-all duration-200 ${
+                  className={`bg-[#141821] p-8 sm:p-12 rounded-[16px] md:rounded-r-[16px] md:rounded-l-none border-2 border-[#2E6BFF] relative flex flex-col justify-between transition-all duration-200 ${
                     isTransitioning 
-                      ? 'border-blue-600 shadow-[0_0_40px_rgba(59,130,246,0.5)] scale-105 rotate-y-6 brightness-110' 
-                      : 'hover:border-[#2A2F3F] hover:bg-[#171C26]'
+                      ? 'border-blue-600 shadow-[0_0_40px_rgba(59,130,246,0.5)] scale-105' 
+                      : 'hover:border-[#2558D6] hover:bg-[#171C26]'
                   }`}
                 >
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#2E6BFF] text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg md:hidden" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                    {paymentType === 'yearly' ? '💎 ÉCONOMISE 100€' : '⭐ RECOMMANDÉ'}
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#2E6BFF] text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
+                    ⭐ RECOMMANDÉ
                   </div>
                   <div className="text-center">
-                    <h3 className="text-xl font-bold mb-3 bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>PREMIUM</h3>
+                    <h3 className="text-xl font-bold mb-3 bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent uppercase" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>L'environnement complet TPLN</h3>
                     <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
-                      <div className="text-gray-500 text-xl mb-1"><span className="line-through">89€</span></div>
                       <span className="text-2xl align-top text-gray-300">€</span>
                       {paymentType === 'monthly' ? '79' : '57,5'}
                       <span className="text-lg text-gray-400 font-normal"> / mois</span>
@@ -5577,33 +5383,31 @@ const App = () => {
                           Facturé 690€ / an
                         </div>
                       )}
-                      <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full text-center">
-                        🎉 Première semaine à<br />15€ seulement !
-                      </div>
                     </div>
-                    {paymentType === 'yearly' && (
-                      <div className="text-gray-400 text-sm mb-4">Best for advanced traders</div>
-                    )}
                                           <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
                         <li className="flex items-center gap-2">
                           <span className="text-green-400 font-bold text-lg">✓</span>
-                          <span className="font-semibold text-white">Formation TPLN model</span>
+                          <span className="font-semibold text-white">Méthode complète</span>
                         </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Signaux crypto forex futur<br/>(détaillé avec image)</span>
+                        <span className="font-semibold text-white">Journal illimité</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Journal de trading compte illimité</span>
+                        <span className="font-semibold text-white">Opportunités expliquées en temps réel</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Live streams (5 jours/semaine)</span>
+                        <span className="font-semibold text-white">Notifications instantanées</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Contact direct avec TheTheTrader</span>
+                        <span className="font-semibold text-white">Live 5j / semaine</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-green-400 font-bold text-lg">✓</span>
+                        <span className="font-semibold text-white">Contact direct</span>
                       </li>
                     </ul>
                   </div>
@@ -5617,14 +5421,9 @@ const App = () => {
                         alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
                       }
                     }}
-                    className={`w-full text-white py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-300 ease-out hover:scale-105 relative overflow-hidden ${isTransitioning ? 'animate-pulse' : ''}`}
-                    style={{ 
-                      background: 'linear-gradient(135deg, rgba(147, 51, 234, 0.9) 0%, rgba(236, 72, 153, 0.9) 50%, rgba(147, 51, 234, 0.9) 100%)',
-                      boxShadow: 'inset 0 0 20px rgba(255, 255, 255, 0.2), inset 0 0 40px rgba(168, 85, 247, 0.15)'
-                    }}
+                    className="w-full bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white py-4 px-6 rounded-[14px] font-medium text-lg transition-all duration-200"
                   >
-                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-beam" style={{ animation: 'beam 2s ease-in-out infinite' }}></span>
-                    <span className="relative z-10">Je m'abonne</span>
+                    Rejoindre l'environnement complet
                   </button>
                   
                 </div>
