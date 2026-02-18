@@ -1283,9 +1283,9 @@ const App = () => {
 
     const page = pages[currentPage];
     return (
-      <div className={`min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 ${isPWA && currentPage === 'home' && !user ? 'pwa-landing-no-scroll' : isPWA && user ? 'pwa-connected-scroll' : ''}`}>
+      <div className={`min-h-screen bg-[#0F1115] ${isPWA && currentPage === 'home' && !user ? 'pwa-landing-no-scroll' : isPWA && user ? 'pwa-connected-scroll' : ''}`}>
         {/* Header with back button */}
-        <nav className="flex items-center justify-between p-4 sm:p-6 relative z-50 border-b border-purple-700/50">
+        <nav className="flex items-center justify-between p-4 sm:p-6 relative z-50 border-b border-[#222836]">
           <button 
             onClick={() => setCurrentPage('home')}
             className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
@@ -1357,10 +1357,10 @@ const App = () => {
 
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 ${isPWA && currentPage === 'home' && !user ? 'pwa-landing-no-scroll' : isPWA && user ? 'pwa-connected-scroll' : ''}`} data-pwa={isPWA ? "true" : undefined}>
+    <div className={`min-h-screen bg-[#0F1115] ${isPWA && currentPage === 'home' && !user ? 'pwa-landing-no-scroll' : isPWA && user ? 'pwa-connected-scroll' : ''}`} data-pwa={isPWA ? "true" : undefined}>
       {/* Navigation - Masquée en PWA */}
       {!isPWA && (
-        <nav className="app-fixed-header relative flex items-center justify-between px-4 py-3 sm:px-6 sm:py-3 z-50 bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 border-b border-purple-800/20 h-16" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}>
+        <nav className="app-fixed-header relative flex items-center justify-between px-4 py-3 sm:px-6 sm:py-3 z-50 bg-[#0F1115] border-b border-[#222836] h-16" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}>
           <div className="flex items-center h-full flex-shrink-0">
             <img 
               src="/logo-removebg-preview.png" 
@@ -1374,10 +1374,10 @@ const App = () => {
           
           {/* Menu Desktop - centré dans le header */}
           <div className="hidden md:flex absolute left-1/2 top-0 bottom-0 -translate-x-1/2 space-x-8 items-center">
-            <button onClick={() => handleScrollToSection('services')} className="text-gray-300 hover:text-white transition-all duration-300 flex items-center h-full font-medium text-lg tracking-wide hover:scale-105">Services</button>
-            <button onClick={() => handleScrollToSection('about-thethetrader')} className="text-gray-300 hover:text-white transition-all duration-300 flex items-center h-full font-medium text-lg tracking-wide hover:scale-105">À propos</button>
-            <button onClick={() => handleScrollToSection('section-app')} className="text-gray-300 hover:text-white transition-all duration-300 flex items-center h-full font-medium text-lg tracking-wide hover:scale-105">La plateforme</button>
-            <button onClick={() => handleScrollToSection('pricing')} className="text-gray-300 hover:text-white transition-all duration-300 flex items-center h-full font-medium text-lg tracking-wide hover:scale-105">Prix</button>
+            <button onClick={() => handleScrollToSection('services')} className="text-[#AAB3C2] hover:text-[#F2F4F8] transition-all duration-200 flex items-center h-full font-medium text-lg tracking-wide">Services</button>
+            <button onClick={() => handleScrollToSection('about-thethetrader')} className="text-[#AAB3C2] hover:text-[#F2F4F8] transition-all duration-200 flex items-center h-full font-medium text-lg tracking-wide">À propos</button>
+            <button onClick={() => handleScrollToSection('section-app')} className="text-[#AAB3C2] hover:text-[#F2F4F8] transition-all duration-200 flex items-center h-full font-medium text-lg tracking-wide">La plateforme</button>
+            <button onClick={() => handleScrollToSection('pricing')} className="text-[#AAB3C2] hover:text-[#F2F4F8] transition-all duration-200 flex items-center h-full font-medium text-lg tracking-wide">Prix</button>
           </div>
           
           {/* Bouton Hamburger Mobile */}
@@ -1400,7 +1400,7 @@ const App = () => {
                 e.preventDefault();
                 setShowInstallPopup(true);
               }}
-              className="bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base flex items-center gap-2"
+              className="bg-[#141821] hover:bg-[#171C26] border border-[#222836] text-[#F2F4F8] px-4 py-2 sm:px-6 sm:py-3 rounded-[14px] font-medium transition-all duration-200 text-sm sm:text-base flex items-center gap-2"
             >
               <span className="flex items-center gap-1.5">
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
@@ -1415,7 +1415,7 @@ const App = () => {
             </button>
             <button 
               onClick={() => setShowAuthModal(true)}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base"
+              className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-[14px] font-medium transition-all duration-200 text-sm sm:text-base"
             >
               <span className="hidden sm:inline">Se connecter</span>
               <span className="sm:hidden">Login</span>
@@ -1426,14 +1426,14 @@ const App = () => {
       
       {/* Menu Mobile Dropdown */}
       {!isPWA && showMobileMenu && (
-        <div className="fixed top-16 left-0 right-0 bg-slate-900/95 backdrop-blur-lg border-b border-purple-800/20 z-40 md:hidden max-h-[70vh] overflow-y-auto">
+        <div className="fixed top-16 left-0 right-0 bg-[#141821] border-b border-[#222836] z-40 md:hidden max-h-[70vh] overflow-y-auto">
           <div className="flex flex-col px-4 py-3 space-y-0.5">
             <button 
               onClick={() => {
                 setShowMobileMenu(false);
                 handleScrollToSection('services');
               }}
-              className="text-gray-300 hover:text-white transition-all duration-200 py-1.5 text-base font-medium text-left"
+              className="text-[#AAB3C2] hover:text-[#F2F4F8] transition-all duration-200 py-1.5 text-base font-medium text-left"
             >
               Services
             </button>
@@ -1442,7 +1442,7 @@ const App = () => {
                 setShowMobileMenu(false);
                 handleScrollToSection('about-thethetrader');
               }}
-              className="text-gray-300 hover:text-white transition-all duration-200 py-1.5 text-base font-medium text-left"
+              className="text-[#AAB3C2] hover:text-[#F2F4F8] transition-all duration-200 py-1.5 text-base font-medium text-left"
             >
               À propos
             </button>
@@ -1451,7 +1451,7 @@ const App = () => {
                 setShowMobileMenu(false);
                 handleScrollToSection('section-app');
               }}
-              className="text-gray-300 hover:text-white transition-all duration-200 py-1.5 text-base font-medium text-left"
+              className="text-[#AAB3C2] hover:text-[#F2F4F8] transition-all duration-200 py-1.5 text-base font-medium text-left"
             >
               La plateforme
             </button>
@@ -1460,18 +1460,18 @@ const App = () => {
                 setShowMobileMenu(false);
                 handleScrollToSection('pricing');
               }}
-              className="text-gray-300 hover:text-white transition-all duration-200 py-1.5 text-base font-medium text-left"
+              className="text-[#AAB3C2] hover:text-[#F2F4F8] transition-all duration-200 py-1.5 text-base font-medium text-left"
             >
               Prix
             </button>
-            <div className="pt-2 mt-2 border-t border-purple-800/20 flex flex-col gap-2">
+            <div className="pt-2 mt-2 border-t border-[#222836] flex flex-col gap-2">
               <button 
                 onClick={(e) => {
                   e.preventDefault();
                   setShowMobileMenu(false);
                   setShowInstallPopup(true);
                 }}
-                className="bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 text-sm flex items-center justify-center gap-2"
+                className="bg-[#141821] hover:bg-[#171C26] border border-[#222836] text-[#F2F4F8] px-4 py-2 rounded-[14px] font-medium transition-all duration-200 text-sm flex items-center justify-center gap-2"
               >
                 <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
                   <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
@@ -1486,7 +1486,7 @@ const App = () => {
                   setShowMobileMenu(false);
                   setShowAuthModal(true);
                 }}
-                className="bg-gradient-to-r from-blue-600 to-purple-700 hover:from-blue-700 hover:to-purple-800 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 text-center text-sm"
+                className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-4 py-2 rounded-[14px] font-medium transition-all duration-200 text-center text-sm"
               >
                 Se connecter
               </button>
@@ -1498,12 +1498,12 @@ const App = () => {
       {/* Popup d'installation PWA */}
       {showInstallPopup && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 max-w-md w-full border border-purple-500/30 shadow-2xl">
+          <div className="bg-[#141821] rounded-[16px] p-8 max-w-md w-full border border-[#222836] shadow-[0_6px_18px_rgba(0,0,0,0.25)]">
             <div className="flex justify-between items-start mb-6">
-              <h3 className="text-2xl font-bold text-white">📱 Installer l'app</h3>
+              <h3 className="text-2xl font-bold text-[#F2F4F8]" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>📱 Installer l'app</h3>
               <button 
                 onClick={() => setShowInstallPopup(false)}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-[#7F8AA1] hover:text-[#F2F4F8] transition-colors"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -1513,59 +1513,59 @@ const App = () => {
             
             <div className="space-y-6">
               {/* Instructions iOS */}
-              <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
-                <h4 className="text-lg font-semibold text-purple-400 mb-3 flex items-center gap-2">
+              <div className="bg-[#141821] rounded-[12px] p-4 border border-[#222836]">
+                <h4 className="text-lg font-semibold mb-3 flex items-center gap-2 bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
                   <span>🍎</span> Sur iPhone/iPad
                 </h4>
-                <ol className="space-y-2 text-gray-300 text-sm">
+                <ol className="space-y-2 text-[#AAB3C2] text-sm">
                   <li className="flex gap-2">
-                    <span className="font-bold text-purple-400">1.</span>
+                    <span className="font-bold bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">1.</span>
                     <span>Appuie sur le bouton <strong>Partager</strong> 📤 (en bas de Safari)</span>
                   </li>
                   <li className="flex gap-2">
-                    <span className="font-bold text-purple-400">2.</span>
+                    <span className="font-bold bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">2.</span>
                     <span>Sélectionne <strong>"Sur l'écran d'accueil"</strong></span>
                   </li>
                   <li className="flex gap-2">
-                    <span className="font-bold text-purple-400">3.</span>
+                    <span className="font-bold bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">3.</span>
                     <span>Confirme en appuyant sur <strong>"Ajouter"</strong></span>
                   </li>
                 </ol>
               </div>
 
               {/* Instructions Android */}
-              <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
-                <h4 className="text-lg font-semibold text-green-400 mb-3 flex items-center gap-2">
+              <div className="bg-[#141821] rounded-[12px] p-4 border border-[#222836]">
+                <h4 className="text-lg font-semibold text-[#13C26B] mb-3 flex items-center gap-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
                   <span>🤖</span> Sur Android
                 </h4>
-                <ol className="space-y-2 text-gray-300 text-sm">
+                <ol className="space-y-2 text-[#AAB3C2] text-sm">
                   <li className="flex gap-2">
-                    <span className="font-bold text-green-400">1.</span>
+                    <span className="font-bold text-[#13C26B]">1.</span>
                     <span>Appuie sur le menu <strong>⋮</strong> (en haut à droite)</span>
                   </li>
                   <li className="flex gap-2">
-                    <span className="font-bold text-green-400">2.</span>
+                    <span className="font-bold text-[#13C26B]">2.</span>
                     <span>Sélectionne <strong>"Ajouter à l'écran d'accueil"</strong> ou <strong>"Installer l'application"</strong></span>
                   </li>
                   <li className="flex gap-2">
-                    <span className="font-bold text-green-400">3.</span>
+                    <span className="font-bold text-[#13C26B]">3.</span>
                     <span>Confirme l'installation</span>
                   </li>
                 </ol>
               </div>
 
               {/* Instructions Desktop */}
-              <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
-                <h4 className="text-lg font-semibold text-blue-400 mb-3 flex items-center gap-2">
+              <div className="bg-[#141821] rounded-[12px] p-4 border border-[#222836]">
+                <h4 className="text-lg font-semibold mb-3 flex items-center gap-2 bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
                   <span>💻</span> Sur ordinateur
                 </h4>
-                <ol className="space-y-2 text-gray-300 text-sm">
+                <ol className="space-y-2 text-[#AAB3C2] text-sm">
                   <li className="flex gap-2">
-                    <span className="font-bold text-blue-400">1.</span>
+                    <span className="font-bold bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">1.</span>
                     <span>Clique sur l'icône <strong>⊕</strong> ou <strong>🔽</strong> dans la barre d'adresse</span>
                   </li>
                   <li className="flex gap-2">
-                    <span className="font-bold text-blue-400">2.</span>
+                    <span className="font-bold bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">2.</span>
                     <span>Sélectionne <strong>"Installer TPLN"</strong></span>
                   </li>
                 </ol>
@@ -1574,7 +1574,7 @@ const App = () => {
 
             <button
               onClick={() => setShowInstallPopup(false)}
-              className="mt-6 w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 rounded-lg font-semibold transition-all duration-200"
+              className="mt-6 w-full bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white py-3 rounded-[14px] font-medium transition-all duration-200"
             >
               J'ai compris
             </button>
@@ -1584,7 +1584,7 @@ const App = () => {
 
       {/* Version PWA - Page scrollable quand connecté */}
       {isPWA ? (
-        <div className={`w-screen ${user ? 'min-h-screen' : 'h-screen overflow-hidden flex items-center justify-center'} bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950`}>
+        <div className={`w-screen ${user ? 'min-h-screen' : 'h-screen overflow-hidden flex items-center justify-center'} bg-[#0F1115]`}>
           {/* Hero Section - Centré verticalement quand pas connecté, scrollable quand connecté */}
           <div className={`text-center ${user ? 'pt-20 pb-8' : 'w-full'} px-4 sm:px-6 max-w-full`}>
             <div className="mb-0 flex justify-center hover:scale-105 transition-transform duration-300">
@@ -1598,13 +1598,13 @@ const App = () => {
 
               />
             </div>
-            <p className="text-lg sm:text-2xl text-gray-300 mb-6 sm:mb-8 max-w-4xl mx-auto px-2 -mt-8">
+            <p className="text-lg sm:text-2xl text-[#AAB3C2] mb-6 sm:mb-8 max-w-4xl mx-auto px-2 -mt-8" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400 }}>
               Un setup très simple, des signaux expliqués, un journal de performance. Rejoins la communauté et trade en confiance.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mb-6 sm:mb-8 px-4">
               <button 
                 onClick={() => setShowAuthModal(true)}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 sm:px-10 py-4 sm:py-5 rounded-lg text-lg sm:text-xl font-semibold hover:opacity-90 w-full sm:w-auto"
+                className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-8 sm:px-10 py-4 sm:py-5 rounded-[14px] text-lg sm:text-xl font-medium transition-all duration-200 w-full sm:w-auto"
               >
                 Se connecter
               </button>
@@ -1619,7 +1619,7 @@ const App = () => {
                 href="https://x.com/thethetrader" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 justify-center bg-black hover:bg-gray-900 text-white px-3 py-2 rounded-lg font-medium transition-all duration-200 hover:scale-[1.02] border border-white/10 shadow text-xs"
+                className="inline-flex items-center gap-2 justify-center bg-[#141821] hover:bg-[#171C26] text-[#F2F4F8] px-3 py-2 rounded-[12px] font-medium transition-all duration-200 border border-[#222836] text-xs"
               >
                 <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -1633,20 +1633,26 @@ const App = () => {
             <>
               {/* Hero Section complète */}
               <div className={`text-center pt-28 sm:pt-40 pb-0 px-4 sm:px-6 ${isPWA ? 'w-full max-w-full box-border' : ''}`}>
-                <h1 className="font-bold mb-6 sm:mb-8 leading-tight" style={{ fontSize: 'clamp(1.6rem, 8vw, 4.5rem)' }}>
-                  <span className="text-white">Arrête de trader au hasard.</span>
+                <h1 className="font-bold mb-6 sm:mb-8 leading-tight" style={{ fontSize: 'clamp(1.6rem, 8vw, 4.5rem)', fontFamily: 'Sora, sans-serif', fontWeight: 700, lineHeight: 1.1 }}>
+                  <span className="text-[#F2F4F8]">Trader avec précision.</span>
                   <br />
-                  <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-                    Apprends à lire le marché.
+                  <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
+                    Sans bruit. Sans hasard.
                   </span>
                 </h1>
-                <p className={`hero-intro-p text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-4xl leading-relaxed ${isPWA ? 'pwa-hero-left' : 'mx-auto text-center'}`} style={isPWA ? undefined : { transform: 'translateX(calc(35% + 5mm))' }}>
-                  Tu n'as pas besoin d'être un expert pour trader efficacement. Tu as juste besoin de la bonne méthode, simple, directe, et conçue pour t'apprendre à penser comme un pro.
+                <p className={`hero-intro-p text-lg sm:text-xl text-[#AAB3C2] mb-8 sm:mb-12 max-w-4xl leading-relaxed ${isPWA ? 'pwa-hero-left' : 'mx-auto text-center'}`} style={{ ...(isPWA ? {} : { transform: 'translateX(calc(35% + 5mm))' }), fontFamily: 'Inter, sans-serif', fontWeight: 400, lineHeight: 1.6 }}>
+                  TPLN est un cadre structuré combinant méthode, mesure et discipline.
+                  <br />
+                  Chaque décision suit des critères clairs.
+                  <br />
+                  Si les règles sont validées, le trade est exécuté.
+                  <br />
+                  Sinon, il est rejeté.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mt-6 mb-8">
                   <button 
                     onClick={() => handleScrollToSection('pricing')}
-                    className="bg-gradient-to-r from-blue-600 to-purple-700 hover:from-blue-700 hover:to-purple-800 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-8 py-4 rounded-[14px] font-medium text-lg transition-all duration-200"
                   >
                     Commencer Maintenant
                   </button>
@@ -1658,13 +1664,13 @@ const App = () => {
               <div id="section-formation" className="py-16 sm:py-24 px-4 sm:px-6">
                 <div className="max-w-6xl mx-auto">
                   <div className="text-center mb-8">
-                    <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
+                    <div className="text-sm font-semibold mb-4 tracking-wider bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
                       APPRENTISSAGE
                     </div>
                     <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                       <span className="text-white">Adoptez mon approche</span>
                       <br />
-                      <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                      <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
                         précise
                       </span>
                     </h2>
@@ -1676,39 +1682,41 @@ const App = () => {
 
                   {/* Plans de prix - Mobile Optimized */}
                   <div id="pricing" className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
-                    <h2 className="text-5xl md:text-7xl font-bold text-center mb-8 sm:mb-12 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
+                    <h2 className="text-5xl md:text-7xl font-bold text-center mb-8 sm:mb-12 text-[#F2F4F8]" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, lineHeight: 1.1 }}>
                       Les services de TPLN
                     </h2>
 
                     {/* Encadré 100 premiers - couleurs site (violet/bleu/rose) */}
-                    <div className="max-w-2xl mx-auto mb-6 sm:mb-8 rounded-xl border border-purple-500/40 bg-gray-800/60 px-5 py-3.5 text-center backdrop-blur-sm">
+                    <div className="max-w-2xl mx-auto mb-6 sm:mb-8 rounded-[16px] border border-[#222836] bg-[#141821] px-5 py-3.5 text-center">
                       <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
-                        <span className="text-white font-semibold text-base sm:text-lg">Offre réservée aux</span>
-                        <span className="inline-flex items-center justify-center min-w-[2.5rem] px-2.5 py-0.5 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold text-lg">100</span>
-                        <span className="text-white font-semibold text-base sm:text-lg">premiers utilisateurs</span>
+                        <span className="text-[#F2F4F8] font-medium text-base sm:text-lg" style={{ fontFamily: 'Inter, sans-serif' }}>Offre réservée aux</span>
+                        <span className="inline-flex items-center justify-center min-w-[2.5rem] px-2.5 py-0.5 rounded-[12px] bg-[#2E6BFF] text-white font-bold text-lg" style={{ fontVariantNumeric: 'tabular-nums' }}>100</span>
+                        <span className="text-[#F2F4F8] font-medium text-base sm:text-lg" style={{ fontFamily: 'Inter, sans-serif' }}>premiers utilisateurs</span>
                       </div>
                     </div>
                     
                     {/* Payment Type Selector */}
                     <div className="flex justify-center mb-8">
-                      <div className="bg-gray-800 p-1 rounded-lg flex">
+                      <div className="bg-[#141821] border border-[#222836] p-1 rounded-[12px] flex">
                         <button 
                           onClick={() => handlePaymentTypeChange('monthly')}
-                          className={`px-6 py-3 rounded-lg font-medium ${
+                          className={`px-6 py-3 rounded-[12px] font-medium transition-all duration-200 ${
                             paymentType === 'monthly' 
-                              ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white' 
-                              : 'text-gray-400'
+                              ? 'bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] text-white' 
+                              : 'text-[#AAB3C2] hover:text-[#F2F4F8]'
                           }`}
+                          style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}
                         >
                           Payer mensuellement
                         </button>
                         <button 
                           onClick={() => handlePaymentTypeChange('yearly')}
-                          className={`px-6 py-3 rounded-lg font-medium ${
+                          className={`px-6 py-3 rounded-[12px] font-medium transition-all duration-200 ${
                             paymentType === 'yearly' 
-                              ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white'
-                              : 'text-gray-400'
+                              ? 'bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] text-white'
+                              : 'text-[#AAB3C2] hover:text-[#F2F4F8]'
                           }`}
+                          style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}
                         >
                           Payer annuellement
                         </button>
@@ -1719,51 +1727,51 @@ const App = () => {
                     <div className={`grid md:grid-cols-[0.8fr_0.9fr_1.1fr] gap-6 sm:gap-8 items-stretch transition-all duration-400 ease-out ${isTransitioning ? 'opacity-0 scale-75 rotate-3 blur-md translate-y-20 transform-gpu perspective-1000' : 'opacity-100 scale-100 rotate-0 blur-0 translate-y-0 transform-gpu perspective-1000'}`} style={{ transformStyle: 'preserve-3d', perspective: '1000px' }}>
                       
                       {/* Journal Perso Plan */}
-                      <div className={`bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 sm:p-8 relative border-2 transition-all duration-500 flex flex-col h-full ${isTransitioning ? 'border-purple-500 shadow-[0_0_30px_rgba(147,51,234,0.3)] scale-105 rotate-y-3 brightness-110 backdrop-blur-sm' : 'border-gray-700 hover:border-purple-500 hover:shadow-[0_0_30px_rgba(147,51,234,0.3)] hover:scale-105 hover:rotate-y-3 hover:brightness-110 hover:backdrop-blur-sm'} transform-gpu`}>
-                        <h3 className="text-xl font-bold text-white mb-3 h-8 flex items-center">TRADING JOURNAL</h3>
-                        <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 flex flex-col ${isTransitioning ? 'scale-110' : 'scale-100'}`} style={{ height: '140px', justifyContent: 'flex-start' }}>
-                          <div className="text-gray-500 text-xl mb-1"><span className="line-through">25€</span></div>
+                      <div className={`bg-[#141821] rounded-[16px] p-6 sm:p-8 relative border border-[#222836] transition-all duration-200 flex flex-col h-full hover:bg-[#171C26] hover:border-[#2A2F3F]`} style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
+                        <h3 className="text-xl font-bold text-[#F2F4F8] mb-3 h-8 flex items-center" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>TRADING JOURNAL</h3>
+                        <div className={`text-4xl font-bold text-[#F2F4F8] mb-6 transition-all duration-200 flex flex-col`} style={{ height: '140px', justifyContent: 'flex-start', fontVariantNumeric: 'tabular-nums' }}>
+                          <div className="text-[#7F8AA1] text-xl mb-1"><span className="line-through">25€</span></div>
                           <div className="h-auto">
-                            <span className="text-2xl align-top text-gray-300">€</span>
+                            <span className="text-2xl align-top text-[#AAB3C2]">€</span>
                             {paymentType === 'monthly' ? '15' : '12,5'}
-                            <span className="text-lg text-gray-400 font-normal"> / mois</span>
+                            <span className="text-lg text-[#7F8AA1] font-normal"> / mois</span>
                           </div>
                           <div className="h-[24px] mt-2 flex items-center">
                             {paymentType === 'yearly' ? (
-                              <div className="text-gray-300 text-sm font-normal">Facturé 150€ / an</div>
+                              <div className="text-[#AAB3C2] text-sm font-normal">Facturé 150€ / an</div>
                             ) : null}
                           </div>
-                          <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full text-center">
+                          <div className="text-[#F5A524] text-sm font-medium mt-2 bg-[rgba(245,165,36,0.12)] px-3 py-1 rounded-[12px] text-center">
                             🎉 Première semaine à<br />8€ seulement !
                           </div>
                         </div>
-                        <div className="text-gray-400 text-sm mb-4 h-[20px] flex items-center">
+                        <div className="text-[#7F8AA1] text-sm mb-4 h-[20px] flex items-center">
                           {paymentType === 'yearly' ? '' : <>&nbsp;</>}
                         </div>
-                        <ul className="text-gray-300 text-base space-y-4 mb-8 text-left flex-grow">
+                        <ul className="text-[#AAB3C2] text-base space-y-4 mb-8 text-left flex-grow" style={{ fontFamily: 'Inter, sans-serif' }}>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Journal de trading personnel</span>
+                            <span className="text-[#13C26B] font-bold text-lg">✓</span>
+                            <span className="font-medium text-[#F2F4F8]">Journal de trading personnel</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Compte illimité</span>
+                            <span className="text-[#13C26B] font-bold text-lg">✓</span>
+                            <span className="font-medium text-[#F2F4F8]">Compte illimité</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Analyse des pertes</span>
+                            <span className="text-[#13C26B] font-bold text-lg">✓</span>
+                            <span className="font-medium text-[#F2F4F8]">Analyse des pertes</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-red-400 font-bold text-lg">✗</span>
-                            <span className="font-semibold text-white">Formation TPLN model</span>
+                            <span className="text-[#EF4444] font-bold text-lg">✗</span>
+                            <span className="font-medium text-[#F2F4F8]">Formation TPLN model</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-red-400 font-bold text-lg">✗</span>
-                            <span className="font-semibold text-white">Signaux</span>
+                            <span className="text-[#EF4444] font-bold text-lg">✗</span>
+                            <span className="font-medium text-[#F2F4F8]">Signaux</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-red-400 font-bold text-lg">✗</span>
-                            <span className="font-semibold text-white">Live streams</span>
+                            <span className="text-[#EF4444] font-bold text-lg">✗</span>
+                            <span className="font-medium text-[#F2F4F8]">Live streams</span>
                           </li>
                         </ul>
                         <div className="mt-auto flex flex-col" style={{ minHeight: '100px' }}>
@@ -1777,7 +1785,8 @@ const App = () => {
                                 alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
                               }
                             }}
-                            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 h-12 flex items-center justify-center"
+                            className="w-full bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white py-3 px-6 rounded-[14px] font-medium transition-all duration-200 h-12 flex items-center justify-center"
+                            style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}
                           >
                             Je m'abonne
                           </button>
@@ -1785,57 +1794,57 @@ const App = () => {
                       </div>
                       
                       {/* Basic Plan */}
-                      <div className={`bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 sm:p-8 relative border-2 transition-all duration-500 flex flex-col h-full ${isTransitioning ? 'border-purple-500 shadow-[0_0_30px_rgba(147,51,234,0.3)] scale-105 rotate-y-3 brightness-110 backdrop-blur-sm' : 'border-gray-700 hover:border-purple-500 hover:shadow-[0_0_30px_rgba(147,51,234,0.3)] hover:scale-105 hover:rotate-y-3 hover:brightness-110 hover:backdrop-blur-sm'} transform-gpu`}>
-                        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse md:hidden">
+                      <div className={`bg-[#141821] rounded-[16px] p-6 sm:p-8 relative border border-[#222836] transition-all duration-200 flex flex-col h-full hover:bg-[#171C26] hover:border-[#2A2F3F]`} style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
+                        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#2E6BFF] text-white px-4 py-1 rounded-[12px] text-xs font-medium md:hidden">
                           {paymentType === 'yearly' ? '💎 ÉCONOMISE 50€' : ''}
                         </div>
-                        <h3 className="text-xl font-bold text-white mb-3 h-8 flex items-center">BASIC</h3>
-                        <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 flex flex-col ${isTransitioning ? 'scale-110' : 'scale-100'}`} style={{ height: '140px', justifyContent: 'flex-start' }}>
-                          <div className="text-gray-500 text-xl mb-1"><span className="line-through">49€</span></div>
+                        <h3 className="text-xl font-bold text-[#F2F4F8] mb-3 h-8 flex items-center" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>BASIC</h3>
+                        <div className={`text-4xl font-bold text-[#F2F4F8] mb-6 transition-all duration-200 flex flex-col`} style={{ height: '140px', justifyContent: 'flex-start', fontVariantNumeric: 'tabular-nums' }}>
+                          <div className="text-[#7F8AA1] text-xl mb-1"><span className="line-through">49€</span></div>
                           <div className="h-auto">
-                            <span className="text-2xl align-top text-gray-300">€</span>
+                            <span className="text-2xl align-top text-[#AAB3C2]">€</span>
                             {paymentType === 'monthly' ? '39' : '34,83'}
-                            <span className="text-lg text-gray-400 font-normal"> / mois</span>
+                            <span className="text-lg text-[#7F8AA1] font-normal"> / mois</span>
                           </div>
                           <div className="h-[24px] mt-2 flex items-center">
                             {paymentType === 'yearly' ? (
-                              <div className="text-gray-300 text-sm font-normal">Facturé 418€ / an</div>
+                              <div className="text-[#AAB3C2] text-sm font-normal">Facturé 418€ / an</div>
                             ) : null}
                           </div>
-                          <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full text-center">
+                          <div className="text-[#F5A524] text-sm font-medium mt-2 bg-[rgba(245,165,36,0.12)] px-3 py-1 rounded-[12px] text-center">
                             🎉 Première semaine à<br />15€ seulement !
                           </div>
                         </div>
-                        <div className="text-gray-400 text-sm mb-4 h-[20px] flex items-center">
+                        <div className="text-[#7F8AA1] text-sm mb-4 h-[20px] flex items-center">
                           {paymentType === 'yearly' ? 'Best for beginner traders' : <>&nbsp;</>}
                         </div>
-                        <div className="text-gray-400 text-sm mb-4 h-[20px] flex items-center">
+                        <div className="text-[#7F8AA1] text-sm mb-4 h-[20px] flex items-center">
                           {paymentType === 'yearly' ? 'Best for beginner traders' : <>&nbsp;</>}
                         </div>
-                        <ul className="text-gray-300 text-base space-y-4 mb-8 text-left flex-grow">
+                        <ul className="text-[#AAB3C2] text-base space-y-4 mb-8 text-left flex-grow" style={{ fontFamily: 'Inter, sans-serif' }}>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Formation TPLN model</span>
+                            <span className="text-[#13C26B] font-bold text-lg">✓</span>
+                            <span className="font-medium text-[#F2F4F8]">Formation TPLN model</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Signaux crypto forex futur<br/>(sans explications)</span>
+                            <span className="text-[#13C26B] font-bold text-lg">✓</span>
+                            <span className="font-medium text-[#F2F4F8]">Signaux crypto forex futur<br/>(sans explications)</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Journal des signaux</span>
+                            <span className="text-[#13C26B] font-bold text-lg">✓</span>
+                            <span className="font-medium text-[#F2F4F8]">Journal des signaux</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Journal de trading (1 compte)</span>
+                            <span className="text-[#13C26B] font-bold text-lg">✓</span>
+                            <span className="font-medium text-[#F2F4F8]">Journal de trading (1 compte)</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Live streams (1 jour / semaine)</span>
+                            <span className="text-[#13C26B] font-bold text-lg">✓</span>
+                            <span className="font-medium text-[#F2F4F8]">Live streams (1 jour / semaine)</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-red-400 font-bold text-lg">✗</span>
-                            <span className="font-semibold text-white">Contact direct avec TheTheTrader</span>
+                            <span className="text-[#EF4444] font-bold text-lg">✗</span>
+                            <span className="font-medium text-[#F2F4F8]">Contact direct avec TheTheTrader</span>
                           </li>
                         </ul>
                         <div className="mt-auto flex flex-col" style={{ minHeight: '100px' }}>
@@ -1849,7 +1858,8 @@ const App = () => {
                                 alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
                               }
                             }}
-                            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 h-12 flex items-center justify-center"
+                            className="w-full bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white py-3 px-6 rounded-[14px] font-medium transition-all duration-200 h-12 flex items-center justify-center"
+                            style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}
                           >
                             Je m'abonne
                           </button>
@@ -1857,50 +1867,50 @@ const App = () => {
                       </div>
 
                       {/* Premium Plan */}
-                      <div className={`bg-gradient-to-br from-purple-900 to-blue-900 rounded-2xl p-6 sm:p-8 relative border-2 transition-all duration-500 flex flex-col h-full ${isTransitioning ? 'border-blue-500 shadow-[0_0_40px_rgba(59,130,246,0.5)] scale-105 rotate-y-6 brightness-110 backdrop-blur-sm' : 'border-purple-500 hover:border-blue-500 hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] hover:scale-105 hover:rotate-y-6 hover:brightness-110 hover:backdrop-blur-sm'} transform-gpu`}>
-                        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse md:hidden">
+                      <div className={`bg-[#141821] rounded-[16px] p-6 sm:p-8 relative border border-[#2E6BFF] transition-all duration-200 flex flex-col h-full hover:bg-[#171C26] hover:border-[#2558D6]`} style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
+                        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#2E6BFF] text-white px-4 py-1 rounded-[12px] text-xs font-medium md:hidden">
                           {paymentType === 'yearly' ? '💎 ÉCONOMISE 100€' : '⭐ RECOMMANDÉ'}
                         </div>
-                        <h3 className="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent mb-3 h-8 flex items-center">PREMIUM</h3>
-                        <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 flex flex-col ${isTransitioning ? 'scale-110' : 'scale-100'}`} style={{ height: '140px', justifyContent: 'flex-start' }}>
-                          <div className="text-gray-500 text-xl mb-1"><span className="line-through">89€</span></div>
+                        <h3 className="text-xl font-bold mb-3 h-8 flex items-center bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>PREMIUM</h3>
+                        <div className={`text-4xl font-bold text-[#F2F4F8] mb-6 transition-all duration-200 flex flex-col`} style={{ height: '140px', justifyContent: 'flex-start', fontVariantNumeric: 'tabular-nums' }}>
+                          <div className="text-[#7F8AA1] text-xl mb-1"><span className="line-through">89€</span></div>
                           <div className="h-auto">
-                            <span className="text-2xl align-top text-gray-300">€</span>
+                            <span className="text-2xl align-top text-[#AAB3C2]">€</span>
                             {paymentType === 'monthly' ? '79' : '57,5'}
-                            <span className="text-lg text-gray-400 font-normal"> / mois</span>
+                            <span className="text-lg text-[#7F8AA1] font-normal"> / mois</span>
                           </div>
                           <div className="h-[24px] mt-2 flex items-center">
                             {paymentType === 'yearly' ? (
-                              <div className="text-gray-300 text-sm font-normal">Facturé 690€ / an</div>
+                              <div className="text-[#AAB3C2] text-sm font-normal">Facturé 690€ / an</div>
                             ) : null}
                           </div>
-                          <div className="text-yellow-400 text-sm font-semibold mt-2 bg-yellow-400/10 px-3 py-1 rounded-full text-center">
+                          <div className="text-[#F5A524] text-sm font-medium mt-2 bg-[rgba(245,165,36,0.12)] px-3 py-1 rounded-[12px] text-center">
                             🎉 Première semaine à<br />15€ seulement !
                           </div>
                         </div>
-                        <div className="text-gray-400 text-sm mb-4 h-[20px] flex items-center">
+                        <div className="text-[#7F8AA1] text-sm mb-4 h-[20px] flex items-center">
                           {paymentType === 'yearly' ? 'Best for advanced traders' : <>&nbsp;</>}
                         </div>
-                        <ul className="text-gray-300 text-base space-y-4 mb-8 text-left flex-grow">
+                        <ul className="text-[#AAB3C2] text-base space-y-4 mb-8 text-left flex-grow" style={{ fontFamily: 'Inter, sans-serif' }}>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Formation TPLN model</span>
+                            <span className="text-[#13C26B] font-bold text-lg">✓</span>
+                            <span className="font-medium text-[#F2F4F8]">Formation TPLN model</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Signaux crypto forex futur<br/>(détaillé avec image)</span>
+                            <span className="text-[#13C26B] font-bold text-lg">✓</span>
+                            <span className="font-medium text-[#F2F4F8]">Signaux crypto forex futur<br/>(détaillé avec image)</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Journal de trading compte illimité</span>
+                            <span className="text-[#13C26B] font-bold text-lg">✓</span>
+                            <span className="font-medium text-[#F2F4F8]">Journal de trading compte illimité</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Live streams (5 jours/semaine)</span>
+                            <span className="text-[#13C26B] font-bold text-lg">✓</span>
+                            <span className="font-medium text-[#F2F4F8]">Live streams (5 jours/semaine)</span>
                           </li>
                           <li className="flex items-center gap-2">
-                            <span className="text-green-400 font-bold text-lg">✓</span>
-                            <span className="font-semibold text-white">Contact direct avec TheTheTrader</span>
+                            <span className="text-[#13C26B] font-bold text-lg">✓</span>
+                            <span className="font-medium text-[#F2F4F8]">Contact direct avec TheTheTrader</span>
                           </li>
                         </ul>
                         <div className="mt-auto flex flex-col" style={{ minHeight: '100px' }}>
@@ -1914,14 +1924,10 @@ const App = () => {
                                 alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
                               }
                             }}
-                            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 relative overflow-hidden h-12 flex items-center justify-center"
-                            style={{ 
-                              background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(147, 51, 234, 0.9) 50%, rgba(59, 130, 246, 0.9) 100%)',
-                              boxShadow: 'inset 0 0 20px rgba(255, 255, 255, 0.2), inset 0 0 40px rgba(168, 85, 247, 0.15)'
-                            }}
+                            className="w-full bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white py-3 px-6 rounded-[14px] font-medium transition-all duration-200 h-12 flex items-center justify-center"
+                            style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}
                           >
-                            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-beam" style={{ animation: 'beam 2s ease-in-out infinite' }}></span>
-                            <span className="relative z-10">Je m'abonne</span>
+                            Je m'abonne
                           </button>
                         </div>
                       </div>
@@ -1937,33 +1943,36 @@ const App = () => {
           {/* Hero Section - Mobile Optimized */}
           <div className="text-center pt-28 sm:pt-40 pb-0 px-4 sm:px-6">
             <h1 className="font-bold mb-6 sm:mb-8 leading-tight" style={{ fontSize: 'clamp(1.6rem, 8vw, 4.5rem)' }}>
-              <span className="text-white">Arrête de trader au hasard.</span>
+              <span className="text-white">Trader avec précision.</span>
               <br />
-              <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-                Apprends à lire le marché.
+              <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
+                Sans bruit. Sans hasard.
               </span>
             </h1>
             <p className={`hero-intro-p text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-4xl leading-relaxed ${isPWA ? 'pwa-hero-left' : 'mx-auto text-center'}`} style={isPWA ? undefined : { transform: 'translateX(calc(35% + 5mm))' }}>
-              Tu n'as pas besoin d'être un expert pour trader efficacement. Tu as juste besoin de la bonne méthode, simple, directe, et conçue pour t'apprendre à penser comme un pro.
+              TPLN est un cadre structuré combinant méthode, mesure et discipline.
+              <br />
+              Chaque décision suit des critères clairs.
+              <br />
+              Si les règles sont validées, le trade est exécuté.
+              <br />
+              Sinon, il est rejeté.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mt-6 mb-8">
               <button 
                 onClick={() => handleScrollToSection('pricing')}
-                className="bg-gradient-to-r from-blue-600 to-purple-700 hover:from-blue-700 hover:to-purple-800 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-8 py-4 rounded-[14px] font-medium text-lg transition-all duration-200"
               >
                 Commencer Maintenant
               </button>
             </div>
-
-
-
 
             {/* Nos Services - Navigation Horizontale */}
             <div id="services" className="w-full mb-10 sm:mb-16">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-12 sm:mb-20">
                 <h2 className="font-bold text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                   <div className="text-white">Les services</div>
-                  <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
                     de TPLN
                   </span>
               </h2>
@@ -1999,7 +2008,7 @@ const App = () => {
                       style={{ scrollSnapAlign: 'start' }}
                     >
                       <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
-                        selectedService === 'formation' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-blue-600'
+                        selectedService === 'formation' ? 'bg-[#2E6BFF]' : 'bg-[#141821] group-hover:bg-[#171C26]'
                       }`}>
                         <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -2020,7 +2029,7 @@ const App = () => {
                       style={{ scrollSnapAlign: 'start' }}
                     >
                       <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
-                        selectedService === 'signaux' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-purple-600'
+                        selectedService === 'signaux' ? 'bg-[#2E6BFF]' : 'bg-[#141821] group-hover:bg-[#171C26]'
                       }`}>
                         <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -2041,7 +2050,7 @@ const App = () => {
                       style={{ scrollSnapAlign: 'start' }}
                     >
                       <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
-                        selectedService === 'journal' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-purple-700'
+                        selectedService === 'journal' ? 'bg-[#2E6BFF]' : 'bg-[#141821] group-hover:bg-[#171C26]'
                       }`}>
                         <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -2062,7 +2071,7 @@ const App = () => {
                       style={{ scrollSnapAlign: 'start' }}
                     >
                       <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
-                        selectedService === 'live' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-red-600'
+                        selectedService === 'live' ? 'bg-[#2E6BFF]' : 'bg-[#141821] group-hover:bg-[#171C26]'
                       }`}>
                         <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -2083,7 +2092,7 @@ const App = () => {
                       style={{ scrollSnapAlign: 'start' }}
                     >
                       <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
-                        selectedService === 'app' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-green-600'
+                        selectedService === 'app' ? 'bg-[#2E6BFF]' : 'bg-[#141821] group-hover:bg-[#171C26]'
                       }`}>
                         <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -2104,7 +2113,7 @@ const App = () => {
                       style={{ scrollSnapAlign: 'start' }}
                     >
                       <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
-                        selectedService === 'analytics' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-indigo-600'
+                        selectedService === 'analytics' ? 'bg-[#2E6BFF]' : 'bg-[#141821] group-hover:bg-[#171C26]'
                       }`}>
                         <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -2125,7 +2134,7 @@ const App = () => {
                       style={{ scrollSnapAlign: 'start' }}
                     >
                       <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
-                        selectedService === 'chat' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-yellow-600'
+                        selectedService === 'chat' ? 'bg-[#2E6BFF]' : 'bg-[#141821] group-hover:bg-[#171C26]'
                       }`}>
                         <svg className="w-6 h-6 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -2134,154 +2143,6 @@ const App = () => {
                       <span className={`text-xs sm:text-base transition-colors ${
                         selectedService === 'chat' ? 'text-white font-medium' : 'text-gray-400 group-hover:text-white'
                       }`}>Chat</span>
-                    </div>
-
-                    {/* Duplication 1 - Visible uniquement sur mobile */}
-                    <div className="sm:hidden contents">
-                      {/* Formation */}
-                      <div className="flex flex-col items-center cursor-pointer group flex-shrink-0" onClick={() => {
-                        setSelectedService('formation');
-                        scrollToSection('services');
-                      }}>
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-2 transition-colors ${selectedService === 'formation' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-blue-600'}`}>
-                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
-                        </div>
-                        <span className={`text-xs transition-colors ${selectedService === 'formation' ? 'text-white font-medium' : 'text-gray-400'}`}>Formation</span>
-                      </div>
-                      {/* Signaux */}
-                      <div className="flex flex-col items-center cursor-pointer group flex-shrink-0" onClick={() => {
-                        setSelectedService('signaux');
-                        scrollToSection('services');
-                      }}>
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-2 transition-colors ${selectedService === 'signaux' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-purple-600'}`}>
-                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                        </div>
-                        <span className={`text-xs transition-colors ${selectedService === 'signaux' ? 'text-white font-medium' : 'text-gray-400'}`}>Signaux</span>
-                      </div>
-                      {/* Journal */}
-                      <div className="flex flex-col items-center cursor-pointer group flex-shrink-0" onClick={() => {
-                        setSelectedService('journal');
-                        scrollToSection('services');
-                      }}>
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-2 transition-colors ${selectedService === 'journal' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-purple-700'}`}>
-                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                        </div>
-                        <span className={`text-xs transition-colors ${selectedService === 'journal' ? 'text-white font-medium' : 'text-gray-400'}`}>Journal</span>
-                      </div>
-                      {/* Live */}
-                      <div className="flex flex-col items-center cursor-pointer group flex-shrink-0" onClick={() => {
-                        setSelectedService('live');
-                        scrollToSection('services');
-                      }}>
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-2 transition-colors ${selectedService === 'live' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-red-600'}`}>
-                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-                        </div>
-                        <span className={`text-xs transition-colors ${selectedService === 'live' ? 'text-white font-medium' : 'text-gray-400'}`}>Live</span>
-                      </div>
-                      {/* App */}
-                      <div className="flex flex-col items-center cursor-pointer group flex-shrink-0" onClick={() => {
-                        setSelectedService('app');
-                        scrollToSection('services');
-                      }}>
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-2 transition-colors ${selectedService === 'app' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-green-600'}`}>
-                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                        </div>
-                        <span className={`text-xs transition-colors ${selectedService === 'app' ? 'text-white font-medium' : 'text-gray-400'}`}>App</span>
-                      </div>
-                      {/* Analytics */}
-                      <div className="flex flex-col items-center cursor-pointer group flex-shrink-0" onClick={() => {
-                        setSelectedService('analytics');
-                        scrollToSection('services');
-                      }}>
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-2 transition-colors ${selectedService === 'analytics' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-indigo-600'}`}>
-                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                        </div>
-                        <span className={`text-xs transition-colors ${selectedService === 'analytics' ? 'text-white font-medium' : 'text-gray-400'}`}>Analytics</span>
-                      </div>
-                      {/* Chat */}
-                      <div className="flex flex-col items-center cursor-pointer group flex-shrink-0" onClick={() => {
-                        setSelectedService('chat');
-                        scrollToSection('services');
-                      }}>
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-2 transition-colors ${selectedService === 'chat' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-yellow-600'}`}>
-                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
-                        </div>
-                        <span className={`text-xs transition-colors ${selectedService === 'chat' ? 'text-white font-medium' : 'text-gray-400'}`}>Chat</span>
-                      </div>
-                    </div>
-
-                    {/* Duplication 2 - Visible uniquement sur mobile */}
-                    <div className="sm:hidden contents">
-                      {/* Formation */}
-                      <div className="flex flex-col items-center cursor-pointer group flex-shrink-0" onClick={() => {
-                        setSelectedService('formation');
-                        scrollToSection('services');
-                      }}>
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-2 transition-colors ${selectedService === 'formation' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-blue-600'}`}>
-                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
-                        </div>
-                        <span className={`text-xs transition-colors ${selectedService === 'formation' ? 'text-white font-medium' : 'text-gray-400'}`}>Formation</span>
-                      </div>
-                      {/* Signaux */}
-                      <div className="flex flex-col items-center cursor-pointer group flex-shrink-0" onClick={() => {
-                        setSelectedService('signaux');
-                        scrollToSection('services');
-                      }}>
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-2 transition-colors ${selectedService === 'signaux' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-purple-600'}`}>
-                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                        </div>
-                        <span className={`text-xs transition-colors ${selectedService === 'signaux' ? 'text-white font-medium' : 'text-gray-400'}`}>Signaux</span>
-                      </div>
-                      {/* Journal */}
-                      <div className="flex flex-col items-center cursor-pointer group flex-shrink-0" onClick={() => {
-                        setSelectedService('journal');
-                        scrollToSection('services');
-                      }}>
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-2 transition-colors ${selectedService === 'journal' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-purple-700'}`}>
-                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                        </div>
-                        <span className={`text-xs transition-colors ${selectedService === 'journal' ? 'text-white font-medium' : 'text-gray-400'}`}>Journal</span>
-                      </div>
-                      {/* Live */}
-                      <div className="flex flex-col items-center cursor-pointer group flex-shrink-0" onClick={() => {
-                        setSelectedService('live');
-                        scrollToSection('services');
-                      }}>
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-2 transition-colors ${selectedService === 'live' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-red-600'}`}>
-                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-                        </div>
-                        <span className={`text-xs transition-colors ${selectedService === 'live' ? 'text-white font-medium' : 'text-gray-400'}`}>Live</span>
-                      </div>
-                      {/* App */}
-                      <div className="flex flex-col items-center cursor-pointer group flex-shrink-0" onClick={() => {
-                        setSelectedService('app');
-                        scrollToSection('services');
-                      }}>
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-2 transition-colors ${selectedService === 'app' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-green-600'}`}>
-                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                        </div>
-                        <span className={`text-xs transition-colors ${selectedService === 'app' ? 'text-white font-medium' : 'text-gray-400'}`}>App</span>
-                      </div>
-                      {/* Analytics */}
-                      <div className="flex flex-col items-center cursor-pointer group flex-shrink-0" onClick={() => {
-                        setSelectedService('analytics');
-                        scrollToSection('services');
-                      }}>
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-2 transition-colors ${selectedService === 'analytics' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-indigo-600'}`}>
-                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                        </div>
-                        <span className={`text-xs transition-colors ${selectedService === 'analytics' ? 'text-white font-medium' : 'text-gray-400'}`}>Analytics</span>
-                      </div>
-                      {/* Chat */}
-                      <div className="flex flex-col items-center cursor-pointer group flex-shrink-0" onClick={() => {
-                        setSelectedService('chat');
-                        scrollToSection('services');
-                      }}>
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-2 transition-colors ${selectedService === 'chat' ? 'bg-purple-600' : 'bg-gray-700 group-hover:bg-yellow-600'}`}>
-                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
-                        </div>
-                        <span className={`text-xs transition-colors ${selectedService === 'chat' ? 'text-white font-medium' : 'text-gray-400'}`}>Chat</span>
-                      </div>
                     </div>
                   </div>
 
@@ -2297,7 +2158,7 @@ const App = () => {
               {/* Sections des services - Déplacées vers le haut */}
               <div className="w-screen -mx-4 sm:mx-0 sm:w-full mt-8">
                 {selectedService === 'Formation' && (
-                  <div className="bg-gradient-to-r from-purple-900/20 to-blue-900/20 rounded-xl p-8 m-4">
+                  <div className="bg-[rgba(46,107,255,0.12)] rounded-[16px] p-8 m-4 border border-[#222836]">
                     <h3 className="text-2xl font-bold text-white mb-4">Formation</h3>
                     <p className="text-gray-300 mb-6">Apprenez les fondamentaux du trading avec nos cours structurés et progressifs.</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2332,7 +2193,7 @@ const App = () => {
 
 
                 {selectedService === 'Live' && (
-                  <div className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-xl p-8 m-4">
+                  <div className="bg-[rgba(46,107,255,0.12)] rounded-[16px] p-8 m-4 border border-[#222836]">
                     <h3 className="text-2xl font-bold text-white mb-4">Live</h3>
                     <p className="text-gray-300 mb-6">Participez à nos sessions de trading en direct avec nos experts.</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2383,7 +2244,7 @@ const App = () => {
                 )}
 
                 {selectedService === 'Chat' && (
-                  <div className="bg-gradient-to-r from-pink-900/20 to-purple-900/20 rounded-xl p-8 m-4">
+                  <div className="bg-[rgba(46,107,255,0.12)] rounded-[16px] p-8 m-4 border border-[#222836]">
                     <h3 className="text-2xl font-bold text-white mb-4">Chat</h3>
                     <p className="text-gray-300 mb-6">Communiquez avec la communauté de traders.</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2432,7 +2293,7 @@ const App = () => {
                       href="https://www.instagram.com/tradingpourlesnuls_/" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 w-full sm:w-auto justify-center bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 hover:from-purple-500 hover:via-pink-400 hover:to-orange-300 text-white px-3 py-2 rounded-lg font-medium text-sm transition-all duration-200 hover:scale-[1.02] shadow border border-white/20"
+                      className="inline-flex items-center gap-2 w-full sm:w-auto justify-center bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-3 py-2 rounded-[14px] font-medium text-sm transition-all duration-200 border border-[#222836]"
                     >
                       <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
@@ -2462,29 +2323,29 @@ const App = () => {
                 </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 hidden">
                 {/* Carte 1 */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-400 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-4xl text-purple-600 mb-4 group-hover:scale-110 transition-transform duration-300">⚡</div>
-                  <div className="text-xl font-bold text-white mb-2 group-hover:text-purple-400 transition-colors duration-300">Simplicité</div>
+                <div className="bg-[#141821] rounded-[16px] p-6 sm:p-8 text-center border border-[#222836] hover:bg-[#171C26] hover:border-[#2A2F3F] transition-all duration-200 cursor-pointer group" style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
+                  <div className="text-4xl text-[#2E6BFF] mb-4 transition-transform duration-200">⚡</div>
+                  <div className="text-xl font-bold text-[#F2F4F8] mb-2 transition-colors duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Simplicité</div>
                   <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Approche simple et efficace. Pas de jargon compliqué, juste des résultats concrets.</div>
                 </div>
 
                 {/* Carte 2 */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25 hover:border-blue-400 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-4xl text-purple-600 mb-4 group-hover:scale-110 transition-transform duration-300">🎯</div>
+                <div className="bg-[#141821] rounded-[16px] p-6 sm:p-8 text-center border border-[#222836] hover:bg-[#171C26] hover:border-[#2A2F3F] transition-all duration-200 cursor-pointer group" style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
+                  <div className="text-4xl text-[#2E6BFF] mb-4 transition-transform duration-200">🎯</div>
                   <div className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors duration-300">Résultats</div>
                   <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Signaux précis et formation qui transforme les débutants en traders confirmés.</div>
                 </div>
 
                 {/* Carte 3 */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 hover:border-green-400 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-4xl text-purple-600 mb-4 group-hover:scale-110 transition-transform duration-300">🤝</div>
+                <div className="bg-[#141821] rounded-[16px] p-6 sm:p-8 text-center border border-[#222836] hover:bg-[#171C26] hover:border-[#2A2F3F] transition-all duration-200 cursor-pointer group" style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
+                  <div className="text-4xl text-[#2E6BFF] mb-4 transition-transform duration-200">🤝</div>
                   <div className="text-xl font-bold text-white mb-2 group-hover:text-green-400 transition-colors duration-300">Communauté</div>
                   <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Rejoignez une communauté active de traders qui partagent et s'entraident.</div>
                 </div>
 
                 {/* Carte 4 - Journal de Trading */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 sm:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-500/25 hover:border-yellow-400 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-4xl text-purple-600 mb-4 group-hover:scale-110 transition-transform duration-300">📔</div>
+                <div className="bg-[#141821] rounded-[16px] p-6 sm:p-8 text-center border border-[#222836] hover:bg-[#171C26] hover:border-[#2A2F3F] transition-all duration-200 cursor-pointer group" style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
+                  <div className="text-4xl text-[#2E6BFF] mb-4 transition-transform duration-200">📔</div>
                   <div className="text-xl font-bold text-white mb-2 group-hover:text-yellow-400 transition-colors duration-300">Journal Personnel</div>
                   <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300">Chacun a son propre journal de trading pour suivre ses trades et analyser ses performances.</div>
                 </div>
@@ -2494,19 +2355,19 @@ const App = () => {
               <div id="section-formation" className="mt-16 sm:mt-20">
                 <div className="relative">
                   {/* Numéro 1 en haut à gauche */}
-                  <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
+                  <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
                     1
                   </div>
                   
                   {/* Titre principal */}
                   <div className="text-center mb-8">
-                    <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
+                    <div className="text-sm font-semibold mb-4 tracking-wider bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
                       APPRENTISSAGE
                     </div>
                     <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                       <span className="text-white">Adoptez mon approche</span>
                       <br />
-                      <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                      <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
                         précise
                       </span>
                     </h2>
@@ -2549,19 +2410,19 @@ const App = () => {
               <div id="section-signaux" className="mt-16 sm:mt-20">
                 <div className="relative">
                   {/* Numéro 2 en haut à gauche */}
-                  <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
+                  <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
                     2
                   </div>
                   
                   {/* Titre principal */}
                   <div className="text-center mb-8">
-                    <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
+                    <div className="text-sm font-semibold mb-4 tracking-wider bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
                       SIGNAUX
                     </div>
                     <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                       <span className="text-white">Reçois mes signaux</span>
                       <br />
-                      <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                      <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
                         en temps réel
                       </span>
                     </h2>
@@ -2592,19 +2453,19 @@ const App = () => {
               <div id="section-journal" className="mt-16 sm:mt-20">
                 <div className="relative">
                   {/* Numéro 3 en haut à gauche */}
-                  <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
+                  <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
                     3
                   </div>
                   
                   {/* Titre principal */}
                   <div className="text-center mb-8">
-                    <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
+                    <div className="text-sm font-semibold mb-4 tracking-wider bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
                       JOURNAL
                     </div>
                     <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                       <span className="text-white">Journal de</span>
                       <br />
-                      <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                      <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
                         trading
                       </span>
                     </h2>
@@ -2630,7 +2491,7 @@ const App = () => {
                           {/* Fond avec gradient radial */}
                           <div className="absolute inset-0 opacity-90" style={{background: 'radial-gradient(circle at top left, rgba(88, 28, 135, 0.8), #4C208B, #3A1870)'}}></div>
                           {/* Bordure lumineuse */}
-                          <div className="absolute inset-0 rounded-2xl border-2 border-purple-400/60 shadow-[0_0_25px_rgba(168,85,247,0.4),inset_0_0_25px_rgba(168,85,247,0.1)] group-hover:border-purple-300/80 group-hover:shadow-[0_0_40px_rgba(168,85,247,0.6),inset_0_0_30px_rgba(168,85,247,0.2)] transition-all duration-500" style={{
+                          <div className="absolute inset-0 rounded-[16px] border border-[#222836] group-hover:border-[#2A2F3F] transition-all duration-200" style={{
                             animation: 'neonGlow 2s ease-in-out infinite'
                           }}></div>
                           {/* Ombres internes */}
@@ -2639,15 +2500,15 @@ const App = () => {
                           <div className="relative z-10 p-4 sm:p-6 md:p-8">
                             {/* Icône avec carré arrondi autour */}
                             <div className="flex items-center justify-center mb-3 md:mb-6">
-                              <div className="w-12 h-12 md:w-16 md:h-16 bg-purple-200/30 rounded-2xl flex items-center justify-center p-2 group-hover:scale-110 transition-transform duration-300">
-                                <div className="w-9 h-9 md:w-12 md:h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/50">
+                              <div className="w-12 h-12 md:w-16 md:h-16 bg-[rgba(46,107,255,0.15)] rounded-[16px] flex items-center justify-center p-2 transition-transform duration-200">
+                                <div className="w-9 h-9 md:w-12 md:h-12 bg-[#2E6BFF] rounded-[12px] flex items-center justify-center">
                                   <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                   </svg>
                                 </div>
                               </div>
                             </div>
-                            <h3 className="font-bold text-white text-center group-hover:text-purple-200 transition-colors duration-300 text-xl mb-2 md:text-2xl md:mb-4">
+                            <h3 className="font-bold text-[#F2F4F8] text-center transition-colors duration-200 text-xl mb-2 md:text-2xl md:mb-4" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
                               Analysez vos statistiques
                             </h3>
                             <p className="text-gray-300 text-center leading-relaxed group-hover:text-gray-200 transition-colors duration-300 text-sm md:text-base">
@@ -2759,19 +2620,19 @@ const App = () => {
               <div id="section-live" className="mt-16 sm:mt-20">
                 <div className="relative">
                   {/* Numéro 4 en haut à gauche */}
-                  <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
+                  <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
                     4
                   </div>
                   
                   {/* Titre principal */}
                   <div className="text-center mb-8">
-                    <div className="text-sm font-semibold text-purple-400 mb-4 tracking-wider">
+                    <div className="text-sm font-semibold mb-4 tracking-wider bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
                       LIVE
                     </div>
                     <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                       <span className="text-white">Session de live</span>
                       <br />
-                      <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                      <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
                         trading
                       </span>
                     </h2>
@@ -2801,19 +2662,19 @@ const App = () => {
               <div id="section-app" className="mt-16 sm:mt-20">
                 <div className="relative">
                   {/* Numéro 5 en haut à gauche */}
-                  <div className="absolute -top-16 -left-16 text-9xl font-bold bg-gradient-to-br from-purple-400/40 to-purple-600/40 bg-clip-text text-transparent select-none">
+                  <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
                     5
                   </div>
                   
                   {/* Titre principal */}
                   <div className="text-center mb-8 sm:mb-2">
-                    <div className="text-sm font-semibold text-purple-400 mb-2 tracking-wider">
+                    <div className="text-sm font-semibold mb-2 tracking-wider bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
                       APP
                     </div>
                     <h2 className="font-bold mb-3 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                       <span className="text-white">Application</span>
                       <br />
-                      <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                      <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
                         mobile
                       </span>
                     </h2>
@@ -2897,7 +2758,7 @@ const App = () => {
                       href="https://www.instagram.com/tradingpourlesnuls_/" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 w-full sm:w-auto justify-center bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 hover:from-purple-500 hover:via-pink-400 hover:to-orange-300 text-white px-3 py-2 rounded-lg font-medium text-sm transition-all duration-200 hover:scale-[1.02] shadow border border-white/20"
+                      className="inline-flex items-center gap-2 w-full sm:w-auto justify-center bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-3 py-2 rounded-[14px] font-medium text-sm transition-all duration-200 border border-[#222836]"
                     >
                       <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
@@ -2926,37 +2787,37 @@ const App = () => {
                 <div className="text-white">
                   Pourquoi choisir
                 </div>
-                <div className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                <div className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
                   TPLN ?
                 </div>
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
                 {/* Carte 1 */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-4 sm:p-6 md:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 hover:border-purple-400 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-3xl sm:text-4xl text-purple-600 mb-2 sm:mb-4 group-hover:scale-110 transition-transform duration-300">⚡</div>
-                  <div className="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2 group-hover:text-purple-400 transition-colors duration-300">Simplicité</div>
-                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300 leading-snug">Approche simple et efficace. Pas de jargon compliqué, juste des résultats concrets.</div>
+                <div className="bg-[#141821] rounded-[16px] p-4 sm:p-6 md:p-8 text-center border border-[#222836] hover:bg-[#171C26] hover:border-[#2A2F3F] transition-all duration-200 cursor-pointer group" style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
+                  <div className="text-3xl sm:text-4xl text-[#2E6BFF] mb-2 sm:mb-4 transition-transform duration-200">⚡</div>
+                  <div className="text-lg sm:text-xl font-bold text-[#F2F4F8] mb-1 sm:mb-2 transition-colors duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Simplicité</div>
+                  <div className="text-[#AAB3C2] text-sm sm:text-base transition-colors duration-200 leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Approche simple et efficace. Pas de jargon compliqué, juste des résultats concrets.</div>
                 </div>
 
                 {/* Carte 2 */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-4 sm:p-6 md:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25 hover:border-blue-400 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-3xl sm:text-4xl text-purple-600 mb-2 sm:mb-4 group-hover:scale-110 transition-transform duration-300">🎯</div>
-                  <div className="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2 group-hover:text-blue-400 transition-colors duration-300">Résultats</div>
-                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300 leading-snug">Signaux précis et formation qui transforme les débutants en traders confirmés.</div>
+                <div className="bg-[#141821] rounded-[16px] p-4 sm:p-6 md:p-8 text-center border border-[#222836] hover:bg-[#171C26] hover:border-[#2A2F3F] transition-all duration-200 cursor-pointer group" style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
+                  <div className="text-3xl sm:text-4xl text-[#2E6BFF] mb-2 sm:mb-4 transition-transform duration-200">🎯</div>
+                  <div className="text-lg sm:text-xl font-bold text-[#F2F4F8] mb-1 sm:mb-2 transition-colors duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Résultats</div>
+                  <div className="text-[#AAB3C2] text-sm sm:text-base transition-colors duration-200 leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Signaux précis et formation qui transforme les débutants en traders confirmés.</div>
                 </div>
 
                 {/* Carte 3 */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-4 sm:p-6 md:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 hover:border-green-400 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-3xl sm:text-4xl text-purple-600 mb-2 sm:mb-4 group-hover:scale-110 transition-transform duration-300">🤝</div>
-                  <div className="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2 group-hover:text-green-400 transition-colors duration-300">Communauté</div>
-                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300 leading-snug">Rejoignez une communauté active de traders qui partagent et s'entraident.</div>
+                <div className="bg-[#141821] rounded-[16px] p-4 sm:p-6 md:p-8 text-center border border-[#222836] hover:bg-[#171C26] hover:border-[#2A2F3F] transition-all duration-200 cursor-pointer group" style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
+                  <div className="text-3xl sm:text-4xl text-[#2E6BFF] mb-2 sm:mb-4 transition-transform duration-200">🤝</div>
+                  <div className="text-lg sm:text-xl font-bold text-[#F2F4F8] mb-1 sm:mb-2 transition-colors duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Communauté</div>
+                  <div className="text-[#AAB3C2] text-sm sm:text-base transition-colors duration-200 leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Rejoignez une communauté active de traders qui partagent et s'entraident.</div>
                 </div>
 
                 {/* Carte 4 - Journal de Trading */}
-                <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-4 sm:p-6 md:p-8 text-center shadow-lg border border-purple-500/50 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-500/25 hover:border-yellow-400 transition-all duration-300 transform cursor-pointer group">
-                  <div className="text-3xl sm:text-4xl text-purple-600 mb-2 sm:mb-4 group-hover:scale-110 transition-transform duration-300">📔</div>
-                  <div className="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2 group-hover:text-yellow-400 transition-colors duration-300">Journal Personnel</div>
-                  <div className="text-gray-300 text-sm sm:text-base group-hover:text-gray-200 transition-colors duration-300 leading-snug">Chacun a son propre journal de trading pour suivre ses trades et analyser ses performances.</div>
+                <div className="bg-[#141821] rounded-[16px] p-4 sm:p-6 md:p-8 text-center border border-[#222836] hover:bg-[#171C26] hover:border-[#2A2F3F] transition-all duration-200 cursor-pointer group" style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
+                  <div className="text-3xl sm:text-4xl text-[#2E6BFF] mb-2 sm:mb-4 transition-transform duration-200">📔</div>
+                  <div className="text-lg sm:text-xl font-bold text-[#F2F4F8] mb-1 sm:mb-2 transition-colors duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Journal Personnel</div>
+                  <div className="text-[#AAB3C2] text-sm sm:text-base transition-colors duration-200 leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Chacun a son propre journal de trading pour suivre ses trades et analyser ses performances.</div>
                 </div>
               </div>
             </div>
@@ -3006,7 +2867,7 @@ const App = () => {
                   <div className={`absolute inset-0 top-12 p-4 space-y-4 overflow-y-auto bg-gray-900 transition-transform duration-300 ${showMobileChannel ? '-translate-x-full' : 'translate-x-0'}`} style={{height: '640px'}}>
                     
                     {/* Aperçu Statistiques */}
-                    <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-lg p-3 border border-blue-500/30">
+                    <div className="bg-[rgba(46,107,255,0.12)] rounded-[12px] p-3 border border-[#222836]">
                       <h3 className="text-white font-bold text-sm mb-2">📊 Aperçu Rapide</h3>
                       <div className="grid grid-cols-2 gap-2 text-xs">
                         <div className="bg-gray-800/50 rounded p-2">
@@ -3647,7 +3508,7 @@ const App = () => {
 
                             <div className="bg-gray-700 rounded-lg p-3">
                               <div className="flex items-center gap-2 mb-2">
-                                <span className="bg-purple-600 text-white px-2 py-1 rounded text-xs font-bold">COURS</span>
+                                <span className="bg-[#2E6BFF] text-white px-2 py-1 rounded-[12px] text-xs font-bold" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>COURS</span>
                                 <span className="text-white font-bold text-sm">Psychologie du trader</span>
                               </div>
                               <div className="text-gray-400 text-xs mb-2">
@@ -4515,7 +4376,7 @@ const App = () => {
                         {/* Vue Fondamentaux - Cours Scalping complet */}
                         {previewChannel === 'fondamentaux' && (
                           <div className="bg-gray-800 rounded-lg p-6 mb-6">
-                            <div className="text-center mb-8 p-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white">
+                            <div className="text-center mb-8 p-8 bg-[#2E6BFF] rounded-[16px] text-white">
                               <div className="flex justify-center mb-4">
                   <img 
                     src="/logo-removebg-preview.png" 
@@ -4614,7 +4475,7 @@ const App = () => {
                                 <h2 className="text-2xl font-bold text-blue-400 mb-4 border-l-4 border-blue-400 pl-4">5. 🔬 Concepts Avancés</h2>
                                 <div className="space-y-4">
                                   <div className="bg-gray-700 rounded-lg p-4">
-                                    <h3 className="text-lg font-semibold text-purple-400 mb-2">🧱 ORDER BLOCK (OB)</h3>
+                                    <h3 className="text-lg font-semibold mb-2 bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>🧱 ORDER BLOCK (OB)</h3>
                                     <p className="mb-2">Un Order Block représente la dernière bougie haussière (ou baissière) avant un mouvement impulsif majeur dans la direction opposée.</p>
                                     <div className="text-sm text-blue-300">
                                       → Ces zones deviennent des repères de liquidité<br/>
@@ -4624,7 +4485,7 @@ const App = () => {
                                   </div>
                                   
                                   <div className="bg-gray-700 rounded-lg p-4">
-                                    <h3 className="text-lg font-semibold text-purple-400 mb-2">⚡📉📈 FVG – Fair Value Gap</h3>
+                                    <h3 className="text-lg font-semibold mb-2 bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>⚡📉📈 FVG – Fair Value Gap</h3>
                                     <p className="mb-2">Un FVG est une zone de déséquilibre créée lors d'un mouvement rapide et violent du marché 🚀.</p>
                                     <div className="text-sm text-blue-300">
                                       → Le prix revient fréquemment combler ces gaps<br/>
@@ -4633,7 +4494,7 @@ const App = () => {
                                   </div>
                                   
                                   <div className="bg-gray-700 rounded-lg p-4">
-                                    <h3 className="text-lg font-semibold text-purple-400 mb-2">🦄 Unicorn</h3>
+                                    <h3 className="text-lg font-semibold mb-2 bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>🦄 Unicorn</h3>
                                     <p className="mb-2">C'est un setup formé par l'association d'un Breaker (BRKR) ⚡ et d'un Fair Value Gap (FVG) 📉.</p>
                                     <div className="text-sm text-blue-300">
                                       → Zone à forte probabilité de réaction du prix<br/>
@@ -4774,7 +4635,7 @@ const App = () => {
                             {/* Message 2 */}
                             <div className="bg-gray-700 rounded-lg p-4">
                               <div className="flex items-center gap-3 mb-2">
-                                <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-sm text-white">S</div>
+                                <div className="w-8 h-8 bg-[#2E6BFF] rounded-full flex items-center justify-center text-sm text-white" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>S</div>
                                 <div>
                                   <span className="text-white font-medium text-sm">Sarah_FX</span>
                                   <span className="text-gray-400 text-xs ml-2">Il y a 8 min</span>
@@ -5196,7 +5057,7 @@ const App = () => {
                     pricingSection.scrollIntoView({ behavior: 'smooth' });
                   }
                 }}
-                className="bg-gradient-to-r from-blue-600 to-purple-700 text-white px-10 sm:px-12 py-5 sm:py-6 rounded-lg text-xl sm:text-2xl font-semibold hover:from-blue-700 hover:to-purple-800 transition-all duration-200"
+                className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-10 sm:px-12 py-5 sm:py-6 rounded-[14px] text-xl sm:text-2xl font-medium transition-all duration-200"
               >
                 Commencer Maintenant
               </button>
@@ -5299,16 +5160,16 @@ const App = () => {
 
             {/* Plans de prix - Mobile Optimized */}
             <div id="pricing" className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6">
-              <h2 className="text-5xl md:text-7xl font-bold text-center mb-8 sm:mb-12 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
+              <h2 className="text-5xl md:text-7xl font-bold text-center mb-8 sm:mb-12 bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
                 Les services de TPLN
               </h2>
 
               {/* Encadré 100 premiers - couleurs site (violet/bleu/rose) */}
-              <div className="max-w-2xl mx-auto mb-6 sm:mb-8 rounded-xl border border-purple-500/40 bg-gray-800/60 px-5 py-3.5 text-center backdrop-blur-sm">
+              <div className="max-w-2xl mx-auto mb-6 sm:mb-8 rounded-[16px] border border-[#222836] bg-[#141821] px-5 py-3.5 text-center">
                 <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
-                  <span className="text-white font-semibold text-base sm:text-lg">Offre réservée aux</span>
-                  <span className="inline-flex items-center justify-center min-w-[2.5rem] px-2.5 py-0.5 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold text-lg">100</span>
-                  <span className="text-white font-semibold text-base sm:text-lg">premiers utilisateurs</span>
+                  <span className="text-[#F2F4F8] font-semibold text-base sm:text-lg" style={{ fontFamily: 'Inter, sans-serif' }}>Offre réservée aux</span>
+                  <span className="inline-flex items-center justify-center min-w-[2.5rem] px-2.5 py-0.5 rounded-[12px] bg-[#2E6BFF] text-white font-bold text-lg" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>100</span>
+                  <span className="text-[#F2F4F8] font-semibold text-base sm:text-lg" style={{ fontFamily: 'Inter, sans-serif' }}>premiers utilisateurs</span>
                 </div>
               </div>
               
@@ -5317,20 +5178,20 @@ const App = () => {
                 <div className="bg-gray-800 p-1 rounded-lg flex">
                   <button 
                     onClick={() => handlePaymentTypeChange('monthly')}
-                    className={`px-6 py-3 rounded-lg font-medium ${
+                    className={`px-6 py-3 rounded-[14px] font-medium transition-all duration-200 ${
                       paymentType === 'monthly' 
-                        ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white' 
-                        : 'text-gray-400'
+                        ? 'bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] text-white' 
+                        : 'text-[#AAB3C2] bg-[#141821] border border-[#222836]'
                     }`}
                   >
                     Payer mensuellement
                   </button>
                   <button 
                     onClick={() => handlePaymentTypeChange('yearly')}
-                    className={`px-6 py-3 rounded-lg font-medium ${
+                    className={`px-6 py-3 rounded-[14px] font-medium transition-all duration-200 ${
                       paymentType === 'yearly' 
-                        ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white' 
-                        : 'text-gray-400'
+                        ? 'bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] text-white' 
+                        : 'text-[#AAB3C2] bg-[#141821] border border-[#222836]'
                     }`}
                   >
                     Payer annuellement
@@ -5340,11 +5201,11 @@ const App = () => {
 
               <div className={`grid grid-cols-1 md:grid-cols-[0.8fr_0.9fr_1.1fr] gap-8 md:gap-0 max-w-6xl mx-auto transition-all duration-400 ease-out ${isTransitioning ? 'opacity-0 scale-75 rotate-3 blur-md translate-y-20 transform-gpu perspective-1000' : 'opacity-100 scale-100 rotate-0 blur-0 translate-y-0 transform-gpu perspective-1000'}`} style={{ transformStyle: 'preserve-3d', perspective: '1000px' }}>
                 {/* Plan Journal Perso */}
-                <div className={`bg-gradient-to-br from-gray-800/20 to-gray-900/20 px-8 py-6 sm:px-12 sm:py-8 rounded-xl md:rounded-l-xl md:rounded-r-none border-2 backdrop-blur-sm flex flex-col transition-all duration-500 ease-out transform-gpu ${
+                <div className={`bg-[#141821] px-8 py-6 sm:px-12 sm:py-8 rounded-[16px] md:rounded-l-[16px] md:rounded-r-none border border-[#222836] flex flex-col transition-all duration-200 ${
                   isTransitioning 
-                    ? 'border-purple-600 shadow-[0_0_30px_rgba(168,85,247,0.6)] scale-105 rotate-y-6 brightness-110' 
-                    : 'border-gray-500/50 hover:border-purple-400 hover:from-gray-800/30 hover:to-gray-900/30 hover:scale-105 hover:shadow-[0_0_30px_rgba(168,85,247,0.4)]'
-                }`}>
+                    ? 'border-[#2E6BFF] scale-105' 
+                    : 'hover:border-[#2A2F3F] hover:bg-[#171C26]'
+                }`} style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
                   <div className="text-center">
                     <h3 className="text-xl font-bold text-white mb-3">TRADING JOURNAL</h3>
                     <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
@@ -5401,10 +5262,10 @@ const App = () => {
                         alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
                       }
                     }}
-                    className={`w-full border-2 text-white py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-500 ease-out transform-gpu ${
+                    className={`w-full border border-[#222836] bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white py-4 px-6 rounded-[14px] font-medium text-lg transition-all duration-200 ${
                       isTransitioning 
-                        ? 'border-purple-600 bg-purple-600/30 shadow-[0_0_30px_rgba(168,85,247,0.8)] scale-110' 
-                        : 'border-purple-500 bg-transparent hover:scale-110 hover:shadow-[0_0_40px_rgba(168,85,247,0.6)] hover:bg-purple-500/20 hover:border-purple-400'
+                        ? 'scale-105' 
+                        : ''
                     }`}
                   >
                     Je m'abonne
@@ -5413,13 +5274,13 @@ const App = () => {
                 </div>
 
                 {/* Plan Starter */}
-                <div className={`bg-gradient-to-br from-purple-600/20 to-blue-600/20 px-8 py-6 sm:px-12 sm:py-8 rounded-xl md:rounded-none border-2 backdrop-blur-sm flex flex-col transition-all duration-500 ease-out transform-gpu ${
+                <div className={`bg-[#141821] px-8 py-6 sm:px-12 sm:py-8 rounded-[16px] md:rounded-none border border-[#222836] flex flex-col transition-all duration-200 ${
                   isTransitioning 
-                    ? 'border-purple-600 shadow-[0_0_30px_rgba(168,85,247,0.6)] scale-105 rotate-y-6 brightness-110' 
-                    : 'border-purple-500/50 hover:border-purple-400 hover:from-purple-600/30 hover:to-blue-600/30 hover:scale-105 hover:shadow-[0_0_30px_rgba(168,85,247,0.4)]'
+                    ? 'border-[#2E6BFF] scale-105' 
+                    : 'hover:border-[#2A2F3F] hover:bg-[#171C26]'
                 }`}>
                   <div className="text-center">
-                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse md:hidden">
+                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#2E6BFF] text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg md:hidden" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
                       {paymentType === 'yearly' ? '💎 ÉCONOMISE 50€' : '⭐ RECOMMANDÉ'}
                     </div>
                     <h3 className="text-xl font-bold text-white mb-3">BASIC</h3>
@@ -5477,10 +5338,10 @@ const App = () => {
                         alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
                       }
                     }}
-                    className={`w-full border-2 text-white py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-500 ease-out transform-gpu ${
+                    className={`w-full border border-[#222836] bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white py-4 px-6 rounded-[14px] font-medium text-lg transition-all duration-200 ${
                       isTransitioning 
-                        ? 'border-purple-600 bg-purple-600/30 shadow-[0_0_30px_rgba(168,85,247,0.8)] scale-110' 
-                        : 'border-purple-500 bg-transparent hover:scale-110 hover:shadow-[0_0_40px_rgba(168,85,247,0.6)] hover:bg-purple-500/20 hover:border-purple-400'
+                        ? 'scale-105' 
+                        : ''
                     }`}
                   >
                     Je m'abonne
@@ -5490,17 +5351,17 @@ const App = () => {
 
                 {/* Plan Pro */}
                 <div 
-                  className={`bg-gradient-to-br from-blue-600/20 to-purple-600/20 p-8 sm:p-12 rounded-xl md:rounded-r-xl md:rounded-l-none border-2 relative flex flex-col justify-between transition-all duration-500 ease-out transform-gpu ${
+                  className={`bg-[#141821] p-8 sm:p-12 rounded-[16px] md:rounded-r-[16px] md:rounded-l-none border border-[#222836] relative flex flex-col justify-between transition-all duration-200 ${
                     isTransitioning 
                       ? 'border-blue-600 shadow-[0_0_40px_rgba(59,130,246,0.5)] scale-105 rotate-y-6 brightness-110' 
-                      : 'border-blue-500/50 backdrop-blur-sm hover:border-blue-400 hover:from-blue-600/30 hover:to-purple-600/30 hover:scale-105 hover:shadow-[0_0_40px_rgba(59,130,246,0.4)]'
+                      : 'hover:border-[#2A2F3F] hover:bg-[#171C26]'
                   }`}
                 >
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse md:hidden">
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#2E6BFF] text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg md:hidden" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
                     {paymentType === 'yearly' ? '💎 ÉCONOMISE 100€' : '⭐ RECOMMANDÉ'}
                   </div>
                   <div className="text-center">
-                    <h3 className="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent mb-3">PREMIUM</h3>
+                    <h3 className="text-xl font-bold mb-3 bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>PREMIUM</h3>
                     <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
                       <div className="text-gray-500 text-xl mb-1"><span className="line-through">89€</span></div>
                       <span className="text-2xl align-top text-gray-300">€</span>
@@ -5820,7 +5681,7 @@ const App = () => {
                                         </div>
                                         
                                         {/* Bouton d'action */}
-                                        <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200">
+                                        <button className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-6 py-3 rounded-[14px] font-medium transition-all duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
                                           Se connecter
                                         </button>
                                       </div>
@@ -5976,7 +5837,7 @@ const App = () => {
 
           {/* Footer - Mobile Optimized - Masqué en PWA */}
           {!isPWA && (
-            <footer className="bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 py-12 sm:py-20 px-4 sm:px-6 mt-0">
+            <footer className="bg-[#0F1115] py-12 sm:py-20 px-4 sm:px-6 mt-0">
               <div className="max-w-7xl mx-auto">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
                   {/* Légal - Éléments essentiels */}
@@ -6067,7 +5928,7 @@ const App = () => {
                 </div>
 
                 {/* Ligne de séparation et nom du site */}
-                <div className="border-t border-purple-700/50 mt-16 pt-8">
+                <div className="border-t border-[#222836] mt-16 pt-8">
                   <div className="text-center">
                     <div className="flex justify-center mb-4">
                       <img 
@@ -6130,7 +5991,7 @@ const App = () => {
               </button>
               <button
                 onClick={handleLogin}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:opacity-90"
+                className="w-full bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white py-3 rounded-[14px] font-medium transition-all duration-200"
               >
                 Se connecter
               </button>
@@ -6186,7 +6047,7 @@ const App = () => {
               </div>
               <button
                 onClick={handleResetPassword}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:opacity-90"
+                className="w-full bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white py-3 rounded-[14px] font-medium transition-all duration-200"
               >
                 Définir le mot de passe
               </button>
