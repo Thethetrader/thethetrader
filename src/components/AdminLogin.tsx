@@ -20,10 +20,18 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
     setIsLoading(true);
     setError(null);
 
+    const timeoutMs = 15000;
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('Connexion expirée. Vérifiez le réseau ou réessayez.')), timeoutMs)
+    );
+
     try {
       console.log('🔐 Tentative de connexion admin:', email);
 
-      const { data, error: authError } = await signInAdmin(email, password);
+      const { data, error: authError } = await Promise.race([
+        signInAdmin(email, password),
+        timeoutPromise,
+      ]);
 
       if (authError) {
         console.error('❌ Erreur authentification admin:', authError.message);
@@ -36,14 +44,14 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
 
       if (data?.user) {
         console.log('✅ Connexion admin réussie:', data.user.email);
-        // Appeler la fonction onLogin avec les données utilisateur
         onLogin(data);
       } else {
         setError('Erreur de connexion inattendue');
       }
     } catch (error) {
       console.error('❌ Erreur connexion admin:', error);
-      setError('Erreur de connexion. Veuillez réessayer.');
+      const msg = error instanceof Error ? error.message : 'Erreur de connexion. Veuillez réessayer.';
+      setError(msg);
     } finally {
       setIsLoading(false);
     }
