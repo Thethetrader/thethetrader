@@ -1672,7 +1672,7 @@ const App = () => {
               <div id="section-formation" className="py-16 sm:py-24 px-4 sm:px-6">
                 <div className="max-w-6xl mx-auto">
                   <div className="text-center mb-8">
-                    <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
+                    <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                       <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
                         UN CADRE CLAIR
                       </span>
@@ -2184,7 +2184,7 @@ const App = () => {
                   
                   {/* Titre principal */}
                   <div className="text-center mb-8">
-                    <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
+                    <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                       <span className="text-white">Journal TPLN</span>
                       <br />
                       <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
@@ -2215,10 +2215,10 @@ const App = () => {
                         </div>
 
                         {/* Right: Feature Grid - 2 columns, 3 rows - PWA: plus carré (max-width + 2 cols) */}
-                        <div className={`grid gap-5 ${isPWA ? 'grid-cols-2 max-w-[320px] mx-auto' : 'grid-cols-1 sm:grid-cols-2'}`}>
+                        <div className={`grid gap-5 ${isPWA ? 'grid-cols-2 max-w-[200px] mx-auto' : 'grid-cols-1 sm:grid-cols-2'}`}>
                           {/* Performance chiffrée */}
                           <div 
-                            className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'aspect-square min-h-0 flex flex-col justify-center' : ''}`}
+                            className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'w-full aspect-square min-h-0 flex flex-col justify-center' : ''}`}
                             style={{ animation: 'fadeIn 0.6s ease-out' }}
                           >
                             <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
@@ -2233,7 +2233,7 @@ const App = () => {
 
                           {/* Discipline par session */}
                           <div 
-                            className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'aspect-square min-h-0 flex flex-col justify-center' : ''}`}
+                            className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'w-full aspect-square min-h-0 flex flex-col justify-center' : ''}`}
                             style={{ animation: 'fadeIn 0.7s ease-out' }}
                           >
                             <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
@@ -2248,7 +2248,7 @@ const App = () => {
 
                           {/* Erreurs récurrentes */}
                           <div 
-                            className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'aspect-square min-h-0 flex flex-col justify-center' : ''}`}
+                            className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'w-full aspect-square min-h-0 flex flex-col justify-center' : ''}`}
                             style={{ animation: 'fadeIn 0.8s ease-out' }}
                           >
                             <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
@@ -2263,7 +2263,7 @@ const App = () => {
 
                           {/* Drawdown maximum */}
                           <div 
-                            className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'aspect-square min-h-0 flex flex-col justify-center' : ''}`}
+                            className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'w-full aspect-square min-h-0 flex flex-col justify-center' : ''}`}
                             style={{ animation: 'fadeIn 0.9s ease-out' }}
                           >
                             <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
@@ -2278,7 +2278,7 @@ const App = () => {
 
                           {/* Win rate & profit factor */}
                           <div 
-                            className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'aspect-square min-h-0 flex flex-col justify-center' : ''}`}
+                            className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'w-full aspect-square min-h-0 flex flex-col justify-center' : ''}`}
                             style={{ animation: 'fadeIn 1s ease-out' }}
                           >
                             <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
@@ -2293,7 +2293,7 @@ const App = () => {
 
                           {/* Qualité d'exécution */}
                           <div
-                            className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'aspect-square min-h-0 flex flex-col justify-center' : ''}`}
+                            className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'w-full aspect-square min-h-0 flex flex-col justify-center' : ''}`}
                             style={{ animation: 'fadeIn 1.1s ease-out' }}
                           >
                             <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
@@ -2356,24 +2356,27 @@ const App = () => {
                   
                   {/* Titre principal */}
                   <div className="text-center mb-8">
-                    <h2 className="font-bold mb-8 text-center leading-tight text-white" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
+                    <h2 className="font-bold mb-8 text-center leading-tight bg-clip-text text-transparent" style={{ fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)', backgroundImage: 'linear-gradient(to right, #2E6BFF 0%, #6B9AFF 35%, #E8EDF5 70%, #FFFFFF 100%)' }}>
                       La méthode TPLN
                     </h2>
                   </div>
 
-                  {/* Tout centré comme section 4 */}
-                  <div className="flex flex-col items-center max-w-2xl mx-auto mb-8 text-center">
-                    <p className="text-white font-bold leading-tight mb-6" style={{ fontFamily: 'Inter, sans-serif', fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                      Un modèle clair. Reproductible. Maîtrisé.
-                    </p>
-                    <div className="text-[#AAB3C2] text-base leading-[1.6] mb-8" style={{ fontFamily: 'Inter, sans-serif' }}>
-                      <p className="mb-2">TPLN repose sur un cadre simple à comprendre, mais précis dans son exécution.</p>
-                      <p className="mb-4">Pas d'indicateurs inutiles.<br />Pas de complexité artificielle.</p>
-                      <p className="mb-4">Un modèle structuré que tu peux appliquer avec constance.</p>
-                      <p className="mb-1">Tu comprends la logique.</p>
-                      <p className="mb-1">Tu sais quoi valider.</p>
-                      <p className="mb-0">Tu sais quand exécuter.</p>
+                  {/* Texte à gauche, cadre à droite */}
+                  <div className="flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-10 max-w-6xl mx-auto mb-8">
+                    <div className="max-w-[480px] text-left lg:flex-shrink-0">
+                      <p className="text-white font-bold leading-tight mb-6" style={{ fontFamily: 'Inter, sans-serif', fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
+                        Un modèle clair. Reproductible. Maîtrisé.
+                      </p>
+                      <div className="text-[#AAB3C2] text-base leading-[1.6]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                        <p className="mb-2">TPLN repose sur un cadre simple à comprendre, mais précis dans son exécution.</p>
+                        <p className="mb-4">Pas d'indicateurs inutiles.<br />Pas de complexité artificielle.</p>
+                        <p className="mb-4">Un modèle structuré que tu peux appliquer avec constance.</p>
+                        <p className="mb-1">Tu comprends la logique.</p>
+                        <p className="mb-1">Tu sais quoi valider.</p>
+                        <p className="mb-0">Tu sais quand exécuter.</p>
+                      </div>
                     </div>
+                    <div className="lg:flex-1 lg:min-w-0 flex justify-center">
                   {/* Cadre formation - Inclus dans l'abonnement */}
                   <div className="mb-0 w-full max-w-lg">
                     <div className="bg-[#141821] border border-[#222836] rounded-[16px] p-8 hover:border-[#2E6BFF]/50 hover:shadow-[0_12px_32px_rgba(46,107,255,0.2)] transition-all duration-300 relative overflow-hidden">
@@ -2410,29 +2413,29 @@ const App = () => {
                         </li>
                       </ul>
                     </div>
-                    
-                    <p className="text-white text-base leading-relaxed text-center mt-6" style={{ fontFamily: 'Inter, sans-serif' }}>
+                  </div>
+                    </div>
+                  </div>
+
+                  {/* En bas : phrase + prix + bouton, centrés sous les 2 colonnes */}
+                  <div className="max-w-6xl mx-auto text-center">
+                    <p className="text-white text-base leading-relaxed mt-6" style={{ fontFamily: 'Inter, sans-serif' }}>
                       Ce n'est pas juste une formation.<br />
                       C'est un système complet : apprendre + exécuter + mesurer.
                     </p>
-                    
-                    {/* Prix */}
-                    <div className="mb-4 text-center">
+                    <div className="mb-4 mt-4">
                       <div className="text-lg bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent font-bold" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
                         49€/mois
                       </div>
-                      <p className="text-white text-sm mt-2 text-center" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      <p className="text-white text-sm mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>
                         Accès à la méthode + journal inclus.
                       </p>
                     </div>
-                    
-                    {/* Bouton */}
                     <div className="flex justify-center">
                       <button className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-8 py-3 rounded-[14px] font-medium transition-all duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
                         Accéder à la méthode
                       </button>
                     </div>
-                  </div>
                   </div>
                 </div>
               </div>
@@ -2444,44 +2447,41 @@ const App = () => {
                     3
                   </div>
                   <div className="text-center mb-8">
-                    <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
+                    <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                       <span className="text-white">Exécution en direct</span>
                       <br />
                       <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
                         TPLN
                       </span>
                     </h2>
-                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Reçois des alertes instantanées à chaque opportunité validée.<br />Accède aux analyses détaillées, au live et à ton journal depuis ton téléphone.</p>
+                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Opportunités validées envoyées en temps réel.<br />Session live quotidienne.<br />Journal de performance intégré.</p>
                   </div>
                   <div className="max-w-2xl mx-auto mb-8">
-                    <div className="bg-[#141821] border border-[#222836] rounded-[14px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden">
+                    <div className="bg-[#141821] border border-[#222836] rounded-[16px] p-8 hover:border-[#2E6BFF]/50 hover:shadow-[0_12px_32px_rgba(46,107,255,0.2)] transition-all duration-300 relative overflow-hidden">
                       <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
-                      <h3 className="text-[#F2F4F8] text-lg font-semibold mb-4" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                        Exécution guidée en direct
+                      <h3 className="text-[#F2F4F8] text-xl font-semibold mb-6 text-left" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                        Inclus dans le plan
                       </h3>
-                      <p className="text-[#AAB3C2] text-sm mb-3" style={{ fontFamily: 'Inter, sans-serif' }}>
-                        Chaque opportunité validée est envoyée avec :
-                      </p>
-                      <ul className="space-y-2.5">
-                        <li className="flex items-center gap-2.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Le contexte graphique détaillé</span>
+                      <ul className="space-y-3.5">
+                        <li className="flex items-start gap-3">
+                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Formation complète au modèle TPLN</span>
                         </li>
-                        <li className="flex items-center gap-2.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Le point d'entrée précis</span>
+                        <li className="flex items-start gap-3">
+                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Live 5 jours / semaine</span>
                         </li>
-                        <li className="flex items-center gap-2.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Le niveau d'invalidation</span>
+                        <li className="flex items-start gap-3">
+                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Opportunités détaillées</span>
                         </li>
-                        <li className="flex items-center gap-2.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>L'objectif ciblé</span>
+                        <li className="flex items-start gap-3">
+                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Journal personnel</span>
                         </li>
-                        <li className="flex items-center gap-2.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>L'explication complète du raisonnement</span>
+                        <li className="flex items-start gap-3">
+                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Suivi des performances globales</span>
                         </li>
                       </ul>
                     </div>
@@ -2498,9 +2498,24 @@ const App = () => {
                       Chaque opportunité envoyée est enregistrée et mesurée dans un journal dédié.
                     </p>
                   </div>
+                  <div className="max-w-2xl mx-auto mb-6 text-center">
+                    <p className="text-white font-semibold mb-3" style={{ fontFamily: 'Sora, sans-serif' }}>Tout inclus :</p>
+                    <p className="text-[#AAB3C2] text-base flex flex-nowrap justify-center items-center gap-x-2 whitespace-nowrap overflow-x-auto" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      <span className="text-[#2E6BFF] flex-shrink-0">✓</span>
+                      <span>Formation complète</span>
+                      <span className="text-[#2E6BFF] flex-shrink-0">✓</span>
+                      <span>Live quotidien</span>
+                      <span className="text-[#2E6BFF] flex-shrink-0">✓</span>
+                      <span>Opportunités détaillées</span>
+                      <span className="text-[#2E6BFF] flex-shrink-0">✓</span>
+                      <span>Journal personnel</span>
+                      <span className="text-[#2E6BFF] flex-shrink-0">✓</span>
+                      <span>Suivi des performances</span>
+                    </p>
+                  </div>
                   <div className="max-w-2xl mx-auto mb-2 text-center">
                     <div className="text-2xl sm:text-3xl bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent font-bold" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                      99€/mois
+                      79€/mois
                     </div>
                   </div>
                   <div className="max-w-2xl mx-auto mb-6 text-center">
@@ -2513,23 +2528,9 @@ const App = () => {
                       Accéder au plan Pro
                     </button>
                   </div>
-                  <div className="max-w-2xl mx-auto mb-8 flex flex-wrap justify-center gap-4 sm:gap-6">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[#2E6BFF] text-base">✓</span>
-                      <span className="text-gray-400 text-sm sm:text-base" style={{ fontFamily: 'Inter, sans-serif' }}>Accès immédiat</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[#2E6BFF] text-base">✓</span>
-                      <span className="text-gray-400 text-sm sm:text-base" style={{ fontFamily: 'Inter, sans-serif' }}>Livestream quotidien</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[#2E6BFF] text-base">✓</span>
-                      <span className="text-gray-400 text-sm sm:text-base" style={{ fontFamily: 'Inter, sans-serif' }}>Analyse complète</span>
-                    </div>
-                  </div>
                 </div>
               </div>
-              
+
               {/* Section 4 - App */}
               <div id="section-app" className="mt-16 sm:mt-20">
                 <div className="relative">
@@ -2540,15 +2541,14 @@ const App = () => {
                   
                   {/* Titre principal */}
                   <div className="text-center mb-8 sm:mb-2">
-                    <h2 className="font-bold mb-3 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
+                    <h2 className="font-bold mb-3 text-center leading-tight" style={{ fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                       <span className="text-white">Application mobile</span>
                       <br />
                       <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
                         TPLN
                       </span>
                     </h2>
-                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Reste connecté à ton exécution.</p>
-                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Reçois des alertes instantanées à chaque opportunité validée.<br />Accède aux analyses détaillées, au live et à ton journal depuis ton téléphone.</p>
+                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Opportunités validées envoyées en temps réel.<br />Session live quotidienne.<br />Journal de performance intégré.</p>
                   </div>
 
                   {/* Liste des fonctionnalités */}
@@ -2556,29 +2556,29 @@ const App = () => {
                     <div className={`flex flex-col lg:flex-row gap-8 ${isPWA ? 'items-start' : 'items-center'}`}>
                       {/* Colonne gauche - Bloc unique */}
                       <div className={`w-full max-w-md order-2 lg:order-1 ${isPWA ? 'text-left' : ''}`}>
-                        <div className={`bg-[#141821] border border-[#222836] rounded-[14px] p-6 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'text-left' : ''}`}>
+                        <div className={`bg-[#141821] border border-[#222836] rounded-[16px] p-8 hover:border-[#2E6BFF]/50 hover:shadow-[0_12px_32px_rgba(46,107,255,0.2)] transition-all duration-300 relative overflow-hidden ${isPWA ? 'text-left' : ''}`}>
                           <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
-                          <h3 className={`text-[#F2F4F8] text-lg font-semibold mb-4 ${isPWA ? 'text-left' : ''}`} style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Tout en temps réel.</h3>
-                          <ul className={`space-y-2.5 ${isPWA ? 'text-left' : ''}`}>
-                            <li className="flex items-start gap-2.5">
-                              <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0 mt-1.5"></div>
-                              <span className="text-[#AAB3C2] text-sm leading-snug min-w-0 text-left flex-1" style={{ fontFamily: 'Inter, sans-serif' }}>Alertes push instantanées</span>
+                          <h3 className={`text-[#F2F4F8] text-xl font-semibold mb-6 text-left`} style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Tout en temps réel.</h3>
+                          <ul className="space-y-3.5">
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                              <span className="text-white text-base leading-relaxed text-left min-w-0 flex-1" style={{ fontFamily: 'Inter, sans-serif' }}>Alertes push instantanées</span>
                             </li>
-                            <li className="flex items-start gap-2.5">
-                              <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0 mt-1.5"></div>
-                              <span className="text-[#AAB3C2] text-sm leading-snug min-w-0 text-left flex-1" style={{ fontFamily: 'Inter, sans-serif' }}>Opportunités expliquées avec graphique détaillé</span>
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                              <span className="text-white text-base leading-relaxed text-left min-w-0 flex-1" style={{ fontFamily: 'Inter, sans-serif' }}>Opportunités expliquées avec graphique détaillé</span>
                             </li>
-                            <li className="flex items-start gap-2.5">
-                              <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0 mt-1.5"></div>
-                              <span className="text-[#AAB3C2] text-sm leading-snug min-w-0 text-left flex-1" style={{ fontFamily: 'Inter, sans-serif' }}>Accès au livestream</span>
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                              <span className="text-white text-base leading-relaxed text-left min-w-0 flex-1" style={{ fontFamily: 'Inter, sans-serif' }}>Accès au livestream</span>
                             </li>
-                            <li className="flex items-start gap-2.5">
-                              <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0 mt-1.5"></div>
-                              <span className="text-[#AAB3C2] text-sm leading-snug min-w-0 text-left flex-1" style={{ fontFamily: 'Inter, sans-serif' }}>Journal de performance intégré</span>
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                              <span className="text-white text-base leading-relaxed text-left min-w-0 flex-1" style={{ fontFamily: 'Inter, sans-serif' }}>Journal de performance intégré</span>
                             </li>
-                            <li className="flex items-start gap-2.5">
-                              <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0 mt-1.5"></div>
-                              <span className="text-[#AAB3C2] text-sm leading-snug min-w-0 text-left flex-1" style={{ fontFamily: 'Inter, sans-serif' }}>Historique complet des exécutions</span>
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                              <span className="text-white text-base leading-relaxed text-left min-w-0 flex-1" style={{ fontFamily: 'Inter, sans-serif' }}>Historique complet des exécutions</span>
                             </li>
                           </ul>
                         </div>
