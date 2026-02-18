@@ -1365,6 +1365,8 @@ const App = () => {
             <img 
               src="/logo-removebg-preview.png" 
               alt="Trading pour les nuls" 
+              width={126}
+              height={84}
               className="h-12 sm:h-12 md:h-14 w-auto object-contain"
 
             />
@@ -1589,6 +1591,8 @@ const App = () => {
               <img 
                 src="/logo-removebg-preview.png" 
                 alt="Trading pour les nuls" 
+                width={252}
+                height={168}
                 className="h-64 sm:h-80 w-auto object-cover"
                 style={{ clipPath: 'inset(10% 5% 15% 5%)' }}
 
@@ -2518,6 +2522,8 @@ const App = () => {
                       <img 
                         src="/model.png" 
                         alt="Aperçu de l'application TPLN - Modèle de trading"
+                        width={606}
+                        height={380}
                         className="w-full rounded-lg"
                         loading="lazy"
                       />
@@ -2527,6 +2533,8 @@ const App = () => {
                       <img 
                         src="/model2.png" 
                         alt="Application TPLN sur iPhone"
+                        width={164}
+                        height={235}
                         className="w-full h-auto rounded-lg"
                         loading="lazy"
                         style={{ aspectRatio: '9/19.5' }}
@@ -2737,6 +2745,8 @@ const App = () => {
                       <img 
                         src="/journal2.png" 
                         alt="Journal de trading TPLN - Suivi des trades"
+                        width={606}
+                        height={379}
                         className="w-full h-auto"
                         loading="lazy"
                       />
@@ -2823,6 +2833,8 @@ const App = () => {
                         <img 
                           src="/FOndiphone.png" 
                           alt="Application TPLN sur iPhone - Fondamentaux"
+                          width={1024}
+                          height={1024}
                           loading="lazy"
                           className="w-full h-auto scale-125 sm:scale-100"
                           style={{
@@ -4508,6 +4520,8 @@ const App = () => {
                   <img 
                     src="/logo-removebg-preview.png" 
                     alt="Trading pour les nuls" 
+                    width={126}
+                    height={84}
                     className="h-12 w-auto"
                     style={{
                       filter: 'drop-shadow(0 0 0 transparent)',
@@ -6059,6 +6073,8 @@ const App = () => {
                       <img 
                         src="/logo-removebg-preview.png" 
                         alt="Trading pour les nuls" 
+                        width={320}
+                        height={213}
                         className="h-20 md:h-64 lg:h-80 w-auto"
 
                       />

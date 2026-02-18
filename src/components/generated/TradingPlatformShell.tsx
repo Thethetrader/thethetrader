@@ -1796,6 +1796,8 @@ export default function TradingPlatformShell() {
     // }, 200);
   };
   const [personalTrades, setPersonalTrades] = useState<PersonalTrade[]>([]);
+  // IDs des trades qu'on vient d'ajouter : ne pas laisser le listener temps réel écraser la liste
+  const justAddedTradeIdsRef = useRef<string[]>([]);
 
   // État pour les comptes multiples
   const [tradingAccounts, setTradingAccounts] = useState<UserAccount[]>([]);
@@ -1846,21 +1848,26 @@ export default function TradingPlatformShell() {
     const unsubscribe = listenToPersonalTrades(
       (trades) => {
         console.log('🔄 Mise à jour trades reçue [PWA]:', trades.length);
-        // Toujours mettre à jour avec les trades reçus, même si vide
-        // Ne pas remplacer par mockTrades si on a déjà des trades existants
+        const pendingIds = justAddedTradeIdsRef.current;
         setPersonalTrades(prevTrades => {
-          // Si on reçoit des trades, les utiliser
-          if (trades.length > 0) {
-            return trades;
+          // Liste vide reçue : ne jamais écraser si on avait des trades ou des ajouts en attente
+          if (trades.length === 0) {
+            if (prevTrades.length > 0 || pendingIds.length > 0) {
+              console.log('⚠️ Tableau vide reçu, liste conservée:', prevTrades.length);
+              return prevTrades;
+            }
+            return mockTrades;
           }
-          // Si on reçoit un tableau vide mais qu'on avait déjà des trades, garder les anciens
-          if (prevTrades.length > 0) {
-            console.log('⚠️ Tableau vide reçu mais trades existants conservés:', prevTrades.length);
-            return prevTrades;
+          // On vient d'ajouter des trades : ne pas remplacer par une liste qui ne les contient pas encore (replication lag)
+          if (pendingIds.length > 0) {
+            const hasAll = pendingIds.every(id => trades.some(t => t.id === id));
+            if (!hasAll) {
+              console.log('⚠️ Mise à jour reçue sans les trades ajoutés, liste conservée');
+              return prevTrades;
+            }
+            justAddedTradeIdsRef.current = [];
           }
-          // Seulement si on n'avait pas de trades avant, utiliser mockTrades pour screenshots
-          console.log('📊 Pas de vraies données, garde les données fictives pour screenshots');
-          return mockTrades;
+          return trades;
         });
       },
       (error) => {
@@ -2817,8 +2824,10 @@ export default function TradingPlatformShell() {
   };
 
   const getTodayTrades = () => {
-    const today = new Date().toISOString().split('T')[0];
-    return getTradesForSelectedAccount.filter(t => t.date === today);
+    // Date du jour en local (après 00h = nouveau jour)
+    const t = new Date();
+    const todayStr = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+    return getTradesForSelectedAccount.filter(tr => tr.date === todayStr);
   };
 
   const getThisMonthTrades = () => {
@@ -3151,15 +3160,11 @@ export default function TradingPlatformShell() {
 
   const getTodayTradesForMonth = () => {
     const today = new Date();
-    const todayStr = today.toISOString().split('T')[0];
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
     const monthTrades = getTradesForMonth(currentDate);
-    
-    // Si c'est le mois actuel, retourner les trades d'aujourd'hui
     if (currentDate.getMonth() === today.getMonth() && currentDate.getFullYear() === today.getFullYear()) {
       return monthTrades.filter(t => t.date === todayStr);
     }
-    
-    // Sinon retourner 0 car ce n'est pas le mois actuel
     return [];
   };
 
@@ -3961,6 +3966,11 @@ export default function TradingPlatformShell() {
       }
 
       if (successCount > 0) {
+        // Marquer les IDs qu'on vient d'ajouter (évite que le listener temps réel écrase la liste)
+        const newIds = savedTrades.map(t => t.id).filter((id): id is string => !!id);
+        if (newIds.length) justAddedTradeIdsRef.current = newIds;
+        // Effacer après 3s pour ne pas bloquer les prochaines mises à jour
+        setTimeout(() => { justAddedTradeIdsRef.current = []; }, 3000);
         // Afficher tout de suite les nouveaux trades (évite liste vide si le refetch tarde)
         setPersonalTrades(prev => [...savedTrades, ...prev]);
         // Fermer le modal d'abord

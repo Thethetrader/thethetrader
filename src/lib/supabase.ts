@@ -1240,16 +1240,15 @@ export const listenToPersonalTrades = (
         },
         (payload) => {
           console.log('🔄 Changement détecté pour user:', payload.eventType);
-          // Attendre un peu pour laisser Supabase traiter l'insertion
+          // Attendre pour laisser Supabase traiter l'insertion (évite liste vide après ajout)
           setTimeout(() => {
-            // Recharger seulement les trades de cet utilisateur avec une limite plus élevée
             getPersonalTrades(1000).then(trades => {
               console.log('📊 Trades rechargés via écoute temps réel:', trades.length);
               onTradesChange(trades);
             }).catch(error => {
               console.error('❌ Erreur rechargement via écoute temps réel:', error);
             });
-          }, 300);
+          }, 600);
         }
       )
       .subscribe();

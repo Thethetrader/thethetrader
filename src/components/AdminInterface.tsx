@@ -130,8 +130,8 @@ function WinRateGauge({ wins, losses }: { wins: number; losses: number }) {
   const total = wins + losses;
   if (total === 0) {
     return (
-      <div className="flex-shrink-0 w-24 h-24 relative">
-        <svg viewBox="0 0 120 60" className="w-full h-full">
+      <div className="flex-shrink-0 w-24 h-24 relative min-w-[6rem]">
+        <svg viewBox="0 0 120 60" className="w-full h-full block" preserveAspectRatio="xMidYMid meet">
           <path
             d="M 10 50 A 40 40 0 0 1 90 50"
             fill="none"
@@ -184,10 +184,13 @@ function WinRateGauge({ wins, losses }: { wins: number; losses: number }) {
   
   const lossLabelPos = getLabelPos(lossLabelAngle, 15);
   const winLabelPos = getLabelPos(winLabelAngle, 22);
+  // Éviter que le chiffre rouge soit coupé à gauche : minimum x = 15
+  const lossTextX = Math.max(15, lossLabelPos.x);
+  const lossTextY = lossLabelPos.y;
 
   return (
-    <div className="flex-shrink-0 w-24 h-24 relative">
-      <svg viewBox="0 0 120 60" className="w-full h-full">
+    <div className="flex-shrink-0 w-24 h-24 relative overflow-visible min-w-[6rem]">
+      <svg viewBox="0 0 120 60" className="w-full h-full block" preserveAspectRatio="xMidYMid meet">
         {losses > 0 && (
           <>
             <path
@@ -198,8 +201,8 @@ function WinRateGauge({ wins, losses }: { wins: number; losses: number }) {
               strokeLinecap="round"
             />
             <text
-              x={lossLabelPos.x}
-              y={lossLabelPos.y}
+              x={lossTextX}
+              y={lossTextY}
               textAnchor="middle"
               dominantBaseline="central"
               className="text-xs font-bold fill-red-400"
@@ -973,6 +976,8 @@ export default function AdminInterface() {
     // Les signaux seront chargés automatiquement par le useEffect qui écoute selectedChannel.id
   };
   const [personalTrades, setPersonalTrades] = useState<PersonalTrade[]>([]);
+  // IDs des trades qu'on vient d'ajouter : ne pas laisser le listener temps réel écraser la liste
+  const justAddedTradeIdsRef = useRef<string[]>([]);
 
   const [tradeData, setTradeData] = useState({
     symbol: '',
@@ -1000,7 +1005,29 @@ export default function AdminInterface() {
     const unsubscribe = listenToPersonalTrades(
       (trades) => {
         console.log('🔄 Mise à jour trades reçue [ADMIN]:', trades.length);
-        setPersonalTrades(trades);
+        const pendingIds = justAddedTradeIdsRef.current;
+        setPersonalTrades(prev => {
+          if (trades.length === 0) {
+            if (prev.length > 0 || pendingIds.length > 0) {
+              console.log('⚠️ [ADMIN] Tableau vide reçu, liste conservée:', prev.length);
+              return prev;
+            }
+            return trades;
+          }
+          if (pendingIds.length > 0) {
+            if (trades.length < prev.length) {
+              console.log('⚠️ [ADMIN] Liste reçue plus courte après ajout, liste conservée');
+              return prev;
+            }
+            const hasAll = pendingIds.every(id => trades.some(t => t.id === id));
+            if (!hasAll) {
+              console.log('⚠️ [ADMIN] Mise à jour reçue sans les trades ajoutés, liste conservée');
+              return prev;
+            }
+            justAddedTradeIdsRef.current = [];
+          }
+          return trades;
+        });
       },
       (error) => {
         console.error('❌ Erreur synchronisation temps réel [ADMIN]:', error);
@@ -1362,7 +1389,7 @@ export default function AdminInterface() {
       // Recharger les trades depuis Supabase pour avoir les données à jour
       console.log('🔄 [ADMIN] Rechargement des trades depuis Supabase...');
       const reloadedTrades = await getPersonalTradesFromSupabase(1000);
-      setPersonalTrades(reloadedTrades);
+      setPersonalTrades(prev => (reloadedTrades.length > 0 ? reloadedTrades : prev));
       console.log('✅ [ADMIN] Trades rechargés:', reloadedTrades.length);
 
       // Mettre à jour le state local des comptes
@@ -2103,27 +2130,15 @@ const dailyPnLChartData = useMemo(
   };
 
   const getTodaySignals = () => {
-    console.log('🔍 [ADMIN] getTodaySignals - allSignalsForStats:', allSignalsForStats.length);
-    console.log('📅 [ADMIN] Date sélectionnée:', currentDate.toDateString());
-    
-    // Utiliser currentDate au lieu de today
+    // Stat "Aujourd'hui" = toujours la vraie date du jour (après 00h = nouveau jour)
+    const today = new Date();
     const todaySignals = allSignalsForStats.filter(s => {
-      // Utiliser le timestamp original pour déterminer la vraie date
       const signalDate = new Date(s.originalTimestamp || s.timestamp);
-      
-      // Si la date est invalide, ignorer ce signal
-      if (isNaN(signalDate.getTime())) {
-        return false;
-      }
-      
-      const isToday = signalDate.getDate() === currentDate.getDate() &&
-             signalDate.getMonth() === currentDate.getMonth() &&
-             signalDate.getFullYear() === currentDate.getFullYear();
-      
-      return isToday;
+      if (isNaN(signalDate.getTime())) return false;
+      return signalDate.getDate() === today.getDate() &&
+             signalDate.getMonth() === today.getMonth() &&
+             signalDate.getFullYear() === today.getFullYear();
     });
-    
-    console.log('📅 [ADMIN] Signaux pour la date sélectionnée:', todaySignals.length);
     return todaySignals;
   };
 
@@ -2257,10 +2272,10 @@ const dailyPnLChartData = useMemo(
   };
 
   const getTodayTrades = () => {
-    const currentDateStr = currentDate.toISOString().split('T')[0];
-    return getTradesForSelectedAccount.filter(t => 
-      t.date === currentDateStr
-    );
+    // Stat "Aujourd'hui" = vraie date du jour en local (après 00h = nouveau jour)
+    const t = new Date();
+    const todayStr = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+    return getTradesForSelectedAccount.filter(trade => trade.date === todayStr);
   };
 
   const getThisMonthTrades = () => {
@@ -3389,7 +3404,7 @@ const dailyPnLChartData = useMemo(
       });
       if (updated) {
         const reloadedTrades = await getPersonalTradesFromSupabase(1000);
-        setPersonalTrades(reloadedTrades);
+        setPersonalTrades(prev => (reloadedTrades.length > 0 ? reloadedTrades : prev));
         setEditingTrade(null);
         setTradeData({ symbol: '', type: 'BUY', entry: '', exit: '', stopLoss: '', pnl: '', status: 'WIN', lossReason: '', lossReasons: [], notes: '', image1: null, image2: null, session: '' });
         setSelectedAccounts([]);
@@ -3404,6 +3419,7 @@ const dailyPnLChartData = useMemo(
     console.log('🔍 [ADMIN] Ajout trade - comptes:', accountsToAdd);
 
     let successCount = 0;
+    const savedTrades: PersonalTrade[] = [];
     for (const accountName of accountsToAdd) {
       const newTrade = {
         date: selectedDate ? getDateString(selectedDate) : getDateString(new Date()),
@@ -3424,18 +3440,22 @@ const dailyPnLChartData = useMemo(
         session: tradeData.session || undefined
       };
       const savedTrade = await addPersonalTradeToSupabase(newTrade as any);
-      if (savedTrade) successCount++;
+      if (savedTrade) {
+        successCount++;
+        savedTrades.push(savedTrade);
+      }
     }
 
     if (successCount > 0) {
       console.log('✅ [ADMIN] Trades sauvegardés:', successCount, '/', accountsToAdd.length);
-      
-      // Attendre un peu pour laisser le temps à Supabase de traiter
+      const newIds = savedTrades.map(t => t.id).filter((id): id is string => !!id);
+      if (newIds.length) justAddedTradeIdsRef.current = newIds;
+      setTimeout(() => { justAddedTradeIdsRef.current = []; }, 3000);
+      setPersonalTrades(prev => [...savedTrades, ...prev]);
+
       await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Recharger les trades depuis Supabase
       const reloadedTrades = await getPersonalTradesFromSupabase(1000);
-      setPersonalTrades(reloadedTrades);
+      setPersonalTrades(prev => (reloadedTrades.length > 0 ? reloadedTrades : prev));
       
       // Reset form
       setTradeData({
@@ -6142,7 +6162,7 @@ const dailyPnLChartData = useMemo(
                         onClick={async () => {
                           console.log('🔄 Rechargement des trades...');
                           const trades = await getPersonalTradesFromSupabase(1000);
-                          setPersonalTrades(trades);
+                          setPersonalTrades(prev => (trades.length > 0 ? trades : prev));
                           console.log(`✅ ${trades.length} trades rechargés depuis Supabase`);
                         }}
                         className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg text-sm font-medium"
