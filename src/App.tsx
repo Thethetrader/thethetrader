@@ -2361,28 +2361,21 @@ const App = () => {
                     </h2>
                   </div>
 
-                  {/* Mesure ta performance réelle - dupliqué */}
-                  <div className="max-w-[480px] mx-auto mb-8 text-center">
-                    <h3 className="text-[#F2F4F8] text-4xl sm:text-5xl font-bold mb-6 leading-[1.1]" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                      Mesure ta performance réelle.
-                    </h3>
-                    <div className="text-[#AAB3C2] text-lg leading-[1.5]" style={{ fontFamily: 'Inter, sans-serif' }}>
-                      <p className="mb-2">
-                        Le journal TPLN ne mesure pas seulement le résultat.
-                      </p>
-                      <p className="mb-4">
-                        Il mesure la qualité de ta prise de décision.
-                      </p>
-                      <div className="space-y-1.5">
-                        <p>Ce que tu exécutes.</p>
-                        <p>Ce que tu répètes.</p>
-                        <p>Ce que tu dois corriger.</p>
-                      </div>
+                  {/* Tout centré comme section 4 */}
+                  <div className="flex flex-col items-center max-w-2xl mx-auto mb-8 text-center">
+                    <p className="text-white font-bold leading-tight mb-6" style={{ fontFamily: 'Inter, sans-serif', fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
+                      Un modèle clair. Reproductible. Maîtrisé.
+                    </p>
+                    <div className="text-[#AAB3C2] text-base leading-[1.6] mb-8" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      <p className="mb-2">TPLN repose sur un cadre simple à comprendre, mais précis dans son exécution.</p>
+                      <p className="mb-4">Pas d'indicateurs inutiles.<br />Pas de complexité artificielle.</p>
+                      <p className="mb-4">Un modèle structuré que tu peux appliquer avec constance.</p>
+                      <p className="mb-1">Tu comprends la logique.</p>
+                      <p className="mb-1">Tu sais quoi valider.</p>
+                      <p className="mb-0">Tu sais quand exécuter.</p>
                     </div>
-                  </div>
-
                   {/* Cadre formation - Inclus dans l'abonnement */}
-                  <div className="max-w-2xl mx-auto mb-8">
+                  <div className="mb-0 w-full max-w-lg">
                     <div className="bg-[#141821] border border-[#222836] rounded-[16px] p-8 hover:border-[#2E6BFF]/50 hover:shadow-[0_12px_32px_rgba(46,107,255,0.2)] transition-all duration-300 relative overflow-hidden">
                       <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
                       
@@ -2428,7 +2421,7 @@ const App = () => {
                       <div className="text-lg bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent font-bold" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
                         49€/mois
                       </div>
-                      <p className="text-white text-sm mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      <p className="text-white text-sm mt-2 text-center" style={{ fontFamily: 'Inter, sans-serif' }}>
                         Accès à la méthode + journal inclus.
                       </p>
                     </div>
@@ -2439,6 +2432,7 @@ const App = () => {
                         Accéder à la méthode
                       </button>
                     </div>
+                  </div>
                   </div>
                 </div>
               </div>
