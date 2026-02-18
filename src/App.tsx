@@ -2449,33 +2449,33 @@ const App = () => {
 
                   {/* Cadre formation */}
                   <div className="max-w-2xl mx-auto mb-8">
-                    <div className="bg-[#141821] border border-[#222836] rounded-[14px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden">
+                    <div className="bg-[#141821] border border-[#222836] rounded-[16px] p-8 hover:border-[#2E6BFF]/50 hover:shadow-[0_12px_32px_rgba(46,107,255,0.2)] transition-all duration-300 relative overflow-hidden">
                       <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
                       
-                      <h3 className="text-[#F2F4F8] text-lg font-semibold mb-3" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                      <h3 className="text-[#F2F4F8] text-xl font-semibold mb-6 text-center" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
                         La formation TPLN détaille :
                       </h3>
                       
-                      <ul className="space-y-2 mb-4">
-                        <li className="flex items-center gap-2.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>La structure du modèle</span>
+                      <ul className="space-y-3.5">
+                        <li className="flex items-center justify-center gap-3 group">
+                          <div className="w-2 h-2 rounded-full bg-[#2E6BFF] flex-shrink-0 group-hover:scale-125 transition-transform duration-200"></div>
+                          <span className="text-[#AAB3C2] text-base leading-relaxed group-hover:text-[#F2F4F8] transition-colors duration-200 text-center" style={{ fontFamily: 'Inter, sans-serif' }}>La structure du modèle</span>
                         </li>
-                        <li className="flex items-center gap-2.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Les critères précis de validation</span>
+                        <li className="flex items-center justify-center gap-3 group">
+                          <div className="w-2 h-2 rounded-full bg-[#2E6BFF] flex-shrink-0 group-hover:scale-125 transition-transform duration-200"></div>
+                          <span className="text-[#AAB3C2] text-base leading-relaxed group-hover:text-[#F2F4F8] transition-colors duration-200 text-center" style={{ fontFamily: 'Inter, sans-serif' }}>Les critères précis de validation</span>
                         </li>
-                        <li className="flex items-center gap-2.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>La gestion du risque</span>
+                        <li className="flex items-center justify-center gap-3 group">
+                          <div className="w-2 h-2 rounded-full bg-[#2E6BFF] flex-shrink-0 group-hover:scale-125 transition-transform duration-200"></div>
+                          <span className="text-[#AAB3C2] text-base leading-relaxed group-hover:text-[#F2F4F8] transition-colors duration-200 text-center" style={{ fontFamily: 'Inter, sans-serif' }}>La gestion du risque</span>
                         </li>
-                        <li className="flex items-center gap-2.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>L'exécution disciplinée</span>
+                        <li className="flex items-center justify-center gap-3 group">
+                          <div className="w-2 h-2 rounded-full bg-[#2E6BFF] flex-shrink-0 group-hover:scale-125 transition-transform duration-200"></div>
+                          <span className="text-[#AAB3C2] text-base leading-relaxed group-hover:text-[#F2F4F8] transition-colors duration-200 text-center" style={{ fontFamily: 'Inter, sans-serif' }}>L'exécution disciplinée</span>
                         </li>
-                        <li className="flex items-center gap-2.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>L'analyse post-trade</span>
+                        <li className="flex items-center justify-center gap-3 group">
+                          <div className="w-2 h-2 rounded-full bg-[#2E6BFF] flex-shrink-0 group-hover:scale-125 transition-transform duration-200"></div>
+                          <span className="text-[#AAB3C2] text-base leading-relaxed group-hover:text-[#F2F4F8] transition-colors duration-200 text-center" style={{ fontFamily: 'Inter, sans-serif' }}>L'analyse post-trade</span>
                         </li>
                       </ul>
                     </div>
@@ -2500,22 +2500,6 @@ const App = () => {
                         Accéder à la méthode
                       </button>
                     </div>
-                  </div>
-
-                  {/* Vidéo complète */}
-                  <div className="max-w-6xl mx-auto rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl p-0">
-                    <video 
-                      className="w-full rounded-lg"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      preload="auto"
-                      controls={false}
-                    >
-                      <source src="/TPLN2.mp4" type="video/mp4" />
-                      Votre navigateur ne supporte pas la lecture de vidéos.
-                    </video>
                   </div>
                 </div>
               </div>
@@ -2569,13 +2553,6 @@ const App = () => {
                     </div>
                   </div>
                   
-                  {/* Texte sous le cadre */}
-                  <div className="max-w-2xl mx-auto mb-6">
-                    <p className="text-gray-400 text-base text-center" style={{ fontFamily: 'Inter, sans-serif' }}>
-                      Ce n'est pas un service de copie. C'est une exécution expliquée.
-                    </p>
-                  </div>
-                  
                   {/* Vidéo complète */}
                   <div className="max-w-6xl mx-auto mb-4 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl p-0">
                     <video 
@@ -2592,18 +2569,216 @@ const App = () => {
                     </video>
                   </div>
                   
+                  {/* Texte sous la vidéo */}
+                  <div className="max-w-2xl mx-auto mb-5 text-center">
+                    <p className="text-gray-400 text-base leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      Chaque trade est expliqué. Aucun signal envoyé sans contexte.
+                    </p>
+                  </div>
+                  
                   {/* Prix */}
-                  <div className="max-w-2xl mx-auto mb-4 text-center">
-                    <div className="text-lg bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent font-bold" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
+                  <div className="max-w-2xl mx-auto mb-2 text-center">
+                    <div className="text-2xl sm:text-3xl bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent font-bold" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
                       99€/mois
                     </div>
                   </div>
                   
+                  {/* Ligne secondaire sous le prix */}
+                  <div className="max-w-2xl mx-auto mb-6 text-center">
+                    <p className="text-gray-400 text-base" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      Annulable à tout moment
+                    </p>
+                  </div>
+                  
                   {/* Bouton */}
-                  <div className="max-w-2xl mx-auto mb-8 flex justify-center">
-                    <button className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-8 py-3 rounded-[14px] font-medium transition-all duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                  <div className="max-w-2xl mx-auto mb-4 flex justify-center">
+                    <button className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-8 py-4 rounded-[14px] font-medium transition-all duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
                       Accéder au plan Pro
                     </button>
+                  </div>
+                  
+                  {/* Mini bullet points horizontaux */}
+                  <div className="max-w-2xl mx-auto mb-8 flex flex-wrap justify-center gap-4 sm:gap-6">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[#2E6BFF] text-base">✓</span>
+                      <span className="text-gray-400 text-sm sm:text-base" style={{ fontFamily: 'Inter, sans-serif' }}>Accès immédiat</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[#2E6BFF] text-base">✓</span>
+                      <span className="text-gray-400 text-sm sm:text-base" style={{ fontFamily: 'Inter, sans-serif' }}>Livestream quotidien</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[#2E6BFF] text-base">✓</span>
+                      <span className="text-gray-400 text-sm sm:text-base" style={{ fontFamily: 'Inter, sans-serif' }}>Analyse complète</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Section 4 - Live (Dupliquée) */}
+              <div id="section-live-2b" className="mt-16 sm:mt-20">
+                <div className="relative">
+                  <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
+                    4
+                  </div>
+                  <div className="text-center mb-8">
+                    <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
+                      <span className="text-white">Exécution</span>
+                      <br />
+                      <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
+                        en temps réel.
+                      </span>
+                    </h2>
+                  </div>
+                  <div className="max-w-2xl mx-auto mb-8">
+                    <div className="bg-[#141821] border border-[#222836] rounded-[14px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
+                      <h3 className="text-[#F2F4F8] text-lg font-semibold mb-4" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                        En complément de la formation :
+                      </h3>
+                      <ul className="space-y-2.5">
+                        <li className="flex items-center gap-2.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Livestream structuré</span>
+                        </li>
+                        <li className="flex items-center gap-2.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Validation checklist en direct</span>
+                        </li>
+                        <li className="flex items-center gap-2.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Contexte expliqué</span>
+                        </li>
+                        <li className="flex items-center gap-2.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Gestion du risque associée</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div className="max-w-6xl mx-auto mb-4 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl p-0">
+                    <video className="w-full rounded-lg" autoPlay loop muted playsInline preload="auto" controls={false}>
+                      <source src="/TPLN2.mp4" type="video/mp4" />
+                      Votre navigateur ne supporte pas la lecture de vidéos.
+                    </video>
+                  </div>
+                  <div className="max-w-2xl mx-auto mb-5 text-center">
+                    <p className="text-gray-400 text-base leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      Chaque trade est expliqué. Aucun signal envoyé sans contexte.
+                    </p>
+                  </div>
+                  <div className="max-w-2xl mx-auto mb-2 text-center">
+                    <div className="text-2xl sm:text-3xl bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent font-bold" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
+                      99€/mois
+                    </div>
+                  </div>
+                  <div className="max-w-2xl mx-auto mb-6 text-center">
+                    <p className="text-gray-400 text-base" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      Annulable à tout moment
+                    </p>
+                  </div>
+                  <div className="max-w-2xl mx-auto mb-4 flex justify-center">
+                    <button className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-8 py-4 rounded-[14px] font-medium transition-all duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                      Accéder au plan Pro
+                    </button>
+                  </div>
+                  <div className="max-w-2xl mx-auto mb-8 flex flex-wrap justify-center gap-4 sm:gap-6">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[#2E6BFF] text-base">✓</span>
+                      <span className="text-gray-400 text-sm sm:text-base" style={{ fontFamily: 'Inter, sans-serif' }}>Accès immédiat</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[#2E6BFF] text-base">✓</span>
+                      <span className="text-gray-400 text-sm sm:text-base" style={{ fontFamily: 'Inter, sans-serif' }}>Livestream quotidien</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[#2E6BFF] text-base">✓</span>
+                      <span className="text-gray-400 text-sm sm:text-base" style={{ fontFamily: 'Inter, sans-serif' }}>Analyse complète</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Section 4 - Live (Dupliquée) */}
+              <div id="section-live-2b" className="mt-16 sm:mt-20">
+                <div className="relative">
+                  <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
+                    4
+                  </div>
+                  <div className="text-center mb-8">
+                    <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
+                      <span className="text-white">Exécution</span>
+                      <br />
+                      <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
+                        en temps réel.
+                      </span>
+                    </h2>
+                  </div>
+                  <div className="max-w-2xl mx-auto mb-8">
+                    <div className="bg-[#141821] border border-[#222836] rounded-[14px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
+                      <h3 className="text-[#F2F4F8] text-lg font-semibold mb-4" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                        En complément de la formation :
+                      </h3>
+                      <ul className="space-y-2.5">
+                        <li className="flex items-center gap-2.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Livestream structuré</span>
+                        </li>
+                        <li className="flex items-center gap-2.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Validation checklist en direct</span>
+                        </li>
+                        <li className="flex items-center gap-2.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Contexte expliqué</span>
+                        </li>
+                        <li className="flex items-center gap-2.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Gestion du risque associée</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div className="max-w-6xl mx-auto mb-4 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl p-0">
+                    <video className="w-full rounded-lg" autoPlay loop muted playsInline preload="auto" controls={false}>
+                      <source src="/TPLN2.mp4" type="video/mp4" />
+                      Votre navigateur ne supporte pas la lecture de vidéos.
+                    </video>
+                  </div>
+                  <div className="max-w-2xl mx-auto mb-5 text-center">
+                    <p className="text-gray-400 text-base leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      Chaque trade est expliqué. Aucun signal envoyé sans contexte.
+                    </p>
+                  </div>
+                  <div className="max-w-2xl mx-auto mb-2 text-center">
+                    <div className="text-2xl sm:text-3xl bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent font-bold" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
+                      99€/mois
+                    </div>
+                  </div>
+                  <div className="max-w-2xl mx-auto mb-6 text-center">
+                    <p className="text-gray-400 text-base" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      Annulable à tout moment
+                    </p>
+                  </div>
+                  <div className="max-w-2xl mx-auto mb-4 flex justify-center">
+                    <button className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-8 py-4 rounded-[14px] font-medium transition-all duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                      Accéder au plan Pro
+                    </button>
+                  </div>
+                  <div className="max-w-2xl mx-auto mb-8 flex flex-wrap justify-center gap-4 sm:gap-6">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[#2E6BFF] text-base">✓</span>
+                      <span className="text-gray-400 text-sm sm:text-base" style={{ fontFamily: 'Inter, sans-serif' }}>Accès immédiat</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[#2E6BFF] text-base">✓</span>
+                      <span className="text-gray-400 text-sm sm:text-base" style={{ fontFamily: 'Inter, sans-serif' }}>Livestream quotidien</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[#2E6BFF] text-base">✓</span>
+                      <span className="text-gray-400 text-sm sm:text-base" style={{ fontFamily: 'Inter, sans-serif' }}>Analyse complète</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -5783,7 +5958,52 @@ const App = () => {
 
 
 
+          {/* Section 4 - Live (Dupliquée 2) - Pour traders disciplinés */}
+          <div id="section-live-3" className="mt-16 sm:mt-20">
+            <div className="relative">
+              {/* Numéro 4 en haut à gauche */}
+              <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
+                4
+              </div>
+              
+              {/* Titre principal */}
+              <div className="text-center mb-8">
+                <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
+                  <span className="text-white">Pour traders</span>
+                  <br />
+                  <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
+                    disciplinés.
+                  </span>
+                </h2>
+              </div>
 
+              {/* Bloc manifeste — positioning, pas liste de features */}
+              <div className="max-w-2xl mx-auto text-center">
+                <p className="text-[#AAB3C2] text-lg mb-3 leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>
+                  TPLN s'adresse aux traders qui privilégient :
+                </p>
+                
+                <div className="space-y-2 sm:space-y-3 mb-4">
+                  <p className="text-[#F2F4F8] text-xl sm:text-2xl font-semibold tracking-tight" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                    La précision
+                  </p>
+                  <p className="text-[#F2F4F8] text-xl sm:text-2xl font-semibold tracking-tight" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                    La structure
+                  </p>
+                  <p className="text-[#F2F4F8] text-xl sm:text-2xl font-semibold tracking-tight" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                    La constance
+                  </p>
+                  <p className="text-[#F2F4F8] text-xl sm:text-2xl font-semibold tracking-tight" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                    La responsabilité
+                  </p>
+                </div>
+                
+                <p className="text-[#AAB3C2] text-base sm:text-lg leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>
+                  Il ne s'adresse pas à ceux qui recherchent des promesses rapides.
+                </p>
+              </div>
+            </div>
+          </div>
 
           {/* Footer - Mobile Optimized - Masqué en PWA */}
           {!isPWA && (
