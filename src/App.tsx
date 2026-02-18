@@ -2174,12 +2174,12 @@ const App = () => {
                 </div>
               </div>
               
-              {/* Section 2 - Signaux */}
+              {/* Section 1 - Signaux */}
               <div id="section-signaux" className="mt-16 sm:mt-20">
                 <div className="relative">
-                  {/* Numéro 2 en haut à gauche */}
+                  {/* Numéro 1 en haut à gauche */}
                   <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                    2
+                    1
                   </div>
                   
                   {/* Titre principal */}
@@ -2346,12 +2346,12 @@ const App = () => {
                 </div>
               </div>
 
-              {/* Section 4 - Live */}
+              {/* Section 2 - Live */}
               <div id="section-live" className="mt-16 sm:mt-20">
                 <div className="relative">
-                  {/* Numéro 4 en haut à gauche */}
+                  {/* Numéro 2 en haut à gauche */}
                   <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                    4
+                    2
                   </div>
                   
                   {/* Titre principal */}
@@ -2432,113 +2432,51 @@ const App = () => {
                 </div>
               </div>
               
-              {/* Section 4 - Live (Dupliquée) */}
-              <div id="section-live-2" className="mt-16 sm:mt-20">
+              {/* Section 3 - Live (Dupliquée) - Exécution en direct */}
+              <div id="section-live-2b" className="mt-16 sm:mt-20">
                 <div className="relative">
-                  {/* Numéro 5 en haut à gauche */}
                   <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                    5
+                    3
                   </div>
-                  
-                  {/* Titre principal */}
                   <div className="text-center mb-8">
                     <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                      <span className="text-white">Pour traders disciplinés.</span>
+                      <span className="text-white">Exécution en direct</span>
+                      <br />
+                      <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
+                        TPLN
+                      </span>
                     </h2>
+                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Reçois des alertes instantanées à chaque opportunité validée.<br />Accède aux analyses détaillées, au live et à ton journal depuis ton téléphone.</p>
                   </div>
-
-                  {/* Texte descriptif */}
-                  <div className="max-w-4xl mx-auto mb-8">
-                    <div className="text-center mb-10">
-                      <h3 className="text-2xl sm:text-3xl font-bold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                        <span className="text-white">TPLN s'adresse aux traders</span>
-                        <br />
-                        <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">qui privilégient :</span>
+                  <div className="max-w-2xl mx-auto mb-8">
+                    <div className="bg-[#141821] border border-[#222836] rounded-[14px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
+                      <h3 className="text-[#F2F4F8] text-lg font-semibold mb-4" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                        Exécution guidée en direct
                       </h3>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 max-w-2xl mx-auto">
-                      <div className="flex items-start gap-4 group cursor-pointer">
-                        <div className="relative flex-shrink-0 mt-1">
-                          <div className="w-3 h-3 rounded-full bg-[#2E6BFF] group-hover:bg-[#2E6BFF]/80 transition-all duration-300"></div>
-                          <div className="absolute inset-0 w-3 h-3 rounded-full bg-[#2E6BFF] opacity-0 group-hover:opacity-50 group-hover:scale-150 transition-all duration-300"></div>
-                        </div>
-                        <span className="text-[#AAB3C2] text-lg font-medium group-hover:text-[#F2F4F8] transition-all duration-300" style={{ fontFamily: 'Inter, sans-serif' }}>La précision</span>
-                      </div>
-                      
-                      <div className="flex items-start gap-4 group cursor-pointer">
-                        <div className="relative flex-shrink-0 mt-1">
-                          <div className="w-3 h-3 rounded-full bg-[#2E6BFF] group-hover:bg-[#2E6BFF]/80 transition-all duration-300"></div>
-                          <div className="absolute inset-0 w-3 h-3 rounded-full bg-[#2E6BFF] opacity-0 group-hover:opacity-50 group-hover:scale-150 transition-all duration-300"></div>
-                        </div>
-                        <span className="text-[#AAB3C2] text-lg font-medium group-hover:text-[#F2F4F8] transition-all duration-300" style={{ fontFamily: 'Inter, sans-serif' }}>La structure</span>
-                      </div>
-                      
-                      <div className="flex items-start gap-4 group cursor-pointer">
-                        <div className="relative flex-shrink-0 mt-1">
-                          <div className="w-3 h-3 rounded-full bg-[#2E6BFF] group-hover:bg-[#2E6BFF]/80 transition-all duration-300"></div>
-                          <div className="absolute inset-0 w-3 h-3 rounded-full bg-[#2E6BFF] opacity-0 group-hover:opacity-50 group-hover:scale-150 transition-all duration-300"></div>
-                        </div>
-                        <span className="text-[#AAB3C2] text-lg font-medium group-hover:text-[#F2F4F8] transition-all duration-300" style={{ fontFamily: 'Inter, sans-serif' }}>La constance</span>
-                      </div>
-                      
-                      <div className="flex items-start gap-4 group cursor-pointer">
-                        <div className="relative flex-shrink-0 mt-1">
-                          <div className="w-3 h-3 rounded-full bg-[#2E6BFF] group-hover:bg-[#2E6BFF]/80 transition-all duration-300"></div>
-                          <div className="absolute inset-0 w-3 h-3 rounded-full bg-[#2E6BFF] opacity-0 group-hover:opacity-50 group-hover:scale-150 transition-all duration-300"></div>
-                        </div>
-                        <span className="text-[#AAB3C2] text-lg font-medium group-hover:text-[#F2F4F8] transition-all duration-300" style={{ fontFamily: 'Inter, sans-serif' }}>La responsabilité</span>
-                      </div>
-                    </div>
-                    
-                    <div className="text-center mt-10 pt-8 border-t border-[#222836]/50">
-                      <p className="text-[#AAB3C2] text-lg leading-relaxed italic max-w-xl mx-auto" style={{ fontFamily: 'Inter, sans-serif' }}>
-                        Il ne s'adresse pas à ceux qui recherchent des promesses rapides.
+                      <p className="text-[#AAB3C2] text-sm mb-3" style={{ fontFamily: 'Inter, sans-serif' }}>
+                        Chaque opportunité validée est envoyée avec :
                       </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Section 4 - Live (Dupliquée) */}
-              <div id="section-live-2b" className="mt-16 sm:mt-20">
-                <div className="relative">
-                  <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                    6
-                  </div>
-                  <div className="text-center mb-8">
-                    <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                      <span className="text-white">Application mobile</span>
-                      <br />
-                      <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
-                        TPLN
-                      </span>
-                    </h2>
-                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Reste connecté à ton exécution.</p>
-                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Reçois des alertes instantanées à chaque opportunité validée.<br />Accède aux analyses détaillées, au live et à ton journal depuis ton téléphone.</p>
-                  </div>
-                  <div className="max-w-2xl mx-auto mb-8">
-                    <div className="bg-[#141821] border border-[#222836] rounded-[14px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden">
-                      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
-                      <h3 className="text-[#F2F4F8] text-lg font-semibold mb-4" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                        En complément de la formation :
-                      </h3>
                       <ul className="space-y-2.5">
                         <li className="flex items-center gap-2.5">
                           <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Livestream structuré</span>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Le contexte graphique détaillé</span>
                         </li>
                         <li className="flex items-center gap-2.5">
                           <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Validation checklist en direct</span>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Le point d'entrée précis</span>
                         </li>
                         <li className="flex items-center gap-2.5">
                           <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Contexte expliqué</span>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Le niveau d'invalidation</span>
                         </li>
                         <li className="flex items-center gap-2.5">
                           <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Gestion du risque associée</span>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>L'objectif ciblé</span>
+                        </li>
+                        <li className="flex items-center gap-2.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
+                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>L'explication complète du raisonnement</span>
                         </li>
                       </ul>
                     </div>
@@ -2586,98 +2524,12 @@ const App = () => {
                 </div>
               </div>
               
-              {/* Section 7 - Live (Dupliquée) */}
-              <div id="section-live-2b" className="mt-16 sm:mt-20">
-                <div className="relative">
-                  <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                    7
-                  </div>
-                  <div className="text-center mb-8">
-                    <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                      <span className="text-white">Application mobile</span>
-                      <br />
-                      <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
-                        TPLN
-                      </span>
-                    </h2>
-                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Reste connecté à ton exécution.</p>
-                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Reçois des alertes instantanées à chaque opportunité validée.<br />Accède aux analyses détaillées, au live et à ton journal depuis ton téléphone.</p>
-                  </div>
-                  <div className="max-w-2xl mx-auto mb-8">
-                    <div className="bg-[#141821] border border-[#222836] rounded-[14px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden">
-                      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
-                      <h3 className="text-[#F2F4F8] text-lg font-semibold mb-4" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                        En complément de la formation :
-                      </h3>
-                      <ul className="space-y-2.5">
-                        <li className="flex items-center gap-2.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Livestream structuré</span>
-                        </li>
-                        <li className="flex items-center gap-2.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Validation checklist en direct</span>
-                        </li>
-                        <li className="flex items-center gap-2.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Contexte expliqué</span>
-                        </li>
-                        <li className="flex items-center gap-2.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#2E6BFF] flex-shrink-0"></div>
-                          <span className="text-[#AAB3C2] text-sm leading-snug" style={{ fontFamily: 'Inter, sans-serif' }}>Gestion du risque associée</span>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div className="max-w-6xl mx-auto mb-4 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl p-0">
-                    <video className="w-full rounded-lg" autoPlay loop muted playsInline preload="auto" controls={false}>
-                      <source src="/TPLN2.mp4" type="video/mp4" />
-                      Votre navigateur ne supporte pas la lecture de vidéos.
-                    </video>
-                  </div>
-                  <div className="max-w-2xl mx-auto mb-5 text-center">
-                    <p className="text-gray-400 text-base leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>
-                      Chaque trade est expliqué. Aucun signal envoyé sans contexte.
-                    </p>
-                  </div>
-                  <div className="max-w-2xl mx-auto mb-2 text-center">
-                    <div className="text-2xl sm:text-3xl bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent font-bold" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                      99€/mois
-                    </div>
-                  </div>
-                  <div className="max-w-2xl mx-auto mb-6 text-center">
-                    <p className="text-gray-400 text-base" style={{ fontFamily: 'Inter, sans-serif' }}>
-                      Annulable à tout moment
-                    </p>
-                  </div>
-                  <div className="max-w-2xl mx-auto mb-4 flex justify-center">
-                    <button className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-8 py-4 rounded-[14px] font-medium transition-all duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                      Accéder au plan Pro
-                    </button>
-                  </div>
-                  <div className="max-w-2xl mx-auto mb-8 flex flex-wrap justify-center gap-4 sm:gap-6">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[#2E6BFF] text-base">✓</span>
-                      <span className="text-gray-400 text-sm sm:text-base" style={{ fontFamily: 'Inter, sans-serif' }}>Accès immédiat</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[#2E6BFF] text-base">✓</span>
-                      <span className="text-gray-400 text-sm sm:text-base" style={{ fontFamily: 'Inter, sans-serif' }}>Livestream quotidien</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[#2E6BFF] text-base">✓</span>
-                      <span className="text-gray-400 text-sm sm:text-base" style={{ fontFamily: 'Inter, sans-serif' }}>Analyse complète</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Section 8 - App */}
+              {/* Section 4 - App */}
               <div id="section-app" className="mt-16 sm:mt-20">
                 <div className="relative">
-                  {/* Numéro 8 en haut à gauche */}
+                  {/* Numéro 4 en haut à gauche */}
                   <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                    8
+                    4
                   </div>
                   
                   {/* Titre principal */}
@@ -5186,6 +5038,27 @@ const App = () => {
                 Les services de TPLN
               </h2>
 
+              {/* Pour traders disciplinés - au-dessus des prix */}
+              <div className="max-w-2xl mx-auto mb-10">
+                <h3 className="text-2xl sm:text-3xl font-bold text-center mb-6" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
+                  <span className="text-white">Pour traders</span>
+                  <br />
+                  <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">disciplinés.</span>
+                </h3>
+                <p className="text-white text-base sm:text-lg mb-4" style={{ fontFamily: 'Inter, sans-serif' }}>
+                  TPLN s'adresse aux traders qui privilégient :
+                </p>
+                <div className="space-y-2 mb-6 pl-0 sm:pl-4">
+                  <p className="text-white text-lg font-bold" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>La précision</p>
+                  <p className="text-white text-lg font-bold" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>La structure</p>
+                  <p className="text-white text-lg font-bold" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>La constance</p>
+                  <p className="text-white text-lg font-bold" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>La responsabilité</p>
+                </div>
+                <p className="text-white text-base" style={{ fontFamily: 'Inter, sans-serif' }}>
+                  Il ne s'adresse pas à ceux qui recherchent des promesses rapides.
+                </p>
+              </div>
+
               {/* Encadré 100 premiers - couleurs site (violet/bleu/rose) */}
               <div className="max-w-2xl mx-auto mb-6 sm:mb-8 rounded-[16px] border border-[#222836] bg-[#141821] px-5 py-3.5 text-center">
                 <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
@@ -5831,50 +5704,6 @@ const App = () => {
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-
-
-
-          {/* Section Live (Dupliquée 2) - Pour traders disciplinés */}
-          <div id="section-live-3" className="mt-16 sm:mt-20">
-            <div className="relative">
-              {/* Titre principal */}
-              <div className="text-center mb-8">
-                <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                  <span className="text-white">Pour traders</span>
-                  <br />
-                  <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
-                    disciplinés.
-                  </span>
-                </h2>
-              </div>
-
-              {/* Bloc manifeste — positioning, pas liste de features */}
-              <div className="max-w-2xl mx-auto text-center">
-                <p className="text-[#AAB3C2] text-lg mb-3 leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>
-                  TPLN s'adresse aux traders qui privilégient :
-                </p>
-                
-                <div className="space-y-2 sm:space-y-3 mb-4">
-                  <p className="text-[#F2F4F8] text-xl sm:text-2xl font-semibold tracking-tight" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                    La précision
-                  </p>
-                  <p className="text-[#F2F4F8] text-xl sm:text-2xl font-semibold tracking-tight" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                    La structure
-                  </p>
-                  <p className="text-[#F2F4F8] text-xl sm:text-2xl font-semibold tracking-tight" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                    La constance
-                  </p>
-                  <p className="text-[#F2F4F8] text-xl sm:text-2xl font-semibold tracking-tight" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                    La responsabilité
-                  </p>
-                </div>
-                
-                <p className="text-[#AAB3C2] text-base sm:text-lg leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>
-                  Il ne s'adresse pas à ceux qui recherchent des promesses rapides.
-                </p>
               </div>
             </div>
           </div>
