@@ -2214,11 +2214,11 @@ const App = () => {
                           </div>
                         </div>
 
-                        {/* Right: Feature Grid - 2 columns, 3 rows */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        {/* Right: Feature Grid - 2 columns, 3 rows - PWA: plus carré (max-width + 2 cols) */}
+                        <div className={`grid gap-5 ${isPWA ? 'grid-cols-2 max-w-[320px] mx-auto' : 'grid-cols-1 sm:grid-cols-2'}`}>
                           {/* Performance chiffrée */}
                           <div 
-                            className="bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden"
+                            className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'aspect-square min-h-0 flex flex-col justify-center' : ''}`}
                             style={{ animation: 'fadeIn 0.6s ease-out' }}
                           >
                             <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
@@ -2233,7 +2233,7 @@ const App = () => {
 
                           {/* Discipline par session */}
                           <div 
-                            className="bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden"
+                            className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'aspect-square min-h-0 flex flex-col justify-center' : ''}`}
                             style={{ animation: 'fadeIn 0.7s ease-out' }}
                           >
                             <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
@@ -2248,7 +2248,7 @@ const App = () => {
 
                           {/* Erreurs récurrentes */}
                           <div 
-                            className="bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden"
+                            className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'aspect-square min-h-0 flex flex-col justify-center' : ''}`}
                             style={{ animation: 'fadeIn 0.8s ease-out' }}
                           >
                             <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
@@ -2263,7 +2263,7 @@ const App = () => {
 
                           {/* Drawdown maximum */}
                           <div 
-                            className="bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden"
+                            className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'aspect-square min-h-0 flex flex-col justify-center' : ''}`}
                             style={{ animation: 'fadeIn 0.9s ease-out' }}
                           >
                             <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
@@ -2278,7 +2278,7 @@ const App = () => {
 
                           {/* Win rate & profit factor */}
                           <div 
-                            className="bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden"
+                            className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'aspect-square min-h-0 flex flex-col justify-center' : ''}`}
                             style={{ animation: 'fadeIn 1s ease-out' }}
                           >
                             <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
@@ -2292,8 +2292,8 @@ const App = () => {
                           </div>
 
                           {/* Qualité d'exécution */}
-                          <div 
-                            className="bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden"
+                          <div
+                            className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'aspect-square min-h-0 flex flex-col justify-center' : ''}`}
                             style={{ animation: 'fadeIn 1.1s ease-out' }}
                           >
                             <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
@@ -2359,15 +2359,26 @@ const App = () => {
                     <h2 className="font-bold mb-8 text-center leading-tight text-white" style={{ fontSize: 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                       La méthode TPLN
                     </h2>
-                    <p className="text-white text-base leading-relaxed text-center mt-6 mb-4" style={{ fontFamily: 'Inter, sans-serif' }}>
-                      Un cadre structuré que tu comprends.<br />
-                      Un journal avancé pour mesurer ce que tu exécutes.
-                    </p>
-                    <p className="text-white text-base leading-relaxed text-center" style={{ fontFamily: 'Inter, sans-serif' }}>
-                      Tu apprends.<br />
-                      Tu appliques.<br />
-                      Tu mesures.
-                    </p>
+                  </div>
+
+                  {/* Mesure ta performance réelle - dupliqué */}
+                  <div className="max-w-[480px] mx-auto mb-8 text-center">
+                    <h3 className="text-[#F2F4F8] text-4xl sm:text-5xl font-bold mb-6 leading-[1.1]" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
+                      Mesure ta performance réelle.
+                    </h3>
+                    <div className="text-[#AAB3C2] text-lg leading-[1.5]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      <p className="mb-2">
+                        Le journal TPLN ne mesure pas seulement le résultat.
+                      </p>
+                      <p className="mb-4">
+                        Il mesure la qualité de ta prise de décision.
+                      </p>
+                      <div className="space-y-1.5">
+                        <p>Ce que tu exécutes.</p>
+                        <p>Ce que tu répètes.</p>
+                        <p>Ce que tu dois corriger.</p>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Cadre formation - Inclus dans l'abonnement */}
@@ -2487,9 +2498,10 @@ const App = () => {
                       Votre navigateur ne supporte pas la lecture de vidéos.
                     </video>
                   </div>
-                  <div className="max-w-2xl mx-auto mb-5 text-center">
+                  <div className="max-w-2xl mx-auto mb-6 text-center">
+                    <h4 className="text-white text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Transparence totale des performances</h4>
                     <p className="text-gray-400 text-base leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>
-                      Chaque trade est expliqué. Aucun signal envoyé sans contexte.
+                      Chaque opportunité envoyée est enregistrée et mesurée dans un journal dédié.
                     </p>
                   </div>
                   <div className="max-w-2xl mx-auto mb-2 text-center">
