@@ -1747,7 +1747,7 @@ const App = () => {
                           {paymentType === 'yearly' && (
                             <div className="text-[#AAB3C2] text-sm font-normal mt-2">Facturé 312€ / an</div>
                           )}
-                        </div>
+                          </div>
                         <ul className="text-[#AAB3C2] text-base space-y-4 mb-8 text-left flex-grow" style={{ fontFamily: 'Inter, sans-serif' }}>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
@@ -1812,7 +1812,7 @@ const App = () => {
                           {paymentType === 'yearly' && (
                             <div className="text-[#AAB3C2] text-sm font-normal mt-2">Facturé 528€ / an</div>
                           )}
-                        </div>
+                          </div>
                         <ul className="text-[#AAB3C2] text-base space-y-4 mb-8 text-left flex-grow" style={{ fontFamily: 'Inter, sans-serif' }}>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
@@ -1873,10 +1873,10 @@ const App = () => {
                           {paymentType === 'yearly' && (
                             <div className="text-[#AAB3C2] text-sm font-normal mt-2">Facturé 690€ / an</div>
                           )}
-                        </div>
+                          </div>
                         <div className="text-[#7F8AA1] text-sm mb-4 h-[20px] flex items-center">
                           {paymentType === 'yearly' ? '' : <>&nbsp;</>}
-                        </div>
+                          </div>
                         <ul className="text-[#AAB3C2] text-base space-y-4 mb-8 text-left flex-grow" style={{ fontFamily: 'Inter, sans-serif' }}>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
@@ -1963,7 +1963,7 @@ const App = () => {
             {/* Nos Services - Navigation Horizontale */}
             <div id="services" className="w-full mb-10 sm:mb-16">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-12 sm:mb-20">
-                </div>
+              </div>
 
               {/* Sections des services - Déplacées vers le haut */}
               <div className="w-screen -mx-4 sm:mx-0 sm:w-full mt-8">
@@ -2078,8 +2078,8 @@ const App = () => {
             <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-4 sm:px-6 hidden flex justify-center">
               <div className="w-full max-w-2xl bg-gray-800/50 p-4 sm:p-5 rounded-xl border border-gray-600/50 backdrop-blur-sm">
                 <h2 className="text-2xl sm:text-3xl font-bold text-white text-left mb-4">
-                  À propos de TheTheTrader
-                </h2>
+                    À propos de TheTheTrader
+                  </h2>
                 <div className="text-gray-300 text-sm sm:text-base leading-snug space-y-1.5 text-left mb-4">
                   <p>Trader depuis 3 ans. Des milliers d'heures d'écran.</p>
                   <p>
@@ -2098,12 +2098,12 @@ const App = () => {
                   </ul>
                   <p>
                     Pas de marketing agressif. Pas de promesses irréalistes. Uniquement du travail structuré.
-                  </p>
-                </div>
+                    </p>
+                  </div>
                 <div className="flex items-center gap-2 flex-wrap">
-                    <a
-                      href="https://x.com/thethetrader"
-                      target="_blank"
+                    <a 
+                      href="https://x.com/thethetrader" 
+                      target="_blank" 
                       rel="noopener noreferrer"
                       title="X @thethetrader"
                       className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-[#222836] hover:bg-[#2A2F3F] text-[#AAB3C2] hover:text-white transition-all duration-200"
@@ -2112,9 +2112,9 @@ const App = () => {
                         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                       </svg>
                     </a>
-                    <a
-                      href="https://www.instagram.com/tradingpourlesnuls_/"
-                      target="_blank"
+                    <a 
+                      href="https://www.instagram.com/tradingpourlesnuls_/" 
+                      target="_blank" 
                       rel="noopener noreferrer"
                       title="Instagram @tradingpourlesnuls_"
                       className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-[#222836] hover:bg-[#2A2F3F] text-[#AAB3C2] hover:text-white transition-all duration-200"
@@ -2123,9 +2123,9 @@ const App = () => {
                         <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                       </svg>
                     </a>
-                    <a
-                      href="https://www.tiktok.com/@tradingpourlesnuls_?_t=ZN-90uWKmkvqoI&_r=1"
-                      target="_blank"
+                    <a 
+                      href="https://www.tiktok.com/@tradingpourlesnuls_?_t=ZN-90uWKmkvqoI&_r=1" 
+                      target="_blank" 
                       rel="noopener noreferrer"
                       title="TikTok @tradingpourlesnuls_"
                       className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-[#222836] hover:bg-[#2A2F3F] text-[#AAB3C2] hover:text-white transition-all duration-200"
@@ -2201,18 +2201,18 @@ const App = () => {
                             <p className="mb-0">Une exécution disciplinée.</p>
                           </>
                         )}
-                      </div>
+                  </div>
                       {isPWAOrMobile && (
                         <>
-                          <p className="text-white font-bold leading-tight mb-3 mt-6" style={{ fontFamily: 'Inter, sans-serif', fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                            TPLN simplifie tout.
+                          <p className="text-white font-bold leading-tight mb-3 mt-6 whitespace-nowrap" style={{ fontFamily: 'Inter, sans-serif', fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
+                            Pourquoi la majorité échoue ?
                           </p>
                           <div className="text-[#AAB3C2] text-base leading-tight space-y-0.5" style={{ fontFamily: 'Inter, sans-serif' }}>
                             <p className="mb-0.5">Pas de cadre</p>
                             <p className="mb-0.5">Pas de constance</p>
                             <p className="mb-0.5">Pas de mesure</p>
                             <p className="mb-0">Trop d'improvisation</p>
-                          </div>
+                    </div>
                           <p className="text-white font-bold leading-tight mb-3 mt-6" style={{ fontFamily: 'Inter, sans-serif', fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                             TPLN remet de la structure.
                           </p>
@@ -2221,10 +2221,10 @@ const App = () => {
                             <p className="mb-0.5">Des règles précises.</p>
                             <p className="mb-0.5">Une exécution disciplinée.</p>
                             <p className="mb-0">Un système mesurable.</p>
-                          </div>
+                    </div>
                         </>
                       )}
-                    </div>
+                  </div>
                     {!isPWAOrMobile && (
                     <div className="lg:flex-1 lg:min-w-0 flex justify-center">
                   <div className="mb-0 w-full max-w-lg">
@@ -2260,8 +2260,8 @@ const App = () => {
                     </div>
                     )}
                   </div>
-                </div>
               </div>
+            </div>
 
               {/* Section 2 - Signaux */}
               <div id="section-signaux" className="mt-16 sm:mt-20">
@@ -2301,7 +2301,7 @@ const App = () => {
                               <p>Ce que tu dois corriger.</p>
                             </div>
                           </div>
-                        </div>
+                  </div>
 
                         {/* Right: Feature Grid - 2 columns, 3 rows - PWA: plus carré (max-width + 2 cols) */}
                         <div className={`grid gap-5 ${isPWA ? 'grid-cols-2 max-w-[200px] mx-auto' : 'grid-cols-1 sm:grid-cols-2'}`}>
@@ -2315,10 +2315,10 @@ const App = () => {
                               <svg className="w-5 h-5 text-[#2E6BFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                               </svg>
-                            </div>
+                  </div>
                             <h4 className="text-[#F2F4F8] text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Performance chiffrée</h4>
                             <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Métriques précises de tes résultats</p>
-                          </div>
+              </div>
 
                           {/* Discipline par session */}
                           <div 
@@ -2332,10 +2332,10 @@ const App = () => {
                               </svg>
                             </div>
                             <h4 className="text-[#F2F4F8] text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Discipline par session</h4>
-                            <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Suivi de ta rigueur opérationnelle</p>
-                          </div>
-
-                          {/* Erreurs récurrentes */}
+                            <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Mesure ta rigueur réelle, pas ton ressenti.</p>
+                  </div>
+                  
+                          {/* Erreurs comportementales */}
                           <div 
                             className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'w-full aspect-square min-h-0 flex flex-col justify-center' : ''}`}
                             style={{ animation: 'fadeIn 0.8s ease-out' }}
@@ -2345,10 +2345,10 @@ const App = () => {
                               <svg className="w-5 h-5 text-[#2E6BFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                               </svg>
-                            </div>
-                            <h4 className="text-[#F2F4F8] text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Erreurs récurrentes</h4>
-                            <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Identification des patterns négatifs</p>
-                          </div>
+                    </div>
+                            <h4 className="text-[#F2F4F8] text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Erreurs comportementales</h4>
+                            <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Détecte les schémas qui sabotent ta performance.</p>
+                  </div>
 
                           {/* Drawdown maximum */}
                           <div 
@@ -2359,11 +2359,11 @@ const App = () => {
                             <div className="w-10 h-10 rounded-[12px] bg-[rgba(46,107,255,0.15)] flex items-center justify-center mb-4">
                               <svg className="w-5 h-5 text-[#2E6BFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                              </svg>
-                            </div>
-                            <h4 className="text-[#F2F4F8] text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Drawdown maximum</h4>
-                            <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Mesure de ton risque maximal</p>
-                          </div>
+                                  </svg>
+                                </div>
+                            <h4 className="text-[#F2F4F8] text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Drawdown maîtrisé</h4>
+                            <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Contrôle ton risque. Protège ton capital.</p>
+                              </div>
 
                           {/* Win rate & profit factor */}
                           <div 
@@ -2376,9 +2376,9 @@ const App = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
                             </div>
-                            <h4 className="text-[#F2F4F8] text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Win rate & profit factor</h4>
-                            <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Ratio de réussite et rentabilité</p>
-                          </div>
+                            <h4 className="text-[#F2F4F8] text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Performance mesurée</h4>
+                            <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Win rate, profit factor, rentabilité réelle.</p>
+                      </div>
 
                           {/* Qualité d'exécution */}
                           <div
@@ -2389,15 +2389,15 @@ const App = () => {
                             <div className="w-10 h-10 rounded-[12px] bg-[rgba(46,107,255,0.15)] flex items-center justify-center mb-4">
                               <svg className="w-5 h-5 text-[#2E6BFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                              </svg>
-                            </div>
+                                  </svg>
+                                </div>
                             <h4 className="text-[#F2F4F8] text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Qualité d'exécution</h4>
                             <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Précision de tes entrées et sorties</p>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
 
                   {/* Image journal2 */}
                   <div className="max-w-6xl mx-auto rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl p-0">
@@ -2407,23 +2407,23 @@ const App = () => {
                       className="w-full rounded-lg"
                       loading="lazy"
                     />
-                  </div>
-                </div>
-              </div>
+                                </div>
+                              </div>
+                            </div>
 
               {/* Section 3 - La méthode TPLN */}
               <div id="section-live" className="mt-16 sm:mt-20">
                 <div className="relative">
                   <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
                     3
-                  </div>
+                          </div>
                   
                   {/* Titre principal */}
                   <div className="text-center mb-8">
                     <h2 className="font-bold mb-8 text-center leading-tight bg-clip-text text-transparent" style={{ fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)', backgroundImage: 'linear-gradient(to right, #2E6BFF 0%, #6B9AFF 35%, #E8EDF5 70%, #FFFFFF 100%)' }}>
                       La méthode TPLN
                     </h2>
-                  </div>
+                        </div>
 
                   {/* Texte à gauche, cadre à droite */}
                   <div className="flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-10 max-w-6xl mx-auto mb-8">
@@ -2444,7 +2444,7 @@ const App = () => {
                           <p className="mb-1">Tu comprends la logique.</p>
                           <p className="mb-1">Tu sais quoi valider.</p>
                           <p className="mb-0">Tu sais quand exécuter.</p>
-                        </div>
+                      </div>
                       )}
                     </div>
                     <div className="lg:flex-1 lg:min-w-0 flex flex-col items-center gap-6">
@@ -2571,8 +2571,8 @@ const App = () => {
                     <p className="text-gray-400 text-base leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>
                       Chaque opportunité envoyée est enregistrée et mesurée dans un journal dédié.
                     </p>
-                  </div>
                 </div>
+              </div>
               </div>
 
               {/* Section 5 - App */}
@@ -2626,52 +2626,61 @@ const App = () => {
                           </ul>
                         </div>
                         <p className={`text-[#AAB3C2] text-base mt-4 leading-relaxed ${isPWA ? 'text-left' : ''}`} style={{ fontFamily: 'Inter, sans-serif' }}>
-                          TPLN n'est pas seulement une formation ou un live.<br />
-                          C'est un environnement structuré accessible à tout moment.<br />
-                          L'accès à l'application est intégré à l'écosystème TPLN.
-                        </p>
-                      </div>
+                          {isPWAOrMobile ? (
+                            <>
+                              TPLN n'est pas juste une formation.<br />
+                              C'est un environnement complet, accessible à tout moment.
+                            </>
+                          ) : (
+                            <>
+                              TPLN n'est pas seulement une formation ou un live.<br />
+                              C'est un environnement structuré accessible à tout moment.<br />
+                              L'accès à l'application est intégré à l'écosystème TPLN.
+                            </>
+                          )}
+                    </p>
+                  </div>
 
                       {/* Colonne droite - Vidéo iPhone */}
                       <div className="flex-1 flex items-center justify-center lg:justify-start order-1 lg:order-2">
                         <div className="w-full sm:max-w-lg lg:max-w-xl xl:max-w-2xl relative">
-                          {/* Cadre iPhone avec photo */}
-                          <div className="relative">
-                            {/* Photo du cadre iPhone */}
-                            <img 
-                              src="/FOndiphone.png" 
-                              alt="Application TPLN sur iPhone - Fondamentaux"
-                              width={1024}
-                              height={1024}
-                              loading="lazy"
+                      {/* Cadre iPhone avec photo */}
+                      <div className="relative">
+                        {/* Photo du cadre iPhone */}
+                        <img 
+                          src="/FOndiphone.png" 
+                          alt="Application TPLN sur iPhone - Fondamentaux"
+                          width={1024}
+                          height={1024}
+                          loading="lazy"
                               className={`w-full h-auto ${isPWA ? 'scale-150' : 'scale-95 sm:scale-110 lg:scale-125'}`}
-                              style={{
-                                display: 'block',
-                                maxWidth: '100%',
-                                height: 'auto'
-                              }}
-                              onError={(e) => {
-                                e.currentTarget.src = '/faceiphone.png';
-                              }}
-                            />
-                            
-                            {/* Vidéo superposée */}
-                            <video 
+                          style={{
+                            display: 'block',
+                            maxWidth: '100%',
+                            height: 'auto'
+                          }}
+                          onError={(e) => {
+                            e.currentTarget.src = '/faceiphone.png';
+                          }}
+                        />
+                        
+                        {/* Vidéo superposée */}
+                        <video 
                               className={`absolute left-1/2 transform -translate-x-1/2 w-[56%] aspect-[9/16] rounded-[2rem] sm:rounded-[4rem] scale-100 sm:scale-100 ${isPWA && !user ? 'top-1.5' : '-top-1'} sm:-top-1`}
-                              autoPlay
-                              loop
-                              muted
-                              playsInline
-                              preload="auto"
-                              controls={false}
-                            >
-                              <source src="/videoapp copie.mp4" type="video/mp4" />
-                              <source src="/videoapp.mov" type="video/quicktime" />
-                              Votre navigateur ne supporte pas la lecture de vidéos.
-                            </video>
-                          </div>
-                        </div>
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          preload="auto"
+                          controls={false}
+                        >
+                          <source src="/videoapp copie.mp4" type="video/mp4" />
+                          <source src="/videoapp.mov" type="video/quicktime" />
+                          Votre navigateur ne supporte pas la lecture de vidéos.
+                        </video>
                       </div>
+                    </div>
+                  </div>
                     </div>
                   </div>
 
@@ -2705,12 +2714,12 @@ const App = () => {
                   </ul>
                   <p>
                     Pas de marketing agressif. Pas de promesses irréalistes. Uniquement du travail structuré.
-                  </p>
-                </div>
+                    </p>
+                  </div>
                 <div className="flex items-center gap-2 flex-wrap">
-                    <a
-                      href="https://x.com/thethetrader"
-                      target="_blank"
+                    <a 
+                      href="https://x.com/thethetrader" 
+                      target="_blank" 
                       rel="noopener noreferrer"
                       title="X @thethetrader"
                       className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-[#222836] hover:bg-[#2A2F3F] text-[#AAB3C2] hover:text-white transition-all duration-200"
@@ -2719,9 +2728,9 @@ const App = () => {
                         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                       </svg>
                     </a>
-                    <a
-                      href="https://www.instagram.com/tradingpourlesnuls_/"
-                      target="_blank"
+                    <a 
+                      href="https://www.instagram.com/tradingpourlesnuls_/" 
+                      target="_blank" 
                       rel="noopener noreferrer"
                       title="Instagram @tradingpourlesnuls_"
                       className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-[#222836] hover:bg-[#2A2F3F] text-[#AAB3C2] hover:text-white transition-all duration-200"
@@ -2730,9 +2739,9 @@ const App = () => {
                         <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                       </svg>
                     </a>
-                    <a
-                      href="https://www.tiktok.com/@tradingpourlesnuls_?_t=ZN-90uWKmkvqoI&_r=1"
-                      target="_blank"
+                    <a 
+                      href="https://www.tiktok.com/@tradingpourlesnuls_?_t=ZN-90uWKmkvqoI&_r=1" 
+                      target="_blank" 
                       rel="noopener noreferrer"
                       title="TikTok @tradingpourlesnuls_"
                       className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-[#222836] hover:bg-[#2A2F3F] text-[#AAB3C2] hover:text-white transition-all duration-200"
@@ -4937,7 +4946,7 @@ const App = () => {
                               <div className="bg-gray-800 rounded-lg p-4">
                                 <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium flex items-center justify-center gap-2">
                                   <span className="text-xl">+</span>
-                                  Ajouter un Trade
+                                  {isPWAOrMobile ? 'trade' : 'Ajouter un Trade'}
                                 </button>
                                 <p className="text-gray-400 text-xs mt-2 text-center">
                                   Ajoutez vos trades avec analyse des raisons de perte
@@ -5161,7 +5170,7 @@ const App = () => {
                           Facturé 312€ / an
                         </div>
                       )}
-                    </div>
+                      </div>
                     <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
@@ -5234,7 +5243,7 @@ const App = () => {
                           Facturé 528€ / an
                         </div>
                       )}
-                    </div>
+                      </div>
                                           <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
                         <li className="flex items-center gap-2">
                           <span className="text-green-400 font-bold text-lg">✓</span>
@@ -5305,7 +5314,7 @@ const App = () => {
                           Facturé 690€ / an
                         </div>
                       )}
-                    </div>
+                      </div>
                                           <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
                         <li className="flex items-center gap-2">
                           <span className="text-green-400 font-bold text-lg">✓</span>

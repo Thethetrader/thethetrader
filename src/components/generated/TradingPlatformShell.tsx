@@ -118,7 +118,7 @@ function ProfitFactorGauge({ totalWins, totalLosses }: { totalWins: number; tota
       
       {/* Label gains (vert) - en bas à gauche */}
       {totalWins > 0 && (
-        <div className="absolute -bottom-2 -left-2 bg-black text-green-400 text-xs font-bold px-2 py-1 rounded pointer-events-none">
+        <div className="absolute -bottom-2 -left-2 bg-black text-green-100 text-xs font-bold px-2 py-1 rounded pointer-events-none">
           ${formatAmount(totalWins)}
         </div>
       )}
@@ -4710,7 +4710,7 @@ export default function TradingPlatformShell() {
                 <select
                   value={selectedAccount}
                   onChange={(e) => handleAccountChange(e.target.value)}
-                  className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 rounded-lg text-sm font-medium focus:outline-none focus:border-green-500 cursor-pointer h-9 appearance-none text-center min-w-[10rem]"
+                  className="bg-green-200/20 hover:bg-green-200/30 border border-green-200/40 text-green-100 hover:text-green-100 rounded-lg text-sm font-medium focus:outline-none focus:border-green-200/50 cursor-pointer h-9 appearance-none text-center min-w-[10rem]"
                   style={{ 
                     backgroundImage: 'none',
                     WebkitAppearance: 'none',
@@ -4745,7 +4745,7 @@ export default function TradingPlatformShell() {
                 className={`px-3 py-2 rounded-lg text-sm font-medium h-9 flex items-center justify-center ${
                   tradingAccounts.length === 0
                     ? 'bg-gray-700 border border-gray-600 text-gray-500 cursor-not-allowed'
-                    : 'bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200'
+                    : 'bg-green-200/20 hover:bg-green-200/30 border border-green-200/40 text-green-100 hover:text-green-100'
                 }`}
                 title="Options du compte"
               >
@@ -4760,7 +4760,7 @@ export default function TradingPlatformShell() {
                     setShowAddAccountModal(true);
                   }
                 }}
-                className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap h-9 flex items-center justify-center"
+                className="bg-green-200/20 hover:bg-green-200/30 border border-green-200/40 text-green-100 hover:text-green-100 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap h-9 flex items-center justify-center"
               >
                 + Compte
               </button>
@@ -4890,7 +4890,7 @@ export default function TradingPlatformShell() {
                     
                     // Déterminer la couleur selon le PnL total
                     if (totalPnL > 0) {
-                      bgColor = 'bg-green-400/40 border-green-300/30 text-white'; // PnL positif - vert plus pale
+                      bgColor = 'bg-green-200/30 border-green-200/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
                       bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif
                     } else {
@@ -4912,7 +4912,7 @@ export default function TradingPlatformShell() {
                     
                     // Déterminer la couleur selon le PnL total
                     if (totalPnL > 0) {
-                      bgColor = 'bg-green-400/40 border-green-300/30 text-white'; // PnL positif - vert plus pale
+                      bgColor = 'bg-green-200/30 border-green-200/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
                       bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif
                     } else {
@@ -5014,7 +5014,7 @@ export default function TradingPlatformShell() {
                             </div>
                             {noteMoy !== null && (
                               <div
-                                className={`absolute bottom-1 left-1 text-xs font-bold ${discColor === 'green' ? 'text-green-400' : discColor === 'yellow' ? 'text-yellow-400' : 'text-red-400'}`}
+                                className={`absolute bottom-1 left-1 text-xs font-bold ${discColor === 'green' ? 'text-green-100' : discColor === 'yellow' ? 'text-yellow-400' : 'text-red-400'}`}
                                 title={`Étoile discipline (sur 5): ${noteMoy} – ${discTitle}`}
                               >
                                 ★ {noteMoy}
@@ -5034,7 +5034,7 @@ export default function TradingPlatformShell() {
           {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') && (
             <div className="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-gray-600">
               <div className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-green-500/60 border border-green-400/50 rounded"></div>
+                <div className="w-3 h-3 bg-green-200/50 border border-green-200/40 rounded"></div>
                 <span className="text-xs text-gray-300">WIN</span>
               </div>
               <div className="flex items-center gap-1">
@@ -5060,7 +5060,7 @@ export default function TradingPlatformShell() {
             <>
               <div className="border-t border-gray-700 mt-6 pt-4 flex items-center justify-center gap-3">
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="inline-flex items-center justify-center w-3 h-3 rounded bg-green-500/70 border border-green-400/60"></span>
+                  <span className="inline-flex items-center justify-center w-3 h-3 rounded bg-green-200/50 border border-green-200/50/60"></span>
                   <span className="text-gray-300">WIN</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
@@ -5143,20 +5143,20 @@ export default function TradingPlatformShell() {
             {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && activeJournalButton !== 'tpln' && (
             <div className={`border rounded-lg p-4 border ${
               (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes'
-                ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'bg-green-600/20 border-green-500/30' : 'bg-red-600/20 border-red-500/30')
-                : (((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForDisplay() : calculateTotalPnLForMonth()) >= 0 ? 'bg-green-600/20 border-green-500/30' : 'bg-red-600/20 border-red-500/30')
+                ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'bg-green-200/20 border-green-200/30' : 'bg-red-600/20 border-red-500/30')
+                : (((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForDisplay() : calculateTotalPnLForMonth()) >= 0 ? 'bg-green-200/20 border-green-200/30' : 'bg-red-600/20 border-red-500/30')
             }`}>
               <div className={`text-sm mb-1 ${
                 (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes'
-                  ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'text-green-300' : 'text-red-300')
-                  : (((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForDisplay() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-300' : 'text-red-300')
+                  ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'text-green-100' : 'text-red-300')
+                  : (((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForDisplay() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-100' : 'text-red-300')
               }`}>
                 {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes' ? 'Solde du compte' : (statsPeriod === 'jour' ? 'P&L du jour' : 'P&L Total')}
               </div>
               <div className={`text-2xl font-bold ${
                 (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes'
-                  ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'text-green-200' : 'text-red-200')
-                  : (((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForDisplay() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-200' : 'text-red-200')
+                  ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'text-green-100' : 'text-red-200')
+                  : (((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForDisplay() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-100' : 'text-red-200')
               }`}>
                 {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes'
                   ? `$${calculateAccountBalance().toFixed(2)}`
@@ -5214,13 +5214,13 @@ export default function TradingPlatformShell() {
             
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
-                <div className="text-xs text-gray-400 mb-1">Aujourd'hui</div>
+                <div className="text-xs text-gray-400 mb-1">Trade auj</div>
                 <div className="text-lg font-bold text-blue-400">
                   {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? getTodayTradesForMonth().length : getTodaySignalsForMonth()}
                 </div>
               </div>
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
-                <div className="text-xs text-gray-400 mb-1">Ce mois</div>
+                <div className="text-xs text-gray-400 mb-1">Trade ce mois</div>
                 <div className="text-lg font-bold text-white">
                   {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? getThisMonthTradesForMonth().length : getThisMonthSignalsForMonth()}
                 </div>
@@ -5230,7 +5230,7 @@ export default function TradingPlatformShell() {
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Avg Win</div>
-                <div className="text-lg font-bold text-green-400">
+                <div className="text-lg font-bold text-green-100">
                   {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? 
                     (calculateAvgWinTradesForDisplay() > 0 ? `+$${calculateAvgWinTradesForDisplay()}` : '-') :
                     (getCalendarMonthlyStats(currentDate).avgWin > 0 ? `+$${getCalendarMonthlyStats(currentDate).avgWin}` : '-')
@@ -5343,7 +5343,7 @@ export default function TradingPlatformShell() {
                         </div>
                       ) : (
                         <>
-                          <div className={`text-xs py-1 rounded font-bold flex items-center justify-center ${weekData.wins > 0 ? 'bg-green-400/70 text-white' : 'bg-transparent'}`} style={{ width: '36px', height: '24px' }}>
+                          <div className={`text-xs py-1 rounded font-bold flex items-center justify-center ${weekData.wins > 0 ? 'bg-green-200/50 text-white' : 'bg-transparent'}`} style={{ width: '36px', height: '24px' }}>
                             {weekData.wins > 0 ? `${weekData.wins}W` : ''}
                           </div>
                           <div className={`text-xs py-1 rounded font-bold flex items-center justify-center ${weekData.losses > 0 ? 'bg-red-400/70 text-white' : 'bg-transparent'}`} style={{ width: '36px', height: '24px' }}>
@@ -5353,7 +5353,7 @@ export default function TradingPlatformShell() {
                       )}
                     </div>
                     <div className={`text-xs ${
-                      weekData.pnl > 0 ? 'text-green-400' : 
+                      weekData.pnl > 0 ? 'text-green-100' : 
                       weekData.pnl < 0 ? 'text-red-400' : 'text-gray-500'
                     }`} style={{ minWidth: '60px', textAlign: 'right' }}>
                       {weekData.pnl !== 0 ? `${weekData.pnl > 0 ? '+' : ''}$${weekData.pnl}` : ''}
@@ -5372,7 +5372,7 @@ export default function TradingPlatformShell() {
                   <h4 className="text-xs font-medium text-gray-300">Solde du compte</h4>
                   <div className={`text-base font-bold ${
                     calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) 
-                      ? 'text-green-400' : 'text-red-400'
+                      ? 'text-green-100' : 'text-red-400'
                   }`}>
                     ${calculateAccountBalance().toFixed(2)}
                   </div>
@@ -5430,7 +5430,7 @@ export default function TradingPlatformShell() {
                   setWinsLossTradeIndex(0);
                   setShowWinsLossModal(true);
                 }}
-                className="w-full px-3 py-2 rounded-lg bg-green-600/30 border border-green-500/50 text-green-300 hover:bg-green-600/50 transition-colors text-sm font-medium"
+                className="w-full px-3 py-2 rounded-lg bg-green-200/30 border border-green-200/40 text-green-100 hover:bg-green-200/40 transition-colors text-sm font-medium"
               >
                 📈 Tous les WIN ({selectedChannel.id === 'calendrier' ? signals.filter(s => s.status === 'WIN' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount.filter(t => t.status === 'WIN').length})
               </button>
@@ -5646,7 +5646,7 @@ export default function TradingPlatformShell() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">P&L Total:</span>
-                <span className={calculateTotalPnL() >= 0 ? 'text-green-400' : 'text-red-400'}>
+                <span className={calculateTotalPnL() >= 0 ? 'text-green-100' : 'text-red-400'}>
                   {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
                 </span>
               </div>
@@ -5667,7 +5667,7 @@ export default function TradingPlatformShell() {
             onClick={handleToggleNotifications}
             className={`w-full px-4 py-3 rounded-lg font-medium transition-all duration-200 shadow-sm ${
               notificationsEnabled
-                ? 'bg-green-500/20 hover:bg-green-500/30 text-green-400 border border-green-500/30 hover:border-green-500/50'
+                ? 'bg-green-200/20 hover:bg-green-200/30 text-green-100 border border-green-200/30 hover:border-green-200/40'
                 : 'bg-gray-600/20 hover:bg-gray-600/30 text-gray-400 border border-gray-600/30 hover:border-gray-600/50'
             }`}
           >
@@ -5763,7 +5763,7 @@ export default function TradingPlatformShell() {
                   onClick={handleToggleNotifications}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                     notificationsEnabled
-                      ? 'bg-green-400/20 hover:bg-green-400/30 text-green-200 border border-green-400/30'
+                      ? 'bg-green-400/20 hover:bg-green-400/30 text-green-100 border border-green-200/50/30'
                       : 'bg-gray-600/20 hover:bg-gray-600/30 text-gray-300 border border-gray-600/30'
                   }`}
                 >
@@ -5828,7 +5828,7 @@ export default function TradingPlatformShell() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-400">P&L Total:</span>
-                      <span className={calculateTotalPnLForMonth() >= 0 ? 'text-green-200 font-medium' : 'text-red-200 font-medium'}>
+                      <span className={calculateTotalPnLForMonth() >= 0 ? 'text-green-100 font-medium' : 'text-red-200 font-medium'}>
                         {calculateTotalPnLForMonth() >= 0 ? '+' : ''}${calculateTotalPnLForMonth()}
                       </span>
                     </div>
@@ -6057,7 +6057,7 @@ export default function TradingPlatformShell() {
                             <select
                               value={selectedAccount}
                               onChange={(e) => handleAccountChange(e.target.value)}
-                              className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-green-500 cursor-pointer h-9"
+                              className="bg-green-200/20 hover:bg-green-200/30 border border-green-200/40 text-green-100 hover:text-green-100 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-green-200/50 cursor-pointer h-9"
                   style={{ height: '36px', background: 'rgba(34, 197, 94, 0.2)' }}
                             >
                               <option value="Tous les comptes">📊 Tous les comptes</option>
@@ -6080,7 +6080,7 @@ export default function TradingPlatformShell() {
                             className={`px-3 py-2 rounded-lg text-sm font-medium ${
                               tradingAccounts.length === 0
                                 ? 'bg-gray-700 border border-gray-600 text-gray-500 cursor-not-allowed'
-                                : 'bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200'
+                                : 'bg-green-200/20 hover:bg-green-200/30 border border-green-200/40 text-green-100 hover:text-green-100'
                             }`}
                             title="Options du compte"
                           >
@@ -6095,7 +6095,7 @@ export default function TradingPlatformShell() {
                                 setShowAddAccountModal(true);
                               }
                             }}
-                            className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
+                            className="bg-green-200/20 hover:bg-green-200/30 border border-green-200/40 text-green-100 hover:text-green-100 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
                           >
                             + Compte
                           </button>
@@ -6206,7 +6206,7 @@ export default function TradingPlatformShell() {
                             <div className="flex items-center justify-between mb-3">
                               <div className="flex items-center gap-3">
                                 <span className={`px-3 py-1 rounded-lg text-sm font-medium ${
-                                  trade.status === 'WIN' ? 'bg-green-500 text-white' :
+                                  trade.status === 'WIN' ? 'bg-green-200/60 text-white' :
                                   trade.status === 'LOSS' ? 'bg-red-500 text-white' :
                                   'bg-blue-500 text-white'
                                 }`}>
@@ -6217,7 +6217,7 @@ export default function TradingPlatformShell() {
                               </div>
                               <div className="flex items-center gap-3">
                                 <span className={`text-lg font-bold ${
-                                  parseFloat(trade.pnl) >= 0 ? 'text-green-400' : 'text-red-400'
+                                  parseFloat(trade.pnl) >= 0 ? 'text-green-100' : 'text-red-400'
                                 }`}>
                                   {parseFloat(trade.pnl) >= 0 ? '+' : ''}{trade.pnl}$
                                 </span>
@@ -6413,7 +6413,7 @@ export default function TradingPlatformShell() {
                               <div className="space-y-3">
                                 {/* Header avec titre et indicateur */}
                                   <div className="flex items-center gap-2">
-                                  <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-500' : 'bg-gray-500'}`}></div>
+                                  <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-200/60' : 'bg-gray-500'}`}></div>
                                   <h3 className="font-bold text-white text-lg">
                                     Signal {signal.type} {signal.symbol} – {signal.timeframe}
                                   </h3>
@@ -6810,13 +6810,13 @@ export default function TradingPlatformShell() {
                                                 </div>
                                                 <div className="text-sm">
                                                   <div className="flex items-center gap-2 mb-1">
-                                                    <span className={signalData.status === 'WIN' ? 'text-green-400' : 'text-red-400'}>
+                                                    <span className={signalData.status === 'WIN' ? 'text-green-100' : 'text-red-400'}>
                                                       {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
                                                     </span>
                                                   </div>
                                                   {signalData.pnl && (
                                                     <div className="text-gray-300">
-                                                      P&L: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-400'}>{signalData.pnl}</span>
+                                                      P&L: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}>{signalData.pnl}</span>
                                                     </div>
                                                   )}
                                                   {(signalData.status === 'LOSS' || signalData.status === 'WIN') && signalData.signalId && (
@@ -6937,7 +6937,7 @@ export default function TradingPlatformShell() {
                                         <span className="text-xs text-gray-400">Résultat du signal:</span>
                                         <div className={`px-3 py-1.5 rounded-lg text-xs font-medium ${
                                           isClosed && currentSignal?.status === 'WIN'
-                                            ? 'bg-green-500 text-white border-2 border-green-400 shadow-lg' // Bouton WIN actif
+                                            ? 'bg-green-200/60 text-white border-2 border-green-200/50 shadow-lg' // Bouton WIN actif
                                             : isClosed && currentSignal?.status === 'LOSS'
                                             ? 'bg-red-500 text-white border-2 border-red-400 shadow-lg' // Bouton LOSS actif
                                             : isClosed && currentSignal?.status === 'BE'
@@ -6950,7 +6950,7 @@ export default function TradingPlatformShell() {
                                         </div>
                                         {isClosed && currentSignal?.pnl && (
                                           <span className={`text-xs font-medium ${
-                                            currentSignal.status === 'WIN' ? 'text-green-400' :
+                                            currentSignal.status === 'WIN' ? 'text-green-100' :
                                             currentSignal.status === 'LOSS' ? 'text-red-400' :
                                             'text-blue-400'
                                           }`}>
@@ -7220,7 +7220,7 @@ export default function TradingPlatformShell() {
                             <div className="space-y-3">
                               {/* Header avec titre et indicateur */}
                                 <div className="flex items-center gap-2">
-                                <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-500' : 'bg-gray-500'}`}></div>
+                                <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-200/60' : 'bg-gray-500'}`}></div>
                                 <h3 className="font-bold text-white text-lg">
                                   Signal {signal.type} {signal.symbol} – {signal.timeframe}
                                 </h3>
@@ -7456,13 +7456,13 @@ export default function TradingPlatformShell() {
                                                 </div>
                                                 <div className="text-sm">
                                                   <div className="flex items-center gap-2 mb-1">
-                                                    <span className={signalData.status === 'WIN' ? 'text-green-400' : 'text-red-400'}>
+                                                    <span className={signalData.status === 'WIN' ? 'text-green-100' : 'text-red-400'}>
                                                       {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
                                                     </span>
                                                   </div>
                                                   {signalData.pnl && (
                                                     <div className="text-gray-300">
-                                                      P&L: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-400'}>{signalData.pnl}</span>
+                                                      P&L: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}>{signalData.pnl}</span>
                                                     </div>
                                                   )}
                                                   {(signalData.status === 'LOSS' || signalData.status === 'WIN') && signalData.signalId && (
@@ -7583,7 +7583,7 @@ export default function TradingPlatformShell() {
                                         <span className="text-xs text-gray-400">Résultat du signal:</span>
                                         <div className={`px-3 py-1.5 rounded-lg text-xs font-medium ${
                                           isClosed && currentSignal?.status === 'WIN'
-                                            ? 'bg-green-500 text-white border-2 border-green-400 shadow-lg' // Bouton WIN actif
+                                            ? 'bg-green-200/60 text-white border-2 border-green-200/50 shadow-lg' // Bouton WIN actif
                                             : isClosed && currentSignal?.status === 'LOSS'
                                             ? 'bg-red-500 text-white border-2 border-red-400 shadow-lg' // Bouton LOSS actif
                                             : isClosed && currentSignal?.status === 'BE'
@@ -7596,7 +7596,7 @@ export default function TradingPlatformShell() {
                                         </div>
                                         {isClosed && currentSignal?.pnl && (
                                           <span className={`text-xs font-medium ${
-                                            currentSignal.status === 'WIN' ? 'text-green-400' :
+                                            currentSignal.status === 'WIN' ? 'text-green-100' :
                                             currentSignal.status === 'LOSS' ? 'text-red-400' :
                                             'text-blue-400'
                                           }`}>
@@ -8595,7 +8595,7 @@ export default function TradingPlatformShell() {
                       </div>
                       <div className="flex items-center gap-3">
                         <span className={`text-lg font-bold ${
-                          (trade.pnl && parseFloat(trade.pnl) >= 0) ? 'text-green-400' : 'text-red-400'
+                          (trade.pnl && parseFloat(trade.pnl) >= 0) ? 'text-green-100' : 'text-red-400'
                         }`}>
                           {(trade.pnl && parseFloat(trade.pnl) >= 0) ? '+' : ''}{trade.pnl || '0'}$
                         </span>
@@ -8789,7 +8789,7 @@ export default function TradingPlatformShell() {
                       </div>
                       <div className="mt-4 text-center">
                         <span className="text-lg font-bold text-white">{currentItem.symbol}</span>
-                        <span className={`ml-2 text-lg font-bold ${currentItem.pnl && parseFloat(currentItem.pnl) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        <span className={`ml-2 text-lg font-bold ${currentItem.pnl && parseFloat(currentItem.pnl) >= 0 ? 'text-green-100' : 'text-red-400'}`}>
                           {(currentItem.pnl && parseFloat(currentItem.pnl) >= 0 ? '+' : '')}{currentItem.pnl || '0'}$
                         </span>
                         <span className="ml-2 text-gray-400 text-sm">{isSignalsMode ? new Date((currentItem as any).timestamp).toLocaleDateString() : (currentItem as any).date}</span>
@@ -8837,7 +8837,7 @@ export default function TradingPlatformShell() {
                       <tr key={row.monthKey} className="border-b border-gray-700">
                         <td className="py-2 pr-4 text-white">{row.monthLabel}</td>
                         <td className="py-2 pr-4 text-white text-right">{row.trades}</td>
-                        <td className={`py-2 pr-4 text-right font-medium ${row.pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        <td className={`py-2 pr-4 text-right font-medium ${row.pnl >= 0 ? 'text-green-100' : 'text-red-400'}`}>
                           {row.pnl >= 0 ? '+' : ''}{row.pnl.toFixed(0)}
                         </td>
                         <td className="py-2 pr-4 text-white text-right">{row.wr} %</td>
@@ -8942,7 +8942,7 @@ export default function TradingPlatformShell() {
                               <div>
                                 <span className="text-sm text-gray-400">PnL:</span>
                                 <span className={`ml-2 font-bold ${
-                                  signal.pnl && signal.pnl.includes('-') ? 'text-red-400' : 'text-green-400'
+                                  signal.pnl && signal.pnl.includes('-') ? 'text-red-400' : 'text-green-100'
                                 }`}>
                                   {signal.pnl || 'N/A'}
                                 </span>
@@ -9101,7 +9101,7 @@ export default function TradingPlatformShell() {
                           <div>
                             <span className="text-sm text-gray-400">PnL:</span>
                             <span className={`ml-2 font-bold ${
-                              trade.pnl && trade.pnl.includes('-') ? 'text-red-400' : 'text-green-400'
+                              trade.pnl && trade.pnl.includes('-') ? 'text-red-400' : 'text-green-100'
                             }`}>
                               {trade.pnl || 'N/A'}
                             </span>
@@ -9203,7 +9203,7 @@ export default function TradingPlatformShell() {
                           <div>
                             <span className="text-sm text-gray-400">PnL:</span>
                             <span className={`ml-2 font-bold ${
-                              signal.pnl && signal.pnl.includes('-') ? 'text-red-400' : 'text-green-400'
+                              signal.pnl && signal.pnl.includes('-') ? 'text-red-400' : 'text-green-100'
                             }`}>
                               {signal.pnl || 'N/A'}
                             </span>
@@ -9383,7 +9383,7 @@ export default function TradingPlatformShell() {
             <div className="flex justify-end">
               <button
                 onClick={() => setShowPremiumPopup(false)}
-                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium"
+                className="bg-green-200/60 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium"
               >
                 Fermer
               </button>
@@ -9417,7 +9417,7 @@ export default function TradingPlatformShell() {
                   // Rediriger vers la page d'accueil avec hash pricing
                   window.location.href = '/#pricing';
                 }}
-                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium"
+                className="bg-green-200/60 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium"
               >
                 Abonnement
               </button>

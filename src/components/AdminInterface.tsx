@@ -111,13 +111,13 @@ function ProfitFactorGauge({ totalWins, totalLosses }: { totalWins: number; tota
       </svg>
       
       {totalLosses > 0 && (
-        <div className="absolute -top-2 -right-2 bg-black text-red-400 text-xs font-bold px-2 py-1 rounded pointer-events-none">
+        <div className="absolute -top-2 -right-2 bg-black text-red-100 text-xs font-bold px-2 py-1 rounded pointer-events-none">
           ${formatAmount(totalLosses)}
         </div>
       )}
       
       {totalWins > 0 && (
-        <div className="absolute -bottom-2 -left-2 bg-black text-green-400 text-xs font-bold px-2 py-1 rounded pointer-events-none">
+        <div className="absolute -bottom-2 -left-2 bg-black text-green-100 text-xs font-bold px-2 py-1 rounded pointer-events-none">
           ${formatAmount(totalWins)}
         </div>
       )}
@@ -4474,7 +4474,7 @@ const dailyPnLChartData = useMemo(
                   <div className="text-2xl font-bold text-white">{stats.total || 99}</div>
                   <div className="text-sm text-white font-bold">✅ TOTAL USERS</div>
                 </div>
-                <div className="bg-green-600 rounded-lg p-4 border-4 border-green-400">
+                <div className="bg-green-600 rounded-lg p-4 border-4 border-green-200/50">
                   <div className="text-2xl font-bold text-white">{stats.active || 77}</div>
                   <div className="text-sm text-white font-bold">🟢 ACTIFS</div>
                 </div>
@@ -4573,7 +4573,7 @@ const dailyPnLChartData = useMemo(
                           <td className="px-4 py-4 whitespace-nowrap text-sm text-white">{user.email}</td>
                           <td className="px-4 py-4 whitespace-nowrap">
                             <span className={`px-2 py-1 text-xs rounded-full ${
-                              user.status === 'active' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+                              user.status === 'active' ? 'bg-green-200/60 text-white' : 'bg-red-300/50 text-white'
                             }`}>
                               {user.status === 'active' ? 'Actif' : 'Inactif'}
                             </span>
@@ -4643,8 +4643,8 @@ const dailyPnLChartData = useMemo(
               <select
                 value={selectedAccount}
                 onChange={(e) => handleAccountChange(e.target.value)}
-                className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-green-500 cursor-pointer h-9"
-                style={{ height: '36px', background: 'rgba(34, 197, 94, 0.2)' }}
+                className="bg-gray-600/20 hover:bg-gray-600/30 border border-gray-500/50 text-gray-300 hover:text-gray-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-gray-500 cursor-pointer h-9"
+                style={{ height: '36px', background: 'rgba(75, 85, 99, 0.2)' }}
               >
                 <option value="Tous les comptes">📊 Tous les comptes</option>
                 {tradingAccounts.map((account) => (
@@ -4665,7 +4665,7 @@ const dailyPnLChartData = useMemo(
               className={`px-3 py-2 rounded-lg text-sm font-medium ${
                 tradingAccounts.length === 0
                   ? 'bg-gray-700 border border-gray-600 text-gray-500 cursor-not-allowed'
-                  : 'bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200'
+                  : 'bg-gray-600/20 hover:bg-gray-600/30 border border-gray-500/50 text-gray-300 hover:text-gray-200'
               }`}
               title="Options du compte"
             >
@@ -4674,7 +4674,7 @@ const dailyPnLChartData = useMemo(
             
             <button
               onClick={() => setShowAddAccountModal(true)}
-              className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 px-3 py-2 rounded-lg text-sm font-medium"
+              className="bg-gray-600/20 hover:bg-gray-600/30 border border-gray-500/50 text-gray-300 hover:text-gray-200 px-3 py-2 rounded-lg text-sm font-medium"
             >
               + Compte
             </button>
@@ -4699,8 +4699,8 @@ const dailyPnLChartData = useMemo(
               <select
                 value={selectedAccount}
                 onChange={(e) => handleAccountChange(e.target.value)}
-                    className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-green-500 cursor-pointer h-9"
-                    style={{ height: '36px', background: 'rgba(34, 197, 94, 0.2)' }}
+                    className="bg-gray-600/20 hover:bg-gray-600/30 border border-gray-500/50 text-gray-300 hover:text-gray-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-gray-500 cursor-pointer h-9"
+                    style={{ height: '36px', background: 'rgba(75, 85, 99, 0.2)' }}
               >
                     <option value="Tous les comptes">📊 Tous les comptes</option>
                 {tradingAccounts.map((account) => (
@@ -4721,7 +4721,7 @@ const dailyPnLChartData = useMemo(
               className={`px-3 py-2 rounded-lg text-sm font-medium ${
                 tradingAccounts.length === 0
                   ? 'bg-gray-700 border border-gray-600 text-gray-500 cursor-not-allowed'
-                  : 'bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200'
+                  : 'bg-gray-600/20 hover:bg-gray-600/30 border border-gray-500/50 text-gray-300 hover:text-gray-200'
               }`}
                   title="Options du compte"
             >
@@ -4730,7 +4730,7 @@ const dailyPnLChartData = useMemo(
             
             <button
               onClick={() => setShowAddAccountModal(true)}
-              className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-300 hover:text-green-200 px-3 py-2 rounded-lg text-sm font-medium"
+              className="bg-gray-600/20 hover:bg-gray-600/30 border border-gray-500/50 text-gray-300 hover:text-gray-200 px-3 py-2 rounded-lg text-sm font-medium"
             >
                   + Compte
             </button>
@@ -4760,9 +4760,9 @@ const dailyPnLChartData = useMemo(
             <>
             <button 
               onClick={handleAddTrade}
-              className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
+              className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg text-sm font-medium"
             >
-              + Ajouter Trade
+              {typeof window !== 'undefined' && window.matchMedia('(display-mode: standalone)').matches ? '+ trade' : '+ Ajouter Trade'}
             </button>
             <button 
               onClick={() => setShowFinSessionModal(true)}
@@ -4882,9 +4882,9 @@ const dailyPnLChartData = useMemo(
                     
                     // Déterminer la couleur selon le PnL total
                     if (totalPnL > 0) {
-                      bgColor = 'bg-green-400/40 border-green-300/30 text-white'; // PnL positif - vert plus pale
+                      bgColor = 'bg-green-200/30 border-green-300/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
-                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif
+                      bgColor = 'bg-red-300/50/60 border-red-400/50 text-white'; // PnL négatif
                     } else {
                       bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
                     }
@@ -4914,9 +4914,9 @@ const dailyPnLChartData = useMemo(
                     
                     // Déterminer la couleur selon le PnL total
                     if (totalPnL > 0) {
-                      bgColor = 'bg-green-400/40 border-green-300/30 text-white'; // PnL positif - vert plus pale
+                      bgColor = 'bg-green-200/30 border-green-300/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
-                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif
+                      bgColor = 'bg-red-300/50/60 border-red-400/50 text-white'; // PnL négatif
                     } else {
                       bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
                     }
@@ -5016,7 +5016,7 @@ const dailyPnLChartData = useMemo(
                             </div>
                             {noteMoy !== null && (
                               <div
-                                className={`absolute bottom-1 left-1 text-xs font-bold ${discColor === 'green' ? 'text-green-400' : discColor === 'yellow' ? 'text-yellow-400' : 'text-red-400'}`}
+                                className={`absolute bottom-1 left-1 text-xs font-bold ${discColor === 'green' ? 'text-green-100' : discColor === 'yellow' ? 'text-yellow-400' : 'text-red-100'}`}
                                 title={`Étoile discipline (sur 5): ${noteMoy} – ${discTitle}`}
                               >
                                 ★ {noteMoy}
@@ -5035,11 +5035,11 @@ const dailyPnLChartData = useMemo(
           {/* Légende */}
           <div className="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-gray-600">
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 bg-green-500/60 border border-green-400/50 rounded"></div>
+              <div className="w-3 h-3 bg-green-200/50 border border-green-200/50/50 rounded"></div>
               <span className="text-xs text-gray-300">WIN</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 bg-red-500/60 border border-red-400/50 rounded"></div>
+              <div className="w-3 h-3 bg-red-300/50/60 border border-red-400/50 rounded"></div>
               <span className="text-xs text-gray-300">LOSS</span>
             </div>
             <div className="flex items-center gap-1">
@@ -5062,6 +5062,7 @@ const dailyPnLChartData = useMemo(
             const currentBalance = calculateAccountBalance();
             const initialBalance = account?.initial_balance || 0;
             const minimumBalance = account?.minimum_balance || 0;
+            const pnl = calculateTotalPnLTradesForAccount();
             
             // DD max - utiliser une valeur du compte si disponible, sinon 1250 par défaut
             // Pour l'instant, on utilise 1250 par défaut, mais on peut ajouter un champ max_drawdown plus tard
@@ -5090,13 +5091,13 @@ const dailyPnLChartData = useMemo(
                 <div className="p-4 bg-gray-800 rounded-lg border border-gray-600">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="text-sm font-medium text-gray-300">Solde du compte</h4>
+                      <h4 className="text-sm font-medium text-gray-300">Solde</h4>
                       <p className="text-xs text-gray-400">{selectedAccount}</p>
                     </div>
                     <div className="text-right">
                       <div className={`text-lg font-bold ${
                         currentBalance >= initialBalance 
-                          ? 'text-green-400' : 'text-red-400'
+                          ? 'text-green-100' : 'text-red-100'
                       }`}>
                         ${currentBalance.toFixed(2)}
                       </div>
@@ -5198,15 +5199,15 @@ const dailyPnLChartData = useMemo(
             
                 return (
               <div className="bg-gray-700 rounded-lg p-4 mt-4">
-                <h4 className="text-base font-medium text-red-300 mb-4">📊 Analyse des Pertes</h4>
+                <h4 className="text-base font-medium text-red-100 mb-4">📊 Analyse des Pertes</h4>
                 <div className="space-y-3">
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400">Total pertes:</span>
-                    <span className="text-red-300 font-medium">{lossSignals.length}</span>
+                    <span className="text-red-100 font-medium">{lossSignals.length}</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400">P&L total pertes:</span>
-                    <span className="text-red-300 font-medium">${Math.round(totalLossPnl)}</span>
+                    <span className="text-red-100 font-medium">${Math.round(totalLossPnl)}</span>
                       </div>
                   {sortedReasons.length > 0 ? (
                     <div className="mt-3">
@@ -5215,7 +5216,7 @@ const dailyPnLChartData = useMemo(
                         {sortedReasons.map((reason) => (
                           <div key={reason.reason} className="flex justify-between text-sm">
                             <span className="text-gray-300">{getCustomLossReasonLabel(reason.reason)}</span>
-                            <span className="text-red-300 font-medium">{reason.count} ({reason.percentage}%)</span>
+                            <span className="text-red-100 font-medium">{reason.count} ({reason.percentage}%)</span>
                           </div>
                         ))}
                       </div>
@@ -5241,44 +5242,67 @@ const dailyPnLChartData = useMemo(
                 <button
                   type="button"
                   onClick={() => setStatsPeriod('mois')}
-                  className={`flex-1 py-2 rounded-lg text-sm font-medium ${statsPeriod === 'mois' ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
+                  className={`flex-1 py-2 rounded-lg text-sm font-medium ${statsPeriod === 'mois' ? 'bg-gray-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
                 >
                   Mois
                 </button>
                 <button
                   type="button"
                   onClick={() => setStatsPeriod('jour')}
-                  className={`flex-1 py-2 rounded-lg text-sm font-medium ${statsPeriod === 'jour' ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
+                  className={`flex-1 py-2 rounded-lg text-sm font-medium ${statsPeriod === 'jour' ? 'bg-gray-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
                 >
                   Jour
                 </button>
               </div>
             )}
             {/* Solde du compte (Journal perso uniquement) - pas sur TPLN model ni Journal Signaux */}
-            {selectedChannel.id === 'trading-journal' && (
-            <div className={`border rounded-lg p-4 border ${
-              selectedChannel.id === 'trading-journal'
-                ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'bg-green-600/20 border-green-500/30' : 'bg-red-600/20 border-red-500/30')
-                : (calculateTotalPnL() >= 0 ? 'bg-green-600/20 border-green-500/30' : 'bg-red-600/20 border-red-500/30')
-            }`}>
-              <div className={`text-sm mb-1 ${
-                selectedChannel.id === 'trading-journal'
-                  ? (selectedAccount && selectedAccount !== 'Tous les comptes' ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'text-green-300' : 'text-red-300') : (calculateTotalPnLTradesForDisplay() >= 0 ? 'text-green-300' : 'text-red-300'))
-                  : (calculateTotalPnL() >= 0 ? 'text-green-300' : 'text-red-300')
-              }`}>
-                {selectedChannel.id === 'trading-journal' && selectedAccount && selectedAccount !== 'Tous les comptes' ? 'Solde du compte' : (statsPeriod === 'jour' ? 'P&L du jour' : 'P&L Total')}
-              </div>
-              <div className={`text-2xl font-bold ${
-                selectedChannel.id === 'trading-journal'
-                  ? (selectedAccount && selectedAccount !== 'Tous les comptes' ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'text-green-200' : 'text-red-200') : (calculateTotalPnLTradesForDisplay() >= 0 ? 'text-green-200' : 'text-red-200'))
-                  : (calculateTotalPnL() >= 0 ? 'text-green-200' : 'text-red-200')
-              }`}>
-                {selectedChannel.id === 'trading-journal' && selectedAccount && selectedAccount !== 'Tous les comptes'
-                  ? `$${calculateAccountBalance().toFixed(2)}`
-                  : `${(selectedChannel.id === 'trading-journal' ? calculateTotalPnLTradesForDisplay() : calculateTotalPnL()) >= 0 ? '+' : ''}$${selectedChannel.id === 'trading-journal' ? calculateTotalPnLTradesForDisplay() : calculateTotalPnL()}`}
-              </div>
-            </div>
-            )}
+            {selectedChannel.id === 'trading-journal' && selectedAccount && selectedAccount !== 'Tous les comptes' && (() => {
+              const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
+              const currentBalance = calculateAccountBalance();
+              const initialBalance = account?.initial_balance || 0;
+              
+              return (
+                <div className={`border rounded-lg p-4 border ${
+                  currentBalance >= initialBalance ? 'bg-green-200/20 border-green-200/30' : 'bg-red-600/20 border-red-500/30'
+                }`}>
+                  <div className={`text-sm mb-1 ${
+                    currentBalance >= initialBalance ? 'text-green-100' : 'text-red-100'
+                  }`}>
+                    Solde
+                  </div>
+                  <div className={`text-2xl font-bold ${
+                    currentBalance >= initialBalance ? 'text-green-100' : 'text-red-100'
+                  }`}>
+                    ${currentBalance.toFixed(2)}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Pnl pour TPLN model */}
+            {selectedChannel.id === 'tpln-model' && (() => {
+              const tplnAccount = tradingAccounts.find(acc => acc.account_name === 'TPLN');
+              const initialBalance = tplnAccount?.initial_balance || 0;
+              const pnl = calculateTotalPnLTradesForAccount();
+              const currentBalance = initialBalance + pnl;
+              
+              return (
+                <div className={`border rounded-lg p-4 border ${
+                  currentBalance >= initialBalance ? 'bg-green-200/20 border-green-200/30' : 'bg-red-600/20 border-red-500/30'
+                }`}>
+                  <div className={`text-sm mb-1 ${
+                    currentBalance >= initialBalance ? 'text-green-100' : 'text-red-100'
+                  }`}>
+                    Pnl
+                  </div>
+                  <div className={`text-2xl font-bold ${
+                    currentBalance >= initialBalance ? 'text-green-100' : 'text-red-100'
+                  }`}>
+                    {`${currentBalance >= initialBalance ? '+' : ''}$${currentBalance.toFixed(2)}`}
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Win Rate */}
             <div className="bg-blue-600/20 border-blue-500/30 rounded-lg py-1 px-4 border flex items-center justify-between">
@@ -5295,8 +5319,8 @@ const dailyPnLChartData = useMemo(
               </div>
             </div>
 
-            {/* Profit Factor (Journal perso uniquement) - pas sur TPLN model ni Journal Signaux */}
-            {selectedChannel.id === 'trading-journal' && (
+            {/* Profit Factor (Journal perso et TPLN model) - pas sur Journal Signaux */}
+            {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') && (
             <div className="bg-gray-700 rounded-lg p-4 border border-gray-600 flex items-center justify-between">
               <div className="flex-1">
                 <div className="text-sm text-gray-400 mb-1 flex items-center gap-1">
@@ -5309,7 +5333,7 @@ const dailyPnLChartData = useMemo(
                   </div>
                 </div>
                 <div className="text-2xl font-bold text-white">
-                  {((selectedChannel.id === 'trading-journal') ? 
+                  {((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? 
                     (() => {
                       const { totalWins, totalLosses } = getProfitFactorDataTradesForDisplay();
                       return totalLosses > 0 ? (totalWins / totalLosses).toFixed(2) : totalWins > 0 ? '∞' : '0.00';
@@ -5322,20 +5346,20 @@ const dailyPnLChartData = useMemo(
                 </div>
               </div>
               <ProfitFactorGauge 
-                {...((selectedChannel.id === 'trading-journal') ? getProfitFactorDataTradesForDisplay() : getProfitFactorData())} 
+                {...((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? getProfitFactorDataTradesForDisplay() : getProfitFactorData())} 
               />
             </div>
             )}
             
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
-                <div className="text-xs text-gray-400 mb-1">Aujourd'hui</div>
+                <div className="text-xs text-gray-400 mb-1">Trade auj</div>
                 <div className="text-lg font-bold text-blue-400">
                   {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? getTodayTrades().length : getTodaySignals().length}
                 </div>
               </div>
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
-                <div className="text-xs text-gray-400 mb-1">Ce mois</div>
+                <div className="text-xs text-gray-400 mb-1">Trade ce mois</div>
                 <div className="text-lg font-bold text-white">
                   {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? getThisMonthTrades().length : getThisMonthSignals().length}
                 </div>
@@ -5345,7 +5369,7 @@ const dailyPnLChartData = useMemo(
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Avg Win</div>
-                <div className="text-lg font-bold text-green-400">
+                <div className="text-lg font-bold text-green-100">
                   {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? 
                     (calculateAvgWinTradesForDisplay() > 0 ? `+$${calculateAvgWinTradesForDisplay()}` : '-') :
                     (calculateAvgWin() > 0 ? `+$${calculateAvgWin()}` : '-')
@@ -5354,7 +5378,7 @@ const dailyPnLChartData = useMemo(
               </div>
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Avg Loss</div>
-                <div className="text-lg font-bold text-red-400">
+                <div className="text-lg font-bold text-red-100">
                   {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? 
                     (calculateAvgLossTradesForDisplay() > 0 ? `-$${calculateAvgLossTradesForDisplay()}` : '-') :
                     (calculateAvgLoss() > 0 ? `-$${calculateAvgLoss()}` : '-')
@@ -5414,7 +5438,7 @@ const dailyPnLChartData = useMemo(
                 return (
                   <div className="bg-gray-700 rounded-lg p-3 mt-3">
                     <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-sm font-medium text-red-300">📊 Analyse des Pertes</h4>
+                      <h4 className="text-sm font-medium text-red-100">📊 Analyse des Pertes</h4>
                       <button
                         onClick={() => setShowLossReasonsModal(true)}
                         className="text-gray-400 hover:text-white transition-colors"
@@ -5426,17 +5450,17 @@ const dailyPnLChartData = useMemo(
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400">Total pertes:</span>
-                        <span className="text-red-300">{lossAnalysis.totalLosses}</span>
+                        <span className="text-red-100">{lossAnalysis.totalLosses}</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400">P&L total pertes:</span>
-                        <span className="text-red-300">${lossAnalysis.totalLossPnl}</span>
+                        <span className="text-red-100">${lossAnalysis.totalLossPnl}</span>
                       </div>
                       {lossAnalysis.reasons.length > 0 ? (
                         lossAnalysis.reasons.slice(0, 3).map((reason, index) => (
                           <div key={reason.reason} className="flex justify-between text-xs">
                             <span className="text-gray-400 truncate">{getCustomLossReasonLabel(reason.reason)}</span>
-                            <span className="text-red-300">{reason.count} ({reason.percentage}%)</span>
+                            <span className="text-red-100">{reason.count} ({reason.percentage}%)</span>
                           </div>
                         ))
                       ) : (
@@ -5490,18 +5514,18 @@ const dailyPnLChartData = useMemo(
                       </div>
                     ) : (
                         <>
-                          <div className={`text-sm py-1 rounded-lg font-bold shadow-lg border flex items-center justify-center ${weekData.wins > 0 ? 'bg-green-800/30 text-green-200 border-green-600/20' : 'bg-transparent border-transparent'}`} style={{ width: '40px', height: '28px' }}>
+                          <div className={`text-sm py-1 rounded-lg font-bold shadow-lg border flex items-center justify-center ${weekData.wins > 0 ? 'bg-green-200/30 text-green-100 border-green-200/20' : 'bg-transparent border-transparent'}`} style={{ width: '40px', height: '28px' }}>
                             {weekData.wins > 0 ? `${weekData.wins}W` : ''}
                       </div>
-                          <div className={`text-sm py-1 rounded-lg font-bold shadow-lg border flex items-center justify-center ${weekData.losses > 0 ? 'bg-red-800/30 text-red-200 border-red-600/20' : 'bg-transparent border-transparent'}`} style={{ width: '40px', height: '28px' }}>
+                          <div className={`text-sm py-1 rounded-lg font-bold shadow-lg border flex items-center justify-center ${weekData.losses > 0 ? 'bg-red-800/30 text-red-100 border-red-600/20' : 'bg-transparent border-transparent'}`} style={{ width: '40px', height: '28px' }}>
                             {weekData.losses > 0 ? `${weekData.losses}L` : ''}
                           </div>
                         </>
                     )}
                     </div>
                     <div className={`text-xs ${
-                      weekData.pnl > 0 ? 'text-green-400' : 
-                      weekData.pnl < 0 ? 'text-red-400' : 'text-gray-500'
+                      weekData.pnl > 0 ? 'text-green-100' : 
+                      weekData.pnl < 0 ? 'text-red-100' : 'text-gray-500'
                     }`} style={{ minWidth: '60px', textAlign: 'right' }}>
                       {weekData.pnl !== 0 ? `${weekData.pnl > 0 ? '+' : ''}$${weekData.pnl}` : ''}
                     </div>
@@ -5520,7 +5544,7 @@ const dailyPnLChartData = useMemo(
                   setWinsLossTradeIndex(0);
                   setShowWinsLossModal(true);
                 }}
-                className="w-full px-3 py-2 rounded-lg bg-green-600/30 border border-green-500/50 text-green-300 hover:bg-green-600/50 transition-colors text-sm font-medium"
+                className="w-full px-3 py-2 rounded-lg bg-green-200/30 border border-green-200/40 text-green-100 hover:bg-green-200/40 transition-colors text-sm font-medium"
               >
                 📈 Tous les WIN ({(selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendar') ? signals.filter(s => s.status === 'WIN' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount.filter(t => t.status === 'WIN').length})
               </button>
@@ -5530,7 +5554,7 @@ const dailyPnLChartData = useMemo(
                   setWinsLossTradeIndex(0);
                   setShowWinsLossModal(true);
                 }}
-                className="w-full px-3 py-2 rounded-lg bg-red-600/30 border border-red-500/50 text-red-300 hover:bg-red-600/50 transition-colors text-sm font-medium"
+                className="w-full px-3 py-2 rounded-lg bg-red-600/30 border border-red-500/50 text-red-100 hover:bg-red-600/50 transition-colors text-sm font-medium"
               >
                 📉 Tous les LOSS ({(selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendar') ? signals.filter(s => s.status === 'LOSS' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount.filter(t => t.status === 'LOSS').length})
               </button>
@@ -5719,7 +5743,7 @@ const dailyPnLChartData = useMemo(
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">P&L Total:</span>
-                <span className={calculateTotalPnL() >= 0 ? 'text-green-400' : 'text-red-400'}>
+                <span className={calculateTotalPnL() >= 0 ? 'text-green-100' : 'text-red-100'}>
                   {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
                 </span>
               </div>
@@ -5913,7 +5937,7 @@ const dailyPnLChartData = useMemo(
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-white">P&L Total:</span>
-                    <span className={calculateTotalPnL() >= 0 ? 'text-green-400' : 'text-red-400'}>
+                    <span className={calculateTotalPnL() >= 0 ? 'text-green-100' : 'text-red-100'}>
                       {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
                     </span>
                   </div>
@@ -6209,7 +6233,7 @@ const dailyPnLChartData = useMemo(
                             console.error('❌ Erreur Firebase:', error);
                           }
                         }}
-                        className="bg-green-600 hover:bg-green-500 px-4 py-2 rounded-lg text-sm font-medium"
+                        className="bg-green-600 hover:bg-green-200/60 px-4 py-2 rounded-lg text-sm font-medium"
                         title="Debug Firebase"
                       >
                         🔍 Debug Firebase
@@ -6218,7 +6242,7 @@ const dailyPnLChartData = useMemo(
                         onClick={handleAddTrade}
                         className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
                       >
-                        + Ajouter Trade
+                        {typeof window !== 'undefined' && window.matchMedia('(display-mode: standalone)').matches ? '+ trade' : '+ Ajouter Trade'}
                       </button>
                       <button 
                         onClick={() => setShowFinSessionModal(true)}
@@ -6275,7 +6299,7 @@ const dailyPnLChartData = useMemo(
                                 <td className="px-4 py-4 whitespace-nowrap text-sm text-white">{user.email}</td>
                                 <td className="px-4 py-4 whitespace-nowrap">
                                   <span className={`px-2 py-1 text-xs rounded-full ${
-                                    user.status === 'active' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+                                    user.status === 'active' ? 'bg-green-200/60 text-white' : 'bg-red-300/50 text-white'
                                   }`}>
                                     {user.status === 'active' ? 'Actif' : 'Inactif'}
                                   </span>
@@ -6292,7 +6316,7 @@ const dailyPnLChartData = useMemo(
                                       setSelectedUser(user);
                                       setShowDeleteUserModal(true);
                                     }}
-                                    className="text-red-400 hover:text-red-300"
+                                    className="text-red-100 hover:text-red-100"
                                   >
                                     🗑️
                                   </button>
@@ -6333,8 +6357,8 @@ const dailyPnLChartData = useMemo(
                             <div className="flex items-center justify-between mb-3">
                               <div className="flex items-center gap-3">
                                 <span className={`px-3 py-1 rounded-lg text-sm font-medium ${
-                                  trade.status === 'WIN' ? 'bg-green-500 text-white' :
-                                  trade.status === 'LOSS' ? 'bg-red-500 text-white' :
+                                  trade.status === 'WIN' ? 'bg-green-200/60 text-white' :
+                                  trade.status === 'LOSS' ? 'bg-red-300/50 text-white' :
                                   'bg-blue-500 text-white'
                                 }`}>
                                   {trade.status}
@@ -6344,7 +6368,7 @@ const dailyPnLChartData = useMemo(
                               </div>
                               <div className="flex items-center gap-3">
                                 <span className={`text-lg font-bold ${
-                                  parseFloat(trade.pnl) >= 0 ? 'text-green-400' : 'text-red-400'
+                                  parseFloat(trade.pnl) >= 0 ? 'text-green-100' : 'text-red-100'
                                 }`}>
                                   {parseFloat(trade.pnl) >= 0 ? '+' : ''}{trade.pnl}$
                                 </span>
@@ -6367,7 +6391,7 @@ const dailyPnLChartData = useMemo(
                                       }
                                     }
                                   }}
-                                  className="text-red-400 hover:text-red-300 transition-colors"
+                                  className="text-red-100 hover:text-red-100 transition-colors"
                                   title="Supprimer ce trade"
                                 >
                                   ❌
@@ -6459,7 +6483,7 @@ const dailyPnLChartData = useMemo(
                               <div className="space-y-3">
                                 {/* Header avec titre et indicateur */}
                                 <div className="flex items-center gap-2">
-                                  <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-500' : 'bg-gray-500'}`}></div>
+                                  <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-200/60' : 'bg-gray-500'}`}></div>
                                   <h3 className="font-bold text-white text-lg">
                                     Signal {signal.type} {signal.symbol} {signal.referenceNumber || ''} – {signal.timeframe}
                                   </h3>
@@ -6490,7 +6514,7 @@ const dailyPnLChartData = useMemo(
                                 {/* Ratio R:R */}
                                 {signal.entry !== 'N/A' && signal.takeProfit !== 'N/A' && signal.stopLoss !== 'N/A' && (
                                   <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
-                                    <span className="text-red-400 text-sm">🎯</span>
+                                    <span className="text-red-100 text-sm">🎯</span>
                                     <span className="text-white text-sm">
                                       Ratio R:R : ≈ {calculateRiskReward(signal.entry, signal.takeProfit, signal.stopLoss)}
                                     </span>
@@ -6536,8 +6560,8 @@ const dailyPnLChartData = useMemo(
                                 onClick={() => handleSignalStatus(signal.id, signal.status === 'WIN' ? 'ACTIVE' : 'WIN')}
                                 className={`px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-1 ${
                                   signal.status === 'WIN' 
-                                    ? 'bg-green-500 text-white shadow-lg shadow-green-500/20' 
-                                    : 'bg-gray-600 hover:bg-green-500 text-gray-300 hover:text-white'
+                                    ? 'bg-green-200/60 text-white shadow-lg shadow-green-200/20' 
+                                    : 'bg-gray-600 hover:bg-green-200/60 text-gray-300 hover:text-white'
                                 }`}
                               >
                                 ✅ WIN
@@ -6546,8 +6570,8 @@ const dailyPnLChartData = useMemo(
                                 onClick={() => handleSignalStatus(signal.id, signal.status === 'LOSS' ? 'ACTIVE' : 'LOSS')}
                                 className={`px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-1 ${
                                   signal.status === 'LOSS' 
-                                    ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' 
-                                    : 'bg-gray-600 hover:bg-red-500 text-gray-300 hover:text-white'
+                                    ? 'bg-red-300/50 text-white shadow-lg shadow-red-500/20' 
+                                    : 'bg-gray-600 hover:bg-red-300/50 text-gray-300 hover:text-white'
                                 }`}
                               >
                                 ❌ LOSS
@@ -6682,8 +6706,8 @@ const dailyPnLChartData = useMemo(
                                             </a>
                                           </div>
                                           <div className="flex items-center gap-2">
-                                            <span className="text-green-400">⏱️</span>
-                                            <span className="text-green-300">Latence: ~100ms</span>
+                                            <span className="text-green-100">⏱️</span>
+                                            <span className="text-green-100">Latence: ~100ms</span>
                                           </div>
                                           <div className="flex items-center gap-2">
                                             <span className="text-orange-400">📊</span>
@@ -6754,13 +6778,13 @@ const dailyPnLChartData = useMemo(
                                                   </div>
                                                   <div className="text-sm">
                                                     <div className="flex items-center gap-2 mb-1">
-                                                      <span className={signalData.status === 'WIN' ? 'text-green-400' : 'text-red-400'}>
+                                                      <span className={signalData.status === 'WIN' ? 'text-green-100' : 'text-red-100'}>
                                                         {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
                                                       </span>
                                                     </div>
                                                     {signalData.pnl && (
                                                       <div className="text-gray-300">
-                                                        P&L: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-400'}>{signalData.pnl}</span>
+                                                        P&L: <span className={signalData.pnl.includes('-') ? 'text-red-100' : 'text-green-100'}>{signalData.pnl}</span>
                                                       </div>
                                                     )}
                                                   </div>
@@ -6807,10 +6831,10 @@ const dailyPnLChartData = useMemo(
                                                     disabled={isClosed && currentSignal?.status !== 'WIN'}
                                                     className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1 flex-1 ${
                                                       isClosed && currentSignal?.status === 'WIN'
-                                                        ? 'bg-green-500 text-white shadow-lg shadow-green-500/20'
+                                                        ? 'bg-green-200/60 text-white shadow-lg shadow-green-200/20'
                                                         : isClosed
                                                         ? 'bg-gray-500/30 text-gray-400 cursor-not-allowed opacity-50'
-                                                        : 'bg-gray-600 hover:bg-green-500 text-gray-300 hover:text-white'
+                                                        : 'bg-gray-600 hover:bg-green-200/60 text-gray-300 hover:text-white'
                                                     }`}
                                                   >
                                                     ✅ WIN
@@ -6820,10 +6844,10 @@ const dailyPnLChartData = useMemo(
                                                     disabled={isClosed && currentSignal?.status !== 'LOSS'}
                                                     className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1 flex-1 ${
                                                       isClosed && currentSignal?.status === 'LOSS'
-                                                        ? 'bg-red-500 text-white shadow-lg shadow-red-500/20'
+                                                        ? 'bg-red-300/50 text-white shadow-lg shadow-red-500/20'
                                                         : isClosed
                                                         ? 'bg-gray-500/30 text-gray-400 cursor-not-allowed opacity-50'
-                                                        : 'bg-gray-600 hover:bg-red-500 text-gray-300 hover:text-white'
+                                                        : 'bg-gray-600 hover:bg-red-300/50 text-gray-300 hover:text-white'
                                                     }`}
                                                   >
                                                     ❌ LOSS
@@ -6946,7 +6970,7 @@ const dailyPnLChartData = useMemo(
                       <div className="flex-1 bg-gray-900 rounded-lg overflow-hidden">
                         <div className="h-full flex flex-col items-center justify-center p-8">
                           <div className="text-center space-y-4">
-                            <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto">
+                            <div className="w-20 h-20 bg-red-300/50 rounded-full flex items-center justify-center mx-auto">
                               <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M8 5v14l11-7z"/>
                               </svg>
@@ -7077,7 +7101,7 @@ const dailyPnLChartData = useMemo(
                             <div className="space-y-3">
                               {/* Header avec titre et indicateur */}
                               <div className="flex items-center gap-2">
-                                <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-500' : 'bg-gray-500'}`}></div>
+                                <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-200/60' : 'bg-gray-500'}`}></div>
                                 <h3 className="font-bold text-white text-lg">
                                   Signal {signal.type} {signal.symbol} {signal.referenceNumber || ''} – {signal.timeframe}
                                 </h3>
@@ -7108,10 +7132,24 @@ const dailyPnLChartData = useMemo(
                               {/* Ratio R:R */}
                               {signal.entry !== 'N/A' && signal.takeProfit !== 'N/A' && signal.stopLoss !== 'N/A' && (
                                 <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
-                                  <span className="text-red-400 text-sm">🎯</span>
+                                  <span className="text-red-100 text-sm">🎯</span>
                                   <span className="text-white text-sm">
                                     Ratio R:R : ≈ {calculateRiskReward(signal.entry, signal.takeProfit, signal.stopLoss)}
                                   </span>
+                                </div>
+                              )}
+
+                              {/* P&L - affiché dans tous les salons sauf calendrier */}
+                              {selectedChannel.id !== 'calendrier' && signal.pnl && (
+                                <div className="pt-2 border-t border-gray-600">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm font-medium">P&L:</span>
+                                    <span className={`text-sm font-bold ${
+                                      parseFloat(signal.pnl) >= 0 ? 'text-green-100' : 'text-red-100'
+                                    }`}>
+                                      {parseFloat(signal.pnl) >= 0 ? '+' : ''}{signal.pnl}$
+                                    </span>
+                                  </div>
                                 </div>
                               )}
 
@@ -7153,8 +7191,8 @@ const dailyPnLChartData = useMemo(
                               onClick={() => handleSignalStatus(signal.id, signal.status === 'WIN' ? 'ACTIVE' : 'WIN')}
                               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
                                 signal.status === 'WIN' 
-                                  ? 'bg-green-500 text-white shadow-lg shadow-green-500/20' 
-                                  : 'bg-gray-600 hover:bg-green-500 text-gray-300 hover:text-white'
+                                  ? 'bg-green-200/60 text-white shadow-lg shadow-green-200/20' 
+                                  : 'bg-gray-600 hover:bg-green-200/60 text-gray-300 hover:text-white'
                               }`}
                             >
                               ✅ WIN
@@ -7163,8 +7201,8 @@ const dailyPnLChartData = useMemo(
                               onClick={() => handleSignalStatus(signal.id, signal.status === 'LOSS' ? 'ACTIVE' : 'LOSS')}
                               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
                                 signal.status === 'LOSS' 
-                                  ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' 
-                                  : 'bg-gray-600 hover:bg-red-500 text-gray-300 hover:text-white'
+                                  ? 'bg-red-300/50 text-white shadow-lg shadow-red-500/20' 
+                                  : 'bg-gray-600 hover:bg-red-300/50 text-gray-300 hover:text-white'
                               }`}
                             >
                               ❌ LOSS
@@ -7223,7 +7261,7 @@ const dailyPnLChartData = useMemo(
                       {!isLiveStreaming ? (
                         <div className="h-full flex flex-col items-center justify-center p-8">
                           <div className="text-center space-y-4">
-                            <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto">
+                            <div className="w-20 h-20 bg-red-300/50 rounded-full flex items-center justify-center mx-auto">
                               <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M8 5v14l11-7z"/>
                               </svg>
@@ -7274,7 +7312,7 @@ const dailyPnLChartData = useMemo(
                                 <p className="text-sm text-gray-400">{streamDescription}</p>
                               </div>
                               <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-2 text-red-400">
+                                <div className="flex items-center gap-2 text-red-100">
                                   <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
                                   <span className="text-sm font-medium">EN DIRECT</span>
                                 </div>
@@ -7389,7 +7427,7 @@ const dailyPnLChartData = useMemo(
                               <span className="text-xs text-gray-400">{message.timestamp}</span>
                               <button
                                 onClick={() => handleDeleteMessage(message.id, selectedChannel.id)}
-                                className="ml-auto text-red-400 hover:text-red-300 transition-colors"
+                                className="ml-auto text-red-100 hover:text-red-100 transition-colors"
                                 title="Supprimer ce message"
                               >
                                 🗑️
@@ -7415,11 +7453,11 @@ const dailyPnLChartData = useMemo(
                                                 </div>
                                                 <div className="text-sm">
                                                   <div className="flex items-center gap-2 mb-1">
-                                                    <span className={signalData.status === 'WIN' ? 'text-green-400' : 'text-red-400'}>
+                                                    <span className={signalData.status === 'WIN' ? 'text-green-100' : 'text-red-100'}>
                                                       {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
                                                     </span>
                                                     {signalData.pnl && (
-                                                      <span className={`text-sm ${signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-400'}`}>
+                                                      <span className={`text-sm ${signalData.pnl.includes('-') ? 'text-red-100' : 'text-green-100'}`}>
                                                         P&L: {signalData.pnl}
                                                       </span>
                                                     )}
@@ -7558,10 +7596,10 @@ const dailyPnLChartData = useMemo(
                                           disabled={isClosed}
                                           className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                                             isClosed && currentSignal?.status === 'WIN'
-                                              ? 'bg-green-500 text-white border-2 border-green-400 shadow-lg scale-105' // Bouton WIN actif
+                                              ? 'bg-green-200/60 text-white border-2 border-green-200/50 shadow-lg scale-105' // Bouton WIN actif
                                               : isClosed
                                               ? 'bg-gray-500/30 text-gray-400 border border-gray-500/30 cursor-not-allowed opacity-50' // Boutons désactivés
-                                              : 'bg-green-400/20 hover:bg-green-400/30 text-green-300 border border-green-400/30 hover:scale-105' // Bouton WIN normal
+                                              : 'bg-green-200/20 hover:bg-green-200/30 text-green-100 border border-green-200/30 hover:scale-105' // Bouton WIN normal
                                           }`}
                                         >
                                           🟢 WIN
@@ -7571,10 +7609,10 @@ const dailyPnLChartData = useMemo(
                                           disabled={isClosed}
                                           className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                                             isClosed && currentSignal?.status === 'LOSS'
-                                              ? 'bg-red-500 text-white border-2 border-red-400 shadow-lg scale-105' // Bouton LOSS actif
+                                              ? 'bg-red-300/50 text-white border-2 border-red-400 shadow-lg scale-105' // Bouton LOSS actif
                                               : isClosed
                                               ? 'bg-gray-500/30 text-gray-400 border border-gray-500/30 cursor-not-allowed opacity-50' // Boutons désactivés
-                                              : 'bg-red-400/20 hover:bg-red-400/30 text-red-300 border border-red-400/30 hover:scale-105' // Bouton LOSS normal
+                                              : 'bg-red-400/20 hover:bg-red-400/30 text-red-100 border border-red-400/30 hover:scale-105' // Bouton LOSS normal
                                           }`}
                                         >
                                           🔴 LOSS
@@ -7754,7 +7792,7 @@ const dailyPnLChartData = useMemo(
                     )}
                   </div>
                   {error && (
-                    <p className="text-xs text-red-400 mt-1">{error}</p>
+                    <p className="text-xs text-red-100 mt-1">{error}</p>
                   )}
                   {debugMode && pasteDebug && (
                     <div className="text-xs text-gray-400 mt-1 bg-gray-900 p-2 rounded">
@@ -8251,7 +8289,7 @@ const dailyPnLChartData = useMemo(
                                 const newReasons = tradeData.lossReasons.filter((_, i) => i !== index);
                                 setTradeData({ ...tradeData, lossReasons: newReasons });
                               }}
-                              className="text-red-400 hover:text-red-300 px-2 shrink-0"
+                              className="text-red-100 hover:text-red-100 px-2 shrink-0"
                               title="Supprimer cette raison"
                             >
                               ✕
@@ -8411,13 +8449,13 @@ const dailyPnLChartData = useMemo(
                       <button
                         key={opt}
                         onClick={() => setFinSessionQualiteDecisions(opt)}
-                        className={`px-3 py-1.5 rounded text-sm ${finSessionQualiteDecisions === opt ? (opt === 'Émotion' ? 'bg-red-600 text-white' : 'bg-blue-600 text-white') : opt === 'Émotion' ? 'bg-gray-600 text-red-300 hover:bg-gray-500' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
+                        className={`px-3 py-1.5 rounded text-sm ${finSessionQualiteDecisions === opt ? (opt === 'Émotion' ? 'bg-red-600 text-white' : 'bg-blue-600 text-white') : opt === 'Émotion' ? 'bg-gray-600 text-red-100 hover:bg-gray-500' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
                       >
                         {opt}
                       </button>
                     ))}
                   </div>
-                  {finSessionQualiteDecisions === 'Émotion' && <p className="text-sm text-red-400 font-medium">⚠️ Alerte : émotion détectée.</p>}
+                  {finSessionQualiteDecisions === 'Émotion' && <p className="text-sm text-red-100 font-medium">⚠️ Alerte : émotion détectée.</p>}
                   <p className="text-xs text-gray-400">👍 Si &quot;émotion&quot; apparaît → alerte.</p>
                 </div>
                 {/* 3. Gestion après erreur */}
@@ -8551,10 +8589,10 @@ const dailyPnLChartData = useMemo(
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div><span className="text-gray-400">Respect du plan:</span> <span className="text-white font-medium">{fs.respectPlan}</span></div>
-                      <div><span className="text-gray-400">Qualité décisions:</span> <span className={fs.qualiteDecisions === 'Émotion' ? 'text-red-400 font-medium' : 'text-white font-medium'}>{fs.qualiteDecisions}</span></div>
+                      <div><span className="text-gray-400">Qualité décisions:</span> <span className={fs.qualiteDecisions === 'Émotion' ? 'text-red-100 font-medium' : 'text-white font-medium'}>{fs.qualiteDecisions}</span></div>
                       <div><span className="text-gray-400">Gestion après erreur:</span> <span className="text-white font-medium">{fs.gestionErreur}</span></div>
                       <div><span className="text-gray-400">Pression (1-5):</span> <span className="text-white font-medium">{fs.pression}</span></div>
-                      {fs.maxDrawdown != null && <div className="col-span-2"><span className="text-gray-400">Max Drawdown (DD):</span> <span className={fs.maxDrawdown < 0 ? 'text-red-400 font-medium' : 'text-white font-medium'}>{fs.maxDrawdown}$</span></div>}
+                      {fs.maxDrawdown != null && <div className="col-span-2"><span className="text-gray-400">Max Drawdown (DD):</span> <span className={fs.maxDrawdown < 0 ? 'text-red-100 font-medium' : 'text-white font-medium'}>{fs.maxDrawdown}$</span></div>}
                     </div>
                   </div>
                 );
@@ -8579,7 +8617,7 @@ const dailyPnLChartData = useMemo(
                       </div>
                       <div className="flex items-center gap-3">
                         <span className={`text-lg font-bold ${
-                          (trade.pnl && parseFloat(trade.pnl) >= 0) ? 'text-green-400' : 'text-red-400'
+                          (trade.pnl && parseFloat(trade.pnl) >= 0) ? 'text-green-100' : 'text-red-100'
                         }`}>
                           {(trade.pnl && parseFloat(trade.pnl) >= 0) ? '+' : ''}{trade.pnl || '0'}$
                         </span>
@@ -8605,7 +8643,7 @@ const dailyPnLChartData = useMemo(
                               }
                             }
                           }}
-                          className="text-red-400 hover:text-red-300 text-xl font-bold"
+                          className="text-red-100 hover:text-red-100 text-xl font-bold"
                           title="Supprimer ce trade"
                         >
                           ×
@@ -8764,7 +8802,7 @@ const dailyPnLChartData = useMemo(
                       </div>
                       <div className="mt-4 text-center">
                         <span className="text-lg font-bold text-white">{currentItem.symbol}</span>
-                        <span className={`ml-2 text-lg font-bold ${currentItem.pnl && parseFloat(currentItem.pnl) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        <span className={`ml-2 text-lg font-bold ${currentItem.pnl && parseFloat(currentItem.pnl) >= 0 ? 'text-green-100' : 'text-red-100'}`}>
                           {(currentItem.pnl && parseFloat(currentItem.pnl) >= 0 ? '+' : '')}{currentItem.pnl || '0'}$
                         </span>
                         <span className="ml-2 text-gray-400 text-sm">{isSignalsMode ? new Date((currentItem as any).timestamp).toLocaleDateString() : (currentItem as any).date}</span>
@@ -8796,30 +8834,33 @@ const dailyPnLChartData = useMemo(
               {monthlyPerformanceDataAdmin.length === 0 ? (
                 <p className="text-gray-400 text-center py-8">Aucune donnée</p>
               ) : (
-                <table className="w-full text-left border-collapse">
+                <table className={`w-full text-left border-collapse ${window.matchMedia('(display-mode: standalone)').matches ? 'text-xs' : ''}`}>
                   <thead>
                     <tr className="border-b border-gray-600">
-                      <th className="py-2 pr-4 text-gray-400 font-medium">Mois</th>
-                      <th className="py-2 pr-4 text-gray-400 font-medium text-right">Trades</th>
-                      <th className="py-2 pr-4 text-gray-400 font-medium text-right">P&L ($)</th>
-                      <th className="py-2 pr-4 text-gray-400 font-medium text-right">WR</th>
-                      <th className="py-2 pr-4 text-gray-400 font-medium text-right">PF</th>
-                      <th className="py-2 text-gray-400 font-medium text-right">Max DD ($)</th>
+                      <th className={`py-2 text-gray-400 font-medium ${window.matchMedia('(display-mode: standalone)').matches ? 'pr-1' : 'pr-4'}`}>Mois</th>
+                      <th className={`py-2 text-gray-400 font-medium text-right ${window.matchMedia('(display-mode: standalone)').matches ? 'pr-1 w-10' : 'pr-4'}`}>Trades</th>
+                      <th className={`py-2 text-gray-400 font-medium text-right ${window.matchMedia('(display-mode: standalone)').matches ? 'pr-1' : 'pr-4'}`}>P&L ($)</th>
+                      <th className={`py-2 text-gray-400 font-medium text-right ${window.matchMedia('(display-mode: standalone)').matches ? 'pr-1 whitespace-nowrap' : 'pr-4'}`}>WR</th>
+                      <th className={`py-2 text-gray-400 font-medium text-right ${window.matchMedia('(display-mode: standalone)').matches ? 'pr-1' : 'pr-4'}`}>PF</th>
+                      <th className={`py-2 text-gray-400 font-medium text-right ${window.matchMedia('(display-mode: standalone)').matches ? 'pr-1' : ''}`}>Max DD ($)</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {monthlyPerformanceDataAdmin.map(row => (
-                      <tr key={row.monthKey} className="border-b border-gray-700">
-                        <td className="py-2 pr-4 text-white">{row.monthLabel}</td>
-                        <td className="py-2 pr-4 text-white text-right">{row.trades}</td>
-                        <td className={`py-2 pr-4 text-right font-medium ${row.pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          {row.pnl >= 0 ? '+' : ''}{row.pnl.toFixed(0)}
-                        </td>
-                        <td className="py-2 pr-4 text-white text-right">{row.wr} %</td>
-                        <td className="py-2 pr-4 text-white text-right">{row.pf === Infinity ? '∞' : row.pf.toFixed(1)}</td>
-                        <td className="py-2 text-right text-red-400">{row.maxDdPnl != null ? `$${row.maxDdPnl}` : '–'}</td>
-                      </tr>
-                    ))}
+                    {monthlyPerformanceDataAdmin.map(row => {
+                      const isPWA = window.matchMedia('(display-mode: standalone)').matches;
+                      return (
+                        <tr key={row.monthKey} className="border-b border-gray-700">
+                          <td className={`py-2 text-white ${isPWA ? 'pr-1' : 'pr-4'}`}>{row.monthLabel}</td>
+                          <td className={`py-2 text-white text-right ${isPWA ? 'pr-1 w-10' : 'pr-4'}`}>{row.trades}</td>
+                          <td className={`py-2 text-right font-medium ${row.pnl >= 0 ? 'text-green-100' : 'text-red-100'} ${isPWA ? 'pr-1' : 'pr-4'}`}>
+                            {row.pnl >= 0 ? '+' : ''}{row.pnl.toFixed(0)}
+                          </td>
+                          <td className={`py-2 text-white text-right ${isPWA ? 'pr-1 whitespace-nowrap' : 'pr-4'}`}>{row.wr}{isPWA ? '\u00A0%' : ' %'}</td>
+                          <td className={`py-2 text-white text-right ${isPWA ? 'pr-1 whitespace-nowrap' : 'pr-4'}`}>{row.pf === Infinity ? '∞' : row.pf.toFixed(1)}</td>
+                          <td className={`py-2 text-right text-red-100 ${isPWA ? 'pr-1' : ''}`}>{row.maxDdPnl != null ? `$${row.maxDdPnl}` : '–'}</td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               )}
@@ -8938,8 +8979,8 @@ const dailyPnLChartData = useMemo(
                       <div className="mb-3">
                         <span className="text-sm text-gray-400">P&L:</span>
                         <span className={`ml-2 font-bold ${
-                          signal.pnl.includes('+') || signal.pnl.includes('GAGNANT') ? 'text-green-400' : 
-                          signal.pnl.includes('-') || signal.pnl.includes('PERDANT') ? 'text-red-400' : 
+                          signal.pnl.includes('+') || signal.pnl.includes('GAGNANT') ? 'text-green-100' : 
+                          signal.pnl.includes('-') || signal.pnl.includes('PERDANT') ? 'text-red-100' : 
                           'text-yellow-400'
                         }`}>
                           {signal.pnl}
@@ -9403,7 +9444,7 @@ const dailyPnLChartData = useMemo(
                             setNewReason({ value: '', emoji: '', label: '' });
                           }
                         }}
-                        className="text-red-400 hover:text-red-300 px-3 py-1 text-sm"
+                        className="text-red-100 hover:text-red-100 px-3 py-1 text-sm"
                         title="Supprimer"
                       >
                         🗑️
@@ -9552,7 +9593,7 @@ const dailyPnLChartData = useMemo(
                             <div>
                               <span className="text-sm text-gray-400">PnL:</span>
                               <span className={`ml-2 font-bold ${
-                                trade.pnl && trade.pnl.includes('-') ? 'text-red-400' : 'text-green-400'
+                                trade.pnl && trade.pnl.includes('-') ? 'text-red-100' : 'text-green-100'
                               }`}>
                                 {trade.pnl || 'N/A'}
                               </span>
@@ -9690,7 +9731,7 @@ const dailyPnLChartData = useMemo(
                             <div>
                               <span className="text-sm text-gray-400">PnL:</span>
                               <span className={`ml-2 font-bold ${
-                                signal.pnl && signal.pnl.includes('-') ? 'text-red-400' : 'text-green-400'
+                                signal.pnl && signal.pnl.includes('-') ? 'text-red-100' : 'text-green-100'
                               }`}>
                                 {signal.pnl || 'N/A'}
                               </span>
