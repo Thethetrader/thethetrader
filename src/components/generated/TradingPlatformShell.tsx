@@ -4710,12 +4710,12 @@ export default function TradingPlatformShell() {
                 <select
                   value={selectedAccount}
                   onChange={(e) => handleAccountChange(e.target.value)}
-                  className="bg-green-200/20 hover:bg-green-200/30 border border-green-200/40 text-green-100 hover:text-green-100 rounded-lg text-sm font-medium focus:outline-none focus:border-green-200/50 cursor-pointer h-9 appearance-none text-center min-w-[10rem]"
+                  className="bg-gray-600 hover:bg-gray-500 border border-gray-500 text-gray-200 hover:text-white rounded-lg text-sm font-medium focus:outline-none focus:border-gray-400 cursor-pointer h-9 appearance-none text-center min-w-[10rem]"
                   style={{ 
                     backgroundImage: 'none',
                     WebkitAppearance: 'none',
                     MozAppearance: 'none',
-                    background: 'rgba(34, 197, 94, 0.2)',
+                    background: 'rgb(75, 85, 99)',
                     boxShadow: 'none',
                     textAlign: 'center',
                     lineHeight: '36px',
@@ -4745,7 +4745,7 @@ export default function TradingPlatformShell() {
                 className={`px-3 py-2 rounded-lg text-sm font-medium h-9 flex items-center justify-center ${
                   tradingAccounts.length === 0
                     ? 'bg-gray-700 border border-gray-600 text-gray-500 cursor-not-allowed'
-                    : 'bg-green-200/20 hover:bg-green-200/30 border border-green-200/40 text-green-100 hover:text-green-100'
+                    : 'bg-gray-600 hover:bg-gray-500 border border-gray-500 text-gray-200 hover:text-white'
                 }`}
                 title="Options du compte"
               >
@@ -4760,7 +4760,7 @@ export default function TradingPlatformShell() {
                     setShowAddAccountModal(true);
                   }
                 }}
-                className="bg-green-200/20 hover:bg-green-200/30 border border-green-200/40 text-green-100 hover:text-green-100 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap h-9 flex items-center justify-center"
+                className="bg-gray-600 hover:bg-gray-500 border border-gray-500 text-gray-200 hover:text-white px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap h-9 flex items-center justify-center"
               >
                 + Compte
               </button>
@@ -4791,7 +4791,7 @@ export default function TradingPlatformShell() {
             <>
             <button 
               onClick={handleAddTrade}
-              className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
+              className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg text-sm font-medium"
             >
               + Ajouter Trade
             </button>
@@ -5124,14 +5124,14 @@ export default function TradingPlatformShell() {
               <button
                 type="button"
                 onClick={() => setStatsPeriod('mois')}
-                className={`flex-1 py-2 rounded-lg text-sm font-medium ${statsPeriod === 'mois' ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
+                className={`flex-1 py-2 rounded-lg text-sm font-medium ${statsPeriod === 'mois' ? 'bg-gray-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
               >
                 Mois
               </button>
               <button
                 type="button"
                 onClick={() => setStatsPeriod('jour')}
-                className={`flex-1 py-2 rounded-lg text-sm font-medium ${statsPeriod === 'jour' ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
+                className={`flex-1 py-2 rounded-lg text-sm font-medium ${statsPeriod === 'jour' ? 'bg-gray-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
               >
                 Jour
               </button>

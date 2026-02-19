@@ -4643,8 +4643,8 @@ const dailyPnLChartData = useMemo(
               <select
                 value={selectedAccount}
                 onChange={(e) => handleAccountChange(e.target.value)}
-                className="bg-gray-600/20 hover:bg-gray-600/30 border border-gray-500/50 text-gray-300 hover:text-gray-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-gray-500 cursor-pointer h-9"
-                style={{ height: '36px', background: 'rgba(75, 85, 99, 0.2)' }}
+                className="bg-gray-600 hover:bg-gray-500 border border-gray-500 text-gray-200 hover:text-white rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-gray-400 cursor-pointer h-9"
+                style={{ height: '36px', background: 'rgb(75, 85, 99)' }}
               >
                 <option value="Tous les comptes">📊 Tous les comptes</option>
                 {tradingAccounts.map((account) => (
@@ -4665,7 +4665,7 @@ const dailyPnLChartData = useMemo(
               className={`px-3 py-2 rounded-lg text-sm font-medium ${
                 tradingAccounts.length === 0
                   ? 'bg-gray-700 border border-gray-600 text-gray-500 cursor-not-allowed'
-                  : 'bg-gray-600/20 hover:bg-gray-600/30 border border-gray-500/50 text-gray-300 hover:text-gray-200'
+                  : 'bg-gray-600 hover:bg-gray-500 border border-gray-500 text-gray-200 hover:text-white'
               }`}
               title="Options du compte"
             >
@@ -4674,7 +4674,7 @@ const dailyPnLChartData = useMemo(
             
             <button
               onClick={() => setShowAddAccountModal(true)}
-              className="bg-gray-600/20 hover:bg-gray-600/30 border border-gray-500/50 text-gray-300 hover:text-gray-200 px-3 py-2 rounded-lg text-sm font-medium"
+              className="bg-gray-600 hover:bg-gray-500 border border-gray-500 text-gray-200 hover:text-white px-3 py-2 rounded-lg text-sm font-medium"
             >
               + Compte
             </button>
@@ -4699,8 +4699,8 @@ const dailyPnLChartData = useMemo(
               <select
                 value={selectedAccount}
                 onChange={(e) => handleAccountChange(e.target.value)}
-                    className="bg-gray-600/20 hover:bg-gray-600/30 border border-gray-500/50 text-gray-300 hover:text-gray-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-gray-500 cursor-pointer h-9"
-                    style={{ height: '36px', background: 'rgba(75, 85, 99, 0.2)' }}
+                    className="bg-gray-600 hover:bg-gray-500 border border-gray-500 text-gray-200 hover:text-white rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-gray-400 cursor-pointer h-9"
+                    style={{ height: '36px', background: 'rgb(75, 85, 99)' }}
               >
                     <option value="Tous les comptes">📊 Tous les comptes</option>
                 {tradingAccounts.map((account) => (
@@ -4721,7 +4721,7 @@ const dailyPnLChartData = useMemo(
               className={`px-3 py-2 rounded-lg text-sm font-medium ${
                 tradingAccounts.length === 0
                   ? 'bg-gray-700 border border-gray-600 text-gray-500 cursor-not-allowed'
-                  : 'bg-gray-600/20 hover:bg-gray-600/30 border border-gray-500/50 text-gray-300 hover:text-gray-200'
+                  : 'bg-gray-600 hover:bg-gray-500 border border-gray-500 text-gray-200 hover:text-white'
               }`}
                   title="Options du compte"
             >
@@ -4730,7 +4730,7 @@ const dailyPnLChartData = useMemo(
             
             <button
               onClick={() => setShowAddAccountModal(true)}
-              className="bg-gray-600/20 hover:bg-gray-600/30 border border-gray-500/50 text-gray-300 hover:text-gray-200 px-3 py-2 rounded-lg text-sm font-medium"
+              className="bg-gray-600 hover:bg-gray-500 border border-gray-500 text-gray-200 hover:text-white px-3 py-2 rounded-lg text-sm font-medium"
             >
                   + Compte
             </button>
@@ -6240,7 +6240,7 @@ const dailyPnLChartData = useMemo(
                       </button>
                       <button 
                         onClick={handleAddTrade}
-                        className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
+                        className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg text-sm font-medium"
                       >
                         {typeof window !== 'undefined' && window.matchMedia('(display-mode: standalone)').matches ? '+ trade' : '+ Ajouter Trade'}
                       </button>
