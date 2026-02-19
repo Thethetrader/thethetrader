@@ -4892,7 +4892,7 @@ export default function TradingPlatformShell() {
                     if (totalPnL > 0) {
                       bgColor = 'bg-green-200/30 border-green-200/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
-                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif
+                      bgColor = 'bg-red-600 border-red-500 text-white'; // PnL négatif - ROUGE
                     } else {
                       bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0 (BE)
                     }
@@ -4914,7 +4914,7 @@ export default function TradingPlatformShell() {
                     if (totalPnL > 0) {
                       bgColor = 'bg-green-200/30 border-green-200/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
-                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif
+                      bgColor = 'bg-red-600 border-red-500 text-white'; // PnL négatif - ROUGE
                     } else {
                       bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
                     }
@@ -5038,7 +5038,7 @@ export default function TradingPlatformShell() {
                 <span className="text-xs text-gray-300">WIN</span>
               </div>
               <div className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-red-500/60 border border-red-400/50 rounded"></div>
+                <div className="w-3 h-3 bg-red-600 border border-red-500 rounded"></div>
                 <span className="text-xs text-gray-300">LOSS</span>
               </div>
               <div className="flex items-center gap-1">

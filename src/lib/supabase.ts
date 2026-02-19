@@ -377,8 +377,13 @@ export const getAvatarColor = (userId: string): string => {
 export const isUserAdmin = async (userId?: string): Promise<boolean> => {
   try {
     const userIdToCheck = userId || (await getCurrentUser())?.id;
-    if (!userIdToCheck) return false;
+    if (!userIdToCheck) {
+      console.warn('⚠️ [isUserAdmin] Pas d\'ID utilisateur fourni');
+      return false;
+    }
 
+    console.log('🔍 [isUserAdmin] Vérification admin pour userId:', userIdToCheck);
+    
     const { data, error } = await supabase
       .from('user_profiles')
       .select('role')
@@ -386,13 +391,16 @@ export const isUserAdmin = async (userId?: string): Promise<boolean> => {
       .single();
 
     if (error) {
-      console.error('Erreur vérification admin:', error);
+      console.error('❌ [isUserAdmin] Erreur requête Supabase:', error.message, error.code);
+      // Si la table n'existe pas ou l'utilisateur n'a pas de profil, retourner false
       return false;
     }
 
-    return data?.role === 'admin';
+    const isAdmin = data?.role === 'admin';
+    console.log('🔍 [isUserAdmin] Rôle trouvé:', data?.role, '→ Admin:', isAdmin);
+    return isAdmin;
   } catch (error) {
-    console.error('Erreur vérification admin:', error);
+    console.error('❌ [isUserAdmin] Erreur exception:', error);
     return false;
   }
 };
@@ -402,26 +410,41 @@ export const isUserAdmin = async (userId?: string): Promise<boolean> => {
  */
 export const signInAdmin = async (email: string, password: string) => {
   try {
+    console.log('🔐 [signInAdmin] Début connexion pour:', email);
+    
     // Connexion Supabase standard
     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (authError) throw authError;
-    if (!authData.user) throw new Error('Aucun utilisateur retourné');
+    if (authError) {
+      console.error('❌ [signInAdmin] Erreur auth Supabase:', authError.message);
+      throw authError;
+    }
+    
+    if (!authData.user) {
+      console.error('❌ [signInAdmin] Aucun utilisateur retourné');
+      throw new Error('Aucun utilisateur retourné');
+    }
+
+    console.log('✅ [signInAdmin] Auth réussie, vérification admin pour:', authData.user.id);
 
     // Vérification du rôle admin
     const isAdmin = await isUserAdmin(authData.user.id);
+    console.log('🔍 [signInAdmin] Résultat vérification admin:', isAdmin);
+    
     if (!isAdmin) {
+      console.warn('⚠️ [signInAdmin] Utilisateur non admin, déconnexion...');
       // Déconnexion immédiate si pas admin
       await supabase.auth.signOut();
       throw new Error('Accès administrateur refusé');
     }
 
+    console.log('✅ [signInAdmin] Connexion admin réussie');
     return { data: authData, error: null };
   } catch (error) {
-    console.error('Erreur connexion admin:', error);
+    console.error('❌ [signInAdmin] Erreur complète:', error);
     return {
       data: null,
       error: error instanceof Error ? error : new Error('Erreur de connexion admin')

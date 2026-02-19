@@ -20,25 +20,21 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
     setIsLoading(true);
     setError(null);
 
-    const timeoutMs = 15000;
-    const timeoutPromise = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error('Connexion expirée. Vérifiez le réseau ou réessayez.')), timeoutMs)
-    );
-
     try {
       console.log('🔐 Tentative de connexion admin:', email);
 
-      const { data, error: authError } = await Promise.race([
-        signInAdmin(email, password),
-        timeoutPromise,
-      ]);
+      // Appel direct sans timeout complexe - Supabase gère déjà les timeouts
+      const { data, error: authError } = await signInAdmin(email, password);
 
       if (authError) {
         console.error('❌ Erreur authentification admin:', authError.message);
-        setError(authError.message === 'Accès administrateur refusé'
-          ? 'Accès refusé. Seuls les administrateurs peuvent se connecter ici.'
-          : 'Email ou mot de passe incorrect.'
-        );
+        if (authError.message === 'Connexion expirée. Vérifiez le réseau ou réessayez.') {
+          setError('Connexion trop lente. Vérifiez votre connexion internet et réessayez.');
+        } else if (authError.message === 'Accès administrateur refusé') {
+          setError('Accès refusé. Seuls les administrateurs peuvent se connecter ici.');
+        } else {
+          setError(authError.message || 'Email ou mot de passe incorrect.');
+        }
         return;
       }
 

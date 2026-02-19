@@ -3375,19 +3375,20 @@ const dailyPnLChartData = useMemo(
   };
 
   const handleTradeSubmit = async () => {
-    if (!tradeData.symbol || !tradeData.entry || !tradeData.exit || !tradeData.pnl) {
-      console.warn('Veuillez remplir les champs obligatoires (Symbol, Entry, Exit, PnL)');
-      return;
-    }
+    try {
+      if (!tradeData.symbol || !tradeData.entry || !tradeData.exit || !tradeData.pnl) {
+        console.warn('Veuillez remplir les champs obligatoires (Symbol, Entry, Exit, PnL)');
+        return;
+      }
 
-    const getDateString = (date: Date) => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    };
+      const getDateString = (date: Date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
 
-    if (editingTrade) {
+      if (editingTrade) {
       const updated = await updatePersonalTrade(editingTrade.id, {
         symbol: tradeData.symbol,
         type: tradeData.type,
@@ -3454,11 +3455,15 @@ const dailyPnLChartData = useMemo(
       setTimeout(() => { justAddedTradeIdsRef.current = []; }, 3000);
       setPersonalTrades(prev => [...savedTrades, ...prev]);
 
-      await new Promise(resolve => setTimeout(resolve, 500));
-      const reloadedTrades = await getPersonalTradesFromSupabase(1000);
-      setPersonalTrades(prev => (reloadedTrades.length > 0 ? reloadedTrades : prev));
+      try {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        const reloadedTrades = await getPersonalTradesFromSupabase(1000);
+        setPersonalTrades(prev => (reloadedTrades.length > 0 ? reloadedTrades : prev));
+      } catch (error) {
+        console.error('❌ [ADMIN] Erreur lors du rechargement des trades:', error);
+      }
       
-      // Reset form
+      // Reset form et fermer le modal - TOUJOURS faire ça même en cas d'erreur
       setTradeData({
         symbol: '',
         type: 'BUY',
@@ -3477,12 +3482,21 @@ const dailyPnLChartData = useMemo(
       setSelectedAccounts([]);
       setShowTradeModal(false);
       console.log('✅ Trade ajouté avec succès dans Supabase !');
+      
+      if (successCount < accountsToAdd.length) {
+        alert(`Trade ajouté à ${successCount}/${accountsToAdd.length} comptes. Vérifiez les erreurs en console.`);
+      }
     } else {
       console.error('❌ [ADMIN] Erreur lors de la sauvegarde du trade');
       alert('❌ Erreur lors de la sauvegarde du trade. Vérifiez la console pour plus de détails.');
     }
-    if (successCount > 0 && successCount < accountsToAdd.length) {
-      alert(`Trade ajouté à ${successCount}/${accountsToAdd.length} comptes. Vérifiez les erreurs en console.`);
+    } catch (error) {
+      console.error('❌ [ADMIN] Erreur inattendue lors de l\'ajout du trade:', error);
+      alert('❌ Erreur lors de l\'ajout du trade. Vérifiez la console pour plus de détails.');
+      // Fermer le modal même en cas d'erreur
+      setShowTradeModal(false);
+      setSelectedAccounts([]);
+      setEditingTrade(null);
     }
   };
 
@@ -4884,7 +4898,7 @@ const dailyPnLChartData = useMemo(
                     if (totalPnL > 0) {
                       bgColor = 'bg-green-200/30 border-green-300/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
-                      bgColor = 'bg-red-300/50/60 border-red-400/50 text-white'; // PnL négatif
+                      bgColor = 'bg-red-600 border-red-500 text-white'; // PnL négatif - ROUGE
                     } else {
                       bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
                     }
@@ -4916,7 +4930,7 @@ const dailyPnLChartData = useMemo(
                     if (totalPnL > 0) {
                       bgColor = 'bg-green-200/30 border-green-300/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
-                      bgColor = 'bg-red-300/50/60 border-red-400/50 text-white'; // PnL négatif
+                      bgColor = 'bg-red-600 border-red-500 text-white'; // PnL négatif - ROUGE
                     } else {
                       bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
                     }
@@ -5039,7 +5053,7 @@ const dailyPnLChartData = useMemo(
               <span className="text-xs text-gray-300">WIN</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 bg-red-300/50/60 border border-red-400/50 rounded"></div>
+              <div className="w-3 h-3 bg-red-600 border border-red-500 rounded"></div>
               <span className="text-xs text-gray-300">LOSS</span>
             </div>
             <div className="flex items-center gap-1">
