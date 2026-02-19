@@ -1504,7 +1504,7 @@ export default function AdminInterface() {
   };
 
   const calculateTotalPnLTradesForAccount = (): number => {
-    return getTradesForSelectedAccount.reduce((total, trade) => total + parseFloat(trade.pnl || '0'), 0);
+    return getTradesForSelectedAccount.reduce((total, trade) => total + parsePnL(trade.pnl || '0'), 0);
   };
 
   // Debug: Afficher les trades au chargement
@@ -2650,52 +2650,77 @@ const dailyPnLChartData = useMemo(
   };
 
   const getWeeklyBreakdownTrades = () => {
-    // Utiliser currentDate au lieu de today
+    // Utiliser EXACTEMENT la même logique que getWeeklyBreakdown pour être cohérent avec le calendrier
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
     
     const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
     const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+    const daysInMonth = lastDayOfMonth.getDate();
     const firstDayWeekday = firstDayOfMonth.getDay(); // 0 = dimanche, 1 = lundi, etc.
     
-    // Ajuster pour que lundi soit 0
+    // Ajuster pour que lundi soit 0 (même logique que le calendrier)
     const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
     
-    // Calculer le nombre de semaines nécessaires pour ce mois
-    const totalCells = Math.ceil((adjustedFirstDay + lastDayOfMonth.getDate()) / 7);
+    // Calculer le nombre de lignes/semaines nécessaires (même logique que le calendrier)
+    const totalCells = Math.ceil((adjustedFirstDay + daysInMonth) / 7);
     
-    // Créer les semaines nécessaires pour ce mois
+    // Créer les semaines en fonction des lignes du calendrier (MÊME LOGIQUE que getWeeklyBreakdown)
     const weeks = [];
     for (let weekNum = 1; weekNum <= totalCells; weekNum++) {
-      // Calculer les jours de la semaine
-      const weekStartDay = (weekNum - 1) * 7 - adjustedFirstDay + 1;
-      const weekEndDay = Math.min(weekNum * 7 - adjustedFirstDay, lastDayOfMonth.getDate());
+      // Calculer les jours de la semaine en fonction de la ligne du calendrier
+      // Chaque ligne commence à l'index (weekNum - 1) * 7 dans le tableau totalCells
+      const weekStartIndex = (weekNum - 1) * 7;
+      const weekEndIndex = weekNum * 7 - 1;
       
-      const weekStart = new Date(currentYear, currentMonth, weekStartDay);
-      const weekEnd = new Date(currentYear, currentMonth, weekEndDay);
-      
-      const effectiveAccountForWeek = selectedChannel.id === 'tpln-model' ? 'TPLN model' : selectedAccount;
-      // Construire les dates YYYY-MM-DD de la semaine (dans le mois) pour éviter les bugs timezone
-      const weekDateStrs = new Set<string>();
-      for (let d = new Date(weekStart); d <= weekEnd; d.setDate(d.getDate() + 1)) {
-        if (d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
-          weekDateStrs.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
+      // Les jours de cette semaine dans le calendrier
+      const weekDays: number[] = [];
+      for (let i = weekStartIndex; i <= weekEndIndex; i++) {
+        const dayNumber = i - adjustedFirstDay + 1;
+        // Inclure seulement les jours valides du mois (entre 1 et daysInMonth)
+        if (dayNumber >= 1 && dayNumber <= daysInMonth) {
+          weekDays.push(dayNumber);
         }
       }
-      const weekTrades = personalTrades.filter(t => {
-        const isDateMatch = t.date && weekDateStrs.has(t.date);
-        const tradeAccount = t.account || 'Compte Principal';
-        const isAccountMatch = effectiveAccountForWeek === 'Tous les comptes' || tradeAccount === effectiveAccountForWeek;
-        return isDateMatch && isAccountMatch;
+      
+      if (weekDays.length === 0) {
+        weeks.push({
+          week: `Week ${weekNum}`,
+          weekNum: weekNum,
+          trades: 0,
+          pnl: 0,
+          wins: 0,
+          losses: 0,
+          isCurrentWeek: false
+        });
+        continue;
+      }
+      
+      // Construire les dates YYYY-MM-DD de la semaine (comme le calendrier)
+      const weekDateStrs = new Set<string>();
+      weekDays.forEach(dayNum => {
+        weekDateStrs.add(`${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`);
+      });
+      
+      // Utiliser getTradesForSelectedAccount comme le calendrier
+      const effectiveAccountForWeek = selectedChannel.id === 'tpln-model' ? 'TPLN model' : selectedAccount;
+      const accountTrades = getTradesForSelectedAccount;
+      
+      const weekTrades = accountTrades.filter(t => {
+        if (!t || !t.date) return false;
+        return weekDateStrs.has(t.date);
       });
       
       const weekPnL = weekTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0);
       const wins = weekTrades.filter(t => t.status === 'WIN').length;
       const losses = weekTrades.filter(t => t.status === 'LOSS').length;
       
-      // Vérifier si c'est la semaine actuelle
-      const todayWeek = Math.ceil(currentDate.getDate() / 7);
-      const isCurrentWeek = weekNum === todayWeek;
+      // Vérifier si c'est la semaine actuelle (même logique que getWeeklyBreakdown)
+      const today = new Date();
+      const todayDay = today.getDate();
+      const isCurrentWeek = today.getMonth() === currentMonth &&
+                           today.getFullYear() === currentYear &&
+                           weekDays.includes(todayDay);
       
       weeks.push({
         week: `Week ${weekNum}`,
@@ -2713,58 +2738,46 @@ const dailyPnLChartData = useMemo(
 
   const getTradesForWeek = (weekNum: number) => {
     try {
-      if (!Array.isArray(personalTrades)) {
-        console.error('personalTrades n\'est pas un tableau:', personalTrades);
+      // Utiliser getTradesForSelectedAccount comme le calendrier pour être cohérent
+      const accountTrades = getTradesForSelectedAccount;
+      if (!Array.isArray(accountTrades)) {
         return [];
       }
 
-      console.log('🔍 DEBUG getTradesForWeek [ADMIN] - Tous les trades:', personalTrades);
-      console.log('🔍 DEBUG getTradesForWeek [ADMIN] - Semaine demandée:', weekNum);
-
-      // Utiliser la même logique que getWeeklyBreakdownTrades
+      // Utiliser EXACTEMENT la même logique que getWeeklyBreakdownTrades (lignes du calendrier)
       const currentMonth = currentDate.getMonth();
       const currentYear = currentDate.getFullYear();
-      
+
       const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
       const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
-      const firstDayWeekday = firstDayOfMonth.getDay(); // 0 = dimanche, 1 = lundi, etc.
-      
-      // Ajuster pour que lundi soit 0
+      const daysInMonth = lastDayOfMonth.getDate();
+      const firstDayWeekday = firstDayOfMonth.getDay();
       const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
+
+      // Calculer les jours de la semaine en fonction de la ligne du calendrier
+      const weekStartIndex = (weekNum - 1) * 7;
+      const weekEndIndex = weekNum * 7 - 1;
       
-      // Calculer les jours de la semaine
-      const weekStartDay = (weekNum - 1) * 7 - adjustedFirstDay + 1;
-      const weekEndDay = Math.min(weekNum * 7 - adjustedFirstDay, lastDayOfMonth.getDate());
-      
-      const weekStart = new Date(currentYear, currentMonth, weekStartDay);
-      const weekEnd = new Date(currentYear, currentMonth, weekEndDay);
-      // Ajouter 23h59 pour inclure toute la journée
-      weekEnd.setHours(23, 59, 59, 999);
-      
-      console.log(`🔍 Recherche trades pour semaine ${weekNum} [ADMIN]:`, weekStart.toDateString(), 'à', weekEnd.toDateString());
-      console.log(`🔍 Dates des trades [ADMIN]:`, personalTrades.map(t => t.date));
-      
-      const filteredTrades = personalTrades.filter(trade => {
-        if (!trade || !trade.date) {
-          console.log('🔍 Trade invalide [ADMIN]:', trade);
-          return false;
+      const weekDays: number[] = [];
+      for (let i = weekStartIndex; i <= weekEndIndex; i++) {
+        const dayNumber = i - adjustedFirstDay + 1;
+        if (dayNumber >= 1 && dayNumber <= daysInMonth) {
+          weekDays.push(dayNumber);
         }
-        
-        const tradeDate = new Date(trade.date);
-        const isDateMatch = tradeDate >= weekStart && 
-               tradeDate <= weekEnd &&
-               tradeDate.getMonth() === currentMonth &&
-               tradeDate.getFullYear() === currentYear;
-        
-        // Filtrer par compte sélectionné
-        const tradeAccount = trade.account || 'Compte Principal';
-        const isAccountMatch = selectedAccount === 'Tous les comptes' || tradeAccount === selectedAccount;
-        
-        console.log(`🔍 Trade ${trade.date} (${tradeDate.toDateString()}) dans semaine ${weekNum} [ADMIN]?`, isDateMatch, 'compte:', isAccountMatch);
-        return isDateMatch && isAccountMatch;
+      }
+
+      // Construire les dates YYYY-MM-DD de la semaine (comme le calendrier)
+      const weekDateStrs = new Set<string>();
+      weekDays.forEach(dayNum => {
+        weekDateStrs.add(`${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`);
       });
-      
-      console.log(`✅ Trades trouvés pour semaine ${weekNum} [ADMIN]:`, filteredTrades.length);
+
+      // Filtrer uniquement par date (le compte est déjà filtré dans getTradesForSelectedAccount)
+      const filteredTrades = accountTrades.filter(trade => {
+        if (!trade || !trade.date) return false;
+        return weekDateStrs.has(trade.date);
+      });
+
       return filteredTrades;
     } catch (error) {
       console.error('❌ Erreur dans getTradesForWeek [ADMIN]:', error);
@@ -3716,7 +3729,18 @@ const dailyPnLChartData = useMemo(
       const accountTrades = getTradesForSelectedAccount;
       if (!Array.isArray(accountTrades)) return [];
       
-      return accountTrades.filter(trade => trade && trade.date && trade.date === dateStr);
+      const filteredTrades = accountTrades.filter(trade => trade && trade.date && trade.date === dateStr);
+      
+      // Debug pour TPLN model
+      if (selectedChannel.id === 'tpln-model') {
+        console.log('🔍 [getTradesForDate] Date:', dateStr, 'Channel: TPLN model');
+        console.log('🔍 [getTradesForDate] Trades trouvés:', filteredTrades.length);
+        filteredTrades.forEach(t => {
+          console.log('🔍 [getTradesForDate] Trade:', t.symbol, 'PnL:', t.pnl, 'Account:', t.account);
+        });
+      }
+      
+      return filteredTrades;
     } catch (error) {
       console.error('Erreur dans getTradesForDate:', error);
       return [];
@@ -4898,7 +4922,7 @@ const dailyPnLChartData = useMemo(
                     if (totalPnL > 0) {
                       bgColor = 'bg-green-200/30 border-green-300/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
-                      bgColor = 'bg-red-600 border-red-500 text-white'; // PnL négatif - ROUGE
+                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif - rouge pâle
                     } else {
                       bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
                     }
@@ -4930,7 +4954,7 @@ const dailyPnLChartData = useMemo(
                     if (totalPnL > 0) {
                       bgColor = 'bg-green-200/30 border-green-300/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
-                      bgColor = 'bg-red-600 border-red-500 text-white'; // PnL négatif - ROUGE
+                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif - rouge pâle
                     } else {
                       bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
                     }
@@ -5053,7 +5077,7 @@ const dailyPnLChartData = useMemo(
               <span className="text-xs text-gray-300">WIN</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 bg-red-600 border border-red-500 rounded"></div>
+              <div className="w-3 h-3 bg-red-500/60 border border-red-400/50 rounded"></div>
               <span className="text-xs text-gray-300">LOSS</span>
             </div>
             <div className="flex items-center gap-1">
@@ -5269,50 +5293,71 @@ const dailyPnLChartData = useMemo(
                 </button>
               </div>
             )}
-            {/* Solde du compte (Journal perso uniquement) - pas sur TPLN model ni Journal Signaux */}
+            {/* PnL (Journal perso uniquement) - pas sur TPLN model ni Journal Signaux */}
             {selectedChannel.id === 'trading-journal' && selectedAccount && selectedAccount !== 'Tous les comptes' && (() => {
-              const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
-              const currentBalance = calculateAccountBalance();
-              const initialBalance = account?.initial_balance || 0;
+              // Si un jour est sélectionné (modal ouvert), afficher le PnL de ce jour
+              const isDaySelected = showTradesModal && selectedTradesDate != null;
+              const tradesForDay = isDaySelected && selectedTradesDate ? getTradesForDate(selectedTradesDate) : [];
+              const dayPnl = Math.round(tradesForDay.reduce((sum, t) => sum + parsePnL(t.pnl || '0'), 0));
+              
+              // Sinon, utiliser le PnL du mois affiché dans le calendrier
+              const monthTrades = getThisMonthTrades();
+              const monthPnl = Math.round(monthTrades.reduce((total, trade) => total + parsePnL(trade.pnl || '0'), 0));
+              
+              const displayPnl = isDaySelected ? dayPnl : monthPnl;
+              const displayLabel = isDaySelected ? 'PnL (ce jour)' : 'PnL';
+              
+              // Debug
+              if (isDaySelected && selectedTradesDate) {
+                console.log('🔍 [ADMIN PnL] Jour sélectionné:', selectedTradesDate.toLocaleDateString(), 'Trades:', tradesForDay.length, 'PnL:', dayPnl);
+              }
               
               return (
                 <div className={`border rounded-lg p-4 border ${
-                  currentBalance >= initialBalance ? 'bg-green-200/20 border-green-200/30' : 'bg-red-600/20 border-red-500/30'
+                  displayPnl >= 0 ? 'bg-green-200/20 border-green-200/30' : 'bg-red-600/20 border-red-500/30'
                 }`}>
                   <div className={`text-sm mb-1 ${
-                    currentBalance >= initialBalance ? 'text-green-100' : 'text-red-100'
+                    displayPnl >= 0 ? 'text-green-100' : 'text-red-100'
                   }`}>
-                    Solde
+                    {displayLabel}
                   </div>
                   <div className={`text-2xl font-bold ${
-                    currentBalance >= initialBalance ? 'text-green-100' : 'text-red-100'
+                    displayPnl >= 0 ? 'text-green-100' : 'text-red-100'
                   }`}>
-                    ${currentBalance.toFixed(2)}
+                    {displayPnl >= 0 ? '+' : ''}${displayPnl}
                   </div>
                 </div>
               );
             })()}
 
-            {/* Pnl pour TPLN model */}
+            {/* Pnl pour TPLN model - affiche le PnL selon statsPeriod (jour/mois) ou du jour cliqué si un jour est sélectionné */}
             {selectedChannel.id === 'tpln-model' && (() => {
-              const tplnAccount = tradingAccounts.find(acc => acc.account_name === 'TPLN');
-              const initialBalance = tplnAccount?.initial_balance || 0;
-              const pnl = calculateTotalPnLTradesForAccount();
-              const currentBalance = initialBalance + pnl;
+              // Si un jour est sélectionné (modal ouvert), afficher le PnL de ce jour
+              const isDaySelected = showTradesModal && selectedTradesDate != null;
+              const tradesForDay = isDaySelected && selectedTradesDate ? getTradesForDate(selectedTradesDate) : [];
+              const dayPnl = Math.round(tradesForDay.reduce((sum, t) => sum + parsePnL(t.pnl || '0'), 0));
+              
+              // Sinon, utiliser le PnL selon statsPeriod (jour ou mois)
+              const periodPnl = Math.round(calculateTotalPnLTradesForDisplay());
+              
+              const displayPnl = isDaySelected ? dayPnl : periodPnl;
+              const displayLabel = isDaySelected 
+                ? 'PnL (ce jour)' 
+                : (statsPeriod === 'jour' ? 'P&L du jour' : 'P&L du mois');
               
               return (
                 <div className={`border rounded-lg p-4 border ${
-                  currentBalance >= initialBalance ? 'bg-green-200/20 border-green-200/30' : 'bg-red-600/20 border-red-500/30'
+                  displayPnl >= 0 ? 'bg-green-200/20 border-green-200/30' : 'bg-red-600/20 border-red-500/30'
                 }`}>
                   <div className={`text-sm mb-1 ${
-                    currentBalance >= initialBalance ? 'text-green-100' : 'text-red-100'
+                    displayPnl >= 0 ? 'text-green-100' : 'text-red-100'
                   }`}>
-                    Pnl
+                    {displayLabel}
                   </div>
                   <div className={`text-2xl font-bold ${
-                    currentBalance >= initialBalance ? 'text-green-100' : 'text-red-100'
+                    displayPnl >= 0 ? 'text-green-100' : 'text-red-100'
                   }`}>
-                    {`${currentBalance >= initialBalance ? '+' : ''}$${currentBalance.toFixed(2)}`}
+                    {displayPnl >= 0 ? '+' : ''}${displayPnl}
                   </div>
                 </div>
               );
@@ -8610,6 +8655,31 @@ const dailyPnLChartData = useMemo(
                     </div>
                   </div>
                 );
+              })()}
+
+              {/* PnL total pour ce jour */}
+              {(() => {
+                const tradesForDay = getTradesForDate(selectedTradesDate);
+                const totalPnL = tradesForDay.reduce((total, trade) => {
+                  if (trade.pnl) {
+                    return total + parsePnL(trade.pnl);
+                  }
+                  return total;
+                }, 0);
+                
+                if (tradesForDay.length > 0) {
+                  return (
+                    <div className="mb-4 p-4 bg-gray-700/50 rounded-lg border border-gray-600">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-400">PnL total pour ce jour:</span>
+                        <span className={`text-lg font-bold ${totalPnL >= 0 ? 'text-green-100' : 'text-red-100'}`}>
+                          {totalPnL >= 0 ? '+' : ''}${totalPnL.toFixed(0)}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
               })()}
 
               <div className="space-y-4">

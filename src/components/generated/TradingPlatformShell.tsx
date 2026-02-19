@@ -2580,109 +2580,94 @@ export default function TradingPlatformShell() {
 
   // Fonction pour calculer le Weekly Breakdown dynamique (même pattern que Avg Win)
   const getWeeklyBreakdownForMonth = () => {
-    const month = currentDate.getMonth();
-    const year = currentDate.getFullYear();
+    // Utiliser EXACTEMENT la même logique que AdminInterface pour être cohérent
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
 
-    const firstDayOfMonth = new Date(year, month, 1);
-    const lastDayOfMonth = new Date(year, month + 1, 0);
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+    const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+    const daysInMonth = lastDayOfMonth.getDate();
     const firstDayWeekday = firstDayOfMonth.getDay(); // 0 = dimanche, 1 = lundi, etc.
-    const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1; // lundi = 0
-
-    const calendarStart = new Date(year, month, 1 - adjustedFirstDay);
-    const totalCells = Math.ceil((adjustedFirstDay + lastDayOfMonth.getDate()) / 7);
+    
+    // Ajuster pour que lundi soit 0 (même logique que le calendrier)
+    const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
+    
+    // Calculer le nombre de lignes/semaines nécessaires (même logique que le calendrier)
+    const totalCells = Math.ceil((adjustedFirstDay + daysInMonth) / 7);
+    
     const today = new Date();
 
-    // Utiliser realTimeSignals qui contient tous les signaux chargés depuis Firebase
-    const monthSignals = realTimeSignals.filter(signal => {
-      if (!signal) return false;
-      
-      // Convertir le timestamp en Date
-      let signalDate: Date;
-      if (signal.originalTimestamp) {
-        signalDate = typeof signal.originalTimestamp === 'number' 
-          ? new Date(signal.originalTimestamp) 
-          : new Date(signal.originalTimestamp);
-      } else if (signal.timestamp) {
-        signalDate = typeof signal.timestamp === 'number' 
-          ? new Date(signal.timestamp) 
-          : new Date(signal.timestamp);
-      } else {
-        return false;
-      }
-      
-      // Vérifier que la date est valide
-      if (isNaN(signalDate.getTime())) return false;
-      
-      // Comparer mois et année
-      return signalDate.getMonth() === month && signalDate.getFullYear() === year;
-    });
-
-    console.log(`📊 [WEEKLY] Total signaux chargés:`, realTimeSignals.length);
-    console.log(`📊 [WEEKLY] Signaux du mois ${month + 1}/${year}:`, monthSignals.length);
-    if (monthSignals.length > 0) {
-      console.log(`📊 [WEEKLY] Exemple de signal:`, {
-        id: monthSignals[0].id,
-        status: monthSignals[0].status,
-        timestamp: monthSignals[0].timestamp,
-        originalTimestamp: monthSignals[0].originalTimestamp
-      });
-    }
-
+    // Créer les semaines en fonction des lignes du calendrier (MÊME LOGIQUE que AdminInterface)
     const weeks = [];
 
     for (let weekNum = 1; weekNum <= totalCells; weekNum++) {
-      const weekStart = new Date(calendarStart);
-      weekStart.setDate(calendarStart.getDate() + (weekNum - 1) * 7);
-      const weekEnd = new Date(weekStart);
-      weekEnd.setDate(weekStart.getDate() + 6);
+      // Calculer les jours de la semaine en fonction de la ligne du calendrier
+      const weekStartIndex = (weekNum - 1) * 7;
+      const weekEndIndex = weekNum * 7 - 1;
+      
+      // Les jours de cette semaine dans le calendrier
+      const weekDays: number[] = [];
+      for (let i = weekStartIndex; i <= weekEndIndex; i++) {
+        const dayNumber = i - adjustedFirstDay + 1;
+        // Inclure seulement les jours valides du mois (entre 1 et daysInMonth)
+        if (dayNumber >= 1 && dayNumber <= daysInMonth) {
+          weekDays.push(dayNumber);
+        }
+      }
+      
+      if (weekDays.length === 0) {
+        weeks.push({
+          week: `Week ${weekNum}`,
+          weekNum,
+          trades: 0,
+          pnl: 0,
+          wins: 0,
+          losses: 0,
+          isCurrentWeek: false
+        });
+        continue;
+      }
 
-      const weekSignals = monthSignals.filter(signal => {
+      // Filtrer les signaux pour cette semaine (même logique que AdminInterface)
+      const weekSignals = realTimeSignals.filter(signal => {
         if (!signal) return false;
-        // Convertir le timestamp en Date (peut être string, number ou Date)
-        let signalDate: Date;
-        if (signal.originalTimestamp) {
-          signalDate = typeof signal.originalTimestamp === 'number' 
-            ? new Date(signal.originalTimestamp) 
-            : new Date(signal.originalTimestamp);
-        } else if (signal.timestamp) {
-          signalDate = typeof signal.timestamp === 'number' 
-            ? new Date(signal.timestamp) 
-            : new Date(signal.timestamp);
-        } else {
+        
+        // Utiliser le timestamp original pour déterminer la vraie date
+        const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
+        
+        // Si la date est invalide, ignorer ce signal
+        if (isNaN(signalDate.getTime())) {
           return false;
         }
         
-        // Vérifier que la date est valide
-        if (isNaN(signalDate.getTime())) return false;
+        // Vérifier si le signal est dans cette semaine (même mois et année)
+        const signalDay = signalDate.getDate();
+        const isInWeek = signalDate.getMonth() === currentMonth &&
+               signalDate.getFullYear() === currentYear &&
+               weekDays.includes(signalDay);
         
-        // Comparer les dates (sans les heures)
-        const signalDateOnly = new Date(signalDate.getFullYear(), signalDate.getMonth(), signalDate.getDate());
-        const weekStartOnly = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate());
-        const weekEndOnly = new Date(weekEnd.getFullYear(), weekEnd.getMonth(), weekEnd.getDate());
-        
-        return signalDateOnly >= weekStartOnly && signalDateOnly <= weekEndOnly;
+        return isInWeek;
       });
 
       // Compter seulement les signaux clôturés (WIN/LOSS/BE)
-      const closedWeekSignals = weekSignals.filter(s => s && s.status !== 'ACTIVE');
-      const wins = closedWeekSignals.filter(s => s.status === 'WIN').length;
-      const losses = closedWeekSignals.filter(s => s.status === 'LOSS').length;
-      const pnl = closedWeekSignals.reduce((total, signal) => {
-        if (signal && signal.pnl) {
-          return total + parsePnL(signal.pnl);
-        }
-        return total;
-      }, 0);
+      const closedSignals = weekSignals.filter(s => s.status !== 'ACTIVE');
+      const weekPnL = closedSignals.reduce((total, signal) => total + parsePnL(signal.pnl || '0'), 0);
+      const wins = closedSignals.filter(s => s.status === 'WIN').length;
+      const losses = closedSignals.filter(s => s.status === 'LOSS').length;
 
-      const isCurrentWeek = today >= weekStart && today <= weekEnd;
+      // Vérifier si c'est la semaine actuelle (même logique que AdminInterface)
+      const todayDay = today.getDate();
+      const isCurrentWeek = today.getMonth() === currentMonth &&
+                           today.getFullYear() === currentYear &&
+                           weekDays.includes(todayDay);
 
       weeks.push({
         week: `Week ${weekNum}`,
         weekNum,
-        trades: closedWeekSignals.length, // Afficher seulement les trades clôturés
+        trades: closedSignals.length, // Afficher seulement les trades clôturés
         wins,
         losses,
-        pnl: Math.round(pnl),
+        pnl: Math.round(weekPnL),
         isCurrentWeek
       });
     }
@@ -3173,44 +3158,74 @@ export default function TradingPlatformShell() {
   };
 
   const getWeeklyBreakdownTradesForMonth = () => {
-    const month = currentDate.getMonth();
-    const year = currentDate.getFullYear();
+    // Utiliser EXACTEMENT la même logique que AdminInterface pour être cohérent
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
     
-    // Créer 5 semaines du mois affiché - calculer comme le calendrier
-    const weeks = [];
-    const firstDayOfMonth = new Date(year, month, 1);
-    const lastDayOfMonth = new Date(year, month + 1, 0);
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+    const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+    const daysInMonth = lastDayOfMonth.getDate();
     const firstDayWeekday = firstDayOfMonth.getDay(); // 0 = dimanche, 1 = lundi, etc.
     
-    // Ajuster pour que lundi soit 0 (comme le calendrier)
+    // Ajuster pour que lundi soit 0 (même logique que le calendrier)
     const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
     
-    for (let weekNum = 1; weekNum <= 5; weekNum++) {
-      // Calculer le début de la semaine comme dans le calendrier
-      const weekStart = new Date(year, month, 1);
-      weekStart.setDate(1 - adjustedFirstDay + (weekNum - 1) * 7);
+    // Calculer le nombre de lignes/semaines nécessaires (même logique que le calendrier)
+    const totalCells = Math.ceil((adjustedFirstDay + daysInMonth) / 7);
+    
+    // Créer les semaines en fonction des lignes du calendrier (MÊME LOGIQUE que AdminInterface)
+    const weeks = [];
+    for (let weekNum = 1; weekNum <= totalCells; weekNum++) {
+      // Calculer les jours de la semaine en fonction de la ligne du calendrier
+      // Chaque ligne commence à l'index (weekNum - 1) * 7 dans le tableau totalCells
+      const weekStartIndex = (weekNum - 1) * 7;
+      const weekEndIndex = weekNum * 7 - 1;
       
-      const weekEnd = new Date(weekStart);
-      weekEnd.setDate(weekStart.getDate() + 6);
-      
-      // Construire les dates YYYY-MM-DD de la semaine (dans le mois) pour éviter les bugs timezone
-      const weekDateStrs = new Set<string>();
-      for (let d = new Date(weekStart); d <= weekEnd; d.setDate(d.getDate() + 1)) {
-        if (d.getMonth() === month && d.getFullYear() === year) {
-          weekDateStrs.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
+      // Les jours de cette semaine dans le calendrier
+      const weekDays: number[] = [];
+      for (let i = weekStartIndex; i <= weekEndIndex; i++) {
+        const dayNumber = i - adjustedFirstDay + 1;
+        // Inclure seulement les jours valides du mois (entre 1 et daysInMonth)
+        if (dayNumber >= 1 && dayNumber <= daysInMonth) {
+          weekDays.push(dayNumber);
         }
       }
-      const weekTrades = getTradesForSelectedAccount.filter(t => t.date && weekDateStrs.has(t.date));
+      
+      if (weekDays.length === 0) {
+        weeks.push({
+          week: `Week ${weekNum}`,
+          weekNum: weekNum,
+          trades: 0,
+          pnl: 0,
+          wins: 0,
+          losses: 0,
+          isCurrentWeek: false
+        });
+        continue;
+      }
+      
+      // Construire les dates YYYY-MM-DD de la semaine (comme le calendrier)
+      const weekDateStrs = new Set<string>();
+      weekDays.forEach(dayNum => {
+        weekDateStrs.add(`${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`);
+      });
+      
+      // Utiliser getTradesForSelectedAccount comme le calendrier
+      const weekTrades = getTradesForSelectedAccount.filter(t => {
+        if (!t || !t.date) return false;
+        return weekDateStrs.has(t.date);
+      });
       
       const weekPnL = weekTrades.reduce((total, trade) => total + parsePnL(trade.pnl), 0);
       const wins = weekTrades.filter(t => t.status === 'WIN').length;
       const losses = weekTrades.filter(t => t.status === 'LOSS').length;
       
-      // Vérifier si c'est la semaine actuelle (seulement si c'est le mois actuel)
+      // Vérifier si c'est la semaine actuelle (même logique que AdminInterface)
       const today = new Date();
-      const isCurrentMonth = month === today.getMonth() && year === today.getFullYear();
-      const todayWeek = Math.ceil(today.getDate() / 7);
-      const isCurrentWeek = isCurrentMonth && weekNum === todayWeek;
+      const todayDay = today.getDate();
+      const isCurrentWeek = today.getMonth() === currentMonth &&
+                           today.getFullYear() === currentYear &&
+                           weekDays.includes(todayDay);
       
       weeks.push({
         week: `Week ${weekNum}`,
@@ -4297,43 +4312,46 @@ export default function TradingPlatformShell() {
 
   const getTradesForWeek = (weekNum: number) => {
     try {
-      // Utiliser les trades du compte sélectionné
+      // Utiliser getTradesForSelectedAccount comme le calendrier pour être cohérent
       const accountTrades = getTradesForSelectedAccount;
-      
       if (!Array.isArray(accountTrades)) {
-        console.error('accountTrades n\'est pas un tableau:', accountTrades);
         return [];
       }
 
-      // Utiliser currentDate (variable du composant) et non new Date()
-      const month = currentDate.getMonth();
-      const year = currentDate.getFullYear();
-      
-      // Calculer le début de la semaine comme dans getWeeklyBreakdownTradesForMonth
-      const firstDayOfMonth = new Date(year, month, 1);
-      const firstDayWeekday = firstDayOfMonth.getDay(); // 0 = dimanche, 1 = lundi, etc.
-      
-      // Ajuster pour que lundi soit 0 (comme le calendrier)
+      // Utiliser EXACTEMENT la même logique que getWeeklyBreakdownTradesForMonth (lignes du calendrier)
+      const currentMonth = currentDate.getMonth();
+      const currentYear = currentDate.getFullYear();
+
+      const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+      const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+      const daysInMonth = lastDayOfMonth.getDate();
+      const firstDayWeekday = firstDayOfMonth.getDay();
       const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
+
+      // Calculer les jours de la semaine en fonction de la ligne du calendrier
+      const weekStartIndex = (weekNum - 1) * 7;
+      const weekEndIndex = weekNum * 7 - 1;
       
-      const weekStart = new Date(year, month, 1);
-      weekStart.setDate(1 - adjustedFirstDay + (weekNum - 1) * 7);
-      
-      const weekEnd = new Date(weekStart);
-      weekEnd.setDate(weekStart.getDate() + 6);
-      
-      const filteredTrades = accountTrades.filter(trade => {
-        if (!trade || !trade.date) {
-          return false;
+      const weekDays: number[] = [];
+      for (let i = weekStartIndex; i <= weekEndIndex; i++) {
+        const dayNumber = i - adjustedFirstDay + 1;
+        if (dayNumber >= 1 && dayNumber <= daysInMonth) {
+          weekDays.push(dayNumber);
         }
-        
-        const tradeDate = new Date(trade.date);
-        return tradeDate >= weekStart && 
-               tradeDate <= weekEnd &&
-               tradeDate.getMonth() === month &&
-               tradeDate.getFullYear() === year;
+      }
+
+      // Construire les dates YYYY-MM-DD de la semaine (comme le calendrier)
+      const weekDateStrs = new Set<string>();
+      weekDays.forEach(dayNum => {
+        weekDateStrs.add(`${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`);
       });
-      
+
+      // Filtrer uniquement par date (le compte est déjà filtré dans getTradesForSelectedAccount)
+      const filteredTrades = accountTrades.filter(trade => {
+        if (!trade || !trade.date) return false;
+        return weekDateStrs.has(trade.date);
+      });
+
       return filteredTrades;
     } catch (error) {
       console.error('❌ Erreur dans getTradesForWeek:', error);
@@ -4357,60 +4375,47 @@ export default function TradingPlatformShell() {
 
   // Fonction pour récupérer les signaux d'une semaine spécifique
   const getSignalsForWeek = (weekNum: number): any[] => {
-    // Utiliser currentDate (variable du composant) et non new Date()
-    const month = currentDate.getMonth();
-    const year = currentDate.getFullYear();
-    
-    // Calculer le début de la semaine comme dans getWeeklyBreakdownForMonth
-    const firstDayOfMonth = new Date(year, month, 1);
-    const firstDayWeekday = firstDayOfMonth.getDay(); // 0 = dimanche, 1 = lundi, etc.
-    
-    // Ajuster pour que lundi soit 0 (comme le calendrier)
+    // Utiliser EXACTEMENT la même logique que getWeeklyBreakdownForMonth (lignes du calendrier)
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+    const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+    const daysInMonth = lastDayOfMonth.getDate();
+    const firstDayWeekday = firstDayOfMonth.getDay();
     const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
+
+    // Calculer les jours de la semaine en fonction de la ligne du calendrier
+    const weekStartIndex = (weekNum - 1) * 7;
+    const weekEndIndex = weekNum * 7 - 1;
     
-    const calendarStart = new Date(year, month, 1 - adjustedFirstDay);
-    const weekStart = new Date(calendarStart);
-    weekStart.setDate(calendarStart.getDate() + (weekNum - 1) * 7);
-    
-    const weekEnd = new Date(weekStart);
-    weekEnd.setDate(weekStart.getDate() + 6);
-    
-    console.log(`🔍 [WEEK-POPUP] Recherche signaux pour semaine ${weekNum}:`, {
-      weekStart: weekStart.toISOString(),
-      weekEnd: weekEnd.toISOString(),
-      totalSignals: realTimeSignals.length
-    });
-    
+    const weekDays: number[] = [];
+    for (let i = weekStartIndex; i <= weekEndIndex; i++) {
+      const dayNumber = i - adjustedFirstDay + 1;
+      if (dayNumber >= 1 && dayNumber <= daysInMonth) {
+        weekDays.push(dayNumber);
+      }
+    }
+
+    // Filtrer les signaux pour cette semaine (même logique que getWeeklyBreakdownForMonth)
     return realTimeSignals.filter(signal => {
       if (!signal) return false;
       
-      // Convertir le timestamp en Date
-      let signalDate: Date;
-      if (signal.originalTimestamp) {
-        signalDate = typeof signal.originalTimestamp === 'number' 
-          ? new Date(signal.originalTimestamp) 
-          : new Date(signal.originalTimestamp);
-      } else if (signal.timestamp) {
-        signalDate = typeof signal.timestamp === 'number' 
-          ? new Date(signal.timestamp) 
-          : new Date(signal.timestamp);
-      } else {
-        return false;
-      }
+      // Utiliser le timestamp original pour déterminer la vraie date
+      const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
       
+      // Si la date est invalide, ignorer ce signal
       if (isNaN(signalDate.getTime())) {
         return false;
       }
       
-      // Comparer les dates (sans les heures)
-      const signalDateOnly = new Date(signalDate.getFullYear(), signalDate.getMonth(), signalDate.getDate());
-      const weekStartOnly = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate());
-      const weekEndOnly = new Date(weekEnd.getFullYear(), weekEnd.getMonth(), weekEnd.getDate());
+      // Vérifier si le signal est dans cette semaine (même mois et année)
+      const signalDay = signalDate.getDate();
+      const isInWeek = signalDate.getMonth() === currentMonth &&
+             signalDate.getFullYear() === currentYear &&
+             weekDays.includes(signalDay);
       
-      return signalDateOnly >= weekStartOnly && 
-             signalDateOnly <= weekEndOnly &&
-             signalDate.getMonth() === month &&
-             signalDate.getFullYear() === year;
+      return isInWeek;
     });
   };
 
@@ -4892,7 +4897,7 @@ export default function TradingPlatformShell() {
                     if (totalPnL > 0) {
                       bgColor = 'bg-green-200/30 border-green-200/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
-                      bgColor = 'bg-red-600 border-red-500 text-white'; // PnL négatif - ROUGE
+                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif - rouge pâle
                     } else {
                       bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0 (BE)
                     }
@@ -4914,7 +4919,7 @@ export default function TradingPlatformShell() {
                     if (totalPnL > 0) {
                       bgColor = 'bg-green-200/30 border-green-200/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
-                      bgColor = 'bg-red-600 border-red-500 text-white'; // PnL négatif - ROUGE
+                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif - rouge pâle
                     } else {
                       bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
                     }
@@ -5038,7 +5043,7 @@ export default function TradingPlatformShell() {
                 <span className="text-xs text-gray-300">WIN</span>
               </div>
               <div className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-red-600 border border-red-500 rounded"></div>
+                <div className="w-3 h-3 bg-red-500/60 border border-red-400/50 rounded"></div>
                 <span className="text-xs text-gray-300">LOSS</span>
               </div>
               <div className="flex items-center gap-1">
@@ -5139,31 +5144,40 @@ export default function TradingPlatformShell() {
           )}
           {/* Métriques principales */}
           <div className="space-y-2 mb-8">
-            {/* Solde du compte (Journal perso) - pas sur TPLN model, ni TPLN button, ni Journal Signaux */}
-            {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && activeJournalButton !== 'tpln' && (
-            <div className={`border rounded-lg p-4 border ${
-              (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes'
-                ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'bg-green-200/20 border-green-200/30' : 'bg-red-600/20 border-red-500/30')
-                : (((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForDisplay() : calculateTotalPnLForMonth()) >= 0 ? 'bg-green-200/20 border-green-200/30' : 'bg-red-600/20 border-red-500/30')
-            }`}>
-              <div className={`text-sm mb-1 ${
-                (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes'
-                  ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'text-green-100' : 'text-red-300')
-                  : (((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForDisplay() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-100' : 'text-red-300')
-              }`}>
-                {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes' ? 'Solde du compte' : (statsPeriod === 'jour' ? 'P&L du jour' : 'P&L Total')}
-              </div>
-              <div className={`text-2xl font-bold ${
-                (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes'
-                  ? (calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) ? 'text-green-100' : 'text-red-200')
-                  : (((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForDisplay() : calculateTotalPnLForMonth()) >= 0 ? 'text-green-100' : 'text-red-200')
-              }`}>
-                {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes'
-                  ? `$${calculateAccountBalance().toFixed(2)}`
-                  : `${((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForDisplay() : calculateTotalPnLForMonth()) >= 0 ? '+' : ''}$${(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForDisplay() : calculateTotalPnLForMonth()}`}
-              </div>
-            </div>
-            )}
+            {/* PnL (Journal perso) - pas sur TPLN model, ni TPLN button, ni Journal Signaux */}
+            {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && activeJournalButton !== 'tpln' && (() => {
+              // Si un jour est sélectionné (modal ouvert), afficher le PnL de ce jour
+              const isDaySelected = showTradesModal && selectedTradesDate != null;
+              const tradesForDay = isDaySelected ? getTradesForDate(selectedTradesDate) : [];
+              const dayPnl = tradesForDay.reduce((sum, t) => sum + parsePnL(t.pnl || '0'), 0);
+              
+              // Sinon, utiliser le PnL selon statsPeriod ou le compte sélectionné
+              const defaultPnl = (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes'
+                ? calculateTotalPnLTradesForDisplay()
+                : ((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForDisplay() : calculateTotalPnLForMonth());
+              
+              const displayPnl = isDaySelected ? dayPnl : defaultPnl;
+              const displayLabel = isDaySelected 
+                ? 'PnL (ce jour)' 
+                : ((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes' ? 'PnL' : (statsPeriod === 'jour' ? 'P&L du jour' : 'P&L Total'));
+              
+              return (
+                <div className={`border rounded-lg p-4 border ${
+                  displayPnl >= 0 ? 'bg-green-200/20 border-green-200/30' : 'bg-red-600/20 border-red-500/30'
+                }`}>
+                  <div className={`text-sm mb-1 ${
+                    displayPnl >= 0 ? 'text-green-100' : 'text-red-300'
+                  }`}>
+                    {displayLabel}
+                  </div>
+                  <div className={`text-2xl font-bold ${
+                    displayPnl >= 0 ? 'text-green-100' : 'text-red-200'
+                  }`}>
+                    {displayPnl >= 0 ? '+' : ''}${displayPnl}
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Win Rate */}
             <div className="bg-blue-600/20 border-blue-500/30 rounded-lg py-1 px-4 border flex items-center justify-between">
