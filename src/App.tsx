@@ -432,6 +432,15 @@ const App = () => {
   
   // Hook pour détecter PWA
   const { isPWA } = usePWA();
+  // Vue mobile (écran étroit) = même contenu court que PWA pour la section 1
+  const [isNarrowView, setIsNarrowView] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)');
+    const onChange = () => setIsNarrowView(mq.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+  const isPWAOrMobile = isPWA || isNarrowView;
   
   // Empêcher le scroll en PWA seulement quand on est connecté (dans l'app)
   useEffect(() => {
@@ -2176,20 +2185,47 @@ const App = () => {
                     </h2>
                   </div>
                   <div className="flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-10 max-w-6xl mx-auto mb-8">
-                    <div className="max-w-[480px] text-left lg:flex-shrink-0">
-                      <p className="text-white font-bold leading-tight mb-6" style={{ fontFamily: 'Inter, sans-serif', fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                        Le trading est devenu trop compliqué
+                    <div className={`max-w-[480px] lg:flex-shrink-0 ${isPWAOrMobile ? 'text-center mx-auto w-full' : 'text-left'}`}>
+                      <p className={`text-white font-bold leading-tight ${isPWAOrMobile ? 'mb-3' : 'mb-6'}`} style={{ fontFamily: 'Inter, sans-serif', fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
+                        Le trading est devenu flou.
                       </p>
-                      <div className="text-[#AAB3C2] text-base leading-[1.6]" style={{ fontFamily: 'Inter, sans-serif' }}>
-                        <p className="mb-2">Indicateurs inutiles.</p>
-                        <p className="mb-2">Stratégies floues.</p>
-                        <p className="mb-4">Aucune structure claire.</p>
-                        <p className="mb-4">TPLN simplifie tout.</p>
-                        <p className="mb-1">Un modèle.</p>
-                        <p className="mb-1">Des règles précises.</p>
-                        <p className="mb-0">Une exécution disciplinée.</p>
+                      <div className={`text-[#AAB3C2] text-base ${isPWAOrMobile ? 'leading-tight space-y-0.5' : 'leading-[1.6]'}`} style={{ fontFamily: 'Inter, sans-serif' }}>
+                        <p className={isPWAOrMobile ? 'mb-0.5' : 'mb-2'}>Indicateurs partout.</p>
+                        <p className={isPWAOrMobile ? 'mb-0.5' : 'mb-2'}>Stratégies qui changent.</p>
+                        <p className={isPWAOrMobile ? 'mb-0' : 'mb-4'}>Aucune structure claire.</p>
+                        {!isPWAOrMobile && (
+                          <>
+                            <p className="mb-4">TPLN simplifie tout.</p>
+                            <p className="mb-1">Un modèle.</p>
+                            <p className="mb-1">Des règles précises.</p>
+                            <p className="mb-0">Une exécution disciplinée.</p>
+                          </>
+                        )}
                       </div>
+                      {isPWAOrMobile && (
+                        <>
+                          <p className="text-white font-bold leading-tight mb-3 mt-6" style={{ fontFamily: 'Inter, sans-serif', fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
+                            TPLN simplifie tout.
+                          </p>
+                          <div className="text-[#AAB3C2] text-base leading-tight space-y-0.5" style={{ fontFamily: 'Inter, sans-serif' }}>
+                            <p className="mb-0.5">Pas de cadre</p>
+                            <p className="mb-0.5">Pas de constance</p>
+                            <p className="mb-0.5">Pas de mesure</p>
+                            <p className="mb-0">Trop d'improvisation</p>
+                          </div>
+                          <p className="text-white font-bold leading-tight mb-3 mt-6" style={{ fontFamily: 'Inter, sans-serif', fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
+                            TPLN remet de la structure.
+                          </p>
+                          <div className="text-[#AAB3C2] text-base leading-tight space-y-0.5" style={{ fontFamily: 'Inter, sans-serif' }}>
+                            <p className="mb-0.5">Un modèle simple.</p>
+                            <p className="mb-0.5">Des règles précises.</p>
+                            <p className="mb-0.5">Une exécution disciplinée.</p>
+                            <p className="mb-0">Un système mesurable.</p>
+                          </div>
+                        </>
+                      )}
                     </div>
+                    {!isPWAOrMobile && (
                     <div className="lg:flex-1 lg:min-w-0 flex justify-center">
                   <div className="mb-0 w-full max-w-lg">
                     <div className="bg-[#141821] border border-[#222836] rounded-[16px] p-8 hover:border-[#2E6BFF]/50 hover:shadow-[0_12px_32px_rgba(46,107,255,0.2)] transition-all duration-300 relative overflow-hidden">
@@ -2222,6 +2258,7 @@ const App = () => {
                     </div>
                   </div>
                     </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -2390,20 +2427,28 @@ const App = () => {
 
                   {/* Texte à gauche, cadre à droite */}
                   <div className="flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-10 max-w-6xl mx-auto mb-8">
-                    <div className="max-w-[480px] text-left lg:flex-shrink-0">
+                    <div className={`max-w-[480px] lg:flex-shrink-0 ${isPWAOrMobile ? 'text-center mx-auto' : 'text-left'}`}>
                       <p className="text-white font-bold leading-tight mb-6" style={{ fontFamily: 'Inter, sans-serif', fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                        Un modèle clair. Reproductible. Maîtrisé.
+                        {isPWAOrMobile ? 'Spécialisé en exécution LTF.' : 'Un modèle clair. Reproductible. Maîtrisé.'}
                       </p>
-                      <div className="text-[#AAB3C2] text-base leading-[1.6]" style={{ fontFamily: 'Inter, sans-serif' }}>
-                        <p className="mb-2">TPLN repose sur un cadre simple à comprendre, mais précis dans son exécution.</p>
-                        <p className="mb-4">Pas d'indicateurs inutiles.<br />Pas de complexité artificielle.</p>
-                        <p className="mb-4">Un modèle structuré que tu peux appliquer avec constance.</p>
-                        <p className="mb-1">Tu comprends la logique.</p>
-                        <p className="mb-1">Tu sais quoi valider.</p>
-                        <p className="mb-0">Tu sais quand exécuter.</p>
-                      </div>
+                      {isPWAOrMobile && (
+                        <p className="text-[#AAB3C2] text-base leading-tight mb-6" style={{ fontFamily: 'Inter, sans-serif' }}>
+                          Rapide. Structuré. Répétable.
+                        </p>
+                      )}
+                      {!isPWAOrMobile && (
+                        <div className="text-[#AAB3C2] text-base leading-[1.6]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                          <p className="mb-2">TPLN repose sur un cadre simple à comprendre, mais précis dans son exécution.</p>
+                          <p className="mb-4">Pas d'indicateurs inutiles.<br />Pas de complexité artificielle.</p>
+                          <p className="mb-4">Un modèle structuré que tu peux appliquer avec constance.</p>
+                          <p className="mb-1">Tu comprends la logique.</p>
+                          <p className="mb-1">Tu sais quoi valider.</p>
+                          <p className="mb-0">Tu sais quand exécuter.</p>
+                        </div>
+                      )}
                     </div>
-                    <div className="lg:flex-1 lg:min-w-0 flex justify-center">
+                    <div className="lg:flex-1 lg:min-w-0 flex flex-col items-center gap-6">
+                      <img src="/trademethode.webp" alt="Méthode TPLN" className="w-full max-w-lg rounded-[16px] object-cover" />
                   {/* Cadre formation - Inclus dans l'abonnement */}
                   <div className="mb-0 w-full max-w-lg">
                     <div className="bg-[#141821] border border-[#222836] rounded-[16px] p-8 hover:border-[#2E6BFF]/50 hover:shadow-[0_12px_32px_rgba(46,107,255,0.2)] transition-all duration-300 relative overflow-hidden">
@@ -2414,30 +2459,53 @@ const App = () => {
                       </h3>
                       
                       <ul className="space-y-3.5">
-                        <li className="flex items-start gap-3">
-                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
-                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Formation complète au modèle TPLN</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
-                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Checklist de validation détaillée</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
-                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Gestion du risque structurée</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
-                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Journal de performance intégré</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
-                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Analyse des erreurs et discipline</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
-                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Suivi win rate, profit factor, drawdown</span>
-                        </li>
+                        {isPWAOrMobile ? (
+                          <>
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                              <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Formation complète (scalp LTF)</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                              <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Checklist d'exécution (entrée / invalidation)</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                              <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Gestion du risque structurée</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                              <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Journal de performance intégré</span>
+                            </li>
+                          </>
+                        ) : (
+                          <>
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                              <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Formation complète au modèle TPLN</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                              <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Checklist de validation détaillée</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                              <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Gestion du risque structurée</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                              <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Journal de performance intégré</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                              <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Analyse des erreurs et discipline</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                              <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Suivi win rate, profit factor, drawdown</span>
+                            </li>
+                          </>
+                        )}
                       </ul>
                     </div>
                   </div>
