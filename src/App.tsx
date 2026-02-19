@@ -1641,16 +1641,11 @@ const App = () => {
                   </span>
                 </h1>
                 <p className={`hero-intro-p text-lg sm:text-xl text-[#AAB3C2] mb-8 sm:mb-12 max-w-4xl leading-relaxed ${isPWA ? 'pwa-hero-left' : 'mx-auto text-center'}`} style={{ ...(isPWA ? {} : { transform: 'translateX(calc(35% + 5mm))' }), fontFamily: 'Inter, sans-serif', fontWeight: 400, lineHeight: 1.6 }}>
-                  TPLN est un système structuré.
+                  TPLN est un système complet de scalp LTF.<br />
                   <br />
-                  Méthode claire. Règles précises. Discipline stricte.
-                  <br />
-                  <br />
-                  Chaque décision est validée.
-                  <br />
-                  Si les critères sont remplis, l'exécution est lancée.
-                  <br />
-                  Sinon, elle est ignorée.
+                  Tu apprends le modèle.<br />
+                  Tu l'exécutes en direct.<br />
+                  Tout est enregistré et mesuré.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mt-6 mb-8">
                   <button 
@@ -1936,16 +1931,11 @@ const App = () => {
               </span>
             </h1>
             <p className={`hero-intro-p text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-4xl leading-relaxed ${isPWA ? 'pwa-hero-left' : 'mx-auto text-center'}`} style={isPWA ? undefined : { transform: 'translateX(calc(35% + 5mm))' }}>
-              TPLN est un système structuré.
+              TPLN est un système complet de scalp LTF.<br />
               <br />
-              Méthode claire. Règles précises. Discipline stricte.
-              <br />
-              <br />
-              Chaque décision est validée.
-              <br />
-              Si les critères sont remplis, l'exécution est lancée.
-              <br />
-              Sinon, elle est ignorée.
+              Tu apprends le modèle.<br />
+              Tu l'exécutes en direct.<br />
+              Tout est enregistré et mesuré.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mt-6 mb-8">
               <button 
@@ -2174,12 +2164,74 @@ const App = () => {
                 </div>
               </div>
               
-              {/* Section 1 - Signaux */}
-              <div id="section-signaux" className="mt-16 sm:mt-20">
+              {/* Section 1 - Le problème */}
+              <div id="section-methode-tpln" className="mt-16 sm:mt-20">
                 <div className="relative">
-                  {/* Numéro 1 en haut à gauche */}
                   <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
                     1
+                  </div>
+                  <div className="text-center mb-8">
+                    <h2 className="font-bold mb-8 text-center leading-tight bg-clip-text text-transparent" style={{ fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)', backgroundImage: 'linear-gradient(to right, #2E6BFF 0%, #6B9AFF 35%, #E8EDF5 70%, #FFFFFF 100%)' }}>
+                      Le problème
+                    </h2>
+                  </div>
+                  <div className="flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-10 max-w-6xl mx-auto mb-8">
+                    <div className="max-w-[480px] text-left lg:flex-shrink-0">
+                      <p className="text-white font-bold leading-tight mb-6" style={{ fontFamily: 'Inter, sans-serif', fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
+                        Le trading est devenu trop compliqué
+                      </p>
+                      <div className="text-[#AAB3C2] text-base leading-[1.6]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                        <p className="mb-2">Indicateurs inutiles.</p>
+                        <p className="mb-2">Stratégies floues.</p>
+                        <p className="mb-4">Aucune structure claire.</p>
+                        <p className="mb-4">TPLN simplifie tout.</p>
+                        <p className="mb-1">Un modèle.</p>
+                        <p className="mb-1">Des règles précises.</p>
+                        <p className="mb-0">Une exécution disciplinée.</p>
+                      </div>
+                    </div>
+                    <div className="lg:flex-1 lg:min-w-0 flex justify-center">
+                  <div className="mb-0 w-full max-w-lg">
+                    <div className="bg-[#141821] border border-[#222836] rounded-[16px] p-8 hover:border-[#2E6BFF]/50 hover:shadow-[0_12px_32px_rgba(46,107,255,0.2)] transition-all duration-300 relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
+                      <h3 className="text-[#F2F4F8] text-xl font-semibold mb-6 text-left" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
+                        Pourquoi la majorité échoue :
+                      </h3>
+                      <ul className="space-y-3.5">
+                        <li className="flex items-start gap-3">
+                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Ils exécutent sans cadre</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Ils changent de stratégie chaque semaine</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Ils ne mesurent rien</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Ils confondent activité et performance</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
+                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Ils n'ont aucune structure reproductible</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 2 - Signaux */}
+              <div id="section-signaux" className="mt-16 sm:mt-20">
+                <div className="relative">
+                  {/* Numéro 2 en haut à gauche */}
+                  <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
+                    2
                   </div>
                   
                   {/* Titre principal */}
@@ -2319,39 +2371,14 @@ const App = () => {
                       loading="lazy"
                     />
                   </div>
-
-                  {/* Accès Journal - sous la photo */}
-                  <div className="max-w-2xl mx-auto mt-8 text-center">
-                    <div className="mb-5">
-                      <p className="text-gray-400 text-base leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>
-                        Accès complet au Journal TPLN. Sans limite de comptes.
-                      </p>
-                    </div>
-                    <div className="mb-2">
-                      <div className="text-2xl sm:text-3xl bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent font-bold" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                        29€
-                      </div>
-                    </div>
-                    <div className="mb-6">
-                      <p className="text-gray-400 text-base" style={{ fontFamily: 'Inter, sans-serif' }}>
-                        Annulable à tout moment
-                      </p>
-                    </div>
-                    <div className="flex justify-center">
-                      <button className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-8 py-4 rounded-[14px] font-medium transition-all duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                        Obtenir le Journal
-                      </button>
-                    </div>
-                  </div>
                 </div>
               </div>
 
-              {/* Section 2 - Live */}
+              {/* Section 3 - La méthode TPLN */}
               <div id="section-live" className="mt-16 sm:mt-20">
                 <div className="relative">
-                  {/* Numéro 2 en haut à gauche */}
                   <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                    2
+                    3
                   </div>
                   
                   {/* Titre principal */}
@@ -2416,39 +2443,18 @@ const App = () => {
                   </div>
                     </div>
                   </div>
-
-                  {/* En bas : phrase + prix + bouton, centrés sous les 2 colonnes */}
-                  <div className="max-w-6xl mx-auto text-center">
-                    <p className="text-white text-base leading-relaxed mt-6" style={{ fontFamily: 'Inter, sans-serif' }}>
-                      Ce n'est pas juste une formation.<br />
-                      C'est un système complet : apprendre + exécuter + mesurer.
-                    </p>
-                    <div className="mb-4 mt-4">
-                      <div className="text-lg bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent font-bold" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                        49€/mois
-                      </div>
-                      <p className="text-white text-sm mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>
-                        Accès à la méthode + journal inclus.
-                      </p>
-                    </div>
-                    <div className="flex justify-center">
-                      <button className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-8 py-3 rounded-[14px] font-medium transition-all duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                        Accéder à la méthode
-                      </button>
-                    </div>
-                  </div>
                 </div>
               </div>
-              
-              {/* Section 3 - Live (Dupliquée) - Exécution en direct */}
+
+              {/* Section 4 - Exécution en direct */}
               <div id="section-live-2b" className="mt-16 sm:mt-20">
                 <div className="relative">
                   <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                    3
+                    4
                   </div>
                   <div className="text-center mb-8">
                     <h2 className="font-bold mb-6 text-center leading-tight" style={{ fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                      <span className="text-white">Exécution en direct</span>
+                      <span className="text-white">Exécution quotidienne en direct.</span>
                       <br />
                       <span className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent">
                         TPLN
@@ -2498,45 +2504,14 @@ const App = () => {
                       Chaque opportunité envoyée est enregistrée et mesurée dans un journal dédié.
                     </p>
                   </div>
-                  <div className="max-w-2xl mx-auto mb-6 text-center">
-                    <p className="text-white font-semibold mb-3" style={{ fontFamily: 'Sora, sans-serif' }}>Tout inclus :</p>
-                    <p className="text-[#AAB3C2] text-base flex flex-nowrap justify-center items-center gap-x-2 whitespace-nowrap overflow-x-auto" style={{ fontFamily: 'Inter, sans-serif' }}>
-                      <span className="text-[#2E6BFF] flex-shrink-0">✓</span>
-                      <span>Formation complète</span>
-                      <span className="text-[#2E6BFF] flex-shrink-0">✓</span>
-                      <span>Live quotidien</span>
-                      <span className="text-[#2E6BFF] flex-shrink-0">✓</span>
-                      <span>Opportunités détaillées</span>
-                      <span className="text-[#2E6BFF] flex-shrink-0">✓</span>
-                      <span>Journal personnel</span>
-                      <span className="text-[#2E6BFF] flex-shrink-0">✓</span>
-                      <span>Suivi des performances</span>
-                    </p>
-                  </div>
-                  <div className="max-w-2xl mx-auto mb-2 text-center">
-                    <div className="text-2xl sm:text-3xl bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent font-bold" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                      79€/mois
-                    </div>
-                  </div>
-                  <div className="max-w-2xl mx-auto mb-6 text-center">
-                    <p className="text-gray-400 text-base" style={{ fontFamily: 'Inter, sans-serif' }}>
-                      Annulable à tout moment
-                    </p>
-                  </div>
-                  <div className="max-w-2xl mx-auto mb-4 flex justify-center">
-                    <button className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-8 py-4 rounded-[14px] font-medium transition-all duration-200" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                      Accéder au plan Pro
-                    </button>
-                  </div>
                 </div>
               </div>
 
-              {/* Section 4 - App */}
+              {/* Section 5 - App */}
               <div id="section-app" className="mt-16 sm:mt-20">
                 <div className="relative">
-                  {/* Numéro 4 en haut à gauche */}
                   <div className="absolute -top-16 -left-16 text-9xl font-bold text-[#2E6BFF]/20 select-none" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                    4
+                    5
                   </div>
                   
                   {/* Titre principal */}
