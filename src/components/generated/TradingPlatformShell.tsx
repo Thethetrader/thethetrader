@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, Signal, syncUserId, database } from '../../utils/firebase-setup';
 import { ref, onValue, push } from 'firebase/database';
-import { addPersonalTrade, getPersonalTrades, getPersonalTradeById, deletePersonalTrade, updatePersonalTrade, PersonalTrade, listenToPersonalTrades, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, getUserSubscription, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, type FinSessionData } from '../../lib/supabase';
+import { addPersonalTrade, getPersonalTrades, getPersonalTradeById, deletePersonalTrade, updatePersonalTrade, PersonalTrade, listenToPersonalTrades, type PersonalTradesUpdate, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, getUserSubscription, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, type FinSessionData } from '../../lib/supabase';
 import ProfitLoss from '../ProfitLoss';
 import { createClient } from '@supabase/supabase-js';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
@@ -88,7 +88,7 @@ function ProfitFactorGauge({ totalWins, totalLosses }: { totalWins: number; tota
           <path
             d={getArcPath(startAngle, lossEndAngle)}
             fill="none"
-            stroke="#dc2626"
+            stroke="var(--loss-color)"
             strokeWidth="12"
             strokeLinecap="round"
             opacity="0.8"
@@ -111,7 +111,7 @@ function ProfitFactorGauge({ totalWins, totalLosses }: { totalWins: number; tota
       {/* Labels avec rectangles arrondis - positionnés à l'extérieur */}
       {/* Label pertes (rouge) - en haut à droite */}
       {totalLosses > 0 && (
-        <div className="absolute -top-2 -right-2 bg-black text-red-400 text-xs font-bold px-2 py-1 rounded pointer-events-none">
+        <div className="absolute -top-2 -right-2 bg-black text-loss text-xs font-bold px-2 py-1 rounded pointer-events-none">
           ${formatAmount(totalLosses)}
         </div>
       )}
@@ -200,7 +200,7 @@ function WinRateGauge({ wins, losses }: { wins: number; losses: number }) {
             <path
               d={getArcPath(startAngle, lossEndAngle)}
               fill="none"
-              stroke="#ef4444"
+              stroke="var(--loss-color)"
               strokeWidth="8"
               strokeLinecap="round"
             />
@@ -1846,25 +1846,20 @@ export default function TradingPlatformShell() {
     
     // Démarrer l'écoute temps réel
     const unsubscribe = listenToPersonalTrades(
-      (trades) => {
-        console.log('🔄 Mise à jour trades reçue [PWA]:', trades.length);
+      (tradesOrUpdater: PersonalTradesUpdate) => {
         const pendingIds = justAddedTradeIdsRef.current;
         setPersonalTrades(prevTrades => {
-          // Liste vide reçue : ne jamais écraser si on avait des trades ou des ajouts en attente
-          if (trades.length === 0) {
-            if (prevTrades.length > 0 || pendingIds.length > 0) {
-              console.log('⚠️ Tableau vide reçu, liste conservée:', prevTrades.length);
-              return prevTrades;
-            }
-            return mockTrades;
+          if (typeof tradesOrUpdater === 'function') {
+            return tradesOrUpdater(prevTrades);
           }
-          // On vient d'ajouter des trades : ne pas remplacer par une liste qui ne les contient pas encore (replication lag)
+          const trades = tradesOrUpdater;
+          if (trades.length === 0) {
+            if (prevTrades.length > 0 || pendingIds.length > 0) return prevTrades;
+            return mockTrades as PersonalTrade[];
+          }
           if (pendingIds.length > 0) {
             const hasAll = pendingIds.every(id => trades.some(t => t.id === id));
-            if (!hasAll) {
-              console.log('⚠️ Mise à jour reçue sans les trades ajoutés, liste conservée');
-              return prevTrades;
-            }
+            if (!hasAll) return prevTrades;
             justAddedTradeIdsRef.current = [];
           }
           return trades;
@@ -4000,7 +3995,7 @@ export default function TradingPlatformShell() {
         const reloadTrades = async (attempt = 1) => {
           try {
             console.log(`🔄 Tentative ${attempt} de rechargement des trades...`);
-            const trades = await getPersonalTrades(1000);
+            const trades = await getPersonalTrades(200);
             console.log(`📊 Trades récupérés: ${trades.length}`);
             console.log('📊 Détails des trades:', trades.map(t => ({ id: t.id, date: t.date, symbol: t.symbol })));
             
@@ -4897,7 +4892,7 @@ export default function TradingPlatformShell() {
                     if (totalPnL > 0) {
                       bgColor = 'bg-green-200/30 border-green-200/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
-                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif - rouge pâle
+                      bgColor = 'bg-loss/60 border-loss/50 text-white'; // PnL négatif - même rouge pâle partout
                     } else {
                       bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0 (BE)
                     }
@@ -4919,7 +4914,7 @@ export default function TradingPlatformShell() {
                     if (totalPnL > 0) {
                       bgColor = 'bg-green-200/30 border-green-200/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
-                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif - rouge pâle
+                      bgColor = 'bg-loss/60 border-loss/50 text-white'; // PnL négatif - même rouge pâle partout
                     } else {
                       bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
                     }
@@ -5043,7 +5038,7 @@ export default function TradingPlatformShell() {
                 <span className="text-xs text-gray-300">WIN</span>
               </div>
               <div className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-red-500/60 border border-red-400/50 rounded"></div>
+                <div className="w-3 h-3 bg-loss/60 border border-loss/50 rounded"></div>
                 <span className="text-xs text-gray-300">LOSS</span>
               </div>
               <div className="flex items-center gap-1">
@@ -5069,7 +5064,7 @@ export default function TradingPlatformShell() {
                   <span className="text-gray-300">WIN</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="inline-flex items-center justify-center w-3 h-3 rounded bg-red-500/70 border border-red-400/60"></span>
+                  <span className="inline-flex items-center justify-center w-3 h-3 rounded bg-loss/70 border border-loss/60"></span>
                   <span className="text-gray-300">LOSS</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
@@ -5088,15 +5083,15 @@ export default function TradingPlatformShell() {
 
               {lossAnalysisStateForSignals.totalLosses > 0 && (
                 <div className="bg-gray-700 rounded-lg p-4 mt-4">
-                  <h4 className="text-base font-medium text-red-300 mb-4">📊 Analyse des Pertes</h4>
+                  <h4 className="text-base font-medium text-loss mb-4">📊 Analyse des Pertes</h4>
                   <div className="space-y-3">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-400">Total pertes:</span>
-                      <span className="text-red-300 font-medium">{lossAnalysisStateForSignals.totalLosses}</span>
+                      <span className="text-loss font-medium">{lossAnalysisStateForSignals.totalLosses}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-400">P&L total pertes:</span>
-                      <span className="text-red-300 font-medium">${lossAnalysisStateForSignals.totalLossPnl}</span>
+                      <span className="text-loss font-medium">${lossAnalysisStateForSignals.totalLossPnl}</span>
                     </div>
                     {lossAnalysisStateForSignals.reasons.length > 0 ? (
                       <div className="mt-3">
@@ -5105,7 +5100,7 @@ export default function TradingPlatformShell() {
                           {lossAnalysisStateForSignals.reasons.map((reason) => (
                             <div key={reason.reason} className="flex justify-between text-sm">
                               <span className="text-gray-300">{getCustomLossReasonLabel(reason.reason)}</span>
-                              <span className="text-red-300 font-medium">{reason.count} ({reason.percentage}%)</span>
+                              <span className="text-loss font-medium">{reason.count} ({reason.percentage}%)</span>
                             </div>
                           ))}
                         </div>
@@ -5163,15 +5158,15 @@ export default function TradingPlatformShell() {
               
               return (
                 <div className={`border rounded-lg p-4 border ${
-                  displayPnl >= 0 ? 'bg-green-200/20 border-green-200/30' : 'bg-red-600/20 border-red-500/30'
+                  displayPnl >= 0 ? 'bg-green-200/20 border-green-200/30' : 'bg-loss/20 border-loss/30'
                 }`}>
                   <div className={`text-sm mb-1 ${
-                    displayPnl >= 0 ? 'text-green-100' : 'text-red-300'
+                    displayPnl >= 0 ? 'text-green-100' : 'text-loss'
                   }`}>
                     {displayLabel}
                   </div>
                   <div className={`text-2xl font-bold ${
-                    displayPnl >= 0 ? 'text-green-100' : 'text-red-200'
+                    displayPnl >= 0 ? 'text-green-100' : 'text-loss'
                   }`}>
                     {displayPnl >= 0 ? '+' : ''}${displayPnl}
                   </div>
@@ -5253,7 +5248,7 @@ export default function TradingPlatformShell() {
               </div>
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Avg Loss</div>
-                <div className="text-lg font-bold text-red-400">
+                <div className="text-lg font-bold text-loss">
                   {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? 
                     (calculateAvgLossTradesForDisplay() > 0 ? `-$${calculateAvgLossTradesForDisplay()}` : '-') :
                     (getCalendarMonthlyStats(currentDate).avgLoss > 0 ? `-$${getCalendarMonthlyStats(currentDate).avgLoss}` : '-')
@@ -5299,21 +5294,21 @@ export default function TradingPlatformShell() {
             {/* Raisons des SL (trades du mois) - sous Avg Win/Loss et sessions */}
             {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') && lossAnalysisState.totalLosses > 0 && (
               <div className="bg-gray-700 rounded-lg p-4 border border-gray-600 mt-4">
-                <h4 className="text-sm font-semibold text-red-300 mb-3">Raisons des SL</h4>
+                <h4 className="text-sm font-semibold text-loss mb-3">Raisons des SL</h4>
                 <div className="flex justify-between text-sm mb-2">
                   <span className="text-gray-400">Pertes ce mois:</span>
-                  <span className="text-red-300 font-medium">{lossAnalysisState.totalLosses} trades</span>
+                  <span className="text-loss font-medium">{lossAnalysisState.totalLosses} trades</span>
                 </div>
                 <div className="flex justify-between text-sm mb-3">
                   <span className="text-gray-400">PnL total:</span>
-                  <span className="text-red-300 font-medium">${Math.round(lossAnalysisState.totalLossPnl)}</span>
+                  <span className="text-loss font-medium">${Math.round(lossAnalysisState.totalLossPnl)}</span>
                 </div>
                 {lossAnalysisState.reasons.length > 0 ? (
                   <div className="space-y-2">
                     {lossAnalysisState.reasons.map((r) => (
                       <div key={r.reason} className="flex justify-between text-sm">
                         <span className="text-gray-300">{getCustomLossReasonLabel(r.reason)}</span>
-                        <span className="text-red-300 font-medium">{r.count} ({r.percentage}%)</span>
+                        <span className="text-loss font-medium">{r.count} ({r.percentage}%)</span>
                       </div>
                     ))}
                   </div>
@@ -5360,7 +5355,7 @@ export default function TradingPlatformShell() {
                           <div className={`text-xs py-1 rounded font-bold flex items-center justify-center ${weekData.wins > 0 ? 'bg-green-200/50 text-white' : 'bg-transparent'}`} style={{ width: '36px', height: '24px' }}>
                             {weekData.wins > 0 ? `${weekData.wins}W` : ''}
                           </div>
-                          <div className={`text-xs py-1 rounded font-bold flex items-center justify-center ${weekData.losses > 0 ? 'bg-red-400/70 text-white' : 'bg-transparent'}`} style={{ width: '36px', height: '24px' }}>
+                          <div className={`text-xs py-1 rounded font-bold flex items-center justify-center ${weekData.losses > 0 ? 'bg-loss/70 text-white' : 'bg-transparent'}`} style={{ width: '36px', height: '24px' }}>
                             {weekData.losses > 0 ? `${weekData.losses}L` : ''}
                           </div>
                         </>
@@ -5368,7 +5363,7 @@ export default function TradingPlatformShell() {
                     </div>
                     <div className={`text-xs ${
                       weekData.pnl > 0 ? 'text-green-100' : 
-                      weekData.pnl < 0 ? 'text-red-400' : 'text-gray-500'
+                      weekData.pnl < 0 ? 'text-loss' : 'text-gray-500'
                     }`} style={{ minWidth: '60px', textAlign: 'right' }}>
                       {weekData.pnl !== 0 ? `${weekData.pnl > 0 ? '+' : ''}$${weekData.pnl}` : ''}
                     </div>
@@ -5386,7 +5381,7 @@ export default function TradingPlatformShell() {
                   <h4 className="text-xs font-medium text-gray-300">Solde du compte</h4>
                   <div className={`text-base font-bold ${
                     calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) 
-                      ? 'text-green-100' : 'text-red-400'
+                      ? 'text-green-100' : 'text-loss'
                   }`}>
                     ${calculateAccountBalance().toFixed(2)}
                   </div>
@@ -5454,7 +5449,7 @@ export default function TradingPlatformShell() {
                   setWinsLossTradeIndex(0);
                   setShowWinsLossModal(true);
                 }}
-                className="w-full px-3 py-2 rounded-lg bg-red-600/30 border border-red-500/50 text-red-300 hover:bg-red-600/50 transition-colors text-sm font-medium"
+                className="w-full px-3 py-2 rounded-lg bg-loss/30 border border-loss/50 text-loss hover:bg-loss/50 transition-colors text-sm font-medium"
               >
                 📉 Tous les LOSS ({selectedChannel.id === 'calendrier' ? signals.filter(s => s.status === 'LOSS' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount.filter(t => t.status === 'LOSS').length})
               </button>

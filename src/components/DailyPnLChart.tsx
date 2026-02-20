@@ -255,13 +255,13 @@ const DailyPnLChart: React.FC<DailyPnLChartProps> = ({ data, height = 220, initi
                     </p>
                     <p style={{ margin: '4px 0', color: '#94a3b8' }}>
                       <span style={{ color: '#f8fafc', marginRight: '8px' }}>PnL:</span>
-                      <span style={{ color: dailyPnL >= 0 ? '#22c55e' : '#ef4444', fontWeight: 'bold' }}>
+                      <span style={{ color: dailyPnL >= 0 ? '#22c55e' : 'var(--loss-color)', fontWeight: 'bold' }}>
                         {formatBalance(dailyPnL)}
                       </span>
                     </p>
                     <p style={{ margin: '4px 0', color: '#94a3b8' }}>
                       <span style={{ color: '#f8fafc', marginRight: '8px' }}>Balance:</span>
-                      <span style={{ color: value >= 0 ? '#22c55e' : '#ef4444', fontWeight: 'bold' }}>
+                      <span style={{ color: value >= 0 ? '#22c55e' : 'var(--loss-color)', fontWeight: 'bold' }}>
                         {formatBalance(value)}
                       </span>
                     </p>

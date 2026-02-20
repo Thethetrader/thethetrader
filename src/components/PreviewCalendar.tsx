@@ -57,7 +57,7 @@ const PreviewCalendar = () => {
       case 'be':
         return `${baseStyle} bg-yellow-500 text-black`;
       case 'loss':
-        return `${baseStyle} bg-red-500`;
+        return `${baseStyle} bg-loss`;
       default:
         return `${baseStyle} bg-gray-700`;
     }
@@ -109,7 +109,7 @@ const PreviewCalendar = () => {
           <span className="text-white">BE</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-red-500 rounded"></div>
+          <div className="w-4 h-4 bg-loss rounded"></div>
           <span className="text-white">Loss</span>
         </div>
       </div>

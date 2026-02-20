@@ -10,7 +10,7 @@ import { httpsCallable } from 'firebase/functions';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 import { LOSS_REASONS, getLossReasonLabel } from '../config/loss-reasons';
 import { signOutAdmin } from '../utils/admin-utils';
-import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, supabase, getPersonalTrades as getPersonalTradesFromSupabase, getPersonalTradeById, addPersonalTrade as addPersonalTradeToSupabase, updatePersonalTrade, listenToPersonalTrades, PersonalTrade, deletePersonalTrade, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, type FinSessionData } from '../lib/supabase';
+import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, supabase, getPersonalTrades as getPersonalTradesFromSupabase, getPersonalTradeById, addPersonalTrade as addPersonalTradeToSupabase, updatePersonalTrade, listenToPersonalTrades, PersonalTrade, type PersonalTradesUpdate, deletePersonalTrade, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, type FinSessionData } from '../lib/supabase';
 import DailyPnLChart from './DailyPnLChart';
 import CheckTradeChecklist from './CheckTradeChecklist';
 
@@ -91,7 +91,7 @@ function ProfitFactorGauge({ totalWins, totalLosses }: { totalWins: number; tota
           <path
             d={getArcPath(startAngle, lossEndAngle)}
             fill="none"
-            stroke="#dc2626"
+            stroke="var(--loss-color)"
             strokeWidth="12"
             strokeLinecap="round"
             opacity="0.8"
@@ -111,7 +111,7 @@ function ProfitFactorGauge({ totalWins, totalLosses }: { totalWins: number; tota
       </svg>
       
       {totalLosses > 0 && (
-        <div className="absolute -top-2 -right-2 bg-black text-red-100 text-xs font-bold px-2 py-1 rounded pointer-events-none">
+        <div className="absolute -top-2 -right-2 bg-black text-loss text-xs font-bold px-2 py-1 rounded pointer-events-none">
           ${formatAmount(totalLosses)}
         </div>
       )}
@@ -193,7 +193,7 @@ function WinRateGauge({ wins, losses }: { wins: number; losses: number }) {
             <path
               d={getArcPath(startAngle, lossEndAngle)}
               fill="none"
-              stroke="#ef4444"
+              stroke="var(--loss-color)"
               strokeWidth="8"
               strokeLinecap="round"
             />
@@ -1004,27 +1004,21 @@ export default function AdminInterface() {
     
     // Démarrer l'écoute temps réel
     const unsubscribe = listenToPersonalTrades(
-      (trades) => {
-        console.log('🔄 Mise à jour trades reçue [ADMIN]:', trades.length);
+      (tradesOrUpdater: PersonalTradesUpdate) => {
         const pendingIds = justAddedTradeIdsRef.current;
         setPersonalTrades(prev => {
+          if (typeof tradesOrUpdater === 'function') {
+            return tradesOrUpdater(prev);
+          }
+          const trades = tradesOrUpdater;
           if (trades.length === 0) {
-            if (prev.length > 0 || pendingIds.length > 0) {
-              console.log('⚠️ [ADMIN] Tableau vide reçu, liste conservée:', prev.length);
-              return prev;
-            }
+            if (prev.length > 0 || pendingIds.length > 0) return prev;
             return trades;
           }
           if (pendingIds.length > 0) {
-            if (trades.length < prev.length) {
-              console.log('⚠️ [ADMIN] Liste reçue plus courte après ajout, liste conservée');
-              return prev;
-            }
+            if (trades.length < prev.length) return prev;
             const hasAll = pendingIds.every(id => trades.some(t => t.id === id));
-            if (!hasAll) {
-              console.log('⚠️ [ADMIN] Mise à jour reçue sans les trades ajoutés, liste conservée');
-              return prev;
-            }
+            if (!hasAll) return prev;
             justAddedTradeIdsRef.current = [];
           }
           return trades;
@@ -1389,7 +1383,7 @@ export default function AdminInterface() {
 
       // Recharger les trades depuis Supabase pour avoir les données à jour
       console.log('🔄 [ADMIN] Rechargement des trades depuis Supabase...');
-      const reloadedTrades = await getPersonalTradesFromSupabase(1000);
+      const reloadedTrades = await getPersonalTradesFromSupabase(200);
       setPersonalTrades(prev => (reloadedTrades.length > 0 ? reloadedTrades : prev));
       console.log('✅ [ADMIN] Trades rechargés:', reloadedTrades.length);
 
@@ -3418,7 +3412,7 @@ const dailyPnLChartData = useMemo(
         session: tradeData.session || undefined
       });
       if (updated) {
-        const reloadedTrades = await getPersonalTradesFromSupabase(1000);
+        const reloadedTrades = await getPersonalTradesFromSupabase(200);
         setPersonalTrades(prev => (reloadedTrades.length > 0 ? reloadedTrades : prev));
         setEditingTrade(null);
         setTradeData({ symbol: '', type: 'BUY', entry: '', exit: '', stopLoss: '', pnl: '', status: 'WIN', lossReason: '', lossReasons: [], notes: '', image1: null, image2: null, session: '' });
@@ -3470,7 +3464,7 @@ const dailyPnLChartData = useMemo(
 
       try {
         await new Promise(resolve => setTimeout(resolve, 500));
-        const reloadedTrades = await getPersonalTradesFromSupabase(1000);
+        const reloadedTrades = await getPersonalTradesFromSupabase(200);
         setPersonalTrades(prev => (reloadedTrades.length > 0 ? reloadedTrades : prev));
       } catch (error) {
         console.error('❌ [ADMIN] Erreur lors du rechargement des trades:', error);
@@ -4922,7 +4916,7 @@ const dailyPnLChartData = useMemo(
                     if (totalPnL > 0) {
                       bgColor = 'bg-green-200/30 border-green-300/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
-                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif - rouge pâle
+                      bgColor = 'bg-loss/60 border-loss/50 text-white'; // PnL négatif - même rouge pâle partout
                     } else {
                       bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
                     }
@@ -4954,7 +4948,7 @@ const dailyPnLChartData = useMemo(
                     if (totalPnL > 0) {
                       bgColor = 'bg-green-200/30 border-green-300/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
-                      bgColor = 'bg-red-500/60 border-red-400/50 text-white'; // PnL négatif - rouge pâle
+                      bgColor = 'bg-loss/60 border-loss/50 text-white'; // PnL négatif - même rouge pâle partout
                     } else {
                       bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
                     }
@@ -5054,7 +5048,7 @@ const dailyPnLChartData = useMemo(
                             </div>
                             {noteMoy !== null && (
                               <div
-                                className={`absolute bottom-1 left-1 text-xs font-bold ${discColor === 'green' ? 'text-green-100' : discColor === 'yellow' ? 'text-yellow-400' : 'text-red-100'}`}
+                                className={`absolute bottom-1 left-1 text-xs font-bold ${discColor === 'green' ? 'text-green-100' : discColor === 'yellow' ? 'text-yellow-400' : 'text-loss'}`}
                                 title={`Étoile discipline (sur 5): ${noteMoy} – ${discTitle}`}
                               >
                                 ★ {noteMoy}
@@ -5077,8 +5071,8 @@ const dailyPnLChartData = useMemo(
               <span className="text-xs text-gray-300">WIN</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 bg-red-500/60 border border-red-400/50 rounded"></div>
-              <span className="text-xs text-gray-300">LOSS</span>
+<div className="w-3 h-3 bg-loss/60 border border-loss/50 rounded"></div>
+                <span className="text-xs text-gray-300">LOSS</span>
             </div>
             <div className="flex items-center gap-1">
               <div className="w-3 h-3 bg-blue-500/60 border border-blue-400/50 rounded"></div>
@@ -5237,15 +5231,15 @@ const dailyPnLChartData = useMemo(
             
                 return (
               <div className="bg-gray-700 rounded-lg p-4 mt-4">
-                <h4 className="text-base font-medium text-red-100 mb-4">📊 Analyse des Pertes</h4>
+                <h4 className="text-base font-medium text-loss mb-4">📊 Analyse des Pertes</h4>
                 <div className="space-y-3">
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400">Total pertes:</span>
-                    <span className="text-red-100 font-medium">{lossSignals.length}</span>
+                    <span className="text-loss font-medium">{lossSignals.length}</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400">P&L total pertes:</span>
-                    <span className="text-red-100 font-medium">${Math.round(totalLossPnl)}</span>
+                    <span className="text-loss font-medium">${Math.round(totalLossPnl)}</span>
                       </div>
                   {sortedReasons.length > 0 ? (
                     <div className="mt-3">
@@ -5254,7 +5248,7 @@ const dailyPnLChartData = useMemo(
                         {sortedReasons.map((reason) => (
                           <div key={reason.reason} className="flex justify-between text-sm">
                             <span className="text-gray-300">{getCustomLossReasonLabel(reason.reason)}</span>
-                            <span className="text-red-100 font-medium">{reason.count} ({reason.percentage}%)</span>
+                            <span className="text-loss font-medium">{reason.count} ({reason.percentage}%)</span>
                           </div>
                         ))}
                       </div>
@@ -5314,15 +5308,15 @@ const dailyPnLChartData = useMemo(
               
               return (
                 <div className={`border rounded-lg p-4 border ${
-                  displayPnl >= 0 ? 'bg-green-200/20 border-green-200/30' : 'bg-red-600/20 border-red-500/30'
+                  displayPnl >= 0 ? 'bg-green-200/20 border-green-200/30' : 'bg-loss/20 border-loss/30'
                 }`}>
                   <div className={`text-sm mb-1 ${
-                    displayPnl >= 0 ? 'text-green-100' : 'text-red-100'
+                    displayPnl >= 0 ? 'text-green-100' : 'text-loss'
                   }`}>
                     {displayLabel}
                   </div>
                   <div className={`text-2xl font-bold ${
-                    displayPnl >= 0 ? 'text-green-100' : 'text-red-100'
+                    displayPnl >= 0 ? 'text-green-100' : 'text-loss'
                   }`}>
                     {displayPnl >= 0 ? '+' : ''}${displayPnl}
                   </div>
@@ -5347,15 +5341,15 @@ const dailyPnLChartData = useMemo(
               
               return (
                 <div className={`border rounded-lg p-4 border ${
-                  displayPnl >= 0 ? 'bg-green-200/20 border-green-200/30' : 'bg-red-600/20 border-red-500/30'
+                  displayPnl >= 0 ? 'bg-green-200/20 border-green-200/30' : 'bg-loss/20 border-loss/30'
                 }`}>
                   <div className={`text-sm mb-1 ${
-                    displayPnl >= 0 ? 'text-green-100' : 'text-red-100'
+                    displayPnl >= 0 ? 'text-green-100' : 'text-loss'
                   }`}>
                     {displayLabel}
                   </div>
                   <div className={`text-2xl font-bold ${
-                    displayPnl >= 0 ? 'text-green-100' : 'text-red-100'
+                    displayPnl >= 0 ? 'text-green-100' : 'text-loss'
                   }`}>
                     {displayPnl >= 0 ? '+' : ''}${displayPnl}
                   </div>
@@ -5425,11 +5419,12 @@ const dailyPnLChartData = useMemo(
               </div>
             </div>
             
+            {selectedChannel.id !== 'tpln-model' && (
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Avg Win</div>
                 <div className="text-lg font-bold text-green-100">
-                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? 
+                  {selectedChannel.id === 'trading-journal' ? 
                     (calculateAvgWinTradesForDisplay() > 0 ? `+$${calculateAvgWinTradesForDisplay()}` : '-') :
                     (calculateAvgWin() > 0 ? `+$${calculateAvgWin()}` : '-')
                   }
@@ -5437,14 +5432,15 @@ const dailyPnLChartData = useMemo(
               </div>
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Avg Loss</div>
-                <div className="text-lg font-bold text-red-100">
-                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? 
+                <div className="text-lg font-bold text-loss">
+                  {selectedChannel.id === 'trading-journal' ? 
                     (calculateAvgLossTradesForDisplay() > 0 ? `-$${calculateAvgLossTradesForDisplay()}` : '-') :
                     (calculateAvgLoss() > 0 ? `-$${calculateAvgLoss()}` : '-')
                   }
                 </div>
               </div>
             </div>
+            )}
 
             {/* Perf par session (taux de réussite %): sous Avg Win - Asian/London | NY AM/NY PM */}
             {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') && (
@@ -5497,7 +5493,7 @@ const dailyPnLChartData = useMemo(
                 return (
                   <div className="bg-gray-700 rounded-lg p-3 mt-3">
                     <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-sm font-medium text-red-100">📊 Analyse des Pertes</h4>
+                      <h4 className="text-sm font-medium text-loss">📊 Analyse des Pertes</h4>
                       <button
                         onClick={() => setShowLossReasonsModal(true)}
                         className="text-gray-400 hover:text-white transition-colors"
@@ -5509,17 +5505,17 @@ const dailyPnLChartData = useMemo(
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400">Total pertes:</span>
-                        <span className="text-red-100">{lossAnalysis.totalLosses}</span>
+                        <span className="text-loss">{lossAnalysis.totalLosses}</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400">P&L total pertes:</span>
-                        <span className="text-red-100">${lossAnalysis.totalLossPnl}</span>
+                        <span className="text-loss">${lossAnalysis.totalLossPnl}</span>
                       </div>
                       {lossAnalysis.reasons.length > 0 ? (
                         lossAnalysis.reasons.slice(0, 3).map((reason, index) => (
                           <div key={reason.reason} className="flex justify-between text-xs">
                             <span className="text-gray-400 truncate">{getCustomLossReasonLabel(reason.reason)}</span>
-                            <span className="text-red-100">{reason.count} ({reason.percentage}%)</span>
+                            <span className="text-loss">{reason.count} ({reason.percentage}%)</span>
                           </div>
                         ))
                       ) : (
@@ -5576,7 +5572,7 @@ const dailyPnLChartData = useMemo(
                           <div className={`text-sm py-1 rounded-lg font-bold shadow-lg border flex items-center justify-center ${weekData.wins > 0 ? 'bg-green-200/30 text-green-100 border-green-200/20' : 'bg-transparent border-transparent'}`} style={{ width: '40px', height: '28px' }}>
                             {weekData.wins > 0 ? `${weekData.wins}W` : ''}
                       </div>
-                          <div className={`text-sm py-1 rounded-lg font-bold shadow-lg border flex items-center justify-center ${weekData.losses > 0 ? 'bg-red-800/30 text-red-100 border-red-600/20' : 'bg-transparent border-transparent'}`} style={{ width: '40px', height: '28px' }}>
+                          <div className={`text-sm py-1 rounded-lg font-bold shadow-lg border flex items-center justify-center ${weekData.losses > 0 ? 'bg-loss/30 text-loss border-loss/20' : 'bg-transparent border-transparent'}`} style={{ width: '40px', height: '28px' }}>
                             {weekData.losses > 0 ? `${weekData.losses}L` : ''}
                           </div>
                         </>
@@ -5584,7 +5580,7 @@ const dailyPnLChartData = useMemo(
                     </div>
                     <div className={`text-xs ${
                       weekData.pnl > 0 ? 'text-green-100' : 
-                      weekData.pnl < 0 ? 'text-red-100' : 'text-gray-500'
+                      weekData.pnl < 0 ? 'text-loss' : 'text-gray-500'
                     }`} style={{ minWidth: '60px', textAlign: 'right' }}>
                       {weekData.pnl !== 0 ? `${weekData.pnl > 0 ? '+' : ''}$${weekData.pnl}` : ''}
                     </div>
@@ -5613,7 +5609,7 @@ const dailyPnLChartData = useMemo(
                   setWinsLossTradeIndex(0);
                   setShowWinsLossModal(true);
                 }}
-                className="w-full px-3 py-2 rounded-lg bg-red-600/30 border border-red-500/50 text-red-100 hover:bg-red-600/50 transition-colors text-sm font-medium"
+                className="w-full px-3 py-2 rounded-lg bg-loss/30 border border-loss/50 text-loss hover:bg-loss/50 transition-colors text-sm font-medium"
               >
                 📉 Tous les LOSS ({(selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendar') ? signals.filter(s => s.status === 'LOSS' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount.filter(t => t.status === 'LOSS').length})
               </button>
@@ -6245,7 +6241,7 @@ const dailyPnLChartData = useMemo(
                       <button 
                         onClick={async () => {
                           console.log('🔄 Rechargement des trades...');
-                          const trades = await getPersonalTradesFromSupabase(1000);
+                          const trades = await getPersonalTradesFromSupabase(200);
                           setPersonalTrades(prev => (trades.length > 0 ? trades : prev));
                           console.log(`✅ ${trades.length} trades rechargés depuis Supabase`);
                         }}

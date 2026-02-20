@@ -19,7 +19,7 @@
   
   /* Couleurs de trading */
   --profit-color: #10b981;
-  --loss-color: #ef4444;
+  --loss-color: #d97373; /* rouge plus pâle, même partout (calendrier, légende, PnL, jauges) */
   --neutral-color: #6b7280;
   
   /* Ombres modernes */

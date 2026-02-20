@@ -998,6 +998,40 @@ export const addPersonalTrade = async (trade: Omit<PersonalTrade, 'id' | 'user_i
   }
 };
 
+/** Mapper une ligne DB (ou payload realtime) vers PersonalTrade */
+function mapRowToPersonalTrade(trade: any): PersonalTrade {
+  let lossReasons: string[] | undefined;
+  if (trade?.loss_reasons != null && trade.loss_reasons !== '') {
+    try {
+      lossReasons = JSON.parse(trade.loss_reasons);
+    } catch {
+      lossReasons = undefined;
+    }
+  }
+  return {
+    id: trade.id,
+    user_id: trade.user_id,
+    date: trade.date,
+    symbol: trade.symbol,
+    type: trade.type,
+    entry: trade.entry != null ? String(trade.entry) : '',
+    exit: trade.exit != null ? String(trade.exit) : '',
+    stopLoss: trade.stop_loss != null ? String(trade.stop_loss) : undefined,
+    pnl: trade.pnl != null ? String(trade.pnl) : '',
+    status: (trade.status === 'BREAKEVEN' ? 'BE' : trade.status) as 'WIN' | 'LOSS' | 'BREAKEVEN',
+    lossReason: trade.loss_reason || undefined,
+    lossReasons,
+    notes: trade.notes || undefined,
+    image1: trade.image1 || undefined,
+    image2: trade.image2 || undefined,
+    timestamp: trade.timestamp || undefined,
+    account: trade.account || 'Compte Principal',
+    session: trade.session || undefined,
+    created_at: trade.created_at,
+    updated_at: trade.updated_at
+  };
+}
+
 /**
  * Récupérer tous les trades personnels depuis Supabase
  */
@@ -1008,8 +1042,6 @@ export const getPersonalTrades = async (limit: number = 50): Promise<PersonalTra
       console.error('❌ Utilisateur non connecté');
       return [];
     }
-
-    console.log('📊 Récupération trades personnels Supabase...');
 
     const { data, error } = await supabase
       .from('personal_trades')
@@ -1024,42 +1056,7 @@ export const getPersonalTrades = async (limit: number = 50): Promise<PersonalTra
       return [];
     }
 
-    console.log('✅ Trades personnels récupérés:', data?.length ?? 0);
-
-    const trades: PersonalTrade[] = (data ?? []).map((trade: any) => {
-      let lossReasons: string[] | undefined;
-      if (trade.loss_reasons != null && trade.loss_reasons !== '') {
-        try {
-          lossReasons = JSON.parse(trade.loss_reasons);
-        } catch {
-          lossReasons = undefined;
-        }
-      }
-      return {
-        id: trade.id,
-        user_id: trade.user_id,
-        date: trade.date,
-        symbol: trade.symbol,
-        type: trade.type,
-        entry: trade.entry != null ? String(trade.entry) : '',
-        exit: trade.exit != null ? String(trade.exit) : '',
-        stopLoss: trade.stop_loss != null ? String(trade.stop_loss) : undefined,
-        pnl: trade.pnl != null ? String(trade.pnl) : '',
-        status: (trade.status === 'BREAKEVEN' ? 'BE' : trade.status) as 'WIN' | 'LOSS' | 'BREAKEVEN',
-        lossReason: trade.loss_reason || undefined,
-        lossReasons,
-        notes: trade.notes || undefined,
-        image1: trade.image1 || undefined,
-        image2: trade.image2 || undefined,
-        timestamp: trade.timestamp || undefined,
-        account: trade.account || 'Compte Principal',
-        session: trade.session || undefined,
-        created_at: trade.created_at,
-        updated_at: trade.updated_at
-      };
-    });
-
-    return trades;
+    return (data ?? []).map(mapRowToPersonalTrade);
   } catch (error) {
     console.error('❌ Erreur récupération trades personnels Supabase:', error);
     return [];
@@ -1227,30 +1224,26 @@ export const updatePersonalTrade = async (
 /**
  * Écouter les changements de trades personnels en temps réel
  */
+export type PersonalTradesUpdate = PersonalTrade[] | ((prev: PersonalTrade[]) => PersonalTrade[]);
+
 export const listenToPersonalTrades = (
-  onTradesChange: (trades: PersonalTrade[]) => void,
+  onTradesChange: (tradesOrUpdater: PersonalTradesUpdate) => void,
   onError?: (error: any) => void
 ) => {
   let userId: string | null = null;
   let activeChannel: ReturnType<typeof supabase.channel> | null = null;
 
-  // Obtenir l'ID utilisateur
   getCurrentUser().then(user => {
     if (!user) {
-      console.error('❌ Utilisateur non connecté');
       if (onError) onError(new Error('Utilisateur non connecté'));
       return;
     }
-
     userId = user.id;
-    console.log('👂 Démarrage écoute temps réel trades Supabase pour user:', userId);
 
-    // Charger les trades initiaux
     getPersonalTrades(50).then(trades => {
       onTradesChange(trades);
     });
 
-    // S'abonner aux changements UNIQUEMENT pour cet utilisateur
     activeChannel = supabase
       .channel(`personal_trades_changes_${userId}`)
       .on(
@@ -1261,27 +1254,23 @@ export const listenToPersonalTrades = (
           table: 'personal_trades',
           filter: `user_id=eq.${userId}`
         },
-        (payload) => {
-          console.log('🔄 Changement détecté pour user:', payload.eventType);
-          // Attendre pour laisser Supabase traiter l'insertion (évite liste vide après ajout)
-          setTimeout(() => {
-            getPersonalTrades(1000).then(trades => {
-              console.log('📊 Trades rechargés via écoute temps réel:', trades.length);
-              onTradesChange(trades);
-            }).catch(error => {
-              console.error('❌ Erreur rechargement via écoute temps réel:', error);
-            });
-          }, 600);
+        (payload: { eventType: string; new?: any; old?: any }) => {
+          if (payload.eventType === 'INSERT' && payload.new) {
+            onTradesChange(prev => [mapRowToPersonalTrade(payload.new), ...prev]);
+          } else if (payload.eventType === 'UPDATE' && payload.new) {
+            onTradesChange(prev =>
+              prev.map(t => t.id === payload.new?.id ? mapRowToPersonalTrade(payload.new) : t)
+            );
+          } else if (payload.eventType === 'DELETE' && payload.old) {
+            const id = payload.old.id;
+            onTradesChange(prev => prev.filter(t => t.id !== id));
+          }
         }
       )
       .subscribe();
-
-    console.log('✅ Abonnement temps réel trades actif');
   });
 
-  // Retourner une fonction pour se désabonner
   return () => {
-    console.log('🛑 Arrêt écoute temps réel trades Supabase');
     if (activeChannel) {
       activeChannel.unsubscribe();
     }

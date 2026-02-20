@@ -6,6 +6,8 @@ export const useSignals = (channel?: string) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  const SIGNALS_LIMIT = 100
+
   useEffect(() => {
     const fetchSignals = async () => {
       try {
@@ -14,6 +16,7 @@ export const useSignals = (channel?: string) => {
           .from('signals')
           .select('*')
           .order('created_at', { ascending: false })
+          .limit(SIGNALS_LIMIT)
 
         if (channel) {
           query = query.eq('channel', channel)
@@ -32,19 +35,25 @@ export const useSignals = (channel?: string) => {
 
     fetchSignals()
 
-    // Écouter les nouveaux signaux en temps réel
+    let refetchTimeout: ReturnType<typeof setTimeout> | null = null
+    const REFETCH_DELAY_MS = 800
+
     const subscription = supabase
       .channel('signals_changes')
-      .on('postgres_changes', 
+      .on('postgres_changes',
         { event: '*', schema: 'public', table: 'signals' },
-        (payload) => {
-          console.log('Signal change:', payload)
-          fetchSignals() // Recharger les signaux
+        () => {
+          if (refetchTimeout) clearTimeout(refetchTimeout)
+          refetchTimeout = setTimeout(() => {
+            refetchTimeout = null
+            fetchSignals()
+          }, REFETCH_DELAY_MS)
         }
       )
       .subscribe()
 
     return () => {
+      if (refetchTimeout) clearTimeout(refetchTimeout)
       subscription.unsubscribe()
     }
   }, [channel])
