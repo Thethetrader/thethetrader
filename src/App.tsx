@@ -441,6 +441,28 @@ const App = () => {
     return () => mq.removeEventListener('change', onChange);
   }, []);
   const isPWAOrMobile = isPWA || isNarrowView;
+
+  // Wrapper PWA: lumière blanche qui fait le tour du cadre quand il entre dans le viewport
+  function PwaGlowCard({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+    const ref = useRef<HTMLDivElement>(null);
+    const [inView, setInView] = useState(false);
+    useEffect(() => {
+      if (!isPWA || !ref.current) return;
+      const el = ref.current;
+      const obs = new IntersectionObserver(
+        ([e]) => setInView(e.isIntersecting),
+        { threshold: 0.2, rootMargin: '0px' }
+      );
+      obs.observe(el);
+      return () => obs.disconnect();
+    }, [isPWA]);
+    if (!isPWA) return <>{children}</>;
+    return (
+      <div ref={ref} className={`pwa-glow-wrapper ${inView ? 'pwa-glow-visible' : ''} ${className}`.trim()}>
+        {children}
+      </div>
+    );
+  }
   
   // Empêcher le scroll en PWA seulement quand on est connecté (dans l'app)
   useEffect(() => {
@@ -2329,6 +2351,7 @@ const App = () => {
                         {/* Right: Feature Grid - 2 columns, 3 rows - PWA: plus carré (max-width + 2 cols) */}
                         <div className={`grid gap-5 ${isPWA ? 'grid-cols-2 max-w-[200px] mx-auto' : 'grid-cols-1 sm:grid-cols-2'}`}>
                           {/* Performance chiffrée */}
+                          <PwaGlowCard>
                           <div 
                             className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'w-full aspect-square min-h-0 flex flex-col justify-center' : ''}`}
                             style={{ animation: 'fadeIn 0.6s ease-out' }}
@@ -2342,8 +2365,10 @@ const App = () => {
                             <h4 className="text-[#F2F4F8] text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Performance chiffrée</h4>
                             <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Métriques précises de tes résultats</p>
               </div>
+                          </PwaGlowCard>
 
                           {/* Discipline par session */}
+                          <PwaGlowCard>
                           <div 
                             className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'w-full aspect-square min-h-0 flex flex-col justify-center' : ''}`}
                             style={{ animation: 'fadeIn 0.7s ease-out' }}
@@ -2357,8 +2382,10 @@ const App = () => {
                             <h4 className="text-[#F2F4F8] text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Discipline par session</h4>
                             <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Mesure ta rigueur réelle, pas ton ressenti.</p>
                   </div>
+                          </PwaGlowCard>
                   
                           {/* Erreurs comportementales */}
+                          <PwaGlowCard>
                           <div 
                             className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'w-full aspect-square min-h-0 flex flex-col justify-center' : ''}`}
                             style={{ animation: 'fadeIn 0.8s ease-out' }}
@@ -2372,8 +2399,10 @@ const App = () => {
                             <h4 className="text-[#F2F4F8] text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Erreurs comportementales</h4>
                             <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Détecte les schémas qui sabotent ta performance.</p>
                   </div>
+                          </PwaGlowCard>
 
                           {/* Drawdown maximum */}
+                          <PwaGlowCard>
                           <div 
                             className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'w-full aspect-square min-h-0 flex flex-col justify-center' : ''}`}
                             style={{ animation: 'fadeIn 0.9s ease-out' }}
@@ -2387,8 +2416,10 @@ const App = () => {
                             <h4 className="text-[#F2F4F8] text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Drawdown maîtrisé</h4>
                             <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Contrôle ton risque. Protège ton capital.</p>
                               </div>
+                          </PwaGlowCard>
 
                           {/* Win rate & profit factor */}
+                          <PwaGlowCard>
                           <div 
                             className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'w-full aspect-square min-h-0 flex flex-col justify-center' : ''}`}
                             style={{ animation: 'fadeIn 1s ease-out' }}
@@ -2402,8 +2433,10 @@ const App = () => {
                             <h4 className="text-[#F2F4F8] text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Performance mesurée</h4>
                             <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Win rate, profit factor, rentabilité réelle.</p>
                       </div>
+                          </PwaGlowCard>
 
                           {/* Qualité d'exécution */}
+                          <PwaGlowCard>
                           <div
                             className={`bg-[#141821] border border-[#222836] rounded-[16px] p-5 hover:border-[#2E6BFF]/40 hover:shadow-[0_8px_24px_rgba(46,107,255,0.15)] transition-all duration-200 relative overflow-hidden ${isPWA ? 'w-full aspect-square min-h-0 flex flex-col justify-center' : ''}`}
                             style={{ animation: 'fadeIn 1.1s ease-out' }}
@@ -2417,6 +2450,7 @@ const App = () => {
                             <h4 className="text-[#F2F4F8] text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Qualité d'exécution</h4>
                             <p className="text-[#AAB3C2] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>Précision de tes entrées et sorties</p>
                               </div>
+                          </PwaGlowCard>
                             </div>
                           </div>
                         </div>
@@ -2564,6 +2598,7 @@ const App = () => {
                     <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Voir le modèle appliqué change tout.<br /><br />Sessions live 5 jours par semaine.<br />Opportunités détaillées en temps réel.<br />Notification immédiate via l'application.<br />Transparence totale grâce au journal des performances partagées.</p>
                   </div>
                   <div className="max-w-2xl mx-auto mb-8">
+                    <PwaGlowCard>
                     <div className="bg-[#141821] border border-[#222836] rounded-[16px] p-8 hover:border-[#2E6BFF]/50 hover:shadow-[0_12px_32px_rgba(46,107,255,0.2)] transition-all duration-300 relative overflow-hidden">
                       <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
                       <h3 className="text-[#F2F4F8] text-xl font-semibold mb-6 text-left" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
@@ -2588,6 +2623,7 @@ const App = () => {
                         </li>
                       </ul>
                     </div>
+                    </PwaGlowCard>
                   </div>
                   <div className="max-w-6xl mx-auto mb-4 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl p-0">
                     <video className="w-full rounded-lg" autoPlay loop muted playsInline preload="auto" controls={false}>

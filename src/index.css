@@ -679,3 +679,39 @@ html {
   touch-action: pan-y !important;
   max-height: calc(100vh - 200px) !important;
 }
+
+/* PWA: lumière blanche qui fait le tour du cadre au scroll */
+.pwa-glow-wrapper {
+  position: relative;
+  overflow: hidden;
+  padding: 2px;
+  border-radius: 16px;
+}
+.pwa-glow-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 250deg,
+    rgba(255, 255, 255, 0.15) 270deg,
+    rgba(255, 255, 255, 0.7) 300deg,
+    rgba(255, 255, 255, 0.4) 330deg,
+    transparent 360deg
+  );
+  animation: pwa-glow-spin 2.5s linear infinite;
+  animation-play-state: paused;
+  pointer-events: none;
+}
+.pwa-glow-wrapper.pwa-glow-visible::before {
+  animation-play-state: running;
+}
+@keyframes pwa-glow-spin {
+  to { transform: rotate(360deg); }
+}
+.pwa-glow-wrapper > * {
+  position: relative;
+  z-index: 1;
+  border-radius: 14px;
+}
