@@ -1650,11 +1650,11 @@ const App = () => {
                   </span>
                 </h1>
                 <p className={`hero-intro-p text-lg sm:text-xl text-[#AAB3C2] mb-8 sm:mb-12 max-w-4xl leading-relaxed ${isPWA ? 'pwa-hero-left' : 'mx-auto text-center'}`} style={{ ...(isPWA ? {} : { transform: 'translateX(calc(35% + 5mm))' }), fontFamily: 'Inter, sans-serif', fontWeight: 400, lineHeight: 1.6 }}>
-                  TPLN est un système complet de scalp LTF.<br />
+                  TPLN est un cadre précis d'exécution.<br />
                   <br />
-                  Tu apprends le modèle.<br />
-                  Tu l'exécutes en direct.<br />
-                  Tout est enregistré et mesuré.
+                  Tu maîtrises la structure.<br />
+                  Tu observes une discipline appliquée en temps réel.<br />
+                  Ta performance devient mesurable.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mt-6 mb-8">
                   <button 
@@ -1751,7 +1751,7 @@ const App = () => {
                         <ul className="text-[#AAB3C2] text-base space-y-4 mb-8 text-left flex-grow" style={{ fontFamily: 'Inter, sans-serif' }}>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
-                            <span className="font-medium text-[#F2F4F8]">Journal personnel</span>
+                            <span className="font-medium text-[#F2F4F8]">Journal professionnel multi-comptes</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
@@ -1802,7 +1802,8 @@ const App = () => {
                         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#2E6BFF] text-white px-4 py-1 rounded-[12px] text-xs font-medium md:hidden">
                           {paymentType === 'yearly' ? '💎 ÉCONOMISE 50€' : ''}
                         </div>
-                        <h3 className="text-xl font-bold text-[#F2F4F8] mb-3 h-8 flex items-center" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>MÉTHODE TPLN</h3>
+                        <h3 className="text-xl font-bold text-[#F2F4F8] mb-2 h-8 flex items-center" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>MÉTHODE TPLN</h3>
+                        <p className="text-[#AAB3C2] text-sm mb-3 italic">👉 Apprends en solo</p>
                         <div className={`text-4xl font-bold text-[#F2F4F8] mb-6 transition-all duration-200 flex flex-col`} style={{ height: '80px', justifyContent: 'flex-start', fontVariantNumeric: 'tabular-nums' }}>
                           <div className="h-auto">
                             <span className="text-2xl align-top text-[#AAB3C2]">€</span>
@@ -1863,7 +1864,8 @@ const App = () => {
                         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#2E6BFF] text-white px-4 py-1 rounded-[12px] text-xs font-medium">
                           ⭐ RECOMMANDÉ
                         </div>
-                        <h3 className="text-xl font-bold mb-3 h-8 flex items-center bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent uppercase" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>L'environnement complet TPLN</h3>
+                        <h3 className="text-xl font-bold mb-2 h-8 flex items-center bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent uppercase" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>L'environnement complet TPLN</h3>
+                        <p className="text-[#AAB3C2] text-sm mb-3 italic">👉 Méthode + Exécution + Transparence totale</p>
                         <div className={`text-4xl font-bold text-[#F2F4F8] mb-6 transition-all duration-200 flex flex-col`} style={{ height: '100px', justifyContent: 'flex-start', fontVariantNumeric: 'tabular-nums' }}>
                           <div className="h-auto">
                             <span className="text-2xl align-top text-[#AAB3C2]">€</span>
@@ -1880,27 +1882,27 @@ const App = () => {
                         <ul className="text-[#AAB3C2] text-base space-y-4 mb-8 text-left flex-grow" style={{ fontFamily: 'Inter, sans-serif' }}>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
-                            <span className="font-medium text-[#F2F4F8]">Méthode complète</span>
+                            <span className="font-medium text-[#F2F4F8]">Accès intégral à la méthode TPLN</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
-                            <span className="font-medium text-[#F2F4F8]">Journal illimité</span>
+                            <span className="font-medium text-[#F2F4F8]">Exécution live 5j / semaine</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
-                            <span className="font-medium text-[#F2F4F8]">Opportunités expliquées en temps réel</span>
+                            <span className="font-medium text-[#F2F4F8]">Opportunités validées et expliquées en direct</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
-                            <span className="font-medium text-[#F2F4F8]">Notifications instantanées</span>
+                            <span className="font-medium text-[#F2F4F8]">Notification immédiate via l'app</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
-                            <span className="font-medium text-[#F2F4F8]">Live 5j / semaine</span>
+                            <span className="font-medium text-[#F2F4F8]">Journal professionnel multi-comptes</span>
                           </li>
                           <li className="flex items-center gap-2">
                             <span className="text-[#13C26B] font-bold text-lg">✓</span>
-                            <span className="font-medium text-[#F2F4F8]">Contact direct</span>
+                            <span className="font-medium text-[#F2F4F8]">Accès direct au fondateur</span>
                           </li>
                         </ul>
                         <div className="mt-auto flex flex-col" style={{ minHeight: '100px' }}>
@@ -1917,7 +1919,7 @@ const App = () => {
                             className="w-full bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white py-3 px-6 rounded-[14px] font-medium transition-all duration-200 h-12 flex items-center justify-center"
                             style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}
                           >
-                            Rejoindre l'environnement complet
+                            Rejoindre l'environnement TPLN
                           </button>
                         </div>
                       </div>
@@ -1940,11 +1942,11 @@ const App = () => {
               </span>
             </h1>
             <p className={`hero-intro-p text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-4xl leading-relaxed ${isPWA ? 'pwa-hero-left' : 'mx-auto text-center'}`} style={isPWA ? undefined : { transform: 'translateX(calc(35% + 5mm))' }}>
-              TPLN est un système complet de scalp LTF.<br />
+              TPLN est un cadre précis d'exécution.<br />
               <br />
-              Tu apprends le modèle.<br />
-              Tu l'exécutes en direct.<br />
-              Tout est enregistré et mesuré.
+              Tu maîtrises la structure.<br />
+              Tu observes une discipline appliquée en temps réel.<br />
+              Ta performance devient mesurable.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mt-6 mb-8">
               <button 
@@ -2205,7 +2207,7 @@ const App = () => {
                       {isPWAOrMobile && (
                         <>
                           <p className="text-white font-bold leading-tight mb-3 mt-6 whitespace-nowrap" style={{ fontFamily: 'Inter, sans-serif', fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                            Pourquoi la majorité échoue ?
+                            Pourquoi la majorité stagne ?
                           </p>
                           <div className="text-[#AAB3C2] text-base leading-tight space-y-0.5" style={{ fontFamily: 'Inter, sans-serif' }}>
                             <p className="mb-0.5">Pas de cadre</p>
@@ -2216,12 +2218,22 @@ const App = () => {
                           <p className="text-white font-bold leading-tight mb-3 mt-6" style={{ fontFamily: 'Inter, sans-serif', fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                             TPLN remet de la structure.
                           </p>
+                          <p className="text-[#AAB3C2] text-sm leading-tight mb-3 -mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>
+                            Là où les autres improvisent
+                          </p>
                           <div className="text-[#AAB3C2] text-base leading-tight space-y-0.5" style={{ fontFamily: 'Inter, sans-serif' }}>
                             <p className="mb-0.5">Un modèle simple.</p>
                             <p className="mb-0.5">Des règles précises.</p>
                             <p className="mb-0.5">Une exécution disciplinée.</p>
                             <p className="mb-0">Un système mesurable.</p>
                     </div>
+                          <button
+                            type="button"
+                            onClick={() => handleScrollToSection('pricing')}
+                            className="mt-6 w-full sm:w-auto bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-6 py-3 rounded-[14px] font-medium text-base transition-all duration-200"
+                          >
+                            Structurer mon exécution
+                          </button>
                         </>
                       )}
                   </div>
@@ -2231,7 +2243,7 @@ const App = () => {
                     <div className="bg-[#141821] border border-[#222836] rounded-[16px] p-8 hover:border-[#2E6BFF]/50 hover:shadow-[0_12px_32px_rgba(46,107,255,0.2)] transition-all duration-300 relative overflow-hidden">
                       <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
                       <h3 className="text-[#F2F4F8] text-xl font-semibold mb-6 text-left" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>
-                        Pourquoi la majorité échoue :
+                        Pourquoi la majorité stagne :
                       </h3>
                       <ul className="space-y-3.5">
                         <li className="flex items-start gap-3">
@@ -2289,16 +2301,18 @@ const App = () => {
                             Mesure ta performance réelle.
                           </h3>
                           <div className="text-[#AAB3C2] text-lg leading-[1.5]" style={{ fontFamily: 'Inter, sans-serif' }}>
-                            <p className="mb-2">
-                              Le journal TPLN ne mesure pas seulement le résultat.
-                            </p>
                             <p className="mb-4">
-                              Il mesure la qualité de ta prise de décision.
+                              Il mesure la qualité de tes décisions,<br />
+                              pas seulement le résultat.
+                            </p>
+                            <p className="mb-4 font-bold text-[#F2F4F8]">
+                              Un amateur espère.<br />
+                              Un trader discipliné mesure.
                             </p>
                             <div className="space-y-1.5">
-                              <p>Ce que tu exécutes.</p>
                               <p>Ce que tu répètes.</p>
                               <p>Ce que tu dois corriger.</p>
+                              <p>Ce qui te fait réellement progresser</p>
                             </div>
                           </div>
                   </div>
@@ -2428,15 +2442,15 @@ const App = () => {
                   {/* Texte à gauche, cadre à droite */}
                   <div className="flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-10 max-w-6xl mx-auto mb-8">
                     <div className={`max-w-[480px] lg:flex-shrink-0 ${isPWAOrMobile ? 'text-center mx-auto' : 'text-left'}`}>
-                      <p className="text-white font-bold leading-tight mb-6" style={{ fontFamily: 'Inter, sans-serif', fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
-                        {isPWAOrMobile ? 'Spécialisé en exécution LTF.' : 'Un modèle clair. Reproductible. Maîtrisé.'}
-                      </p>
-                      {isPWAOrMobile && (
-                        <p className="text-[#AAB3C2] text-base leading-tight mb-6" style={{ fontFamily: 'Inter, sans-serif' }}>
-                          Rapide. Structuré. Répétable.
+                      {isPWAOrMobile ? (
+                        <p className="text-[#AAB3C2] text-base leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>
+                          Une lecture structurée du marché. Cohérente à chaque échelle. Exécutée avec précision.
                         </p>
-                      )}
-                      {!isPWAOrMobile && (
+                      ) : (
+                        <>
+                        <p className="text-white font-bold leading-tight mb-6" style={{ fontFamily: 'Inter, sans-serif', fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
+                          Un modèle clair. Reproductible. Maîtrisé.
+                        </p>
                         <div className="text-[#AAB3C2] text-base leading-[1.6]" style={{ fontFamily: 'Inter, sans-serif' }}>
                           <p className="mb-2">TPLN repose sur un cadre simple à comprendre, mais précis dans son exécution.</p>
                           <p className="mb-4">Pas d'indicateurs inutiles.<br />Pas de complexité artificielle.</p>
@@ -2444,7 +2458,8 @@ const App = () => {
                           <p className="mb-1">Tu comprends la logique.</p>
                           <p className="mb-1">Tu sais quoi valider.</p>
                           <p className="mb-0">Tu sais quand exécuter.</p>
-                      </div>
+                        </div>
+                        </>
                       )}
                     </div>
                     <div className="lg:flex-1 lg:min-w-0 flex flex-col items-center gap-6">
@@ -2463,19 +2478,19 @@ const App = () => {
                           <>
                             <li className="flex items-start gap-3">
                               <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
-                              <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Formation complète (scalp LTF)</span>
+                              <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Le modèle TPLN complet</span>
                             </li>
                             <li className="flex items-start gap-3">
                               <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
-                              <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Checklist d'exécution (entrée / invalidation)</span>
+                              <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Une checklist d'exécution structurée</span>
                             </li>
                             <li className="flex items-start gap-3">
                               <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
-                              <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Gestion du risque structurée</span>
+                              <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Une gestion du risque disciplinée</span>
                             </li>
                             <li className="flex items-start gap-3">
                               <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
-                              <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Journal de performance intégré</span>
+                              <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Un journal professionnel de performance</span>
                             </li>
                           </>
                         ) : (
@@ -2528,7 +2543,7 @@ const App = () => {
                         TPLN
                       </span>
                     </h2>
-                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Opportunités validées envoyées en temps réel.<br />Session live quotidienne.<br />Journal de performance intégré.</p>
+                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>L'application TPLN centralise tout.<br />Exécution, live, journal, historique.<br />Un seul environnement. Sans dispersion.</p>
                   </div>
                   <div className="max-w-2xl mx-auto mb-8">
                     <div className="bg-[#141821] border border-[#222836] rounded-[16px] p-8 hover:border-[#2E6BFF]/50 hover:shadow-[0_12px_32px_rgba(46,107,255,0.2)] transition-all duration-300 relative overflow-hidden">
@@ -2539,23 +2554,19 @@ const App = () => {
                       <ul className="space-y-3.5">
                         <li className="flex items-start gap-3">
                           <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
-                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Formation complète au modèle TPLN</span>
+                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Sessions live 5 jours / semaine</span>
                         </li>
                         <li className="flex items-start gap-3">
                           <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
-                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Live 5 jours / semaine</span>
+                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Opportunités validées et expliquées</span>
                         </li>
                         <li className="flex items-start gap-3">
                           <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
-                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Opportunités détaillées</span>
+                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Notification instantanée via l'application</span>
                         </li>
                         <li className="flex items-start gap-3">
                           <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
-                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Journal personnel</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
-                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Suivi des performances globales</span>
+                          <span className="text-white text-base leading-relaxed text-left" style={{ fontFamily: 'Inter, sans-serif' }}>Journal public des performances partagées</span>
                         </li>
                       </ul>
                     </div>
@@ -2567,11 +2578,14 @@ const App = () => {
                     </video>
                   </div>
                   <div className="max-w-2xl mx-auto mb-6 text-center">
-                    <h4 className="text-white text-lg font-semibold mb-2" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Transparence totale des performances</h4>
-                    <p className="text-gray-400 text-base leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>
-                      Chaque opportunité envoyée est enregistrée et mesurée dans un journal dédié.
-                    </p>
-                </div>
+                    <button
+                      type="button"
+                      onClick={() => handleScrollToSection('pricing')}
+                      className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-6 py-3 rounded-[14px] font-medium text-base transition-all duration-200"
+                    >
+                      Accéder aux sessions live
+                    </button>
+                  </div>
               </div>
               </div>
 
@@ -2591,7 +2605,7 @@ const App = () => {
                         TPLN
                       </span>
                     </h2>
-                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Opportunités validées envoyées en temps réel.<br />Session live quotidienne.<br />Journal de performance intégré.</p>
+                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>L'application TPLN centralise tout.<br />Exécution, live, journal, historique.<br />Un seul environnement. Sans dispersion.</p>
                   </div>
 
                   {/* Liste des fonctionnalités */}
@@ -2599,33 +2613,7 @@ const App = () => {
                     <div className={`flex flex-col lg:flex-row gap-8 ${isPWA ? 'items-start' : 'items-center'}`}>
                       {/* Colonne gauche - Bloc unique */}
                       <div className={`w-full max-w-md order-2 lg:order-1 ${isPWA ? 'text-left' : ''}`}>
-                        <div className={`bg-[#141821] border border-[#222836] rounded-[16px] p-8 hover:border-[#2E6BFF]/50 hover:shadow-[0_12px_32px_rgba(46,107,255,0.2)] transition-all duration-300 relative overflow-hidden ${isPWA ? 'text-left' : ''}`}>
-                          <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
-                          <h3 className={`text-[#F2F4F8] text-xl font-semibold mb-6 text-left`} style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600 }}>Tout en temps réel.</h3>
-                          <ul className="space-y-3.5">
-                            <li className="flex items-start gap-3">
-                              <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
-                              <span className="text-white text-base leading-relaxed text-left min-w-0 flex-1" style={{ fontFamily: 'Inter, sans-serif' }}>Alertes push instantanées</span>
-                            </li>
-                            <li className="flex items-start gap-3">
-                              <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
-                              <span className="text-white text-base leading-relaxed text-left min-w-0 flex-1" style={{ fontFamily: 'Inter, sans-serif' }}>Opportunités expliquées avec graphique détaillé</span>
-                            </li>
-                            <li className="flex items-start gap-3">
-                              <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
-                              <span className="text-white text-base leading-relaxed text-left min-w-0 flex-1" style={{ fontFamily: 'Inter, sans-serif' }}>Accès au livestream</span>
-                            </li>
-                            <li className="flex items-start gap-3">
-                              <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
-                              <span className="text-white text-base leading-relaxed text-left min-w-0 flex-1" style={{ fontFamily: 'Inter, sans-serif' }}>Journal de performance intégré</span>
-                            </li>
-                            <li className="flex items-start gap-3">
-                              <div className="w-2 h-2 rounded-full bg-[#6B7280] flex-shrink-0 mt-1.5"></div>
-                              <span className="text-white text-base leading-relaxed text-left min-w-0 flex-1" style={{ fontFamily: 'Inter, sans-serif' }}>Historique complet des exécutions</span>
-                            </li>
-                          </ul>
-                        </div>
-                        <p className={`text-[#AAB3C2] text-base mt-4 leading-relaxed ${isPWA ? 'text-left' : ''}`} style={{ fontFamily: 'Inter, sans-serif' }}>
+                        <p className={`text-[#AAB3C2] text-base leading-relaxed ${isPWA ? 'text-left' : ''}`} style={{ fontFamily: 'Inter, sans-serif' }}>
                           {isPWAOrMobile ? (
                             <>
                               TPLN n'est pas juste une formation.<br />
@@ -2639,6 +2627,13 @@ const App = () => {
                             </>
                           )}
                     </p>
+                    <button
+                      type="button"
+                      onClick={() => handleScrollToSection('pricing')}
+                      className="mt-6 w-full sm:w-auto bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-6 py-3 rounded-[14px] font-medium text-base transition-all duration-200"
+                    >
+                      Rejoindre l'environnement TPLN
+                    </button>
                   </div>
 
                       {/* Colonne droite - Vidéo iPhone */}
@@ -2679,6 +2674,13 @@ const App = () => {
                           Votre navigateur ne supporte pas la lecture de vidéos.
                         </video>
                       </div>
+                      <button
+                        type="button"
+                        onClick={() => handleScrollToSection('pricing')}
+                        className="mt-6 w-full sm:w-auto bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-6 py-3 rounded-[14px] font-medium text-base transition-all duration-200 block mx-auto"
+                      >
+                        Accéder au journal
+                      </button>
                     </div>
                   </div>
                     </div>
@@ -5152,73 +5154,71 @@ const App = () => {
                 </div>
               </div>
 
-              <div className={`grid grid-cols-1 md:grid-cols-[0.8fr_0.9fr_1.1fr] gap-8 md:gap-0 max-w-6xl mx-auto transition-all duration-400 ease-out ${isTransitioning ? 'opacity-0 scale-75 rotate-3 blur-md translate-y-20 transform-gpu perspective-1000' : 'opacity-100 scale-100 rotate-0 blur-0 translate-y-0 transform-gpu perspective-1000'}`} style={{ transformStyle: 'preserve-3d', perspective: '1000px' }}>
-                {/* Plan Journal Pro */}
-                <div className={`bg-[#141821] px-8 py-6 sm:px-12 sm:py-8 rounded-[16px] md:rounded-l-[16px] md:rounded-r-none border border-[#222836] flex flex-col transition-all duration-200 ${
-                  isTransitioning 
-                    ? 'border-[#2E6BFF] scale-105' 
-                    : 'hover:border-[#2A2F3F] hover:bg-[#171C26]'
-                }`} style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
+              <div className={`grid grid-cols-1 md:grid-cols-[1.1fr_0.9fr_0.8fr] gap-8 md:gap-0 max-w-6xl mx-auto transition-all duration-400 ease-out ${isTransitioning ? 'opacity-0 scale-75 rotate-3 blur-md translate-y-20 transform-gpu perspective-1000' : 'opacity-100 scale-100 rotate-0 blur-0 translate-y-0 transform-gpu perspective-1000'}`} style={{ transformStyle: 'preserve-3d', perspective: '1000px' }}>
+                {/* Plan Pro - L'environnement complet TPLN */}
+                <div 
+                  className={`bg-[#141821] p-8 sm:p-12 rounded-[16px] md:rounded-l-[16px] md:rounded-r-none border-2 border-[#2E6BFF] relative flex flex-col justify-between transition-all duration-200 ${
+                    isTransitioning 
+                      ? 'border-blue-600 shadow-[0_0_40px_rgba(59,130,246,0.5)] scale-105' 
+                      : 'hover:border-[#2558D6] hover:bg-[#171C26]'
+                  }`}
+                >
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#2E6BFF] text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
+                    ⭐ RECOMMANDÉ
+                  </div>
                   <div className="text-center">
-                    <h3 className="text-xl font-bold text-white mb-3">JOURNAL PRO</h3>
+                    <h3 className="text-xl font-bold mb-2 bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent uppercase" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>L'environnement complet TPLN</h3>
+                    <p className="text-gray-400 text-sm mb-3 italic">👉 Méthode + Exécution + Transparence totale</p>
                     <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
                       <span className="text-2xl align-top text-gray-300">€</span>
-                      {paymentType === 'monthly' ? '29' : '26'}
+                      {paymentType === 'monthly' ? '79' : '57,5'}
                       <span className="text-lg text-gray-400 font-normal"> / mois</span>
                       {paymentType === 'yearly' && (
                         <div className="text-gray-300 text-sm font-normal mt-2">
-                          Facturé 312€ / an
+                          Facturé 690€ / an
                         </div>
                       )}
                       </div>
-                    <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
+                                          <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
+                        <li className="flex items-center gap-2">
+                          <span className="text-green-400 font-bold text-lg">✓</span>
+                          <span className="font-semibold text-white">Accès intégral à la méthode TPLN</span>
+                        </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Journal personnel</span>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Comptes illimités</span>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Analyse avancée</span>
+                        <span className="font-semibold text-white">Exécution live 5j / semaine</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Comparaison de comptes</span>
+                        <span className="font-semibold text-white">Opportunités validées et expliquées en direct</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-red-400 font-bold text-lg">✗</span>
-                        <span className="font-semibold text-white">Méthode TPLN</span>
+                        <span className="text-green-400 font-bold text-lg">✓</span>
+                        <span className="font-semibold text-white">Notification immédiate via l'app</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-red-400 font-bold text-lg">✗</span>
-                        <span className="font-semibold text-white">Exécutions partagées</span>
+                        <span className="text-green-400 font-bold text-lg">✓</span>
+                        <span className="font-semibold text-white">Journal professionnel multi-comptes</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-red-400 font-bold text-lg">✗</span>
-                        <span className="font-semibold text-white">Live</span>
+                        <span className="text-green-400 font-bold text-lg">✓</span>
+                        <span className="font-semibold text-white">Accès direct au fondateur</span>
                       </li>
                     </ul>
                   </div>
                   <button 
                     onClick={async () => {
                       try {
-                        console.log('🖱️ Clic sur bouton Journal Pro (mobile)');
-                        await redirectToCheckout('journal', paymentType);
+                        console.log('🖱️ Clic sur bouton Premium (mobile)');
+                        await redirectToCheckout('premium', paymentType);
                       } catch (error: any) {
-                        console.error('Erreur:', error);
+                        console.error('Erreur Stripe:', error);
                         alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
                       }
                     }}
-                    className={`w-full border border-[#222836] bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white py-4 px-6 rounded-[14px] font-medium text-lg transition-all duration-200 ${
-                      isTransitioning 
-                        ? 'scale-105' 
-                        : ''
-                    }`}
+                    className="w-full bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white py-4 px-6 rounded-[14px] font-medium text-lg transition-all duration-200"
                   >
-                    Accéder au Journal Pro
+                    Rejoindre l'environnement TPLN
                   </button>
                   
                 </div>
@@ -5233,7 +5233,8 @@ const App = () => {
                     <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#2E6BFF] text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg md:hidden" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
                       {paymentType === 'yearly' ? '💎 ÉCONOMISE 50€' : ''}
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-3">MÉTHODE TPLN</h3>
+                    <h3 className="text-xl font-bold text-white mb-2">MÉTHODE TPLN</h3>
+                    <p className="text-gray-400 text-sm mb-3 italic">👉 Apprends en solo</p>
                     <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
                       <span className="text-2xl align-top text-gray-300">€</span>
                       {paymentType === 'monthly' ? '49' : '44'}
@@ -5292,69 +5293,72 @@ const App = () => {
                   
                 </div>
 
-                {/* Plan Pro - L'environnement complet TPLN */}
-                <div 
-                  className={`bg-[#141821] p-8 sm:p-12 rounded-[16px] md:rounded-r-[16px] md:rounded-l-none border-2 border-[#2E6BFF] relative flex flex-col justify-between transition-all duration-200 ${
-                    isTransitioning 
-                      ? 'border-blue-600 shadow-[0_0_40px_rgba(59,130,246,0.5)] scale-105' 
-                      : 'hover:border-[#2558D6] hover:bg-[#171C26]'
-                  }`}
-                >
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#2E6BFF] text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
-                    ⭐ RECOMMANDÉ
-                  </div>
+                {/* Plan Journal Pro */}
+                <div className={`bg-[#141821] px-8 py-6 sm:px-12 sm:py-8 rounded-[16px] md:rounded-r-[16px] md:rounded-l-none border border-[#222836] flex flex-col transition-all duration-200 ${
+                  isTransitioning 
+                    ? 'border-[#2E6BFF] scale-105' 
+                    : 'hover:border-[#2A2F3F] hover:bg-[#171C26]'
+                }`} style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.25)' }}>
                   <div className="text-center">
-                    <h3 className="text-xl font-bold mb-3 bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent uppercase" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>L'environnement complet TPLN</h3>
+                    <h3 className="text-xl font-bold text-white mb-3">JOURNAL PRO</h3>
                     <div className={`text-4xl font-bold text-white mb-6 transition-all duration-500 ${isTransitioning ? 'scale-110' : 'scale-100'}`}>
                       <span className="text-2xl align-top text-gray-300">€</span>
-                      {paymentType === 'monthly' ? '79' : '57,5'}
+                      {paymentType === 'monthly' ? '29' : '26'}
                       <span className="text-lg text-gray-400 font-normal"> / mois</span>
                       {paymentType === 'yearly' && (
                         <div className="text-gray-300 text-sm font-normal mt-2">
-                          Facturé 690€ / an
+                          Facturé 312€ / an
                         </div>
                       )}
                       </div>
-                                          <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
-                        <li className="flex items-center gap-2">
-                          <span className="text-green-400 font-bold text-lg">✓</span>
-                          <span className="font-semibold text-white">Méthode complète</span>
-                        </li>
+                    <ul className="text-gray-300 text-base space-y-4 mb-8 text-left">
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Journal illimité</span>
+                        <span className="font-semibold text-white">Journal professionnel multi-comptes</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Opportunités expliquées en temps réel</span>
+                        <span className="font-semibold text-white">Comptes illimités</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Notifications instantanées</span>
+                        <span className="font-semibold text-white">Analyse avancée</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Live 5j / semaine</span>
+                        <span className="font-semibold text-white">Comparaison de comptes</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-green-400 font-bold text-lg">✓</span>
-                        <span className="font-semibold text-white">Contact direct</span>
+                        <span className="text-red-400 font-bold text-lg">✗</span>
+                        <span className="font-semibold text-white">Méthode TPLN</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-red-400 font-bold text-lg">✗</span>
+                        <span className="font-semibold text-white">Exécutions partagées</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-red-400 font-bold text-lg">✗</span>
+                        <span className="font-semibold text-white">Live</span>
                       </li>
                     </ul>
                   </div>
                   <button 
                     onClick={async () => {
                       try {
-                        console.log('🖱️ Clic sur bouton Premium (mobile)');
-                        await redirectToCheckout('premium', paymentType);
+                        console.log('🖱️ Clic sur bouton Journal Pro (mobile)');
+                        await redirectToCheckout('journal', paymentType);
                       } catch (error: any) {
-                        console.error('Erreur Stripe:', error);
+                        console.error('Erreur:', error);
                         alert(`Erreur: ${error?.message || 'Erreur lors de l\'ouverture du paiement'}`);
                       }
                     }}
-                    className="w-full bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white py-4 px-6 rounded-[14px] font-medium text-lg transition-all duration-200"
+                    className={`w-full border border-[#222836] bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white py-4 px-6 rounded-[14px] font-medium text-lg transition-all duration-200 ${
+                      isTransitioning 
+                        ? 'scale-105' 
+                        : ''
+                    }`}
                   >
-                    Rejoindre l'environnement complet
+                    Accéder au Journal Pro
                   </button>
                   
                 </div>
