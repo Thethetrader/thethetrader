@@ -2421,7 +2421,16 @@ const App = () => {
                       className="w-full rounded-lg"
                       loading="lazy"
                     />
-                                </div>
+                  </div>
+                  <div className="max-w-6xl mx-auto mt-6 text-center">
+                    <button
+                      type="button"
+                      onClick={() => handleScrollToSection('pricing')}
+                      className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-6 py-3 rounded-[14px] font-medium text-base transition-all duration-200"
+                    >
+                      Accéder au journal
+                    </button>
+                  </div>
                               </div>
                             </div>
 
@@ -2609,35 +2618,10 @@ const App = () => {
                   </div>
 
                   {/* Liste des fonctionnalités */}
-                  <div className="max-w-6xl mb-8 mt-8 sm:mt-12">
-                    <div className={`flex flex-col lg:flex-row gap-8 ${isPWA ? 'items-start' : 'items-center'}`}>
-                      {/* Colonne gauche - Bloc unique */}
-                      <div className={`w-full max-w-md order-2 lg:order-1 ${isPWA ? 'text-left' : ''}`}>
-                        <p className={`text-[#AAB3C2] text-base leading-relaxed ${isPWA ? 'text-left' : ''}`} style={{ fontFamily: 'Inter, sans-serif' }}>
-                          {isPWAOrMobile ? (
-                            <>
-                              TPLN n'est pas juste une formation.<br />
-                              C'est un environnement complet, accessible à tout moment.
-                            </>
-                          ) : (
-                            <>
-                              TPLN n'est pas seulement une formation ou un live.<br />
-                              C'est un environnement structuré accessible à tout moment.<br />
-                              L'accès à l'application est intégré à l'écosystème TPLN.
-                            </>
-                          )}
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => handleScrollToSection('pricing')}
-                      className="mt-6 w-full sm:w-auto bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-6 py-3 rounded-[14px] font-medium text-base transition-all duration-200"
-                    >
-                      Rejoindre l'environnement TPLN
-                    </button>
-                  </div>
-
-                      {/* Colonne droite - Vidéo iPhone */}
-                      <div className="flex-1 flex items-center justify-center lg:justify-start order-1 lg:order-2">
+                  <div className="max-w-6xl mx-auto mb-8 mt-8 sm:mt-12">
+                    <div className={`flex flex-col gap-8 ${isPWA ? 'items-start' : 'items-center'}`}>
+                      {/* iPhone centré */}
+                      <div className="w-full flex justify-center">
                         <div className="w-full sm:max-w-lg lg:max-w-xl xl:max-w-2xl relative">
                       {/* Cadre iPhone avec photo */}
                       <div className="relative">
@@ -2648,7 +2632,7 @@ const App = () => {
                           width={1024}
                           height={1024}
                           loading="lazy"
-                              className={`w-full h-auto ${isPWA ? 'scale-150' : 'scale-95 sm:scale-110 lg:scale-125'}`}
+                              className={`w-full h-auto ${isPWA ? 'scale-[3]' : 'scale-95 sm:scale-110 lg:scale-125'}`}
                           style={{
                             display: 'block',
                             maxWidth: '100%',
@@ -2661,7 +2645,7 @@ const App = () => {
                         
                         {/* Vidéo superposée */}
                         <video 
-                              className={`absolute left-1/2 transform -translate-x-1/2 w-[56%] aspect-[9/16] rounded-[2rem] sm:rounded-[4rem] scale-100 sm:scale-100 ${isPWA && !user ? 'top-1.5' : '-top-1'} sm:-top-1`}
+                              className={`absolute left-1/2 transform -translate-x-1/2 w-[56%] aspect-[9/16] rounded-[3.25rem] rounded-t-[3.75rem] sm:rounded-[5.25rem] sm:rounded-t-[6rem] scale-100 sm:scale-100 ${isPWA && !user ? 'top-1.5' : '-top-1'} sm:-top-1`}
                           autoPlay
                           loop
                           muted
@@ -2674,15 +2658,9 @@ const App = () => {
                           Votre navigateur ne supporte pas la lecture de vidéos.
                         </video>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => handleScrollToSection('pricing')}
-                        className="mt-6 w-full sm:w-auto bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-6 py-3 rounded-[14px] font-medium text-base transition-all duration-200 block mx-auto"
-                      >
-                        Accéder au journal
-                      </button>
                     </div>
                   </div>
+
                     </div>
                   </div>
 
@@ -5364,6 +5342,38 @@ const App = () => {
                 </div>
               </div>
             </div>
+
+              <h2 className="font-bold text-center mb-8 sm:mb-12 mt-16 sm:mt-20 bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] bg-clip-text text-transparent" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700 }}>
+                <span className="text-3xl md:text-5xl">Accompagnement</span>{' '}
+                <span className="text-5xl md:text-7xl">1:1</span>
+              </h2>
+
+              <div className="max-w-2xl mx-auto mb-12 px-4 sm:px-6">
+                <div className="bg-[#141821] border border-[#222836] rounded-[40px] p-8 hover:border-[#2E6BFF]/50 hover:shadow-[0_12px_32px_rgba(46,107,255,0.2)] transition-all duration-300 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#2E6BFF] to-transparent"></div>
+                  <p className="text-[#AAB3C2] text-lg leading-relaxed mb-6 text-left" style={{ fontFamily: 'Inter, sans-serif' }}>
+                    Pour les traders qui veulent structurer et optimiser leur exécution.
+                  </p>
+                  <ul className="text-white text-base space-y-3 text-left max-w-md list-disc list-inside" style={{ fontFamily: 'Inter, sans-serif' }}>
+                    <li>Audit complet de ton journal</li>
+                    <li>Analyse de ta prise de décision</li>
+                    <li>Identification des biais récurrents</li>
+                    <li>Plan d'optimisation personnalisé</li>
+                  </ul>
+                </div>
+                <div className="text-center mt-8">
+                <div className="border-t border-[#222836] my-6 max-w-xs mx-auto" aria-hidden="true"></div>
+                <p className="text-2xl font-bold text-white mb-2" style={{ fontFamily: 'Sora, sans-serif' }}>250€ / session (1h)</p>
+                <p className="text-[#AAB3C2] text-sm mb-4">Places limitées.</p>
+                <p className="text-[#AAB3C2] text-sm mb-6">Accès sur demande.</p>
+                <a
+                  href="mailto:contact@thethetrader.com?subject=Réserver%20une%20session%201:1"
+                  className="inline-block bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-6 py-3 rounded-[14px] font-medium text-base transition-all duration-200"
+                >
+                  Réserver une session
+                </a>
+                </div>
+              </div>
 
             {/* Aperçu de la plateforme - Mobile Optimized - SUPPRIMÉ */}
             <div className="max-w-7xl mx-auto mb-6 sm:mb-10 px-2 sm:px-4" style={{display: 'none'}}>
