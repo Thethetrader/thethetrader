@@ -1440,20 +1440,11 @@ const App = () => {
             <button 
               onClick={() => {
                 setShowMobileMenu(false);
-                handleScrollToSection('services');
+                handleScrollToSection('pricing');
               }}
               className="text-[#AAB3C2] hover:text-[#F2F4F8] transition-all duration-200 py-1.5 text-base font-medium text-left"
             >
               Services
-            </button>
-            <button 
-              onClick={() => {
-                setShowMobileMenu(false);
-                handleScrollToSection('about-thethetrader');
-              }}
-              className="text-[#AAB3C2] hover:text-[#F2F4F8] transition-all duration-200 py-1.5 text-base font-medium text-left"
-            >
-              À propos
             </button>
             <button 
               onClick={() => {
@@ -1467,11 +1458,29 @@ const App = () => {
             <button 
               onClick={() => {
                 setShowMobileMenu(false);
+                handleScrollToSection('about-thethetrader');
+              }}
+              className="text-[#AAB3C2] hover:text-[#F2F4F8] transition-all duration-200 py-1.5 text-base font-medium text-left"
+            >
+              À propos
+            </button>
+            <button 
+              onClick={() => {
+                setShowMobileMenu(false);
                 handleScrollToSection('pricing');
               }}
               className="text-[#AAB3C2] hover:text-[#F2F4F8] transition-all duration-200 py-1.5 text-base font-medium text-left"
             >
-              Prix
+              Tarifs
+            </button>
+            <button 
+              onClick={() => {
+                setShowMobileMenu(false);
+                handleScrollToSection('pricing');
+              }}
+              className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-4 py-2 rounded-[14px] font-medium text-base transition-all duration-200 mt-2"
+            >
+              Rejoindre TPLN
             </button>
             <div className="pt-2 mt-2 border-t border-[#222836] flex flex-col gap-2">
               <button 
