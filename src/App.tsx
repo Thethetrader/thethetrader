@@ -2191,7 +2191,7 @@ const App = () => {
                       <p className={`text-white font-bold leading-tight ${isPWAOrMobile ? 'mb-3' : 'mb-6'}`} style={{ fontFamily: 'Inter, sans-serif', fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                         Le trading est devenu flou.
                       </p>
-                      <div className={`text-[#AAB3C2] text-base ${isPWAOrMobile ? 'leading-tight space-y-0.5' : 'leading-[1.6]'}`} style={{ fontFamily: 'Inter, sans-serif' }}>
+                      <div className={`text-[#AAB3C2] text-lg ${isPWAOrMobile ? 'leading-tight space-y-0.5' : 'leading-[1.6]'}`} style={{ fontFamily: 'Inter, sans-serif' }}>
                         <p className={isPWAOrMobile ? 'mb-0.5' : 'mb-2'}>Indicateurs partout.</p>
                         <p className={isPWAOrMobile ? 'mb-0.5' : 'mb-2'}>Stratégies qui changent.</p>
                         <p className={isPWAOrMobile ? 'mb-0' : 'mb-4'}>Aucune structure claire.</p>
@@ -2209,7 +2209,7 @@ const App = () => {
                           <p className="text-white font-bold leading-tight mb-3 mt-6 whitespace-nowrap" style={{ fontFamily: 'Inter, sans-serif', fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                             Pourquoi la majorité stagne ?
                           </p>
-                          <div className="text-[#AAB3C2] text-base leading-tight space-y-0.5" style={{ fontFamily: 'Inter, sans-serif' }}>
+                          <div className="text-[#AAB3C2] text-lg leading-tight space-y-0.5" style={{ fontFamily: 'Inter, sans-serif' }}>
                             <p className="mb-0.5">Pas de cadre</p>
                             <p className="mb-0.5">Pas de constance</p>
                             <p className="mb-0.5">Pas de mesure</p>
@@ -2218,10 +2218,10 @@ const App = () => {
                           <p className="text-white font-bold leading-tight mb-3 mt-6" style={{ fontFamily: 'Inter, sans-serif', fontSize: isPWA ? 'clamp(1.75rem, 10vw, 4rem)' : 'clamp(1.25rem, 6vw, 3.25rem)' }}>
                             TPLN remet de la structure.
                           </p>
-                          <p className="text-[#AAB3C2] text-sm leading-tight mb-3 -mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>
+                          <p className="text-[#AAB3C2] text-base leading-tight mb-3 -mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>
                             Là où les autres improvisent
                           </p>
-                          <div className="text-[#AAB3C2] text-base leading-tight space-y-0.5" style={{ fontFamily: 'Inter, sans-serif' }}>
+                          <div className="text-[#AAB3C2] text-lg leading-tight space-y-0.5" style={{ fontFamily: 'Inter, sans-serif' }}>
                             <p className="mb-0.5">Un modèle simple.</p>
                             <p className="mb-0.5">Des règles précises.</p>
                             <p className="mb-0.5">Une exécution disciplinée.</p>
@@ -2301,15 +2301,15 @@ const App = () => {
                             Mesure ta performance réelle.
                           </h3>
                           <div className="text-[#AAB3C2] text-lg leading-[1.5]" style={{ fontFamily: 'Inter, sans-serif' }}>
-                            <p className="mb-4">
+                            <p className="mb-3">
                               Il mesure la qualité de tes décisions,<br />
                               pas seulement le résultat.
                             </p>
-                            <p className="mb-4 font-bold text-[#F2F4F8]">
+                            <p className="mb-3 text-lg font-bold text-[#F2F4F8]">
                               Un amateur espère.<br />
                               Un trader discipliné mesure.
                             </p>
-                            <div className="space-y-1.5">
+                            <div className="space-y-1 mt-1">
                               <p>Ce que tu répètes.</p>
                               <p>Ce que tu dois corriger.</p>
                               <p>Ce qui te fait réellement progresser</p>
@@ -2452,7 +2452,7 @@ const App = () => {
                   <div className="flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-10 max-w-6xl mx-auto mb-8">
                     <div className={`max-w-[480px] lg:flex-shrink-0 ${isPWAOrMobile ? 'text-center mx-auto' : 'text-left'}`}>
                       {isPWAOrMobile ? (
-                        <p className="text-[#AAB3C2] text-base leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>
+                        <p className="text-[#AAB3C2] text-lg leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>
                           Une lecture structurée du marché. Cohérente à chaque échelle. Exécutée avec précision.
                         </p>
                       ) : (
@@ -2552,7 +2552,7 @@ const App = () => {
                         TPLN
                       </span>
                     </h2>
-                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>L'application TPLN centralise tout.<br />Exécution, live, journal, historique.<br />Un seul environnement. Sans dispersion.</p>
+                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Voir le modèle appliqué change tout.<br /><br />Sessions live 5 jours par semaine.<br />Opportunités détaillées en temps réel.<br />Notification immédiate via l'application.<br />Transparence totale grâce au journal des performances partagées.</p>
                   </div>
                   <div className="max-w-2xl mx-auto mb-8">
                     <div className="bg-[#141821] border border-[#222836] rounded-[16px] p-8 hover:border-[#2E6BFF]/50 hover:shadow-[0_12px_32px_rgba(46,107,255,0.2)] transition-all duration-300 relative overflow-hidden">
@@ -2614,7 +2614,7 @@ const App = () => {
                         TPLN
                       </span>
                     </h2>
-                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>L'application TPLN centralise tout.<br />Exécution, live, journal, historique.<br />Un seul environnement. Sans dispersion.</p>
+                    <p className="text-gray-400 text-lg mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>L'application TPLN centralise tout.<br />Exécution, live, journal, historique.<br />Un seul environnement.<br />Sans dispersion.</p>
                   </div>
 
                   {/* Liste des fonctionnalités */}
