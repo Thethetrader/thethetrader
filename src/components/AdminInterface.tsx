@@ -4916,7 +4916,7 @@ const dailyPnLChartData = useMemo(
                     if (totalPnL > 0) {
                       bgColor = 'bg-green-200/30 border-green-300/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
-                      bgColor = 'bg-loss/60 border-loss/50 text-white'; // PnL négatif - même rouge pâle partout
+                      bgColor = 'calendar-cell-loss border-2'; // PnL négatif - rouge pâle (cases calendrier)
                     } else {
                       bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
                     }
@@ -4948,7 +4948,7 @@ const dailyPnLChartData = useMemo(
                     if (totalPnL > 0) {
                       bgColor = 'bg-green-200/30 border-green-300/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
-                      bgColor = 'bg-loss/60 border-loss/50 text-white'; // PnL négatif - même rouge pâle partout
+                      bgColor = 'calendar-cell-loss border-2'; // PnL négatif - rouge pâle (cases calendrier)
                     } else {
                       bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
                     }
@@ -5486,8 +5486,8 @@ const dailyPnLChartData = useMemo(
               </div>
             )}
 
-            {/* Analyse des pertes - sous Avg Win/Loss (pas sur TPLN model) */}
-            {selectedChannel.id === 'trading-journal' && (() => {
+            {/* Analyse des pertes - sous Avg Win/Loss (Journal perso et TPLN model) */}
+            {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') && (() => {
               const lossAnalysis = getLossAnalysis();
               if (lossAnalysis.totalLosses > 0) {
                 return (

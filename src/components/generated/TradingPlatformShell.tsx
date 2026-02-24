@@ -4892,7 +4892,7 @@ export default function TradingPlatformShell() {
                     if (totalPnL > 0) {
                       bgColor = 'bg-green-200/30 border-green-200/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
-                      bgColor = 'bg-loss/60 border-loss/50 text-white'; // PnL négatif - même rouge pâle partout
+                      bgColor = 'calendar-cell-loss border-2'; // PnL négatif - rouge pâle (cases calendrier)
                     } else {
                       bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0 (BE)
                     }
@@ -4914,7 +4914,7 @@ export default function TradingPlatformShell() {
                     if (totalPnL > 0) {
                       bgColor = 'bg-green-200/30 border-green-200/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
-                      bgColor = 'bg-loss/60 border-loss/50 text-white'; // PnL négatif - même rouge pâle partout
+                      bgColor = 'calendar-cell-loss border-2'; // PnL négatif - rouge pâle (cases calendrier)
                     } else {
                       bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
                     }
