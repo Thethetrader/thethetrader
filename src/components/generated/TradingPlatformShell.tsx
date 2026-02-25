@@ -4707,9 +4707,6 @@ export default function TradingPlatformShell() {
             <h1 className="text-2xl font-bold text-white">
               {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? (selectedChannel.id === 'tpln-model' || activeJournalButton === 'tpln' ? 'TPLN model' : 'Trading Journal') : 'Journal des Signaux'}
             </h1>
-            <p className="text-sm text-gray-400 mt-1">
-              {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? (selectedChannel.id === 'tpln-model' || activeJournalButton === 'tpln' ? 'Calendrier et stats du modèle' : 'Journal tous tes trades') : 'Suivi des performances des signaux'}
-            </p>
           </div>
           
           {/* Sélecteur de compte - DESKTOP (pas sur TPLN model ni TPLN button) */}
@@ -5437,7 +5434,7 @@ export default function TradingPlatformShell() {
 
           {/* Boutons Tous les WIN / LOSS / Tableau - tout en bas, en colonne */}
           {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'calendrier') && (
-            <div className="flex flex-col gap-2 mt-6">
+            <div className="flex flex-col gap-2 mt-6 mb-10">
               <button
                 onClick={() => {
                   setWinsLossFilter('WIN');
@@ -5943,7 +5940,6 @@ export default function TradingPlatformShell() {
                         <span className="text-lg">📅</span>
                         <div>
                           <p className="font-semibold text-white">Journal Signaux</p>
-                          <p className="text-sm text-gray-400">Suivi des performances</p>
                         </div>
                       </div>
                     </button>
@@ -6060,7 +6056,6 @@ export default function TradingPlatformShell() {
                       {/* Titre */}
                       <div>
                         <h1 className="text-xl md:text-2xl font-bold text-white">{activeJournalButton === 'tpln' ? 'TPLN model' : 'Trading Journal'}</h1>
-                        <p className="text-sm text-gray-400 mt-1">{activeJournalButton === 'tpln' ? 'Calendrier et stats du modèle' : 'Journal tous tes trades'}</p>
                       </div>
                       
                       {/* Sélecteur de compte et boutons (pas sur TPLN) */}
@@ -6125,7 +6120,6 @@ export default function TradingPlatformShell() {
                   <div className="flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
                     <div>
                       <h1 className="text-2xl font-bold text-white">Journal des Signaux</h1>
-                      <p className="text-sm text-gray-400 mt-1">Suivi des performances des signaux</p>
                     </div>
                   </div>
                 )}

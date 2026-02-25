@@ -5602,7 +5602,7 @@ const dailyPnLChartData = useMemo(
 
           {/* Boutons Tous les WIN / LOSS / Tableau - tout en bas, en colonne (comme PWA) */}
           {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendar') && (
-            <div className="flex flex-col gap-2 mt-6">
+            <div className="flex flex-col gap-2 mt-6 mb-10">
               <button
                 onClick={() => {
                   setWinsLossFilter('WIN');
