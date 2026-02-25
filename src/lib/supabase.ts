@@ -1299,61 +1299,41 @@ export interface FinSessionData {
   pression: number;
   maxDrawdown?: number | null;
   sessionType?: string;
+  /** Compte auquel la stat est rattachée (ex: Compte Principal, TPLN model) */
+  account?: string;
 }
 
-/** Récupère toutes les stats fin de session de l'utilisateur (pour cache calendrier). Si plusieurs sessions le même jour, calcule la moyenne de la pression. */
+/** Clé cache = date + compte (une entrée par date et par compte). */
+export function getFinSessionCacheKey(dateStr: string, account?: string): string {
+  return `${dateStr}_${account || 'Compte Principal'}`;
+}
+
+/** Récupère toutes les stats fin de session de l'utilisateur. Clé = getFinSessionCacheKey(date, account_name). */
 export const getFinSessionStatsFromSupabase = async (): Promise<Record<string, FinSessionData>> => {
   try {
     const user = await getCurrentUser();
     if (!user) return {};
     const { data, error } = await supabase
       .from('fin_session_stats')
-      .select('date, session_type, respect_plan, qualite_decisions, gestion_erreur, pression, max_drawdown')
+      .select('date, session_type, respect_plan, qualite_decisions, gestion_erreur, pression, max_drawdown, account_name')
       .eq('user_id', user.id);
     if (error) {
       console.error('❌ Erreur getFinSessionStats:', error);
       return {};
     }
     const record: Record<string, FinSessionData> = {};
-    // Grouper par date
-    const byDate: Record<string, Array<{ respect_plan: string; qualite_decisions: string; gestion_erreur: string; pression: number; max_drawdown?: number | null; session_type?: string }>> = {};
-    (data || []).forEach((row: { date: string; session_type: string | null; respect_plan: string | null; qualite_decisions: string | null; gestion_erreur: string | null; pression: number | null; max_drawdown?: number | null }) => {
+    (data || []).forEach((row: { date: string; session_type: string | null; respect_plan: string | null; qualite_decisions: string | null; gestion_erreur: string | null; pression: number | null; max_drawdown?: number | null; account_name?: string | null }) => {
       if (row.date && row.respect_plan != null && row.qualite_decisions != null && row.gestion_erreur != null && row.pression != null) {
-        if (!byDate[row.date]) byDate[row.date] = [];
-        byDate[row.date].push({
-          respect_plan: row.respect_plan,
-          qualite_decisions: row.qualite_decisions,
-          gestion_erreur: row.gestion_erreur,
+        const account = row.account_name || 'Compte Principal';
+        const key = getFinSessionCacheKey(row.date, account);
+        record[key] = {
+          respectPlan: row.respect_plan,
+          qualiteDecisions: row.qualite_decisions,
+          gestionErreur: row.gestion_erreur,
           pression: row.pression,
-          ...(row.max_drawdown != null && { max_drawdown: row.max_drawdown }),
-          ...(row.session_type && { session_type: row.session_type })
-        });
-      }
-    });
-    // Calculer la moyenne si plusieurs sessions
-    Object.keys(byDate).forEach(date => {
-      const sessions = byDate[date];
-      if (sessions.length === 1) {
-        const s = sessions[0];
-        record[date] = {
-          respectPlan: s.respect_plan,
-          qualiteDecisions: s.qualite_decisions,
-          gestionErreur: s.gestion_erreur,
-          pression: s.pression,
-          ...(s.max_drawdown != null && { maxDrawdown: s.max_drawdown }),
-          ...(s.session_type && { sessionType: s.session_type })
-        };
-      } else {
-        // Moyenne de la pression
-        const avgPression = Math.round(sessions.reduce((sum, s) => sum + s.pression, 0) / sessions.length);
-        // Pour les autres, prendre le mode ou le premier
-        const firstSession = sessions[0];
-        record[date] = {
-          respectPlan: firstSession.respect_plan,
-          qualiteDecisions: firstSession.qualite_decisions,
-          gestionErreur: firstSession.gestion_erreur,
-          pression: avgPression,
-          sessionType: `${sessions.length} sessions`
+          ...(row.max_drawdown != null && { maxDrawdown: row.max_drawdown }),
+          ...(row.session_type && { sessionType: row.session_type }),
+          account
         };
       }
     });
@@ -1364,7 +1344,7 @@ export const getFinSessionStatsFromSupabase = async (): Promise<Record<string, F
   }
 };
 
-/** Enregistre ou met à jour les stats fin de session pour une date. Retourne { ok: true } ou { ok: false, reason, message? }. */
+/** Enregistre ou met à jour les stats fin de session pour une date et un compte. */
 export const upsertFinSessionStatToSupabase = async (dateStr: string, data: FinSessionData): Promise<{ ok: boolean; reason?: string; message?: string }> => {
   try {
     const user = await getCurrentUser();
@@ -1372,10 +1352,12 @@ export const upsertFinSessionStatToSupabase = async (dateStr: string, data: FinS
       console.error('❌ Fin session: utilisateur non connecté (Supabase Auth)');
       return { ok: false, reason: 'non_connecte' };
     }
+    const accountName = data.account || 'Compte Principal';
     const payload: Record<string, unknown> = {
       user_id: user.id,
       date: dateStr,
       session_type: data.sessionType || '18h',
+      account_name: accountName,
       respect_plan: data.respectPlan,
       qualite_decisions: data.qualiteDecisions,
       gestion_erreur: data.gestionErreur,
@@ -1385,7 +1367,7 @@ export const upsertFinSessionStatToSupabase = async (dateStr: string, data: FinS
     if (data.maxDrawdown != null) payload.max_drawdown = data.maxDrawdown;
     const { error } = await supabase
       .from('fin_session_stats')
-      .upsert(payload, { onConflict: 'user_id,date,session_type' });
+      .upsert(payload, { onConflict: 'user_id,date,session_type,account_name' });
     if (error) {
       console.error('❌ Erreur upsertFinSessionStat:', error.message, error.details);
       return { ok: false, reason: 'erreur_serveur', message: error.message };
@@ -1398,16 +1380,16 @@ export const upsertFinSessionStatToSupabase = async (dateStr: string, data: FinS
   }
 };
 
-/** Supprime les stats fin de session pour une date. */
-export const deleteFinSessionStatFromSupabase = async (dateStr: string): Promise<boolean> => {
+/** Supprime les stats fin de session pour une date (et optionnellement un compte). */
+export const deleteFinSessionStatFromSupabase = async (dateStr: string, accountName?: string): Promise<boolean> => {
   try {
     const user = await getCurrentUser();
     if (!user) return false;
-    const { error } = await supabase
-      .from('fin_session_stats')
-      .delete()
-      .eq('user_id', user.id)
-      .eq('date', dateStr);
+    let q = supabase.from('fin_session_stats').delete().eq('user_id', user.id).eq('date', dateStr);
+    if (accountName != null && accountName !== '') {
+      q = q.eq('account_name', accountName);
+    }
+    const { error } = await q;
     if (error) {
       console.error('❌ Erreur deleteFinSessionStat:', error);
       return false;

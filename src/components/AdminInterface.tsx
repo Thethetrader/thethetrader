@@ -10,7 +10,7 @@ import { httpsCallable } from 'firebase/functions';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 import { LOSS_REASONS, getLossReasonLabel } from '../config/loss-reasons';
 import { signOutAdmin } from '../utils/admin-utils';
-import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, supabase, getPersonalTrades as getPersonalTradesFromSupabase, getPersonalTradeById, addPersonalTrade as addPersonalTradeToSupabase, updatePersonalTrade, listenToPersonalTrades, PersonalTrade, type PersonalTradesUpdate, deletePersonalTrade, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, type FinSessionData } from '../lib/supabase';
+import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, supabase, getPersonalTrades as getPersonalTradesFromSupabase, getPersonalTradeById, addPersonalTrade as addPersonalTradeToSupabase, updatePersonalTrade, listenToPersonalTrades, PersonalTrade, type PersonalTradesUpdate, deletePersonalTrade, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, getFinSessionCacheKey, type FinSessionData } from '../lib/supabase';
 import DailyPnLChart from './DailyPnLChart';
 import CheckTradeChecklist from './CheckTradeChecklist';
 
@@ -880,6 +880,7 @@ export default function AdminInterface() {
   const [finSessionGestionErreur, setFinSessionGestionErreur] = useState<'Oui' | 'Non' | ''>('');
   const [finSessionPression, setFinSessionPression] = useState<number | ''>('');
   const [finSessionMaxDrawdown, setFinSessionMaxDrawdown] = useState<string>('');
+  const [finSessionSelectedAccounts, setFinSessionSelectedAccounts] = useState<string[]>(['Compte Principal']);
   const [showLossReasonsModal, setShowLossReasonsModal] = useState(false);
   const [customLossReasons, setCustomLossReasons] = useState(() => {
     const saved = localStorage.getItem('customLossReasons');
@@ -3289,13 +3290,19 @@ const dailyPnLChartData = useMemo(
     setShowSignalModal(true);
   };
 
-  // Helpers stats fin de session (Supabase + cache)
+  // Helpers stats fin de session (Supabase + cache, par compte)
   const getDateKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-  const getFinSessionForDate = (d: Date): FinSessionData | null => finSessionCache[getDateKey(d)] ?? null;
+  const getEffectiveAccountForFinSession = () => (selectedChannel.id === 'tpln-model' ? 'TPLN model' : (selectedAccount || 'Compte Principal'));
+  const getFinSessionForDate = (d: Date, account?: string): FinSessionData | null => {
+    const acc = account ?? getEffectiveAccountForFinSession();
+    const key = getFinSessionCacheKey(getDateKey(d), acc);
+    return finSessionCache[key] ?? null;
+  };
   const saveFinSessionForDate = async (d: Date, data: FinSessionData) => {
-    const key = getDateKey(d);
-    const result = await upsertFinSessionStatToSupabase(key, data);
-    if (result.ok) setFinSessionCache(prev => ({ ...prev, [key]: data }));
+    const dateStr = getDateKey(d);
+    const acc = data.account || 'Compte Principal';
+    const result = await upsertFinSessionStatToSupabase(dateStr, { ...data, account: acc });
+    if (result.ok) setFinSessionCache(prev => ({ ...prev, [getFinSessionCacheKey(dateStr, acc)]: { ...data, account: acc } }));
     return result;
   };
   /** Note moyenne 1-5 à partir des 4 stats psy (pour affichage calendrier). */
@@ -3328,6 +3335,8 @@ const dailyPnLChartData = useMemo(
 
   useEffect(() => {
     if (showFinSessionModal) {
+      const defaultAcc = selectedChannel.id === 'tpln-model' ? 'TPLN model' : (selectedAccount && selectedAccount !== 'Tous les comptes' ? selectedAccount : 'Compte Principal');
+      setFinSessionSelectedAccounts([defaultAcc]);
       const today = getFinSessionForDate(new Date());
       if (today) {
         setFinSessionRespectPlan(today.respectPlan as 'Oui' | 'Non' | 'Partiel');
@@ -3343,7 +3352,7 @@ const dailyPnLChartData = useMemo(
         setFinSessionMaxDrawdown('');
       }
     }
-  }, [showFinSessionModal, finSessionCache]);
+  }, [showFinSessionModal, finSessionCache, selectedChannel.id, selectedAccount]);
 
   // Fonctions pour le journal de trading personnalisé
   const handleAddTrade = () => {
@@ -5287,8 +5296,8 @@ const dailyPnLChartData = useMemo(
                 </button>
               </div>
             )}
-            {/* PnL (Journal perso uniquement) - pas sur TPLN model ni Journal Signaux */}
-            {selectedChannel.id === 'trading-journal' && selectedAccount && selectedAccount !== 'Tous les comptes' && (() => {
+            {/* PnL (Journal perso - tous comptes ou compte sélectionné) */}
+            {selectedChannel.id === 'trading-journal' && selectedAccount && (() => {
               // Si un jour est sélectionné (modal ouvert), afficher le PnL de ce jour
               const isDaySelected = showTradesModal && selectedTradesDate != null;
               const tradesForDay = isDaySelected && selectedTradesDate ? getTradesForDate(selectedTradesDate) : [];
@@ -5299,7 +5308,8 @@ const dailyPnLChartData = useMemo(
               const monthPnl = Math.round(monthTrades.reduce((total, trade) => total + parsePnL(trade.pnl || '0'), 0));
               
               const displayPnl = isDaySelected ? dayPnl : monthPnl;
-              const displayLabel = isDaySelected ? 'PnL (ce jour)' : 'PnL';
+              const scopeLabel = selectedAccount === 'Tous les comptes' ? ' (tous comptes)' : '';
+              const displayLabel = isDaySelected ? `PnL (ce jour)${scopeLabel}` : `PnL${scopeLabel}`;
               
               // Debug
               if (isDaySelected && selectedTradesDate) {
@@ -8334,21 +8344,28 @@ const dailyPnLChartData = useMemo(
                   <option value="NY PM">NY PM</option>
                 </select>
               </div>
-              {selectedChannel.id === 'trading-journal' && tradingAccounts.length > 0 && (
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Compte</label>
-                  <select
-                    value={selectedAccount}
-                    onChange={(e) => setSelectedAccount(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  >
-                    <option value="Tous les comptes">Tous les comptes</option>
-                    {tradingAccounts.filter((a: UserAccount) => a.account_name !== 'TPLN' && a.account_name !== 'TPLN model').map((account: UserAccount) => (
-                      <option key={account.id} value={account.account_name}>{account.account_name}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
+              {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') && (() => {
+                const accountOptions = ['Compte Principal', 'TPLN model', ...tradingAccounts.filter((a: UserAccount) => a.account_name !== 'TPLN' && a.account_name !== 'TPLN model').map((a: UserAccount) => a.account_name)];
+                const uniqueOptions = Array.from(new Set(accountOptions));
+                return (
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Comptes (mêmes stats enregistrées pour chaque compte coché)</label>
+                    <div className="flex flex-wrap gap-3">
+                      {uniqueOptions.map((name) => (
+                        <label key={name} className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={finSessionSelectedAccounts.includes(name)}
+                            onChange={() => setFinSessionSelectedAccounts(prev => prev.includes(name) ? prev.filter(a => a !== name) : [...prev, name])}
+                            className="rounded border-gray-500 bg-gray-700 text-blue-500 focus:ring-blue-500"
+                          />
+                          <span className="text-sm text-white">{name}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
               <div className="space-y-6">
                 {/* 1. Respect du plan */}
                 <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
@@ -8458,10 +8475,25 @@ const dailyPnLChartData = useMemo(
                 <button
                   onClick={async () => {
                     if (finSessionRespectPlan && finSessionQualiteDecisions && finSessionGestionErreur && finSessionPression !== '') {
+                      const accountsToSave = (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? finSessionSelectedAccounts : ['Compte Principal'];
+                      if (accountsToSave.length === 0) {
+                        alert('Sélectionne au moins un compte.');
+                        return;
+                      }
                       const maxDd = finSessionMaxDrawdown.trim() === '' ? undefined : parseFloat(finSessionMaxDrawdown);
-                      const result = await saveFinSessionForDate(new Date(), { respectPlan: finSessionRespectPlan, qualiteDecisions: finSessionQualiteDecisions, gestionErreur: finSessionGestionErreur, pression: finSessionPression, sessionType: finSessionSelectedSession, ...(maxDd != null && !Number.isNaN(maxDd) && { maxDrawdown: maxDd }) });
-                      if (result.ok) setShowFinSessionModal(false);
-                      else alert(result.reason === 'non_connecte' ? 'Tu n’es pas connecté. Déconnecte-toi puis reconnecte-toi (Supabase).' : `Erreur enregistrement. ${result.message ? result.message : 'Vérifie ta connexion ou réessaie.'}`);
+                      const payload = { respectPlan: finSessionRespectPlan, qualiteDecisions: finSessionQualiteDecisions, gestionErreur: finSessionGestionErreur, pression: finSessionPression, sessionType: finSessionSelectedSession, ...(maxDd != null && !Number.isNaN(maxDd) && { maxDrawdown: maxDd }) };
+                      let allOk = true;
+                      let firstError: string | null = null;
+                      for (const acc of accountsToSave) {
+                        const result = await saveFinSessionForDate(new Date(), { ...payload, account: acc });
+                        if (!result.ok) { allOk = false; firstError = result.message ?? result.reason ?? 'Erreur'; }
+                      }
+                      if (allOk) {
+                        const fromServer = await getFinSessionStatsFromSupabase();
+                        setFinSessionCache(fromServer);
+                        setShowFinSessionModal(false);
+                        alert(`Stats enregistrées pour ${accountsToSave.length} compte(s) (sauvegardées en ligne).`);
+                      } else alert(firstError === 'non_connecte' ? 'Tu n’es pas connecté. Déconnecte-toi puis reconnecte-toi (Supabase).' : `Erreur enregistrement. ${firstError ?? 'Vérifie ta connexion ou réessaie.'}`);
                     } else {
                       alert('Remplis les 4 stats pour enregistrer.');
                     }
@@ -8511,8 +8543,9 @@ const dailyPnLChartData = useMemo(
                         type="button"
                         onClick={async () => {
                           if (confirm('Supprimer ces stats fin de session pour ce jour ?')) {
-                            const ok = await deleteFinSessionStatFromSupabase(dateKey);
-                            if (ok) setFinSessionCache(prev => { const next = { ...prev }; delete next[dateKey]; return next; });
+                            const acc = getEffectiveAccountForFinSession();
+                            const ok = await deleteFinSessionStatFromSupabase(dateKey, acc);
+                            if (ok) setFinSessionCache(prev => { const next = { ...prev }; delete next[getFinSessionCacheKey(dateKey, acc)]; return next; });
                           }
                         }}
                         className="text-gray-400 hover:text-white p-1 rounded"

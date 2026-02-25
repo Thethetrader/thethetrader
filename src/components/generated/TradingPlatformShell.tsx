@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, Signal, syncUserId, database } from '../../utils/firebase-setup';
 import { ref, onValue, push } from 'firebase/database';
-import { addPersonalTrade, getPersonalTrades, getPersonalTradeById, deletePersonalTrade, updatePersonalTrade, PersonalTrade, listenToPersonalTrades, type PersonalTradesUpdate, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, getUserSubscription, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, type FinSessionData } from '../../lib/supabase';
+import { addPersonalTrade, getPersonalTrades, getPersonalTradeById, deletePersonalTrade, updatePersonalTrade, PersonalTrade, listenToPersonalTrades, type PersonalTradesUpdate, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, getUserSubscription, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, getFinSessionCacheKey, type FinSessionData } from '../../lib/supabase';
 import ProfitLoss from '../ProfitLoss';
 import { createClient } from '@supabase/supabase-js';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
@@ -1645,6 +1645,7 @@ export default function TradingPlatformShell() {
   const [finSessionGestionErreur, setFinSessionGestionErreur] = useState<'Oui' | 'Non' | ''>('');
   const [finSessionPression, setFinSessionPression] = useState<number | ''>('');
   const [finSessionMaxDrawdown, setFinSessionMaxDrawdown] = useState<string>('');
+  const [finSessionSelectedAccounts, setFinSessionSelectedAccounts] = useState<string[]>(['Compte Principal']);
   const [showLossReasonsModal, setShowLossReasonsModal] = useState(false);
   const [customLossReasons, setCustomLossReasons] = useState(() => {
     const saved = localStorage.getItem('customLossReasons');
@@ -3809,13 +3810,19 @@ export default function TradingPlatformShell() {
 
   // Fonction supprimée - seul admin peut créer des signaux
 
-  // Helpers stats fin de session (Supabase + cache)
+  // Helpers stats fin de session (Supabase + cache, par compte)
   const getDateKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-  const getFinSessionForDate = (d: Date): FinSessionData | null => finSessionCache[getDateKey(d)] ?? null;
+  const getEffectiveAccountForFinSession = () => (selectedChannel.id === 'tpln-model' ? 'TPLN' : (selectedAccount || 'Compte Principal'));
+  const getFinSessionForDate = (d: Date, account?: string): FinSessionData | null => {
+    const acc = account ?? getEffectiveAccountForFinSession();
+    const key = getFinSessionCacheKey(getDateKey(d), acc);
+    return finSessionCache[key] ?? null;
+  };
   const saveFinSessionForDate = async (d: Date, data: FinSessionData) => {
-    const key = getDateKey(d);
-    const result = await upsertFinSessionStatToSupabase(key, data);
-    if (result.ok) setFinSessionCache(prev => ({ ...prev, [key]: data }));
+    const dateStr = getDateKey(d);
+    const acc = data.account || 'Compte Principal';
+    const result = await upsertFinSessionStatToSupabase(dateStr, { ...data, account: acc });
+    if (result.ok) setFinSessionCache(prev => ({ ...prev, [getFinSessionCacheKey(dateStr, acc)]: { ...data, account: acc } }));
     return result;
   };
   /** Note moyenne 1-5 à partir des 4 stats psy (pour affichage calendrier). */
@@ -3848,6 +3855,8 @@ export default function TradingPlatformShell() {
 
   useEffect(() => {
     if (showFinSessionModal) {
+      const defaultAcc = selectedChannel.id === 'tpln-model' ? 'TPLN' : (selectedAccount && selectedAccount !== 'Tous les comptes' ? selectedAccount : 'Compte Principal');
+      setFinSessionSelectedAccounts([defaultAcc]);
       const today = getFinSessionForDate(new Date());
       if (today) {
         setFinSessionRespectPlan(today.respectPlan as 'Oui' | 'Non' | 'Partiel');
@@ -3863,7 +3872,7 @@ export default function TradingPlatformShell() {
         setFinSessionMaxDrawdown('');
       }
     }
-  }, [showFinSessionModal, finSessionCache]);
+  }, [showFinSessionModal, finSessionCache, selectedChannel.id, selectedAccount]);
 
   // Fonctions pour le journal de trading personnalisé
   const handleAddTrade = () => {
@@ -5139,22 +5148,18 @@ export default function TradingPlatformShell() {
           )}
           {/* Métriques principales */}
           <div className="space-y-2 mb-8">
-            {/* PnL (Journal perso) - pas sur TPLN model, ni TPLN button, ni Journal Signaux */}
+            {/* PnL (Journal perso - tous comptes ou compte sélectionné) */}
             {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && activeJournalButton !== 'tpln' && (() => {
               // Si un jour est sélectionné (modal ouvert), afficher le PnL de ce jour
               const isDaySelected = showTradesModal && selectedTradesDate != null;
               const tradesForDay = isDaySelected ? getTradesForDate(selectedTradesDate) : [];
               const dayPnl = tradesForDay.reduce((sum, t) => sum + parsePnL(t.pnl || '0'), 0);
               
-              // Sinon, utiliser le PnL selon statsPeriod ou le compte sélectionné
-              const defaultPnl = (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes'
-                ? calculateTotalPnLTradesForDisplay()
-                : ((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? calculateTotalPnLTradesForDisplay() : calculateTotalPnLForMonth());
-              
-              const displayPnl = isDaySelected ? dayPnl : defaultPnl;
-              const displayLabel = isDaySelected 
-                ? 'PnL (ce jour)' 
-                : ((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && selectedAccount !== 'Tous les comptes' ? 'PnL' : (statsPeriod === 'jour' ? 'P&L du jour' : 'P&L Total'));
+              const displayPnl = isDaySelected ? dayPnl : calculateTotalPnLTradesForDisplay();
+              const scopeLabel = selectedAccount === 'Tous les comptes' ? ' (tous comptes)' : '';
+              const displayLabel = isDaySelected
+                ? `PnL (ce jour)${scopeLabel}`
+                : (statsPeriod === 'jour' ? `P&L du jour${scopeLabel}` : `PnL${scopeLabel}`);
               
               return (
                 <div className={`border rounded-lg p-4 border ${
@@ -8386,21 +8391,28 @@ export default function TradingPlatformShell() {
                   <option value="NY PM">NY PM</option>
                 </select>
               </div>
-              {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && tradingAccounts.length > 0 && (
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Compte</label>
-                  <select
-                    value={selectedAccount}
-                    onChange={(e) => setSelectedAccount(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  >
-                    <option value="Tous les comptes">Tous les comptes</option>
-                    {tradingAccounts.filter(a => a.account_name !== 'TPLN').map((account) => (
-                      <option key={account.id} value={account.account_name}>{account.account_name}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
+              {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') && (() => {
+                const accountOptions = ['Compte Principal', 'TPLN', ...tradingAccounts.filter(a => a.account_name !== 'TPLN' && a.account_name !== 'TPLN model').map(a => a.account_name)];
+                const uniqueOptions = Array.from(new Set(accountOptions));
+                return (
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Comptes (mêmes stats enregistrées pour chaque compte coché)</label>
+                    <div className="flex flex-wrap gap-3">
+                      {uniqueOptions.map((name) => (
+                        <label key={name} className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={finSessionSelectedAccounts.includes(name)}
+                            onChange={() => setFinSessionSelectedAccounts(prev => prev.includes(name) ? prev.filter(a => a !== name) : [...prev, name])}
+                            className="rounded border-gray-500 bg-gray-700 text-blue-500 focus:ring-blue-500"
+                          />
+                          <span className="text-sm text-white">{name}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
               <div className="space-y-6">
                 {/* 1. Respect du plan */}
                 <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
@@ -8510,10 +8522,25 @@ export default function TradingPlatformShell() {
                 <button
                   onClick={async () => {
                     if (finSessionRespectPlan && finSessionQualiteDecisions && finSessionGestionErreur && finSessionPression !== '') {
+                      const accountsToSave = (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? finSessionSelectedAccounts : ['Compte Principal'];
+                      if (accountsToSave.length === 0) {
+                        alert('Sélectionne au moins un compte.');
+                        return;
+                      }
                       const maxDd = finSessionMaxDrawdown.trim() === '' ? undefined : parseFloat(finSessionMaxDrawdown);
-                      const result = await saveFinSessionForDate(new Date(), { respectPlan: finSessionRespectPlan, qualiteDecisions: finSessionQualiteDecisions, gestionErreur: finSessionGestionErreur, pression: finSessionPression, sessionType: finSessionSelectedSession, ...(maxDd != null && !Number.isNaN(maxDd) && { maxDrawdown: maxDd }) });
-                      if (result.ok) setShowFinSessionModal(false);
-                      else alert(result.reason === 'non_connecte' ? 'Tu n’es pas connecté. Déconnecte-toi puis reconnecte-toi (Supabase).' : `Erreur enregistrement. ${result.message ? result.message : 'Vérifie ta connexion ou réessaie.'}`);
+                      const payload = { respectPlan: finSessionRespectPlan, qualiteDecisions: finSessionQualiteDecisions, gestionErreur: finSessionGestionErreur, pression: finSessionPression, sessionType: finSessionSelectedSession, ...(maxDd != null && !Number.isNaN(maxDd) && { maxDrawdown: maxDd }) };
+                      let allOk = true;
+                      let firstError: string | null = null;
+                      for (const acc of accountsToSave) {
+                        const result = await saveFinSessionForDate(new Date(), { ...payload, account: acc });
+                        if (!result.ok) { allOk = false; firstError = result.message ?? result.reason ?? 'Erreur'; }
+                      }
+                      if (allOk) {
+                        const fromServer = await getFinSessionStatsFromSupabase();
+                        setFinSessionCache(fromServer);
+                        setShowFinSessionModal(false);
+                        alert(`Stats enregistrées pour ${accountsToSave.length} compte(s) (sauvegardées en ligne).`);
+                      } else alert(firstError === 'non_connecte' ? 'Tu n’es pas connecté. Déconnecte-toi puis reconnecte-toi (Supabase).' : `Erreur enregistrement. ${firstError ?? 'Vérifie ta connexion ou réessaie.'}`);
                     } else {
                       alert('Remplis les 4 stats pour enregistrer.');
                     }
@@ -8563,8 +8590,9 @@ export default function TradingPlatformShell() {
                         type="button"
                         onClick={async () => {
                           if (confirm('Supprimer ces stats fin de session pour ce jour ?')) {
-                            const ok = await deleteFinSessionStatFromSupabase(dateKey);
-                            if (ok) setFinSessionCache(prev => { const next = { ...prev }; delete next[dateKey]; return next; });
+                            const acc = getEffectiveAccountForFinSession();
+                            const ok = await deleteFinSessionStatFromSupabase(dateKey, acc);
+                            if (ok) setFinSessionCache(prev => { const next = { ...prev }; delete next[getFinSessionCacheKey(dateKey, acc)]; return next; });
                           }
                         }}
                         className="text-gray-400 hover:text-white p-1 rounded"
