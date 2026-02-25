@@ -1416,11 +1416,12 @@ export default function AdminInterface() {
 
   // Fonctions pour les calculs de balance et stop-loss (optimisé avec useMemo)
   const getTradesForSelectedAccount = useMemo(() => {
-    // Sur TPLN model, afficher uniquement les trades du compte TPLN model
+    // Sur TPLN model, afficher les trades du compte TPLN model ou TPLN (compatibilité)
     if (selectedChannel.id === 'tpln-model') {
       const seen = new Set<string>();
       return personalTrades.filter(trade => {
-        if ((trade.account || 'Compte Principal') !== 'TPLN model') return false;
+        const acc = trade.account || 'Compte Principal';
+        if (acc !== 'TPLN model' && acc !== 'TPLN') return false;
         const key = `${trade.date}|${trade.symbol}|${trade.entry}|${trade.exit}|${trade.pnl}`;
         if (seen.has(key)) return false;
         seen.add(key);

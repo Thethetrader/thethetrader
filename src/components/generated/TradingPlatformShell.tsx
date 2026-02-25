@@ -2709,11 +2709,12 @@ export default function TradingPlatformShell() {
 
   // Fonctions pour les statistiques des trades personnels (optimisé avec useMemo)
   const getTradesForSelectedAccount = useMemo(() => {
-    // Sur TPLN model, afficher uniquement les trades du compte TPLN
+    // Sur TPLN model, afficher les trades du compte TPLN ou TPLN model (compatibilité)
     if (selectedChannel.id === 'tpln-model') {
       const seen = new Set<string>();
       return personalTrades.filter(trade => {
-        if ((trade.account || 'Compte Principal') !== 'TPLN') return false;
+        const acc = trade.account || 'Compte Principal';
+        if (acc !== 'TPLN' && acc !== 'TPLN model') return false;
         const key = `${trade.date}|${trade.symbol}|${trade.entry}|${trade.exit}|${trade.pnl}`;
         if (seen.has(key)) return false;
         seen.add(key);
