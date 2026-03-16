@@ -415,6 +415,12 @@ html {
   font-weight: 600;
 }
 
+/* Compat Tailwind: `text-loss` basé sur une CSS var hex peut être ignoré par le navigateur.
+   On force la couleur perte via la variable globale. */
+.text-loss {
+  color: var(--loss-color);
+}
+
 /* Cases perte du calendrier : rouge pâle (--loss-color) */
 .calendar-cell-loss {
   background-color: rgba(217, 115, 115, 0.6); /* #d97373 60% */

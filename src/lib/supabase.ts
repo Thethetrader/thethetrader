@@ -1122,6 +1122,56 @@ export const getPersonalTradesRange = async ({
   }
 };
 
+type PersonalTradesLightParams = {
+  account?: string;
+  accountIn?: string[];
+  /** Par défaut 1000 (sécurité) */
+  limit?: number;
+};
+
+/**
+ * Récupère des trades "light" (colonnes minimales) pour calculs (perf table, etc.).
+ * Réduit fortement l'egress vs select('*').
+ */
+export const getPersonalTradesLight = async ({
+  account,
+  accountIn,
+  limit = 1000
+}: PersonalTradesLightParams): Promise<PersonalTrade[]> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      console.error('❌ Utilisateur non connecté');
+      return [];
+    }
+
+    let q = supabase
+      .from('personal_trades')
+      .select('id,user_id,date,symbol,type,entry,exit,stop_loss,pnl,status,account,session,created_at,updated_at')
+      .eq('user_id', user.id)
+      .order('date', { ascending: false })
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (account) {
+      q = q.eq('account', account);
+    } else if (accountIn && accountIn.length > 0) {
+      q = q.in('account', accountIn);
+    }
+
+    const { data, error } = await q;
+    if (error) {
+      console.error('❌ Erreur getPersonalTradesLight:', error);
+      return [];
+    }
+
+    return (data ?? []).map(mapRowToPersonalTrade);
+  } catch (error) {
+    console.error('❌ Erreur getPersonalTradesLight:', error);
+    return [];
+  }
+};
+
 /**
  * Récupérer un trade par ID (avec images, pour détail / édition)
  */
@@ -1367,19 +1417,59 @@ export function getFinSessionCacheKey(dateStr: string, account?: string): string
   return `${dateStr}_${account || 'Compte Principal'}`;
 }
 
+function isMissingAccountNameColumn(err: any): boolean {
+  if (!err) return false;
+  const code = typeof err.code === 'string' ? err.code : '';
+  const msg = typeof err.message === 'string' ? err.message : '';
+  const details = typeof err.details === 'string' ? err.details : '';
+  // Postgres: 42703 (undefined_column). PostgREST: PGRST204 (schema cache).
+  if (code === '42703' || code === 'PGRST204') return true;
+  const haystack = `${msg} ${details}`.toLowerCase();
+  return haystack.includes('account_name') && (haystack.includes('could not find') || haystack.includes('schema cache'));
+}
+
 /** Récupère toutes les stats fin de session de l'utilisateur. Clé = getFinSessionCacheKey(date, account_name). */
 export const getFinSessionStatsFromSupabase = async (): Promise<Record<string, FinSessionData>> => {
   try {
     const user = await getCurrentUser();
     if (!user) return {};
-    const { data, error } = await supabase
+    // Compat: certaines bases n'ont pas la colonne account_name.
+    // On tente avec account_name, puis fallback sans.
+    let data:
+      | Array<{
+          date: string;
+          session_type: string | null;
+          respect_plan: string | null;
+          qualite_decisions: string | null;
+          gestion_erreur: string | null;
+          pression: number | null;
+          max_drawdown?: number | null;
+          account_name?: string | null;
+        }>
+      | null = null;
+
+    const first = await supabase
       .from('fin_session_stats')
       .select('date, session_type, respect_plan, qualite_decisions, gestion_erreur, pression, max_drawdown, account_name')
       .eq('user_id', user.id);
-    if (error) {
-      console.error('❌ Erreur getFinSessionStats:', error);
+
+    if (first.error && isMissingAccountNameColumn(first.error)) {
+      const fallback = await supabase
+        .from('fin_session_stats')
+        .select('date, session_type, respect_plan, qualite_decisions, gestion_erreur, pression, max_drawdown')
+        .eq('user_id', user.id);
+      if (fallback.error) {
+        console.error('❌ Erreur getFinSessionStats (fallback):', fallback.error);
+        return {};
+      }
+      data = fallback.data as any;
+    } else if (first.error) {
+      console.error('❌ Erreur getFinSessionStats:', first.error);
       return {};
+    } else {
+      data = first.data as any;
     }
+
     const record: Record<string, FinSessionData> = {};
     (data || []).forEach((row: { date: string; session_type: string | null; respect_plan: string | null; qualite_decisions: string | null; gestion_erreur: string | null; pression: number | null; max_drawdown?: number | null; account_name?: string | null }) => {
       if (row.date && row.respect_plan != null && row.qualite_decisions != null && row.gestion_erreur != null && row.pression != null) {
@@ -1424,12 +1514,25 @@ export const upsertFinSessionStatToSupabase = async (dateStr: string, data: FinS
       updated_at: new Date().toISOString()
     };
     if (data.maxDrawdown != null) payload.max_drawdown = data.maxDrawdown;
-    const { error } = await supabase
+    const attempt = await supabase
       .from('fin_session_stats')
       .upsert(payload, { onConflict: 'user_id,date,session_type,account_name' });
-    if (error) {
-      console.error('❌ Erreur upsertFinSessionStat:', error.message, error.details);
-      return { ok: false, reason: 'erreur_serveur', message: error.message };
+    if (attempt.error && isMissingAccountNameColumn(attempt.error)) {
+      // Fallback sans account_name
+      const payloadNoAccount = { ...payload };
+      delete payloadNoAccount.account_name;
+      const attempt2 = await supabase
+        .from('fin_session_stats')
+        .upsert(payloadNoAccount, { onConflict: 'user_id,date,session_type' });
+      if (attempt2.error) {
+        console.error('❌ Erreur upsertFinSessionStat (fallback):', attempt2.error.message, attempt2.error.details);
+        return { ok: false, reason: 'erreur_serveur', message: attempt2.error.message };
+      }
+      return { ok: true };
+    }
+    if (attempt.error) {
+      console.error('❌ Erreur upsertFinSessionStat:', attempt.error.message, attempt.error.details);
+      return { ok: false, reason: 'erreur_serveur', message: attempt.error.message };
     }
     return { ok: true };
   } catch (e: unknown) {
@@ -1448,9 +1551,18 @@ export const deleteFinSessionStatFromSupabase = async (dateStr: string, accountN
     if (accountName != null && accountName !== '') {
       q = q.eq('account_name', accountName);
     }
-    const { error } = await q;
-    if (error) {
-      console.error('❌ Erreur deleteFinSessionStat:', error);
+    const attempt = await q;
+    if (attempt.error && isMissingAccountNameColumn(attempt.error)) {
+      // Fallback sans account_name
+      const attempt2 = await supabase.from('fin_session_stats').delete().eq('user_id', user.id).eq('date', dateStr);
+      if (attempt2.error) {
+        console.error('❌ Erreur deleteFinSessionStat (fallback):', attempt2.error);
+        return false;
+      }
+      return true;
+    }
+    if (attempt.error) {
+      console.error('❌ Erreur deleteFinSessionStat:', attempt.error);
       return false;
     }
     return true;

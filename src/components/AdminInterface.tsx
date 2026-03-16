@@ -10,7 +10,7 @@ import { httpsCallable } from 'firebase/functions';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 import { LOSS_REASONS, getLossReasonLabel } from '../config/loss-reasons';
 import { signOutAdmin } from '../utils/admin-utils';
-import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, supabase, getPersonalTrades as getPersonalTradesFromSupabase, getPersonalTradesRange, getPersonalTradeById, addPersonalTrade as addPersonalTradeToSupabase, updatePersonalTrade, listenToPersonalTrades, PersonalTrade, type PersonalTradesUpdate, deletePersonalTrade, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, getFinSessionCacheKey, type FinSessionData } from '../lib/supabase';
+import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, supabase, getPersonalTrades as getPersonalTradesFromSupabase, getPersonalTradesRange, getPersonalTradesLight, getPersonalTradeById, addPersonalTrade as addPersonalTradeToSupabase, updatePersonalTrade, listenToPersonalTrades, PersonalTrade, type PersonalTradesUpdate, deletePersonalTrade, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, getFinSessionCacheKey, type FinSessionData } from '../lib/supabase';
 import DailyPnLChart from './DailyPnLChart';
 import CheckTradeChecklist from './CheckTradeChecklist';
 
@@ -337,6 +337,8 @@ export default function AdminInterface() {
   const [winsLossFilter, setWinsLossFilter] = useState<'WIN' | 'LOSS' | 'BE' | null>(null);
   const [winsLossTradeIndex, setWinsLossTradeIndex] = useState(0);
   const [showPerformanceTableModal, setShowPerformanceTableModal] = useState(false);
+  const [performanceTradesLight, setPerformanceTradesLight] = useState<PersonalTrade[] | null>(null);
+  const [performanceTradesLightKey, setPerformanceTradesLightKey] = useState<string>('');
   const [imageZoom, setImageZoom] = useState(1);
   const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -1368,27 +1370,23 @@ export default function AdminInterface() {
       const user = await getCurrentUser();
       if (user) {
         console.log('🔄 [ADMIN] Mise à jour des trades associés...');
-        const { data: tradesData, error: updateTradesError } = await supabase
+        const { error: updateTradesError } = await supabase
           .from('personal_trades')
           .update({ account: newName.trim() })
           .eq('user_id', user.id)
-          .eq('account', oldName)
-          .select();
+          .eq('account', oldName);
 
         if (updateTradesError) {
           console.error('❌ [ADMIN] Erreur mise à jour trades:', updateTradesError);
         } else {
-          console.log('✅ [ADMIN] Trades mis à jour dans Supabase:', tradesData?.length || 0, 'trades');
+          console.log('✅ [ADMIN] Trades mis à jour dans Supabase (compte renommé)');
         }
       } else {
         console.warn('⚠️ [ADMIN] Utilisateur non trouvé, impossible de mettre à jour les trades');
       }
 
-      // Recharger les trades depuis Supabase pour avoir les données à jour
-      console.log('🔄 [ADMIN] Rechargement des trades depuis Supabase...');
-      const reloadedTrades = await getPersonalTradesFromSupabase(200);
-      setPersonalTrades(prev => (reloadedTrades.length > 0 ? reloadedTrades : prev));
-      console.log('✅ [ADMIN] Trades rechargés:', reloadedTrades.length);
+      // Inutile de recharger tout l'historique: on met juste à jour le cache local
+      setPersonalTrades(prev => prev.map(t => (t.account === oldName ? { ...t, account: newName.trim() } : t)));
 
       // Mettre à jour le state local des comptes
       const updatedAccounts = tradingAccounts.map(acc => 
@@ -2446,7 +2444,9 @@ const dailyPnLChartData = useMemo(
     const isSignals = selectedChannel.id === 'calendrier';
     const items = isSignals
       ? signals.filter((s: { channel_id?: string; status?: string; pnl?: string }) => s.channel_id === 'calendrier' && s.status !== 'ACTIVE' && s.pnl != null)
-      : getTradesForSelectedAccount;
+      : (showPerformanceTableModal && performanceTradesLight && performanceTradesLightKey
+          ? performanceTradesLight
+          : getTradesForSelectedAccount);
     if (items.length === 0) return [];
     const byMonth = new Map<string, { pnl: number; wins: number; losses: number; totalWinPnL: number; totalLossPnL: number; entries: { date: string; pnl: number }[] }>();
     const getMonthKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
@@ -2519,7 +2519,62 @@ const dailyPnLChartData = useMemo(
       return { monthKey: key, monthLabel, trades: total, pnl: r.pnl, wr, pf, maxDdPnl };
     });
     return rows.reverse();
-  }, [selectedChannel.id, selectedAccount, personalTrades, signals, tradingAccounts, finSessionCache]);
+  }, [selectedChannel.id, selectedAccount, personalTrades, signals, tradingAccounts, finSessionCache, showPerformanceTableModal, performanceTradesLight, performanceTradesLightKey]);
+
+  // Prefetch "light" trades for performance table so all months show up (low egress)
+  useEffect(() => {
+    if (!showPerformanceTableModal) return;
+    const isSignals = selectedChannel.id === 'calendrier';
+    if (isSignals) return;
+    const isPersonal = selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model';
+    if (!isPersonal) return;
+
+    const key =
+      selectedChannel.id === 'tpln-model'
+        ? 'TPLN_MODEL'
+        : (selectedAccount || 'Compte Principal');
+    if (performanceTradesLightKey === key && performanceTradesLight) return;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        console.log('📊 [ADMIN] Prefetch trades light (perf table):', key);
+        let trades: PersonalTrade[] = [];
+        if (selectedChannel.id === 'tpln-model') {
+          trades = await getPersonalTradesLight({ accountIn: ['TPLN model', 'TPLN'], limit: 2000 });
+          // IMPORTANT: même logique que `getTradesForSelectedAccount` (éviter doublons TPLN/TPLN model)
+          const seen = new Set<string>();
+          trades = trades.filter(trade => {
+            const acc = trade.account || 'Compte Principal';
+            if (acc !== 'TPLN model' && acc !== 'TPLN') return false;
+            const key = `${trade.date}|${trade.symbol}|${trade.entry}|${trade.exit}|${trade.pnl}`;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+          });
+        } else if (selectedAccount && selectedAccount !== 'Tous les comptes') {
+          trades = await getPersonalTradesLight({ account: selectedAccount, limit: 2000 });
+        } else {
+          // Tous les comptes: on récupère light puis on filtre localement (évite requête complexe)
+          trades = await getPersonalTradesLight({ limit: 2000 });
+          trades = trades.filter(t => {
+            const acc = t.account || 'Compte Principal';
+            return acc !== 'TPLN' && acc !== 'TPLN model';
+          });
+        }
+        if (cancelled) return;
+        setPerformanceTradesLightKey(key);
+        setPerformanceTradesLight(trades);
+        console.log('✅ [ADMIN] Prefetch trades light OK:', key, trades.length);
+      } catch (e) {
+        console.error('❌ [ADMIN] Prefetch trades light error:', e);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [showPerformanceTableModal, selectedChannel.id, selectedAccount, performanceTradesLightKey, performanceTradesLight]);
 
   const calculateRiskReward = (entry: string, takeProfit: string, stopLoss: string): string => {
     const entryNum = parseFloat(entry);
@@ -3368,8 +3423,13 @@ const dailyPnLChartData = useMemo(
   const getEffectiveAccountForFinSession = () => (selectedChannel.id === 'tpln-model' ? 'TPLN model' : (selectedAccount || 'Compte Principal'));
   const getFinSessionForDate = (d: Date, account?: string): FinSessionData | null => {
     const acc = account ?? getEffectiveAccountForFinSession();
-    const key = getFinSessionCacheKey(getDateKey(d), acc);
-    return finSessionCache[key] ?? null;
+    const dateKey = getDateKey(d);
+    // Clé "par compte"
+    const key = getFinSessionCacheKey(dateKey, acc);
+    const direct = finSessionCache[key];
+    if (direct) return direct;
+    // Pas de fallback entre comptes: l'étoile doit correspondre au compte sélectionné.
+    return null;
   };
   const saveFinSessionForDate = async (d: Date, data: FinSessionData) => {
     const dateStr = getDateKey(d);
@@ -3494,8 +3554,8 @@ const dailyPnLChartData = useMemo(
         session: tradeData.session || undefined
       });
       if (updated) {
-        const reloadedTrades = await getPersonalTradesFromSupabase(200);
-        setPersonalTrades(prev => (reloadedTrades.length > 0 ? reloadedTrades : prev));
+        // Pas de rechargement massif: le realtime UPDATE mettra à jour, sinon on merge le retour de l'API
+        mergeTradesUnique([updated]);
         setEditingTrade(null);
         setTradeData({ symbol: '', type: 'BUY', entry: '', exit: '', stopLoss: '', pnl: '', status: 'WIN', lossReason: '', lossReasons: [], notes: '', image1: null, image2: null, session: '' });
         setSelectedAccounts([]);
@@ -3543,14 +3603,7 @@ const dailyPnLChartData = useMemo(
       if (newIds.length) justAddedTradeIdsRef.current = newIds;
       setTimeout(() => { justAddedTradeIdsRef.current = []; }, 3000);
       setPersonalTrades(prev => [...savedTrades, ...prev]);
-
-      try {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        const reloadedTrades = await getPersonalTradesFromSupabase(200);
-        setPersonalTrades(prev => (reloadedTrades.length > 0 ? reloadedTrades : prev));
-      } catch (error) {
-        console.error('❌ [ADMIN] Erreur lors du rechargement des trades:', error);
-      }
+      // Pas de rechargement massif: le realtime INSERT va arriver. Si pas, on a déjà ajouté localement.
       
       // Reset form et fermer le modal - TOUJOURS faire ça même en cas d'erreur
       setTradeData({
@@ -6324,9 +6377,18 @@ const dailyPnLChartData = useMemo(
                       <button 
                         onClick={async () => {
                           console.log('🔄 Rechargement des trades...');
-                          const trades = await getPersonalTradesFromSupabase(200);
-                          setPersonalTrades(prev => (trades.length > 0 ? trades : prev));
-                          console.log(`✅ ${trades.length} trades rechargés depuis Supabase`);
+                          loadedTradesMonthsRef.current.clear();
+                          const { startDate, endDate, year, month } = getMonthRange(currentDate);
+                          const monthKeyBase = `${year}-${String(month + 1).padStart(2, '0')}`;
+                          const rangeParams =
+                            selectedChannel.id === 'tpln-model'
+                              ? { startDate, endDate, accountIn: ['TPLN model', 'TPLN'], limit: 500 }
+                              : (selectedAccount && selectedAccount !== 'Tous les comptes'
+                                  ? { startDate, endDate, account: selectedAccount, limit: 500 }
+                                  : { startDate, endDate, limit: 500 });
+                          const trades = await getPersonalTradesRange(rangeParams as any);
+                          mergeTradesUnique(trades);
+                          console.log(`✅ ${trades.length} trades rechargés (mois courant) depuis Supabase`);
                         }}
                         className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg text-sm font-medium"
                         title="Recharger les trades depuis Supabase"
@@ -8927,6 +8989,52 @@ const dailyPnLChartData = useMemo(
                         </tr>
                       );
                     })}
+                    {(() => {
+                      const isPWA = window.matchMedia('(display-mode: standalone)').matches;
+                      const totalTrades = monthlyPerformanceDataAdmin.reduce((s, r) => s + r.trades, 0);
+                      const totalPnl = monthlyPerformanceDataAdmin.reduce((s, r) => s + r.pnl, 0);
+                      // WR global = total trades gagnants / total trades
+                      const totalWinsApprox = monthlyPerformanceDataAdmin.reduce((s, r) => s + Math.round((r.wr / 100) * r.trades), 0);
+                      const globalWr = totalTrades > 0 ? Math.round((totalWinsApprox / totalTrades) * 100) : 0;
+                      // PF global à partir des PF mensuels pondérés par pertes
+                      let totalWinPnL = 0;
+                      let totalLossPnL = 0;
+                      monthlyPerformanceDataAdmin.forEach(r => {
+                        if (r.pf === Infinity) {
+                          if (r.pnl > 0) totalWinPnL += r.pnl;
+                        } else if (r.pf > 0) {
+                          const approxLoss = Math.abs(r.pnl) / (r.pf + 1e-9);
+                          if (r.pnl >= 0) {
+                            totalWinPnL += r.pnl + approxLoss;
+                            totalLossPnL += approxLoss;
+                          } else {
+                            totalLossPnL += Math.abs(r.pnl);
+                          }
+                        } else if (r.pnl < 0) {
+                          totalLossPnL += Math.abs(r.pnl);
+                        }
+                      });
+                      const globalPf =
+                        totalLossPnL > 0 ? totalWinPnL / totalLossPnL : (totalWinPnL > 0 ? Infinity : 0);
+                      const globalMaxDd =
+                        monthlyPerformanceDataAdmin.reduce<number | null>((min, r) => {
+                          if (r.maxDdPnl == null) return min;
+                          return min == null ? r.maxDdPnl : Math.min(min, r.maxDdPnl);
+                        }, null);
+
+                      return (
+                        <tr className="border-t border-gray-600 bg-gray-900/60">
+                          <td className={`py-2 font-semibold text-white ${isPWA ? 'pr-1' : 'pr-4'}`}>Total</td>
+                          <td className={`py-2 font-semibold text-white text-right ${isPWA ? 'pr-1 w-10' : 'pr-4'}`}>{totalTrades}</td>
+                          <td className={`py-2 font-semibold text-right ${totalPnl >= 0 ? 'text-green-100' : 'text-red-100'} ${isPWA ? 'pr-1' : 'pr-4'}`}>
+                            {totalPnl >= 0 ? '+' : ''}{totalPnl.toFixed(0)}
+                          </td>
+                          <td className={`py-2 font-semibold text-white text-right ${isPWA ? 'pr-1 whitespace-nowrap' : 'pr-4'}`}>{globalWr}{isPWA ? '\u00A0%' : ' %'}</td>
+                          <td className={`py-2 font-semibold text-white text-right ${isPWA ? 'pr-1 whitespace-nowrap' : 'pr-4'}`}>{globalPf === Infinity ? '∞' : globalPf.toFixed(1)}</td>
+                          <td className={`py-2 font-semibold text-red-100 text-right ${isPWA ? 'pr-1' : ''}`}>{globalMaxDd != null ? `$${globalMaxDd}` : '–'}</td>
+                        </tr>
+                      );
+                    })()}
                   </tbody>
                 </table>
               )}
