@@ -10,7 +10,7 @@ import { httpsCallable } from 'firebase/functions';
 import { syncProfileImage, getProfileImage, initializeProfile } from '../utils/profile-manager';
 import { LOSS_REASONS, getLossReasonLabel } from '../config/loss-reasons';
 import { signOutAdmin } from '../utils/admin-utils';
-import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, supabase, getPersonalTrades as getPersonalTradesFromSupabase, getPersonalTradeById, addPersonalTrade as addPersonalTradeToSupabase, updatePersonalTrade, listenToPersonalTrades, PersonalTrade, type PersonalTradesUpdate, deletePersonalTrade, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, getFinSessionCacheKey, type FinSessionData } from '../lib/supabase';
+import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, supabase, getPersonalTrades as getPersonalTradesFromSupabase, getPersonalTradesRange, getPersonalTradeById, addPersonalTrade as addPersonalTradeToSupabase, updatePersonalTrade, listenToPersonalTrades, PersonalTrade, type PersonalTradesUpdate, deletePersonalTrade, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, getFinSessionCacheKey, type FinSessionData } from '../lib/supabase';
 import DailyPnLChart from './DailyPnLChart';
 import CheckTradeChecklist from './CheckTradeChecklist';
 
@@ -980,6 +980,8 @@ export default function AdminInterface() {
   const [personalTrades, setPersonalTrades] = useState<PersonalTrade[]>([]);
   // IDs des trades qu'on vient d'ajouter : ne pas laisser le listener temps réel écraser la liste
   const justAddedTradeIdsRef = useRef<string[]>([]);
+  // Cache des mois déjà chargés (pour éviter de re-télécharger en boucle)
+  const loadedTradesMonthsRef = useRef<Set<string>>(new Set());
 
   const [tradeData, setTradeData] = useState({
     symbol: '',
@@ -1538,6 +1540,76 @@ export default function AdminInterface() {
     console.log('🔄 [ADMIN] Mise à jour currentDate vers la date actuelle:', now.toDateString());
     setCurrentDate(now);
   }, []);
+
+  const getMonthRange = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth(); // 0-11
+    const start = new Date(year, month, 1);
+    const end = new Date(year, month + 1, 0);
+    const toYMD = (d: Date) =>
+      `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    return { startDate: toYMD(start), endDate: toYMD(end), year, month };
+  };
+
+  const mergeTradesUnique = (incoming: PersonalTrade[]) => {
+    if (!incoming.length) return;
+    setPersonalTrades(prev => {
+      const byId = new Map<string, PersonalTrade>();
+      prev.forEach(t => {
+        if (t.id) byId.set(t.id, t);
+      });
+      incoming.forEach(t => {
+        if (t.id) byId.set(t.id, t);
+      });
+      const merged = Array.from(byId.values());
+      merged.sort((a, b) => {
+        const da = a.date ? new Date(a.date).getTime() : 0;
+        const db = b.date ? new Date(b.date).getTime() : 0;
+        if (db !== da) return db - da;
+        const ca = a.created_at ? new Date(a.created_at).getTime() : 0;
+        const cb = b.created_at ? new Date(b.created_at).getTime() : 0;
+        return cb - ca;
+      });
+      return merged;
+    });
+  };
+
+  // Charger les trades du mois affiché uniquement quand on navigue (réduit l'egress)
+  useEffect(() => {
+    const isPersonalCalendar = selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model';
+    if (!isPersonalCalendar) return;
+
+    const { startDate, endDate, year, month } = getMonthRange(currentDate);
+    const monthKeyBase = `${year}-${String(month + 1).padStart(2, '0')}`;
+
+    const load = async () => {
+      try {
+        // Filtre compte pour réduire les rows
+        let monthKey = `${monthKeyBase}|ALL`;
+        let rangeParams: Parameters<typeof getPersonalTradesRange>[0] = { startDate, endDate, limit: 500 };
+
+        if (selectedChannel.id === 'tpln-model') {
+          monthKey = `${monthKeyBase}|TPLN_MODEL`;
+          rangeParams = { startDate, endDate, accountIn: ['TPLN model', 'TPLN'], limit: 500 };
+        } else if (selectedAccount && selectedAccount !== 'Tous les comptes') {
+          monthKey = `${monthKeyBase}|${selectedAccount}`;
+          rangeParams = { startDate, endDate, account: selectedAccount, limit: 500 };
+        }
+
+        if (loadedTradesMonthsRef.current.has(monthKey)) return;
+        loadedTradesMonthsRef.current.add(monthKey);
+
+        console.log('📦 [ADMIN] Chargement trades du mois (on-demand):', monthKey, startDate, endDate);
+        const monthTrades = await getPersonalTradesRange(rangeParams);
+        console.log('✅ [ADMIN] Trades mois chargés:', monthKey, monthTrades.length);
+        mergeTradesUnique(monthTrades);
+      } catch (e) {
+        console.error('❌ [ADMIN] Erreur chargement trades mois:', e);
+      }
+    };
+
+    load();
+  }, [selectedChannel.id, currentDate, selectedAccount]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);

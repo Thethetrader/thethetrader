@@ -1,7 +1,7 @@
 // Service Worker pour Tradingpourlesnuls PWA
 // Gère les notifications push en arrière-plan
 
-const CACHE_NAME = 'thethetrader-v13-favicon';
+const CACHE_NAME = 'thethetrader-v14-favicon';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -51,6 +51,18 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   // Laisser passer toutes les requêtes non-GET (POST, PUT...) pour éviter les erreurs
   if (event.request.method !== 'GET') {
+    return;
+  }
+
+  // Ne jamais intercepter les requêtes cross-origin (Supabase, Google, etc.)
+  // Ça évite des erreurs "FetchEvent.respondWith" et limite l'egress/cache inutile.
+  try {
+    const reqUrl = new URL(event.request.url);
+    if (reqUrl.origin !== self.location.origin) {
+      return;
+    }
+  } catch {
+    // Si l'URL est invalide, laisser passer
     return;
   }
 

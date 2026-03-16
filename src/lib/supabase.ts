@@ -1063,6 +1063,65 @@ export const getPersonalTrades = async (limit: number = 50): Promise<PersonalTra
   }
 };
 
+type PersonalTradesRangeParams = {
+  /** YYYY-MM-DD inclus */
+  startDate: string;
+  /** YYYY-MM-DD inclus */
+  endDate: string;
+  /** Filtre exact sur account (optionnel) */
+  account?: string;
+  /** Filtre IN sur account (optionnel) */
+  accountIn?: string[];
+  /** Sécurité: limite max de rows renvoyées (optionnel) */
+  limit?: number;
+};
+
+/**
+ * Récupérer les trades personnels pour une période (et éventuellement un compte),
+ * pour éviter de charger tout l'historique (réduit l'egress).
+ */
+export const getPersonalTradesRange = async ({
+  startDate,
+  endDate,
+  account,
+  accountIn,
+  limit = 500
+}: PersonalTradesRangeParams): Promise<PersonalTrade[]> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      console.error('❌ Utilisateur non connecté');
+      return [];
+    }
+
+    let q = supabase
+      .from('personal_trades')
+      .select('*')
+      .eq('user_id', user.id)
+      .gte('date', startDate)
+      .lte('date', endDate)
+      .order('date', { ascending: false })
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (account) {
+      q = q.eq('account', account);
+    } else if (accountIn && accountIn.length > 0) {
+      q = q.in('account', accountIn);
+    }
+
+    const { data, error } = await q;
+    if (error) {
+      console.error('❌ Erreur récupération trades range Supabase:', error);
+      return [];
+    }
+    return (data ?? []).map(mapRowToPersonalTrade);
+  } catch (error) {
+    console.error('❌ Erreur getPersonalTradesRange:', error);
+    return [];
+  }
+};
+
 /**
  * Récupérer un trade par ID (avec images, pour détail / édition)
  */
