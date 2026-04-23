@@ -187,49 +187,70 @@
     overflow: visible !important;
   }
   .reviews h2 {
-    font-size: 32px !important;
-    line-height: 38px !important;
+    font-size: 36px !important;
+    line-height: 120% !important;
+    letter-spacing: -0.04em !important;
     padding: 0 16px !important;
+    max-width: 680px !important;
   }
-  .reviews p {
-    font-size: 16px !important;
-    line-height: 22px !important;
-    padding: 0 16px !important;
+  .reviews > div > div:first-child > p {
+    font-size: 19px !important;
+    line-height: 140% !important;
+    letter-spacing: -0.02em !important;
+    padding: 32px 16px 0 !important;
+    max-width: 760px !important;
   }
 
-  /* ---- Qualiopi stats ---- */
+  /* ---- Qualiopi stats (matches alti-trading mobile) ---- */
   .qualiopi-stats {
-    padding: 64px 0 !important;
+    padding: 48px 0 0 !important;
   }
   .qualiopi-stats .mx-auto {
     padding: 0 16px !important;
   }
   .qualiopi-stats ul {
-    flex-direction: column !important;
-    gap: 40px !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    flex-direction: unset !important;
+    gap: 24px !important;
+    width: fit-content !important;
+    margin-inline: auto !important;
+    padding-block: 8px 40px !important;
+    border-bottom: 1px solid oklch(0.92 0.004 286.32) !important;
+    text-align: left !important;
+    align-items: start !important;
+    justify-items: start !important;
   }
   .qualiopi-stats ul > li {
     flex: 0 0 auto !important;
     padding: 0 !important;
     width: 100% !important;
-    max-width: 320px !important;
+    max-width: 100% !important;
+    text-align: left !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
   }
-  /* Shrink the big number on mobile */
+  /* Number: 24px on mobile per alti-trading */
   .qualiopi-stats ul > li > div {
-    font-size: 56px !important;
-    line-height: 56px !important;
-    padding-bottom: 12px !important;
+    font-size: 24px !important;
+    line-height: 32px !important;
+    font-weight: 500 !important;
+    padding-bottom: 0 !important;
+    letter-spacing: 0 !important;
   }
   .qualiopi-stats ul > li > p {
-    font-size: 15px !important;
-    line-height: 21px !important;
-    max-width: 280px !important;
+    font-size: 14px !important;
+    line-height: 20px !important;
+    max-width: 100% !important;
+    text-align: left !important;
+    letter-spacing: 0 !important;
   }
   .qualiopi-stats > div > p {
-    margin-top: 40px !important;
-    padding: 0 8px !important;
+    margin-top: 24px !important;
+    padding: 0 !important;
+    text-align: left !important;
+    font-size: 12px !important;
+    line-height: 16px !important;
   }
 
   /* ---- Qualiopi perks ---- */
@@ -308,11 +329,9 @@
     gap: 24px !important;
   }
 
-  /* Generic h2 cleanup (large titles) */
+  /* Generic h2 cleanup (large titles) - reviews/programs keep their own overrides */
   .ecosystem h2,
-  .programs h2,
   .staff h2,
-  .reviews h2,
   .qualiopi-stats h2,
   .qualiopi-perks h2,
   .trial h2,
