@@ -55,45 +55,53 @@
     display: inline-flex !important;
   }
 
-  /* ---- Hero ---- */
+  /* ---- Hero (matches alti-trading mobile) ---- */
   .hero {
-    padding: 96px 0 40px !important;
+    padding: 80px 0 40px !important;
+  }
+  .hero > div.relative {
+    padding: 0 16px !important;
+  }
+  .hero .flex.flex-col.items-center.text-center {
+    padding-bottom: 64px !important;
+    width: 100% !important;
   }
   .hero .hero-headline {
-    font-size: 32px !important;
-    line-height: 36px !important;
-    letter-spacing: -0.02em !important;
+    max-width: 420px !important;
+    font-size: 36px !important;
+    line-height: 116% !important;
+    letter-spacing: -0.032em !important;
     margin: 16px 0 20px !important;
-    max-width: 100% !important;
-    padding: 0 16px !important;
+    color: oklch(0.21 0.006 285.885) !important;
+    font-weight: 600 !important;
   }
   .hero .hero-headline > span {
-    grid-template-rows: 40px !important;
-    min-height: 40px !important;
+    grid-template-rows: auto !important;
+    min-height: auto !important;
   }
   .hero .hero-headline > span > span {
-    line-height: 36px !important;
-    transform: translateY(36px) !important;
+    line-height: 100% !important;
+    min-width: max-content !important;
+    transform-origin: center top !important;
+    transform: translateY(-75%) !important;
   }
-  .hero .hero-headline > span > span[style*="translateY(0)"] {
+  .hero .hero-headline > span > span.active {
     transform: translateY(0) !important;
   }
-  .hero p {
-    font-size: 16px !important;
-    line-height: 24px !important;
-    max-width: 100% !important;
-    padding: 0 16px !important;
-    margin-bottom: 32px !important;
-    min-height: auto !important;
+  .hero > div.relative > p {
+    max-width: 480px !important;
+    font-size: 19px !important;
+    line-height: 150% !important;
+    letter-spacing: -0.02em !important;
+    font-weight: 400 !important;
+    margin-bottom: 40px !important;
+    min-height: 70px !important;
+    color: oklch(0.442 0.017 285.786) !important;
   }
   /* Hide the absolute-positioned hero visuals (520x520 photos + grid) */
   .hero picture.absolute,
   .hero [aria-hidden="true"][style*="grid-template-columns"] {
     display: none !important;
-  }
-  /* Hero container */
-  .hero > div.relative {
-    padding: 0 !important;
   }
 
   /* ---- Partners strip ---- */
