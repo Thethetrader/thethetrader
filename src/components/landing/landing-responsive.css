@@ -163,27 +163,87 @@
     gap: 16px !important;
     height: auto !important;
     overflow: visible !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+  }
+  .reviews .reviews-grid > div {
+    overflow: visible !important;
+  }
+  .reviews .reviews-marquee-col {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    animation: none !important;
+    transform: none !important;
+  }
+  /* Show only the 6 unique reviews (first half of duplicated set) */
+  .reviews .reviews-marquee-col > :nth-child(n+3) {
+    display: none !important;
+  }
+  /* Allow full review text on mobile */
+  .reviews .reviews-marquee-col > div p {
+    -webkit-line-clamp: unset !important;
+    display: block !important;
+    overflow: visible !important;
+  }
+  .reviews h2 {
+    font-size: 32px !important;
+    line-height: 38px !important;
+    padding: 0 16px !important;
+  }
+  .reviews p {
+    font-size: 16px !important;
+    line-height: 22px !important;
+    padding: 0 16px !important;
   }
 
   /* ---- Qualiopi stats ---- */
   .qualiopi-stats {
-    padding: 40px 0 !important;
+    padding: 64px 0 !important;
   }
   .qualiopi-stats .mx-auto {
     padding: 0 16px !important;
   }
-  .qualiopi-stats > div > div {
+  .qualiopi-stats ul {
     flex-direction: column !important;
-    gap: 24px !important;
-    align-items: stretch !important;
+    gap: 40px !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+  .qualiopi-stats ul > li {
+    flex: 0 0 auto !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 320px !important;
+  }
+  /* Shrink the big number on mobile */
+  .qualiopi-stats ul > li > div {
+    font-size: 56px !important;
+    line-height: 56px !important;
+    padding-bottom: 12px !important;
+  }
+  .qualiopi-stats ul > li > p {
+    font-size: 15px !important;
+    line-height: 21px !important;
+    max-width: 280px !important;
+  }
+  .qualiopi-stats > div > p {
+    margin-top: 40px !important;
+    padding: 0 8px !important;
   }
 
   /* ---- Qualiopi perks ---- */
   .qualiopi-perks {
-    padding: 48px 0 !important;
+    padding: 32px 16px 64px !important;
   }
   .qualiopi-perks .mx-auto {
-    padding: 0 16px !important;
+    flex-direction: column !important;
+    padding: 20px 20px !important;
+    gap: 20px !important;
+    text-align: center !important;
+  }
+  .qualiopi-perks .mx-auto > div:last-child {
+    flex: 0 0 auto !important;
   }
 
   /* ---- Trial (signup/form) ---- */
