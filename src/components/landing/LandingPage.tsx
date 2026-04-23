@@ -1,12 +1,11 @@
 import "./landing-responsive.css";
 import { SiteHeader } from "./site-header";
 import { HeroSection } from "./hero-section";
-import { PartnersStrip } from "./partners-strip";
 import { EcosystemSection } from "./ecosystem-section";
 import { ProgramsSection } from "./programs-section";
 import { StaffSection } from "./staff-section";
 import { ReviewsSection } from "./reviews-section";
-import { QualiopiStatsSection, QualiopiPerksSection } from "./qualiopi-section";
+import { QualiopiStatsSection } from "./qualiopi-section";
 import { TrialSection } from "./trial-section";
 import { PostsSection } from "./posts-section";
 import { BookingFreebiesRow } from "./booking-freebies";
@@ -26,13 +25,11 @@ export function LandingPage({ onOpenAuth }: { onOpenAuth?: () => void }) {
       <SiteHeader onOpenAuth={onOpenAuth} />
       <main>
         <HeroSection />
-        <PartnersStrip />
         <EcosystemSection />
         <ProgramsSection />
         <StaffSection />
         <ReviewsSection />
         <QualiopiStatsSection />
-        <QualiopiPerksSection />
         <TrialSection />
         <PostsSection />
         <BookingFreebiesRow />

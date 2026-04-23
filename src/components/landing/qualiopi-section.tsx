@@ -173,29 +173,6 @@ export function QualiopiPerksSection() {
           marginRight: "auto",
         }}
       >
-        <div className="flex flex-col" style={{ flex: "1 1 auto", gap: 8 }}>
-          <div
-            style={{
-              fontSize: 17,
-              fontWeight: 500,
-              lineHeight: "24px",
-              color: "oklch(0.141 0.005 285.823)",
-            }}
-          >
-            Tous nos parcours d&apos;apprentissage sont certifiés Qualiopi, gage de la qualité et du
-            professionnalisme de nos actions de formation.
-          </div>
-          <div
-            style={{
-              fontSize: 13,
-              fontWeight: 400,
-              lineHeight: "18px",
-              color: "oklch(0.552 0.016 285.938)",
-            }}
-          >
-            Certification délivrée au titre de la catégorie d&apos;action suivante : Actions de formation
-          </div>
-        </div>
         <div style={{ flex: "0 0 152px" }}>
           <QualiopiLogo />
         </div>

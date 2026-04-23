@@ -103,8 +103,8 @@ export function SiteHeader({ onOpenAuth }: { onOpenAuth?: () => void }) {
         >
           <ul className="mx-auto flex h-full max-w-[1080px] items-center px-5">
             <li className="flex h-9 items-center pr-3">
-              <a href="/" className="flex items-center" aria-label="Alti Trading — Accueil">
-                <AltiLogo width={146} height={20} />
+              <a href="/" className="flex items-center" aria-label="Alti Trading — Accueil" style={{ background: "#ffffff", padding: "12px 16px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <img src="/faviconewtpln.png" alt="Alti Trading" width={96} height={96} style={{ display: "block" }} />
               </a>
             </li>
 

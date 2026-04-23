@@ -714,146 +714,213 @@ export function EcosystemSection() {
         <div className="flex flex-col gap-20 lg:hidden">
           {PILLARS.map((pillar) => {
             const { badge, Icon, h3, p } = COPY[pillar];
+            if (pillar === "learning") {
+              return (
+                <div key={pillar}>
+                  <div
+                    style={{
+                      position: "relative",
+                      background: PILLAR_BG[pillar],
+                      borderRadius: 24,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <div
+                      style={{
+                        position: "relative",
+                        height: 260,
+                        overflow: "hidden",
+                      }}
+                    >
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 20,
+                          left: -40,
+                          display: "grid",
+                          gridTemplateColumns: "repeat(3, 180px)",
+                          gap: 16,
+                        }}
+                      >
+                        {LEARNING_TILES.slice(0, 6).map((t) => (
+                          <div
+                            key={t.src}
+                            style={{
+                              width: 180,
+                              height: 101,
+                              borderRadius: 8,
+                              overflow: "hidden",
+                              background: "#fff",
+                            }}
+                          >
+                            {t.kind === "img" ? (
+                              <img
+                                src={t.src}
+                                alt=""
+                                width={180}
+                                height={101}
+                                loading="lazy"
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover",
+                                  display: "block",
+                                }}
+                              />
+                            ) : (
+                              <video
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                                poster={t.poster}
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover",
+                                  display: "block",
+                                }}
+                              >
+                                <source src={t.src} type="video/webm" />
+                                <source src={t.src.replace(".webm", ".mp4")} type="video/mp4" />
+                              </video>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div style={{ padding: "24px 24px 32px" }}>
+                      <span
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 4,
+                          padding: "4px 8px",
+                          height: 24,
+                          background: "rgba(255,255,255,0.85)",
+                          color: "oklch(0.21 0.006 285.885)",
+                          fontSize: 12,
+                          lineHeight: "12px",
+                          fontWeight: 500,
+                          letterSpacing: "0.12px",
+                          borderRadius: 9999,
+                        }}
+                      >
+                        <Icon />
+                        {badge}
+                      </span>
+                      <h3
+                        style={{
+                          fontSize: 28,
+                          fontWeight: 600,
+                          lineHeight: 1.15,
+                          letterSpacing: "-0.03em",
+                          color: "oklch(0.141 0.005 285.823)",
+                          padding: "16px 0 24px",
+                          margin: 0,
+                        }}
+                      >
+                        {h3}
+                      </h3>
+                      <p
+                        style={{
+                          fontSize: 17,
+                          fontWeight: 400,
+                          lineHeight: 1.5,
+                          letterSpacing: "-0.02em",
+                          color: "oklch(0.141 0.005 285.823)",
+                          margin: 0,
+                        }}
+                      >
+                        {p}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
             return (
               <div key={pillar}>
                 <div
                   style={{
                     position: "relative",
-                    height: 420,
                     background: PILLAR_BG[pillar],
                     borderRadius: 24,
                     overflow: "hidden",
-                    marginBottom: 32,
                   }}
                 >
-                  {pillar === "learning" ? (
-                    <div
+                  <div
+                    style={{
+                      position: "relative",
+                      height: 260,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <img
+                      src={
+                        pillar === "coachings"
+                          ? "/images/ecosystem/coaching-ind-cam-view@2x.webp"
+                          : pillar === "community"
+                            ? "/images/ecosystem/discord-chat-feed@2x.webp"
+                            : "/images/ecosystem/tools-ui-blocks@2x.webp"
+                      }
+                      alt=""
+                      width={pillar === "coachings" ? 532 : pillar === "community" ? 450 : 615}
+                      height={pillar === "coachings" ? 640 : pillar === "community" ? 725 : 700}
+                      loading="lazy"
+                      style={{ maxWidth: "92%", height: "auto", display: "block" }}
+                    />
+                  </div>
+                  <div style={{ padding: "24px 24px 32px" }}>
+                    <span
                       style={{
-                        position: "absolute",
-                        top: 20,
-                        left: -40,
-                        display: "grid",
-                        gridTemplateColumns: "repeat(3, 180px)",
-                        gap: 16,
-                      }}
-                    >
-                      {LEARNING_TILES.slice(0, 6).map((t) => (
-                        <div
-                          key={t.src}
-                          style={{
-                            width: 180,
-                            height: 101,
-                            borderRadius: 8,
-                            overflow: "hidden",
-                            background: "#fff",
-                          }}
-                        >
-                          {t.kind === "img" ? (
-                            <img
-                              src={t.src}
-                              alt=""
-                              width={180}
-                              height={101}
-                              loading="lazy"
-                              style={{
-                                width: "100%",
-                                height: "100%",
-                                objectFit: "cover",
-                                display: "block",
-                              }}
-                            />
-                          ) : (
-                            <video
-                              autoPlay
-                              loop
-                              muted
-                              playsInline
-                              poster={t.poster}
-                              style={{
-                                width: "100%",
-                                height: "100%",
-                                objectFit: "cover",
-                                display: "block",
-                              }}
-                            >
-                              <source src={t.src} type="video/webm" />
-                              <source src={t.src.replace(".webm", ".mp4")} type="video/mp4" />
-                            </video>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div
-                      style={{
-                        position: "absolute",
-                        inset: 0,
-                        display: "flex",
+                        display: "inline-flex",
                         alignItems: "center",
-                        justifyContent: "center",
+                        gap: 4,
+                        padding: "4px 8px",
+                        height: 24,
+                        background: "rgba(255,255,255,0.85)",
+                        color: "oklch(0.21 0.006 285.885)",
+                        fontSize: 12,
+                        lineHeight: "12px",
+                        fontWeight: 500,
+                        letterSpacing: "0.12px",
+                        borderRadius: 9999,
                       }}
                     >
-                      <img
-                        src={
-                          pillar === "coachings"
-                            ? "/images/ecosystem/coaching-ind-cam-view@2x.webp"
-                            : pillar === "community"
-                              ? "/images/ecosystem/discord-chat-feed@2x.webp"
-                              : "/images/ecosystem/tools-ui-blocks@2x.webp"
-                        }
-                        alt=""
-                        width={pillar === "coachings" ? 532 : pillar === "community" ? 450 : 615}
-                        height={pillar === "coachings" ? 640 : pillar === "community" ? 725 : 700}
-                        loading="lazy"
-                        style={{ maxWidth: "92%", height: "auto", display: "block" }}
-                      />
-                    </div>
-                  )}
+                      <Icon />
+                      {badge}
+                    </span>
+                    <h3
+                      style={{
+                        fontSize: 28,
+                        fontWeight: 600,
+                        lineHeight: 1.15,
+                        letterSpacing: "-0.03em",
+                        color: "oklch(0.141 0.005 285.823)",
+                        padding: "16px 0 24px",
+                        margin: 0,
+                      }}
+                    >
+                      {h3}
+                    </h3>
+                    <p
+                      style={{
+                        fontSize: 17,
+                        fontWeight: 400,
+                        lineHeight: 1.5,
+                        letterSpacing: "-0.02em",
+                        color: "oklch(0.141 0.005 285.823)",
+                        margin: 0,
+                      }}
+                    >
+                      {p}
+                    </p>
+                  </div>
                 </div>
-                <span
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 4,
-                    padding: "4px 8px",
-                    height: 24,
-                    background: "oklch(0.967 0.001 286.375)",
-                    color: "oklch(0.21 0.006 285.885)",
-                    fontSize: 12,
-                    lineHeight: "12px",
-                    fontWeight: 500,
-                    letterSpacing: "0.12px",
-                    borderRadius: 9999,
-                  }}
-                >
-                  <Icon />
-                  {badge}
-                </span>
-                <h3
-                  style={{
-                    fontSize: 28,
-                    fontWeight: 600,
-                    lineHeight: 1.15,
-                    letterSpacing: "-0.03em",
-                    color: "oklch(0.141 0.005 285.823)",
-                    padding: "16px 0 24px",
-                    margin: 0,
-                  }}
-                >
-                  {h3}
-                </h3>
-                <p
-                  style={{
-                    fontSize: 17,
-                    fontWeight: 400,
-                    lineHeight: 1.5,
-                    letterSpacing: "-0.02em",
-                    color: "oklch(0.141 0.005 285.823)",
-                    margin: 0,
-                  }}
-                >
-                  {p}
-                </p>
               </div>
             );
           })}

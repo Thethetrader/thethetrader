@@ -48,6 +48,9 @@
   #upper-nav {
     display: none !important;
   }
+  #site-header {
+    background: #ffffff !important;
+  }
   .landing-desktop-nav {
     display: none !important;
   }
@@ -92,17 +95,14 @@
     font-weight: 600 !important;
   }
   .hero .hero-headline > span {
-    grid-template-rows: auto !important;
-    min-height: auto !important;
+    grid-template-rows: 46px !important;
+    min-height: 46px !important;
+    vertical-align: bottom !important;
   }
   .hero .hero-headline > span > span {
-    line-height: 100% !important;
+    line-height: 46px !important;
     min-width: max-content !important;
     transform-origin: center top !important;
-    transform: translateY(-75%) !important;
-  }
-  .hero .hero-headline > span > span.active {
-    transform: translateY(0) !important;
   }
   .hero .flex.flex-col.items-center.text-center > p {
     max-width: 480px !important;

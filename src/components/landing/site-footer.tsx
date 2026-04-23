@@ -15,30 +15,6 @@ type FooterGroup = { title: string; links: FooterLink[] };
 
 const GROUPS: FooterGroup[] = [
   {
-    title: "Programmes complets",
-    links: [
-      { text: "Starter", href: "/starter/" },
-      { text: "Trader Plus", href: "/traderplus/" },
-      { text: "Investisseur Pro", href: "/investisseurpro/", badge: "Le plus populaire" },
-      { text: "Expert des Marchés Financiers", href: "/expert-marches-financiers/", badge: "Éligible CPF" },
-    ],
-  },
-  {
-    title: "Formations à l'unité",
-    links: [
-      { text: "Daytrader Pro", href: "/daytraderpro/" },
-      { text: "Dividendes Pro", href: "/dividendespro/" },
-      { text: "Crypto Pro", href: "/cryptopro/" },
-      { text: "Certification AMF", href: "/certification-amf/" },
-      { text: "Power Mental", href: "/powermental/" },
-      { text: "Power Trading", href: "/powertrading/" },
-      { text: "Power Prop Firm", href: "/powerpropfirm/", badge: "Nouveau" },
-      { text: "Power Fiscalité", href: "/powerfiscalite/" },
-      { text: "Money Master", href: "/moneymaster/" },
-      { text: "Replay Bootcamp", href: "/replay-bootcamp/" },
-    ],
-  },
-  {
     title: "Nos formations",
     links: [{ text: "Consulter toutes les formations", href: "/nos-formations/" }],
   },
@@ -362,7 +338,7 @@ export function SiteFooter() {
           }}
         >
           <p style={{ margin: 0 }}>
-            © {new Date().getFullYear()} ALTI TRADING — Tous droits réservés.
+            © {new Date().getFullYear()} TPLN — Tous droits réservés.
           </p>
           <ul
             className="flex items-center flex-wrap"
