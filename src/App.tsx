@@ -8,6 +8,7 @@ import ProfitLoss from './components/ProfitLoss';
 import LivestreamPage from './components/LivestreamPage';
 import UserLivestreamPage from './components/UserLivestreamPage';
 import PreviewCalendar from './components/PreviewCalendar';
+import { LandingPage } from './components/landing/LandingPage';
 import { supabase } from './lib/supabase';
 
 
@@ -102,7 +103,7 @@ const App = () => {
         scrollbar-width: none;
       }
       body, html {
-        overflow-x: hidden;
+        overflow-x: clip;
         max-width: 100vw;
       }
       .pwa-landing-no-scroll {
@@ -1363,7 +1364,63 @@ const App = () => {
     return renderLegalPage();
   }
 
-
+  // Nouvelle landing page Alti pour visiteurs non connectés (hors PWA)
+  if (currentPage === 'home' && !user && !isPWA) {
+    return (
+      <>
+        <LandingPage onOpenAuth={() => setShowAuthModal(true)} />
+        {showAuthModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-8 rounded-lg max-w-md w-full mx-4">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Connexion</h2>
+                <button
+                  onClick={() => setShowAuthModal(false)}
+                  className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-gray-700 mb-2">Email</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    placeholder="votre@email.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700 mb-2">Mot de passe</label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    placeholder="••••••••"
+                  />
+                </div>
+                <button
+                  onClick={handleForgotPassword}
+                  className="text-sm text-blue-600 hover:text-blue-800 text-left w-full"
+                >
+                  Mot de passe oublié ?
+                </button>
+                <button
+                  onClick={handleLogin}
+                  className="w-full bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white py-3 rounded-[14px] font-medium transition-all duration-200"
+                >
+                  Se connecter
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
 
   return (
     <div className={`min-h-screen bg-[#0F1115] ${isPWA && currentPage === 'home' && !user ? 'pwa-landing-no-scroll' : isPWA && user ? 'pwa-connected-scroll' : ''}`} data-pwa={isPWA ? "true" : undefined}>

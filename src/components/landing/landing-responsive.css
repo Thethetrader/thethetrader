@@ -1,0 +1,282 @@
+/* ========================================================================
+   Landing page responsive overrides
+   Targets inline styles set in each section via class selectors + !important
+   ======================================================================== */
+
+/* --- TABLET (≤1024px) ----------------------------------------------------- */
+@media (max-width: 1024px) {
+  /* Programs: 3 cols → 2 */
+  .programs .plans-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  /* Reviews: 3 cols → 2 */
+  .reviews .reviews-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  /* Posts: 3 cols → 2 */
+  .posts .posts-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  /* Footer: 5 cols → 3 */
+  .site-footer .footer-links-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 32px !important;
+  }
+}
+
+/* --- MOBILE (≤768px) ----------------------------------------------------- */
+@media (max-width: 768px) {
+  /* ---- Global section padding / container ---- */
+  .hero,
+  .partners,
+  .ecosystem,
+  .programs,
+  .staff,
+  .reviews,
+  .qualiopi-stats,
+  .qualiopi-perks,
+  .trial,
+  .posts,
+  .booking,
+  .freebies,
+  .site-footer {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* ---- Site header ---- */
+  #upper-nav {
+    display: none !important;
+  }
+  .landing-desktop-nav {
+    display: none !important;
+  }
+  .landing-mobile-burger {
+    display: inline-flex !important;
+  }
+
+  /* ---- Hero ---- */
+  .hero {
+    padding: 96px 0 40px !important;
+  }
+  .hero .hero-headline {
+    font-size: 32px !important;
+    line-height: 36px !important;
+    letter-spacing: -0.02em !important;
+    margin: 16px 0 20px !important;
+    max-width: 100% !important;
+    padding: 0 16px !important;
+  }
+  .hero .hero-headline > span {
+    grid-template-rows: 40px !important;
+    min-height: 40px !important;
+  }
+  .hero .hero-headline > span > span {
+    line-height: 36px !important;
+    transform: translateY(36px) !important;
+  }
+  .hero .hero-headline > span > span[style*="translateY(0)"] {
+    transform: translateY(0) !important;
+  }
+  .hero p {
+    font-size: 16px !important;
+    line-height: 24px !important;
+    max-width: 100% !important;
+    padding: 0 16px !important;
+    margin-bottom: 32px !important;
+    min-height: auto !important;
+  }
+  /* Hide the absolute-positioned hero visuals (520x520 photos + grid) */
+  .hero picture.absolute,
+  .hero [aria-hidden="true"][style*="grid-template-columns"] {
+    display: none !important;
+  }
+  /* Hero container */
+  .hero > div.relative {
+    padding: 0 !important;
+  }
+
+  /* ---- Partners strip ---- */
+  .partners {
+    padding: 40px 0 !important;
+  }
+
+  /* ---- Ecosystem ----
+     Desktop sticky split (`.hidden lg:flex`) is already hidden below 1024px.
+     The mobile stacked version (`.lg:hidden`) is shown. Tighten it. */
+  .ecosystem {
+    padding: 48px 0 !important;
+  }
+  .ecosystem h2 {
+    font-size: 28px !important;
+    line-height: 34px !important;
+    padding: 0 16px !important;
+  }
+  .ecosystem .mx-auto {
+    padding: 0 16px !important;
+  }
+
+  /* ---- Programs (price cards) ---- */
+  .programs {
+    padding: 64px 0 !important;
+  }
+  .programs .plans-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+    padding: 0 16px !important;
+  }
+  .programs h2 {
+    font-size: 32px !important;
+    line-height: 38px !important;
+    padding: 0 16px !important;
+  }
+  .programs .mx-auto {
+    padding: 0 !important;
+  }
+
+  /* ---- Staff section ---- */
+  .staff {
+    padding: 48px 0 !important;
+  }
+  .staff .mx-auto {
+    padding: 0 16px !important;
+  }
+  .staff .flex.justify-center {
+    flex-direction: column !important;
+    gap: 24px !important;
+  }
+  .staff .flex.justify-center > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* ---- Reviews ---- */
+  .reviews {
+    padding: 48px 0 !important;
+  }
+  .reviews .mx-auto {
+    padding: 0 16px !important;
+  }
+  .reviews .reviews-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* ---- Qualiopi stats ---- */
+  .qualiopi-stats {
+    padding: 40px 0 !important;
+  }
+  .qualiopi-stats .mx-auto {
+    padding: 0 16px !important;
+  }
+  .qualiopi-stats > div > div {
+    flex-direction: column !important;
+    gap: 24px !important;
+    align-items: stretch !important;
+  }
+
+  /* ---- Qualiopi perks ---- */
+  .qualiopi-perks {
+    padding: 48px 0 !important;
+  }
+  .qualiopi-perks .mx-auto {
+    padding: 0 16px !important;
+  }
+
+  /* ---- Trial (signup/form) ---- */
+  .trial {
+    padding: 48px 0 !important;
+  }
+  .trial .mx-auto {
+    padding: 0 16px !important;
+  }
+  .trial .grid.items-center {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+    padding: 28px 20px !important;
+    border-radius: 20px !important;
+  }
+  .trial h2 {
+    font-size: 26px !important;
+    line-height: 32px !important;
+  }
+
+  /* ---- Posts ---- */
+  .posts {
+    padding: 48px 0 !important;
+  }
+  .posts .mx-auto {
+    padding: 0 16px !important;
+  }
+  .posts .posts-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  .posts h2 {
+    font-size: 28px !important;
+    line-height: 34px !important;
+  }
+
+  /* ---- Booking + Freebies row ---- */
+  .booking-freebies-row {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+    padding: 0 16px !important;
+  }
+  .booking,
+  .freebies {
+    padding: 32px 20px !important;
+  }
+
+  /* ---- Site footer ---- */
+  .site-footer {
+    padding: 48px 0 24px !important;
+  }
+  .site-footer .mx-auto {
+    padding: 0 16px !important;
+  }
+  .site-footer .footer-top {
+    flex-direction: column !important;
+    gap: 24px !important;
+    align-items: flex-start !important;
+  }
+  .site-footer .footer-links-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 24px !important;
+  }
+
+  /* Generic h2 cleanup (large titles) */
+  .ecosystem h2,
+  .programs h2,
+  .staff h2,
+  .reviews h2,
+  .qualiopi-stats h2,
+  .qualiopi-perks h2,
+  .trial h2,
+  .posts h2 {
+    font-size: 28px !important;
+    line-height: 34px !important;
+    letter-spacing: -0.01em !important;
+  }
+}
+
+/* --- Small mobile tweaks (≤480px) --------------------------------------- */
+@media (max-width: 480px) {
+  .hero .hero-headline {
+    font-size: 28px !important;
+    line-height: 32px !important;
+  }
+  .site-footer .footer-links-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* --- Desktop: hide the mobile burger ----------------------------------- */
+@media (min-width: 769px) {
+  .landing-mobile-burger {
+    display: none !important;
+  }
+}
