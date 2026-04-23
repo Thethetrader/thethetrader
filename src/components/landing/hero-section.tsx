@@ -152,10 +152,23 @@ export function HeroSection() {
           );
         })}
 
-        {/* Hero copy */}
+        {/* Hero copy - positioned absolutely over background */}
         <div
           className="flex flex-col items-center text-center"
-          style={{ paddingBottom: 96, width: "100%" }}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1,
+            paddingBottom: 96,
+          }}
         >
           <span
             className="inline-flex items-center justify-center"
@@ -317,6 +330,183 @@ export function HeroSection() {
               Excellent · 7 000+ avis
             </span>
           </div>
+        </div>
+
+        {/* Hero copy moved outside .relative to overlay on full section */}
+      </div>
+
+      {/* Hero copy - positioned absolutely over entire hero background */}
+      <div
+        className="flex flex-col items-center text-center"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 1,
+          paddingBottom: 96,
+        }}
+      >
+        <span
+          className="inline-flex items-center justify-center"
+          style={{
+            gap: 4,
+            padding: "4px 8px",
+            height: 24,
+            background: "oklch(0.967 0.001 286.375)",
+            color: "oklch(0.21 0.006 285.885)",
+            fontSize: 12,
+            lineHeight: "12px",
+            fontWeight: 500,
+            letterSpacing: "0.12px",
+            borderRadius: 9999,
+            border: "1px solid transparent",
+          }}
+        >
+          <span
+            aria-hidden="true"
+            style={{
+              display: "block",
+              width: 18,
+              height: 10.195,
+              borderRadius: 2,
+              background:
+                "linear-gradient(to right, #000091 0% 33%, #FFFFFF 33% 66%, #E1000F 66% 100%)",
+            }}
+          />
+          N°1 en France
+        </span>
+
+        <h1
+          className="hero-headline"
+          style={{
+            margin: "24px 0 32px",
+            maxWidth: 692,
+            fontSize: 64,
+            fontWeight: 600,
+            lineHeight: "74.24px",
+            letterSpacing: "-0.032em",
+            color: "oklch(0.21 0.006 285.885)",
+            textAlign: "center",
+          }}
+        >
+          Apprenez à investir avec succès en{" "}
+          <span
+            style={{
+              display: "inline-grid",
+              gridTemplateColumns: "auto",
+              gridTemplateRows: "76.8px",
+              minHeight: 76.8,
+              paddingRight: 1.28,
+              overflow: "hidden",
+              verticalAlign: "bottom",
+            }}
+          >
+            {WORDS.map((word, idx) => {
+              const isActive = idx === activeIdx;
+              return (
+                <span
+                  key={word}
+                  style={{
+                    gridArea: "1 / 1",
+                    lineHeight: "64px",
+                    opacity: isActive ? 1 : 0,
+                    transform: isActive ? "translateY(0)" : "translateY(57.6px)",
+                    transition: isActive
+                      ? "opacity 0.4s, transform 0.4s"
+                      : "opacity 0.3s, transform 0s 0.3s",
+                    color: "oklch(0.21 0.006 285.885)",
+                    fontWeight: 600,
+                  }}
+                >
+                  {word}
+                </span>
+              );
+            })}
+          </span>
+        </h1>
+
+        <p
+          style={{
+            marginBottom: 56,
+            maxWidth: 480,
+            minHeight: 70,
+            fontSize: 22,
+            fontWeight: 400,
+            lineHeight: "33px",
+            letterSpacing: "-0.02em",
+            color: "oklch(0.442 0.017 285.786)",
+            textAlign: "center",
+          }}
+        >
+          L&apos;écosystème de formation ultime pour enfin réussir sur les marchés financiers.
+        </p>
+
+        <div className="flex" style={{ gap: 16 }}>
+          <a
+            href="/formation-bourse-offerte2303219/"
+            className="trial-button flex items-center justify-center"
+            style={{
+              gap: 6,
+              padding: "0 10px 0 12px",
+              height: 40,
+              background: "oklch(0.21 0.006 285.885 / 0.85)",
+              color: "oklch(0.985 0 0)",
+              fontSize: 15,
+              fontWeight: 500,
+              lineHeight: "21.43px",
+              borderRadius: 9,
+              border: "1px solid transparent",
+              transition: "0.15s cubic-bezier(0.4, 0, 0.2, 1)",
+              cursor: "pointer",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.background =
+                "oklch(0.21 0.006 285.885 / 1)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.background =
+                "oklch(0.21 0.006 285.885 / 0.85)";
+            }}
+          >
+            Essayer Gratuitement
+            <ArrowRightIcon width={17} height={17} />
+          </a>
+        </div>
+
+        {/* Trustpilot static pill */}
+        <div
+          className="flex items-center justify-center"
+          style={{ paddingTop: 32, width: 300, height: 52, gap: 8 }}
+        >
+          <div className="flex items-center" style={{ gap: 2 }}>
+            {[0, 1, 2, 3, 4].map((i) => (
+              <span
+                key={i}
+                style={{
+                  width: 16,
+                  height: 16,
+                  borderRadius: "50%",
+                  background: "oklch(0.21 0.006 285.885)",
+                }}
+              />
+            ))}
+          </div>
+          <span
+            style={{
+              fontSize: 12,
+              fontWeight: 500,
+              color: "oklch(0.442 0.017 285.786)",
+            }}
+          >
+            Excellent · 7 000+ avis
+          </span>
         </div>
       </div>
     </section>
