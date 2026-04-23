@@ -382,4 +382,15 @@
   .landing-mobile-burger {
     display: none !important;
   }
+
+  /* Restore desktop hero headline animation styles */
+  .hero .hero-headline > span {
+    grid-template-rows: 76.8px !important;
+    min-height: 76.8px !important;
+    overflow: hidden !important;
+  }
+  .hero .hero-headline > span > span {
+    line-height: 64px !important;
+    min-width: unset !important;
+  }
 }
