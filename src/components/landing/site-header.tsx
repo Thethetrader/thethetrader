@@ -8,11 +8,10 @@ function cn(...classes: (string | boolean | undefined | null)[]) {
 type MainNavItem = { label: string; href?: string; panel?: boolean };
 
 const mainNavItems: MainNavItem[] = [
-  { label: "Formations", panel: true },
-  { label: "CPF", href: "/expert-marches-financiers/" },
-  { label: "Financements", href: "/financements/" },
-  { label: "Avis", href: "/avis/" },
-  { label: "Ressources", panel: true },
+  { label: "Services", href: "#services" },
+  { label: "À propos", href: "#about-thethetrader" },
+  { label: "La plateforme", href: "#section-app" },
+  { label: "Prix", href: "#pricing" },
 ];
 
 export function SiteHeader({ onOpenAuth }: { onOpenAuth?: () => void }) {
