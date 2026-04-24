@@ -413,3 +413,15 @@
     min-width: 130px !important;
   }
 }
+
+@media (max-width: 768px) {
+  .problem-section-inner {
+    grid-template-columns: 1fr !important;
+    padding: 36px 24px !important;
+    gap: 32px 0 !important;
+  }
+  .problem-section-inner > div:nth-child(2) {
+    display: none;
+  }
+}
+
