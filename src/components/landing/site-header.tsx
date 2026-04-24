@@ -27,60 +27,6 @@ export function SiteHeader({ onOpenAuth }: { onOpenAuth?: () => void }) {
 
   return (
     <>
-      {/* Upper nav — relative, scrolls away */}
-      <nav
-        id="upper-nav"
-        className="relative z-[1002] w-full"
-        style={{
-          height: 40,
-          background: "oklch(0.967 0.001 286.375)",
-          color: "oklch(0.442 0.017 285.786)",
-          fontSize: 12,
-          lineHeight: "18px",
-          fontWeight: 400,
-        }}
-        aria-label="Navigation supérieure"
-      >
-        <ul className="mx-auto flex h-full max-w-[1080px] items-center px-5" style={{ gap: 8 }}>
-          <li className="mr-auto flex items-center">
-            <a
-              href="https://www.altitrading.com"
-              className="group/lang relative flex h-4 items-center gap-1.5 overflow-hidden transition-colors duration-150 hover:text-foreground"
-              aria-label="Switch language"
-            >
-              <GlobeIcon className="size-4 shrink-0" />
-              <span className="relative inline-flex">
-                <span className="transition-transform duration-200 group-hover/lang:-translate-x-full">Français</span>
-                <span className="absolute left-0 top-0 translate-x-full opacity-0 transition-all duration-200 group-hover/lang:translate-x-0 group-hover/lang:opacity-100">
-                  English →
-                </span>
-              </span>
-            </a>
-          </li>
-          <li className="flex items-center">
-            <a
-              href="#"
-              className="flex h-9 items-center gap-1 border-2 border-transparent px-3 transition-colors duration-150 hover:underline underline-offset-4 decoration-[oklch(0.442_0.017_285.786/0.4)]"
-            >
-              Besoin d&apos;aide pour choisir votre formation ?
-            </a>
-          </li>
-          <li className="flex items-center">
-            <a
-              href="#"
-              className="flex h-9 items-center gap-1 border-2 border-transparent px-3 transition-colors duration-150 hover:underline underline-offset-4"
-            >
-              Connexion
-            </a>
-          </li>
-          <li className="flex items-center">
-            <button className="flex h-9 items-center gap-1 border-2 border-transparent px-3 transition-colors duration-150 hover:underline underline-offset-4">
-              À propos
-              <ChevronDownIcon className="size-4" />
-            </button>
-          </li>
-        </ul>
-      </nav>
 
       {/* Sticky main header (transparent wrapper, white inner nav) */}
       <header
@@ -103,7 +49,7 @@ export function SiteHeader({ onOpenAuth }: { onOpenAuth?: () => void }) {
           <ul className="mx-auto flex h-full max-w-[1080px] items-center px-5">
             <li className="flex h-9 items-center pr-3">
               <a href="/" className="flex items-center" aria-label="Alti Trading — Accueil" style={{ background: "#ffffff", padding: "12px 16px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", maxWidth: "100%", maxHeight: "100%" }}>
-                <img src="/TPLNFAVICONFINAL.png" alt="Alti Trading" width={96} height={96} style={{ display: "block", maxWidth: "32px", maxHeight: "32px" }} />
+                <img src="/TPLNFAVICONFINAL.png" alt="Alti Trading" width={96} height={96} style={{ display: "block", maxWidth: "48px", maxHeight: "48px" }} />
               </a>
             </li>
 
