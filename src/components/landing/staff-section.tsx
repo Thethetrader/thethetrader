@@ -1,6 +1,7 @@
 export function StaffSection() {
   return (
     <section
+      id="about-thethetrader"
       className="staff"
       style={{ padding: "160px 0 128px", letterSpacing: "-0.01em" }}
     >
@@ -52,41 +53,31 @@ export function StaffSection() {
           className="flex justify-center"
           style={{ gap: 40, alignItems: "center" }}
         >
-          {/* Photo card */}
+          {/* Logo card */}
           <div
             style={{
               width: 360,
               height: 500,
-              borderRadius: 24,
-              overflow: "hidden",
-              boxShadow: "inset 0 0 0 1px oklch(0.92 0.004 286 / 0.6)",
-              background: "oklch(0.967 0.003 264.542 / 0.5)",
+              background: "#ffffff",
               flexShrink: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            <div
+            <img
+              src="/TPLNFAVICONFINAL.png"
+              alt="TPLN"
+              width={220}
+              height={220}
+              loading="lazy"
               style={{
-                width: 360,
-                height: 500,
-                display: "grid",
-                alignItems: "end",
+                width: 220,
+                height: 220,
+                display: "block",
+                objectFit: "contain",
               }}
-            >
-              <img
-                src="/images/staff/alexandre@2x.png"
-                alt="TheTheTrader"
-                width={360}
-                height={500}
-                loading="lazy"
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  display: "block",
-                  objectFit: "contain",
-                  objectPosition: "bottom",
-                }}
-              />
-            </div>
+            />
           </div>
 
           {/* About card */}

@@ -1,15 +1,81 @@
-import { FacebookIcon, GoogleIcon, PlayIcon } from "./icons";
+import { useState } from "react";
+import { supabase } from "../../lib/supabase";
+
+type Step = "form" | "success" | "error";
 
 export function TrialSection() {
+  const [firstName, setFirstName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState<Step>("form");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!firstName.trim() || !email.trim() || password.length < 6) {
+      setErrorMsg("Remplis tous les champs (mot de passe : 6 caractères minimum).");
+      return;
+    }
+    setLoading(true);
+    setErrorMsg("");
+
+    const trialEndsAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+
+    const { data: signUpData, error } = await supabase.auth.signUp({
+      email: email.trim(),
+      password,
+      options: {
+        data: {
+          display_name: firstName.trim(),
+          trial_plan: "journal",
+          trial_ends_at: trialEndsAt,
+        },
+      },
+    });
+
+    if (error) {
+      console.error("Signup error:", error);
+      const msg = error.message.toLowerCase();
+      if (msg.includes("already registered") || msg.includes("already exists") || msg.includes("email address is already")) {
+        setErrorMsg("Cet email est déjà utilisé.");
+      } else if (msg.includes("rate limit") || msg.includes("too many")) {
+        setErrorMsg("Trop de tentatives. Réessaie dans quelques minutes.");
+      } else if (msg.includes("disabled") || msg.includes("not allowed")) {
+        setErrorMsg("Les inscriptions sont temporairement désactivées.");
+      } else if (msg.includes("password")) {
+        setErrorMsg("Mot de passe invalide (6 caractères minimum).");
+      } else {
+        setErrorMsg(`Erreur : ${error.message}`);
+      }
+      setLoading(false);
+      return;
+    }
+
+    // Créer le profil dans user_profiles pour éviter le crash du shell
+    if (signUpData?.user) {
+      const { error: profileError } = await supabase.from("user_profiles").upsert({
+        id: signUpData.user.id,
+        user_id: signUpData.user.id,
+        user_type: "user",
+        display_name: firstName.trim(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }, { onConflict: "id" });
+      if (profileError) console.error("Profile creation error:", profileError);
+    }
+
+    setStep("success");
+    setLoading(false);
+  };
+
   return (
     <section
+      id="trial"
       className="trial"
       style={{ padding: "80px 0", letterSpacing: "-0.01em" }}
     >
-      <div
-        className="mx-auto"
-        style={{ maxWidth: 1400, padding: "0 20px" }}
-      >
+      <div className="mx-auto" style={{ maxWidth: 1400, padding: "0 20px" }}>
         <div
           className="grid items-center"
           style={{
@@ -34,7 +100,7 @@ export function TrialSection() {
                 margin: 0,
               }}
             >
-              Essayez notre formation 100% Gratuite ✨
+              Essaie le journal 1 mois gratuit
             </h2>
             <p
               style={{
@@ -45,124 +111,118 @@ export function TrialSection() {
                 margin: "12px 0 0",
               }}
             >
-              Et découvrez comment faire fructifier votre argent en partant de zéro !
+              Teste la méthode TPLN sans engagement et commence à trader avec structure.
             </p>
 
-            <form
-              onSubmit={(e) => e.preventDefault()}
-              className="flex flex-col"
-              style={{ gap: 10, marginTop: 24 }}
-            >
-              <input
-                type="text"
-                name="first_name"
-                placeholder="Prénom"
-                autoComplete="given-name"
+            {step === "success" ? (
+              <div
                 style={{
-                  height: 48,
-                  padding: "0 16px",
-                  fontSize: 15,
-                  border: "1px solid oklch(0.92 0.004 286.32)",
-                  borderRadius: 10,
-                  background: "oklch(1 0 0)",
-                  outline: "none",
-                }}
-              />
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                autoComplete="email"
-                style={{
-                  height: 48,
-                  padding: "0 16px",
-                  fontSize: 15,
-                  border: "1px solid oklch(0.92 0.004 286.32)",
-                  borderRadius: 10,
-                  background: "oklch(1 0 0)",
-                  outline: "none",
-                }}
-              />
-              <button
-                type="submit"
-                className="flex items-center justify-center"
-                style={{
-                  height: 48,
-                  padding: "0 24px",
-                  fontSize: 15,
-                  fontWeight: 600,
-                  color: "oklch(0.985 0 0)",
-                  background: "oklch(0.21 0.006 285.885)",
-                  border: "none",
-                  borderRadius: 10,
-                  cursor: "pointer",
+                  marginTop: 24,
+                  padding: "24px",
+                  borderRadius: 12,
+                  background: "oklch(0.97 0.05 145)",
+                  border: "1px solid oklch(0.85 0.1 145)",
+                  color: "oklch(0.3 0.1 145)",
                 }}
               >
-                Commencer
-              </button>
-            </form>
+                <p style={{ margin: 0, fontWeight: 600, fontSize: 16 }}>
+                  ✓ Compte créé avec succès !
+                </p>
+                <p style={{ margin: "8px 0 0", fontSize: 14 }}>
+                  Vérifie ta boîte mail pour confirmer ton adresse, puis connecte-toi pour accéder au journal pendant 30 jours.
+                </p>
+              </div>
+            ) : (
+              <form
+                onSubmit={handleSubmit}
+                className="flex flex-col"
+                style={{ gap: 10, marginTop: 24 }}
+              >
+                <input
+                  type="text"
+                  placeholder="Prénom"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  autoComplete="given-name"
+                  required
+                  style={{
+                    height: 48,
+                    padding: "0 16px",
+                    fontSize: 15,
+                    border: "1px solid oklch(0.92 0.004 286.32)",
+                    borderRadius: 10,
+                    background: "oklch(1 0 0)",
+                    outline: "none",
+                  }}
+                />
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="email"
+                  required
+                  style={{
+                    height: 48,
+                    padding: "0 16px",
+                    fontSize: 15,
+                    border: "1px solid oklch(0.92 0.004 286.32)",
+                    borderRadius: 10,
+                    background: "oklch(1 0 0)",
+                    outline: "none",
+                  }}
+                />
+                <input
+                  type="password"
+                  placeholder="Mot de passe (6 caractères min.)"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="new-password"
+                  required
+                  style={{
+                    height: 48,
+                    padding: "0 16px",
+                    fontSize: 15,
+                    border: "1px solid oklch(0.92 0.004 286.32)",
+                    borderRadius: 10,
+                    background: "oklch(1 0 0)",
+                    outline: "none",
+                  }}
+                />
 
-            <div
-              className="flex items-center"
-              style={{
-                gap: 12,
-                margin: "20px 0",
-                fontSize: 13,
-                color: "oklch(0.552 0.016 285.938)",
-              }}
-            >
-              <div style={{ flex: 1, height: 1, background: "oklch(0.92 0.004 286.32)" }} />
-              <span>Ou</span>
-              <div style={{ flex: 1, height: 1, background: "oklch(0.92 0.004 286.32)" }} />
-            </div>
+                {errorMsg && (
+                  <p style={{ margin: 0, fontSize: 13, color: "oklch(0.55 0.2 25)" }}>
+                    {errorMsg}
+                  </p>
+                )}
 
-            <div className="flex flex-col" style={{ gap: 10 }}>
-              <button
-                type="button"
-                className="flex items-center justify-center"
-                style={{
-                  height: 48,
-                  padding: "0 24px",
-                  gap: 10,
-                  fontSize: 15,
-                  fontWeight: 500,
-                  color: "oklch(0.141 0.005 285.823)",
-                  background: "oklch(1 0 0)",
-                  border: "1px solid oklch(0.92 0.004 286.32)",
-                  borderRadius: 10,
-                  cursor: "pointer",
-                }}
-              >
-                <GoogleIcon width={18} height={18} />
-                Connexion avec Google
-              </button>
-              <button
-                type="button"
-                className="flex items-center justify-center"
-                style={{
-                  height: 48,
-                  padding: "0 24px",
-                  gap: 10,
-                  fontSize: 15,
-                  fontWeight: 500,
-                  color: "oklch(0.141 0.005 285.823)",
-                  background: "oklch(1 0 0)",
-                  border: "1px solid oklch(0.92 0.004 286.32)",
-                  borderRadius: 10,
-                  cursor: "pointer",
-                }}
-              >
-                <FacebookIcon width={18} height={18} />
-                Connexion avec Facebook
-              </button>
-            </div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex items-center justify-center"
+                  style={{
+                    height: 48,
+                    padding: "0 24px",
+                    fontSize: 15,
+                    fontWeight: 600,
+                    color: "oklch(0.985 0 0)",
+                    background: loading ? "oklch(0.5 0.006 285.885)" : "oklch(0.21 0.006 285.885)",
+                    border: "none",
+                    borderRadius: 10,
+                    cursor: loading ? "not-allowed" : "pointer",
+                    transition: "background 0.15s",
+                  }}
+                >
+                  {loading ? "Création du compte…" : "Commencer 1 mois gratuit"}
+                </button>
+              </form>
+            )}
 
             <p
               style={{
                 fontSize: 13,
                 color: "oklch(0.552 0.016 285.938)",
                 marginTop: 16,
-                margin: "16px 0 0",
               }}
             >
               100% gratuit. Aucun moyen de paiement requis.
@@ -174,30 +234,12 @@ export function TrialSection() {
             <div style={{ position: "relative", width: "100%", maxWidth: 620 }}>
               <img
                 src="/images/trial/hand-horizontal-phone.webp"
-                alt="Un téléphone portable tenu à l'horizontal affichant une vidéo de formation"
+                alt="Aperçu du journal de trading TPLN"
                 width={620}
                 height={720}
                 loading="lazy"
                 style={{ width: "100%", height: "auto", display: "block" }}
               />
-              <div
-                aria-hidden
-                className="flex items-center justify-center"
-                style={{
-                  position: "absolute",
-                  left: "50%",
-                  top: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: 64,
-                  height: 64,
-                  borderRadius: "50%",
-                  background: "oklch(1 0 0 / 0.95)",
-                  boxShadow: "0 12px 30px rgba(0, 0, 0, 0.25)",
-                  color: "oklch(0.21 0.006 285.885)",
-                }}
-              >
-                <PlayIcon width={26} height={26} />
-              </div>
             </div>
           </div>
         </div>

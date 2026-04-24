@@ -3,9 +3,9 @@ import { ArrowRightIcon, StarIcon } from "./icons";
 
 const WORDS = ["Trading", "Bourse", "Crypto"] as const;
 const VISUALS = [
-  { key: "trading", src: "/images/hero/hero-chrome-trading@2x.webp" },
-  { key: "stocks", src: "/images/hero/hero-chrome-stocks@2x.webp" },
-  { key: "crypto", src: "/images/hero/hero-chrome-crypto@2x.webp" },
+  { key: "trading", src: "/images/hero/hero-tpln-1.png", type: "img" },
+  { key: "stocks", src: "/images/hero/hero-tpln-2.png", type: "img" },
+  { key: "crypto", src: "/images/hero/hero-tpln-3.png", type: "img" },
 ] as const;
 
 const GRID_ROWS = 6;
@@ -60,6 +60,37 @@ export function HeroSection() {
         letterSpacing: "-0.01em",
       }}
     >
+      {/* Floating finance icons */}
+      <div aria-hidden="true" className="absolute inset-0 overflow-hidden" style={{ zIndex: 0, pointerEvents: "none" }}>
+        <style>{`
+          @keyframes floatA { 0%,100%{transform:translateY(0px) rotate(-8deg)} 50%{transform:translateY(-18px) rotate(-8deg)} }
+          @keyframes floatB { 0%,100%{transform:translateY(0px) rotate(6deg)} 50%{transform:translateY(-14px) rotate(6deg)} }
+          @keyframes floatC { 0%,100%{transform:translateY(0px) rotate(12deg)} 50%{transform:translateY(-22px) rotate(12deg)} }
+          @keyframes floatD { 0%,100%{transform:translateY(0px) rotate(-4deg)} 50%{transform:translateY(-16px) rotate(-4deg)} }
+          @keyframes floatE { 0%,100%{transform:translateY(0px) rotate(9deg)} 50%{transform:translateY(-12px) rotate(9deg)} }
+        `}</style>
+        {/* Bitcoin - left */}
+        <div style={{ position:"absolute", left:"3%", top:"18%", width:72, height:72, opacity:0.13, animation:"floatA 5s ease-in-out infinite" }}>
+          <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#F7931A"/><path d="M44.5 27.7c.6-4-2.5-6.2-6.7-7.6l1.4-5.5-3.3-.8-1.3 5.3-2.7-.7 1.3-5.3-3.3-.8-1.4 5.5-2.1-.5-4.5-1.1-.9 3.6s2.4.6 2.4.6c1.3.3 1.5 1.2 1.5 1.9l-1.5 6.1c.1 0 .2.1.4.1-.1 0-.3-.1-.4-.1l-2.1 8.5c-.2.4-.6 1.1-1.6.8 0 .1-2.4-.6-2.4-.6l-1.7 3.8 4.3 1.1 2.3.6-1.4 5.6 3.3.8 1.4-5.5 2.7.7-1.4 5.5 3.3.8 1.4-5.5c5.6 1.1 9.8.6 11.6-4.4 1.4-4-.1-6.4-3-7.9 2.2-.5 3.8-1.9 4.2-4.8zm-7.5 10.5c-1 4-7.7 1.8-9.9 1.3l1.8-7c2.2.5 9.2 1.6 8.1 5.7zm1-10.6c-.9 3.6-6.5 1.8-8.3 1.3l1.6-6.4c1.8.5 7.7 1.3 6.7 5.1z" fill="#fff"/></svg>
+        </div>
+        {/* Ethereum - right top */}
+        <div style={{ position:"absolute", right:"5%", top:"12%", width:60, height:60, opacity:0.11, animation:"floatB 6.5s ease-in-out infinite" }}>
+          <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#627EEA"/><path d="M32 10v16.5l13.9 6.2L32 10z" fill="#fff" fillOpacity=".6"/><path d="M32 10L18.1 32.7l13.9-6.2V10z" fill="#fff"/><path d="M32 44.1v9.9l14-19.4L32 44.1z" fill="#fff" fillOpacity=".6"/><path d="M32 54V44.1l-13.9-9.5L32 54z" fill="#fff"/><path d="M32 41.5l13.9-8.8L32 26.5v15z" fill="#fff" fillOpacity=".2"/><path d="M18.1 32.7L32 41.5V26.5L18.1 32.7z" fill="#fff" fillOpacity=".6"/></svg>
+        </div>
+        {/* Chart icon - left bottom */}
+        <div style={{ position:"absolute", left:"8%", bottom:"22%", width:54, height:54, opacity:0.09, animation:"floatC 7s ease-in-out infinite 1s" }}>
+          <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#0A9EF3"/><rect x="14" y="38" width="8" height="12" rx="2" fill="#fff"/><rect x="28" y="28" width="8" height="22" rx="2" fill="#fff" fillOpacity=".8"/><rect x="42" y="18" width="8" height="32" rx="2" fill="#fff" fillOpacity=".6"/></svg>
+        </div>
+        {/* Dollar coin - right bottom */}
+        <div style={{ position:"absolute", right:"4%", bottom:"28%", width:64, height:64, opacity:0.10, animation:"floatD 5.5s ease-in-out infinite 0.5s" }}>
+          <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#22C55E"/><text x="32" y="43" textAnchor="middle" fontSize="30" fontWeight="bold" fill="#fff">$</text></svg>
+        </div>
+        {/* Small BTC - far right mid */}
+        <div style={{ position:"absolute", right:"14%", top:"55%", width:40, height:40, opacity:0.07, animation:"floatE 8s ease-in-out infinite 2s" }}>
+          <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#F7931A"/><path d="M44.5 27.7c.6-4-2.5-6.2-6.7-7.6l1.4-5.5-3.3-.8-1.3 5.3-2.7-.7 1.3-5.3-3.3-.8-1.4 5.5-2.1-.5-4.5-1.1-.9 3.6s2.4.6 2.4.6c1.3.3 1.5 1.2 1.5 1.9l-1.5 6.1c.1 0 .2.1.4.1-.1 0-.3-.1-.4-.1l-2.1 8.5c-.2.4-.6 1.1-1.6.8 0 .1-2.4-.6-2.4-.6l-1.7 3.8 4.3 1.1 2.3.6-1.4 5.6 3.3.8 1.4-5.5 2.7.7-1.4 5.5 3.3.8 1.4-5.5c5.6 1.1 9.8.6 11.6-4.4 1.4-4-.1-6.4-3-7.9 2.2-.5 3.8-1.9 4.2-4.8zm-7.5 10.5c-1 4-7.7 1.8-9.9 1.3l1.8-7c2.2.5 9.2 1.6 8.1 5.7zm1-10.6c-.9 3.6-6.5 1.8-8.3 1.3l1.6-6.4c1.8.5 7.7 1.3 6.7 5.1z" fill="#fff"/></svg>
+        </div>
+      </div>
+
       {/* Colorflow animated gradient background */}
       <div
         aria-hidden="true"
@@ -123,7 +154,7 @@ export function HeroSection() {
         {VISUALS.map((v, idx) => {
           const isActive = idx === activeIdx;
           return (
-            <picture
+            <div
               key={v.key}
               className="absolute"
               style={{
@@ -148,9 +179,34 @@ export function HeroSection() {
                 loading="lazy"
                 style={{ width: "100%", height: "100%", objectFit: "contain" }}
               />
-            </picture>
+            </div>
           );
         })}
+
+        {/* Vidéo TPLN en fond à droite */}
+        <div
+          className="absolute"
+          style={{
+            top: 0,
+            right: -20,
+            left: 540,
+            bottom: 0,
+            zIndex: -2,
+            opacity: 0.12,
+            overflow: "hidden",
+            borderRadius: 16,
+          }}
+        >
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          >
+            <source src="/images/hero/hero-tpln.mov" type="video/mp4" />
+          </video>
+        </div>
 
       </div>
 
@@ -269,7 +325,7 @@ export function HeroSection() {
 
         <div className="flex" style={{ gap: 16 }}>
           <a
-            href="/formation-bourse-offerte2303219/"
+            href="#trial"
             className="trial-button flex items-center justify-center"
             style={{
               gap: 6,
@@ -324,7 +380,7 @@ export function HeroSection() {
               color: "oklch(0.442 0.017 285.786)",
             }}
           >
-            Excellent · 7 000+ avis
+            Excellent · +150 avis
           </span>
         </div>
       </div>

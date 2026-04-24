@@ -115,27 +115,15 @@ const COPY: Record<
 const PILLARS: Pillar[] = ["learning", "coachings", "community", "resources"];
 
 const LEARNING_TILES: { src: string; kind: "img" | "video"; poster?: string }[] = [
-  { src: "/images/ecosystem/signals-schema-course-slide.webp", kind: "img" },
-  {
-    src: "/videos/ecosystem/trading-graph-quentin.webm",
-    kind: "video",
-    poster: "/videos/ecosystem/trading-graph-quentin-poster.webp",
-  },
-  { src: "/images/ecosystem/course-quiz-score.webp", kind: "img" },
-  { src: "/images/ecosystem/time-units-course-slide.webp", kind: "img" },
-  {
-    src: "/videos/ecosystem/fixytrade-alexandre.webm",
-    kind: "video",
-    poster: "/videos/ecosystem/fixytrade-alexandre-poster.webp",
-  },
-  { src: "/images/ecosystem/learning-plateform.webp", kind: "img" },
-  { src: "/images/ecosystem/trading-score-course-slide.webp", kind: "img" },
-  {
-    src: "/videos/ecosystem/bootcamp-conf-alexandre.webm",
-    kind: "video",
-    poster: "/videos/ecosystem/bootcamp-conf-alexandre-poster.webp",
-  },
-  { src: "/images/ecosystem/start-course-slide.webp", kind: "img" },
+  { src: "/images/hero/hero-tpln-1.png", kind: "img" },
+  { src: "/images/hero/hero-tpln-2.png", kind: "img" },
+  { src: "/images/hero/hero-tpln-3.png", kind: "img" },
+  { src: "/images/hero/hero-tpln.mov", kind: "video" },
+  { src: "/images/hero/hero-tpln-1.png", kind: "img" },
+  { src: "/images/hero/hero-tpln-2.png", kind: "img" },
+  { src: "/images/hero/hero-tpln-3.png", kind: "img" },
+  { src: "/images/hero/hero-tpln.mov", kind: "video" },
+  { src: "/images/hero/hero-tpln-1.png", kind: "img" },
 ];
 
 function Tile({
@@ -176,8 +164,8 @@ function Tile({
           poster={poster}
           style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
         >
-          <source src={src} type="video/webm" />
-          <source src={src.replace(".webm", ".mp4")} type="video/mp4" />
+          <source src={src} type={src.endsWith(".mov") ? "video/mp4" : "video/webm"} />
+          {!src.endsWith(".mov") && <source src={src.replace(".webm", ".mp4")} type="video/mp4" />}
         </video>
       )}
     </div>
@@ -398,6 +386,7 @@ export function EcosystemSection() {
 
   return (
     <section
+      id="services"
       className="ecosystem"
       style={{ width: "100%", padding: "80px 0 120px", letterSpacing: "-0.01em" }}
     >
@@ -462,36 +451,41 @@ export function EcosystemSection() {
                   visualRefs.current[0] = el;
                 }}
               />
-              <CenteredImageVisual
-                innerRef={(el) => {
-                  visualRefs.current[1] = el;
-                }}
-                pillar="coachings"
-                src="/images/ecosystem/coaching-ind-cam-view@2x.webp"
-                width={532}
-                height={640}
-                alt="Un coach et son apprenant en face-cam durant une session de coaching individuel en ligne"
-              />
-              <CenteredImageVisual
-                innerRef={(el) => {
-                  visualRefs.current[2] = el;
-                }}
-                pillar="community"
-                src="/images/ecosystem/discord-chat-feed@2x.webp"
-                width={450}
-                height={725}
-                alt="Un fil de discussion coachs et apprenants sur Discord"
-              />
-              <CenteredImageVisual
-                innerRef={(el) => {
-                  visualRefs.current[3] = el;
-                }}
-                pillar="resources"
-                src="/images/ecosystem/tools-ui-blocks@2x.webp"
-                width={615}
-                height={700}
-                alt="Interfaces d'outils de trading"
-              />
+              <div
+                ref={(el) => { visualRefs.current[1] = el; }}
+                style={{ ...baseVisualStyle("coachings", "101%"), display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, padding: 24, overflowY: "auto" }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 10, width: "100%" }}>
+                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: "oklch(0.5 0.15 260)", flexShrink: 0 }} />
+                  <img src="/images/ecosystem/tpln-section2-1.png" alt="TPLN" loading="lazy" style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }} />
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, width: "100%" }}>
+                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: "oklch(0.5 0.15 260)", flexShrink: 0 }} />
+                  <img src="/images/ecosystem/tpln-section2-2.png" alt="TPLN" loading="lazy" style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }} />
+                </div>
+              </div>
+              <div
+                ref={(el) => { visualRefs.current[2] = el; }}
+                style={{ ...baseVisualStyle("community", "101%"), display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, padding: 24 }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 10, width: "100%" }}>
+                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: "oklch(0.5 0.15 260)", flexShrink: 0 }} />
+                  <video autoPlay loop muted playsInline style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }}>
+                    <source src="/images/ecosystem/tpln-section3.mp4" type="video/mp4" />
+                  </video>
+                </div>
+              </div>
+              <div
+                ref={(el) => { visualRefs.current[3] = el; }}
+                style={{ ...baseVisualStyle("resources", "101%"), display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, padding: 32, alignContent: "center" }}
+              >
+                {["tpln-section4-1.png","tpln-section4-2.png","tpln-section4-3.png","tpln-section4-4.png"].map((f) => (
+                  <div key={f} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                    <span style={{ width: 8, height: 8, borderRadius: "50%", background: "oklch(0.5 0.15 260)", flexShrink: 0, marginTop: 4 }} />
+                    <img src={`/images/ecosystem/${f}`} alt="App TPLN" loading="lazy" style={{ width: "100%", maxWidth: 220, height: "auto", borderRadius: 10, display: "block" }} />
+                  </div>
+                ))}
+              </div>
               </div>
             </div>
           </div>
@@ -642,66 +636,15 @@ export function EcosystemSection() {
                     <div
                       style={{
                         marginTop: 32,
-                        padding: 28,
                         borderRadius: 16,
-                        border: "1px solid oklch(0.92 0.004 286.32)",
-                        background: "oklch(0.98 0 0)",
+                        overflow: "hidden",
                       }}
                     >
-                      <div
-                        style={{
-                          fontSize: 18,
-                          fontWeight: 700,
-                          lineHeight: "24px",
-                          color: "oklch(0.141 0.005 285.823)",
-                          marginBottom: 20,
-                        }}
-                      >
-                        Inclus dans l&apos;abonnement :
-                      </div>
-                      <ul
-                        style={{
-                          margin: 0,
-                          padding: 0,
-                          listStyle: "none",
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: 14,
-                        }}
-                      >
-                        {[
-                          "Formation complète au modèle TPLN",
-                          "Checklist de validation détaillée",
-                          "Gestion du risque structurée",
-                          "Journal de performance intégré",
-                          "Analyse des erreurs et discipline",
-                          "Suivi win rate, profit factor, drawdown",
-                        ].map((item) => (
-                          <li
-                            key={item}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 12,
-                              fontSize: 15,
-                              fontWeight: 400,
-                              lineHeight: "21px",
-                              color: "oklch(0.141 0.005 285.823)",
-                            }}
-                          >
-                            <span
-                              style={{
-                                width: 8,
-                                height: 8,
-                                borderRadius: "50%",
-                                background: "oklch(0.5 0.15 260)",
-                                flexShrink: 0,
-                              }}
-                            />
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
+                      <img
+                        src="/images/ecosystem/tpln-section2-2.png"
+                        alt="TPLN"
+                        style={{ width: "100%", height: "auto", display: "block", borderRadius: 16 }}
+                      />
                     </div>
                   )}
                 </div>
@@ -728,7 +671,7 @@ export function EcosystemSection() {
                     <div
                       style={{
                         position: "relative",
-                        height: 260,
+                        height: 380,
                         overflow: "hidden",
                       }}
                     >
@@ -781,8 +724,8 @@ export function EcosystemSection() {
                                   display: "block",
                                 }}
                               >
-                                <source src={t.src} type="video/webm" />
-                                <source src={t.src.replace(".webm", ".mp4")} type="video/mp4" />
+                                <source src={t.src} type={t.src.endsWith(".mov") ? "video/mp4" : "video/webm"} />
+                                {!t.src.endsWith(".mov") && <source src={t.src.replace(".webm", ".mp4")} type="video/mp4" />}
                               </video>
                             )}
                           </div>
@@ -852,27 +795,40 @@ export function EcosystemSection() {
                   <div
                     style={{
                       position: "relative",
-                      height: 260,
+                      height: 380,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       overflow: "hidden",
                     }}
                   >
-                    <img
-                      src={
-                        pillar === "coachings"
-                          ? "/images/ecosystem/coaching-ind-cam-view@2x.webp"
-                          : pillar === "community"
-                            ? "/images/ecosystem/discord-chat-feed@2x.webp"
-                            : "/images/ecosystem/tools-ui-blocks@2x.webp"
-                      }
-                      alt=""
-                      width={pillar === "coachings" ? 532 : pillar === "community" ? 450 : 615}
-                      height={pillar === "coachings" ? 640 : pillar === "community" ? 725 : 700}
-                      loading="lazy"
-                      style={{ maxWidth: "92%", height: "auto", display: "block" }}
-                    />
+                    {pillar === "coachings" ? (
+                      <div style={{ display: "flex", flexDirection: "column", gap: 12, padding: "12px 16px", width: "100%" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 10, width: "100%" }}>
+                          <span style={{ width: 8, height: 8, borderRadius: "50%", background: "oklch(0.5 0.15 260)", flexShrink: 0 }} />
+                          <img src="/images/ecosystem/tpln-section2-1.png" alt="" loading="lazy" style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }} />
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 10, width: "100%" }}>
+                          <span style={{ width: 8, height: 8, borderRadius: "50%", background: "oklch(0.5 0.15 260)", flexShrink: 0 }} />
+                          <img src="/images/ecosystem/tpln-section2-2.png" alt="" loading="lazy" style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }} />
+                        </div>
+                      </div>
+                    ) : pillar === "community" ? (
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "0 16px", width: "100%" }}>
+                        <video autoPlay loop muted playsInline style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }}>
+                          <source src="/images/ecosystem/tpln-section3.mp4" type="video/mp4" />
+                        </video>
+                      </div>
+                    ) : (
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, padding: "0 20px", width: "100%" }}>
+                        {["tpln-section4-1.png","tpln-section4-2.png","tpln-section4-3.png","tpln-section4-4.png"].map((f) => (
+                          <div key={f} style={{ display: "flex", alignItems: "flex-start", gap: 6 }}>
+                            <span style={{ width: 7, height: 7, borderRadius: "50%", background: "oklch(0.5 0.15 260)", flexShrink: 0, marginTop: 4 }} />
+                            <img src={`/images/ecosystem/${f}`} alt="App TPLN" loading="lazy" style={{ width: "100%", maxWidth: 80, height: "auto", borderRadius: 8, display: "block" }} />
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <div style={{ padding: "24px 24px 32px" }}>
                     <span

@@ -9,6 +9,7 @@ import LivestreamPage from './components/LivestreamPage';
 import UserLivestreamPage from './components/UserLivestreamPage';
 import PreviewCalendar from './components/PreviewCalendar';
 import { LandingPage } from './components/landing/LandingPage';
+import { ArticlePage } from './components/landing/ArticlePage';
 import { supabase } from './lib/supabase';
 
 
@@ -1359,6 +1360,12 @@ const App = () => {
     );
   }
                 
+  // Articles TPLN
+  const articleMatch = window.location.pathname.match(/^\/articles\/([^/]+)\/?$/);
+  if (articleMatch) {
+    return <ArticlePage slug={articleMatch[1]} />;
+  }
+
   // Si on est sur une page légale, l'afficher
   if (currentPage !== 'home') {
     return renderLegalPage();

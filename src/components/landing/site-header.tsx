@@ -10,7 +10,7 @@ type MainNavItem = { label: string; href?: string; panel?: boolean };
 const mainNavItems: MainNavItem[] = [
   { label: "Services", href: "#services" },
   { label: "À propos", href: "#about-thethetrader" },
-  { label: "La plateforme", href: "#section-app" },
+  { label: "La plateforme", href: "#services" },
   { label: "Prix", href: "#pricing" },
 ];
 
@@ -85,7 +85,7 @@ export function SiteHeader({ onOpenAuth }: { onOpenAuth?: () => void }) {
       {/* Sticky main header (transparent wrapper, white inner nav) */}
       <header
         id="site-header"
-        className="sticky top-0 z-[1000] bg-transparent"
+        className="sticky top-0 z-[1000] bg-white"
         style={{ height: 56 }}
       >
         <nav
@@ -103,7 +103,7 @@ export function SiteHeader({ onOpenAuth }: { onOpenAuth?: () => void }) {
           <ul className="mx-auto flex h-full max-w-[1080px] items-center px-5">
             <li className="flex h-9 items-center pr-3">
               <a href="/" className="flex items-center" aria-label="Alti Trading — Accueil" style={{ background: "#ffffff", padding: "12px 16px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", maxWidth: "100%", maxHeight: "100%" }}>
-                <img src="/faviconewtpln.png" alt="Alti Trading" width={96} height={96} style={{ display: "block", maxWidth: "32px", maxHeight: "32px" }} />
+                <img src="/TPLNFAVICONFINAL.png" alt="Alti Trading" width={96} height={96} style={{ display: "block", maxWidth: "32px", maxHeight: "32px" }} />
               </a>
             </li>
 
@@ -154,13 +154,13 @@ export function SiteHeader({ onOpenAuth }: { onOpenAuth?: () => void }) {
             <li className="landing-desktop-nav ml-auto flex items-center gap-2">
               <a
                 href="#trial"
-                className="trial-button flex h-8 items-center gap-1 rounded-lg border border-transparent px-2.5 text-[13px] font-medium text-primary-foreground transition-all duration-150 ease-[cubic-bezier(0.4,0,0.2,1)]"
-                style={{ background: "oklch(0.21 0.006 285.885 / 0.85)" }}
+                className="trial-button flex h-8 items-center gap-1 rounded-lg border border-transparent px-2.5 text-[13px] font-medium text-white transition-all duration-150 ease-[cubic-bezier(0.4,0,0.2,1)]"
+                style={{ background: "#25D366" }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = "oklch(0.21 0.006 285.885 / 1)";
+                  (e.currentTarget as HTMLElement).style.background = "#1ebe5d";
                 }}
                 onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = "oklch(0.21 0.006 285.885 / 0.85)";
+                  (e.currentTarget as HTMLElement).style.background = "#25D366";
                 }}
               >
                 Essayer Gratuitement
@@ -208,7 +208,7 @@ export function SiteHeader({ onOpenAuth }: { onOpenAuth?: () => void }) {
               <a
                 href="#trial"
                 className="flex h-10 items-center justify-center rounded-md text-[14px] font-medium text-white"
-                style={{ background: "oklch(0.21 0.006 285.885)" }}
+                style={{ background: "#25D366" }}
                 onClick={() => setMobileOpen(false)}
               >
                 Essayer Gratuitement

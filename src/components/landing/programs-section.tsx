@@ -290,6 +290,7 @@ function PlanCard({ plan }: { plan: Plan }) {
 export function ProgramsSection() {
   return (
     <section
+      id="pricing"
       className="programs dark"
       style={{
         background: "rgb(0, 0, 0)",
@@ -490,7 +491,7 @@ export function ProgramsSection() {
                 color: "oklch(0.985 0 0)",
               }}
             >
-              250\u20AC / session (1h)
+              250€ / session (1h)
             </div>
             <p
               style={{

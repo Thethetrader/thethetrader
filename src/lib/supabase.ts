@@ -533,8 +533,8 @@ export const getUserProfile = async (userId?: string) => {
       .eq('id', userIdToGet)
       .single();
 
-    if (error) throw error;
-    return { data, error: null };
+    if (error && error.code !== 'PGRST116') throw error;
+    return { data: data ?? null, error: null };
   } catch (error) {
     console.error('Erreur récupération profil:', error);
     return {
@@ -1743,6 +1743,18 @@ export const getUserSubscription = async (): Promise<{ plan_type: 'basic' | 'pre
       return null;
     }
 
+    // Vérifier trial via user_metadata (créé lors du signup landing)
+    const meta = user.user_metadata;
+    if (meta?.trial_plan && meta?.trial_ends_at) {
+      const trialEnd = new Date(meta.trial_ends_at);
+      if (trialEnd > new Date()) {
+        console.log('✅ Trial actif jusqu\'au:', trialEnd.toLocaleDateString());
+        return { plan_type: meta.trial_plan as 'journal', status: 'trial' };
+      } else {
+        console.log('ℹ️ Trial expiré le:', trialEnd.toLocaleDateString());
+      }
+    }
+
     const { data, error } = await supabase
       .from('subscriptions')
       .select('plan_type, status')
@@ -1752,7 +1764,6 @@ export const getUserSubscription = async (): Promise<{ plan_type: 'basic' | 'pre
 
     if (error) {
       if (error.code === 'PGRST116') {
-        // Aucun abonnement trouvé
         console.log('ℹ️ Aucun abonnement actif trouvé');
         return null;
       }

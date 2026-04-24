@@ -383,6 +383,11 @@
     display: none !important;
   }
 
+  #site-header img[alt="Alti Trading"] {
+    max-width: 64px !important;
+    max-height: 64px !important;
+  }
+
   /* Restore desktop hero headline animation styles */
   .hero {
     padding: 180px 0 80px !important;
