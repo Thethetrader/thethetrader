@@ -1,21 +1,23 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import './index.css';
-import TradingPlatformShell from './components/generated/TradingPlatformShell';
-import AdminLogin from './components/AdminLogin';
-import AdminInterface from './components/AdminInterface';
-import UserChat from './components/UserChat';
-import ProfitLoss from './components/ProfitLoss';
-import LivestreamPage from './components/LivestreamPage';
-import UserLivestreamPage from './components/UserLivestreamPage';
-import PreviewCalendar from './components/PreviewCalendar';
 import { LandingPage } from './components/landing/LandingPage';
-import { ArticlePage } from './components/landing/ArticlePage';
-import { FaqPage } from './components/pages/FaqPage';
-import { ContactPage } from './components/pages/ContactPage';
-import { MentionsLegalesPage } from './components/pages/MentionsLegalesPage';
-import { ConfidentialitePage } from './components/pages/ConfidentialitePage';
-import { CgvPage } from './components/pages/CgvPage';
 import { supabase } from './lib/supabase';
+
+// Lazy-load everything that's not needed on the landing page
+const TradingPlatformShell = lazy(() => import('./components/generated/TradingPlatformShell'));
+const AdminLogin = lazy(() => import('./components/AdminLogin'));
+const AdminInterface = lazy(() => import('./components/AdminInterface'));
+const UserChat = lazy(() => import('./components/UserChat'));
+const ProfitLoss = lazy(() => import('./components/ProfitLoss'));
+const LivestreamPage = lazy(() => import('./components/LivestreamPage'));
+const UserLivestreamPage = lazy(() => import('./components/UserLivestreamPage'));
+const PreviewCalendar = lazy(() => import('./components/PreviewCalendar'));
+const ArticlePage = lazy(() => import('./components/landing/ArticlePage').then(m => ({ default: m.ArticlePage })));
+const FaqPage = lazy(() => import('./components/pages/FaqPage').then(m => ({ default: m.FaqPage })));
+const ContactPage = lazy(() => import('./components/pages/ContactPage').then(m => ({ default: m.ContactPage })));
+const MentionsLegalesPage = lazy(() => import('./components/pages/MentionsLegalesPage').then(m => ({ default: m.MentionsLegalesPage })));
+const ConfidentialitePage = lazy(() => import('./components/pages/ConfidentialitePage').then(m => ({ default: m.ConfidentialitePage })));
+const CgvPage = lazy(() => import('./components/pages/CgvPage').then(m => ({ default: m.CgvPage })));
 
 
 import { useNotifications } from './hooks/use-notifications';
@@ -1288,9 +1290,9 @@ const App = () => {
       'livestream': {
         title: 'Livestream Trading',
         content: user ? (
-          <LivestreamPage />
+          <Suspense fallback={<div />}><LivestreamPage /></Suspense>
         ) : (
-          <UserLivestreamPage />
+          <Suspense fallback={<div />}><UserLivestreamPage /></Suspense>
         )
       }
     };
@@ -1332,17 +1334,15 @@ const App = () => {
     const isAdminAuthenticated = localStorage.getItem('adminAuthenticated') === 'true';
 
     if (isAdminAuthenticated) {
-      return <AdminInterface />;
+      return <Suspense fallback={<div />}><AdminInterface /></Suspense>;
     } else {
-      return <AdminLogin onLogin={(adminData) => {
+      return <Suspense fallback={<div />}><AdminLogin onLogin={(adminData) => {
         console.log('✅ Admin connecté dans App.tsx:', adminData.user.email);
-        // Marquer comme admin authentifié
         localStorage.setItem('adminAuthenticated', 'true');
         localStorage.setItem('adminUser', JSON.stringify(adminData.user));
-        // Recharger la page admin
         setCurrentPage('temp');
         setTimeout(() => setCurrentPage('admin'), 100);
-      }} />;
+      }} /></Suspense>;
     }
   }
 
@@ -1351,7 +1351,7 @@ const App = () => {
     return (
       <div className="relative">
         {/* Ton salon complet */}
-        <TradingPlatformShell />
+        <Suspense fallback={<div />}><TradingPlatformShell /></Suspense>
         
         {/* Petit logo déconnexion en bas à gauche - Desktop seulement */}
         <button 
@@ -1367,15 +1367,15 @@ const App = () => {
                 
   // Articles TPLN
   const articleMatch = window.location.pathname.match(/^\/articles\/([^/]+)\/?$/);
-  if (articleMatch) return <ArticlePage slug={articleMatch[1]} />;
+  if (articleMatch) return <Suspense fallback={<div />}><ArticlePage slug={articleMatch[1]} /></Suspense>;
 
   // Pages statiques
   const p = window.location.pathname.replace(/\/$/, "");
-  if (p === "/faq") return <FaqPage />;
-  if (p === "/contact") return <ContactPage />;
-  if (p === "/mentions-legales") return <MentionsLegalesPage />;
-  if (p === "/confidentialite") return <ConfidentialitePage />;
-  if (p === "/CGV" || p === "/cgv") return <CgvPage />;
+  if (p === "/faq") return <Suspense fallback={<div />}><FaqPage /></Suspense>;
+  if (p === "/contact") return <Suspense fallback={<div />}><ContactPage /></Suspense>;
+  if (p === "/mentions-legales") return <Suspense fallback={<div />}><MentionsLegalesPage /></Suspense>;
+  if (p === "/confidentialite") return <Suspense fallback={<div />}><ConfidentialitePage /></Suspense>;
+  if (p === "/CGV" || p === "/cgv") return <Suspense fallback={<div />}><CgvPage /></Suspense>;
 
   // Si on est sur une page légale, l'afficher
   if (currentPage !== 'home') {
@@ -3577,12 +3577,12 @@ const App = () => {
 
                         {/* Vue ChatZone */}
                         {mobileActiveChannel === 'chatzone' && (
-                          <UserChat channelId="chatzone" />
+                          <Suspense fallback={<div />}><UserChat channelId="chatzone" /></Suspense>
                         )}
 
                         {/* Vue Profit Loss */}
                         {mobileActiveChannel === 'profit-loss' && (
-                          <ProfitLoss channelId="profit-loss" currentUserId="user" />
+                          <Suspense fallback={<div />}><ProfitLoss channelId="profit-loss" currentUserId="user" /></Suspense>
                         )}
 
                         {/* Vue Journal Signaux (Calendar) */}
@@ -4905,7 +4905,7 @@ const App = () => {
                         {previewChannel === 'trading-journal' && (
                           <div className="space-y-4">
                             {/* Calendrier Trading Journal - Vrai calendrier */}
-                            <PreviewCalendar />
+                            <Suspense fallback={<div />}><PreviewCalendar /></Suspense>
 
                             
                             {/* Statistiques Trading Journal - Format exact */}
