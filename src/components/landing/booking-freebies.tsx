@@ -11,7 +11,7 @@ function ChevronRight(props: { size?: number }) {
   );
 }
 
-function BookingCard() {
+export function BookingCard() {
   return (
     <section
       className="booking flex flex-col"

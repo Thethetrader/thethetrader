@@ -8,7 +8,7 @@ import { ReviewsSection } from "./reviews-section";
 import { QualiopiStatsSection } from "./qualiopi-section";
 import { TrialSection } from "./trial-section";
 import { PostsSection } from "./posts-section";
-import { BookingFreebiesRow } from "./booking-freebies";
+import { BookingFreebiesRow, BookingCard } from "./booking-freebies";
 import { SiteFooter } from "./site-footer";
 
 export function LandingPage({ onOpenAuth }: { onOpenAuth?: () => void }) {
@@ -25,6 +25,9 @@ export function LandingPage({ onOpenAuth }: { onOpenAuth?: () => void }) {
       <SiteHeader onOpenAuth={onOpenAuth} />
       <main>
         <HeroSection onOpenAuth={onOpenAuth} />
+        <div className="mx-auto" style={{ maxWidth: 1400, padding: "40px 20px 0" }}>
+          <BookingCard />
+        </div>
         <EcosystemSection />
         <ProgramsSection />
         <StaffSection />
