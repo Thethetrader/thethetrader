@@ -377,6 +377,11 @@
   }
 }
 
+/* --- Mobile-only elements hidden by default ---------------------------- */
+.mobile-bottom-cta {
+  display: none;
+}
+
 /* --- Desktop: hide the mobile burger ----------------------------------- */
 @media (min-width: 769px) {
   .landing-mobile-burger {
@@ -417,7 +422,7 @@
 @media (max-width: 768px) {
   /* ---- Mobile fixed bottom CTA ---- */
   .mobile-bottom-cta {
-    display: block !important;
+    display: block;
     position: fixed !important;
     bottom: 0 !important;
     left: 0 !important;

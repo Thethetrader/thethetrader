@@ -109,7 +109,7 @@ export function LandingPage({ onOpenAuth }: { onOpenAuth?: () => void }) {
       <SiteFooter />
 
       {/* Mobile fixed bottom CTA */}
-      <div className="mobile-bottom-cta" style={{ display: "none" }}>
+      <div className="mobile-bottom-cta">
         <a
           href="#trial"
           style={{
