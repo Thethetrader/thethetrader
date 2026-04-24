@@ -232,13 +232,36 @@ export function TrialSection() {
           {/* Right: phone video visual */}
           <div className="flex items-center justify-center" style={{ position: "relative" }}>
             <div style={{ position: "relative", width: "100%", maxWidth: 620 }}>
+              {/* Video overlay clipped to phone screen */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: "6%",
+                  left: "2%",
+                  width: "65%",
+                  height: "60%",
+                  borderRadius: "3%",
+                  overflow: "hidden",
+                  zIndex: 1,
+                }}
+              >
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  style={{ width: "100%", height: "100%", objectFit: "fill", display: "block" }}
+                >
+                  <source src="/images/ecosystem/tpln-section3.mp4" type="video/mp4" />
+                </video>
+              </div>
               <img
                 src="/images/trial/hand-horizontal-phone.webp"
                 alt="Aperçu du journal de trading TPLN"
                 width={620}
                 height={720}
                 loading="lazy"
-                style={{ width: "100%", height: "auto", display: "block" }}
+                style={{ width: "100%", height: "auto", display: "block", position: "relative", zIndex: 2 }}
               />
             </div>
           </div>
