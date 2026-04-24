@@ -250,7 +250,8 @@ export function HeroSection({ onOpenAuth }: { onOpenAuth?: () => void }) {
               textAlign: "center",
             }}
           >
-            L&apos;écosystème de formation ultime pour enfin réussir sur les marchés financiers.
+            Méthode. Journal. Sessions live. Application mobile.<br />
+            Un écosystème ultra-complet pour trader avec structure et mesurer chaque progrès.
           </p>
 
           <div className="flex" style={{ gap: 16 }}>
