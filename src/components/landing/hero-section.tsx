@@ -247,7 +247,7 @@ export function HeroSection({ onOpenAuth }: { onOpenAuth?: () => void }) {
               textAlign: "center",
             }}
           >
-            Méthode. Journal. Sessions live. Application mobile.<br />
+            Méthode. Journal. Sessions live. <span style={{ whiteSpace: "nowrap" }}>Application mobile.</span><br />
             Un écosystème ultra-complet pour trader avec structure et mesurer chaque progrès.
           </p>
 

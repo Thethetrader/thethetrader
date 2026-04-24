@@ -106,7 +106,7 @@
   }
   .hero .flex.flex-col.items-center.text-center > p {
     max-width: 480px !important;
-    font-size: 19px !important;
+    font-size: 16px !important;
     line-height: 150% !important;
     letter-spacing: -0.02em !important;
     font-weight: 400 !important;
