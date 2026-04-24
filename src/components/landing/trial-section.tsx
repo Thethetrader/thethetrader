@@ -231,16 +231,17 @@ export function TrialSection() {
 
           {/* Right: phone video visual */}
           <div className="flex items-center justify-center" style={{ position: "relative" }}>
-            <div style={{ position: "relative", width: "100%", maxWidth: 620 }}>
+            {/* aspect-ratio matches image natural 1956×1300 so % heights resolve correctly */}
+            <div style={{ position: "relative", width: "100%", maxWidth: 620, aspectRatio: "1956/1300" }}>
               {/* Video overlay clipped to phone screen */}
               <div
                 style={{
                   position: "absolute",
-                  top: "6%",
-                  left: "2%",
-                  width: "65%",
-                  height: "60%",
-                  borderRadius: "3%",
+                  top: "8%",
+                  left: "1.94%",
+                  width: "63.96%",
+                  height: "44.08%",
+                  borderRadius: "2%",
                   overflow: "hidden",
                   zIndex: 1,
                 }}
@@ -258,10 +259,10 @@ export function TrialSection() {
               <img
                 src="/images/trial/hand-horizontal-phone.webp"
                 alt="Aperçu du journal de trading TPLN"
-                width={620}
-                height={720}
+                width={1956}
+                height={1300}
                 loading="lazy"
-                style={{ width: "100%", height: "auto", display: "block", position: "relative", zIndex: 2 }}
+                style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", display: "block", zIndex: 2 }}
               />
             </div>
           </div>
