@@ -24,7 +24,7 @@ export function LandingPage({ onOpenAuth }: { onOpenAuth?: () => void }) {
     >
       <SiteHeader onOpenAuth={onOpenAuth} />
       <main>
-        <HeroSection />
+        <HeroSection onOpenAuth={onOpenAuth} />
         <EcosystemSection />
         <ProgramsSection />
         <StaffSection />

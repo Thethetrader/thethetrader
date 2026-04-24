@@ -116,14 +116,23 @@ const PILLARS: Pillar[] = ["learning", "coachings", "community", "resources"];
 
 const LEARNING_TILES: { src: string; kind: "img" | "video"; poster?: string }[] = [
   { src: "/images/hero/hero-tpln-1.png", kind: "img" },
+  { src: "/images/hero/hero-mobile-1.png", kind: "img" },
   { src: "/images/hero/hero-tpln-2.png", kind: "img" },
+  { src: "/images/hero/hero-mobile-2.png", kind: "img" },
   { src: "/images/hero/hero-tpln-3.png", kind: "img" },
+  { src: "/images/hero/hero-mobile-3.png", kind: "img" },
   { src: "/images/hero/hero-tpln.mov", kind: "video" },
   { src: "/images/hero/hero-tpln-1.png", kind: "img" },
-  { src: "/images/hero/hero-tpln-2.png", kind: "img" },
-  { src: "/images/hero/hero-tpln-3.png", kind: "img" },
-  { src: "/images/hero/hero-tpln.mov", kind: "video" },
+  { src: "/images/hero/hero-mobile-1.png", kind: "img" },
+];
+
+const MOBILE_LEARNING_TILES: { src: string; kind: "img" | "video" }[] = [
   { src: "/images/hero/hero-tpln-1.png", kind: "img" },
+  { src: "/images/hero/hero-mobile-1.png", kind: "img" },
+  { src: "/images/hero/hero-tpln.mov", kind: "video" },
+  { src: "/images/hero/hero-tpln-2.png", kind: "img" },
+  { src: "/images/hero/hero-mobile-2.png", kind: "img" },
+  { src: "/images/hero/hero-tpln-3.png", kind: "img" },
 ];
 
 function Tile({
@@ -453,37 +462,25 @@ export function EcosystemSection() {
               />
               <div
                 ref={(el) => { visualRefs.current[1] = el; }}
-                style={{ ...baseVisualStyle("coachings", "101%"), display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, padding: 24, overflowY: "auto" }}
+                style={{ ...baseVisualStyle("coachings", "101%"), display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16, padding: 32, overflowY: "auto" }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 10, width: "100%" }}>
-                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: "oklch(0.5 0.15 260)", flexShrink: 0 }} />
-                  <img src="/images/ecosystem/tpln-section2-1.png" alt="TPLN" loading="lazy" style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }} />
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, width: "100%" }}>
-                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: "oklch(0.5 0.15 260)", flexShrink: 0 }} />
-                  <img src="/images/ecosystem/tpln-section2-2.png" alt="TPLN" loading="lazy" style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }} />
-                </div>
+                <img src="/images/ecosystem/tpln-section2-1.png" alt="TPLN" loading="lazy" style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }} />
+                <img src="/images/ecosystem/tpln-section2-2.png" alt="TPLN" loading="lazy" style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }} />
               </div>
               <div
                 ref={(el) => { visualRefs.current[2] = el; }}
-                style={{ ...baseVisualStyle("community", "101%"), display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, padding: 24 }}
+                style={{ ...baseVisualStyle("community", "101%"), display: "flex", alignItems: "center", justifyContent: "center", padding: 32 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 10, width: "100%" }}>
-                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: "oklch(0.5 0.15 260)", flexShrink: 0 }} />
-                  <video autoPlay loop muted playsInline style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }}>
-                    <source src="/images/ecosystem/tpln-section3.mp4" type="video/mp4" />
-                  </video>
-                </div>
+                <video autoPlay loop muted playsInline style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }}>
+                  <source src="/images/ecosystem/tpln-section3.mp4" type="video/mp4" />
+                </video>
               </div>
               <div
                 ref={(el) => { visualRefs.current[3] = el; }}
-                style={{ ...baseVisualStyle("resources", "101%"), display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, padding: 32, alignContent: "center" }}
+                style={{ ...baseVisualStyle("resources", "101%"), display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, padding: 32, alignContent: "center", justifyItems: "center" }}
               >
                 {["tpln-section4-1.png","tpln-section4-2.png","tpln-section4-3.png","tpln-section4-4.png"].map((f) => (
-                  <div key={f} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-                    <span style={{ width: 8, height: 8, borderRadius: "50%", background: "oklch(0.5 0.15 260)", flexShrink: 0, marginTop: 4 }} />
-                    <img src={`/images/ecosystem/${f}`} alt="App TPLN" loading="lazy" style={{ width: "100%", maxWidth: 220, height: "auto", borderRadius: 10, display: "block" }} />
-                  </div>
+                  <img key={f} src={`/images/ecosystem/${f}`} alt="App TPLN" loading="lazy" style={{ width: "100%", maxWidth: 220, height: "auto", borderRadius: 10, display: "block" }} />
                 ))}
               </div>
               </div>
@@ -632,21 +629,6 @@ export function EcosystemSection() {
                       </ul>
                     </div>
                   )}
-                  {pillar === "coachings" && (
-                    <div
-                      style={{
-                        marginTop: 32,
-                        borderRadius: 16,
-                        overflow: "hidden",
-                      }}
-                    >
-                      <img
-                        src="/images/ecosystem/tpln-section2-2.png"
-                        alt="TPLN"
-                        style={{ width: "100%", height: "auto", display: "block", borderRadius: 16 }}
-                      />
-                    </div>
-                  )}
                 </div>
               );
             })}
@@ -683,9 +665,11 @@ export function EcosystemSection() {
                           display: "grid",
                           gridTemplateColumns: "repeat(3, 180px)",
                           gap: 16,
+                          transform: "matrix(0.92, -0.09, 0.18, 0.88, -20, 10)",
+                          transformOrigin: "0 0",
                         }}
                       >
-                        {LEARNING_TILES.slice(0, 6).map((t) => (
+                        {MOBILE_LEARNING_TILES.map((t) => (
                           <div
                             key={t.src}
                             style={{
@@ -803,15 +787,9 @@ export function EcosystemSection() {
                     }}
                   >
                     {pillar === "coachings" ? (
-                      <div style={{ display: "flex", flexDirection: "column", gap: 12, padding: "12px 16px", width: "100%" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 10, width: "100%" }}>
-                          <span style={{ width: 8, height: 8, borderRadius: "50%", background: "oklch(0.5 0.15 260)", flexShrink: 0 }} />
-                          <img src="/images/ecosystem/tpln-section2-1.png" alt="" loading="lazy" style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }} />
-                        </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: 10, width: "100%" }}>
-                          <span style={{ width: 8, height: 8, borderRadius: "50%", background: "oklch(0.5 0.15 260)", flexShrink: 0 }} />
-                          <img src="/images/ecosystem/tpln-section2-2.png" alt="" loading="lazy" style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }} />
-                        </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 16, padding: "20px 24px", width: "100%" }}>
+                        <img src="/images/ecosystem/tpln-section2-1.png" alt="" loading="lazy" style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }} />
+                        <img src="/images/ecosystem/tpln-section2-2.png" alt="" loading="lazy" style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }} />
                       </div>
                     ) : pillar === "community" ? (
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "0 16px", width: "100%" }}>
@@ -820,12 +798,9 @@ export function EcosystemSection() {
                         </video>
                       </div>
                     ) : (
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, padding: "0 20px", width: "100%" }}>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, padding: "0 20px", width: "100%", justifyItems: "center" }}>
                         {["tpln-section4-1.png","tpln-section4-2.png","tpln-section4-3.png","tpln-section4-4.png"].map((f) => (
-                          <div key={f} style={{ display: "flex", alignItems: "flex-start", gap: 6 }}>
-                            <span style={{ width: 7, height: 7, borderRadius: "50%", background: "oklch(0.5 0.15 260)", flexShrink: 0, marginTop: 4 }} />
-                            <img src={`/images/ecosystem/${f}`} alt="App TPLN" loading="lazy" style={{ width: "100%", maxWidth: 80, height: "auto", borderRadius: 8, display: "block" }} />
-                          </div>
+                          <img key={f} src={`/images/ecosystem/${f}`} alt="App TPLN" loading="lazy" style={{ width: "100%", maxWidth: 80, height: "auto", borderRadius: 8, display: "block" }} />
                         ))}
                       </div>
                     )}
