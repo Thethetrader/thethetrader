@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRightIcon, StarIcon } from "./icons";
 
-const WORDS = ["Trading", "Bourse", "Crypto"] as const;
+const WORDS = ["bruit.", "hasard."] as const;
 const VISUALS = [
   { key: "trading", src: "/images/hero/hero-chrome-trading@2x.webp" },
   { key: "stocks", src: "/images/hero/hero-chrome-stocks@2x.webp" },
@@ -202,7 +202,39 @@ export function HeroSection({ onOpenAuth }: { onOpenAuth?: () => void }) {
             }}
           >
             Trader avec précision.<br />
-            Sans bruit. Sans hasard.
+            Sans{" "}
+            <span
+              style={{
+                display: "inline-grid",
+                gridTemplateColumns: "auto",
+                gridTemplateRows: "76.8px",
+                minHeight: 76.8,
+                overflow: "hidden",
+                verticalAlign: "bottom",
+              }}
+            >
+              {WORDS.map((word, idx) => {
+                const isActive = idx === activeIdx;
+                return (
+                  <span
+                    key={word}
+                    style={{
+                      gridArea: "1 / 1",
+                      lineHeight: "64px",
+                      opacity: isActive ? 1 : 0,
+                      transform: isActive ? "translateY(0)" : "translateY(57.6px)",
+                      transition: isActive
+                        ? "opacity 0.4s, transform 0.4s"
+                        : "opacity 0.3s, transform 0s 0.3s",
+                      color: "oklch(0.21 0.006 285.885)",
+                      fontWeight: 600,
+                    }}
+                  >
+                    {word}
+                  </span>
+                );
+              })}
+            </span>
           </h1>
 
           <p
