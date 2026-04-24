@@ -115,24 +115,24 @@ const COPY: Record<
 const PILLARS: Pillar[] = ["learning", "coachings", "community", "resources"];
 
 const LEARNING_TILES: { src: string; kind: "img" | "video"; poster?: string }[] = [
-  { src: "/images/hero/hero-tpln-1.png", kind: "img" },
-  { src: "/images/hero/hero-mobile-1.png", kind: "img" },
-  { src: "/images/hero/hero-tpln-2.png", kind: "img" },
-  { src: "/images/hero/hero-mobile-2.png", kind: "img" },
-  { src: "/images/hero/hero-tpln-3.png", kind: "img" },
-  { src: "/images/hero/hero-mobile-3.png", kind: "img" },
+  { src: "/images/hero/hero-tpln-1.webp", kind: "img" },
+  { src: "/images/hero/hero-mobile-1.webp", kind: "img" },
+  { src: "/images/hero/hero-tpln-2.webp", kind: "img" },
+  { src: "/images/hero/hero-mobile-2.webp", kind: "img" },
+  { src: "/images/hero/hero-tpln-3.webp", kind: "img" },
+  { src: "/images/hero/hero-mobile-3.webp", kind: "img" },
   { src: "/images/hero/hero-tpln.mov", kind: "video" },
-  { src: "/images/hero/hero-tpln-1.png", kind: "img" },
-  { src: "/images/hero/hero-mobile-1.png", kind: "img" },
+  { src: "/images/hero/hero-tpln-1.webp", kind: "img" },
+  { src: "/images/hero/hero-mobile-1.webp", kind: "img" },
 ];
 
 const MOBILE_LEARNING_TILES: { src: string; kind: "img" | "video" }[] = [
-  { src: "/images/hero/hero-tpln-1.png", kind: "img" },
-  { src: "/images/hero/hero-mobile-1.png", kind: "img" },
+  { src: "/images/hero/hero-tpln-1.webp", kind: "img" },
+  { src: "/images/hero/hero-mobile-1.webp", kind: "img" },
   { src: "/images/hero/hero-tpln.mov", kind: "video" },
-  { src: "/images/hero/hero-tpln-2.png", kind: "img" },
-  { src: "/images/hero/hero-mobile-2.png", kind: "img" },
-  { src: "/images/hero/hero-tpln-3.png", kind: "img" },
+  { src: "/images/hero/hero-tpln-2.webp", kind: "img" },
+  { src: "/images/hero/hero-mobile-2.webp", kind: "img" },
+  { src: "/images/hero/hero-tpln-3.webp", kind: "img" },
 ];
 
 function Tile({
