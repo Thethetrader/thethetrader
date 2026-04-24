@@ -53,7 +53,14 @@ export function SiteHeader({ onOpenAuth }: { onOpenAuth?: () => void }) {
               </a>
             </li>
 
-            <li className="landing-mobile-burger ml-auto items-center" style={{ display: "none" }}>
+            <li className="landing-mobile-burger ml-auto items-center gap-2" style={{ display: "none" }}>
+              <a
+                href="#trial"
+                className="landing-mobile-cta flex items-center justify-center rounded-lg text-[13px] font-medium text-white"
+                style={{ background: "#25D366", height: 34, padding: "0 12px" }}
+              >
+                Essayer Gratuitement
+              </a>
               <button
                 type="button"
                 aria-label="Ouvrir le menu"

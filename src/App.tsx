@@ -10,6 +10,11 @@ import UserLivestreamPage from './components/UserLivestreamPage';
 import PreviewCalendar from './components/PreviewCalendar';
 import { LandingPage } from './components/landing/LandingPage';
 import { ArticlePage } from './components/landing/ArticlePage';
+import { FaqPage } from './components/pages/FaqPage';
+import { ContactPage } from './components/pages/ContactPage';
+import { MentionsLegalesPage } from './components/pages/MentionsLegalesPage';
+import { ConfidentialitePage } from './components/pages/ConfidentialitePage';
+import { CgvPage } from './components/pages/CgvPage';
 import { supabase } from './lib/supabase';
 
 
@@ -1362,9 +1367,15 @@ const App = () => {
                 
   // Articles TPLN
   const articleMatch = window.location.pathname.match(/^\/articles\/([^/]+)\/?$/);
-  if (articleMatch) {
-    return <ArticlePage slug={articleMatch[1]} />;
-  }
+  if (articleMatch) return <ArticlePage slug={articleMatch[1]} />;
+
+  // Pages statiques
+  const p = window.location.pathname.replace(/\/$/, "");
+  if (p === "/faq") return <FaqPage />;
+  if (p === "/contact") return <ContactPage />;
+  if (p === "/mentions-legales") return <MentionsLegalesPage />;
+  if (p === "/confidentialite") return <ConfidentialitePage />;
+  if (p === "/CGV" || p === "/cgv") return <CgvPage />;
 
   // Si on est sur une page légale, l'afficher
   if (currentPage !== 'home') {

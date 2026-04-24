@@ -112,6 +112,31 @@ export function ProblemSection() {
               </li>
             ))}
           </ul>
+
+          <a
+            href="#trial"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              marginTop: 32,
+              height: 44,
+              padding: "0 20px",
+              background: dark,
+              color: "#fff",
+              fontSize: 15,
+              fontWeight: 600,
+              letterSpacing: "-0.01em",
+              borderRadius: 10,
+              textDecoration: "none",
+              gap: 8,
+              transition: "opacity 0.15s",
+            }}
+            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.opacity = "0.85")}
+            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.opacity = "1")}
+          >
+            Je veux trader avec structure
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </a>
         </div>
       </section>
     </div>

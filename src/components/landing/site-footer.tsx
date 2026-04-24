@@ -4,23 +4,24 @@ const NAV_GROUPS = [
   {
     title: "Formations",
     links: [
-      { text: "Services", href: "#services" },
-      { text: "La plateforme", href: "#section-app" },
-      { text: "Prix", href: "#pricing" },
+      { text: "Services", href: "/#services" },
+      { text: "La plateforme", href: "/#services" },
+      { text: "Prix", href: "/#pricing" },
     ],
   },
   {
     title: "Accompagnement",
     links: [
-      { text: "Session 1:1", href: "#pricing" },
-      { text: "Réserver une session", href: "#" },
+      { text: "Session 1:1", href: "/#pricing" },
+      { text: "Réserver une session", href: "/contact/" },
     ],
   },
   {
     title: "À propos",
     links: [
-      { text: "TheTheTrader", href: "#about-thethetrader" },
-      { text: "Contact", href: "#" },
+      { text: "TheTheTrader", href: "/#about-thethetrader" },
+      { text: "Contact", href: "/contact/" },
+      { text: "FAQ", href: "/faq/" },
     ],
   },
 ];

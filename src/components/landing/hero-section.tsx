@@ -207,8 +207,7 @@ export function HeroSection({ onOpenAuth }: { onOpenAuth?: () => void }) {
               style={{
                 display: "inline-grid",
                 gridTemplateColumns: "auto",
-                gridTemplateRows: "76.8px",
-                minHeight: 76.8,
+                gridTemplateRows: "74px",
                 overflow: "hidden",
                 verticalAlign: "bottom",
               }}
@@ -220,12 +219,10 @@ export function HeroSection({ onOpenAuth }: { onOpenAuth?: () => void }) {
                     key={word}
                     style={{
                       gridArea: "1 / 1",
-                      lineHeight: "64px",
+                      lineHeight: "74px",
                       opacity: isActive ? 1 : 0,
-                      transform: isActive ? "translateY(0)" : "translateY(57.6px)",
-                      transition: isActive
-                        ? "opacity 0.4s, transform 0.4s"
-                        : "opacity 0.3s, transform 0s 0.3s",
+                      transform: isActive ? "translateY(0)" : "translateY(74px)",
+                      transition: "opacity 0.45s ease, transform 0.45s ease",
                       color: "oklch(0.21 0.006 285.885)",
                       fontWeight: 600,
                     }}
