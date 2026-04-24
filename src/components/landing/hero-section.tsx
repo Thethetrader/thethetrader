@@ -201,40 +201,8 @@ export function HeroSection({ onOpenAuth }: { onOpenAuth?: () => void }) {
               textAlign: "center",
             }}
           >
-            Apprenez à investir avec succès en{" "}
-            <span
-              style={{
-                display: "inline-grid",
-                gridTemplateColumns: "auto",
-                gridTemplateRows: "76.8px",
-                minHeight: 76.8,
-                paddingRight: 1.28,
-                overflow: "hidden",
-                verticalAlign: "bottom",
-              }}
-            >
-              {WORDS.map((word, idx) => {
-                const isActive = idx === activeIdx;
-                return (
-                  <span
-                    key={word}
-                    style={{
-                      gridArea: "1 / 1",
-                      lineHeight: "64px",
-                      opacity: isActive ? 1 : 0,
-                      transform: isActive ? "translateY(0)" : "translateY(57.6px)",
-                      transition: isActive
-                        ? "opacity 0.4s, transform 0.4s"
-                        : "opacity 0.3s, transform 0s 0.3s",
-                      color: "oklch(0.21 0.006 285.885)",
-                      fontWeight: 600,
-                    }}
-                  >
-                    {word}
-                  </span>
-                );
-              })}
-            </span>
+            Trader avec précision.<br />
+            Sans bruit. Sans hasard.
           </h1>
 
           <p
