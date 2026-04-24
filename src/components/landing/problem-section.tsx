@@ -27,10 +27,11 @@ export function ProblemSection() {
           background:
             "radial-gradient(120% 100% at 100% 0%, rgba(255, 82, 165, 0.10) 0%, rgba(255,255,255,0) 60%), oklch(0.99 0.002 286)",
           border: "1px solid oklch(0.92 0.004 286.32)",
-          padding: "48px 56px",
+          padding: "48px 40px",
+          minHeight: 360,
           display: "grid",
           gridTemplateColumns: "1fr 1px 1fr",
-          gap: "0 48px",
+          gap: "0 40px",
           alignItems: "start",
         }}
       >
