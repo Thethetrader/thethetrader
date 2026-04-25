@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
   ChatBubbleIcon,
@@ -128,11 +128,14 @@ const LEARNING_TILES: { src: string; kind: "img" | "video"; poster?: string }[] 
 
 const MOBILE_LEARNING_TILES: { src: string; kind: "img" | "video" }[] = [
   { src: "/images/hero/hero-tpln-1.webp", kind: "img" },
+  { src: "/images/hero/hero-mobile-3.webp", kind: "img" },
+  { src: "/images/hero/hero-tpln-2.webp", kind: "img" },
   { src: "/images/hero/hero-mobile-1.webp", kind: "img" },
   { src: "/images/hero/hero-tpln.mov", kind: "video" },
-  { src: "/images/hero/hero-tpln-2.webp", kind: "img" },
   { src: "/images/hero/hero-mobile-2.webp", kind: "img" },
   { src: "/images/hero/hero-tpln-3.webp", kind: "img" },
+  { src: "/images/ecosystem/tpln-section2-1.webp", kind: "img" },
+  { src: "/images/ecosystem/tpln-section4-1.webp", kind: "img" },
 ];
 
 function Tile({
@@ -343,9 +346,53 @@ function CenteredImageVisual({
   );
 }
 
+function Lightbox({ src, kind, onClose }: { src: string; kind: "img" | "video"; onClose: () => void }) {
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed", inset: 0, zIndex: 9999,
+        background: "rgba(0,0,0,0.85)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        padding: 16,
+        backdropFilter: "blur(6px)",
+      }}
+    >
+      <button
+        onClick={onClose}
+        style={{
+          position: "absolute", top: 16, right: 16,
+          width: 36, height: 36, borderRadius: "50%",
+          background: "rgba(255,255,255,0.15)",
+          border: "none", cursor: "pointer",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: 20, color: "#fff",
+        }}
+      >×</button>
+      {kind === "video" ? (
+        <video
+          autoPlay loop muted playsInline
+          onClick={(e) => e.stopPropagation()}
+          style={{ maxWidth: "100%", maxHeight: "90vh", borderRadius: 12, display: "block" }}
+        >
+          <source src={src} type="video/mp4" />
+        </video>
+      ) : (
+        <img
+          src={src}
+          alt=""
+          onClick={(e) => e.stopPropagation()}
+          style={{ maxWidth: "100%", maxHeight: "90vh", borderRadius: 12, objectFit: "contain", display: "block" }}
+        />
+      )}
+    </div>
+  );
+}
+
 export function EcosystemSection() {
   const copyRefs = useRef<Array<HTMLDivElement | null>>([]);
   const visualRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const [lightbox, setLightbox] = useState<{ src: string; kind: "img" | "video" } | null>(null);
 
   useEffect(() => {
     let raf = 0;
@@ -394,6 +441,8 @@ export function EcosystemSection() {
   }, []);
 
   return (
+    <>
+    {lightbox && <Lightbox src={lightbox.src} kind={lightbox.kind} onClose={() => setLightbox(null)} />}
     <section
       id="services"
       className="ecosystem"
@@ -462,10 +511,10 @@ export function EcosystemSection() {
               />
               <div
                 ref={(el) => { visualRefs.current[1] = el; }}
-                style={{ ...baseVisualStyle("coachings", "101%"), display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16, padding: 32, overflowY: "auto" }}
+                style={{ ...baseVisualStyle("coachings", "101%"), display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16, padding: 32, overflow: "hidden" }}
               >
-                <img src="/images/ecosystem/tpln-section2-1.png" alt="TPLN" loading="lazy" style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }} />
-                <img src="/images/ecosystem/tpln-section2-2.png" alt="TPLN" loading="lazy" style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }} />
+                <img src="/images/ecosystem/tpln-section2-1.webp" alt="TPLN" loading="lazy" style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }} />
+                <img src="/images/ecosystem/tpln-section2-2.webp" alt="TPLN" loading="lazy" style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }} />
               </div>
               <div
                 ref={(el) => { visualRefs.current[2] = el; }}
@@ -479,7 +528,7 @@ export function EcosystemSection() {
                 ref={(el) => { visualRefs.current[3] = el; }}
                 style={{ ...baseVisualStyle("resources", "101%"), display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, padding: 32, alignContent: "center", justifyItems: "center" }}
               >
-                {["tpln-section4-1.png","tpln-section4-2.png","tpln-section4-3.png","tpln-section4-4.png"].map((f) => (
+                {["tpln-section4-1.webp","tpln-section4-2.webp","tpln-section4-3.webp","tpln-section4-4.webp"].map((f) => (
                   <img key={f} src={`/images/ecosystem/${f}`} alt="App TPLN" loading="lazy" style={{ width: "100%", maxWidth: 220, height: "auto", borderRadius: 10, display: "block" }} />
                 ))}
               </div>
@@ -650,71 +699,40 @@ export function EcosystemSection() {
                       overflow: "hidden",
                     }}
                   >
-                    <div
-                      style={{
-                        position: "relative",
-                        height: 380,
-                        overflow: "hidden",
-                      }}
-                    >
-                      <div
-                        style={{
-                          position: "absolute",
-                          top: 20,
-                          left: -40,
-                          display: "grid",
-                          gridTemplateColumns: "repeat(3, 180px)",
-                          gap: 16,
-                          transform: "matrix(0.92, -0.09, 0.18, 0.88, -20, 10)",
-                          transformOrigin: "0 0",
-                        }}
-                      >
-                        {MOBILE_LEARNING_TILES.map((t) => (
-                          <div
-                            key={t.src}
-                            style={{
-                              width: 180,
-                              height: 101,
-                              borderRadius: 8,
-                              overflow: "hidden",
-                              background: "#fff",
-                            }}
-                          >
-                            {t.kind === "img" ? (
-                              <img
-                                src={t.src}
-                                alt=""
-                                width={180}
-                                height={101}
-                                loading="lazy"
-                                style={{
-                                  width: "100%",
-                                  height: "100%",
-                                  objectFit: "cover",
-                                  display: "block",
-                                }}
-                              />
-                            ) : (
-                              <video
-                                autoPlay
-                                loop
-                                muted
-                                playsInline
-                                poster={t.poster}
-                                style={{
-                                  width: "100%",
-                                  height: "100%",
-                                  objectFit: "cover",
-                                  display: "block",
-                                }}
-                              >
-                                <source src={t.src} type={t.src.endsWith(".mov") ? "video/mp4" : "video/webm"} />
-                                {!t.src.endsWith(".mov") && <source src={t.src.replace(".webm", ".mp4")} type="video/mp4" />}
-                              </video>
-                            )}
+                    <div style={{ padding: "20px 0", display: "flex", flexDirection: "column", gap: 12, overflow: "hidden",
+                      WebkitMaskImage: "linear-gradient(to right, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%)",
+                      maskImage: "linear-gradient(to right, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%)",
+                    }}>
+                      <style>{`
+                        @keyframes slide-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+                        @keyframes slide-right { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+                      `}</style>
+                      {[
+                        { tiles: [MOBILE_LEARNING_TILES[0], MOBILE_LEARNING_TILES[1], MOBILE_LEARNING_TILES[2], MOBILE_LEARNING_TILES[3]], dir: "left", dur: "50s" },
+                        { tiles: [MOBILE_LEARNING_TILES[4], MOBILE_LEARNING_TILES[5], MOBILE_LEARNING_TILES[6], MOBILE_LEARNING_TILES[7]], dir: "right", dur: "60s" },
+                        { tiles: [MOBILE_LEARNING_TILES[8], MOBILE_LEARNING_TILES[0], MOBILE_LEARNING_TILES[4], MOBILE_LEARNING_TILES[2]], dir: "left", dur: "45s" },
+                      ].map((row, rowIdx) => (
+                        <div key={rowIdx} style={{ overflow: "hidden" }}>
+                          <div style={{
+                            display: "flex",
+                            gap: 12,
+                            width: "max-content",
+                            animation: `${row.dir === "left" ? "slide-left" : "slide-right"} ${row.dur} linear infinite`,
+                          }}>
+                            {[...row.tiles, ...row.tiles].map((t, i) => (
+                              <div key={i} onClick={() => setLightbox({ src: t.src, kind: t.kind })} style={{ width: 160, height: 90, borderRadius: 8, overflow: "hidden", background: "#fff", flexShrink: 0, cursor: "pointer" }}>
+                                {t.kind === "img" ? (
+                                  <img src={t.src} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                                ) : (
+                                  <video autoPlay loop muted playsInline style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}>
+                                    <source src={t.src} type="video/mp4" />
+                                  </video>
+                                )}
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
+                        </div>
+                      ))}
                     </div>
                     <div style={{ padding: "24px 24px 32px" }}>
                       <span
@@ -787,21 +805,30 @@ export function EcosystemSection() {
                     }}
                   >
                     {pillar === "coachings" ? (
-                      <div style={{ display: "flex", flexDirection: "column", gap: 16, padding: "20px 24px", width: "100%" }}>
-                        <img src="/images/ecosystem/tpln-section2-1.png" alt="" loading="lazy" style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }} />
-                        <img src="/images/ecosystem/tpln-section2-2.png" alt="" loading="lazy" style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }} />
+                      <div style={{ display: "flex", flexDirection: "column", gap: 12, padding: "4px 48px", width: "100%" }}>
+                        <img src="/images/ecosystem/tpln-section2-1.webp" alt="" loading="lazy" style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }} />
+                        <img src="/images/ecosystem/tpln-section2-2.webp" alt="" loading="lazy" style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }} />
                       </div>
                     ) : pillar === "community" ? (
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "0 16px", width: "100%" }}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "4px 16px", width: "100%" }}>
                         <video autoPlay loop muted playsInline style={{ width: "100%", height: "auto", borderRadius: 10, display: "block" }}>
                           <source src="/images/ecosystem/tpln-section3.mp4" type="video/mp4" />
                         </video>
                       </div>
                     ) : (
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, padding: "0 20px", width: "100%", justifyItems: "center" }}>
-                        {["tpln-section4-1.png","tpln-section4-2.png","tpln-section4-3.png","tpln-section4-4.png"].map((f) => (
-                          <img key={f} src={`/images/ecosystem/${f}`} alt="App TPLN" loading="lazy" style={{ width: "100%", maxWidth: 80, height: "auto", borderRadius: 8, display: "block" }} />
-                        ))}
+                      <div style={{
+                        overflow: "hidden", width: "100%", padding: "12px 0",
+                        WebkitMaskImage: "linear-gradient(to right, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%)",
+                        maskImage: "linear-gradient(to right, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%)",
+                      }}>
+                        <div style={{
+                          display: "flex", gap: 16, width: "max-content",
+                          animation: "slide-left 28s linear infinite",
+                        }}>
+                          {[..."tpln-section4-1.webp,tpln-section4-2.webp,tpln-section4-3.webp,tpln-section4-4.webp,tpln-section4-1.webp,tpln-section4-2.webp,tpln-section4-3.webp,tpln-section4-4.webp".split(",")].map((f, i) => (
+                            <img key={i} src={`/images/ecosystem/${f}`} alt="App TPLN" loading="lazy" onClick={() => setLightbox({ src: `/images/ecosystem/${f}`, kind: "img" })} style={{ width: 140, height: "auto", borderRadius: 12, display: "block", flexShrink: 0, cursor: "pointer" }} />
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -858,5 +885,6 @@ export function EcosystemSection() {
         </div>
       </div>
     </section>
+    </>
   );
 }

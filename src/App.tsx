@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import './index.css';
 import { LandingPage } from './components/landing/LandingPage';
 import { supabase } from './lib/supabase';
+import { useNotifications } from './hooks/use-notifications';
+import { usePWA } from './hooks/use-pwa';
+import { redirectToCheckout } from './utils/stripe';
 
 // Lazy-load everything that's not needed on the landing page
 const TradingPlatformShell = lazy(() => import('./components/generated/TradingPlatformShell'));
@@ -18,11 +21,7 @@ const ContactPage = lazy(() => import('./components/pages/ContactPage').then(m =
 const MentionsLegalesPage = lazy(() => import('./components/pages/MentionsLegalesPage').then(m => ({ default: m.MentionsLegalesPage })));
 const ConfidentialitePage = lazy(() => import('./components/pages/ConfidentialitePage').then(m => ({ default: m.ConfidentialitePage })));
 const CgvPage = lazy(() => import('./components/pages/CgvPage').then(m => ({ default: m.CgvPage })));
-
-
-import { useNotifications } from './hooks/use-notifications';
-import { usePWA } from './hooks/use-pwa';
-import { redirectToCheckout } from './utils/stripe';
+const ReserverPage = lazy(() => import('./components/pages/ReserverPage').then(m => ({ default: m.ReserverPage })));
 
 // FORCE DEPLOYMENT: 2025-01-13 04:25:00 - FIX OLD CONTENT
 
@@ -1372,7 +1371,8 @@ const App = () => {
   // Pages statiques
   const p = window.location.pathname.replace(/\/$/, "");
   if (p === "/faq") return <Suspense fallback={<div />}><FaqPage /></Suspense>;
-  if (p === "/contact") return <Suspense fallback={<div />}><ContactPage /></Suspense>;
+  if (p === "/contact") return <Suspense fallback={<div />}><ContactPage onOpenAuth={() => setShowAuthModal(true)} /></Suspense>;
+  if (p === "/reserver") return <Suspense fallback={<div />}><ReserverPage onOpenAuth={() => setShowAuthModal(true)} /></Suspense>;
   if (p === "/mentions-legales") return <Suspense fallback={<div />}><MentionsLegalesPage /></Suspense>;
   if (p === "/confidentialite") return <Suspense fallback={<div />}><ConfidentialitePage /></Suspense>;
   if (p === "/CGV" || p === "/cgv") return <Suspense fallback={<div />}><CgvPage /></Suspense>;

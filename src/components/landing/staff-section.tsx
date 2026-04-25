@@ -177,7 +177,9 @@ export function StaffSection() {
             <div className="flex" style={{ gap: 12, marginTop: 28 }}>
               {/* X / Twitter */}
               <a
-                href="#"
+                href="https://x.com/thethetrader"
+                target="_blank"
+                rel="noopener noreferrer"
                 style={{
                   width: 44,
                   height: 44,
@@ -193,7 +195,9 @@ export function StaffSection() {
               </a>
               {/* Instagram */}
               <a
-                href="#"
+                href="https://www.instagram.com/tradingpourlesnuls_/"
+                target="_blank"
+                rel="noopener noreferrer"
                 style={{
                   width: 44,
                   height: 44,
@@ -209,7 +213,9 @@ export function StaffSection() {
               </a>
               {/* TikTok */}
               <a
-                href="#"
+                href="https://www.tiktok.com/@tradingpourlesnuls_"
+                target="_blank"
+                rel="noopener noreferrer"
                 style={{
                   width: 44,
                   height: 44,

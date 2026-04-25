@@ -26,7 +26,7 @@ const PLANS: Plan[] = [
     slug: "ip",
     name: "L'ENVIRONNEMENT COMPLET TPLN",
     subtitle: "Méthode + Exécution + Transparence totale",
-    price: "\u20AC79",
+    price: "\u20AC69",
     period: "/ mois",
     badges: [{ label: "Recommandé", variant: "important" }],
     features: [
@@ -66,7 +66,7 @@ const PLANS: Plan[] = [
   {
     slug: "starter",
     name: "JOURNAL PRO",
-    price: "\u20AC29",
+    price: "\u20AC15",
     period: "/ mois",
     badges: [],
     features: [

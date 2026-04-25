@@ -56,7 +56,7 @@ export function HeroSection({ onOpenAuth }: { onOpenAuth?: () => void }) {
     <section
       className="hero relative overflow-hidden bg-white"
       style={{
-        padding: "180px 0 80px",
+        padding: "16px 0 80px",
         letterSpacing: "-0.01em",
       }}
     >
@@ -70,11 +70,11 @@ export function HeroSection({ onOpenAuth }: { onOpenAuth?: () => void }) {
           @keyframes floatE { 0%,100%{transform:translateY(0px) rotate(9deg)} 50%{transform:translateY(-12px) rotate(9deg)} }
         `}</style>
         {/* Bitcoin - left */}
-        <div style={{ position:"absolute", left:"3%", top:"18%", width:72, height:72, opacity:0.22, animation:"floatA 5s ease-in-out infinite" }}>
+        <div className="hero-float-btc" style={{ position:"absolute", left:"3%", top:"18%", width:72, height:72, opacity:0.22, animation:"floatA 5s ease-in-out infinite" }}>
           <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#F7931A"/><path d="M44.5 27.7c.6-4-2.5-6.2-6.7-7.6l1.4-5.5-3.3-.8-1.3 5.3-2.7-.7 1.3-5.3-3.3-.8-1.4 5.5-2.1-.5-4.5-1.1-.9 3.6s2.4.6 2.4.6c1.3.3 1.5 1.2 1.5 1.9l-1.5 6.1c.1 0 .2.1.4.1-.1 0-.3-.1-.4-.1l-2.1 8.5c-.2.4-.6 1.1-1.6.8 0 .1-2.4-.6-2.4-.6l-1.7 3.8 4.3 1.1 2.3.6-1.4 5.6 3.3.8 1.4-5.5 2.7.7-1.4 5.5 3.3.8 1.4-5.5c5.6 1.1 9.8.6 11.6-4.4 1.4-4-.1-6.4-3-7.9 2.2-.5 3.8-1.9 4.2-4.8zm-7.5 10.5c-1 4-7.7 1.8-9.9 1.3l1.8-7c2.2.5 9.2 1.6 8.1 5.7zm1-10.6c-.9 3.6-6.5 1.8-8.3 1.3l1.6-6.4c1.8.5 7.7 1.3 6.7 5.1z" fill="#fff"/></svg>
         </div>
         {/* Ethereum - right top */}
-        <div style={{ position:"absolute", right:"5%", top:"12%", width:60, height:60, opacity:0.20, animation:"floatB 6.5s ease-in-out infinite" }}>
+        <div className="hero-float-eth" style={{ position:"absolute", right:"5%", top:"12%", width:60, height:60, opacity:0.20, animation:"floatB 6.5s ease-in-out infinite" }}>
           <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#627EEA"/><path d="M32 10v16.5l13.9 6.2L32 10z" fill="#fff" fillOpacity=".6"/><path d="M32 10L18.1 32.7l13.9-6.2V10z" fill="#fff"/><path d="M32 44.1v9.9l14-19.4L32 44.1z" fill="#fff" fillOpacity=".6"/><path d="M32 54V44.1l-13.9-9.5L32 54z" fill="#fff"/><path d="M32 41.5l13.9-8.8L32 26.5v15z" fill="#fff" fillOpacity=".2"/><path d="M18.1 32.7L32 41.5V26.5L18.1 32.7z" fill="#fff" fillOpacity=".6"/></svg>
         </div>
         {/* Chart icon - left bottom */}
@@ -91,7 +91,7 @@ export function HeroSection({ onOpenAuth }: { onOpenAuth?: () => void }) {
         </div>
       </div>
 
-      {/* Colorflow animated gradient background */}
+      {/* Colorflow animated gradient background — chargé après hydratation */}
       <div
         aria-hidden="true"
         className="absolute inset-0 overflow-hidden"
@@ -101,16 +101,19 @@ export function HeroSection({ onOpenAuth }: { onOpenAuth?: () => void }) {
           className="w-full h-full"
           style={{ minHeight: "100%", aspectRatio: "16 / 9", background: "rgb(252, 252, 252)" }}
         >
-          <iframe
-            src={COLORFLOW_SRC}
-            title="hero background"
-            width={800}
-            height={600}
-            frameBorder={0}
-            referrerPolicy="no-referrer"
-            sandbox="allow-scripts"
-            style={{ width: "100%", height: "100%", border: 0, display: "block" }}
-          />
+          {typeof window !== "undefined" && (
+            <iframe
+              src={COLORFLOW_SRC}
+              title="hero background"
+              width={800}
+              height={600}
+              frameBorder={0}
+              referrerPolicy="no-referrer"
+              sandbox="allow-scripts"
+              loading="lazy"
+              style={{ width: "100%", height: "100%", border: 0, display: "block" }}
+            />
+          )}
         </div>
       </div>
 

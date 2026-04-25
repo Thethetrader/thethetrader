@@ -1,4 +1,4 @@
-import { InstagramIcon, TiktokIcon } from "./icons";
+import { InstagramIcon, TiktokIcon, XIcon } from "./icons";
 
 const NAV_GROUPS = [
   {
@@ -13,7 +13,7 @@ const NAV_GROUPS = [
     title: "Accompagnement",
     links: [
       { text: "Session 1:1", href: "/#pricing" },
-      { text: "Réserver une session", href: "/contact/" },
+      { text: "Réserver une session", href: "/reserver/" },
     ],
   },
   {
@@ -27,8 +27,9 @@ const NAV_GROUPS = [
 ];
 
 const SOCIAL_LINKS = [
-  { href: "#", label: "Instagram TPLN", Icon: InstagramIcon },
-  { href: "#", label: "TikTok TPLN", Icon: TiktokIcon },
+  { href: "https://www.instagram.com/tradingpourlesnuls_/", label: "Instagram TPLN", Icon: InstagramIcon },
+  { href: "https://www.tiktok.com/@tradingpourlesnuls_", label: "TikTok TPLN", Icon: TiktokIcon },
+  { href: "https://x.com/thethetrader", label: "X TPLN", Icon: XIcon },
 ];
 
 const LEGAL_LINKS = [

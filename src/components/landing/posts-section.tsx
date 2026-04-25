@@ -10,7 +10,7 @@ type Post = {
 const POSTS: Post[] = [
   {
     href: "/articles/strategie-vs-execution",
-    image: "/images/posts/businessman.webp",
+    image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=500&fit=crop&q=80",
     alt: "Stratégie vs exécution",
     time: "5 min",
     category: "Mindset",
@@ -18,7 +18,7 @@ const POSTS: Post[] = [
   },
   {
     href: "/articles/journal-de-trading",
-    image: "/images/posts/compass-and-chess.webp",
+    image: "https://images.unsplash.com/photo-1770681381576-f1fdceb2ea01?w=800&h=500&fit=crop&q=80",
     alt: "Journal de trading",
     time: "6 min",
     category: "Méthode",
@@ -26,7 +26,7 @@ const POSTS: Post[] = [
   },
   {
     href: "/articles/biais-cognitifs-trading",
-    image: "/images/posts/debuter-investissement.webp",
+    image: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&h=500&fit=crop&q=80",
     alt: "Biais cognitifs",
     time: "5 min",
     category: "Psychologie",
@@ -34,7 +34,7 @@ const POSTS: Post[] = [
   },
   {
     href: "/articles/constance-et-marches",
-    image: "/images/posts/petrole.webp",
+    image: "https://images.unsplash.com/photo-1639754390580-2e7437267698?w=800&h=500&fit=crop&q=80",
     alt: "Constance trading",
     time: "4 min",
     category: "Mindset",
@@ -42,7 +42,7 @@ const POSTS: Post[] = [
   },
   {
     href: "/articles/checklist-pre-trade",
-    image: "/images/posts/compass-and-chess.webp",
+    image: "https://images.unsplash.com/photo-1621264448270-9ef00e88a935?w=800&h=500&fit=crop&q=80",
     alt: "Checklist pré-trade",
     time: "5 min",
     category: "Méthode",
@@ -50,7 +50,7 @@ const POSTS: Post[] = [
   },
   {
     href: "/articles/gerer-ses-emotions-en-trading",
-    image: "/images/posts/livret-a.webp",
+    image: "https://images.unsplash.com/photo-1645226880663-81561dcab0ae?w=800&h=500&fit=crop&q=80",
     alt: "Émotions en trading",
     time: "5 min",
     category: "Psychologie",

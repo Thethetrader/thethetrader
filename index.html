@@ -30,11 +30,16 @@
     <link rel="preconnect" href="https://colorflow.ls.graphics">
     <link rel="dns-prefetch" href="https://colorflow.ls.graphics">
 
-    <!-- Google Fonts: chargement async pour ne pas bloquer l'affichage (améliore FCP/LCP) -->
+    <!-- Google Fonts: Poppins uniquement, poids essentiels -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Sora:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Sora:wght@400;500;600;700&display=swap"></noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"></noscript>
+    <!-- Preconnect Unsplash CDN (images articles) -->
+    <link rel="preconnect" href="https://images.unsplash.com">
+    <link rel="dns-prefetch" href="https://images.unsplash.com">
+    <!-- Preload LCP image -->
+    <link rel="preload" as="image" href="/faviconsansfond.webp" type="image/webp" fetchpriority="high">
     <link rel="icon" type="image/jpeg" href="/FAVICONcarre.jpg">
     <link rel="apple-touch-icon" sizes="180x180" href="/FAVICONcarre.jpg">
     <link rel="manifest" href="/manifest.json">

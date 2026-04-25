@@ -26,6 +26,23 @@
 
 /* --- MOBILE (≤768px) ----------------------------------------------------- */
 @media (max-width: 768px) {
+  /* Push BTC and ETH icons lower on mobile */
+  .hero-float-btc { top: 60% !important; }
+  .hero-float-eth { top: 70% !important; }
+
+  /* Logo wrapper: centered with equal top/bottom spacing on mobile */
+  .landing-logo-wrapper {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+    position: relative !important;
+    z-index: 20 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+  .landing-logo-wrapper img {
+    width: min(380px, 90vw) !important;
+  }
   /* ---- Global section padding / container ---- */
   .hero,
   .partners,
@@ -63,6 +80,7 @@
     position: relative !important;
     padding: 0 !important;
     min-height: 100vh !important;
+    margin-top: -235px !important;
   }
   /* Position the relative container to fill hero */
   .hero > div.relative {
@@ -77,7 +95,7 @@
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    z-index: 10 !important;
+    z-index: 30 !important;
   }
   /* Text overlay positioned on background */
   .hero .flex.flex-col.items-center.text-center {
@@ -183,32 +201,41 @@
     padding: 0 16px !important;
   }
   .reviews .reviews-grid {
-    grid-template-columns: 1fr !important;
-    gap: 16px !important;
-    height: auto !important;
-    overflow: visible !important;
-    -webkit-mask-image: none !important;
-    mask-image: none !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    height: 520px !important;
+    overflow: hidden !important;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 60px, #000 calc(100% - 60px), transparent 100%) !important;
+    mask-image: linear-gradient(to bottom, transparent 0, #000 60px, #000 calc(100% - 60px), transparent 100%) !important;
   }
   .reviews .reviews-grid > div {
-    overflow: visible !important;
+    overflow: hidden !important;
+  }
+  /* Hide 3rd column on mobile */
+  .reviews .reviews-grid > div:nth-child(3) {
+    display: none !important;
   }
   .reviews .reviews-marquee-col {
     display: flex !important;
     flex-direction: column !important;
-    gap: 16px !important;
-    animation: none !important;
-    transform: none !important;
+    gap: 12px !important;
+    animation-play-state: running !important;
   }
-  /* Show only the 6 unique reviews (first half of duplicated set) */
+  .reviews .reviews-marquee-col--1 {
+    animation: reviews-scroll-up 20s linear infinite !important;
+  }
+  .reviews .reviews-marquee-col--2 {
+    animation: reviews-scroll-down 16s linear infinite !important;
+  }
+  /* Show all duplicated reviews for seamless loop */
   .reviews .reviews-marquee-col > :nth-child(n+3) {
-    display: none !important;
-  }
-  /* Allow full review text on mobile */
-  .reviews .reviews-marquee-col > div p {
-    -webkit-line-clamp: unset !important;
     display: block !important;
-    overflow: visible !important;
+  }
+  /* Clamp review text on mobile */
+  .reviews .reviews-marquee-col > div p {
+    -webkit-line-clamp: 5 !important;
+    display: -webkit-box !important;
+    overflow: hidden !important;
   }
   .reviews h2 {
     font-size: 36px !important;
@@ -395,7 +422,8 @@
 
   /* Restore desktop hero headline animation styles */
   .hero {
-    padding: 180px 0 80px !important;
+    padding: 0px 0 20px !important;
+    margin-top: -60px !important;
     min-height: 780px !important;
   }
   .hero .hero-headline {
@@ -417,6 +445,32 @@
     line-height: 64px !important;
     min-width: 130px !important;
   }
+
+  /* Reviews marquee animation */
+  .reviews .reviews-marquee-col {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    will-change: transform;
+  }
+  .reviews .reviews-marquee-col--1 {
+    animation: reviews-scroll-up 22s linear infinite;
+  }
+  .reviews .reviews-marquee-col--2 {
+    animation: reviews-scroll-down 18s linear infinite;
+  }
+  .reviews .reviews-marquee-col--3 {
+    animation: reviews-scroll-up 26s linear infinite;
+  }
+}
+
+@keyframes reviews-scroll-up {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-50%); }
+}
+@keyframes reviews-scroll-down {
+  from { transform: translateY(-50%); }
+  to   { transform: translateY(0); }
 }
 
 @media (max-width: 768px) {
@@ -442,6 +496,15 @@
   }
   .problem-section-inner > div:nth-child(2) {
     display: none;
+  }
+
+  /* CTA block mobile */
+  .cta-block-wrapper {
+    padding: 0 16px 40px !important;
+  }
+  .cta-block-inner {
+    padding: 32px 20px !important;
+    border-radius: 16px !important;
   }
 }
 

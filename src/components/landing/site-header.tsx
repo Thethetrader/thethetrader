@@ -48,7 +48,7 @@ export function SiteHeader({ onOpenAuth }: { onOpenAuth?: () => void }) {
         >
           <ul className="mx-auto flex h-full max-w-[1080px] items-center px-5">
             <li className="flex h-9 items-center pr-3">
-              <a href="/" className="flex items-center" aria-label="Alti Trading — Accueil" style={{ background: "#ffffff", padding: "12px 16px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", maxWidth: "100%", maxHeight: "100%" }}>
+              <a href="/" className="flex items-center" aria-label="Alti Trading — Accueil" style={{ background: "#ffffff", padding: "4px 8px", borderRadius: "6px", display: "flex", alignItems: "center", justifyContent: "center", maxWidth: "100%", maxHeight: "100%" }}>
                 <img src="/TPLNFAVICONFINAL.png" alt="Alti Trading" width={96} height={96} style={{ display: "block", maxWidth: "48px", maxHeight: "48px" }} />
               </a>
             </li>
@@ -57,7 +57,7 @@ export function SiteHeader({ onOpenAuth }: { onOpenAuth?: () => void }) {
               <a
                 href="#trial"
                 className="landing-mobile-cta flex items-center justify-center rounded-lg text-[13px] font-medium text-white"
-                style={{ background: "#25D366", height: 34, padding: "0 12px" }}
+                style={{ background: "#1a6b2a", height: 34, padding: "0 12px" }}
               >
                 Essayer Gratuitement
               </a>
@@ -108,12 +108,12 @@ export function SiteHeader({ onOpenAuth }: { onOpenAuth?: () => void }) {
               <a
                 href="#trial"
                 className="trial-button flex h-8 items-center gap-1 rounded-lg border border-transparent px-2.5 text-[13px] font-medium text-white transition-all duration-150 ease-[cubic-bezier(0.4,0,0.2,1)]"
-                style={{ background: "#25D366" }}
+                style={{ background: "#1a6b2a" }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = "#1ebe5d";
+                  (e.currentTarget as HTMLElement).style.background = "#155722";
                 }}
                 onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = "#25D366";
+                  (e.currentTarget as HTMLElement).style.background = "#1a6b2a";
                 }}
               >
                 Essayer Gratuitement
@@ -121,7 +121,8 @@ export function SiteHeader({ onOpenAuth }: { onOpenAuth?: () => void }) {
               <button
                 type="button"
                 onClick={onOpenAuth}
-                className="flex h-8 items-center gap-1 rounded-lg border border-[oklch(0.92_0.004_286.32)] bg-white px-2.5 text-[13px] font-medium text-foreground transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-muted"
+                className="flex h-8 items-center gap-1 rounded-lg border px-2.5 text-[13px] font-medium transition-colors duration-150"
+                style={{ borderColor: "oklch(0.92 0.004 286.32)", background: "#fff", color: "oklch(0.141 0.005 285.823)" }}
               >
                 Se connecter
               </button>
@@ -161,7 +162,7 @@ export function SiteHeader({ onOpenAuth }: { onOpenAuth?: () => void }) {
               <a
                 href="#trial"
                 className="flex h-10 items-center justify-center rounded-md text-[14px] font-medium text-white"
-                style={{ background: "#25D366" }}
+                style={{ background: "#1a6b2a" }}
                 onClick={() => setMobileOpen(false)}
               >
                 Essayer Gratuitement

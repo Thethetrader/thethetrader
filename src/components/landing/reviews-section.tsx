@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 type Review = {
   initials: string;
   name: string;
@@ -7,59 +9,118 @@ type Review = {
 
 const REVIEWS: Review[] = [
   {
-    initials: "CL",
-    name: "Clément",
+    initials: "TM",
+    name: "Thomas M.",
     stars: 5,
     body:
-      "Débutant en trading et ayant prit la formation Starter pour découvrir ce monde, j'ai été agréablement surpris de voir à quel point il était facile d'apprendre et de progresser. Alti Trading propose des formations de qualité dont les notions sont très bien expliquées et facile à comprendre, même pour le commun des mortels. Le petit + : vous progressez à votre rythme!",
+      "L'Environnement Complet TPLN a tout changé pour moi. Suivre les sessions live 5j/semaine et voir chaque opportunité expliquée en temps réel, ça n'a rien à voir avec une formation classique. En 6 semaines j'ai enfin une routine de trading structurée. Les notifications via l'app sont ultra pratiques.",
   },
   {
-    initials: "AM",
-    name: "Abdraman Mbodou",
+    initials: "SB",
+    name: "Sarah B.",
+    stars: 5,
+    body:
+      "J'avais essayé plusieurs formations avant TPLN. Aucune ne montrait l'exécution réelle. Ici, chaque trade est expliqué en direct, avec le raisonnement derrière. Le journal multi-comptes est un vrai outil pro. Et l'accès direct au fondateur fait vraiment la différence — les réponses sont rapides et concrètes.",
+  },
+  {
+    initials: "KD",
+    name: "Kevin D.",
+    stars: 5,
+    body:
+      "J'ai commencé par la formule Méthode TPLN à 49€/mois pour apprendre à mon rythme. La structure est claire, le risk management est bien expliqué et j'ai rapidement compris comment construire une exécution disciplinée. Exactement ce qu'il me fallait avant de passer aux lives.",
+  },
+  {
+    initials: "ML",
+    name: "Marie L.",
     stars: 4,
     body:
-      "Le Day Trading Pro est une formation de qualité, le cours est très clair, concret et formidable. J'ai commencé le cours en ayant aucune connaissance mais actuellement j'envisage ouvrir un compte et commencer à investir. Je recommande à 100% ALTI TRADING à toute personne désirant investir en bourse.",
+      "La méthode TPLN m'a donné un cadre que je n'avais jamais eu. Avant j'ouvrais des positions au feeling. Maintenant j'ai des règles claires, une gestion du risque précise et je sais quoi chercher sur le graphique. Le journal inclus m'a permis de suivre mes progrès dès le premier mois.",
   },
   {
-    initials: "SV",
-    name: "sven",
+    initials: "RN",
+    name: "Romain N.",
     stars: 5,
     body:
-      "J'ai adoré la formation DTP! Clair et concis, les vidéos m'ont énormément appris et ouvert au monde du trading. Je dirais qu'il manque un tout petit peu de contenu en \"réel\", c'est-à-dire où l'on voit vraiment du trading qui est fait en live mais pour le reste c'est 5/5.",
+      "Le Journal Pro à 29€/mois est un outil indispensable. Je gère 3 comptes différents et la comparaison des performances m'a permis d'identifier exactement où je perdais de l'argent. L'analyse avancée est vraiment au niveau professionnel. Rapport qualité/prix imbattable.",
   },
   {
-    initials: "FT",
-    name: "Fayçal Tham",
+    initials: "AC",
+    name: "Alexia C.",
     stars: 5,
     body:
-      "Bonne expérience qui reprend tout depuis les bases. Je commence et n'ai donc pas encore de retour concret sur l'application des méthodes mais tous les éléments avancés me parlent et l'accent sur le risk management nous met en confiance.",
-  },
-  {
-    initials: "KY",
-    name: "Kylian",
-    stars: 5,
-    body:
-      "Une formation de qualité, un apprentissage complet, voilà des mots pour résumer cette formation. La formation est excellente car elle nous permet d'apprendre à notre rythme, revenir en permanence sur les différents modules. Des questionnaires nous permettent de valider nos apprentissages. De plus, les replays permettent de voir certains cas concrets directement sur un graphique.",
-  },
-  {
-    initials: "ER",
-    name: "ERIC",
-    stars: 5,
-    body:
-      "Cette formation est claire et synthétique. J'étais novice dans le trading et cette formation DTP m'a donné les outils pour comprendre l'analyse technique des actifs. Il manque de mon point de vue davantage d'exercices sur des exemples de trade en scalping et intraday.",
+      "Grâce au Journal Pro TPLN j'ai arrêté de me mentir sur mes résultats. Les données sont là, claires, sans filtre. Comptes illimités, analyse poussée — en 2 mois j'ai identifié mes patterns perdants et commencé à vraiment progresser. Je recommande à tous les traders qui veulent se voir évoluer.",
   },
 ];
 
-function ReviewCard({ review }: { review: Review }) {
+function ReviewModal({ review, onClose }: { review: Review; onClose: () => void }) {
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed", inset: 0, zIndex: 9999,
+        background: "rgba(0,0,0,0.5)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        padding: "20px",
+        backdropFilter: "blur(4px)",
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: "#fff",
+          borderRadius: 16,
+          padding: 28,
+          maxWidth: 480,
+          width: "100%",
+          boxShadow: "0 24px 48px rgba(0,0,0,0.18)",
+          position: "relative",
+        }}
+      >
+        <button
+          onClick={onClose}
+          style={{
+            position: "absolute", top: 16, right: 16,
+            width: 32, height: 32, borderRadius: "50%",
+            border: "1px solid oklch(0.92 0.004 286.32)",
+            background: "#fff", cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 18, color: "oklch(0.552 0.016 285.938)",
+          }}
+        >×</button>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+          <div style={{
+            width: 48, height: 48, borderRadius: "50%",
+            background: "oklch(0.967 0.001 286.375 / 0.5)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 15, fontWeight: 600, color: "oklch(0.141 0.005 285.823)",
+          }}>
+            {review.initials}
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <div style={{ fontSize: 15, fontWeight: 600, color: "oklch(0.141 0.005 285.823)" }}>{review.name}</div>
+            <img src={`/images/trustpilot/${review.stars}stars.svg`} alt={`${review.stars} étoiles`} style={{ height: 16, width: "auto" }} />
+          </div>
+        </div>
+        <p style={{ fontSize: 15, lineHeight: "22px", color: "oklch(0.141 0.005 285.823)", margin: 0 }}>
+          {review.body}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function ReviewCard({ review, onOpen }: { review: Review; onOpen: () => void }) {
   return (
     <div
       className="flex flex-col"
+      onClick={onOpen}
       style={{
         width: "100%",
         padding: 24,
         background: "oklch(1 0 0)",
         border: "1px solid oklch(0.92 0.004 286.32)",
         borderRadius: 12,
+        cursor: "pointer",
       }}
     >
       <div className="flex items-center" style={{ gap: 12, marginBottom: 16 }}>
@@ -119,7 +180,10 @@ function ReviewCard({ review }: { review: Review }) {
 }
 
 export function ReviewsSection() {
+  const [selected, setSelected] = useState<Review | null>(null);
   return (
+    <>
+    {selected && <ReviewModal review={selected} onClose={() => setSelected(null)} />}
     <section
       className="reviews"
       style={{ padding: "160px 0 100px", letterSpacing: "-0.01em" }}
@@ -177,7 +241,7 @@ export function ReviewsSection() {
               margin: 0,
             }}
           >
-            Des milliers d&apos;investisseurs nous{" "}
+            150 traders formés nous font{" "}
             <span
               style={{
                 backgroundImage:
@@ -187,7 +251,7 @@ export function ReviewsSection() {
                 color: "transparent",
               }}
             >
-              adorent
+              confiance
             </span>
           </h2>
           <p
@@ -203,8 +267,7 @@ export function ReviewsSection() {
               margin: 0,
             }}
           >
-            Comme eux, passez à l&apos;action. Rejoignez plus de 150 000 investisseurs heureux pour bâtir votre
-            avenir financier.
+            Comme eux, rejoins la communauté TPLN et commence à trader avec méthode, structure et discipline.
           </p>
         </div>
 
@@ -227,7 +290,7 @@ export function ReviewsSection() {
               <div key={colIdx} style={{ overflow: "hidden" }}>
                 <div className={`reviews-marquee-col reviews-marquee-col--${colIdx + 1}`}>
                   {[...colReviews, ...colReviews].map((r, i) => (
-                    <ReviewCard key={`${colIdx}-${i}`} review={r} />
+                    <ReviewCard key={`${colIdx}-${i}`} review={r} onOpen={() => setSelected(r)} />
                   ))}
                 </div>
               </div>
@@ -236,5 +299,6 @@ export function ReviewsSection() {
         </div>
       </div>
     </section>
+    </>
   );
 }

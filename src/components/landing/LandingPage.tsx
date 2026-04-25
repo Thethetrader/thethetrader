@@ -24,19 +24,30 @@ export function LandingPage({ onOpenAuth }: { onOpenAuth?: () => void }) {
       }}
     >
       <SiteHeader onOpenAuth={onOpenAuth} />
+      {/* Logo between header and hero */}
+      <div className="landing-logo-wrapper" style={{ display: "flex", justifyContent: "center", paddingTop: 8, paddingBottom: 0, background: "#fff", position: "relative", zIndex: 0 }}>
+        <img
+          src="/faviconsansfond.webp"
+          alt="TPLN"
+          fetchPriority="high"
+          loading="eager"
+          style={{ width: "min(800px, 90vw)", height: "auto", objectFit: "contain" }}
+        />
+      </div>
       <main>
         <HeroSection onOpenAuth={onOpenAuth} />
         <ProblemSection />
+
         <EcosystemSection />
         <ProgramsSection />
         <StaffSection />
         <ReviewsSection />
 
-        {/* Social proof CTA — highest conversion point */}
-        <div style={{ padding: "0 20px 40px", maxWidth: 1400, margin: "0 auto" }}>
-          <div style={{
+        {/* CTA rapide après reviews */}
+        <div className="cta-block-wrapper" style={{ padding: "0 20px 60px", maxWidth: 1400, margin: "0 auto" }}>
+          <div className="cta-block-inner" style={{
             borderRadius: 24,
-            background: "radial-gradient(120% 100% at 50% 0%, rgba(37, 211, 102, 0.10) 0%, rgba(255,255,255,0) 60%), oklch(0.99 0.002 286)",
+            background: "radial-gradient(120% 100% at 50% 0%, rgba(26, 107, 42, 0.08) 0%, rgba(255,255,255,0) 60%), oklch(0.99 0.002 286)",
             border: "1px solid oklch(0.92 0.004 286.32)",
             padding: "48px 40px",
             display: "flex",
@@ -55,43 +66,11 @@ export function LandingPage({ onOpenAuth }: { onOpenAuth?: () => void }) {
               Méthode. Journal. Sessions live. Tout ce qu'il faut pour trader avec rigueur — dès aujourd'hui.
             </p>
             <div style={{ display: "flex", gap: 12, marginTop: 28, flexWrap: "wrap", justifyContent: "center" }}>
-              <a
-                href="#trial"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  height: 48,
-                  padding: "0 24px",
-                  background: "#25D366",
-                  color: "#fff",
-                  fontSize: 16,
-                  fontWeight: 600,
-                  letterSpacing: "-0.01em",
-                  borderRadius: 12,
-                  textDecoration: "none",
-                  gap: 8,
-                }}
-              >
+              <a href="#trial" style={{ display: "inline-flex", alignItems: "center", height: 48, padding: "0 24px", background: "#1a6b2a", color: "#fff", fontSize: 16, fontWeight: 600, letterSpacing: "-0.01em", borderRadius: 12, textDecoration: "none", gap: 8 }}>
                 Démarrer gratuitement
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2.5 8h11M9.5 3.5L14 8l-4.5 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </a>
-              <a
-                href="#pricing"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  height: 48,
-                  padding: "0 24px",
-                  background: "#fff",
-                  color: "oklch(0.141 0.005 285.823)",
-                  fontSize: 16,
-                  fontWeight: 500,
-                  letterSpacing: "-0.01em",
-                  borderRadius: 12,
-                  textDecoration: "none",
-                  border: "1px solid oklch(0.92 0.004 286.32)",
-                }}
-              >
+              <a href="#pricing" style={{ display: "inline-flex", alignItems: "center", height: 48, padding: "0 24px", background: "#fff", color: "oklch(0.141 0.005 285.823)", fontSize: 16, fontWeight: 500, letterSpacing: "-0.01em", borderRadius: 12, textDecoration: "none", border: "1px solid oklch(0.92 0.004 286.32)" }}>
                 Voir les offres
               </a>
             </div>
