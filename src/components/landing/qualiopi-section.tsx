@@ -10,7 +10,7 @@ const STATS: Stat[] = [
     value: 95.1,
     label: "des apprenants affirment avoir atteint les objectifs et compétences visées à l'issue de leur formation.",
   },
-  { value: 98.4, label: "des apprenants recommandent les formations ALTI TRADING." },
+  { value: 98.4, label: "des apprenants recommandent les formations TPLN TRADING." },
 ];
 
 function AnimatedNumber({ value, play }: { value: number; play: boolean }) {
