@@ -4722,7 +4722,7 @@ export default function TradingPlatformShell() {
                     backgroundImage: 'none',
                     WebkitAppearance: 'none',
                     MozAppearance: 'none',
-                    background: 'rgb(75, 85, 99)',
+                    background: '#f3f4f6',
                     boxShadow: 'none',
                     textAlign: 'center',
                     lineHeight: '36px',
@@ -4901,7 +4901,7 @@ export default function TradingPlatformShell() {
                     } else if (totalPnL < 0) {
                       bgColor = 'calendar-cell-loss border-2'; // PnL négatif - rouge pâle (cases calendrier)
                     } else {
-                      bgColor = 'bg-blue-500/60 border-blue-400/50 text-gray-900'; // PnL = 0 (BE)
+                      bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0 (BE)
                     }
                   }
                 } else {
@@ -4923,7 +4923,7 @@ export default function TradingPlatformShell() {
                     } else if (totalPnL < 0) {
                       bgColor = 'calendar-cell-loss border-2'; // PnL négatif - rouge pâle (cases calendrier)
                     } else {
-                      bgColor = 'bg-blue-500/60 border-blue-400/50 text-gray-900'; // PnL = 0
+                      bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
                     }
                   }
                 }
@@ -5358,7 +5358,7 @@ export default function TradingPlatformShell() {
                           <div className={`text-xs py-1 rounded font-bold flex items-center justify-center ${weekData.wins > 0 ? 'bg-green-200/50 text-gray-900' : 'bg-transparent'}`} style={{ width: '36px', height: '24px' }}>
                             {weekData.wins > 0 ? `${weekData.wins}W` : ''}
                           </div>
-                          <div className={`text-xs py-1 rounded font-bold flex items-center justify-center ${weekData.losses > 0 ? 'bg-loss/70 text-gray-900' : 'bg-transparent'}`} style={{ width: '36px', height: '24px' }}>
+                          <div className={`text-xs py-1 rounded font-bold flex items-center justify-center ${weekData.losses > 0 ? 'bg-loss/70 text-white' : 'bg-transparent'}`} style={{ width: '36px', height: '24px' }}>
                             {weekData.losses > 0 ? `${weekData.losses}L` : ''}
                           </div>
                         </>
@@ -5563,7 +5563,7 @@ export default function TradingPlatformShell() {
                     </button>
                     <button
                       onClick={handleUsernameCancel}
-                      className="text-xs bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded text-gray-900"
+                      className="text-xs bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded text-white"
                     >
                       ✗
                     </button>
@@ -5731,7 +5731,7 @@ export default function TradingPlatformShell() {
                         </button>
                         <button
                           onClick={handleUsernameCancel}
-                          className="text-xs bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded text-gray-900"
+                          className="text-xs bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded text-white"
                         >
                           ✗
                         </button>
@@ -6216,8 +6216,8 @@ export default function TradingPlatformShell() {
                               <div className="flex items-center gap-3">
                                 <span className={`px-3 py-1 rounded-lg text-sm font-medium ${
                                   trade.status === 'WIN' ? 'bg-green-200/60 text-gray-900' :
-                                  trade.status === 'LOSS' ? 'bg-red-500 text-gray-900' :
-                                  'bg-blue-500 text-gray-900'
+                                  trade.status === 'LOSS' ? 'bg-red-500 text-white' :
+                                  'bg-blue-500 text-white'
                                 }`}>
                                   {trade.status}
                                 </span>
@@ -6559,13 +6559,13 @@ export default function TradingPlatformShell() {
                                 <div className="flex gap-2">
                                   <button
                                     onClick={handleStartStream}
-                                    className="flex-1 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-gray-900 font-medium"
+                                    className="flex-1 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-white font-medium"
                                   >
                                     🎥 Démarrer Stream
                                   </button>
                                   <button
                                     onClick={handleShareScreen}
-                                    className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-gray-900"
+                                    className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white"
                                   >
                                     📺 Partager Écran
                                   </button>
@@ -6657,7 +6657,7 @@ export default function TradingPlatformShell() {
                                       onClick={() => handleAddReaction(message.id)}
                                       className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
                                         (messageReactions[message.id]?.users || []).includes(user?.email || 'Anonymous')
-                                          ? 'bg-orange-500 text-gray-900 hover:bg-orange-600'
+                                          ? 'bg-orange-500 text-white hover:bg-orange-600'
                                           : 'bg-gray-200 text-gray-600 hover:bg-gray-300 hover:text-gray-900'
                                       }`}
                                     >
@@ -6686,7 +6686,7 @@ export default function TradingPlatformShell() {
                             />
                             <button
                               onClick={handleSendMessage}
-                              className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-gray-900 text-sm"
+                              className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-white text-sm"
                             >
                               Envoyer
                             </button>
@@ -6948,9 +6948,9 @@ export default function TradingPlatformShell() {
                                           isClosed && currentSignal?.status === 'WIN'
                                             ? 'bg-green-200/60 text-gray-900 border-2 border-green-200/50 shadow-lg' // Bouton WIN actif
                                             : isClosed && currentSignal?.status === 'LOSS'
-                                            ? 'bg-red-500 text-gray-900 border-2 border-red-400 shadow-lg' // Bouton LOSS actif
+                                            ? 'bg-red-500 text-white border-2 border-red-400 shadow-lg' // Bouton LOSS actif
                                             : isClosed && currentSignal?.status === 'BE'
-                                            ? 'bg-blue-500 text-gray-900 border-2 border-blue-400 shadow-lg' // Bouton BE actif
+                                            ? 'bg-blue-500 text-white border-2 border-blue-400 shadow-lg' // Bouton BE actif
                                             : 'bg-gray-300/30 text-gray-500 border border-gray-400/30' // Bouton neutre
                                         }`}>
                                           {isClosed && currentSignal?.status === 'WIN' ? '🟢 WIN' :
@@ -6991,7 +6991,7 @@ export default function TradingPlatformShell() {
                                   onClick={() => handleAddReaction(message.id)}
                                   className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
                                     (messageReactions[message.id]?.users || []).includes(user?.email || 'Anonymous')
-                                      ? 'bg-orange-500 text-gray-900 hover:bg-orange-600'
+                                      ? 'bg-orange-500 text-white hover:bg-orange-600'
                                       : 'bg-gray-200 text-gray-600 hover:bg-gray-300 hover:text-gray-900'
                                   }`}
                                 >
@@ -7047,13 +7047,13 @@ export default function TradingPlatformShell() {
                                 <div className="flex gap-2">
                                   <button
                                     onClick={handleStartStream}
-                                    className="flex-1 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-gray-900 font-medium"
+                                    className="flex-1 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-white font-medium"
                                   >
                                     🎥 Démarrer Stream
                                   </button>
                                   <button
                                     onClick={handleShareScreen}
-                                    className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-gray-900"
+                                    className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white"
                                   >
                                     📺 Partager Écran
                                   </button>
@@ -7146,7 +7146,7 @@ export default function TradingPlatformShell() {
                                     onClick={() => handleAddReaction(message.id)}
                                     className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
                                       (messageReactions[message.id]?.users || []).includes(user?.email || 'Anonymous')
-                                        ? 'bg-orange-500 text-gray-900 hover:bg-orange-600'
+                                        ? 'bg-orange-500 text-white hover:bg-orange-600'
                                         : 'bg-gray-200 text-gray-600 hover:bg-gray-300 hover:text-gray-900'
                                     }`}
                                   >
@@ -7174,7 +7174,7 @@ export default function TradingPlatformShell() {
                             />
                             <button
                               onClick={handleSendMessage}
-                              className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-gray-900 text-sm"
+                              className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-white text-sm"
                             >
                               Envoyer
                             </button>
@@ -7594,9 +7594,9 @@ export default function TradingPlatformShell() {
                                           isClosed && currentSignal?.status === 'WIN'
                                             ? 'bg-green-200/60 text-gray-900 border-2 border-green-200/50 shadow-lg' // Bouton WIN actif
                                             : isClosed && currentSignal?.status === 'LOSS'
-                                            ? 'bg-red-500 text-gray-900 border-2 border-red-400 shadow-lg' // Bouton LOSS actif
+                                            ? 'bg-red-500 text-white border-2 border-red-400 shadow-lg' // Bouton LOSS actif
                                             : isClosed && currentSignal?.status === 'BE'
-                                            ? 'bg-blue-500 text-gray-900 border-2 border-blue-400 shadow-lg' // Bouton BE actif
+                                            ? 'bg-blue-500 text-white border-2 border-blue-400 shadow-lg' // Bouton BE actif
                                             : 'bg-gray-300/30 text-gray-500 border border-gray-400/30' // Bouton neutre
                                         }`}>
                                           {isClosed && currentSignal?.status === 'WIN' ? '🟢 WIN' :
@@ -7637,7 +7637,7 @@ export default function TradingPlatformShell() {
                                   onClick={() => handleAddReaction(message.id)}
                                   className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
                                     (messageReactions[message.id]?.users || []).includes(user?.email || 'Anonymous')
-                                      ? 'bg-orange-500 text-gray-900 hover:bg-orange-600'
+                                      ? 'bg-orange-500 text-white hover:bg-orange-600'
                                       : 'bg-gray-200 text-gray-600 hover:bg-gray-300 hover:text-gray-900'
                                   }`}
                                 >
@@ -7693,13 +7693,13 @@ export default function TradingPlatformShell() {
                               <div className="flex gap-2">
                                 <button
                                   onClick={handleStartStream}
-                                  className="flex-1 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-gray-900 font-medium"
+                                  className="flex-1 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-white font-medium"
                                 >
                                   🎥 Démarrer Stream
                                 </button>
                                 <button
                                   onClick={handleShareScreen}
-                                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-gray-900"
+                                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white"
                                 >
                                   📺 Partager Écran
                                 </button>
@@ -7794,7 +7794,7 @@ export default function TradingPlatformShell() {
                                       onClick={() => handleAddReaction(message.id)}
                                       className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
                                         (messageReactions[message.id]?.users || []).includes(user?.email || 'Anonymous')
-                                          ? 'bg-orange-500 text-gray-900 hover:bg-orange-600'
+                                          ? 'bg-orange-500 text-white hover:bg-orange-600'
                                           : 'bg-gray-200 text-gray-600 hover:bg-gray-300 hover:text-gray-900'
                                       }`}
                                     >
@@ -7824,7 +7824,7 @@ export default function TradingPlatformShell() {
                           />
                           <button
                             onClick={handleSendMessage}
-                            className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-gray-900 text-sm"
+                            className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-white text-sm"
                           >
                             Envoyer
                           </button>
@@ -7913,7 +7913,7 @@ export default function TradingPlatformShell() {
                                   iframe.requestFullscreen();
                                 }
                               }}
-                              className="absolute top-4 right-4 z-10 bg-blue-600 hover:bg-blue-700 text-gray-900 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                              className="absolute top-4 right-4 z-10 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors"
                             >
                               📺 Plein écran
                             </button>
@@ -7974,7 +7974,7 @@ export default function TradingPlatformShell() {
                           />
                           <button
                             onClick={handleSendMessage}
-                            className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-gray-900 text-sm"
+                            className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-white text-sm"
                           >
                             Envoyer
                           </button>
@@ -8130,7 +8130,7 @@ export default function TradingPlatformShell() {
                     </button>
                     <button
                       onClick={() => setTradeData({...tradeData, type: 'SELL'})}
-                      className={`px-3 py-2 rounded text-sm ${tradeData.type === 'SELL' ? 'bg-red-600 text-gray-900' : 'bg-gray-200 text-gray-600'}`}
+                      className={`px-3 py-2 rounded text-sm ${tradeData.type === 'SELL' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-600'}`}
                     >
                       📉 SELL
                     </button>
@@ -8226,13 +8226,13 @@ export default function TradingPlatformShell() {
                     </button>
                     <button
                       onClick={() => setTradeData({...tradeData, status: 'LOSS'})}
-                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'LOSS' ? 'bg-red-600 text-gray-900' : 'bg-gray-200 text-gray-600'}`}
+                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'LOSS' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-600'}`}
                     >
                       ❌ LOSS
                     </button>
                     <button
                       onClick={() => setTradeData({...tradeData, status: 'BE'})}
-                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'BE' ? 'bg-blue-600 text-gray-900' : 'bg-gray-200 text-gray-600'}`}
+                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'BE' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}`}
                     >
                       ⚖️ BE
                     </button>
@@ -8352,7 +8352,7 @@ export default function TradingPlatformShell() {
                   </button>
                   <button
                     onClick={handleTradeSubmit}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-gray-900"
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white"
                   >
                     {editingTrade ? 'Modifier le trade' : 'Ajouter le trade'}
                   </button>
@@ -8422,7 +8422,7 @@ export default function TradingPlatformShell() {
                       <button
                         key={opt}
                         onClick={() => setFinSessionRespectPlan(opt)}
-                        className={`px-3 py-1.5 rounded text-sm ${finSessionRespectPlan === opt ? 'bg-blue-600 text-gray-900' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+                        className={`px-3 py-1.5 rounded text-sm ${finSessionRespectPlan === opt ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
                       >
                         {opt}
                       </button>
@@ -8443,7 +8443,7 @@ export default function TradingPlatformShell() {
                       <button
                         key={opt}
                         onClick={() => setFinSessionQualiteDecisions(opt)}
-                        className={`px-3 py-1.5 rounded text-sm ${finSessionQualiteDecisions === opt ? (opt === 'Émotion' ? 'bg-red-600 text-gray-900' : 'bg-blue-600 text-gray-900') : opt === 'Émotion' ? 'bg-gray-200 text-red-300 hover:bg-gray-300' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+                        className={`px-3 py-1.5 rounded text-sm ${finSessionQualiteDecisions === opt ? (opt === 'Émotion' ? 'bg-red-600 text-white' : 'bg-blue-600 text-white') : opt === 'Émotion' ? 'bg-gray-200 text-red-300 hover:bg-gray-300' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
                       >
                         {opt}
                       </button>
@@ -8465,7 +8465,7 @@ export default function TradingPlatformShell() {
                       <button
                         key={opt}
                         onClick={() => setFinSessionGestionErreur(opt)}
-                        className={`px-3 py-1.5 rounded text-sm ${finSessionGestionErreur === opt ? 'bg-blue-600 text-gray-900' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+                        className={`px-3 py-1.5 rounded text-sm ${finSessionGestionErreur === opt ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
                       >
                         {opt}
                       </button>
@@ -8486,7 +8486,7 @@ export default function TradingPlatformShell() {
                       <button
                         key={n}
                         onClick={() => setFinSessionPression(n)}
-                        className={`w-10 h-10 rounded text-sm font-bold ${finSessionPression === n ? 'bg-blue-600 text-gray-900' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+                        className={`w-10 h-10 rounded text-sm font-bold ${finSessionPression === n ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
                       >
                         {n}
                       </button>
@@ -8540,7 +8540,7 @@ export default function TradingPlatformShell() {
                       alert('Remplis les 4 stats pour enregistrer.');
                     }
                   }}
-                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-gray-900 text-sm"
+                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white text-sm"
                 >
                   Enregistrer ({finSessionSelectedSession})
                 </button>
@@ -8619,7 +8619,7 @@ export default function TradingPlatformShell() {
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
                         <span className={`px-2 py-1 rounded text-xs font-bold ${
-                          trade.type === 'BUY' ? 'bg-green-600 text-gray-900' : 'bg-red-600 text-gray-900'
+                          trade.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
                         }`}>
                           {trade.type}
                         </span>
@@ -8678,8 +8678,8 @@ export default function TradingPlatformShell() {
                         <span className="text-sm text-gray-500">Status:</span>
                         <span className={`ml-2 px-2 py-1 rounded text-xs ${
                           trade.status === 'WIN' ? 'bg-green-600 text-gray-900' :
-                          trade.status === 'LOSS' ? 'bg-red-600 text-gray-900' :
-                          'bg-blue-600 text-gray-900'
+                          trade.status === 'LOSS' ? 'bg-red-600 text-white' :
+                          'bg-blue-600 text-white'
                         }`}>
                           {trade.status}
                         </span>
@@ -8941,7 +8941,7 @@ export default function TradingPlatformShell() {
                             <div className="flex items-center justify-between mb-3">
                               <div className="flex items-center gap-3">
                                 <span className={`px-2 py-1 rounded text-xs font-bold ${
-                                  signal.type === 'BUY' ? 'bg-green-600 text-gray-900' : 'bg-red-600 text-gray-900'
+                                  signal.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
                                 }`}>
                                   {signal.type}
                                 </span>
@@ -8950,9 +8950,9 @@ export default function TradingPlatformShell() {
                               </div>
                               <span className={`px-2 py-1 rounded text-xs ${
                                 signal.status === 'WIN' ? 'bg-green-600 text-gray-900' :
-                                signal.status === 'LOSS' ? 'bg-red-600 text-gray-900' :
-                                signal.status === 'BE' ? 'bg-blue-600 text-gray-900' :
-                                'bg-yellow-600 text-gray-900'
+                                signal.status === 'LOSS' ? 'bg-red-600 text-white' :
+                                signal.status === 'BE' ? 'bg-blue-600 text-white' :
+                                'bg-yellow-600 text-white'
                               }`}>
                                 {signal.status}
                               </span>
@@ -9082,7 +9082,7 @@ export default function TradingPlatformShell() {
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-3">
                             <span className={`px-2 py-1 rounded text-xs font-bold ${
-                              trade.type === 'BUY' ? 'bg-green-600 text-gray-900' : 'bg-red-600 text-gray-900'
+                              trade.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
                             }`}>
                               {trade.type}
                             </span>
@@ -9092,9 +9092,9 @@ export default function TradingPlatformShell() {
                           <div className="flex items-center gap-2">
                             <span className={`px-2 py-1 rounded text-xs ${
                               trade.status === 'WIN' ? 'bg-green-600 text-gray-900' :
-                              trade.status === 'LOSS' ? 'bg-red-600 text-gray-900' :
-                              trade.status === 'BE' ? 'bg-blue-600 text-gray-900' :
-                              'bg-yellow-600 text-gray-900'
+                              trade.status === 'LOSS' ? 'bg-red-600 text-white' :
+                              trade.status === 'BE' ? 'bg-blue-600 text-white' :
+                              'bg-yellow-600 text-white'
                             }`}>
                               {trade.status}
                             </span>
@@ -9202,7 +9202,7 @@ export default function TradingPlatformShell() {
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-3">
                             <span className={`px-2 py-1 rounded text-xs font-bold ${
-                              signal.type === 'BUY' ? 'bg-green-600 text-gray-900' : 'bg-red-600 text-gray-900'
+                              signal.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
                             }`}>
                               {signal.type}
                             </span>
@@ -9211,9 +9211,9 @@ export default function TradingPlatformShell() {
                           </div>
                           <span className={`px-2 py-1 rounded text-xs ${
                             signal.status === 'WIN' ? 'bg-green-600 text-gray-900' :
-                            signal.status === 'LOSS' ? 'bg-red-600 text-gray-900' :
-                            signal.status === 'BE' ? 'bg-blue-600 text-gray-900' :
-                            'bg-yellow-600 text-gray-900'
+                            signal.status === 'LOSS' ? 'bg-red-600 text-white' :
+                            signal.status === 'BE' ? 'bg-blue-600 text-white' :
+                            'bg-yellow-600 text-white'
                           }`}>
                             {signal.status}
                           </span>
@@ -9373,7 +9373,7 @@ export default function TradingPlatformShell() {
                     e.stopPropagation();
                     resetImageView();
                   }}
-                  className="bg-blue-500/50 hover:bg-blue-500/70 text-gray-900 px-3 py-1 rounded text-sm"
+                  className="bg-blue-500/50 hover:bg-blue-500/70 text-white px-3 py-1 rounded text-sm"
                 >
                   🔄 Reset
                 </button>
@@ -9606,7 +9606,7 @@ export default function TradingPlatformShell() {
                       
                       setNewReason({ value: '', emoji: '', label: '' });
                     }}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-gray-900 font-medium"
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white font-medium"
                   >
                     {editingIndex !== null ? '✓ Modifier' : '+ Ajouter'}
                   </button>
@@ -9679,7 +9679,7 @@ export default function TradingPlatformShell() {
                       setNewReason({ value: '', emoji: '', label: '' });
                     }
                   }}
-                  className="flex-1 bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded text-gray-900 font-medium"
+                  className="flex-1 bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded text-white font-medium"
                 >
                   🔄 Réinitialiser
                 </button>

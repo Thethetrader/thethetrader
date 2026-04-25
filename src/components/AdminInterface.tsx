@@ -4114,43 +4114,43 @@ const dailyPnLChartData = useMemo(
         
         popup.innerHTML = `
           <div style="
-            background: #1f2937;
+            background: #ffffff;
             padding: 24px;
             border-radius: 12px;
             min-width: 400px;
             max-width: 500px;
             max-height: 90vh;
             overflow-y: auto;
-            border: 1px solid #374151;
-            color: white;
+            border: 1px solid #e5e7eb;
+            color: #111827;
           ">
-            <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600;">
+            <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600; color: #111827;">
               📊 Fermer le signal ${newStatus === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
             </h3>
-            
+
             <div style="margin-bottom: 20px;">
-              <label style="display: block; margin-bottom: 8px; color: #d1d5db;">
+              <label style="display: block; margin-bottom: 8px; color: #6b7280;">
                 P&L Final (ex: +$150 ou -$50):
               </label>
-              <input 
+              <input
                 id="pnlInput"
-                type="text" 
+                type="text"
                 placeholder="+$150"
                 style="
                   width: 100%;
                   padding: 8px 12px;
-                  border: 1px solid #4b5563;
+                  border: 1px solid #d1d5db;
                   border-radius: 6px;
-                  background: #374151;
-                  color: white;
+                  background: #ffffff;
+                  color: #111827;
                   font-size: 14px;
                 "
               />
             </div>
-            
+
             ${newStatus === 'LOSS' ? `
             <div style="margin-bottom: 20px;">
-              <label style="display: block; margin-bottom: 8px; color: #d1d5db;">
+              <label style="display: block; margin-bottom: 8px; color: #6b7280;">
                 🎯 Raison du stop-loss (optionnel):
               </label>
               <select
@@ -4158,10 +4158,10 @@ const dailyPnLChartData = useMemo(
                 style="
                   width: 100%;
                   padding: 8px 12px;
-                  border: 1px solid #4b5563;
+                  border: 1px solid #d1d5db;
                   border-radius: 6px;
-                  background: #374151;
-                  color: white;
+                  background: #ffffff;
+                  color: #111827;
                   font-size: 14px;
                 "
               >
@@ -4170,36 +4170,36 @@ const dailyPnLChartData = useMemo(
               </select>
             </div>
             ` : ''}
-            
+
             <div style="margin-bottom: 20px;">
-              <label style="display: block; margin-bottom: 8px; color: #d1d5db;">
+              <label style="display: block; margin-bottom: 8px; color: #6b7280;">
                 📸 Photo de conclusion (optionnel):
               </label>
-              <input 
+              <input
                 id="photoInput"
-                type="file" 
+                type="file"
                 accept="image/*"
                 style="
                   width: 100%;
                   padding: 8px 12px;
-                  border: 1px solid #4b5563;
+                  border: 1px solid #d1d5db;
                   border-radius: 6px;
-                  background: #374151;
-                  color: white;
+                  background: #ffffff;
+                  color: #111827;
                   font-size: 14px;
                 "
               />
             </div>
-            
+
             <div style="display: flex; gap: 12px; justify-content: flex-end;">
-              <button 
+              <button
                 id="cancelBtn"
                 style="
                   padding: 8px 16px;
-                  border: 1px solid #6b7280;
+                  border: 1px solid #d1d5db;
                   border-radius: 6px;
-                  background: #374151;
-                  color: #d1d5db;
+                  background: #f3f4f6;
+                  color: #374151;
                   cursor: pointer;
                   font-size: 14px;
                 "
@@ -4811,7 +4811,7 @@ const dailyPnLChartData = useMemo(
                 value={selectedAccount}
                 onChange={(e) => handleAccountChange(e.target.value)}
                 className="bg-gray-200 hover:bg-gray-300 border border-gray-400 text-gray-700 hover:text-gray-900 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-gray-400 cursor-pointer h-9"
-                style={{ height: '36px', background: 'rgb(75, 85, 99)' }}
+                style={{ height: '36px', background: '#f3f4f6' }}
               >
                 <option value="Tous les comptes">📊 Tous les comptes</option>
                 {tradingAccounts.map((account) => (
@@ -4867,7 +4867,7 @@ const dailyPnLChartData = useMemo(
                 value={selectedAccount}
                 onChange={(e) => handleAccountChange(e.target.value)}
                     className="bg-gray-200 hover:bg-gray-300 border border-gray-400 text-gray-700 hover:text-gray-900 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-gray-400 cursor-pointer h-9"
-                    style={{ height: '36px', background: 'rgb(75, 85, 99)' }}
+                    style={{ height: '36px', background: '#f3f4f6' }}
               >
                     <option value="Tous les comptes">📊 Tous les comptes</option>
                 {tradingAccounts.map((account) => (
@@ -5053,7 +5053,7 @@ const dailyPnLChartData = useMemo(
                     } else if (totalPnL < 0) {
                       bgColor = 'calendar-cell-loss border-2'; // PnL négatif - rouge pâle (cases calendrier)
                     } else {
-                      bgColor = 'bg-blue-500/60 border-blue-400/50 text-gray-900'; // PnL = 0
+                      bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
                     }
                   }
                 } else {
@@ -5085,7 +5085,7 @@ const dailyPnLChartData = useMemo(
                     } else if (totalPnL < 0) {
                       bgColor = 'calendar-cell-loss border-2'; // PnL négatif - rouge pâle (cases calendrier)
                     } else {
-                      bgColor = 'bg-blue-500/60 border-blue-400/50 text-gray-900'; // PnL = 0
+                      bgColor = 'bg-blue-500/60 border-blue-400/50 text-white'; // PnL = 0
                     }
                   }
                 }
@@ -5774,7 +5774,7 @@ const dailyPnLChartData = useMemo(
   };
 
   return (
-    <div className="h-screen w-full bg-white text-gray-900 overflow-hidden flex" style={{ paddingTop: '0px', backgroundColor: '#111827', minHeight: '100vh' }}>
+    <div className="h-screen w-full bg-white text-gray-900 overflow-hidden flex" style={{ paddingTop: '0px', backgroundColor: '#ffffff', minHeight: '100vh' }}>
       {/* Desktop Sidebar */}
       <div className="hidden md:flex w-56 min-w-56 flex-shrink-0 bg-gray-50 flex-col">
         <div className="p-4 border-b border-gray-200">
@@ -5816,7 +5816,7 @@ const dailyPnLChartData = useMemo(
                     </button>
                     <button
                       onClick={handleUsernameCancel}
-                      className="text-xs bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded text-gray-900"
+                      className="text-xs bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded text-white"
                     >
                       ✗
                     </button>
@@ -6023,9 +6023,9 @@ const dailyPnLChartData = useMemo(
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col bg-white" style={{ minHeight: '100vh', backgroundColor: '#111827' }}>
+      <div className="flex-1 flex flex-col bg-white" style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
         {/* Mobile Navigation - Fixed */}
-        <div className="md:hidden bg-gray-50 border-b border-gray-200 p-3 fixed top-0 left-0 right-0 z-30" style={{ height: '60px', backgroundColor: '#1f2937' }}>
+        <div className="md:hidden bg-gray-50 border-b border-gray-200 p-3 fixed top-0 left-0 right-0 z-30" style={{ height: '60px', backgroundColor: '#f9fafb' }}>
           {mobileView === 'channels' ? (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -6103,13 +6103,13 @@ const dailyPnLChartData = useMemo(
         </div>
 
         {/* Mobile Content Container with Slide Animation */}
-        <div className="md:hidden relative flex-1 overflow-hidden bg-white" style={{ paddingTop: '60px', backgroundColor: '#111827' }}>
+        <div className="md:hidden relative flex-1 overflow-hidden bg-white" style={{ paddingTop: '60px', backgroundColor: '#ffffff' }}>
           {/* Channels List - Slides from left */}
           <div 
             className={`absolute inset-0 bg-gray-50 transform transition-transform duration-300 ease-in-out z-10 ${
               mobileView === 'channels' ? 'translate-x-0' : '-translate-x-full'
             }`}
-            style={{ backgroundColor: '#1f2937', minHeight: '100vh' }}
+            style={{ backgroundColor: '#f9fafb', minHeight: '100vh' }}
           >
                         <div className="p-4 space-y-6 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
               <div className="bg-gray-100 rounded-lg p-4">
@@ -6362,7 +6362,7 @@ const dailyPnLChartData = useMemo(
             className={`absolute inset-0 bg-white transform transition-transform duration-300 ease-in-out z-10 ${
               mobileView === 'content' ? 'translate-x-0' : 'translate-x-full'
             }`}
-            style={{ backgroundColor: '#111827', minHeight: '100vh' }}
+            style={{ backgroundColor: '#ffffff', minHeight: '100vh' }}
           >
             {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'user-management' || selectedChannel.id === 'check-trade') ? (
               <div className="bg-white text-gray-900 p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '0px' }}>
@@ -6660,8 +6660,8 @@ const dailyPnLChartData = useMemo(
                                 onClick={() => handleSignalStatus(signal.id, signal.status === 'BE' ? 'ACTIVE' : 'BE')}
                                 className={`px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-1 ${
                                   signal.status === 'BE' 
-                                    ? 'bg-blue-500 text-gray-900 shadow-lg shadow-blue-500/20' 
-                                    : 'bg-gray-200 hover:bg-blue-500 text-gray-600 hover:text-gray-900'
+                                    ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
+                                    : 'bg-gray-200 hover:bg-blue-500 text-gray-600 hover:text-white'
                                 }`}
                               >
                                 ⚖️ BE
@@ -6800,7 +6800,7 @@ const dailyPnLChartData = useMemo(
                                         </div>
                                         <button 
                                           onClick={() => window.open('https://admintrading.app.100ms.live/meeting/kor-inbw-yiz', '_blank')}
-                                          className="mt-3 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-gray-900 text-sm font-medium w-full"
+                                          className="mt-3 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-white text-sm font-medium w-full"
                                         >
                                           👆 Cliquez pour rejoindre instantanément
                                         </button>
@@ -6937,10 +6937,10 @@ const dailyPnLChartData = useMemo(
                                                     disabled={isClosed && currentSignal?.status !== 'BE'}
                                                     className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1 flex-1 ${
                                                       isClosed && currentSignal?.status === 'BE'
-                                                        ? 'bg-blue-500 text-gray-900 shadow-lg shadow-blue-500/20'
+                                                        ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'
                                                         : isClosed
                                                         ? 'bg-gray-300/30 text-gray-500 cursor-not-allowed opacity-50'
-                                                        : 'bg-gray-200 hover:bg-blue-500 text-gray-600 hover:text-gray-900'
+                                                        : 'bg-gray-200 hover:bg-blue-500 text-gray-600 hover:text-white'
                                                     }`}
                                                   >
                                                     ⚖️ BE
@@ -6986,7 +6986,7 @@ const dailyPnLChartData = useMemo(
                                   onClick={() => handleAddReaction(message.id)}
                                   className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-all duration-200 ${
                                     (messageReactions[message.id]?.users || []).includes('Admin')
-                                      ? 'bg-orange-500 text-gray-900'
+                                      ? 'bg-orange-500 text-white'
                                       : 'bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-900'
                                   }`}
                                 >
@@ -7004,7 +7004,7 @@ const dailyPnLChartData = useMemo(
                     </div>
                     
                     {/* Barre de message */}
-                    <div className="border-t border-gray-200 p-2 md:p-4 fixed bottom-0 left-0 right-0 bg-gray-50 z-30 md:left-64" style={{ backgroundColor: '#1f2937' }}>
+                    <div className="border-t border-gray-200 p-2 md:p-4 fixed bottom-0 left-0 right-0 bg-gray-50 z-30 md:left-64" style={{ backgroundColor: '#f9fafb' }}>
                       <div className="flex items-center gap-1.5 md:gap-2">
                         <input
                           type="text"
@@ -7033,7 +7033,7 @@ const dailyPnLChartData = useMemo(
                         </button>
                         <button
                           onClick={handleSendMessage}
-                          className="bg-blue-600 hover:bg-blue-700 px-2 md:px-3 py-1.5 md:py-2 rounded-lg text-gray-900 text-xs md:text-sm flex-shrink-0"
+                          className="bg-blue-600 hover:bg-blue-700 px-2 md:px-3 py-1.5 md:py-2 rounded-lg text-white text-xs md:text-sm flex-shrink-0"
                         >
                           Envoyer
                         </button>
@@ -7067,7 +7067,7 @@ const dailyPnLChartData = useMemo(
                                     iframe.requestFullscreen();
                                   }
                                 }}
-                                className="absolute top-4 right-4 z-10 bg-blue-600 hover:bg-blue-700 text-gray-900 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                                className="absolute top-4 right-4 z-10 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors"
                               >
                                 📺 Plein écran
                               </button>
@@ -7128,7 +7128,7 @@ const dailyPnLChartData = useMemo(
                             />
                             <button
                               onClick={handleSendMessage}
-                              className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-gray-900 text-sm"
+                              className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-white text-sm"
                             >
                               Envoyer
                             </button>
@@ -7291,8 +7291,8 @@ const dailyPnLChartData = useMemo(
                               onClick={() => handleSignalStatus(signal.id, signal.status === 'BE' ? 'ACTIVE' : 'BE')}
                               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
                                 signal.status === 'BE' 
-                                  ? 'bg-blue-500 text-gray-900 shadow-lg shadow-blue-500/20' 
-                                  : 'bg-gray-200 hover:bg-blue-500 text-gray-600 hover:text-gray-900'
+                                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
+                                  : 'bg-gray-200 hover:bg-blue-500 text-gray-600 hover:text-white'
                               }`}
                             >
                               ⚖️ BE
@@ -7368,13 +7368,13 @@ const dailyPnLChartData = useMemo(
                               <div className="flex gap-2">
                                 <button
                                   onClick={handleStartStream}
-                                  className="flex-1 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-gray-900 font-medium"
+                                  className="flex-1 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-white font-medium"
                                 >
                                   🎥 Démarrer Stream
                                 </button>
                                 <button
                                   onClick={handleShareScreen}
-                                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-gray-900"
+                                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white"
                                 >
                                   📺 Partager Écran
                                 </button>
@@ -7472,7 +7472,7 @@ const dailyPnLChartData = useMemo(
                           />
                           <button
                             onClick={handleSendMessage}
-                            className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-gray-900 text-sm"
+                            className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-white text-sm"
                           >
                             Envoyer
                           </button>
@@ -7702,7 +7702,7 @@ const dailyPnLChartData = useMemo(
                                           disabled={isClosed}
                                           className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                                             isClosed && currentSignal?.status === 'BE'
-                                              ? 'bg-blue-500 text-gray-900 border-2 border-blue-400 shadow-lg scale-105' // Bouton BE actif
+                                              ? 'bg-blue-500 text-white border-2 border-blue-400 shadow-lg scale-105' // Bouton BE actif
                                               : isClosed
                                               ? 'bg-gray-300/30 text-gray-500 border border-gray-400/30 cursor-not-allowed opacity-50' // Boutons désactivés
                                               : 'bg-blue-400/20 hover:bg-blue-400/30 text-blue-300 border border-blue-400/30 hover:scale-105' // Bouton BE normal
@@ -7743,7 +7743,7 @@ const dailyPnLChartData = useMemo(
                                   onClick={() => handleAddReaction(message.id)}
                                   className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-all duration-200 ${
                                     (messageReactions[message.id]?.users || []).includes('Admin')
-                                      ? 'bg-orange-500 text-gray-900'
+                                      ? 'bg-orange-500 text-white'
                                       : 'bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-900'
                                   }`}
                                 >
@@ -7761,7 +7761,7 @@ const dailyPnLChartData = useMemo(
                   </div>
                   
                   {/* Barre de message */}
-                  <div className="border-t border-gray-200 p-2 md:p-4 fixed bottom-0 left-0 right-0 bg-gray-50 z-10 md:left-64 md:right-0" style={{ backgroundColor: '#1f2937' }}>
+                  <div className="border-t border-gray-200 p-2 md:p-4 fixed bottom-0 left-0 right-0 bg-gray-50 z-10 md:left-64 md:right-0" style={{ backgroundColor: '#f9fafb' }}>
                     <div className="flex items-center gap-1.5 md:gap-2">
                       <input
                         type="text"
@@ -7790,7 +7790,7 @@ const dailyPnLChartData = useMemo(
                       </button>
                       <button
                         onClick={handleSendMessage}
-                        className="bg-blue-600 hover:bg-blue-700 px-2 md:px-3 py-1.5 md:py-2 rounded-lg text-gray-900 text-xs md:text-sm flex-shrink-0"
+                        className="bg-blue-600 hover:bg-blue-700 px-2 md:px-3 py-1.5 md:py-2 rounded-lg text-white text-xs md:text-sm flex-shrink-0"
                       >
                         Envoyer
                       </button>
@@ -7834,7 +7834,7 @@ const dailyPnLChartData = useMemo(
                     <label className="block text-sm font-medium text-gray-600">📋 Coller données TradingView</label>
                     <button
                       onClick={() => setDebugMode(!debugMode)}
-                      className={`text-xs px-2 py-1 rounded ${debugMode ? 'bg-blue-600 text-gray-900' : 'bg-gray-200 text-gray-600'}`}
+                      className={`text-xs px-2 py-1 rounded ${debugMode ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}`}
                     >
                       {debugMode ? '🔧 Debug ON' : '🔧 Debug OFF'}
                     </button>
@@ -7895,7 +7895,7 @@ const dailyPnLChartData = useMemo(
                     </button>
                     <button
                       onClick={() => setSignalData({...signalData, type: 'SELL'})}
-                      className={`px-3 py-2 rounded text-sm ${signalData.type === 'SELL' ? 'bg-red-600 text-gray-900' : 'bg-gray-200 text-gray-600'}`}
+                      className={`px-3 py-2 rounded text-sm ${signalData.type === 'SELL' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-600'}`}
                     >
                       📉 SELL
                     </button>
@@ -7998,7 +7998,7 @@ const dailyPnLChartData = useMemo(
                   </button>
                   <button
                     onClick={handleSignalSubmit}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-gray-900"
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white"
                   >
                     Créer le signal
                   </button>
@@ -8076,7 +8076,7 @@ const dailyPnLChartData = useMemo(
                 </button>
                 <button
                   onClick={() => deleteUser(selectedUser.id)}
-                  className="flex-1 px-4 py-2 bg-red-600 text-gray-900 rounded hover:bg-red-700"
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
                 >
                   Supprimer
                 </button>
@@ -8223,7 +8223,7 @@ const dailyPnLChartData = useMemo(
                     </button>
                     <button
                       onClick={() => setTradeData({...tradeData, type: 'SELL'})}
-                      className={`px-3 py-2 rounded text-sm ${tradeData.type === 'SELL' ? 'bg-red-600 text-gray-900' : 'bg-gray-200 text-gray-600'}`}
+                      className={`px-3 py-2 rounded text-sm ${tradeData.type === 'SELL' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-600'}`}
                     >
                       📉 SELL
                     </button>
@@ -8319,13 +8319,13 @@ const dailyPnLChartData = useMemo(
                     </button>
                     <button
                       onClick={() => setTradeData({...tradeData, status: 'LOSS'})}
-                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'LOSS' ? 'bg-red-600 text-gray-900' : 'bg-gray-200 text-gray-600'}`}
+                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'LOSS' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-600'}`}
                     >
                       ❌ LOSS
                     </button>
                     <button
                       onClick={() => setTradeData({...tradeData, status: 'BE'})}
-                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'BE' ? 'bg-blue-600 text-gray-900' : 'bg-gray-200 text-gray-600'}`}
+                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'BE' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}`}
                     >
                       ⚖️ BE
                     </button>
@@ -8445,7 +8445,7 @@ const dailyPnLChartData = useMemo(
                   </button>
                   <button
                     onClick={handleTradeSubmit}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-gray-900"
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white"
                   >
                     {editingTrade ? 'Modifier le trade' : 'Ajouter le trade'}
                   </button>
@@ -8515,7 +8515,7 @@ const dailyPnLChartData = useMemo(
                       <button
                         key={opt}
                         onClick={() => setFinSessionRespectPlan(opt)}
-                        className={`px-3 py-1.5 rounded text-sm ${finSessionRespectPlan === opt ? 'bg-blue-600 text-gray-900' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+                        className={`px-3 py-1.5 rounded text-sm ${finSessionRespectPlan === opt ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
                       >
                         {opt}
                       </button>
@@ -8536,7 +8536,7 @@ const dailyPnLChartData = useMemo(
                       <button
                         key={opt}
                         onClick={() => setFinSessionQualiteDecisions(opt)}
-                        className={`px-3 py-1.5 rounded text-sm ${finSessionQualiteDecisions === opt ? (opt === 'Émotion' ? 'bg-red-600 text-gray-900' : 'bg-blue-600 text-gray-900') : opt === 'Émotion' ? 'bg-gray-200 text-red-100 hover:bg-gray-300' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+                        className={`px-3 py-1.5 rounded text-sm ${finSessionQualiteDecisions === opt ? (opt === 'Émotion' ? 'bg-red-600 text-white' : 'bg-blue-600 text-white') : opt === 'Émotion' ? 'bg-gray-200 text-red-100 hover:bg-gray-300' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
                       >
                         {opt}
                       </button>
@@ -8558,7 +8558,7 @@ const dailyPnLChartData = useMemo(
                       <button
                         key={opt}
                         onClick={() => setFinSessionGestionErreur(opt)}
-                        className={`px-3 py-1.5 rounded text-sm ${finSessionGestionErreur === opt ? 'bg-blue-600 text-gray-900' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+                        className={`px-3 py-1.5 rounded text-sm ${finSessionGestionErreur === opt ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
                       >
                         {opt}
                       </button>
@@ -8579,7 +8579,7 @@ const dailyPnLChartData = useMemo(
                       <button
                         key={n}
                         onClick={() => setFinSessionPression(n)}
-                        className={`w-10 h-10 rounded text-sm font-bold ${finSessionPression === n ? 'bg-blue-600 text-gray-900' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+                        className={`w-10 h-10 rounded text-sm font-bold ${finSessionPression === n ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
                       >
                         {n}
                       </button>
@@ -8633,7 +8633,7 @@ const dailyPnLChartData = useMemo(
                       alert('Remplis les 4 stats pour enregistrer.');
                     }
                   }}
-                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-gray-900 text-sm"
+                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white text-sm"
                 >
                   Enregistrer ({finSessionSelectedSession})
                 </button>
@@ -8737,7 +8737,7 @@ const dailyPnLChartData = useMemo(
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
                         <span className={`px-2 py-1 rounded text-xs font-bold ${
-                          trade.type === 'BUY' ? 'bg-green-600 text-gray-900' : 'bg-red-600 text-gray-900'
+                          trade.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
                         }`}>
                           {trade.type}
                         </span>
@@ -8796,8 +8796,8 @@ const dailyPnLChartData = useMemo(
                         <span className="text-sm text-gray-500">Status:</span>
                         <span className={`ml-2 px-2 py-1 rounded text-xs ${
                           trade.status === 'WIN' ? 'bg-green-600 text-gray-900' :
-                          trade.status === 'LOSS' ? 'bg-red-600 text-gray-900' :
-                          'bg-blue-600 text-gray-900'
+                          trade.status === 'LOSS' ? 'bg-red-600 text-white' :
+                          'bg-blue-600 text-white'
                         }`}>
                           {trade.status}
                         </span>
@@ -9103,7 +9103,7 @@ const dailyPnLChartData = useMemo(
                           }
                         }
                       }}
-                      className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center bg-red-600 hover:bg-red-700 text-gray-900 rounded-full text-xs font-bold transition-colors"
+                      className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center bg-red-600 hover:bg-red-700 text-white rounded-full text-xs font-bold transition-colors"
                     >
                       ×
                     </button>
@@ -9111,7 +9111,7 @@ const dailyPnLChartData = useMemo(
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
                         <span className={`px-2 py-1 rounded text-xs font-bold ${
-                          signal.type === 'BUY' ? 'bg-green-600 text-gray-900' : 'bg-red-600 text-gray-900'
+                          signal.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
                         }`}>
                           {signal.type}
                         </span>
@@ -9120,9 +9120,9 @@ const dailyPnLChartData = useMemo(
                       </div>
                       <span className={`px-2 py-1 rounded text-xs ${
                         signal.status === 'WIN' ? 'bg-green-600 text-gray-900' :
-                        signal.status === 'LOSS' ? 'bg-red-600 text-gray-900' :
-                        signal.status === 'BE' ? 'bg-blue-600 text-gray-900' :
-                        'bg-yellow-600 text-gray-900'
+                        signal.status === 'LOSS' ? 'bg-red-600 text-white' :
+                        signal.status === 'BE' ? 'bg-blue-600 text-white' :
+                        'bg-yellow-600 text-white'
                       }`}>
                         {signal.status}
                       </span>
@@ -9287,7 +9287,7 @@ const dailyPnLChartData = useMemo(
                   e.stopPropagation();
                   resetImageView();
                 }}
-                className="bg-blue-500/50 hover:bg-blue-500/70 text-gray-900 px-3 py-1 rounded text-sm"
+                className="bg-blue-500/50 hover:bg-blue-500/70 text-white px-3 py-1 rounded text-sm"
               >
                 🔄 Reset
               </button>
@@ -9428,7 +9428,7 @@ const dailyPnLChartData = useMemo(
             <div className="flex gap-3">
               <button
                 onClick={handleSendNotification}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-gray-900 px-4 py-2 rounded-lg font-medium"
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium"
               >
                 Envoyer
               </button>
@@ -9481,7 +9481,7 @@ const dailyPnLChartData = useMemo(
             <div className="flex gap-3">
               <button
                 onClick={handleSendLivestreamNotification}
-                className="flex-1 bg-red-600 hover:bg-red-700 text-gray-900 px-4 py-2 rounded-lg font-medium"
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium"
               >
                 Envoyer
               </button>
@@ -9566,7 +9566,7 @@ const dailyPnLChartData = useMemo(
                       
                       setNewReason({ value: '', emoji: '', label: '' });
                     }}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-gray-900 font-medium"
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white font-medium"
                   >
                     {editingIndex !== null ? '✓ Modifier' : '+ Ajouter'}
                   </button>
@@ -9639,7 +9639,7 @@ const dailyPnLChartData = useMemo(
                       setNewReason({ value: '', emoji: '', label: '' });
                     }
                   }}
-                  className="flex-1 bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded text-gray-900 font-medium"
+                  className="flex-1 bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded text-white font-medium"
                 >
                   🔄 Réinitialiser
                 </button>
@@ -9725,7 +9725,7 @@ const dailyPnLChartData = useMemo(
                           <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-3">
                               <span className={`px-2 py-1 rounded text-xs font-bold ${
-                                trade.type === 'BUY' ? 'bg-green-600 text-gray-900' : 'bg-red-600 text-gray-900'
+                                trade.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
                               }`}>
                                 {trade.type}
                               </span>
@@ -9735,9 +9735,9 @@ const dailyPnLChartData = useMemo(
                             <div className="flex items-center gap-2">
                               <span className={`px-2 py-1 rounded text-xs ${
                                 trade.status === 'WIN' ? 'bg-green-600 text-gray-900' :
-                                trade.status === 'LOSS' ? 'bg-red-600 text-gray-900' :
-                                trade.status === 'BE' ? 'bg-blue-600 text-gray-900' :
-                                'bg-yellow-600 text-gray-900'
+                                trade.status === 'LOSS' ? 'bg-red-600 text-white' :
+                                trade.status === 'BE' ? 'bg-blue-600 text-white' :
+                                'bg-yellow-600 text-white'
                               }`}>
                                 {trade.status}
                               </span>
@@ -9872,7 +9872,7 @@ const dailyPnLChartData = useMemo(
                           <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-3">
                               <span className={`px-2 py-1 rounded text-xs font-bold ${
-                                signal.type === 'BUY' ? 'bg-green-600 text-gray-900' : 'bg-red-600 text-gray-900'
+                                signal.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
                               }`}>
                                 {signal.type}
                               </span>
@@ -9881,9 +9881,9 @@ const dailyPnLChartData = useMemo(
                             </div>
                             <span className={`px-2 py-1 rounded text-xs ${
                               signal.status === 'WIN' ? 'bg-green-600 text-gray-900' :
-                              signal.status === 'LOSS' ? 'bg-red-600 text-gray-900' :
-                              signal.status === 'BE' ? 'bg-blue-600 text-gray-900' :
-                              'bg-yellow-600 text-gray-900'
+                              signal.status === 'LOSS' ? 'bg-red-600 text-white' :
+                              signal.status === 'BE' ? 'bg-blue-600 text-white' :
+                              'bg-yellow-600 text-white'
                             }`}>
                               {signal.status}
                             </span>
