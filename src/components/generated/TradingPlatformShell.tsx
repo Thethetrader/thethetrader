@@ -3743,7 +3743,7 @@ export default function TradingPlatformShell() {
           video.srcObject = stream;
           
           // Trouver spécifiquement les conteneurs de 
-          const Containers = document.querySelectorAll('.bg-white .bg-black.flex.items-center.justify-center');
+          const Containers = document.querySelectorAll('.bg-gray-900 .bg-black.flex.items-center.justify-center');
           console.log('Conteneurs  trouvés:', Containers.length);
           
           if (Containers.length === 0) {
@@ -4691,7 +4691,7 @@ export default function TradingPlatformShell() {
     
     if (selectedChannel.id === 'check-trade') {
       return (
-        <div className="bg-white text-gray-900 p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '72px' }}>
+        <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '72px' }}>
           <CheckTradeChecklist />
         </div>
       );
@@ -4700,12 +4700,12 @@ export default function TradingPlatformShell() {
     const isJournalPerso = selectedChannel.id === 'journal' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model';
     const isMobile = window.innerWidth < 768;
     return (
-    <div className="bg-white text-gray-900 p-2 md:p-4 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: (isMobile && isJournalPerso) ? '20px' : '0px', marginTop: (isMobile && !isJournalPerso) ? '-9px' : '0px', touchAction: 'pan-y', maxWidth: '100%' }}>
+    <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: (isMobile && isJournalPerso) ? '20px' : '0px', marginTop: (isMobile && !isJournalPerso) ? '-9px' : '0px', touchAction: 'pan-y', maxWidth: '100%' }}>
       {/* Header */}
-      <div className={`flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 pb-4 gap-4 md:gap-0 ${isMobile && !isJournalPerso ? '' : 'border-b border-gray-300'}`}>
+      <div className={`flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 pb-4 gap-4 md:gap-0 ${isMobile && !isJournalPerso ? '' : 'border-b border-gray-600'}`}>
         <div className="hidden md:flex md:items-center md:gap-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-white">
               {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? (selectedChannel.id === 'tpln-model' || activeJournalButton === 'tpln' ? 'TPLN model' : 'Trading Journal') : 'Journal des Signaux'}
             </h1>
           </div>
@@ -4717,12 +4717,12 @@ export default function TradingPlatformShell() {
                 <select
                   value={selectedAccount}
                   onChange={(e) => handleAccountChange(e.target.value)}
-                  className="bg-gray-200 hover:bg-gray-300 border border-gray-400 text-gray-700 hover:text-gray-900 rounded-lg text-sm font-medium focus:outline-none focus:border-gray-400 cursor-pointer h-9 appearance-none text-center min-w-[10rem]"
+                  className="bg-gray-600 hover:bg-gray-500 border border-gray-500 text-gray-200 hover:text-white rounded-lg text-sm font-medium focus:outline-none focus:border-gray-400 cursor-pointer h-9 appearance-none text-center min-w-[10rem]"
                   style={{ 
                     backgroundImage: 'none',
                     WebkitAppearance: 'none',
                     MozAppearance: 'none',
-                    background: '#f3f4f6',
+                    background: 'rgb(75, 85, 99)',
                     boxShadow: 'none',
                     textAlign: 'center',
                     lineHeight: '36px',
@@ -4741,7 +4741,7 @@ export default function TradingPlatformShell() {
                   ))}
                 </select>
               ) : (
-                <div className="text-sm text-gray-500 italic px-3 py-2 h-9 flex items-center">
+                <div className="text-sm text-gray-400 italic px-3 py-2 h-9 flex items-center">
                   Aucun compte enregistré
                 </div>
               )}
@@ -4751,8 +4751,8 @@ export default function TradingPlatformShell() {
                 disabled={tradingAccounts.length === 0}
                 className={`px-3 py-2 rounded-lg text-sm font-medium h-9 flex items-center justify-center ${
                   tradingAccounts.length === 0
-                    ? 'bg-gray-100 border border-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-gray-200 hover:bg-gray-300 border border-gray-400 text-gray-700 hover:text-gray-900'
+                    ? 'bg-gray-700 border border-gray-600 text-gray-500 cursor-not-allowed'
+                    : 'bg-gray-600 hover:bg-gray-500 border border-gray-500 text-gray-200 hover:text-white'
                 }`}
                 title="Options du compte"
               >
@@ -4767,7 +4767,7 @@ export default function TradingPlatformShell() {
                     setShowAddAccountModal(true);
                   }
                 }}
-                className="bg-gray-200 hover:bg-gray-300 border border-gray-400 text-gray-700 hover:text-gray-900 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap h-9 flex items-center justify-center"
+                className="bg-gray-600 hover:bg-gray-500 border border-gray-500 text-gray-200 hover:text-white px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap h-9 flex items-center justify-center"
               >
                 + Compte
               </button>
@@ -4776,20 +4776,20 @@ export default function TradingPlatformShell() {
         </div>
         
         <div className={`flex items-center ${(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? 'gap-4' : ''}`}>
-          <div className="flex items-center gap-3 text-gray-900">
+          <div className="flex items-center gap-3 text-white">
             <button 
               onClick={goToPreviousMonth}
-              className="p-2 hover:bg-gray-100 rounded-lg text-lg font-bold"
+              className="p-2 hover:bg-gray-700 rounded-lg text-lg font-bold"
             >
               ‹
             </button>
             <div className="text-center">
               <div className="text-lg font-semibold">{getMonthName(currentDate)}</div>
-              <div className="text-sm text-gray-500">{currentDate.getFullYear()}</div>
+              <div className="text-sm text-gray-400">{currentDate.getFullYear()}</div>
             </div>
             <button 
               onClick={goToNextMonth}
-              className="p-2 hover:bg-gray-100 rounded-lg text-lg font-bold"
+              className="p-2 hover:bg-gray-700 rounded-lg text-lg font-bold"
             >
               ›
             </button>
@@ -4798,13 +4798,13 @@ export default function TradingPlatformShell() {
             <>
             <button 
               onClick={handleAddTrade}
-              className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg text-sm font-medium"
+              className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg text-sm font-medium"
             >
               + Ajouter Trade
             </button>
             <button 
               onClick={() => setShowFinSessionModal(true)}
-              className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg text-sm font-medium"
+              className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg text-sm font-medium"
               title="Statistiques en fin de session"
             >
               Fin session
@@ -4820,7 +4820,7 @@ export default function TradingPlatformShell() {
           {/* Jours de la semaine */}
           <div className="grid grid-cols-7 gap-0.5 md:gap-1 mb-4 w-full" style={{ maxWidth: '100%', overflowX: 'hidden' }}>
             {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
-              <div key={day} className="text-center text-gray-500 font-semibold py-3 text-sm uppercase tracking-wide">
+              <div key={day} className="text-center text-gray-400 font-semibold py-3 text-sm uppercase tracking-wide">
                 {day.substring(0, 3)}
               </div>
             ))}
@@ -4848,12 +4848,12 @@ export default function TradingPlatformShell() {
                 
                 // Celles vides au début
                 if (dayNumber < 1) {
-                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-50 border-gray-200" style={{minHeight: '64px'}}></div>;
+                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700" style={{minHeight: '64px'}}></div>;
                 }
                 
                 // Celles vides à la fin
                 if (dayNumber > daysInMonth) {
-                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-50 border-gray-200" style={{minHeight: '64px'}}></div>;
+                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700" style={{minHeight: '64px'}}></div>;
                 }
               
                               // Vérifier s'il y a des trades personnels ou des signaux pour ce jour (comparaison string comme getTradesForDate pour éviter les bugs timezone)
@@ -4879,7 +4879,7 @@ export default function TradingPlatformShell() {
                   }) : [];
 
                 // Déterminer la couleur selon les trades ou signaux
-                let bgColor = 'bg-gray-100 border-gray-300 text-gray-500'; // No trade par défaut
+                let bgColor = 'bg-gray-700 border-gray-600 text-gray-400'; // No trade par défaut
                 let tradeCount = 0;
 
                 if (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') {
@@ -4897,7 +4897,7 @@ export default function TradingPlatformShell() {
                     
                     // Déterminer la couleur selon le PnL total
                     if (totalPnL > 0) {
-                      bgColor = 'bg-green-200/30 border-green-200/30 text-gray-900'; // PnL positif - vert plus pale
+                      bgColor = 'bg-green-200/30 border-green-200/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
                       bgColor = 'calendar-cell-loss border-2'; // PnL négatif - rouge pâle (cases calendrier)
                     } else {
@@ -4919,7 +4919,7 @@ export default function TradingPlatformShell() {
                     
                     // Déterminer la couleur selon le PnL total
                     if (totalPnL > 0) {
-                      bgColor = 'bg-green-200/30 border-green-200/30 text-gray-900'; // PnL positif - vert plus pale
+                      bgColor = 'bg-green-200/30 border-green-200/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
                       bgColor = 'calendar-cell-loss border-2'; // PnL négatif - rouge pâle (cases calendrier)
                     } else {
@@ -5039,65 +5039,65 @@ export default function TradingPlatformShell() {
 
           {/* Légende - directement sous le calendrier pour journal perso */}
           {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') && (
-            <div className="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-gray-300">
+            <div className="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-gray-600">
               <div className="flex items-center gap-1">
                 <div className="w-3 h-3 bg-green-200/50 border border-green-200/40 rounded"></div>
-                <span className="text-xs text-gray-600">WIN</span>
+                <span className="text-xs text-gray-300">WIN</span>
               </div>
               <div className="flex items-center gap-1">
                 <div className="w-3 h-3 bg-loss/60 border border-loss/50 rounded"></div>
-                <span className="text-xs text-gray-600">LOSS</span>
+                <span className="text-xs text-gray-300">LOSS</span>
               </div>
               <div className="flex items-center gap-1">
                 <div className="w-3 h-3 bg-blue-500/60 border border-blue-400/50 rounded"></div>
-                <span className="text-xs text-gray-600">BREAK</span>
+                <span className="text-xs text-gray-300">BREAK</span>
               </div>
               <div className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-gray-100 border border-gray-300 rounded"></div>
-                <span className="text-xs text-gray-600">NO TRADE</span>
+                <div className="w-3 h-3 bg-gray-700 border border-gray-600 rounded"></div>
+                <span className="text-xs text-gray-300">NO TRADE</span>
               </div>
               <div className="flex items-center gap-1">
                 <div className="w-3 h-3 border-2 border-blue-400 rounded"></div>
-                <span className="text-xs text-gray-600">Today</span>
+                <span className="text-xs text-gray-300">Today</span>
               </div>
             </div>
           )}
 
           {selectedChannel.id !== 'trading-journal' && selectedChannel.id !== 'journal' && selectedChannel.id !== 'tpln-model' && (
             <>
-              <div className="border-t border-gray-200 mt-6 pt-4 flex items-center justify-center gap-3">
+              <div className="border-t border-gray-700 mt-6 pt-4 flex items-center justify-center gap-3">
                 <div className="flex items-center gap-2 text-xs">
                   <span className="inline-flex items-center justify-center w-3 h-3 rounded bg-green-200/50 border border-green-200/50/60"></span>
-                  <span className="text-gray-600">WIN</span>
+                  <span className="text-gray-300">WIN</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
                   <span className="inline-flex items-center justify-center w-3 h-3 rounded bg-loss/70 border border-loss/60"></span>
-                  <span className="text-gray-600">LOSS</span>
+                  <span className="text-gray-300">LOSS</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
                   <span className="inline-flex items-center justify-center w-3 h-3 rounded bg-blue-500/70 border border-blue-400/60"></span>
-                  <span className="text-gray-600">BREAK</span>
+                  <span className="text-gray-300">BREAK</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="inline-flex items-center justify-center w-3 h-3 rounded bg-gray-200 border border-gray-400"></span>
-                  <span className="text-gray-600">NO TRADE</span>
+                  <span className="inline-flex items-center justify-center w-3 h-3 rounded bg-gray-600 border border-gray-500"></span>
+                  <span className="text-gray-300">NO TRADE</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
                   <span className="inline-flex items-center justify-center w-3 h-3 rounded border border-blue-400"></span>
-                  <span className="text-gray-600">Today</span>
+                  <span className="text-gray-300">Today</span>
                 </div>
               </div>
 
               {lossAnalysisStateForSignals.totalLosses > 0 && (
-                <div className="bg-gray-100 rounded-lg p-4 mt-4">
+                <div className="bg-gray-700 rounded-lg p-4 mt-4">
                   <h4 className="text-base font-medium text-loss mb-4">📊 Analyse des Pertes</h4>
                   <div className="space-y-3">
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Total pertes:</span>
+                      <span className="text-gray-400">Total pertes:</span>
                       <span className="text-loss font-medium">{lossAnalysisStateForSignals.totalLosses}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">P&L total pertes:</span>
+                      <span className="text-gray-400">P&L total pertes:</span>
                       <span className="text-loss font-medium">${lossAnalysisStateForSignals.totalLossPnl}</span>
                     </div>
                     {lossAnalysisStateForSignals.reasons.length > 0 ? (
@@ -5106,7 +5106,7 @@ export default function TradingPlatformShell() {
                         <div className="space-y-2">
                           {lossAnalysisStateForSignals.reasons.map((reason) => (
                             <div key={reason.reason} className="flex justify-between text-sm">
-                              <span className="text-gray-600">{getCustomLossReasonLabel(reason.reason)}</span>
+                              <span className="text-gray-300">{getCustomLossReasonLabel(reason.reason)}</span>
                               <span className="text-loss font-medium">{reason.count} ({reason.percentage}%)</span>
                             </div>
                           ))}
@@ -5124,21 +5124,21 @@ export default function TradingPlatformShell() {
           )}
         </div>
         {/* Panneau des statistiques */}
-        <div className="w-full lg:w-80 bg-gray-50 rounded-xl p-4 md:p-6" style={{ paddingTop: 'calc(1rem + 1cm - 1mm)', paddingBottom: 'calc(1rem - 0.5cm)' }} key={`stats-${selectedAccount}-${currentDate.getMonth()}-${currentDate.getFullYear()}-${statsUpdateTrigger}`}>
+        <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6" style={{ paddingTop: 'calc(1rem + 1cm - 1mm)', paddingBottom: 'calc(1rem - 0.5cm)' }} key={`stats-${selectedAccount}-${currentDate.getMonth()}-${currentDate.getFullYear()}-${statsUpdateTrigger}`}>
           {/* Mois / Jour - uniquement Journal perso et TPLN model */}
           {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') && (
             <div className="flex gap-2 mb-4">
               <button
                 type="button"
                 onClick={() => setStatsPeriod('mois')}
-                className={`flex-1 py-2 rounded-lg text-sm font-medium ${statsPeriod === 'mois' ? 'bg-gray-200 text-gray-900' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+                className={`flex-1 py-2 rounded-lg text-sm font-medium ${statsPeriod === 'mois' ? 'bg-gray-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
               >
                 Mois
               </button>
               <button
                 type="button"
                 onClick={() => setStatsPeriod('jour')}
-                className={`flex-1 py-2 rounded-lg text-sm font-medium ${statsPeriod === 'jour' ? 'bg-gray-200 text-gray-900' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+                className={`flex-1 py-2 rounded-lg text-sm font-medium ${statsPeriod === 'jour' ? 'bg-gray-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
               >
                 Jour
               </button>
@@ -5194,18 +5194,18 @@ export default function TradingPlatformShell() {
 
             {/* Profit Factor (pas sur TPLN model, ni TPLN button, ni Journal Signaux) */}
             {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && activeJournalButton !== 'tpln' && (
-            <div className="bg-gray-100 rounded-lg p-4 border border-gray-300 flex items-center justify-between">
+            <div className="bg-gray-700 rounded-lg p-4 border border-gray-600 flex items-center justify-between">
               <div className="flex-1">
-                <div className="text-sm text-gray-500 mb-1 flex items-center gap-1">
+                <div className="text-sm text-gray-400 mb-1 flex items-center gap-1">
                   Profit Factor
                   <div className="group relative">
-                    <span className="text-gray-500 cursor-help">?</span>
-                    <div className="absolute left-0 bottom-full mb-2 w-48 p-2 bg-gray-50 text-xs text-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 border border-gray-300">
+                    <span className="text-gray-400 cursor-help">?</span>
+                    <div className="absolute left-0 bottom-full mb-2 w-48 p-2 bg-gray-800 text-xs text-white rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 border border-gray-600">
                       Ratio gains totaux<br />sur pertes totales
                     </div>
                   </div>
                 </div>
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-2xl font-bold text-white">
                   {((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? 
                     (() => {
                       const { totalWins, totalLosses } = getProfitFactorDataTradesForDisplay();
@@ -5225,23 +5225,23 @@ export default function TradingPlatformShell() {
             )}
             
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-gray-100 rounded-lg p-3 border border-gray-300">
-                <div className="text-xs text-gray-500 mb-1">Trade auj</div>
+              <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
+                <div className="text-xs text-gray-400 mb-1">Trade auj</div>
                 <div className="text-lg font-bold text-blue-400">
                   {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? getTodayTradesForMonth().length : getTodaySignalsForMonth()}
                 </div>
               </div>
-              <div className="bg-gray-100 rounded-lg p-3 border border-gray-300">
-                <div className="text-xs text-gray-500 mb-1">Trade ce mois</div>
-                <div className="text-lg font-bold text-gray-900">
+              <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
+                <div className="text-xs text-gray-400 mb-1">Trade ce mois</div>
+                <div className="text-lg font-bold text-white">
                   {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? getThisMonthTradesForMonth().length : getThisMonthSignalsForMonth()}
                 </div>
               </div>
             </div>
             
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-gray-100 rounded-lg p-3 border border-gray-300">
-                <div className="text-xs text-gray-500 mb-1">Avg Win</div>
+              <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
+                <div className="text-xs text-gray-400 mb-1">Avg Win</div>
                 <div className="text-lg font-bold text-green-100">
                   {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? 
                     (calculateAvgWinTradesForDisplay() > 0 ? `+$${calculateAvgWinTradesForDisplay()}` : '-') :
@@ -5249,8 +5249,8 @@ export default function TradingPlatformShell() {
                   }
                 </div>
               </div>
-              <div className="bg-gray-100 rounded-lg p-3 border border-gray-300">
-                <div className="text-xs text-gray-500 mb-1">Avg Loss</div>
+              <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
+                <div className="text-xs text-gray-400 mb-1">Avg Loss</div>
                 <div className="text-lg font-bold text-loss">
                   {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? 
                     (calculateAvgLossTradesForDisplay() > 0 ? `-$${calculateAvgLossTradesForDisplay()}` : '-') :
@@ -5262,31 +5262,31 @@ export default function TradingPlatformShell() {
 
             {/* Perf par session (taux de réussite %): sous Avg Win - Asian/London | NY AM/NY PM */}
             {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') && (
-            <div className="bg-gray-100 rounded-lg p-4 border border-gray-300 grid grid-cols-2 gap-3">
+            <div className="bg-gray-700 rounded-lg p-4 border border-gray-600 grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-2">
                 <div>
-                  <div className="text-xs text-gray-500 mb-0.5">Asian</div>
-                  <div className="text-base font-bold text-gray-900">
+                  <div className="text-xs text-gray-400 mb-0.5">Asian</div>
+                  <div className="text-base font-bold text-white">
                     {getWinRateForSessionDisplay(['18h', 'Open Asian']) !== null ? `${getWinRateForSessionDisplay(['18h', 'Open Asian'])}%` : '–'}
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-500 mb-0.5">London</div>
-                  <div className="text-base font-bold text-gray-900">
+                  <div className="text-xs text-gray-400 mb-0.5">London</div>
+                  <div className="text-base font-bold text-white">
                     {getWinRateForSessionDisplay(['London']) !== null ? `${getWinRateForSessionDisplay(['London'])}%` : '–'}
                   </div>
                 </div>
               </div>
               <div className="flex flex-col gap-2">
                 <div>
-                  <div className="text-xs text-gray-500 mb-0.5">NY AM</div>
-                  <div className="text-base font-bold text-gray-900">
+                  <div className="text-xs text-gray-400 mb-0.5">NY AM</div>
+                  <div className="text-base font-bold text-white">
                     {getWinRateForSessionDisplay(['NY AM']) !== null ? `${getWinRateForSessionDisplay(['NY AM'])}%` : '–'}
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-500 mb-0.5">NY PM</div>
-                  <div className="text-base font-bold text-gray-900">
+                  <div className="text-xs text-gray-400 mb-0.5">NY PM</div>
+                  <div className="text-base font-bold text-white">
                     {getWinRateForSessionDisplay(['NY PM']) !== null ? `${getWinRateForSessionDisplay(['NY PM'])}%` : '–'}
                   </div>
                 </div>
@@ -5296,21 +5296,21 @@ export default function TradingPlatformShell() {
 
             {/* Raisons des SL (trades du mois) - sous Avg Win/Loss et sessions */}
             {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') && lossAnalysisState.totalLosses > 0 && (
-              <div className="bg-gray-100 rounded-lg p-4 border border-gray-300 mt-4">
+              <div className="bg-gray-700 rounded-lg p-4 border border-gray-600 mt-4">
                 <h4 className="text-sm font-semibold text-loss mb-3">Raisons des SL</h4>
                 <div className="flex justify-between text-sm mb-2">
-                  <span className="text-gray-500">Pertes ce mois:</span>
+                  <span className="text-gray-400">Pertes ce mois:</span>
                   <span className="text-loss font-medium">{lossAnalysisState.totalLosses} trades</span>
                 </div>
                 <div className="flex justify-between text-sm mb-3">
-                  <span className="text-gray-500">PnL total:</span>
+                  <span className="text-gray-400">PnL total:</span>
                   <span className="text-loss font-medium">${Math.round(lossAnalysisState.totalLossPnl)}</span>
                 </div>
                 {lossAnalysisState.reasons.length > 0 ? (
                   <div className="space-y-2">
                     {lossAnalysisState.reasons.map((r) => (
                       <div key={r.reason} className="flex justify-between text-sm">
-                        <span className="text-gray-600">{getCustomLossReasonLabel(r.reason)}</span>
+                        <span className="text-gray-300">{getCustomLossReasonLabel(r.reason)}</span>
                         <span className="text-loss font-medium">{r.count} ({r.percentage}%)</span>
                       </div>
                     ))}
@@ -5325,15 +5325,15 @@ export default function TradingPlatformShell() {
 
           {/* Résumé hebdomadaire */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-600 mb-4">Weekly Breakdown</h4>
+            <h4 className="text-sm font-semibold text-gray-300 mb-4">Weekly Breakdown</h4>
             <div className="space-y-2">
               {((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? getWeeklyBreakdownTradesForMonth() : getWeeklyBreakdownForMonth()).map((weekData, index) => (
                 <div 
                   key={index} 
-                  className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer hover:bg-gray-200/50 transition-colors ${
+                  className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer hover:bg-gray-600/50 transition-colors ${
                     weekData.isCurrentWeek 
                       ? 'bg-blue-600/20 border-blue-500/30' 
-                      : 'bg-gray-100/50 border-gray-300'
+                      : 'bg-gray-700/50 border-gray-600'
                   }`}
                   onClick={() => {
                     setSelectedWeek(weekData.weekNum);
@@ -5342,7 +5342,7 @@ export default function TradingPlatformShell() {
                 >
                   <div className="flex items-center gap-3">
                     <div className={`text-sm font-medium ${
-                      weekData.isCurrentWeek ? 'text-blue-300' : 'text-gray-600'
+                      weekData.isCurrentWeek ? 'text-blue-300' : 'text-gray-300'
                     }`}>
                       {weekData.week}
                     </div>
@@ -5355,7 +5355,7 @@ export default function TradingPlatformShell() {
                         </div>
                       ) : (
                         <>
-                          <div className={`text-xs py-1 rounded font-bold flex items-center justify-center ${weekData.wins > 0 ? 'bg-green-200/50 text-gray-900' : 'bg-transparent'}`} style={{ width: '36px', height: '24px' }}>
+                          <div className={`text-xs py-1 rounded font-bold flex items-center justify-center ${weekData.wins > 0 ? 'bg-green-200/50 text-white' : 'bg-transparent'}`} style={{ width: '36px', height: '24px' }}>
                             {weekData.wins > 0 ? `${weekData.wins}W` : ''}
                           </div>
                           <div className={`text-xs py-1 rounded font-bold flex items-center justify-center ${weekData.losses > 0 ? 'bg-loss/70 text-white' : 'bg-transparent'}`} style={{ width: '36px', height: '24px' }}>
@@ -5379,9 +5379,9 @@ export default function TradingPlatformShell() {
           {/* Solde du compte - Journal perso uniquement (pas TPLN ni Tous les comptes) */}
           {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') && activeJournalButton !== 'tpln' && selectedAccount !== 'Tous les comptes' && (
             <div className="mt-4">
-              <div className="p-3 bg-gray-50 rounded-lg border border-gray-300">
+              <div className="p-3 bg-gray-800 rounded-lg border border-gray-600">
                 <div className="flex items-center justify-between mb-2">
-                  <h4 className="text-xs font-medium text-gray-600">Solde du compte</h4>
+                  <h4 className="text-xs font-medium text-gray-300">Solde du compte</h4>
                   <div className={`text-base font-bold ${
                     calculateAccountBalance() >= (tradingAccounts.find(acc => acc.account_name === selectedAccount)?.initial_balance || 0) 
                       ? 'text-green-100' : 'text-loss'
@@ -5389,9 +5389,9 @@ export default function TradingPlatformShell() {
                     ${calculateAccountBalance().toFixed(2)}
                   </div>
                 </div>
-                <p className="text-xs text-gray-500">{selectedAccount}</p>
+                <p className="text-xs text-gray-400">{selectedAccount}</p>
                 <div className="mt-2 space-y-1">
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-gray-400">
                     Balance initiale: ${(() => {
                       const account = tradingAccounts.find(acc => acc.account_name === selectedAccount);
                       let initialBalance = account?.initial_balance || 0;
@@ -5405,13 +5405,13 @@ export default function TradingPlatformShell() {
                       return initialBalance.toFixed(2);
                     })()}
                   </div>
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-gray-400">
                     Stop-loss: ${(() => {
                       const stopLoss = calculateTrailingStopLoss();
                       return stopLoss.currentStopLoss?.toFixed(2) || 'Non défini';
                     })()}
                   </div>
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-gray-400">
                     Marge de sécurité: ${(() => {
                       const stopLoss = calculateTrailingStopLoss();
                       return stopLoss.remaining?.toFixed(2) || 'N/A';
@@ -5468,7 +5468,7 @@ export default function TradingPlatformShell() {
               </button>
               <button
                 onClick={() => setShowPerformanceTableModal(true)}
-                className="w-full px-3 py-2 rounded-lg bg-gray-200/50 border border-gray-400/50 text-gray-700 hover:bg-gray-200 transition-colors text-sm font-medium"
+                className="w-full px-3 py-2 rounded-lg bg-gray-600/50 border border-gray-500/50 text-gray-200 hover:bg-gray-600 transition-colors text-sm font-medium"
               >
                 📊 TABLEAU DE PERFORMANCE
               </button>
@@ -5486,10 +5486,10 @@ export default function TradingPlatformShell() {
 
 
   return (
-    <div className="h-screen w-full bg-white text-gray-900 overflow-hidden flex" style={{ paddingTop: '0px' }}>
+    <div className="h-screen w-full bg-gray-900 text-white overflow-hidden flex" style={{ paddingTop: '0px' }}>
       {/* Desktop Sidebar */}
-      <div className="hidden md:flex w-56 min-w-56 flex-shrink-0 bg-gray-50 flex-col">
-        <div className="p-4 border-b border-gray-200">
+      <div className="hidden md:flex w-56 min-w-56 flex-shrink-0 bg-gray-800 flex-col">
+        <div className="p-4 border-b border-gray-700">
           <div className="flex items-center gap-3">
             <label className="cursor-pointer">
               <input
@@ -5537,7 +5537,7 @@ export default function TradingPlatformShell() {
                         type="text"
                         value={usernameInput}
                         onChange={(e) => setUsernameInput(e.target.value)}
-                        className="bg-gray-100 text-gray-900 text-sm px-2 py-1 rounded border border-gray-300 w-24"
+                        className="bg-gray-700 text-white text-sm px-2 py-1 rounded border border-gray-600 w-24"
                         autoFocus
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') {
@@ -5551,13 +5551,13 @@ export default function TradingPlatformShell() {
                       currentUsername || 'Chargement...'
                     )}
                   </p>
-                  <p className="text-xs text-gray-500">En ligne</p>
+                  <p className="text-xs text-gray-400">En ligne</p>
                 </div>
                 {isEditingUsername && (
                   <div className="flex gap-1">
                     <button
                       onClick={handleUsernameEdit}
-                      className="text-xs bg-green-600 hover:bg-green-700 px-2 py-0.5 rounded text-gray-900"
+                      className="text-xs bg-green-600 hover:bg-green-700 px-2 py-0.5 rounded text-white"
                     >
                       ✓
                     </button>
@@ -5576,22 +5576,22 @@ export default function TradingPlatformShell() {
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           <div>
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">ÉDUCATION</h3>
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">ÉDUCATION</h3>
             <div className="space-y-1">
               {channels.find(c => c.id === 'fondamentaux') && (
-                <button onClick={() => handleChannelChange('fondamentaux', 'fondamentaux')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'fondamentaux' ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'}`}>📚 Fondamentaux</button>
+                <button onClick={() => handleChannelChange('fondamentaux', 'fondamentaux')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'fondamentaux' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📚 Fondamentaux</button>
               )}
             </div>
           </div>
 
           <div>
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">SIGNAUX</h3>
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">SIGNAUX</h3>
             <div className="space-y-1">
               {channels.filter(c => ['general-chat-2', 'general-chat-3', 'general-chat-4'].includes(c.id)).map(channel => (
                 <button 
                   key={channel.id}
                   onClick={() => handleChannelChange(channel.id, channel.name)} 
-                  className={`w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2 ${selectedChannel.id === channel.id ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'}`}
+                  className={`w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2 ${selectedChannel.id === channel.id ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
                 >
                   <span className="inline-flex items-center justify-center w-5 h-5 shrink-0 text-center text-sm">{channel.emoji}</span>
                   {channel.fullName}
@@ -5601,7 +5601,7 @@ export default function TradingPlatformShell() {
           </div>
 
           <div>
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">TRADING HUB</h3>
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">TRADING HUB</h3>
             <div className="space-y-1">
               {channels.find(c => c.id === 'calendrier') && (
                 <button onClick={async () => {
@@ -5621,19 +5621,19 @@ export default function TradingPlatformShell() {
                   }
                   handleChannelChange('calendrier', 'calendrier');
                   setView('signals');
-                }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-100 text-gray-900' : selectedChannel.id === 'tpln-model' ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'}`}>📅 Journal Signaux</button>
+                }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'calendrier' ? 'bg-gray-700 text-white' : selectedChannel.id === 'tpln-model' ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
               )}
               {channels.find(c => c.id === 'journal') && (
                 <>
-                  <button onClick={() => { handleChannelChange('journal', 'journal'); setActiveJournalButton('trading-journal'); }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' && activeJournalButton === 'trading-journal' ? 'bg-gray-100 text-gray-900' : selectedChannel.id === 'tpln-model' ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'}`}>📓 Trading Journal</button>
-                  <button onClick={() => { handleChannelChange('journal', 'journal'); setActiveJournalButton('tpln'); }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' && activeJournalButton === 'tpln' ? 'bg-gray-100 text-gray-900' : selectedChannel.id === 'tpln-model' ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'}`}>📓 TPLN model</button>
+                  <button onClick={() => { handleChannelChange('journal', 'journal'); setActiveJournalButton('trading-journal'); }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' && activeJournalButton === 'trading-journal' ? 'bg-gray-700 text-white' : selectedChannel.id === 'tpln-model' ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 Trading Journal</button>
+                  <button onClick={() => { handleChannelChange('journal', 'journal'); setActiveJournalButton('tpln'); }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'journal' && activeJournalButton === 'tpln' ? 'bg-gray-700 text-white' : selectedChannel.id === 'tpln-model' ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📓 TPLN model</button>
                 </>
               )}
               {channels.find(c => c.id === 'check-trade') && (
-                <button onClick={() => handleChannelChange('check-trade', 'check-trade')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'check-trade' ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'}`}>✅ Check Trade</button>
+                <button onClick={() => handleChannelChange('check-trade', 'check-trade')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'check-trade' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>✅ Check Trade</button>
               )}
               {channels.find(c => c.id === 'livestream-premium') && (
-                <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'}`}>
+                <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>
                   <div className="flex items-start gap-2">
                     <span>⭐</span>
                     <div className="flex flex-col">
@@ -5644,31 +5644,31 @@ export default function TradingPlatformShell() {
                 </button>
               )}
               {channels.find(c => c.id === 'video') && (
-                <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'}`}>📺 Livestream</button>
+                <button onClick={() => handleChannelChange('video', 'video')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'video' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📺 Livestream</button>
               )}
             </div>
           </div>
 
-          <div className="bg-gray-100 rounded-lg p-3">
+          <div className="bg-gray-700 rounded-lg p-3">
             <h4 className="text-sm font-medium mb-2">Statistiques</h4>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Win Rate:</span>
-                <span className="text-gray-900">{calculateWinRate()}%</span>
+                <span className="text-gray-400">Win Rate:</span>
+                <span className="text-white">{calculateWinRate()}%</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">P&L Total:</span>
+                <span className="text-gray-400">P&L Total:</span>
                 <span className={calculateTotalPnL() >= 0 ? 'text-green-100' : 'text-red-400'}>
                   {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Signaux actifs:</span>
-                <span className="text-gray-900">{realTimeSignals.filter(s => s.status === 'ACTIVE').length}</span>
+                <span className="text-gray-400">Signaux actifs:</span>
+                <span className="text-white">{realTimeSignals.filter(s => s.status === 'ACTIVE').length}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Total Trades:</span>
-                <span className="text-gray-900">{realTimeSignals.length}</span>
+                <span className="text-gray-400">Total Trades:</span>
+                <span className="text-white">{realTimeSignals.length}</span>
               </div>
             </div>
           </div>
@@ -5680,7 +5680,7 @@ export default function TradingPlatformShell() {
             className={`w-full px-4 py-3 rounded-lg font-medium transition-all duration-200 shadow-sm ${
               notificationsEnabled
                 ? 'bg-green-200/20 hover:bg-green-200/30 text-green-100 border border-green-200/30 hover:border-green-200/40'
-                : 'bg-gray-200/20 hover:bg-gray-200/30 text-gray-500 border border-gray-300/30 hover:border-gray-300/50'
+                : 'bg-gray-600/20 hover:bg-gray-600/30 text-gray-400 border border-gray-600/30 hover:border-gray-600/50'
             }`}
           >
             {notificationsEnabled ? '🔔 Notifications ON' : '🔕 Notifications OFF'}
@@ -5690,7 +5690,7 @@ export default function TradingPlatformShell() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Mobile Navigation - Fixed */}
-        <div className={`md:hidden bg-gray-50 p-3 fixed top-0 left-0 right-0 z-30 ${selectedChannel.id === 'calendrier' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model' ? '' : 'border-b border-gray-200'}`} style={{ height: '60px' }}>
+        <div className={`md:hidden bg-gray-800 p-3 fixed top-0 left-0 right-0 z-30 ${selectedChannel.id === 'calendrier' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model' ? '' : 'border-b border-gray-700'}`} style={{ height: '60px' }}>
           {mobileView === 'channels' ? (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -5716,7 +5716,7 @@ export default function TradingPlatformShell() {
                         type="text"
                         value={usernameInput}
                         onChange={(e) => setUsernameInput(e.target.value)}
-                        className="text-sm bg-transparent border border-blue-400 rounded px-1 py-0.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-300"
+                        className="text-sm bg-transparent border border-blue-400 rounded px-1 py-0.5 text-white placeholder-gray-400 focus:outline-none focus:border-blue-300"
                         placeholder="Nouveau nom..."
                         autoFocus
                         onKeyPress={(e) => e.key === 'Enter' && handleUsernameEdit()}
@@ -5725,7 +5725,7 @@ export default function TradingPlatformShell() {
                       <div className="flex gap-1">
                         <button
                           onClick={handleUsernameEdit}
-                          className="text-xs bg-green-600 hover:bg-green-700 px-2 py-0.5 rounded text-gray-900"
+                          className="text-xs bg-green-600 hover:bg-green-700 px-2 py-0.5 rounded text-white"
                         >
                           ✓
                         </button>
@@ -5776,12 +5776,12 @@ export default function TradingPlatformShell() {
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                     notificationsEnabled
                       ? 'bg-green-400/20 hover:bg-green-400/30 text-green-100 border border-green-200/50/30'
-                      : 'bg-gray-200/20 hover:bg-gray-200/30 text-gray-600 border border-gray-300/30'
+                      : 'bg-gray-600/20 hover:bg-gray-600/30 text-gray-300 border border-gray-600/30'
                   }`}
                 >
                   {notificationsEnabled ? '🔔' : '🔕'}
                 </button>
-                <button onClick={handleLogout} className="text-gray-500 hover:text-gray-900">
+                <button onClick={handleLogout} className="text-gray-400 hover:text-white">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                   </svg>
@@ -5803,7 +5803,7 @@ export default function TradingPlatformShell() {
                     }
                   });
                 }}
-                className="flex items-center gap-2 text-gray-500 hover:text-gray-900"
+                className="flex items-center gap-2 text-gray-400 hover:text-white"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -5823,23 +5823,23 @@ export default function TradingPlatformShell() {
         <div className="md:hidden relative flex-1 overflow-hidden" style={{ paddingTop: '60px' }}>
           {/* Channels List - Slides from left */}
           <div 
-            className={`absolute inset-0 bg-gray-50 transform transition-transform duration-300 ease-in-out z-10 ${
+            className={`absolute inset-0 bg-gray-800 transform transition-transform duration-300 ease-in-out z-10 ${
               mobileView === 'channels' ? 'translate-x-0 pointer-events-auto' : '-translate-x-full pointer-events-none'
             }`}
           >
             <div className="p-4 space-y-3 h-full overflow-y-auto" style={{ paddingTop: '80px', WebkitOverflowScrolling: 'touch' }}>
               {/* Statistiques en haut */}
-              <div className="bg-gray-100 rounded-lg p-6">
-                <h3 className="font-medium text-gray-900 mb-3 text-center">📊 Statistiques signaux</h3>
+              <div className="bg-gray-700 rounded-lg p-6">
+                <h3 className="font-medium text-white mb-3 text-center">📊 Statistiques signaux</h3>
                 <div className="grid grid-cols-2 gap-4">
                   {/* Colonne gauche */}
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Win Rate:</span>
-                      <span className="text-gray-700 font-medium">{calculateWinRateForMonth()}%</span>
+                      <span className="text-gray-400">Win Rate:</span>
+                      <span className="text-gray-200 font-medium">{calculateWinRateForMonth()}%</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">P&L Total:</span>
+                      <span className="text-gray-400">P&L Total:</span>
                       <span className={calculateTotalPnLForMonth() >= 0 ? 'text-green-100 font-medium' : 'text-red-200 font-medium'}>
                         {calculateTotalPnLForMonth() >= 0 ? '+' : ''}${calculateTotalPnLForMonth()}
                       </span>
@@ -5848,19 +5848,19 @@ export default function TradingPlatformShell() {
                   {/* Colonne droite */}
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Signaux actifs:</span>
-                      <span className="text-gray-700 font-medium">{realTimeSignals.filter(s => s.status === 'ACTIVE').length}</span>
+                      <span className="text-gray-400">Signaux actifs:</span>
+                      <span className="text-gray-200 font-medium">{realTimeSignals.filter(s => s.status === 'ACTIVE').length}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Total Trades:</span>
-                      <span className="text-gray-700 font-medium">{realTimeSignals.length}</span>
+                      <span className="text-gray-400">Total Trades:</span>
+                      <span className="text-gray-200 font-medium">{realTimeSignals.length}</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">ÉDUCATION</h3>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">ÉDUCATION</h3>
                 <div className="space-y-2">
                   {channels.filter(c => ['fondamentaux'].includes(c.id)).map(channel => (
                     <button
@@ -5869,13 +5869,13 @@ export default function TradingPlatformShell() {
                         handleChannelChange(channel.id, channel.name);
                         setMobileView('content');
                       }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <span className="text-lg">{channel.emoji}</span>
                         <div>
-                          <p className="font-medium text-gray-900">{channel.fullName}</p>
-                          <p className="text-sm text-gray-500">Contenu éducatif</p>
+                          <p className="font-medium text-white">{channel.fullName}</p>
+                          <p className="text-sm text-gray-400">Contenu éducatif</p>
                         </div>
                       </div>
 
@@ -5885,7 +5885,7 @@ export default function TradingPlatformShell() {
               </div>
 
               <div>
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">SIGNAUX</h3>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">SIGNAUX</h3>
                 <div className="space-y-2">
                   {channels.filter(c => ['general-chat-2', 'general-chat-3', 'general-chat-4'].includes(c.id)).map(channel => (
                     <button
@@ -5894,13 +5894,13 @@ export default function TradingPlatformShell() {
                         handleChannelChange(channel.id, channel.name);
                         setMobileView('content');
                       }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <span className="inline-flex items-center justify-center w-6 h-6 shrink-0 text-center text-lg">{channel.emoji}</span>
                         <div>
-                          <p className="font-semibold text-gray-900">{channel.fullName}</p>
-                          <p className="text-sm text-gray-500">Canal de signaux</p>
+                          <p className="font-semibold text-white">{channel.fullName}</p>
+                          <p className="text-sm text-gray-400">Canal de signaux</p>
                         </div>
                       </div>
 
@@ -5911,7 +5911,7 @@ export default function TradingPlatformShell() {
               </div>
 
               <div>
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">TRADING HUB</h3>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">TRADING HUB</h3>
                 <div className="space-y-2">
                   {channels.find(c => c.id === 'calendrier') && (
                     <button
@@ -5935,12 +5935,12 @@ export default function TradingPlatformShell() {
                         setMobileView('content');
                         console.log('✅ État mis à jour: calendrier');
                       }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <span className="text-lg">📅</span>
                         <div>
-                          <p className="font-semibold text-gray-900">Journal Signaux</p>
+                          <p className="font-semibold text-white">Journal Signaux</p>
                         </div>
                       </div>
                     </button>
@@ -5954,13 +5954,13 @@ export default function TradingPlatformShell() {
                           setActiveJournalButton('trading-journal');
                           setMobileView('content');
                         }}
-                        className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'journal' && activeJournalButton === 'trading-journal' ? 'bg-gray-200' : 'bg-gray-100 hover:bg-gray-200'}`}
+                        className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'journal' && activeJournalButton === 'trading-journal' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
                       >
                         <div className="flex items-center gap-3">
                           <span className="text-lg">📓</span>
                           <div>
-                            <p className="font-semibold text-gray-900">Journal Perso</p>
-                            <p className="text-sm text-gray-500">Journal personnel</p>
+                            <p className="font-semibold text-white">Journal Perso</p>
+                            <p className="text-sm text-gray-400">Journal personnel</p>
                           </div>
                         </div>
                       </button>
@@ -5970,13 +5970,13 @@ export default function TradingPlatformShell() {
                           setActiveJournalButton('tpln');
                           setMobileView('content');
                         }}
-                        className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'journal' && activeJournalButton === 'tpln' ? 'bg-gray-200' : 'bg-gray-100 hover:bg-gray-200'}`}
+                        className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'journal' && activeJournalButton === 'tpln' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
                       >
                         <div className="flex items-center gap-3">
                           <span className="text-lg">📓</span>
                           <div>
-                            <p className="font-semibold text-gray-900">TPLN model</p>
-                            <p className="text-sm text-gray-500">Calendrier et stats du modèle</p>
+                            <p className="font-semibold text-white">TPLN model</p>
+                            <p className="text-sm text-gray-400">Calendrier et stats du modèle</p>
                           </div>
                         </div>
                       </button>
@@ -5989,13 +5989,13 @@ export default function TradingPlatformShell() {
                         handleChannelChange('check-trade', 'check-trade');
                         setMobileView('content');
                       }}
-                      className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'check-trade' ? 'bg-gray-200' : 'bg-gray-100 hover:bg-gray-200'}`}
+                      className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'check-trade' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
                     >
                       <div className="flex items-center gap-3">
                         <span className="text-lg">✅</span>
                         <div>
-                          <p className="font-semibold text-gray-900">Check Trade</p>
-                          <p className="text-sm text-gray-500">Checklist de trade</p>
+                          <p className="font-semibold text-white">Check Trade</p>
+                          <p className="text-sm text-gray-400">Checklist de trade</p>
                         </div>
                       </div>
                     </button>
@@ -6007,13 +6007,13 @@ export default function TradingPlatformShell() {
                         handleChannelChange('livestream-premium', 'livestream-premium');
                         setMobileView('content');
                       }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <span className="text-lg">⭐</span>
                         <div>
-                          <p className="font-semibold text-gray-900">Livestream Premium</p>
-                          <p className="text-sm text-gray-500">Stream premium</p>
+                          <p className="font-semibold text-white">Livestream Premium</p>
+                          <p className="text-sm text-gray-400">Stream premium</p>
                         </div>
                       </div>
                     </button>
@@ -6025,13 +6025,13 @@ export default function TradingPlatformShell() {
                         handleChannelChange('video', 'video');
                         setMobileView('content');
                       }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <span className="text-lg">📺</span>
                         <div>
-                          <p className="font-semibold text-gray-900">Livestream</p>
-                          <p className="text-sm text-gray-500">Stream en direct</p>
+                          <p className="font-semibold text-white">Livestream</p>
+                          <p className="text-sm text-gray-400">Stream en direct</p>
                         </div>
                       </div>
                     </button>
@@ -6044,19 +6044,19 @@ export default function TradingPlatformShell() {
 
           {/* Content Area - Slides from right */}
           <div 
-            className={`absolute inset-0 bg-white transform transition-transform duration-300 ease-in-out z-10 ${
+            className={`absolute inset-0 bg-gray-900 transform transition-transform duration-300 ease-in-out z-10 ${
               mobileView === 'content' ? 'translate-x-0 pointer-events-auto' : 'translate-x-full pointer-events-none'
             }`}
           >
             {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'video' || selectedChannel.id === 'livestream-premium' || selectedChannel.id === 'journal') ? (
-              <div className="bg-white text-gray-900 p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '0px', WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}>
+              <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '0px', WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}>
                 {/* Header avec sélecteur de compte et bouton Ajouter Trade pour Trading Journal (pas sur TPLN model) */}
                 {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? (
-                  <div className="mb-4 md:mb-6 border-b border-gray-300 pb-4">
+                  <div className="mb-4 md:mb-6 border-b border-gray-600 pb-4">
                     <div className="space-y-4">
                       {/* Titre */}
                       <div>
-                        <h1 className="text-xl md:text-2xl font-bold text-gray-900">{activeJournalButton === 'tpln' ? 'TPLN model' : 'Trading Journal'}</h1>
+                        <h1 className="text-xl md:text-2xl font-bold text-white">{activeJournalButton === 'tpln' ? 'TPLN model' : 'Trading Journal'}</h1>
                       </div>
                       
                       {/* Sélecteur de compte et boutons (pas sur TPLN) */}
@@ -6079,7 +6079,7 @@ export default function TradingPlatformShell() {
                               ))}
                             </select>
                           ) : (
-                            <div className="text-sm text-gray-500 italic px-3 py-2">
+                            <div className="text-sm text-gray-400 italic px-3 py-2">
                               Aucun compte enregistré
                             </div>
                           )}
@@ -6089,7 +6089,7 @@ export default function TradingPlatformShell() {
                             disabled={tradingAccounts.length === 0}
                             className={`px-3 py-2 rounded-lg text-sm font-medium ${
                               tradingAccounts.length === 0
-                                ? 'bg-gray-100 border border-gray-300 text-gray-500 cursor-not-allowed'
+                                ? 'bg-gray-700 border border-gray-600 text-gray-500 cursor-not-allowed'
                                 : 'bg-green-200/20 hover:bg-green-200/30 border border-green-200/40 text-green-100 hover:text-green-100'
                             }`}
                             title="Options du compte"
@@ -6118,9 +6118,9 @@ export default function TradingPlatformShell() {
                 
                   {/* Header pour le calendrier normal */}
                 {(view === 'calendar' || selectedChannel.id === 'calendrier') && selectedChannel.id !== 'trading-journal' && (
-                  <div className="flex justify-between items-center mb-6 border-b border-gray-300 pb-4">
+                  <div className="flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
                     <div>
-                      <h1 className="text-2xl font-bold text-gray-900">Journal des Signaux</h1>
+                      <h1 className="text-2xl font-bold text-white">Journal des Signaux</h1>
                     </div>
                   </div>
                 )}
@@ -6130,10 +6130,10 @@ export default function TradingPlatformShell() {
                 
                 {/* Interface Livestream pour mobile */}
                 {(selectedChannel.id === 'video' || selectedChannel.id === 'livestream-premium') && (
-                  <div className="flex flex-col h-full bg-white">
+                  <div className="flex flex-col h-full bg-gray-900">
                     <div className="text-center space-y-4 w-full max-w-[95vw] mx-auto p-4 pt-16">
-                      <h1 className="text-3xl font-bold text-gray-900 mb-2">{selectedChannel.id === 'livestream-premium' ? 'Livestream Premium' : 'Livestream'}</h1>
-                      <p className="text-gray-500">Attache ta ceinture cousin</p>
+                      <h1 className="text-3xl font-bold text-white mb-2">{selectedChannel.id === 'livestream-premium' ? 'Livestream Premium' : 'Livestream'}</h1>
+                      <p className="text-gray-400">Attache ta ceinture cousin</p>
                       
                       {/* Iframe 100ms */}
                       <div className="w-full relative" id="video-container">
@@ -6172,7 +6172,7 @@ export default function TradingPlatformShell() {
                               }
                             }
                           }}
-                          className="absolute top-4 right-4 z-10 text-gray-900 text-4xl font-bold hover:text-gray-600 transition-colors bg-black bg-opacity-50 px-2 py-1 rounded"
+                          className="absolute top-4 right-4 z-10 text-white text-4xl font-bold hover:text-gray-300 transition-colors bg-black bg-opacity-50 px-2 py-1 rounded"
                           title="Plein écran"
                         >
                           ⤢
@@ -6200,29 +6200,29 @@ export default function TradingPlatformShell() {
                   });
                   return selectedChannel.id === 'trading-journal' && selectedDate;
                 })() && (
-                  <div className="mt-8 border-t border-gray-300 pt-6">
-                    <h3 className="text-lg font-bold text-gray-900 mb-4">
+                  <div className="mt-8 border-t border-gray-600 pt-6">
+                    <h3 className="text-lg font-bold text-white mb-4">
                       Trades du {selectedDate.toLocaleDateString('fr-FR')}
                     </h3>
                     {getTradesForDate(selectedDate).length === 0 ? (
-                      <div className="text-center py-8 text-gray-500">
+                      <div className="text-center py-8 text-gray-400">
                         Aucun trade pour cette date
                       </div>
                     ) : (
                       <div className="space-y-4">
                         {getTradesForDate(selectedDate).map((trade) => (
-                          <div key={trade.id} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                          <div key={trade.id} className="bg-gray-800 rounded-lg p-4 border border-gray-700">
                             <div className="flex items-center justify-between mb-3">
                               <div className="flex items-center gap-3">
                                 <span className={`px-3 py-1 rounded-lg text-sm font-medium ${
-                                  trade.status === 'WIN' ? 'bg-green-200/60 text-gray-900' :
+                                  trade.status === 'WIN' ? 'bg-green-200/60 text-white' :
                                   trade.status === 'LOSS' ? 'bg-red-500 text-white' :
                                   'bg-blue-500 text-white'
                                 }`}>
                                   {trade.status}
                                 </span>
-                                <span className="text-gray-900 font-semibold">{trade.symbol}</span>
-                                <span className="text-gray-500">{trade.type}</span>
+                                <span className="text-white font-semibold">{trade.symbol}</span>
+                                <span className="text-gray-400">{trade.type}</span>
                               </div>
                               <div className="flex items-center gap-3">
                                 <span className={`text-lg font-bold ${
@@ -6232,7 +6232,7 @@ export default function TradingPlatformShell() {
                                 </span>
                                 <button
                                   onClick={() => handleEditTrade(trade)}
-                                  className="px-3 py-1 rounded text-sm bg-gray-200 hover:bg-gray-300 text-gray-900"
+                                  className="px-3 py-1 rounded text-sm bg-gray-600 hover:bg-gray-500 text-white"
                                   title="Modifier ce trade"
                                 >
                                   Modifier
@@ -6261,53 +6261,53 @@ export default function TradingPlatformShell() {
                               if (reasons.length === 0) return null;
                               const labels = reasons.map(v => customLossReasons.find(r => r.value === v)).filter(Boolean);
                               return (
-                                <div className="mb-2 text-sm text-gray-500">
+                                <div className="mb-2 text-sm text-gray-400">
                                   Raisons {trade.status === 'LOSS' ? 'SL' : 'BE'}: {labels.map((r: any) => `${r.emoji} ${r.label}`).join(', ')}
                                 </div>
                               );
                             })()}
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                               <div>
-                                <span className="text-gray-500">Entry:</span>
-                                <span className="text-gray-900 ml-2">{trade.entry}</span>
+                                <span className="text-gray-400">Entry:</span>
+                                <span className="text-white ml-2">{trade.entry}</span>
                               </div>
                               <div>
-                                <span className="text-gray-500">Exit:</span>
-                                <span className="text-gray-900 ml-2">{trade.exit}</span>
+                                <span className="text-gray-400">Exit:</span>
+                                <span className="text-white ml-2">{trade.exit}</span>
                               </div>
                               <div>
-                                <span className="text-gray-500">Stop Loss:</span>
-                                <span className="text-gray-900 ml-2">{trade.stopLoss || 'N/A'}</span>
+                                <span className="text-gray-400">Stop Loss:</span>
+                                <span className="text-white ml-2">{trade.stopLoss || 'N/A'}</span>
                               </div>
                               <div>
-                                <span className="text-gray-500">Time:</span>
-                                <span className="text-gray-900 ml-2">{trade.timestamp}</span>
+                                <span className="text-gray-400">Time:</span>
+                                <span className="text-white ml-2">{trade.timestamp}</span>
                               </div>
                             </div>
                             
                             {trade.notes && (
-                              <div className="mt-3 pt-3 border-t border-gray-300">
-                                <span className="text-gray-500 text-sm">Notes:</span>
-                                <p className="text-gray-900 text-sm mt-1">{trade.notes}</p>
+                              <div className="mt-3 pt-3 border-t border-gray-600">
+                                <span className="text-gray-400 text-sm">Notes:</span>
+                                <p className="text-white text-sm mt-1">{trade.notes}</p>
                               </div>
                             )}
                             
                             {(trade.image1 || trade.image2) && (
-                              <div className="mt-3 pt-3 border-t border-gray-300">
-                                <span className="text-gray-500 text-sm">Images:</span>
+                              <div className="mt-3 pt-3 border-t border-gray-600">
+                                <span className="text-gray-400 text-sm">Images:</span>
                                 <div className="flex gap-2 mt-2">
                                   {trade.image1 && (
                                     <img 
                                       src={trade.image1} 
                                       alt="Trade screenshot 1"
-                                      className="w-20 h-20 object-cover rounded border border-gray-300"
+                                      className="w-20 h-20 object-cover rounded border border-gray-600"
                                     />
                                   )}
                                   {trade.image2 && (
                                     <img 
                                       src={trade.image2} 
                                       alt="Trade screenshot 2"
-                                      className="w-20 h-20 object-cover rounded border border-gray-300"
+                                      className="w-20 h-20 object-cover rounded border border-gray-600"
                                     />
                                   )}
                                 </div>
@@ -6334,7 +6334,7 @@ export default function TradingPlatformShell() {
                       {view === 'signals' && !['fondamentaux', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'video', 'livestream-premium', '', 'calendrier', 'journal', 'check-trade'].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
                     {/* Bouton Voir plus fixe en haut */}
-                    <div className="flex justify-center pt-2 sticky top-0 bg-white p-2 rounded z-10">
+                    <div className="flex justify-center pt-2 sticky top-0 bg-gray-900 p-2 rounded z-10">
                       <button
                         onClick={async () => {
                           try {
@@ -6392,14 +6392,14 @@ export default function TradingPlatformShell() {
                             console.error('❌ Erreur lors du chargement de signaux supplémentaires:', error);
                           }
                         }}
-                        className="px-4 py-2 text-sm rounded bg-gray-100 hover:bg-gray-200 text-gray-900"
+                        className="px-4 py-2 text-sm rounded bg-gray-700 hover:bg-gray-600 text-white"
                       >
                         Voir plus (+10)
                       </button>
                     </div>
                     {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                       <div className="text-center py-8">
-                        <div className="text-gray-500 text-sm">Aucun signal pour le moment</div>
+                        <div className="text-gray-400 text-sm">Aucun signal pour le moment</div>
                         <div className="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
                       </div>
                     ) : (
@@ -6414,16 +6414,16 @@ export default function TradingPlatformShell() {
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="font-semibold text-gray-900">TheTheTrader</span>
-                              <span className="text-xs text-gray-500">{signal.timestamp}</span>
+                              <span className="font-semibold text-white">TheTheTrader</span>
+                              <span className="text-xs text-gray-400">{signal.timestamp}</span>
                             </div>
 
-                            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 max-w-2xl md:max-w-2xl max-w-full">
+                            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 max-w-2xl md:max-w-2xl max-w-full">
                               <div className="space-y-3">
                                 {/* Header avec titre et indicateur */}
                                   <div className="flex items-center gap-2">
-                                  <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-200/60' : 'bg-gray-300'}`}></div>
-                                  <h3 className="font-bold text-gray-900 text-lg">
+                                  <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-200/60' : 'bg-gray-500'}`}></div>
+                                  <h3 className="font-bold text-white text-lg">
                                     Signal {signal.type} {signal.symbol} – {signal.timeframe}
                                   </h3>
                                 </div>
@@ -6433,28 +6433,28 @@ export default function TradingPlatformShell() {
                                     {signal.entry !== 'N/A' && (
                                       <div className="flex items-center gap-2">
                                       <span className="text-blue-400 text-sm">🔹</span>
-                                      <span className="text-gray-900">Entrée : {signal.entry} USD</span>
+                                      <span className="text-white">Entrée : {signal.entry} USD</span>
                                       </div>
                                     )}
                                     {signal.stopLoss !== 'N/A' && (
                                       <div className="flex items-center gap-2">
                                       <span className="text-blue-400 text-sm">🔹</span>
-                                      <span className="text-gray-900">Stop Loss : {signal.stopLoss} USD</span>
+                                      <span className="text-white">Stop Loss : {signal.stopLoss} USD</span>
                                       </div>
                                     )}
                                   {signal.takeProfit !== 'N/A' && (
                                       <div className="flex items-center gap-2">
                                       <span className="text-blue-400 text-sm">🔹</span>
-                                      <span className="text-gray-900">Take Profit : {signal.takeProfit} USD</span>
+                                      <span className="text-white">Take Profit : {signal.takeProfit} USD</span>
                                       </div>
                                     )}
                                   </div>
                                 
                                 {/* Ratio R:R */}
                                 {signal.entry !== 'N/A' && signal.takeProfit !== 'N/A' && signal.stopLoss !== 'N/A' && (
-                                  <div className="flex items-center gap-2 pt-2 border-t border-gray-300">
+                                  <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
                                     <span className="text-red-400 text-sm">🎯</span>
-                                    <span className="text-gray-900 text-sm">
+                                    <span className="text-white text-sm">
                                       Ratio R:R : ≈ {calculateRiskReward(signal.entry, signal.takeProfit, signal.stopLoss)}
                                     </span>
                                 </div>
@@ -6462,7 +6462,7 @@ export default function TradingPlatformShell() {
 
                                 {/* Message de fermeture */}
                                 {signal.closeMessage && (
-                                  <div className="flex items-center justify-between pt-2 border-t border-gray-300">
+                                  <div className="flex items-center justify-between pt-2 border-t border-gray-600">
                                     <div className="flex items-center gap-2">
                                       <span className="text-yellow-400 text-sm">🔒</span>
                                       <span className="text-yellow-400 text-sm font-medium">
@@ -6510,7 +6510,7 @@ export default function TradingPlatformShell() {
                                 <img 
                                   src={signal.image} 
                                   alt="Signal screenshot"
-                                  className="max-w-full md:max-w-2xl rounded-lg border border-gray-300"
+                                  className="max-w-full md:max-w-2xl rounded-lg border border-gray-600"
                                 />
                               </div>
                             )}
@@ -6528,17 +6528,17 @@ export default function TradingPlatformShell() {
                     {/* Interface Livestream */}
                     <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
                       {/* Zone de stream */}
-                      <div className="flex-1 bg-white rounded-lg overflow-hidden">
+                      <div className="flex-1 bg-gray-900 rounded-lg overflow-hidden">
                         {!isLiveStreaming ? (
                           <div className="h-full flex flex-col items-center justify-center p-8">
                             <div className="text-center space-y-4">
                               <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto">
-                                <svg className="w-10 h-10 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
                                   <path d="M8 5v14l11-7z"/>
                                 </svg>
                               </div>
-                              <h2 className="text-xl font-bold text-gray-900">Aucun stream en cours</h2>
-                              <p className="text-gray-500">Commencez votre session de trading en direct</p>
+                              <h2 className="text-xl font-bold text-white">Aucun stream en cours</h2>
+                              <p className="text-gray-400">Commencez votre session de trading en direct</p>
                               
                               {/* Formulaire de démarrage */}
                               <div className="space-y-3 max-w-md mx-auto">
@@ -6547,13 +6547,13 @@ export default function TradingPlatformShell() {
                                   placeholder="Titre du stream (ex: Session TradingView - EURUSD)"
                                   value={streamTitle}
                                   onChange={(e) => setStreamTitle(e.target.value)}
-                                  className="w-full bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                                 />
                                 <textarea
                                   placeholder="Description (optionnel)"
                                   value={streamDescription}
                                   onChange={(e) => setStreamDescription(e.target.value)}
-                                  className="w-full bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                                   rows={2}
                                 />
                                 <div className="flex gap-2">
@@ -6576,18 +6576,18 @@ export default function TradingPlatformShell() {
                         ) : (
                           <div className="h-full flex flex-col">
                             {/* Header du stream */}
-                            <div className="bg-gray-50 p-4 border-b border-gray-200">
+                            <div className="bg-gray-800 p-4 border-b border-gray-700">
                               <div className="flex items-center justify-between">
                                 <div>
-                                  <h3 className="text-lg font-bold text-gray-900">{streamTitle}</h3>
-                                  <p className="text-sm text-gray-500">{streamDescription}</p>
+                                  <h3 className="text-lg font-bold text-white">{streamTitle}</h3>
+                                  <p className="text-sm text-gray-400">{streamDescription}</p>
                                 </div>
                                 <div className="flex items-center gap-4">
                                   <div className="flex items-center gap-2 text-red-400">
                                     <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
                                     <span className="text-sm font-medium">EN DIRECT</span>
                                   </div>
-                                  <div className="flex items-center gap-1 text-gray-500">
+                                  <div className="flex items-center gap-1 text-gray-400">
                                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                                     </svg>
@@ -6595,7 +6595,7 @@ export default function TradingPlatformShell() {
                                   </div>
                                   <button
                                     onClick={handleStopStream}
-                                    className="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded text-sm text-gray-900"
+                                    className="bg-gray-600 hover:bg-gray-500 px-3 py-1 rounded text-sm text-white"
                                   >
                                     Arrêter
                                   </button>
@@ -6605,8 +6605,8 @@ export default function TradingPlatformShell() {
                             
                             {/* Zone de vidéo */}
                             <div className="flex-1 bg-black flex items-center justify-center">
-                              <div className="text-center text-gray-500">
-                                <div className="w-16 h-16 bg-gray-50 rounded-lg flex items-center justify-center mx-auto mb-4">
+                              <div className="text-center text-gray-400">
+                                <div className="w-16 h-16 bg-gray-800 rounded-lg flex items-center justify-center mx-auto mb-4">
                                   <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
                                   </svg>
@@ -6620,16 +6620,16 @@ export default function TradingPlatformShell() {
                       </div>
                       
                       {/* Chat live */}
-                      <div className="w-full lg:w-80 bg-gray-50 rounded-lg flex flex-col">
-                        <div className="p-4 border-b border-gray-200">
-                          <h3 className="font-semibold text-gray-900">💬 Chat Live</h3>
-                          <p className="text-xs text-gray-500">{viewerCount} spectateurs en ligne</p>
+                      <div className="w-full lg:w-80 bg-gray-800 rounded-lg flex flex-col">
+                        <div className="p-4 border-b border-gray-700">
+                          <h3 className="font-semibold text-white">💬 Chat Live</h3>
+                          <p className="text-xs text-gray-400">{viewerCount} spectateurs en ligne</p>
                         </div>
                         
                         <div className="flex-1 overflow-y-auto p-4 space-y-3">
                           {(messages[''] || []).length === 0 ? (
                         <div className="text-center py-8">
-                              <div className="text-gray-500 text-sm">Aucun message</div>
+                              <div className="text-gray-400 text-sm">Aucun message</div>
                               <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
                         </div>
                       ) : (
@@ -6644,11 +6644,11 @@ export default function TradingPlatformShell() {
                                 </div>
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2 mb-1">
-                                    <span className="font-medium text-gray-900 text-sm">{message.author}</span>
-                                    <span className="text-xs text-gray-500">{message.timestamp}</span>
+                                    <span className="font-medium text-white text-sm">{message.author}</span>
+                                    <span className="text-xs text-gray-400">{message.timestamp}</span>
                                   </div>
-                                  <div className="bg-gray-100 rounded-lg p-2">
-                                    <p className="text-gray-900 text-sm">{message.text}</p>
+                                  <div className="bg-gray-700 rounded-lg p-2">
+                                    <p className="text-white text-sm">{message.text}</p>
                                   </div>
                                   
                                   {/* Bouton de réaction flamme */}
@@ -6658,7 +6658,7 @@ export default function TradingPlatformShell() {
                                       className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
                                         (messageReactions[message.id]?.users || []).includes(user?.email || 'Anonymous')
                                           ? 'bg-orange-500 text-white hover:bg-orange-600'
-                                          : 'bg-gray-200 text-gray-600 hover:bg-gray-300 hover:text-gray-900'
+                                          : 'bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white'
                                       }`}
                                     >
                                       🔥
@@ -6674,7 +6674,7 @@ export default function TradingPlatformShell() {
                         </div>
                         
                         {/* Barre de message pour le chat live */}
-                        <div className="p-4 border-t border-gray-200">
+                        <div className="p-4 border-t border-gray-700">
                           <div className="flex items-center gap-2">
                             <input
                               type="text"
@@ -6682,7 +6682,7 @@ export default function TradingPlatformShell() {
                               onChange={(e) => setChatMessage(e.target.value)}
                               onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                               placeholder="Commenter le stream..."
-                              className="flex-1 bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
+                              className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
                             />
                             <button
                               onClick={handleSendMessage}
@@ -6706,12 +6706,12 @@ export default function TradingPlatformShell() {
                           {Array.from({ length: 16 }, (_, i) => i + 1).map((pageNum) => (
                             <div key={pageNum} className="w-full flex flex-col items-center">
                               <div className="text-center mb-2">
-                                <span className="text-sm font-medium text-gray-500">Page {pageNum}/16</span>
+                                <span className="text-sm font-medium text-gray-400">Page {pageNum}/16</span>
                               </div>
                               <img 
                                 src={`/fondamentaux/page-${pageNum}.jpg`}
                                 alt={`Page ${pageNum}`}
-                                className="w-full max-w-3xl rounded-lg shadow-lg border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity"
+                                className="w-full max-w-3xl rounded-lg shadow-lg border border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
                                 loading="lazy"
                                 onClick={() => setSelectedImage(`/fondamentaux/page-${pageNum}.jpg`)}
                               />
@@ -6797,25 +6797,25 @@ export default function TradingPlatformShell() {
                             </div>
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-1">
-                                <span className="font-semibold text-gray-900">{message.author}</span>
-                                <span className="text-xs text-gray-500">{message.timestamp}</span>
+                                <span className="font-semibold text-white">{message.author}</span>
+                                <span className="text-xs text-gray-400">{message.timestamp}</span>
                               </div>
                               <div 
-                                className="bg-gray-100 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words"
+                                className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words"
                                 data-signal-id={message.text.includes('[SIGNAL_ID:') ? message.text.match(/\[SIGNAL_ID:([^\]]+)\]/)?.[1] : undefined}
                               >
-                                <div className="text-gray-900">
+                                <div className="text-white">
                                   {(() => {
                                     const signalData = formatSignalMessage(message.text);
                                     if (signalData) {
                                       return (
                                         <div>
-                                          <div className="bg-gray-50 rounded-lg p-4 border border-gray-300">
+                                          <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
                                             {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
                                               <div className="mb-3">
                                                 <div className="flex items-center gap-2 mb-2">
                                                   <span className="text-xs">📊</span>
-                                                  <span className="text-sm font-semibold text-gray-600">SIGNAL FERMÉ</span>
+                                                  <span className="text-sm font-semibold text-gray-300">SIGNAL FERMÉ</span>
                                                 </div>
                                                 <div className="text-sm">
                                                   <div className="flex items-center gap-2 mb-1">
@@ -6824,12 +6824,12 @@ export default function TradingPlatformShell() {
                                                     </span>
                                                   </div>
                                                   {signalData.pnl && (
-                                                    <div className="text-gray-600">
+                                                    <div className="text-gray-300">
                                                       P&L: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}>{signalData.pnl}</span>
                                                     </div>
                                                   )}
                                                   {(signalData.status === 'LOSS' || signalData.status === 'WIN') && signalData.signalId && (
-                                                    <div className="mt-2 pt-2 border-t border-gray-300">
+                                                    <div className="mt-2 pt-2 border-t border-gray-600">
                                                       <button
                                                         onClick={() => {
                                                           const currentSignalId = signalData.signalId;
@@ -6877,7 +6877,7 @@ export default function TradingPlatformShell() {
                                                             console.log('❌ Aucun message original trouvé');
                                                           }
                                                         }}
-                                                        className="flex items-center gap-1 text-gray-900 hover:text-gray-600 transition-colors text-sm font-medium cursor-pointer"
+                                                        className="flex items-center gap-1 text-white hover:text-gray-300 transition-colors text-sm font-medium cursor-pointer"
                                                         title="Remonter au signal d'origine"
                                                       >
                                                         <span className="text-lg">⬆️</span>
@@ -6891,29 +6891,29 @@ export default function TradingPlatformShell() {
                                               <div className="space-y-2">
                                                 <div className="flex items-center gap-2">
                                                   <span className="text-lg">🚀</span>
-                                                  <span className="font-bold text-gray-900">
+                                                  <span className="font-bold text-white">
                                                     {signalData.type} {signalData.symbol}
                                                   </span>
                                                   {signalData.timeframe && (
-                                                    <span className="text-sm text-gray-500">{signalData.timeframe}</span>
+                                                    <span className="text-sm text-gray-400">{signalData.timeframe}</span>
                                                   )}
                                                 </div>
                                                 {signalData.entry && (
                                                   <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-500">📊</span>
-                                                    <span className="text-gray-900">Entry: {signalData.entry}</span>
+                                                    <span className="text-gray-400">📊</span>
+                                                    <span className="text-white">Entry: {signalData.entry}</span>
                                                   </div>
                                                 )}
                                                 {signalData.rr && (
                                                   <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-500">🎯</span>
-                                                    <span className="text-gray-900">R:R ≈ {signalData.rr}</span>
+                                                    <span className="text-gray-400">🎯</span>
+                                                    <span className="text-white">R:R ≈ {signalData.rr}</span>
                                                   </div>
                                                 )}
                                                 {signalData.timeframe && (
                                                   <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-500">⏰</span>
-                                                    <span className="text-gray-900">{signalData.timeframe}</span>
+                                                    <span className="text-gray-400">⏰</span>
+                                                    <span className="text-white">{signalData.timeframe}</span>
                                                   </div>
                                                 )}
                                               </div>
@@ -6941,17 +6941,17 @@ export default function TradingPlatformShell() {
                                   const isClosed = currentSignal && ['WIN', 'LOSS', 'BE'].includes(currentSignal.status);
                                   
                                   return (
-                                    <div className="mt-3 pt-3 border-t border-gray-300">
+                                    <div className="mt-3 pt-3 border-t border-gray-600">
                                       <div className="flex items-center gap-2">
-                                        <span className="text-xs text-gray-500">Résultat du signal:</span>
+                                        <span className="text-xs text-gray-400">Résultat du signal:</span>
                                         <div className={`px-3 py-1.5 rounded-lg text-xs font-medium ${
                                           isClosed && currentSignal?.status === 'WIN'
-                                            ? 'bg-green-200/60 text-gray-900 border-2 border-green-200/50 shadow-lg' // Bouton WIN actif
+                                            ? 'bg-green-200/60 text-white border-2 border-green-200/50 shadow-lg' // Bouton WIN actif
                                             : isClosed && currentSignal?.status === 'LOSS'
                                             ? 'bg-red-500 text-white border-2 border-red-400 shadow-lg' // Bouton LOSS actif
                                             : isClosed && currentSignal?.status === 'BE'
                                             ? 'bg-blue-500 text-white border-2 border-blue-400 shadow-lg' // Bouton BE actif
-                                            : 'bg-gray-300/30 text-gray-500 border border-gray-400/30' // Bouton neutre
+                                            : 'bg-gray-500/30 text-gray-400 border border-gray-500/30' // Bouton neutre
                                         }`}>
                                           {isClosed && currentSignal?.status === 'WIN' ? '🟢 WIN' :
                                            isClosed && currentSignal?.status === 'LOSS' ? '🔴 LOSS' :
@@ -6977,7 +6977,7 @@ export default function TradingPlatformShell() {
                                       <img 
                                         src={message.attachment_data} 
                                         alt="Attachment"
-                                        className="mt-2 w-full max-w-full h-auto max-h-40 md:max-h-96 object-contain rounded-lg border border-gray-300 cursor-pointer hover:opacity-80 transition-opacity"
+                                        className="mt-2 w-full max-w-full h-auto max-h-40 md:max-h-96 object-contain rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
                                         onClick={() => setSelectedImage(message.attachment_data)}
                                       />
                                     </div>
@@ -6992,7 +6992,7 @@ export default function TradingPlatformShell() {
                                   className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
                                     (messageReactions[message.id]?.users || []).includes(user?.email || 'Anonymous')
                                       ? 'bg-orange-500 text-white hover:bg-orange-600'
-                                      : 'bg-gray-200 text-gray-600 hover:bg-gray-300 hover:text-gray-900'
+                                      : 'bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white'
                                   }`}
                                 >
                                   🔥
@@ -7016,17 +7016,17 @@ export default function TradingPlatformShell() {
                     {/* Interface Livestream Desktop */}
                     <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
                       {/* Zone de stream */}
-                      <div className="flex-1 bg-white rounded-lg overflow-hidden">
+                      <div className="flex-1 bg-gray-900 rounded-lg overflow-hidden">
                         {!isLiveStreaming ? (
                           <div className="h-full flex flex-col items-center justify-center p-8">
                             <div className="text-center space-y-4">
                               <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto">
-                                <svg className="w-10 h-10 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
                                   <path d="M8 5v14l11-7z"/>
                                 </svg>
                               </div>
-                              <h2 className="text-xl font-bold text-gray-900">Aucun stream en cours</h2>
-                              <p className="text-gray-500">Commencez votre session de trading en direct</p>
+                              <h2 className="text-xl font-bold text-white">Aucun stream en cours</h2>
+                              <p className="text-gray-400">Commencez votre session de trading en direct</p>
                               
                               {/* Formulaire de démarrage */}
                               <div className="space-y-3 max-w-md mx-auto">
@@ -7035,13 +7035,13 @@ export default function TradingPlatformShell() {
                                   placeholder="Titre du stream (ex: Session TradingView - EURUSD)"
                                   value={streamTitle}
                                   onChange={(e) => setStreamTitle(e.target.value)}
-                                  className="w-full bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                                 />
                                 <textarea
                                   placeholder="Description (optionnel)"
                                   value={streamDescription}
                                   onChange={(e) => setStreamDescription(e.target.value)}
-                                  className="w-full bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                                   rows={2}
                                 />
                                 <div className="flex gap-2">
@@ -7064,18 +7064,18 @@ export default function TradingPlatformShell() {
                         ) : (
                           <div className="h-full flex flex-col">
                             {/* Header du stream */}
-                            <div className="bg-gray-50 p-4 border-b border-gray-200">
+                            <div className="bg-gray-800 p-4 border-b border-gray-700">
                               <div className="flex items-center justify-between">
                                 <div>
-                                  <h3 className="text-lg font-bold text-gray-900">{streamTitle}</h3>
-                                  <p className="text-sm text-gray-500">{streamDescription}</p>
+                                  <h3 className="text-lg font-bold text-white">{streamTitle}</h3>
+                                  <p className="text-sm text-gray-400">{streamDescription}</p>
                                 </div>
                                 <div className="flex items-center gap-4">
                                   <div className="flex items-center gap-2 text-red-400">
                                     <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
                                     <span className="text-sm font-medium">EN DIRECT</span>
                                   </div>
-                                  <div className="flex items-center gap-1 text-gray-500">
+                                  <div className="flex items-center gap-1 text-gray-400">
                                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                                     </svg>
@@ -7083,7 +7083,7 @@ export default function TradingPlatformShell() {
                                   </div>
                                   <button
                                     onClick={handleStopStream}
-                                    className="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded text-sm text-gray-900"
+                                    className="bg-gray-600 hover:bg-gray-500 px-3 py-1 rounded text-sm text-white"
                                   >
                                     Arrêter
                                   </button>
@@ -7093,8 +7093,8 @@ export default function TradingPlatformShell() {
                             
                             {/* Zone de vidéo */}
                             <div className="flex-1 bg-black flex items-center justify-center">
-                              <div className="text-center text-gray-500">
-                                <div className="w-16 h-16 bg-gray-50 rounded-lg flex items-center justify-center mx-auto mb-4">
+                              <div className="text-center text-gray-400">
+                                <div className="w-16 h-16 bg-gray-800 rounded-lg flex items-center justify-center mx-auto mb-4">
                                   <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
                                   </svg>
@@ -7108,16 +7108,16 @@ export default function TradingPlatformShell() {
                       </div>
                       
                       {/* Chat live */}
-                      <div className="w-full lg:w-80 bg-gray-50 rounded-lg flex flex-col">
-                        <div className="p-4 border-b border-gray-200">
-                          <h3 className="font-semibold text-gray-900">💬 Chat Live</h3>
-                          <p className="text-xs text-gray-500">{viewerCount} spectateurs en ligne</p>
+                      <div className="w-full lg:w-80 bg-gray-800 rounded-lg flex flex-col">
+                        <div className="p-4 border-b border-gray-700">
+                          <h3 className="font-semibold text-white">💬 Chat Live</h3>
+                          <p className="text-xs text-gray-400">{viewerCount} spectateurs en ligne</p>
                         </div>
                         
                         <div className="flex-1 overflow-y-auto p-4 space-y-3">
                           {(messages[''] || []).length === 0 ? (
                             <div className="text-center py-8">
-                              <div className="text-gray-500 text-sm">Aucun message</div>
+                              <div className="text-gray-400 text-sm">Aucun message</div>
                               <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
                             </div>
                           ) : (
@@ -7132,11 +7132,11 @@ export default function TradingPlatformShell() {
                                 </div>
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2 mb-1">
-                                    <span className="font-medium text-gray-900 text-sm">{message.author}</span>
-                                    <span className="text-xs text-gray-500">{message.timestamp}</span>
+                                    <span className="font-medium text-white text-sm">{message.author}</span>
+                                    <span className="text-xs text-gray-400">{message.timestamp}</span>
                                   </div>
-                                  <div className="bg-gray-100 rounded-lg p-2">
-                                    <p className="text-gray-900 text-sm">{message.text}</p>
+                                  <div className="bg-gray-700 rounded-lg p-2">
+                                    <p className="text-white text-sm">{message.text}</p>
                                   </div>
                                 </div>
                                 
@@ -7147,7 +7147,7 @@ export default function TradingPlatformShell() {
                                     className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
                                       (messageReactions[message.id]?.users || []).includes(user?.email || 'Anonymous')
                                         ? 'bg-orange-500 text-white hover:bg-orange-600'
-                                        : 'bg-gray-200 text-gray-600 hover:bg-gray-300 hover:text-gray-900'
+                                        : 'bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white'
                                     }`}
                                   >
                                     🔥
@@ -7162,7 +7162,7 @@ export default function TradingPlatformShell() {
                         </div>
                         
                         {/* Barre de message pour le chat live */}
-                        <div className="p-4 border-t border-gray-200">
+                        <div className="p-4 border-t border-gray-700">
                           <div className="flex items-center gap-2">
                             <input
                               type="text"
@@ -7170,7 +7170,7 @@ export default function TradingPlatformShell() {
                               onChange={(e) => setChatMessage(e.target.value)}
                               onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                               placeholder="Commenter le stream..."
-                              className="flex-1 bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
+                              className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
                             />
                             <button
                               onClick={handleSendMessage}
@@ -7206,7 +7206,7 @@ export default function TradingPlatformShell() {
                 <div className="space-y-4">
                   {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                     <div className="text-center py-8">
-                      <div className="text-gray-500 text-sm">Aucun signal pour le moment</div>
+                      <div className="text-gray-400 text-sm">Aucun signal pour le moment</div>
                       <div className="text-gray-500 text-xs mt-1">Créez votre premier signal avec le bouton "+"</div>
                     </div>
                   ) : (
@@ -7221,16 +7221,16 @@ export default function TradingPlatformShell() {
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <span className="font-semibold text-gray-900">TheTheTrader</span>
-                            <span className="text-xs text-gray-500">{signal.timestamp}</span>
+                            <span className="font-semibold text-white">TheTheTrader</span>
+                            <span className="text-xs text-gray-400">{signal.timestamp}</span>
                           </div>
 
-                          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 max-w-full md:max-w-2xl">
+                          <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 max-w-full md:max-w-2xl">
                             <div className="space-y-3">
                               {/* Header avec titre et indicateur */}
                                 <div className="flex items-center gap-2">
-                                <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-200/60' : 'bg-gray-300'}`}></div>
-                                <h3 className="font-bold text-gray-900 text-lg">
+                                <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-200/60' : 'bg-gray-500'}`}></div>
+                                <h3 className="font-bold text-white text-lg">
                                   Signal {signal.type} {signal.symbol} – {signal.timeframe}
                                 </h3>
                               </div>
@@ -7240,28 +7240,28 @@ export default function TradingPlatformShell() {
                                   {signal.entry !== 'N/A' && (
                                     <div className="flex items-center gap-2">
                                     <span className="text-blue-400 text-sm">🔹</span>
-                                    <span className="text-gray-900">Entrée : {signal.entry} USD</span>
+                                    <span className="text-white">Entrée : {signal.entry} USD</span>
                                     </div>
                                   )}
                                   {signal.stopLoss !== 'N/A' && (
                                     <div className="flex items-center gap-2">
                                     <span className="text-blue-400 text-sm">🔹</span>
-                                    <span className="text-gray-900">Stop Loss : {signal.stopLoss} USD</span>
+                                    <span className="text-white">Stop Loss : {signal.stopLoss} USD</span>
                                     </div>
                                   )}
                                 {signal.takeProfit !== 'N/A' && (
                                     <div className="flex items-center gap-2">
                                     <span className="text-blue-400 text-sm">🔹</span>
-                                    <span className="text-gray-900">Take Profit : {signal.takeProfit} USD</span>
+                                    <span className="text-white">Take Profit : {signal.takeProfit} USD</span>
                                     </div>
                                   )}
                                 </div>
                               
                               {/* Ratio R:R */}
                               {signal.entry !== 'N/A' && signal.takeProfit !== 'N/A' && signal.stopLoss !== 'N/A' && (
-                                <div className="flex items-center gap-2 pt-2 border-t border-gray-300">
+                                <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
                                   <span className="text-red-400 text-sm">🎯</span>
-                                  <span className="text-gray-900 text-sm">
+                                  <span className="text-white text-sm">
                                     Ratio R:R : ≈ {calculateRiskReward(signal.entry, signal.takeProfit, signal.stopLoss)}
                                   </span>
                               </div>
@@ -7269,7 +7269,7 @@ export default function TradingPlatformShell() {
 
                               {/* Message de fermeture */}
                               {signal.closeMessage && (
-                                <div className="flex items-center justify-between pt-2 border-t border-gray-300">
+                                <div className="flex items-center justify-between pt-2 border-t border-gray-600">
                                   <div className="flex items-center gap-2">
                                     <span className="text-yellow-400 text-sm">🔒</span>
                                     <span className="text-yellow-400 text-sm font-medium">
@@ -7317,18 +7317,18 @@ export default function TradingPlatformShell() {
                               <img 
                                 src={signal.image} 
                                 alt="Signal screenshot"
-                                className="max-w-full md:max-w-2xl rounded-lg border border-gray-300"
+                                className="max-w-full md:max-w-2xl rounded-lg border border-gray-600"
                               />
                             </div>
                           )}
 
                           {signal.closure_image && (
                             <div className="mt-2">
-                              <div className="text-xs text-gray-500 mb-1">📸 Photo de clôture:</div>
+                              <div className="text-xs text-gray-400 mb-1">📸 Photo de clôture:</div>
                               <img 
                                 src={signal.closure_image} 
                                 alt="Closure screenshot"
-                                className="max-w-full md:max-w-2xl rounded-lg border border-gray-300"
+                                className="max-w-full md:max-w-2xl rounded-lg border border-gray-600"
                               />
                             </div>
                           )}
@@ -7352,12 +7352,12 @@ export default function TradingPlatformShell() {
                           {Array.from({ length: 16 }, (_, i) => i + 1).map((pageNum) => (
                             <div key={pageNum} className="w-full flex flex-col items-center">
                               <div className="text-center mb-2">
-                                <span className="text-sm font-medium text-gray-500">Page {pageNum}/16</span>
+                                <span className="text-sm font-medium text-gray-400">Page {pageNum}/16</span>
                               </div>
                               <img 
                                 src={`/fondamentaux/page-${pageNum}.jpg`}
                                 alt={`Page ${pageNum}`}
-                                className="w-full max-w-3xl rounded-lg shadow-lg border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity"
+                                className="w-full max-w-3xl rounded-lg shadow-lg border border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
                                 loading="lazy"
                                 onClick={() => setSelectedImage(`/fondamentaux/page-${pageNum}.jpg`)}
                               />
@@ -7443,25 +7443,25 @@ export default function TradingPlatformShell() {
                             </div>
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-1">
-                                <span className="font-semibold text-gray-900">{message.author}</span>
-                                <span className="text-xs text-gray-500">{message.timestamp}</span>
+                                <span className="font-semibold text-white">{message.author}</span>
+                                <span className="text-xs text-gray-400">{message.timestamp}</span>
                               </div>
                               <div 
-                                className="bg-gray-100 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words"
+                                className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words"
                                 data-signal-id={message.text.includes('[SIGNAL_ID:') ? message.text.match(/\[SIGNAL_ID:([^\]]+)\]/)?.[1] : undefined}
                               >
-                                <div className="text-gray-900">
+                                <div className="text-white">
                                   {(() => {
                                     const signalData = formatSignalMessage(message.text);
                                     if (signalData) {
                                       return (
                                         <div>
-                                          <div className="bg-gray-50 rounded-lg p-4 border border-gray-300">
+                                          <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
                                             {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
                                               <div className="mb-3">
                                                 <div className="flex items-center gap-2 mb-2">
                                                   <span className="text-xs">📊</span>
-                                                  <span className="text-sm font-semibold text-gray-600">SIGNAL FERMÉ</span>
+                                                  <span className="text-sm font-semibold text-gray-300">SIGNAL FERMÉ</span>
                                                 </div>
                                                 <div className="text-sm">
                                                   <div className="flex items-center gap-2 mb-1">
@@ -7470,12 +7470,12 @@ export default function TradingPlatformShell() {
                                                     </span>
                                                   </div>
                                                   {signalData.pnl && (
-                                                    <div className="text-gray-600">
+                                                    <div className="text-gray-300">
                                                       P&L: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}>{signalData.pnl}</span>
                                                     </div>
                                                   )}
                                                   {(signalData.status === 'LOSS' || signalData.status === 'WIN') && signalData.signalId && (
-                                                    <div className="mt-2 pt-2 border-t border-gray-300">
+                                                    <div className="mt-2 pt-2 border-t border-gray-600">
                                                       <button
                                                         onClick={() => {
                                                           const currentSignalId = signalData.signalId;
@@ -7523,7 +7523,7 @@ export default function TradingPlatformShell() {
                                                             console.log('❌ Aucun message original trouvé');
                                                           }
                                                         }}
-                                                        className="flex items-center gap-1 text-gray-900 hover:text-gray-600 transition-colors text-sm font-medium cursor-pointer"
+                                                        className="flex items-center gap-1 text-white hover:text-gray-300 transition-colors text-sm font-medium cursor-pointer"
                                                         title="Remonter au signal d'origine"
                                                       >
                                                         <span className="text-lg">⬆️</span>
@@ -7537,29 +7537,29 @@ export default function TradingPlatformShell() {
                                               <div className="space-y-2">
                                                 <div className="flex items-center gap-2">
                                                   <span className="text-lg">🚀</span>
-                                                  <span className="font-bold text-gray-900">
+                                                  <span className="font-bold text-white">
                                                     {signalData.type} {signalData.symbol}
                                                   </span>
                                                   {signalData.timeframe && (
-                                                    <span className="text-sm text-gray-500">{signalData.timeframe}</span>
+                                                    <span className="text-sm text-gray-400">{signalData.timeframe}</span>
                                                   )}
                                                 </div>
                                                 {signalData.entry && (
                                                   <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-500">📊</span>
-                                                    <span className="text-gray-900">Entry: {signalData.entry}</span>
+                                                    <span className="text-gray-400">📊</span>
+                                                    <span className="text-white">Entry: {signalData.entry}</span>
                                                   </div>
                                                 )}
                                                 {signalData.rr && (
                                                   <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-500">🎯</span>
-                                                    <span className="text-gray-900">R:R ≈ {signalData.rr}</span>
+                                                    <span className="text-gray-400">🎯</span>
+                                                    <span className="text-white">R:R ≈ {signalData.rr}</span>
                                                   </div>
                                                 )}
                                                 {signalData.timeframe && (
                                                   <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-500">⏰</span>
-                                                    <span className="text-gray-900">{signalData.timeframe}</span>
+                                                    <span className="text-gray-400">⏰</span>
+                                                    <span className="text-white">{signalData.timeframe}</span>
                                                   </div>
                                                 )}
                                               </div>
@@ -7587,17 +7587,17 @@ export default function TradingPlatformShell() {
                                   const isClosed = currentSignal && ['WIN', 'LOSS', 'BE'].includes(currentSignal.status);
                                   
                                   return (
-                                    <div className="mt-3 pt-3 border-t border-gray-300">
+                                    <div className="mt-3 pt-3 border-t border-gray-600">
                                       <div className="flex items-center gap-2">
-                                        <span className="text-xs text-gray-500">Résultat du signal:</span>
+                                        <span className="text-xs text-gray-400">Résultat du signal:</span>
                                         <div className={`px-3 py-1.5 rounded-lg text-xs font-medium ${
                                           isClosed && currentSignal?.status === 'WIN'
-                                            ? 'bg-green-200/60 text-gray-900 border-2 border-green-200/50 shadow-lg' // Bouton WIN actif
+                                            ? 'bg-green-200/60 text-white border-2 border-green-200/50 shadow-lg' // Bouton WIN actif
                                             : isClosed && currentSignal?.status === 'LOSS'
                                             ? 'bg-red-500 text-white border-2 border-red-400 shadow-lg' // Bouton LOSS actif
                                             : isClosed && currentSignal?.status === 'BE'
                                             ? 'bg-blue-500 text-white border-2 border-blue-400 shadow-lg' // Bouton BE actif
-                                            : 'bg-gray-300/30 text-gray-500 border border-gray-400/30' // Bouton neutre
+                                            : 'bg-gray-500/30 text-gray-400 border border-gray-500/30' // Bouton neutre
                                         }`}>
                                           {isClosed && currentSignal?.status === 'WIN' ? '🟢 WIN' :
                                            isClosed && currentSignal?.status === 'LOSS' ? '🔴 LOSS' :
@@ -7623,7 +7623,7 @@ export default function TradingPlatformShell() {
                                       <img 
                                         src={message.attachment_data} 
                                         alt="Attachment"
-                                        className="mt-2 w-full max-w-full h-auto max-h-40 md:max-h-96 object-contain rounded-lg border border-gray-300 cursor-pointer hover:opacity-80 transition-opacity"
+                                        className="mt-2 w-full max-w-full h-auto max-h-40 md:max-h-96 object-contain rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
                                         onClick={() => setSelectedImage(message.attachment_data)}
                                       />
                                     </div>
@@ -7638,7 +7638,7 @@ export default function TradingPlatformShell() {
                                   className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
                                     (messageReactions[message.id]?.users || []).includes(user?.email || 'Anonymous')
                                       ? 'bg-orange-500 text-white hover:bg-orange-600'
-                                      : 'bg-gray-200 text-gray-600 hover:bg-gray-300 hover:text-gray-900'
+                                      : 'bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white'
                                   }`}
                                 >
                                   🔥
@@ -7662,17 +7662,17 @@ export default function TradingPlatformShell() {
                   {/* Interface Livestream Desktop */}
                   <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
                     {/* Zone de stream */}
-                    <div className="flex-1 bg-white rounded-lg overflow-hidden">
+                    <div className="flex-1 bg-gray-900 rounded-lg overflow-hidden">
                       {!isLiveStreaming ? (
                         <div className="h-full flex flex-col items-center justify-center p-8">
                           <div className="text-center space-y-4">
                             <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto">
-                              <svg className="w-10 h-10 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M8 5v14l11-7z"/>
                               </svg>
                             </div>
-                            <h2 className="text-xl font-bold text-gray-900">Aucun stream en cours</h2>
-                            <p className="text-gray-500">Commencez votre session de trading en direct</p>
+                            <h2 className="text-xl font-bold text-white">Aucun stream en cours</h2>
+                            <p className="text-gray-400">Commencez votre session de trading en direct</p>
                             
                             {/* Formulaire de démarrage */}
                             <div className="space-y-3 max-w-md mx-auto">
@@ -7681,13 +7681,13 @@ export default function TradingPlatformShell() {
                                 placeholder="Titre du stream (ex: Session TradingView - EURUSD)"
                                 value={streamTitle}
                                 onChange={(e) => setStreamTitle(e.target.value)}
-                                className="w-full bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                               />
                               <textarea
                                 placeholder="Description (optionnel)"
                                 value={streamDescription}
                                 onChange={(e) => setStreamDescription(e.target.value)}
-                                className="w-full bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                                 rows={2}
                               />
                               <div className="flex gap-2">
@@ -7710,18 +7710,18 @@ export default function TradingPlatformShell() {
                       ) : (
                         <div className="h-full flex flex-col">
                           {/* Header du stream */}
-                          <div className="bg-gray-50 p-4 border-b border-gray-200">
+                          <div className="bg-gray-800 p-4 border-b border-gray-700">
                             <div className="flex items-center justify-between">
                               <div>
-                                <h3 className="text-lg font-bold text-gray-900">{streamTitle}</h3>
-                                <p className="text-sm text-gray-500">{streamDescription}</p>
+                                <h3 className="text-lg font-bold text-white">{streamTitle}</h3>
+                                <p className="text-sm text-gray-400">{streamDescription}</p>
                               </div>
                               <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-2 text-red-400">
                                   <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
                                   <span className="text-sm font-medium">EN DIRECT</span>
                                 </div>
-                                <div className="flex items-center gap-1 text-gray-500">
+                                <div className="flex items-center gap-1 text-gray-400">
                                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                                   </svg>
@@ -7729,7 +7729,7 @@ export default function TradingPlatformShell() {
                                 </div>
                                 <button
                                   onClick={handleStopStream}
-                                  className="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded text-sm text-gray-900"
+                                  className="bg-gray-600 hover:bg-gray-500 px-3 py-1 rounded text-sm text-white"
                                 >
                                   Arrêter
                                 </button>
@@ -7739,8 +7739,8 @@ export default function TradingPlatformShell() {
                           
                           {/* Zone de vidéo */}
                           <div className="flex-1 bg-black flex items-center justify-center">
-                            <div className="text-center text-gray-500">
-                              <div className="w-16 h-16 bg-gray-50 rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <div className="text-center text-gray-400">
+                              <div className="w-16 h-16 bg-gray-800 rounded-lg flex items-center justify-center mx-auto mb-4">
                                 <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
                                   <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
                                 </svg>
@@ -7754,16 +7754,16 @@ export default function TradingPlatformShell() {
                     </div>
                     
                     {/* Chat live */}
-                    <div className="w-full lg:w-80 bg-gray-50 rounded-lg flex flex-col">
-                      <div className="p-4 border-b border-gray-200">
-                        <h3 className="font-semibold text-gray-900">💬 Chat Live</h3>
-                        <p className="text-xs text-gray-500">{viewerCount} spectateurs en ligne</p>
+                    <div className="w-full lg:w-80 bg-gray-800 rounded-lg flex flex-col">
+                      <div className="p-4 border-b border-gray-700">
+                        <h3 className="font-semibold text-white">💬 Chat Live</h3>
+                        <p className="text-xs text-gray-400">{viewerCount} spectateurs en ligne</p>
                       </div>
                       
                       <div className="flex-1 overflow-y-auto p-4 space-y-3">
                         {(messages[''] || []).length === 0 ? (
                       <div className="text-center py-8">
-                            <div className="text-gray-500 text-sm">Aucun message</div>
+                            <div className="text-gray-400 text-sm">Aucun message</div>
                             <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
                       </div>
                     ) : (
@@ -7782,20 +7782,20 @@ export default function TradingPlatformShell() {
                               </div>
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-1">
-                                  <span className="font-medium text-gray-900 text-sm">{message.author}</span>
-                                  <span className="text-xs text-gray-500">{message.timestamp}</span>
+                                  <span className="font-medium text-white text-sm">{message.author}</span>
+                                  <span className="text-xs text-gray-400">{message.timestamp}</span>
                                 </div>
-                                <div className="bg-gray-100 rounded-lg p-2">
-                                  <p className="text-gray-900 text-sm">{message.text}</p>
+                                <div className="bg-gray-700 rounded-lg p-2">
+                                  <p className="text-white text-sm">{message.text}</p>
                                   
                                   {/* Bouton de réaction flamme pour les messages */}
-                                  <div className="mt-2 pt-2 border-t border-gray-300">
+                                  <div className="mt-2 pt-2 border-t border-gray-600">
                                     <button
                                       onClick={() => handleAddReaction(message.id)}
                                       className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
                                         (messageReactions[message.id]?.users || []).includes(user?.email || 'Anonymous')
                                           ? 'bg-orange-500 text-white hover:bg-orange-600'
-                                          : 'bg-gray-200 text-gray-600 hover:bg-gray-300 hover:text-gray-900'
+                                          : 'bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white'
                                       }`}
                                     >
                                       🔥
@@ -7812,7 +7812,7 @@ export default function TradingPlatformShell() {
                       </div>
                       
                       {/* Barre de message pour le chat live */}
-                      <div className="p-4 border-t border-gray-200">
+                      <div className="p-4 border-t border-gray-700">
                         <div className="flex items-center gap-2">
                           <input
                             type="text"
@@ -7820,7 +7820,7 @@ export default function TradingPlatformShell() {
                             onChange={(e) => setChatMessage(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                             placeholder="Commenter le stream..."
-                            className="flex-1 bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
+                            className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
                           />
                           <button
                             onClick={handleSendMessage}
@@ -7836,15 +7836,15 @@ export default function TradingPlatformShell() {
               ) : selectedChannel.id === 'profit-loss' ? (
                 <ProfitLoss />
               ) : (selectedChannel.id === 'video' || selectedChannel.id === 'livestream-premium') ? (
-                <div className="flex flex-col h-full bg-white">
+                <div className="flex flex-col h-full bg-gray-900">
                   {/* Interface Video avec Sidebar Visible */}
                   <div className="flex-1 flex flex-col gap-4 p-2">
                     {/* Zone de stream */}
-                    <div className="flex-1 bg-white rounded-lg overflow-hidden">
+                    <div className="flex-1 bg-gray-900 rounded-lg overflow-hidden">
                       <div className="h-full flex flex-col items-center justify-center p-4 pt-16">
                         <div className="text-center space-y-4 w-full max-w-[95vw] mx-auto">
-                          <h1 className="text-3xl font-bold text-gray-900 mb-2">{selectedChannel.id === 'livestream-premium' ? 'Livestream Premium' : 'Livestream'}</h1>
-                          <p className="text-gray-500">Attache ta ceinture cousin</p>
+                          <h1 className="text-3xl font-bold text-white mb-2">{selectedChannel.id === 'livestream-premium' ? 'Livestream Premium' : 'Livestream'}</h1>
+                          <p className="text-gray-400">Attache ta ceinture cousin</p>
                           
                           {/* Iframe 100ms */}
                           <div className="w-full relative">
@@ -7855,7 +7855,7 @@ export default function TradingPlatformShell() {
                                   iframe.requestFullscreen();
                                 }
                               }}
-                              className="absolute top-4 right-4 z-10 text-gray-900 text-4xl font-bold hover:text-gray-600 transition-colors"
+                              className="absolute top-4 right-4 z-10 text-white text-4xl font-bold hover:text-gray-300 transition-colors"
                             >
                               ⤢
                             </button>
@@ -7874,12 +7874,12 @@ export default function TradingPlatformShell() {
                   </div>
                 </div>
               ) : selectedChannel.id === 'trading-hub' ? (
-                <div className="flex flex-col h-full bg-white">
+                <div className="flex flex-col h-full bg-gray-900">
                   {/* Trading Hub - RumbleTalk */}
                   <div className="flex-1 flex flex-col p-4">
                     <div className="text-center mb-4">
-                      <h1 className="text-3xl font-bold text-gray-900 mb-2">💬 Trading Hub</h1>
-                      <p className="text-gray-500">Discute avec la communauté en temps réel</p>
+                      <h1 className="text-3xl font-bold text-white mb-2">💬 Trading Hub</h1>
+                      <p className="text-gray-400">Discute avec la communauté en temps réel</p>
                     </div>
                     
                     {/* RumbleTalk Chat */}
@@ -7889,20 +7889,20 @@ export default function TradingPlatformShell() {
                   </div>
                 </div>
               ) : (selectedChannel.id === 'video' || selectedChannel.id === 'livestream-premium') ? (
-                <div className="flex flex-col h-full bg-white">
+                <div className="flex flex-col h-full bg-gray-900">
                   {/* Interface Livestream avec Sidebar Visible */}
                   <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
                     {/* Zone de stream */}
-                    <div className="flex-1 bg-white rounded-lg overflow-hidden">
+                    <div className="flex-1 bg-gray-900 rounded-lg overflow-hidden">
                       <div className="h-full flex flex-col items-center justify-center p-8">
                         <div className="text-center space-y-4">
                           <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto">
-                            <svg className="w-10 h-10 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
                               <path d="M8 5v14l11-7z"/>
                             </svg>
                           </div>
-                          <h2 className="text-xl font-bold text-gray-900">Livestream Trading</h2>
-                          <p className="text-gray-500">Session de trading en direct</p>
+                          <h2 className="text-xl font-bold text-white">Livestream Trading</h2>
+                          <p className="text-gray-400">Session de trading en direct</p>
                           
                           {/* Iframe 100ms */}
                           <div className="w-full max-w-7xl relative">
@@ -7931,16 +7931,16 @@ export default function TradingPlatformShell() {
                     </div>
                     
                     {/* Chat live */}
-                    <div className="w-full lg:w-80 bg-gray-50 rounded-lg flex flex-col">
-                      <div className="p-4 border-b border-gray-200">
-                        <h3 className="font-semibold text-gray-900">💬 Chat Live</h3>
-                        <p className="text-xs text-gray-500">Commentaires en direct</p>
+                    <div className="w-full lg:w-80 bg-gray-800 rounded-lg flex flex-col">
+                      <div className="p-4 border-b border-gray-700">
+                        <h3 className="font-semibold text-white">💬 Chat Live</h3>
+                        <p className="text-xs text-gray-400">Commentaires en direct</p>
                       </div>
                       
                       <div className="flex-1 overflow-y-auto p-4 space-y-3">
                         {(messages['video'] || []).length === 0 ? (
                           <div className="text-center py-8">
-                            <div className="text-gray-500 text-sm">Aucun message</div>
+                            <div className="text-gray-400 text-sm">Aucun message</div>
                             <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
                           </div>
                         ) : (
@@ -7949,11 +7949,11 @@ export default function TradingPlatformShell() {
                               <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs">T</div>
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-1">
-                                  <span className="font-medium text-gray-900 text-sm">{message.author}</span>
-                                  <span className="text-xs text-gray-500">{message.timestamp}</span>
+                                  <span className="font-medium text-white text-sm">{message.author}</span>
+                                  <span className="text-xs text-gray-400">{message.timestamp}</span>
                                 </div>
-                                <div className="bg-gray-100 rounded-lg p-2">
-                                  <p className="text-gray-900 text-sm">{message.text}</p>
+                                <div className="bg-gray-700 rounded-lg p-2">
+                                  <p className="text-white text-sm">{message.text}</p>
                                 </div>
                               </div>
                             </div>
@@ -7962,7 +7962,7 @@ export default function TradingPlatformShell() {
                       </div>
                       
                       {/* Barre de message pour le chat live */}
-                      <div className="p-4 border-t border-gray-200">
+                      <div className="p-4 border-t border-gray-700">
                         <div className="flex items-center gap-2">
                           <input
                             type="text"
@@ -7970,7 +7970,7 @@ export default function TradingPlatformShell() {
                             onChange={(e) => setChatMessage(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                             placeholder="Commenter le stream..."
-                            className="flex-1 bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
+                            className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
                           />
                           <button
                             onClick={handleSendMessage}
@@ -7995,13 +7995,13 @@ export default function TradingPlatformShell() {
       {/* Modal pour ajouter un trade */}
       {showTradeModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-50 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+          <div className="bg-gray-800 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">{editingTrade ? 'Modifier le trade' : 'Ajouter un trade'}</h2>
+                <h2 className="text-lg font-semibold text-white">{editingTrade ? 'Modifier le trade' : 'Ajouter un trade'}</h2>
                 <button 
                   onClick={() => { setSelectedAccounts([]); setEditingTrade(null); setShowTradeModal(false); }}
-                  className="text-gray-500 hover:text-gray-900"
+                  className="text-gray-400 hover:text-white"
                 >
                   ✕
                 </button>
@@ -8010,9 +8010,9 @@ export default function TradingPlatformShell() {
               <div className="space-y-4">
                 {/* Zone de collage TradingView */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">📋 Coller données TradingView</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">📋 Coller données TradingView</label>
                   <div
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 min-h-[80px] flex items-center justify-center cursor-pointer"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 min-h-[80px] flex items-center justify-center cursor-pointer"
                     onPaste={handleTradingViewPasteTrade}
                     onDrop={(e) => {
                       e.preventDefault();
@@ -8034,18 +8034,18 @@ export default function TradingPlatformShell() {
                     onDragOver={(e) => e.preventDefault()}
                   >
                     <div className="text-center">
-                      <div className="text-gray-500 mb-1">📋 Cliquez ici et collez (Ctrl+V)</div>
+                      <div className="text-gray-400 mb-1">📋 Cliquez ici et collez (Ctrl+V)</div>
                       <div className="text-xs text-gray-500">ou glissez-déposez du texte</div>
                     </div>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">Collez directement depuis TradingView</p>
+                  <p className="text-xs text-gray-400 mt-1">Collez directement depuis TradingView</p>
                 </div>
 
                 {/* Compte destination */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Comptes (sélectionner plusieurs)</label>
-                  <div className="space-y-2 max-h-48 overflow-y-auto bg-gray-100 border border-gray-300 rounded p-3">
-                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-200 p-2 rounded">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Comptes (sélectionner plusieurs)</label>
+                  <div className="space-y-2 max-h-48 overflow-y-auto bg-gray-700 border border-gray-600 rounded p-3">
+                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-600 p-2 rounded">
                       <input
                         type="checkbox"
                         checked={selectedAccounts.includes('Tous les comptes')}
@@ -8059,9 +8059,9 @@ export default function TradingPlatformShell() {
                         }}
                         className="w-4 h-4"
                       />
-                      <span className="text-gray-900 text-sm">📊 Tous les comptes</span>
+                      <span className="text-white text-sm">📊 Tous les comptes</span>
                     </label>
-                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-200 p-2 rounded">
+                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-600 p-2 rounded">
                       <input
                         type="checkbox"
                         checked={selectedAccounts.includes('TPLN')}
@@ -8074,10 +8074,10 @@ export default function TradingPlatformShell() {
                         }}
                         className="w-4 h-4"
                       />
-                      <span className="text-gray-900 text-sm">📋 TPLN model</span>
+                      <span className="text-white text-sm">📋 TPLN model</span>
                     </label>
                     {tradingAccounts.map((account) => (
-                      <label key={account.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-200 p-2 rounded">
+                      <label key={account.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-600 p-2 rounded">
                         <input
                           type="checkbox"
                           checked={selectedAccounts.includes(account.account_name)}
@@ -8090,11 +8090,11 @@ export default function TradingPlatformShell() {
                           }}
                           className="w-4 h-4"
                         />
-                        <span className="text-gray-900 text-sm">{account.account_name}</span>
+                        <span className="text-white text-sm">{account.account_name}</span>
                       </label>
                     ))}
                     {tradingAccounts.length === 0 && (
-                      <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-200 p-2 rounded">
+                      <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-600 p-2 rounded">
                         <input
                           type="checkbox"
                           checked={selectedAccounts.includes('Compte Principal')}
@@ -8107,12 +8107,12 @@ export default function TradingPlatformShell() {
                           }}
                           className="w-4 h-4"
                         />
-                        <span className="text-gray-900 text-sm">Compte Principal</span>
+                        <span className="text-white text-sm">Compte Principal</span>
                       </label>
                     )}
                   </div>
                   {selectedAccounts.length > 0 && (
-                    <p className="text-xs text-gray-500 mt-2">
+                    <p className="text-xs text-gray-400 mt-2">
                       {selectedAccounts.length} compte{selectedAccounts.length > 1 ? 's' : ''} sélectionné{selectedAccounts.length > 1 ? 's' : ''}
                     </p>
                   )}
@@ -8120,17 +8120,17 @@ export default function TradingPlatformShell() {
 
                 {/* Type de trade */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Type</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Type</label>
                   <div className="flex gap-2">
                     <button
                       onClick={() => setTradeData({...tradeData, type: 'BUY'})}
-                      className={`px-3 py-2 rounded text-sm ${tradeData.type === 'BUY' ? 'bg-green-600 text-gray-900' : 'bg-gray-200 text-gray-600'}`}
+                      className={`px-3 py-2 rounded text-sm ${tradeData.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-300'}`}
                     >
                       📈 BUY
                     </button>
                     <button
                       onClick={() => setTradeData({...tradeData, type: 'SELL'})}
-                      className={`px-3 py-2 rounded text-sm ${tradeData.type === 'SELL' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-600'}`}
+                      className={`px-3 py-2 rounded text-sm ${tradeData.type === 'SELL' ? 'bg-red-600 text-white' : 'bg-gray-600 text-gray-300'}`}
                     >
                       📉 SELL
                     </button>
@@ -8139,11 +8139,11 @@ export default function TradingPlatformShell() {
 
                 {/* Session */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Session</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Session</label>
                   <select
                     value={tradeData.session}
                     onChange={(e) => setTradeData({...tradeData, session: e.target.value})}
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
                   >
                     <option value="">— Choisir —</option>
                     <option value="18h">18h</option>
@@ -8156,83 +8156,83 @@ export default function TradingPlatformShell() {
 
                 {/* Symbol */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Symbole *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Symbole *</label>
                   <input
                     type="text"
                     value={tradeData.symbol}
                     onChange={(e) => setTradeData({...tradeData, symbol: e.target.value})}
                     placeholder="BTC, ETH, NQ1!, etc."
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900 placeholder-gray-400"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
                 </div>
 
                 {/* Entry */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Prix d'entrée *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Prix d'entrée *</label>
                   <input
                     type="text"
                     value={tradeData.entry}
                     onChange={(e) => setTradeData({...tradeData, entry: e.target.value})}
                     placeholder="45000"
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900 placeholder-gray-400"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
                 </div>
 
                 {/* Exit */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Prix de sortie *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Prix de sortie *</label>
                   <input
                     type="text"
                     value={tradeData.exit}
                     onChange={(e) => setTradeData({...tradeData, exit: e.target.value})}
                     placeholder="46000"
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900 placeholder-gray-400"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
                 </div>
 
                 {/* Stop Loss */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Stop Loss</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Stop Loss</label>
                   <input
                     type="text"
                     value={tradeData.stopLoss}
                     onChange={(e) => setTradeData({...tradeData, stopLoss: e.target.value})}
                     placeholder="44000"
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900 placeholder-gray-400"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
                 </div>
 
                 {/* PnL */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">P&L *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">P&L *</label>
                   <input
                     type="text"
                     value={tradeData.pnl}
                     onChange={(e) => setTradeData({...tradeData, pnl: e.target.value})}
                     placeholder="+500 ou -200"
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900 placeholder-gray-400"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
                 </div>
 
                 {/* Status */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Résultat</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Résultat</label>
                   <div className="flex gap-2">
                     <button
                       onClick={() => setTradeData({...tradeData, status: 'WIN'})}
-                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'WIN' ? 'bg-green-600 text-gray-900' : 'bg-gray-200 text-gray-600'}`}
+                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'WIN' ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-300'}`}
                     >
                       ✅ WIN
                     </button>
                     <button
                       onClick={() => setTradeData({...tradeData, status: 'LOSS'})}
-                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'LOSS' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-600'}`}
+                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'LOSS' ? 'bg-red-600 text-white' : 'bg-gray-600 text-gray-300'}`}
                     >
                       ❌ LOSS
                     </button>
                     <button
                       onClick={() => setTradeData({...tradeData, status: 'BE'})}
-                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'BE' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}`}
+                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'BE' ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300'}`}
                     >
                       ⚖️ BE
                     </button>
@@ -8242,7 +8242,7 @@ export default function TradingPlatformShell() {
                 {/* Sélection multiple des raisons (affiché si LOSS ou BE) */}
                 {(tradeData.status === 'LOSS' || tradeData.status === 'BE') && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-600 mb-2">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
                       {tradeData.status === 'LOSS' ? 'Raisons du Stop-Loss' : 'Raisons du BE'}
                     </label>
                     <div className="space-y-2">
@@ -8260,7 +8260,7 @@ export default function TradingPlatformShell() {
                               }
                               setTradeData({...tradeData, lossReasons: newLossReasons.filter(Boolean)});
                             }}
-                            className="flex-1 bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900"
+                            className="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
                           >
                             <option value="">{index === 0 ? 'Sélectionner une raison...' : 'Autre raison...'}</option>
                             {customLossReasons.map(reason => (
@@ -8293,7 +8293,7 @@ export default function TradingPlatformShell() {
                       + Ajouter une raison
                     </button>
                     {tradeData.lossReasons.filter(Boolean).length > 0 && (
-                      <div className="mt-2 text-sm text-gray-500">
+                      <div className="mt-2 text-sm text-gray-400">
                         Raisons sélectionnées: {tradeData.lossReasons.filter(Boolean).map(reason => {
                           const reasonObj = customLossReasons.find(r => r.value === reason);
                           return reasonObj ? `${reasonObj.emoji} ${reasonObj.label}` : reason;
@@ -8305,19 +8305,19 @@ export default function TradingPlatformShell() {
 
                 {/* Notes */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Notes</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Notes</label>
                   <textarea
                     value={tradeData.notes}
                     onChange={(e) => setTradeData({...tradeData, notes: e.target.value})}
                     placeholder="Notes sur le trade..."
                     rows={3}
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900 placeholder-gray-400"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   ></textarea>
                 </div>
                 
                 {/* Images */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Image 1</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Image 1</label>
                   <input
                     type="file"
                     accept="image/*"
@@ -8325,12 +8325,12 @@ export default function TradingPlatformShell() {
                       const file = e.target.files?.[0];
                       if (file) setTradeData({...tradeData, image1: file});
                     }}
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Image 2</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Image 2</label>
                   <input
                     type="file"
                     accept="image/*"
@@ -8338,7 +8338,7 @@ export default function TradingPlatformShell() {
                       const file = e.target.files?.[0];
                       if (file) setTradeData({...tradeData, image2: file});
                     }}
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
                   />
                 </div>
                
@@ -8346,7 +8346,7 @@ export default function TradingPlatformShell() {
                 <div className="flex gap-3 pt-4">
                   <button
                     onClick={() => { setSelectedAccounts([]); setEditingTrade(null); setShowTradeModal(false); }}
-                    className="flex-1 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded text-gray-900"
+                    className="flex-1 bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
                   >
                     Annuler
                   </button>
@@ -8366,18 +8366,18 @@ export default function TradingPlatformShell() {
       {/* Modal Fin session - 4 stats psy */}
       {showFinSessionModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-50 rounded-lg w-full max-w-lg max-h-[90vh] overflow-y-auto">
+          <div className="bg-gray-800 rounded-lg w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">🧠 LES 4 STATS PSY ESSENTIELLES (fin de session)</h2>
-                <button onClick={() => setShowFinSessionModal(false)} className="text-gray-500 hover:text-gray-900">✕</button>
+                <h2 className="text-lg font-semibold text-white">🧠 LES 4 STATS PSY ESSENTIELLES (fin de session)</h2>
+                <button onClick={() => setShowFinSessionModal(false)} className="text-gray-400 hover:text-white">✕</button>
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-600 mb-2">Session</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Session</label>
                 <select
                   value={finSessionSelectedSession}
                   onChange={(e) => setFinSessionSelectedSession(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-gray-100 border border-gray-300 text-gray-900 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  className="w-full px-3 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 >
                   <option value="18h">18h</option>
                   <option value="Open Asian">Open Asian</option>
@@ -8391,7 +8391,7 @@ export default function TradingPlatformShell() {
                 const uniqueOptions = Array.from(new Set(accountOptions));
                 return (
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-600 mb-2">Comptes (mêmes stats enregistrées pour chaque compte coché)</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Comptes (mêmes stats enregistrées pour chaque compte coché)</label>
                     <div className="flex flex-wrap gap-3">
                       {uniqueOptions.map((name) => (
                         <label key={name} className="flex items-center gap-2 cursor-pointer">
@@ -8399,9 +8399,9 @@ export default function TradingPlatformShell() {
                             type="checkbox"
                             checked={finSessionSelectedAccounts.includes(name)}
                             onChange={() => setFinSessionSelectedAccounts(prev => prev.includes(name) ? prev.filter(a => a !== name) : [...prev, name])}
-                            className="rounded border-gray-400 bg-gray-100 text-blue-500 focus:ring-blue-500"
+                            className="rounded border-gray-500 bg-gray-700 text-blue-500 focus:ring-blue-500"
                           />
-                          <span className="text-sm text-gray-900">{name}</span>
+                          <span className="text-sm text-white">{name}</span>
                         </label>
                       ))}
                     </div>
@@ -8410,108 +8410,108 @@ export default function TradingPlatformShell() {
               })()}
               <div className="space-y-6">
                 {/* 1. Respect du plan */}
-                <div className="bg-gray-100/50 rounded-lg p-4 border border-gray-300">
+                <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="w-7 h-7 rounded bg-gray-200 text-gray-600 text-sm font-bold flex items-center justify-center">1</span>
-                    <span className="font-medium text-gray-900">Respect du plan</span>
+                    <span className="w-7 h-7 rounded bg-gray-600 text-gray-300 text-sm font-bold flex items-center justify-center">1</span>
+                    <span className="font-medium text-white">Respect du plan</span>
                     <span className="text-yellow-400">⭐⭐⭐</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-1"><strong>Question :</strong> <em>Ai-je respecté mon plan du début à la fin ?</em></p>
+                  <p className="text-sm text-gray-300 mb-1"><strong>Question :</strong> <em>Ai-je respecté mon plan du début à la fin ?</em></p>
                   <div className="flex gap-2 flex-wrap mb-2">
                     {(['Oui', 'Non', 'Partiel'] as const).map((opt) => (
                       <button
                         key={opt}
                         onClick={() => setFinSessionRespectPlan(opt)}
-                        className={`px-3 py-1.5 rounded text-sm ${finSessionRespectPlan === opt ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+                        className={`px-3 py-1.5 rounded text-sm ${finSessionRespectPlan === opt ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
                       >
                         {opt}
                       </button>
                     ))}
                   </div>
-                  <p className="text-xs text-gray-500">👍 Stat n°1 absolue. Un trader peut perdre en respectant → journée réussie.</p>
+                  <p className="text-xs text-gray-400">👍 Stat n°1 absolue. Un trader peut perdre en respectant → journée réussie.</p>
                 </div>
                 {/* 2. Qualité des décisions */}
-                <div className="bg-gray-100/50 rounded-lg p-4 border border-gray-300">
+                <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="w-7 h-7 rounded bg-gray-200 text-gray-600 text-sm font-bold flex items-center justify-center">2</span>
-                    <span className="font-medium text-gray-900">Qualité des décisions</span>
+                    <span className="w-7 h-7 rounded bg-gray-600 text-gray-300 text-sm font-bold flex items-center justify-center">2</span>
+                    <span className="font-medium text-white">Qualité des décisions</span>
                     <span className="text-yellow-400">⭐⭐</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-1"><strong>Question :</strong> <em>Mes trades étaient-ils pris par lecture ou par émotion ?</em></p>
+                  <p className="text-sm text-gray-300 mb-1"><strong>Question :</strong> <em>Mes trades étaient-ils pris par lecture ou par émotion ?</em></p>
                   <div className="flex gap-2 flex-wrap mb-2">
                     {(['Lecture', 'Mixte', 'Émotion'] as const).map((opt) => (
                       <button
                         key={opt}
                         onClick={() => setFinSessionQualiteDecisions(opt)}
-                        className={`px-3 py-1.5 rounded text-sm ${finSessionQualiteDecisions === opt ? (opt === 'Émotion' ? 'bg-red-600 text-white' : 'bg-blue-600 text-white') : opt === 'Émotion' ? 'bg-gray-200 text-red-300 hover:bg-gray-300' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+                        className={`px-3 py-1.5 rounded text-sm ${finSessionQualiteDecisions === opt ? (opt === 'Émotion' ? 'bg-red-600 text-white' : 'bg-blue-600 text-white') : opt === 'Émotion' ? 'bg-gray-600 text-red-300 hover:bg-gray-500' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
                       >
                         {opt}
                       </button>
                     ))}
                   </div>
                   {finSessionQualiteDecisions === 'Émotion' && <p className="text-sm text-red-400 font-medium">⚠️ Alerte : émotion détectée.</p>}
-                  <p className="text-xs text-gray-500">👍 Si &quot;émotion&quot; apparaît → alerte.</p>
+                  <p className="text-xs text-gray-400">👍 Si &quot;émotion&quot; apparaît → alerte.</p>
                 </div>
                 {/* 3. Gestion après erreur */}
-                <div className="bg-gray-100/50 rounded-lg p-4 border border-gray-300">
+                <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="w-7 h-7 rounded bg-gray-200 text-gray-600 text-sm font-bold flex items-center justify-center">3</span>
-                    <span className="font-medium text-gray-900">Gestion après erreur</span>
+                    <span className="w-7 h-7 rounded bg-gray-600 text-gray-300 text-sm font-bold flex items-center justify-center">3</span>
+                    <span className="font-medium text-white">Gestion après erreur</span>
                     <span className="text-yellow-400">⭐⭐⭐</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-1"><strong>Question :</strong> <em>Après une erreur (SL, entrée ratée), ai-je gardé le contrôle ?</em></p>
+                  <p className="text-sm text-gray-300 mb-1"><strong>Question :</strong> <em>Après une erreur (SL, entrée ratée), ai-je gardé le contrôle ?</em></p>
                   <div className="flex gap-2 flex-wrap mb-2">
                     {(['Oui', 'Non'] as const).map((opt) => (
                       <button
                         key={opt}
                         onClick={() => setFinSessionGestionErreur(opt)}
-                        className={`px-3 py-1.5 rounded text-sm ${finSessionGestionErreur === opt ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+                        className={`px-3 py-1.5 rounded text-sm ${finSessionGestionErreur === opt ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
                       >
                         {opt}
                       </button>
                     ))}
                   </div>
-                  <p className="text-xs text-gray-500">👍 C&apos;est LA stat qui prédit la régularité future.</p>
+                  <p className="text-xs text-gray-400">👍 C&apos;est LA stat qui prédit la régularité future.</p>
                 </div>
                 {/* 4. Niveau de pression ressenti */}
-                <div className="bg-gray-100/50 rounded-lg p-4 border border-gray-300">
+                <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="w-7 h-7 rounded bg-gray-200 text-gray-600 text-sm font-bold flex items-center justify-center">4</span>
-                    <span className="font-medium text-gray-900">Niveau de pression ressenti</span>
+                    <span className="w-7 h-7 rounded bg-gray-600 text-gray-300 text-sm font-bold flex items-center justify-center">4</span>
+                    <span className="font-medium text-white">Niveau de pression ressenti</span>
                     <span className="text-yellow-400">⭐⭐</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-1"><strong>Auto-note :</strong> 1 = très calme → 5 = très tendu</p>
+                  <p className="text-sm text-gray-300 mb-1"><strong>Auto-note :</strong> 1 = très calme → 5 = très tendu</p>
                   <div className="flex gap-2 flex-wrap mb-2">
                     {[1, 2, 3, 4, 5].map((n) => (
                       <button
                         key={n}
                         onClick={() => setFinSessionPression(n)}
-                        className={`w-10 h-10 rounded text-sm font-bold ${finSessionPression === n ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+                        className={`w-10 h-10 rounded text-sm font-bold ${finSessionPression === n ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
                       >
                         {n}
                       </button>
                     ))}
                   </div>
-                  <p className="text-xs text-gray-500">Tu veux voir : pression ≤ 3 les bons jours, pression maîtrisée même les jours rouges.</p>
+                  <p className="text-xs text-gray-400">Tu veux voir : pression ≤ 3 les bons jours, pression maîtrisée même les jours rouges.</p>
                 </div>
                 {/* 5. Max Drawdown (DD) */}
-                <div className="bg-gray-100/50 rounded-lg p-4 border border-gray-300">
+                <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="w-7 h-7 rounded bg-gray-200 text-gray-600 text-sm font-bold flex items-center justify-center">5</span>
-                    <span className="font-medium text-gray-900">Max Drawdown (DD)</span>
+                    <span className="w-7 h-7 rounded bg-gray-600 text-gray-300 text-sm font-bold flex items-center justify-center">5</span>
+                    <span className="font-medium text-white">Max Drawdown (DD)</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-2">Drawdown max de la session ($, ex: -50)</p>
+                  <p className="text-sm text-gray-300 mb-2">Drawdown max de la session ($, ex: -50)</p>
                   <input
                     type="number"
                     placeholder="-50"
                     value={finSessionMaxDrawdown}
                     onChange={(e) => setFinSessionMaxDrawdown(e.target.value)}
-                    className="w-full bg-gray-200 border border-gray-400 rounded px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                   />
                 </div>
               </div>
               <div className="flex justify-end gap-2 pt-4">
-                <button onClick={() => setShowFinSessionModal(false)} className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded text-gray-900 text-sm">
+                <button onClick={() => setShowFinSessionModal(false)} className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white text-sm">
                   Fermer
                 </button>
                 <button
@@ -8553,10 +8553,10 @@ export default function TradingPlatformShell() {
       {/* Modal des Trades */}
       {showTradesModal && selectedTradesDate && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-50 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900">
+                <h2 className="text-xl font-bold text-white">
                   Trades du {selectedTradesDate.toLocaleDateString('fr-FR', { 
                     weekday: 'long', 
                     year: 'numeric', 
@@ -8566,7 +8566,7 @@ export default function TradingPlatformShell() {
                 </h2>
                 <button
                   onClick={() => setShowTradesModal(false)}
-                  className="text-gray-500 hover:text-gray-900 text-2xl"
+                  className="text-gray-400 hover:text-white text-2xl"
                 >
                   ×
                 </button>
@@ -8578,9 +8578,9 @@ export default function TradingPlatformShell() {
                 if (!fs) return null;
                 const dateKey = getDateKey(selectedTradesDate);
                 return (
-                  <div className="mb-6 p-4 bg-gray-100/70 rounded-lg border border-gray-300 relative">
+                  <div className="mb-6 p-4 bg-gray-700/70 rounded-lg border border-gray-600 relative">
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-semibold text-gray-600">🧠 Stats fin de session</h3>
+                      <h3 className="text-sm font-semibold text-gray-300">🧠 Stats fin de session</h3>
                       <button
                         type="button"
                         onClick={async () => {
@@ -8590,7 +8590,7 @@ export default function TradingPlatformShell() {
                             if (ok) setFinSessionCache(prev => { const next = { ...prev }; delete next[getFinSessionCacheKey(dateKey, acc)]; return next; });
                           }
                         }}
-                        className="text-gray-500 hover:text-gray-900 p-1 rounded"
+                        className="text-gray-400 hover:text-white p-1 rounded"
                         title="Supprimer ces stats"
                         aria-label="Supprimer"
                       >
@@ -8598,11 +8598,11 @@ export default function TradingPlatformShell() {
                       </button>
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div><span className="text-gray-500">Respect du plan:</span> <span className="text-gray-900 font-medium">{fs.respectPlan}</span></div>
-                      <div><span className="text-gray-500">Qualité décisions:</span> <span className={fs.qualiteDecisions === 'Émotion' ? 'text-red-400 font-medium' : 'text-gray-900 font-medium'}>{fs.qualiteDecisions}</span></div>
-                      <div><span className="text-gray-500">Gestion après erreur:</span> <span className="text-gray-900 font-medium">{fs.gestionErreur}</span></div>
-                      <div><span className="text-gray-500">Pression (1-5):</span> <span className="text-gray-900 font-medium">{fs.pression}</span></div>
-                      {fs.maxDrawdown != null && <div className="col-span-2"><span className="text-gray-500">Max Drawdown (DD):</span> <span className={fs.maxDrawdown < 0 ? 'text-red-400 font-medium' : 'text-gray-900 font-medium'}>{fs.maxDrawdown}$</span></div>}
+                      <div><span className="text-gray-400">Respect du plan:</span> <span className="text-white font-medium">{fs.respectPlan}</span></div>
+                      <div><span className="text-gray-400">Qualité décisions:</span> <span className={fs.qualiteDecisions === 'Émotion' ? 'text-red-400 font-medium' : 'text-white font-medium'}>{fs.qualiteDecisions}</span></div>
+                      <div><span className="text-gray-400">Gestion après erreur:</span> <span className="text-white font-medium">{fs.gestionErreur}</span></div>
+                      <div><span className="text-gray-400">Pression (1-5):</span> <span className="text-white font-medium">{fs.pression}</span></div>
+                      {fs.maxDrawdown != null && <div className="col-span-2"><span className="text-gray-400">Max Drawdown (DD):</span> <span className={fs.maxDrawdown < 0 ? 'text-red-400 font-medium' : 'text-white font-medium'}>{fs.maxDrawdown}$</span></div>}
                     </div>
                   </div>
                 );
@@ -8610,12 +8610,12 @@ export default function TradingPlatformShell() {
 
               <div className="space-y-4">
                 {getTradesForDate(selectedTradesDate).length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
+                  <div className="text-center py-8 text-gray-400">
                     Aucun trade pour cette date
                   </div>
                 ) : (
                   getTradesForDate(selectedTradesDate).map((trade) => (
-                  <div key={trade.id} className="bg-gray-100 rounded-lg p-4 border border-gray-300">
+                  <div key={trade.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
                         <span className={`px-2 py-1 rounded text-xs font-bold ${
@@ -8623,7 +8623,7 @@ export default function TradingPlatformShell() {
                         }`}>
                           {trade.type}
                         </span>
-                        <span className="text-lg font-bold text-gray-900">{trade.symbol}</span>
+                        <span className="text-lg font-bold text-white">{trade.symbol}</span>
                       </div>
                       <div className="flex items-center gap-3">
                         <span className={`text-lg font-bold ${
@@ -8636,7 +8636,7 @@ export default function TradingPlatformShell() {
                             setShowTradesModal(false);
                             await handleEditTrade(trade);
                           }}
-                          className="px-3 py-1 rounded text-sm bg-gray-200 hover:bg-gray-300 text-gray-900"
+                          className="px-3 py-1 rounded text-sm bg-gray-600 hover:bg-gray-500 text-white"
                           title="Modifier ce trade"
                         >
                           Modifier
@@ -8663,21 +8663,21 @@ export default function TradingPlatformShell() {
 
                     <div className="grid grid-cols-2 gap-4 mb-3">
                       <div>
-                        <span className="text-sm text-gray-500">Entry:</span>
-                        <span className="text-gray-900 ml-2">{trade.entry}</span>
+                        <span className="text-sm text-gray-400">Entry:</span>
+                        <span className="text-white ml-2">{trade.entry}</span>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-500">Exit:</span>
-                        <span className="text-gray-900 ml-2">{trade.exit}</span>
+                        <span className="text-sm text-gray-400">Exit:</span>
+                        <span className="text-white ml-2">{trade.exit}</span>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-500">Stop Loss:</span>
-                        <span className="text-gray-900 ml-2">{trade.stopLoss}</span>
+                        <span className="text-sm text-gray-400">Stop Loss:</span>
+                        <span className="text-white ml-2">{trade.stopLoss}</span>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-500">Status:</span>
+                        <span className="text-sm text-gray-400">Status:</span>
                         <span className={`ml-2 px-2 py-1 rounded text-xs ${
-                          trade.status === 'WIN' ? 'bg-green-600 text-gray-900' :
+                          trade.status === 'WIN' ? 'bg-green-600 text-white' :
                           trade.status === 'LOSS' ? 'bg-red-600 text-white' :
                           'bg-blue-600 text-white'
                         }`}>
@@ -8690,22 +8690,22 @@ export default function TradingPlatformShell() {
                       if (reasons.length === 0) return null;
                       const labels = reasons.map(v => customLossReasons.find(r => r.value === v)).filter(Boolean);
                       return (
-                        <div className="mb-3 text-sm text-gray-500">
+                        <div className="mb-3 text-sm text-gray-400">
                           Raisons {trade.status === 'LOSS' ? 'SL' : 'BE'}: {labels.map((r: any) => `${r.emoji} ${r.label}`).join(', ')}
                         </div>
                       );
                     })()}
                     {trade.notes && (
                       <div className="mb-3">
-                        <span className="text-sm text-gray-500">Notes:</span>
-                        <p className="text-gray-900 mt-1">{trade.notes}</p>
+                        <span className="text-sm text-gray-400">Notes:</span>
+                        <p className="text-white mt-1">{trade.notes}</p>
                       </div>
                     )}
 
                     {/* Images */}
                     {(trade.image1 || trade.image2) && (
                       <div className="mb-3">
-                        <span className="text-sm text-gray-500">Images:</span>
+                        <span className="text-sm text-gray-400">Images:</span>
                         <div className="mt-2 space-y-3 flex flex-col items-center">
                           {trade.image1 && (
                             <div className="flex flex-col items-center">
@@ -8714,7 +8714,7 @@ export default function TradingPlatformShell() {
                                 <img 
                                   src={trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1} 
                                   alt="Trade image 1" 
-                                  className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-300"
+                                  className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
                                   onClick={() => setSelectedImage(trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1)}
                                 />
                               </div>
@@ -8727,7 +8727,7 @@ export default function TradingPlatformShell() {
                                 <img 
                                   src={trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2} 
                                   alt="Trade image 2" 
-                                  className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-300"
+                                  className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
                                   onClick={() => setSelectedImage(trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2)}
                                 />
                               </div>
@@ -8737,7 +8737,7 @@ export default function TradingPlatformShell() {
                       </div>
                     )}
 
-                    <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center justify-between text-sm text-gray-400">
                       <span>Ajouté le {trade.timestamp}</span>
                     </div>
                   </div>
@@ -8745,10 +8745,10 @@ export default function TradingPlatformShell() {
                 )}
               </div>
 
-              <div className="mt-6 pt-4 border-t border-gray-300">
+              <div className="mt-6 pt-4 border-t border-gray-600">
                 <button
                   onClick={() => setShowTradesModal(false)}
-                  className="w-full bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded text-gray-900"
+                  className="w-full bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
                 >
                   Fermer
                 </button>
@@ -8761,7 +8761,7 @@ export default function TradingPlatformShell() {
       {/* Modal Tous les WIN / Tous les LOSS - Journal perso, TPLN model, et Journal Signaux */}
       {showWinsLossModal && winsLossFilter && (
         <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4" onClick={() => setShowWinsLossModal(false)}>
-          <div className="bg-gray-50 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
+          <div className="bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
             {(() => {
               // Pour le calendrier (signaux) ou les trades (journal perso/TPLN)
               const isSignalsMode = selectedChannel.id === 'calendrier';
@@ -8774,12 +8774,12 @@ export default function TradingPlatformShell() {
                 return (
                   <div className="p-6">
                     <div className="flex justify-between items-center mb-4">
-                      <h2 className="text-xl font-bold text-gray-900">
+                      <h2 className="text-xl font-bold text-white">
                         {winsLossFilter === 'WIN' ? '📈 Tous les WIN' : winsLossFilter === 'LOSS' ? '📉 Tous les LOSS' : '🔵 Tous les BE'}
                       </h2>
-                      <button onClick={() => setShowWinsLossModal(false)} className="text-gray-500 hover:text-gray-900 text-2xl">×</button>
+                      <button onClick={() => setShowWinsLossModal(false)} className="text-gray-400 hover:text-white text-2xl">×</button>
                     </div>
-                    <div className="text-center py-12 text-gray-500">Aucun {isSignalsMode ? 'signal' : 'trade'} {winsLossFilter === 'WIN' ? 'gagnant' : winsLossFilter === 'LOSS' ? 'perdant' : 'break-even'}</div>
+                    <div className="text-center py-12 text-gray-400">Aucun {isSignalsMode ? 'signal' : 'trade'} {winsLossFilter === 'WIN' ? 'gagnant' : winsLossFilter === 'LOSS' ? 'perdant' : 'break-even'}</div>
                   </div>
                 );
               }
@@ -8792,44 +8792,44 @@ export default function TradingPlatformShell() {
               
               return (
                 <>
-                  <div className="flex justify-between items-center p-4 border-b border-gray-200">
-                    <h2 className="text-xl font-bold text-gray-900">
+                  <div className="flex justify-between items-center p-4 border-b border-gray-700">
+                    <h2 className="text-xl font-bold text-white">
                       {winsLossFilter === 'WIN' ? '📈 Tous les WIN' : winsLossFilter === 'LOSS' ? '📉 Tous les LOSS' : '🔵 Tous les BE'} ({winsLossTradeIndex + 1}/{filteredItems.length})
                     </h2>
-                    <button onClick={() => setShowWinsLossModal(false)} className="text-gray-500 hover:text-gray-900 text-2xl">×</button>
+                    <button onClick={() => setShowWinsLossModal(false)} className="text-gray-400 hover:text-white text-2xl">×</button>
                   </div>
                   <div className="flex-1 flex items-center justify-between gap-4 p-4 overflow-hidden">
                     <button
                       onClick={() => setWinsLossTradeIndex(i => (i <= 0 ? filteredItems.length - 1 : i - 1))}
-                      className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-2xl text-gray-900"
+                      className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-2xl text-white"
                     >
                       ←
                     </button>
                     <div className="flex-1 flex flex-col items-center min-w-0">
                       <div className="space-y-4">
                         {imgUrl ? (
-                          <img src={imgUrl} alt={isSignalsMode ? "Signal" : "Trade"} className="max-w-full max-h-[60vh] object-contain rounded-lg border border-gray-300" />
+                          <img src={imgUrl} alt={isSignalsMode ? "Signal" : "Trade"} className="max-w-full max-h-[60vh] object-contain rounded-lg border border-gray-600" />
                         ) : (
-                          <div className="w-96 h-96 flex items-center justify-center bg-gray-100 rounded-lg text-gray-500">Pas d'image</div>
+                          <div className="w-96 h-96 flex items-center justify-center bg-gray-700 rounded-lg text-gray-500">Pas d'image</div>
                         )}
                         {isSignalsMode && (currentItem as any).closure_image && (currentItem as any).image && (
                           <div>
-                            <div className="text-xs text-gray-500 mb-1">📸 Photo de clôture:</div>
-                            <img src={(currentItem as any).closure_image} alt="Closure" className="max-w-full max-h-[60vh] object-contain rounded-lg border border-gray-300" />
+                            <div className="text-xs text-gray-400 mb-1">📸 Photo de clôture:</div>
+                            <img src={(currentItem as any).closure_image} alt="Closure" className="max-w-full max-h-[60vh] object-contain rounded-lg border border-gray-600" />
                           </div>
                         )}
                       </div>
                       <div className="mt-4 text-center">
-                        <span className="text-lg font-bold text-gray-900">{currentItem.symbol}</span>
+                        <span className="text-lg font-bold text-white">{currentItem.symbol}</span>
                         <span className={`ml-2 text-lg font-bold ${currentItem.pnl && parseFloat(currentItem.pnl) >= 0 ? 'text-green-100' : 'text-red-400'}`}>
                           {(currentItem.pnl && parseFloat(currentItem.pnl) >= 0 ? '+' : '')}{currentItem.pnl || '0'}$
                         </span>
-                        <span className="ml-2 text-gray-500 text-sm">{isSignalsMode ? new Date((currentItem as any).timestamp).toLocaleDateString() : (currentItem as any).date}</span>
+                        <span className="ml-2 text-gray-400 text-sm">{isSignalsMode ? new Date((currentItem as any).timestamp).toLocaleDateString() : (currentItem as any).date}</span>
                       </div>
                     </div>
                     <button
                       onClick={() => setWinsLossTradeIndex(i => (i >= filteredItems.length - 1 ? 0 : i + 1))}
-                      className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-2xl text-gray-900"
+                      className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-2xl text-white"
                     >
                       →
                     </button>
@@ -8844,36 +8844,36 @@ export default function TradingPlatformShell() {
       {/* Modal Tableau de performance */}
       {showPerformanceTableModal && (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'calendrier') && (
         <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4" onClick={() => setShowPerformanceTableModal(false)}>
-          <div className="bg-gray-50 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-gray-300" onClick={e => e.stopPropagation()}>
-            <div className="flex justify-between items-center p-4 border-b border-gray-300">
-              <h2 className="text-xl font-bold text-gray-900">Tableau de performance</h2>
-              <button onClick={() => setShowPerformanceTableModal(false)} className="text-gray-500 hover:text-gray-900 text-2xl">×</button>
+          <div className="bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-gray-600" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center p-4 border-b border-gray-600">
+              <h2 className="text-xl font-bold text-white">Tableau de performance</h2>
+              <button onClick={() => setShowPerformanceTableModal(false)} className="text-gray-400 hover:text-white text-2xl">×</button>
             </div>
             <div className="overflow-auto p-4">
               {monthlyPerformanceData.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">Aucune donnée</p>
+                <p className="text-gray-400 text-center py-8">Aucune donnée</p>
               ) : (
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-gray-300">
-                      <th className="py-2 pr-4 text-gray-500 font-medium">Mois</th>
-                      <th className="py-2 pr-4 text-gray-500 font-medium text-right">Trades</th>
-                      <th className="py-2 pr-4 text-gray-500 font-medium text-right">P&L ($)</th>
-                      <th className="py-2 pr-4 text-gray-500 font-medium text-right">WR</th>
-                      <th className="py-2 pr-4 text-gray-500 font-medium text-right">PF</th>
-                      <th className="py-2 text-gray-500 font-medium text-right">Max DD ($)</th>
+                    <tr className="border-b border-gray-600">
+                      <th className="py-2 pr-4 text-gray-400 font-medium">Mois</th>
+                      <th className="py-2 pr-4 text-gray-400 font-medium text-right">Trades</th>
+                      <th className="py-2 pr-4 text-gray-400 font-medium text-right">P&L ($)</th>
+                      <th className="py-2 pr-4 text-gray-400 font-medium text-right">WR</th>
+                      <th className="py-2 pr-4 text-gray-400 font-medium text-right">PF</th>
+                      <th className="py-2 text-gray-400 font-medium text-right">Max DD ($)</th>
                     </tr>
                   </thead>
                   <tbody>
                     {monthlyPerformanceData.map(row => (
-                      <tr key={row.monthKey} className="border-b border-gray-200">
-                        <td className="py-2 pr-4 text-gray-900">{row.monthLabel}</td>
-                        <td className="py-2 pr-4 text-gray-900 text-right">{row.trades}</td>
+                      <tr key={row.monthKey} className="border-b border-gray-700">
+                        <td className="py-2 pr-4 text-white">{row.monthLabel}</td>
+                        <td className="py-2 pr-4 text-white text-right">{row.trades}</td>
                         <td className={`py-2 pr-4 text-right font-medium ${row.pnl >= 0 ? 'text-green-100' : 'text-red-400'}`}>
                           {row.pnl >= 0 ? '+' : ''}{row.pnl.toFixed(0)}
                         </td>
-                        <td className="py-2 pr-4 text-gray-900 text-right">{row.wr} %</td>
-                        <td className="py-2 pr-4 text-gray-900 text-right">{row.pf === Infinity ? '∞' : row.pf.toFixed(1)}</td>
+                        <td className="py-2 pr-4 text-white text-right">{row.wr} %</td>
+                        <td className="py-2 pr-4 text-white text-right">{row.pf === Infinity ? '∞' : row.pf.toFixed(1)}</td>
                         <td className="py-2 text-right text-red-400">{row.maxDdPnl != null ? `$${row.maxDdPnl}` : '–'}</td>
                       </tr>
                     ))}
@@ -8888,10 +8888,10 @@ export default function TradingPlatformShell() {
       {/* Modal des Signaux */}
       {showSignalsModal && selectedSignalsDate && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-50 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+          <div className="bg-gray-800 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900">
+                <h2 className="text-xl font-bold text-white">
                   {selectedChannel.id === 'trading-journal' ? 'Trades du' : 'Signaux du'} {selectedSignalsDate.toLocaleDateString('fr-FR', { 
                     weekday: 'long', 
                     year: 'numeric', 
@@ -8901,7 +8901,7 @@ export default function TradingPlatformShell() {
                 </h2>
                 <button
                   onClick={() => setShowSignalsModal(false)}
-                  className="text-gray-500 hover:text-gray-900 text-2xl"
+                  className="text-gray-400 hover:text-white text-2xl"
                 >
                   ×
                 </button>
@@ -8934,7 +8934,7 @@ export default function TradingPlatformShell() {
                     });
                     
                     return signals.map((signal) => (
-                      <div key={signal.id} className="bg-gray-100 rounded-lg p-4 border border-gray-300">
+                      <div key={signal.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
                         <div className="flex flex-col sm:flex-row gap-4">
                           {/* Cadres à gauche : infos du signal */}
                           <div className="flex-1 min-w-0">
@@ -8945,11 +8945,11 @@ export default function TradingPlatformShell() {
                                 }`}>
                                   {signal.type}
                                 </span>
-                                <span className="text-lg font-bold text-gray-900">{signal.symbol}</span>
-                                <span className="text-sm text-gray-500">{signal.timeframe}</span>
+                                <span className="text-lg font-bold text-white">{signal.symbol}</span>
+                                <span className="text-sm text-gray-400">{signal.timeframe}</span>
                               </div>
                               <span className={`px-2 py-1 rounded text-xs ${
-                                signal.status === 'WIN' ? 'bg-green-600 text-gray-900' :
+                                signal.status === 'WIN' ? 'bg-green-600 text-white' :
                                 signal.status === 'LOSS' ? 'bg-red-600 text-white' :
                                 signal.status === 'BE' ? 'bg-blue-600 text-white' :
                                 'bg-yellow-600 text-white'
@@ -8960,19 +8960,19 @@ export default function TradingPlatformShell() {
 
                             <div className="grid grid-cols-2 gap-4 mb-3">
                               <div>
-                                <span className="text-sm text-gray-500">Entry:</span>
-                                <span className="text-gray-900 ml-2">{signal.entry}</span>
+                                <span className="text-sm text-gray-400">Entry:</span>
+                                <span className="text-white ml-2">{signal.entry}</span>
                               </div>
                               <div>
-                                <span className="text-sm text-gray-500">Take Profit:</span>
-                                <span className="text-gray-900 ml-2">{signal.takeProfit}</span>
+                                <span className="text-sm text-gray-400">Take Profit:</span>
+                                <span className="text-white ml-2">{signal.takeProfit}</span>
                               </div>
                               <div>
-                                <span className="text-sm text-gray-500">Stop Loss:</span>
-                                <span className="text-gray-900 ml-2">{signal.stopLoss}</span>
+                                <span className="text-sm text-gray-400">Stop Loss:</span>
+                                <span className="text-white ml-2">{signal.stopLoss}</span>
                               </div>
                               <div>
-                                <span className="text-sm text-gray-500">PnL:</span>
+                                <span className="text-sm text-gray-400">PnL:</span>
                                 <span className={`ml-2 font-bold ${
                                   signal.pnl && signal.pnl.includes('-') ? 'text-red-400' : 'text-green-100'
                                 }`}>
@@ -8984,8 +8984,8 @@ export default function TradingPlatformShell() {
                             {/* Description */}
                             {signal.description && (
                               <div className="mb-3">
-                                <span className="text-sm text-gray-500">Description:</span>
-                                <p className="text-gray-900 mt-1 whitespace-pre-wrap">{signal.description}</p>
+                                <span className="text-sm text-gray-400">Description:</span>
+                                <p className="text-white mt-1 whitespace-pre-wrap">{signal.description}</p>
                               </div>
                             )}
                           </div>
@@ -8993,7 +8993,7 @@ export default function TradingPlatformShell() {
                           {/* Images à droite des cadres */}
                           {(signal.image || signal.attachment_data || signal.closure_image) && (
                             <div className="flex-shrink-0 flex flex-col gap-3">
-                              <span className="text-sm text-gray-500">Images:</span>
+                              <span className="text-sm text-gray-400">Images:</span>
                               <div className="flex flex-col gap-3">
                                 {(signal.image || signal.attachment_data) && (
                                   <div className="flex flex-col">
@@ -9002,7 +9002,7 @@ export default function TradingPlatformShell() {
                                       <img 
                                         src={signal.image || signal.attachment_data}
                                         alt="Signal image"
-                                        className="max-w-[200px] sm:max-w-[240px] h-auto max-h-64 object-contain rounded cursor-pointer hover:opacity-80 border border-gray-300"
+                                        className="max-w-[200px] sm:max-w-[240px] h-auto max-h-64 object-contain rounded cursor-pointer hover:opacity-80 border border-gray-600"
                                         onClick={() => setSelectedImage(signal.image || signal.attachment_data)}
                                       />
                                     </div>
@@ -9015,7 +9015,7 @@ export default function TradingPlatformShell() {
                                       <img 
                                         src={signal.closure_image}
                                         alt="Signal closure image"
-                                        className="max-w-[200px] sm:max-w-[240px] h-auto max-h-64 object-contain rounded cursor-pointer hover:opacity-80 border border-gray-300"
+                                        className="max-w-[200px] sm:max-w-[240px] h-auto max-h-64 object-contain rounded cursor-pointer hover:opacity-80 border border-gray-600"
                                         onClick={() => setSelectedImage(signal.closure_image)}
                                       />
                                     </div>
@@ -9030,8 +9030,8 @@ export default function TradingPlatformShell() {
                   })()
                 ) : (
                   <div className="text-center py-8">
-                    <div className="text-gray-500 text-lg mb-2">📅</div>
-                    <div className="text-gray-600 text-lg font-medium">
+                    <div className="text-gray-400 text-lg mb-2">📅</div>
+                    <div className="text-gray-300 text-lg font-medium">
                       {selectedChannel.id === 'trading-journal' ? 'Aucun trade pour ce jour' : 'Aucun signal pour ce jour'}
                     </div>
                     <div className="text-gray-500 text-sm mt-1">
@@ -9043,10 +9043,10 @@ export default function TradingPlatformShell() {
                 )}
               </div>
 
-              <div className="mt-6 pt-4 border-t border-gray-300">
+              <div className="mt-6 pt-4 border-t border-gray-600">
                 <button
                   onClick={() => setShowSignalsModal(false)}
-                  className="w-full bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded text-gray-900"
+                  className="w-full bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
                 >
                   Fermer
                 </button>
@@ -9059,15 +9059,15 @@ export default function TradingPlatformShell() {
       {/* Popup Semaine */}
       {showWeekSignalsModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" key={`week-modal-${selectedAccount}-${selectedWeek}`}>
-          <div className="bg-gray-50 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="text-2xl font-bold text-white">
                   {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? 'Trades de la Semaine' : 'Signaux de la Semaine'} {selectedWeek}
                 </h2>
                 <button
                   onClick={() => setShowWeekSignalsModal(false)}
-                  className="text-gray-500 hover:text-gray-900 text-2xl"
+                  className="text-gray-400 hover:text-white text-2xl"
                 >
                   ×
                 </button>
@@ -9078,7 +9078,7 @@ export default function TradingPlatformShell() {
                   // Affichage des trades pour le journal perso
                   getTradesForWeek(selectedWeek).length > 0 ? (
                     getTradesForWeek(selectedWeek).map((trade) => (
-                      <div key={trade.id} className="bg-gray-100 rounded-lg p-4 border border-gray-300">
+                      <div key={trade.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-3">
                             <span className={`px-2 py-1 rounded text-xs font-bold ${
@@ -9086,12 +9086,12 @@ export default function TradingPlatformShell() {
                             }`}>
                               {trade.type}
                             </span>
-                            <span className="text-lg font-bold text-gray-900">{trade.symbol}</span>
-                            <span className="text-sm text-gray-500">{trade.date}</span>
+                            <span className="text-lg font-bold text-white">{trade.symbol}</span>
+                            <span className="text-sm text-gray-400">{trade.date}</span>
                           </div>
                           <div className="flex items-center gap-2">
                             <span className={`px-2 py-1 rounded text-xs ${
-                              trade.status === 'WIN' ? 'bg-green-600 text-gray-900' :
+                              trade.status === 'WIN' ? 'bg-green-600 text-white' :
                               trade.status === 'LOSS' ? 'bg-red-600 text-white' :
                               trade.status === 'BE' ? 'bg-blue-600 text-white' :
                               'bg-yellow-600 text-white'
@@ -9100,7 +9100,7 @@ export default function TradingPlatformShell() {
                             </span>
                             <button
                               onClick={() => handleEditTrade(trade)}
-                              className="px-3 py-1 rounded text-sm bg-gray-200 hover:bg-gray-300 text-gray-900"
+                              className="px-3 py-1 rounded text-sm bg-gray-600 hover:bg-gray-500 text-white"
                               title="Modifier ce trade"
                             >
                               Modifier
@@ -9112,26 +9112,26 @@ export default function TradingPlatformShell() {
                           if (reasons.length === 0) return null;
                           const labels = reasons.map(v => customLossReasons.find(r => r.value === v)).filter(Boolean);
                           return (
-                            <div className="mb-2 text-sm text-gray-500">
+                            <div className="mb-2 text-sm text-gray-400">
                               Raisons {trade.status === 'LOSS' ? 'SL' : 'BE'}: {labels.map((r: any) => `${r.emoji} ${r.label}`).join(', ')}
                             </div>
                           );
                         })()}
                         <div className="grid grid-cols-2 gap-4 mb-3">
                           <div>
-                            <span className="text-sm text-gray-500">Entry:</span>
-                            <span className="text-gray-900 ml-2">{trade.entry}</span>
+                            <span className="text-sm text-gray-400">Entry:</span>
+                            <span className="text-white ml-2">{trade.entry}</span>
                           </div>
                           <div>
-                            <span className="text-sm text-gray-500">Exit:</span>
-                            <span className="text-gray-900 ml-2">{trade.exit}</span>
+                            <span className="text-sm text-gray-400">Exit:</span>
+                            <span className="text-white ml-2">{trade.exit}</span>
                           </div>
                           <div>
-                            <span className="text-sm text-gray-500">Stop Loss:</span>
-                            <span className="text-gray-900 ml-2">{trade.stopLoss}</span>
+                            <span className="text-sm text-gray-400">Stop Loss:</span>
+                            <span className="text-white ml-2">{trade.stopLoss}</span>
                           </div>
                           <div>
-                            <span className="text-sm text-gray-500">PnL:</span>
+                            <span className="text-sm text-gray-400">PnL:</span>
                             <span className={`ml-2 font-bold ${
                               trade.pnl && trade.pnl.includes('-') ? 'text-red-400' : 'text-green-100'
                             }`}>
@@ -9142,15 +9142,15 @@ export default function TradingPlatformShell() {
 
                         {trade.notes && (
                           <div className="mb-3">
-                            <span className="text-sm text-gray-500">Notes:</span>
-                            <p className="text-gray-900 mt-1">{trade.notes}</p>
+                            <span className="text-sm text-gray-400">Notes:</span>
+                            <p className="text-white mt-1">{trade.notes}</p>
                           </div>
                         )}
 
                         {/* Affichage des images */}
                         {(trade.image1 || trade.image2) && (
                           <div className="mb-3">
-                            <span className="text-sm text-gray-500">Images:</span>
+                            <span className="text-sm text-gray-400">Images:</span>
                             <div className="mt-2 space-y-3 flex flex-col items-center">
                               {trade.image1 && (
                                 <div className="flex flex-col items-center">
@@ -9159,7 +9159,7 @@ export default function TradingPlatformShell() {
                                     <img 
                                       src={trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1}
                                       alt="Trade image 1"
-                                      className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-300"
+                                      className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
                                       onClick={() => setSelectedImage(trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1)}
                                     />
                                   </div>
@@ -9172,7 +9172,7 @@ export default function TradingPlatformShell() {
                                     <img 
                                       src={trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2}
                                       alt="Trade image 2"
-                                      className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-300"
+                                      className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
                                       onClick={() => setSelectedImage(trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2)}
                                     />
                                   </div>
@@ -9182,15 +9182,15 @@ export default function TradingPlatformShell() {
                           </div>
                         )}
 
-                        <div className="flex items-center justify-between text-sm text-gray-500">
+                        <div className="flex items-center justify-between text-sm text-gray-400">
                           <span>Créé le {trade.timestamp}</span>
                         </div>
                       </div>
                     ))
                   ) : (
                     <div className="text-center py-8">
-                      <div className="text-gray-500 text-lg mb-2">📊</div>
-                      <div className="text-gray-600 text-lg font-medium">Aucun trade pour cette semaine</div>
+                      <div className="text-gray-400 text-lg mb-2">📊</div>
+                      <div className="text-gray-300 text-lg font-medium">Aucun trade pour cette semaine</div>
                       <div className="text-gray-500 text-sm mt-1">Tes trades apparaîtront ici quand tu les ajouteras</div>
                     </div>
                   )
@@ -9198,7 +9198,7 @@ export default function TradingPlatformShell() {
                   // Affichage des signaux pour les autres canaux
                   getSignalsForWeek(selectedWeek).length > 0 ? (
                     getSignalsForWeek(selectedWeek).map((signal) => (
-                      <div key={signal.id} className="bg-gray-100 rounded-lg p-4 border border-gray-300">
+                      <div key={signal.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-3">
                             <span className={`px-2 py-1 rounded text-xs font-bold ${
@@ -9206,11 +9206,11 @@ export default function TradingPlatformShell() {
                             }`}>
                               {signal.type}
                             </span>
-                            <span className="text-lg font-bold text-gray-900">{signal.symbol}</span>
-                            <span className="text-sm text-gray-500">{signal.timeframe}</span>
+                            <span className="text-lg font-bold text-white">{signal.symbol}</span>
+                            <span className="text-sm text-gray-400">{signal.timeframe}</span>
                           </div>
                           <span className={`px-2 py-1 rounded text-xs ${
-                            signal.status === 'WIN' ? 'bg-green-600 text-gray-900' :
+                            signal.status === 'WIN' ? 'bg-green-600 text-white' :
                             signal.status === 'LOSS' ? 'bg-red-600 text-white' :
                             signal.status === 'BE' ? 'bg-blue-600 text-white' :
                             'bg-yellow-600 text-white'
@@ -9221,19 +9221,19 @@ export default function TradingPlatformShell() {
 
                         <div className="grid grid-cols-2 gap-4 mb-3">
                           <div>
-                            <span className="text-sm text-gray-500">Entry:</span>
-                            <span className="text-gray-900 ml-2">{signal.entry}</span>
+                            <span className="text-sm text-gray-400">Entry:</span>
+                            <span className="text-white ml-2">{signal.entry}</span>
                           </div>
                           <div>
-                            <span className="text-sm text-gray-500">Take Profit:</span>
-                            <span className="text-gray-900 ml-2">{signal.takeProfit}</span>
+                            <span className="text-sm text-gray-400">Take Profit:</span>
+                            <span className="text-white ml-2">{signal.takeProfit}</span>
                           </div>
                           <div>
-                            <span className="text-sm text-gray-500">Stop Loss:</span>
-                            <span className="text-gray-900 ml-2">{signal.stopLoss}</span>
+                            <span className="text-sm text-gray-400">Stop Loss:</span>
+                            <span className="text-white ml-2">{signal.stopLoss}</span>
                           </div>
                           <div>
-                            <span className="text-sm text-gray-500">PnL:</span>
+                            <span className="text-sm text-gray-400">PnL:</span>
                             <span className={`ml-2 font-bold ${
                               signal.pnl && signal.pnl.includes('-') ? 'text-red-400' : 'text-green-100'
                             }`}>
@@ -9245,15 +9245,15 @@ export default function TradingPlatformShell() {
                         {/* Description */}
                         {signal.description && (
                           <div className="mb-3">
-                            <span className="text-sm text-gray-500">Description:</span>
-                            <p className="text-gray-900 mt-1 whitespace-pre-wrap">{signal.description}</p>
+                            <span className="text-sm text-gray-400">Description:</span>
+                            <p className="text-white mt-1 whitespace-pre-wrap">{signal.description}</p>
                           </div>
                         )}
 
                         {/* Affichage des images */}
                         {(signal.image || signal.attachment_data || signal.closure_image) && (
                           <div className="mb-3">
-                            <span className="text-sm text-gray-500">Images:</span>
+                            <span className="text-sm text-gray-400">Images:</span>
                             <div className="mt-2 space-y-3 flex flex-col items-center">
                               {(signal.image || signal.attachment_data) && (
                                 <div className="flex flex-col items-center">
@@ -9262,7 +9262,7 @@ export default function TradingPlatformShell() {
                                     <img 
                                       src={signal.image || signal.attachment_data}
                                       alt="Signal image"
-                                      className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-300"
+                                      className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
                                       onClick={() => setSelectedImage(signal.image || signal.attachment_data)}
                                     />
                                   </div>
@@ -9275,7 +9275,7 @@ export default function TradingPlatformShell() {
                                     <img 
                                       src={signal.closure_image}
                                       alt="Signal closure image"
-                                      className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-300"
+                                      className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
                                       onClick={() => setSelectedImage(signal.closure_image)}
                                     />
                                   </div>
@@ -9288,18 +9288,18 @@ export default function TradingPlatformShell() {
                     ))
                   ) : (
                     <div className="text-center py-8">
-                      <div className="text-gray-500 text-lg mb-2">📅</div>
-                      <div className="text-gray-600 text-lg font-medium">Aucun signal pour cette semaine</div>
+                      <div className="text-gray-400 text-lg mb-2">📅</div>
+                      <div className="text-gray-300 text-lg font-medium">Aucun signal pour cette semaine</div>
                       <div className="text-gray-500 text-sm mt-1">Les signaux apparaîtront ici quand ils seront créés</div>
                     </div>
                   )
                 )}
               </div>
 
-              <div className="mt-6 pt-4 border-t border-gray-300">
+              <div className="mt-6 pt-4 border-t border-gray-600">
                 <button
                   onClick={() => setShowWeekSignalsModal(false)}
-                  className="w-full bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded text-gray-900"
+                  className="w-full bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
                 >
                   Fermer
                 </button>
@@ -9350,12 +9350,12 @@ export default function TradingPlatformShell() {
                     e.stopPropagation();
                     handleImageZoom(-0.2);
                   }}
-                  className="bg-white/20 hover:bg-white/30 text-gray-900 px-3 py-1 rounded text-sm font-bold"
+                  className="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded text-sm font-bold"
                   disabled={imageZoom <= 0.5}
                 >
                   −
                 </button>
-                <span className="text-gray-900 text-sm px-2 py-1 bg-white/20 rounded">
+                <span className="text-white text-sm px-2 py-1 bg-white/20 rounded">
                   {Math.round(imageZoom * 100)}%
                 </span>
                 <button
@@ -9363,7 +9363,7 @@ export default function TradingPlatformShell() {
                     e.stopPropagation();
                     handleImageZoom(0.2);
                   }}
-                  className="bg-white/20 hover:bg-white/30 text-gray-900 px-3 py-1 rounded text-sm font-bold"
+                  className="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded text-sm font-bold"
                   disabled={imageZoom >= 5}
                 >
                   +
@@ -9386,14 +9386,14 @@ export default function TradingPlatformShell() {
                 setSelectedImage(null);
                 resetImageView();
               }}
-              className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-gray-900 rounded-full w-10 h-10 flex items-center justify-center text-xl transition-all"
+              className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl transition-all"
             >
               ×
             </button>
 
             {/* Instructions - Cachées sur PWA */}
             {!window.matchMedia('(display-mode: standalone)').matches && (
-              <div className="absolute top-4 left-4 bg-black/50 text-gray-900 text-xs px-3 py-2 rounded-lg">
+              <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-3 py-2 rounded-lg">
                 <div>🖱️ Clic pour zoomer</div>
                 <div>🔄 Molette pour zoomer</div>
                 <div>✋ Glisser quand zoomé</div>
@@ -9407,15 +9407,15 @@ export default function TradingPlatformShell() {
       {/* Popup Premium */}
       {showPremiumPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-50 rounded-lg p-6 w-96">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Seulement pour les premium!</h3>
-            <p className="text-gray-600 mb-6">
+          <div className="bg-gray-800 rounded-lg p-6 w-96">
+            <h3 className="text-lg font-bold text-white mb-4">Seulement pour les premium!</h3>
+            <p className="text-gray-300 mb-6">
               Cette fonctionnalité est réservée aux abonnés PREMIUM. Passez à PREMIUM pour ajouter plusieurs comptes.
             </p>
             <div className="flex justify-end">
               <button
                 onClick={() => setShowPremiumPopup(false)}
-                className="bg-green-200/60 hover:bg-green-600 text-gray-900 px-4 py-2 rounded-lg font-medium"
+                className="bg-green-200/60 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium"
               >
                 Fermer
               </button>
@@ -9427,9 +9427,9 @@ export default function TradingPlatformShell() {
       {/* Popup Accès Restreint pour plan Journal */}
       {showAccessRestrictedPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-50 rounded-lg p-6 w-96">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Accès restreint</h3>
-            <p className="text-gray-600 mb-6">
+          <div className="bg-gray-800 rounded-lg p-6 w-96">
+            <h3 className="text-lg font-bold text-white mb-4">Accès restreint</h3>
+            <p className="text-gray-300 mb-6">
               Abonne-toi à une autre formule pour y avoir accès.
             </p>
             <div className="flex justify-end gap-3">
@@ -9439,7 +9439,7 @@ export default function TradingPlatformShell() {
                   // Revenir à la liste des salons
                   setMobileView('channels');
                 }}
-                className="bg-gray-200 hover:bg-gray-100 text-gray-900 px-4 py-2 rounded-lg font-medium"
+                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium"
               >
                 Fermer
               </button>
@@ -9449,7 +9449,7 @@ export default function TradingPlatformShell() {
                   // Rediriger vers la page d'accueil avec hash pricing
                   window.location.href = '/#pricing';
                 }}
-                className="bg-green-200/60 hover:bg-green-600 text-gray-900 px-4 py-2 rounded-lg font-medium"
+                className="bg-green-200/60 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium"
               >
                 Abonnement
               </button>
@@ -9461,54 +9461,54 @@ export default function TradingPlatformShell() {
       {/* Modal pour ajouter un nouveau compte */}
       {showAddAccountModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-50 rounded-lg p-6 w-96">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Ajouter un nouveau compte</h3>
+          <div className="bg-gray-800 rounded-lg p-6 w-96">
+            <h3 className="text-lg font-bold text-white mb-4">Ajouter un nouveau compte</h3>
             
             <div className="mb-4">
-              <label className="block text-sm text-gray-600 mb-2">Nom du compte</label>
+              <label className="block text-sm text-gray-300 mb-2">Nom du compte</label>
               <input
                 type="text"
                 value={newAccountName}
                 onChange={(e) => setNewAccountName(e.target.value)}
                 placeholder="Ex: Compte Demo, Compte Live..."
-                className="w-full bg-gray-100 border border-gray-300 text-gray-900 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+                className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
                 onKeyPress={(e) => e.key === 'Enter' && handleAddAccount()}
               />
             </div>
             
             <div className="mb-4">
-              <label className="block text-sm text-gray-600 mb-2">Balance initiale ($)</label>
+              <label className="block text-sm text-gray-300 mb-2">Balance initiale ($)</label>
               <input
                 type="number"
                 value={newAccountBalance}
                 onChange={(e) => setNewAccountBalance(e.target.value)}
                 placeholder="Ex: 10000"
-                className="w-full bg-gray-100 border border-gray-300 text-gray-900 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+                className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
                 onKeyPress={(e) => e.key === 'Enter' && handleAddAccount()}
               />
             </div>
             
             <div className="mb-4">
-              <label className="block text-sm text-gray-600 mb-2">Balance actuelle ($) <span className="text-gray-500 text-xs">(optionnel)</span></label>
+              <label className="block text-sm text-gray-300 mb-2">Balance actuelle ($) <span className="text-gray-500 text-xs">(optionnel)</span></label>
               <input
                 type="number"
                 value={newAccountCurrentBalance}
                 onChange={(e) => setNewAccountCurrentBalance(e.target.value)}
                 placeholder="Ex: 12500 (si tu as déjà tradé)"
-                className="w-full bg-gray-100 border border-gray-300 text-gray-900 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+                className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
                 onKeyPress={(e) => e.key === 'Enter' && handleAddAccount()}
               />
               <p className="text-xs text-gray-500 mt-1">Si tu as déjà commencé à trader avec ce compte, indique ton solde actuel</p>
             </div>
             
             <div className="mb-4">
-              <label className="block text-sm text-gray-600 mb-2">Balance minimum ($)</label>
+              <label className="block text-sm text-gray-300 mb-2">Balance minimum ($)</label>
               <input
                 type="number"
                 value={newAccountMinimum}
                 onChange={(e) => setNewAccountMinimum(e.target.value)}
                 placeholder="Ex: 5000 (seuil d'arrêt)"
-                className="w-full bg-gray-100 border border-gray-300 text-gray-900 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+                className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
                 onKeyPress={(e) => e.key === 'Enter' && handleAddAccount()}
               />
             </div>
@@ -9516,7 +9516,7 @@ export default function TradingPlatformShell() {
             <div className="flex gap-3">
               <button
                 onClick={handleAddAccount}
-                className="flex-1 bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-gray-900 font-medium"
+                className="flex-1 bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-white font-medium"
               >
                 Ajouter
               </button>
@@ -9528,7 +9528,7 @@ export default function TradingPlatformShell() {
                   setNewAccountCurrentBalance('');
                   setNewAccountMinimum('');
                 }}
-                className="flex-1 bg-gray-200 hover:bg-gray-100 px-4 py-2 rounded-lg text-gray-900 font-medium"
+                className="flex-1 bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg text-white font-medium"
               >
                 Annuler
               </button>
@@ -9540,25 +9540,25 @@ export default function TradingPlatformShell() {
       {/* Modal de gestion des raisons de perte */}
       {showLossReasonsModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-50 rounded-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-gray-800 rounded-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-semibold text-gray-900">⚙️ Gérer les raisons de perte</h3>
+                <h3 className="text-xl font-semibold text-white">⚙️ Gérer les raisons de perte</h3>
                 <button
                   onClick={() => {
                     setShowLossReasonsModal(false);
                     setEditingIndex(null);
                     setNewReason({ value: '', emoji: '', label: '' });
                   }}
-                  className="text-gray-500 hover:text-gray-900 text-2xl"
+                  className="text-gray-400 hover:text-white text-2xl"
                 >
                   ×
                 </button>
               </div>
 
               {/* Formulaire d'ajout/édition */}
-              <div className="mb-6 p-4 bg-gray-100 rounded-lg">
-                <h4 className="text-sm font-medium text-gray-600 mb-3">
+              <div className="mb-6 p-4 bg-gray-700 rounded-lg">
+                <h4 className="text-sm font-medium text-gray-300 mb-3">
                   {editingIndex !== null ? '✏️ Modifier la raison' : '➕ Ajouter une raison'}
                 </h4>
                 <div className="mb-3">
@@ -9571,7 +9571,7 @@ export default function TradingPlatformShell() {
                       const value = label.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
                       setNewReason({...newReason, label, value});
                     }}
-                    className="w-full bg-gray-200 border border-gray-400 rounded px-3 py-2 text-gray-900"
+                    className="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white"
                   />
                 </div>
                 <div className="flex gap-2">
@@ -9616,7 +9616,7 @@ export default function TradingPlatformShell() {
                         setEditingIndex(null);
                         setNewReason({ value: '', emoji: '', label: '' });
                       }}
-                      className="bg-gray-200 hover:bg-gray-100 px-4 py-2 rounded text-gray-900"
+                      className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded text-white"
                     >
                       Annuler
                     </button>
@@ -9626,16 +9626,16 @@ export default function TradingPlatformShell() {
 
               {/* Liste des raisons */}
               <div className="space-y-2 mb-6">
-                <h4 className="text-sm font-medium text-gray-600 mb-3">Raisons actuelles ({customLossReasons.length}) :</h4>
+                <h4 className="text-sm font-medium text-gray-300 mb-3">Raisons actuelles ({customLossReasons.length}) :</h4>
                 {customLossReasons.map((reason, index) => (
                   <div 
                     key={index}
-                    className="flex items-center gap-3 p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                    className="flex items-center gap-3 p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors"
                   >
                     <span className="text-2xl">{reason.emoji}</span>
                     <div className="flex-1">
-                      <div className="text-gray-900 font-medium">{reason.label}</div>
-                      <div className="text-xs text-gray-500 font-mono">{reason.value}</div>
+                      <div className="text-white font-medium">{reason.label}</div>
+                      <div className="text-xs text-gray-400 font-mono">{reason.value}</div>
                     </div>
                     <div className="flex gap-2">
                       <button
@@ -9689,7 +9689,7 @@ export default function TradingPlatformShell() {
                     setEditingIndex(null);
                     setNewReason({ value: '', emoji: '', label: '' });
                   }}
-                  className="flex-1 bg-gray-200 hover:bg-gray-100 px-4 py-2 rounded text-gray-900 font-medium"
+                  className="flex-1 bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded text-white font-medium"
                 >
                   Fermer
                 </button>

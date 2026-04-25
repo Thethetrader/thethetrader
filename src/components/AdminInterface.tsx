@@ -3221,7 +3221,7 @@ const dailyPnLChartData = useMemo(
           }
           
           // Trouver spécifiquement les conteneurs de 
-          const Containers = document.querySelectorAll('.bg-white .bg-black.flex.items-center.justify-center');
+          const Containers = document.querySelectorAll('.bg-gray-900 .bg-black.flex.items-center.justify-center');
           console.log('Conteneurs  trouvés:', Containers.length);
           
           if (Containers.length === 0) {
@@ -4114,43 +4114,43 @@ const dailyPnLChartData = useMemo(
         
         popup.innerHTML = `
           <div style="
-            background: #ffffff;
+            background: #1f2937;
             padding: 24px;
             border-radius: 12px;
             min-width: 400px;
             max-width: 500px;
             max-height: 90vh;
             overflow-y: auto;
-            border: 1px solid #e5e7eb;
-            color: #111827;
+            border: 1px solid #374151;
+            color: white;
           ">
-            <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600; color: #111827;">
+            <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600;">
               📊 Fermer le signal ${newStatus === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
             </h3>
-
+            
             <div style="margin-bottom: 20px;">
-              <label style="display: block; margin-bottom: 8px; color: #6b7280;">
+              <label style="display: block; margin-bottom: 8px; color: #d1d5db;">
                 P&L Final (ex: +$150 ou -$50):
               </label>
-              <input
+              <input 
                 id="pnlInput"
-                type="text"
+                type="text" 
                 placeholder="+$150"
                 style="
                   width: 100%;
                   padding: 8px 12px;
-                  border: 1px solid #d1d5db;
+                  border: 1px solid #4b5563;
                   border-radius: 6px;
-                  background: #ffffff;
-                  color: #111827;
+                  background: #374151;
+                  color: white;
                   font-size: 14px;
                 "
               />
             </div>
-
+            
             ${newStatus === 'LOSS' ? `
             <div style="margin-bottom: 20px;">
-              <label style="display: block; margin-bottom: 8px; color: #6b7280;">
+              <label style="display: block; margin-bottom: 8px; color: #d1d5db;">
                 🎯 Raison du stop-loss (optionnel):
               </label>
               <select
@@ -4158,10 +4158,10 @@ const dailyPnLChartData = useMemo(
                 style="
                   width: 100%;
                   padding: 8px 12px;
-                  border: 1px solid #d1d5db;
+                  border: 1px solid #4b5563;
                   border-radius: 6px;
-                  background: #ffffff;
-                  color: #111827;
+                  background: #374151;
+                  color: white;
                   font-size: 14px;
                 "
               >
@@ -4170,36 +4170,36 @@ const dailyPnLChartData = useMemo(
               </select>
             </div>
             ` : ''}
-
+            
             <div style="margin-bottom: 20px;">
-              <label style="display: block; margin-bottom: 8px; color: #6b7280;">
+              <label style="display: block; margin-bottom: 8px; color: #d1d5db;">
                 📸 Photo de conclusion (optionnel):
               </label>
-              <input
+              <input 
                 id="photoInput"
-                type="file"
+                type="file" 
                 accept="image/*"
                 style="
                   width: 100%;
                   padding: 8px 12px;
-                  border: 1px solid #d1d5db;
+                  border: 1px solid #4b5563;
                   border-radius: 6px;
-                  background: #ffffff;
-                  color: #111827;
+                  background: #374151;
+                  color: white;
                   font-size: 14px;
                 "
               />
             </div>
-
+            
             <div style="display: flex; gap: 12px; justify-content: flex-end;">
-              <button
+              <button 
                 id="cancelBtn"
                 style="
                   padding: 8px 16px;
-                  border: 1px solid #d1d5db;
+                  border: 1px solid #6b7280;
                   border-radius: 6px;
-                  background: #f3f4f6;
-                  color: #374151;
+                  background: #374151;
+                  color: #d1d5db;
                   cursor: pointer;
                   font-size: 14px;
                 "
@@ -4605,7 +4605,7 @@ const dailyPnLChartData = useMemo(
     // Si c'est check-trade, afficher la checklist sans scroll automatique
     if (selectedChannel.id === 'check-trade') {
       return (
-        <div className="bg-white text-gray-900 p-2 md:p-4 h-full overflow-y-auto">
+        <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto">
           <div style={{ paddingTop: '80px' }}>
             <CheckTradeChecklist />
           </div>
@@ -4618,10 +4618,10 @@ const dailyPnLChartData = useMemo(
       const filteredUsers = getFilteredUsers();
       
       return (
-        <div className="bg-white text-gray-900 p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
+        <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
           <div className="space-y-6">
             {/* Header avec statistiques */}
-            <div className="border-b border-gray-300 pb-6">
+            <div className="border-b border-gray-600 pb-6">
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h1 className="text-2xl font-bold text-red-500">🔥 NOUVEAU CODE v3.0 CHARGÉ ! 🔥</h1>
@@ -4638,46 +4638,46 @@ const dailyPnLChartData = useMemo(
               {/* Statistiques FORCÉES VISIBLES */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-blue-600 rounded-lg p-4 border-4 border-blue-400">
-                  <div className="text-2xl font-bold text-gray-900">{stats.total || 99}</div>
-                  <div className="text-sm text-gray-900 font-bold">✅ TOTAL USERS</div>
+                  <div className="text-2xl font-bold text-white">{stats.total || 99}</div>
+                  <div className="text-sm text-white font-bold">✅ TOTAL USERS</div>
                 </div>
                 <div className="bg-green-600 rounded-lg p-4 border-4 border-green-200/50">
-                  <div className="text-2xl font-bold text-gray-900">{stats.active || 77}</div>
-                  <div className="text-sm text-gray-900 font-bold">🟢 ACTIFS</div>
+                  <div className="text-2xl font-bold text-white">{stats.active || 77}</div>
+                  <div className="text-sm text-white font-bold">🟢 ACTIFS</div>
                 </div>
                 <div className="bg-red-600 rounded-lg p-4 border-4 border-red-400">
-                  <div className="text-2xl font-bold text-gray-900">{stats.inactive || 22}</div>
-                  <div className="text-sm text-gray-900 font-bold">🔴 INACTIFS</div>
+                  <div className="text-2xl font-bold text-white">{stats.inactive || 22}</div>
+                  <div className="text-sm text-white font-bold">🔴 INACTIFS</div>
                 </div>
                 <div className="bg-purple-600 rounded-lg p-4 border-4 border-purple-400">
-                  <div className="text-2xl font-bold text-gray-900">{stats.newThisWeek || 5}</div>
-                  <div className="text-sm text-gray-900 font-bold">🆕 NOUVEAUX</div>
+                  <div className="text-2xl font-bold text-white">{stats.newThisWeek || 5}</div>
+                  <div className="text-sm text-white font-bold">🆕 NOUVEAUX</div>
                 </div>
               </div>
             </div>
 
             {/* Filtres et recherche */}
-            <div className="bg-gray-50 rounded-lg p-4">
+            <div className="bg-gray-800 rounded-lg p-4">
               <div className="grid grid-cols-1 gap-4">
                 {/* Barre de recherche */}
                 <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">Rechercher</label>
+                  <label className="block text-xs font-medium text-gray-400 mb-1">Rechercher</label>
                   <input
                     type="text"
                     placeholder="Email utilisateur..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-sm text-gray-900 focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-sm text-white focus:outline-none focus:border-blue-500"
                   />
                 </div>
                 
                 {/* Filtre statut */}
                 <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">Statut</label>
+                  <label className="block text-xs font-medium text-gray-400 mb-1">Statut</label>
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'inactive')}
-                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-sm text-gray-900 focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-sm text-white focus:outline-none focus:border-blue-500"
                   >
                     <option value="all">Tous</option>
                     <option value="active">Actifs</option>
@@ -4687,11 +4687,11 @@ const dailyPnLChartData = useMemo(
                 
                 {/* Trier par */}
                 <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">Trier par</label>
+                  <label className="block text-xs font-medium text-gray-400 mb-1">Trier par</label>
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as 'email' | 'created_at' | 'last_sign_in_at')}
-                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-sm text-gray-900 focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-sm text-white focus:outline-none focus:border-blue-500"
                   >
                     <option value="created_at">Date création</option>
                     <option value="last_sign_in_at">Dernière connexion</option>
@@ -4701,11 +4701,11 @@ const dailyPnLChartData = useMemo(
                 
                 {/* Ordre */}
                 <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">Ordre</label>
+                  <label className="block text-xs font-medium text-gray-400 mb-1">Ordre</label>
                   <select
                     value={sortOrder}
                     onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
-                    className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded text-sm text-gray-900 focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-sm text-white focus:outline-none focus:border-blue-500"
                   >
                     <option value="desc">Décroissant</option>
                     <option value="asc">Croissant</option>
@@ -4715,40 +4715,40 @@ const dailyPnLChartData = useMemo(
             </div>
 
             {/* Liste des utilisateurs */}
-            <div className="bg-gray-50 rounded-lg overflow-hidden">
+            <div className="bg-gray-800 rounded-lg overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-100">
+                  <thead className="bg-gray-700">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Email</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Statut</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Créé le</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Dernière connexion</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Actions</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Email</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Statut</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Créé le</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Dernière connexion</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-700">
                     {filteredUsers.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
+                        <td colSpan={5} className="px-4 py-8 text-center text-gray-400">
                           {searchTerm || statusFilter !== 'all' ? 'Aucun utilisateur trouvé avec ces critères' : 'Aucun utilisateur pour le moment'}
                         </td>
                       </tr>
                     ) : (
                       filteredUsers.map((user) => (
-                        <tr key={user.id} className="hover:bg-gray-100">
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{user.email}</td>
+                        <tr key={user.id} className="hover:bg-gray-700">
+                          <td className="px-4 py-4 whitespace-nowrap text-sm text-white">{user.email}</td>
                           <td className="px-4 py-4 whitespace-nowrap">
                             <span className={`px-2 py-1 text-xs rounded-full ${
-                              user.status === 'active' ? 'bg-green-200/60 text-gray-900' : 'bg-red-300/50 text-gray-900'
+                              user.status === 'active' ? 'bg-green-200/60 text-white' : 'bg-red-300/50 text-white'
                             }`}>
                               {user.status === 'active' ? 'Actif' : 'Inactif'}
                             </span>
                           </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600">
+                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-300">
                             {new Date(user.created_at).toLocaleDateString('fr-FR')}
                           </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600">
+                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-300">
                             {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString('fr-FR') : 'Jamais'}
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-sm">
@@ -4800,9 +4800,9 @@ const dailyPnLChartData = useMemo(
     const isJournalSignaux = selectedChannel.id !== 'trading-journal';
     
     return (
-            <div className="bg-white text-gray-900 p-2 md:p-4 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: (isMobile && isJournalSignaux) ? 'calc(20px - 0.5cm)' : '80px', touchAction: 'pan-y', maxWidth: '100%' }}>
+            <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: (isMobile && isJournalSignaux) ? 'calc(20px - 0.5cm)' : '80px', touchAction: 'pan-y', maxWidth: '100%' }}>
       {/* Header */}
-      <div className="mb-6 md:mb-8 border-b border-gray-300 pb-4">
+      <div className="mb-6 md:mb-8 border-b border-gray-600 pb-4">
         {/* Sélecteur de compte - MOBILE (pas sur TPLN model) */}
         {selectedChannel.id === 'trading-journal' && (
           <div className="flex md:hidden items-center gap-2 mb-4">
@@ -4810,8 +4810,8 @@ const dailyPnLChartData = useMemo(
               <select
                 value={selectedAccount}
                 onChange={(e) => handleAccountChange(e.target.value)}
-                className="bg-gray-200 hover:bg-gray-300 border border-gray-400 text-gray-700 hover:text-gray-900 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-gray-400 cursor-pointer h-9"
-                style={{ height: '36px', background: '#f3f4f6' }}
+                className="bg-gray-600 hover:bg-gray-500 border border-gray-500 text-gray-200 hover:text-white rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-gray-400 cursor-pointer h-9"
+                style={{ height: '36px', background: 'rgb(75, 85, 99)' }}
               >
                 <option value="Tous les comptes">📊 Tous les comptes</option>
                 {tradingAccounts.map((account) => (
@@ -4821,7 +4821,7 @@ const dailyPnLChartData = useMemo(
                 ))}
               </select>
             ) : (
-              <div className="text-sm text-gray-500 italic px-3 py-2">
+              <div className="text-sm text-gray-400 italic px-3 py-2">
                 Aucun compte enregistré
               </div>
             )}
@@ -4831,8 +4831,8 @@ const dailyPnLChartData = useMemo(
               disabled={tradingAccounts.length === 0}
               className={`px-3 py-2 rounded-lg text-sm font-medium ${
                 tradingAccounts.length === 0
-                  ? 'bg-gray-100 border border-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-gray-200 hover:bg-gray-300 border border-gray-400 text-gray-700 hover:text-gray-900'
+                  ? 'bg-gray-700 border border-gray-600 text-gray-500 cursor-not-allowed'
+                  : 'bg-gray-600 hover:bg-gray-500 border border-gray-500 text-gray-200 hover:text-white'
               }`}
               title="Options du compte"
             >
@@ -4841,7 +4841,7 @@ const dailyPnLChartData = useMemo(
             
             <button
               onClick={() => setShowAddAccountModal(true)}
-              className="bg-gray-200 hover:bg-gray-300 border border-gray-400 text-gray-700 hover:text-gray-900 px-3 py-2 rounded-lg text-sm font-medium"
+              className="bg-gray-600 hover:bg-gray-500 border border-gray-500 text-gray-200 hover:text-white px-3 py-2 rounded-lg text-sm font-medium"
             >
               + Compte
             </button>
@@ -4851,10 +4851,10 @@ const dailyPnLChartData = useMemo(
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-0">
           <div className="hidden md:flex md:items-center md:gap-6">
             <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-white">
             {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? (selectedChannel.id === 'tpln-model' ? 'TPLN model' : 'Mon Journal Perso') : 'Journal des Signaux'}
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-400 mt-1">
             {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? (selectedChannel.id === 'tpln-model' ? 'Calendrier et stats du model' : 'Journal tous tes trades') : 'Suivi des performances des signaux'}
           </p>
         </div>
@@ -4866,8 +4866,8 @@ const dailyPnLChartData = useMemo(
               <select
                 value={selectedAccount}
                 onChange={(e) => handleAccountChange(e.target.value)}
-                    className="bg-gray-200 hover:bg-gray-300 border border-gray-400 text-gray-700 hover:text-gray-900 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-gray-400 cursor-pointer h-9"
-                    style={{ height: '36px', background: '#f3f4f6' }}
+                    className="bg-gray-600 hover:bg-gray-500 border border-gray-500 text-gray-200 hover:text-white rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-gray-400 cursor-pointer h-9"
+                    style={{ height: '36px', background: 'rgb(75, 85, 99)' }}
               >
                     <option value="Tous les comptes">📊 Tous les comptes</option>
                 {tradingAccounts.map((account) => (
@@ -4877,7 +4877,7 @@ const dailyPnLChartData = useMemo(
                 ))}
               </select>
             ) : (
-              <div className="text-sm text-gray-500 italic px-3 py-2">
+              <div className="text-sm text-gray-400 italic px-3 py-2">
                     Aucun compte enregistré
               </div>
             )}
@@ -4887,8 +4887,8 @@ const dailyPnLChartData = useMemo(
               disabled={tradingAccounts.length === 0}
               className={`px-3 py-2 rounded-lg text-sm font-medium ${
                 tradingAccounts.length === 0
-                  ? 'bg-gray-100 border border-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-gray-200 hover:bg-gray-300 border border-gray-400 text-gray-700 hover:text-gray-900'
+                  ? 'bg-gray-700 border border-gray-600 text-gray-500 cursor-not-allowed'
+                  : 'bg-gray-600 hover:bg-gray-500 border border-gray-500 text-gray-200 hover:text-white'
               }`}
                   title="Options du compte"
             >
@@ -4897,7 +4897,7 @@ const dailyPnLChartData = useMemo(
             
             <button
               onClick={() => setShowAddAccountModal(true)}
-              className="bg-gray-200 hover:bg-gray-300 border border-gray-400 text-gray-700 hover:text-gray-900 px-3 py-2 rounded-lg text-sm font-medium"
+              className="bg-gray-600 hover:bg-gray-500 border border-gray-500 text-gray-200 hover:text-white px-3 py-2 rounded-lg text-sm font-medium"
             >
                   + Compte
             </button>
@@ -4906,10 +4906,10 @@ const dailyPnLChartData = useMemo(
         </div>
         
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3 text-gray-900">
+          <div className="flex items-center gap-3 text-white">
             <button 
               onClick={goToPreviousMonth}
-              className="p-2 hover:bg-gray-100 rounded-lg text-lg font-bold"
+              className="p-2 hover:bg-gray-700 rounded-lg text-lg font-bold"
             >
               ‹
             </button>
@@ -4918,7 +4918,7 @@ const dailyPnLChartData = useMemo(
             </span>
             <button 
               onClick={goToNextMonth}
-              className="p-2 hover:bg-gray-100 rounded-lg text-lg font-bold"
+              className="p-2 hover:bg-gray-700 rounded-lg text-lg font-bold"
             >
               ›
             </button>
@@ -4927,13 +4927,13 @@ const dailyPnLChartData = useMemo(
             <>
             <button 
               onClick={handleAddTrade}
-              className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg text-sm font-medium"
+              className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg text-sm font-medium"
             >
               {typeof window !== 'undefined' && window.matchMedia('(display-mode: standalone)').matches ? '+ trade' : '+ Ajouter Trade'}
             </button>
             <button 
               onClick={() => setShowFinSessionModal(true)}
-              className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg text-sm font-medium"
+              className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg text-sm font-medium"
               title="Statistiques en fin de session"
             >
               Fin session
@@ -4950,7 +4950,7 @@ const dailyPnLChartData = useMemo(
           {/* Jours de la semaine */}
           <div className="grid grid-cols-7 gap-0.5 md:gap-1 mb-4 w-full" style={{ maxWidth: '100%', overflowX: 'hidden' }}>
             {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
-              <div key={day} className="text-center text-gray-500 font-semibold py-3 text-sm uppercase tracking-wide">
+              <div key={day} className="text-center text-gray-400 font-semibold py-3 text-sm uppercase tracking-wide">
                 {day.substring(0, 3)}
               </div>
             ))}
@@ -4981,12 +4981,12 @@ const dailyPnLChartData = useMemo(
                 
                 // Celles vides au début
                 if (dayNumber < 1) {
-                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-50 border-gray-200" style={{minHeight: '64px'}}></div>;
+                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700" style={{minHeight: '64px'}}></div>;
                 }
                 
                 // Celles vides à la fin
                 if (dayNumber > daysInMonth) {
-                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-50 border-gray-200" style={{minHeight: '64px'}}></div>;
+                  return <div key={i} className="border-2 rounded-lg h-16 md:h-24 p-1 md:p-2 bg-gray-800 border-gray-700" style={{minHeight: '64px'}}></div>;
                 }
               
                               // Vérifier s'il y a des trades personnels ou des signaux pour ce jour
@@ -5031,7 +5031,7 @@ const dailyPnLChartData = useMemo(
                   }) : [];
 
                 // Déterminer la couleur selon les trades ou signaux
-                let bgColor = 'bg-gray-100 border-gray-300 text-gray-500'; // No trade par défaut
+                let bgColor = 'bg-gray-700 border-gray-600 text-gray-400'; // No trade par défaut
                 let tradeCount = 0;
 
                 if (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') {
@@ -5049,7 +5049,7 @@ const dailyPnLChartData = useMemo(
                     
                     // Déterminer la couleur selon le PnL total
                     if (totalPnL > 0) {
-                      bgColor = 'bg-green-200/30 border-green-300/30 text-gray-900'; // PnL positif - vert plus pale
+                      bgColor = 'bg-green-200/30 border-green-300/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
                       bgColor = 'calendar-cell-loss border-2'; // PnL négatif - rouge pâle (cases calendrier)
                     } else {
@@ -5081,7 +5081,7 @@ const dailyPnLChartData = useMemo(
                     
                     // Déterminer la couleur selon le PnL total
                     if (totalPnL > 0) {
-                      bgColor = 'bg-green-200/30 border-green-300/30 text-gray-900'; // PnL positif - vert plus pale
+                      bgColor = 'bg-green-200/30 border-green-300/30 text-white'; // PnL positif - vert plus pale
                     } else if (totalPnL < 0) {
                       bgColor = 'calendar-cell-loss border-2'; // PnL négatif - rouge pâle (cases calendrier)
                     } else {
@@ -5200,26 +5200,26 @@ const dailyPnLChartData = useMemo(
             </div>
 
           {/* Légende */}
-          <div className="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-gray-300">
+          <div className="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-gray-600">
             <div className="flex items-center gap-1">
               <div className="w-3 h-3 bg-green-200/50 border border-green-200/50/50 rounded"></div>
-              <span className="text-xs text-gray-600">WIN</span>
+              <span className="text-xs text-gray-300">WIN</span>
             </div>
             <div className="flex items-center gap-1">
 <div className="w-3 h-3 bg-loss/60 border border-loss/50 rounded"></div>
-                <span className="text-xs text-gray-600">LOSS</span>
+                <span className="text-xs text-gray-300">LOSS</span>
             </div>
             <div className="flex items-center gap-1">
               <div className="w-3 h-3 bg-blue-500/60 border border-blue-400/50 rounded"></div>
-              <span className="text-xs text-gray-600">BREAK</span>
+              <span className="text-xs text-gray-300">BREAK</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 bg-gray-100 border border-gray-300 rounded"></div>
-              <span className="text-xs text-gray-600">NO TRADE</span>
+              <div className="w-3 h-3 bg-gray-700 border border-gray-600 rounded"></div>
+              <span className="text-xs text-gray-300">NO TRADE</span>
             </div>
             <div className="flex items-center gap-1">
               <div className="w-3 h-3 border-2 border-blue-400 rounded"></div>
-              <span className="text-xs text-gray-600">Today</span>
+              <span className="text-xs text-gray-300">Today</span>
             </div>
           </div>
 
@@ -5255,11 +5255,11 @@ const dailyPnLChartData = useMemo(
             
             return (
               <div className="mt-4 space-y-3">
-                <div className="p-4 bg-gray-50 rounded-lg border border-gray-300">
+                <div className="p-4 bg-gray-800 rounded-lg border border-gray-600">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="text-sm font-medium text-gray-600">Solde</h4>
-                      <p className="text-xs text-gray-500">{selectedAccount}</p>
+                      <h4 className="text-sm font-medium text-gray-300">Solde</h4>
+                      <p className="text-xs text-gray-400">{selectedAccount}</p>
                     </div>
                     <div className="text-right">
                       <div className={`text-lg font-bold ${
@@ -5268,10 +5268,10 @@ const dailyPnLChartData = useMemo(
                       }`}>
                         ${currentBalance.toFixed(2)}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-gray-400">
                         Balance initiale: ${initialBalance.toFixed(2)}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-gray-400">
                         Stop-loss: ${minimumBalance.toFixed(2)}
                       </div>
                     </div>
@@ -5279,12 +5279,12 @@ const dailyPnLChartData = useMemo(
                 </div>
                 
                 {/* Jauge de drawdown maximum */}
-                <div className="p-4 bg-gray-50 rounded-lg border border-gray-300">
+                <div className="p-4 bg-gray-800 rounded-lg border border-gray-600">
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm font-medium text-gray-900">DD Max</span>
-                    <span className="text-sm font-bold text-gray-900">{drawdownPercentage.toFixed(1)}%</span>
+                    <span className="text-sm font-medium text-white">DD Max</span>
+                    <span className="text-sm font-bold text-white">{drawdownPercentage.toFixed(1)}%</span>
                   </div>
-                  <div className="relative w-full h-8 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="relative w-full h-8 bg-gray-700 rounded-full overflow-hidden">
                     {/* Barre de progression rouge */}
                     {drawdownPercentage > 0 && (
                       <div 
@@ -5301,8 +5301,8 @@ const dailyPnLChartData = useMemo(
                     )}
                   </div>
                   <div className="flex items-center justify-between mt-2 text-xs">
-                    <span className="text-gray-900 font-medium">${losses.toFixed(2)}</span>
-                    <span className="text-gray-900 font-medium">${maxDrawdown.toFixed(2)}</span>
+                    <span className="text-white font-medium">${losses.toFixed(2)}</span>
+                    <span className="text-white font-medium">${maxDrawdown.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -5365,15 +5365,15 @@ const dailyPnLChartData = useMemo(
             }, 0);
             
                 return (
-              <div className="bg-gray-100 rounded-lg p-4 mt-4">
+              <div className="bg-gray-700 rounded-lg p-4 mt-4">
                 <h4 className="text-base font-medium text-loss mb-4">📊 Analyse des Pertes</h4>
                 <div className="space-y-3">
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">Total pertes:</span>
+                        <span className="text-gray-400">Total pertes:</span>
                     <span className="text-loss font-medium">{lossSignals.length}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">P&L total pertes:</span>
+                        <span className="text-gray-400">P&L total pertes:</span>
                     <span className="text-loss font-medium">${Math.round(totalLossPnl)}</span>
                       </div>
                   {sortedReasons.length > 0 ? (
@@ -5382,7 +5382,7 @@ const dailyPnLChartData = useMemo(
                       <div className="space-y-2">
                         {sortedReasons.map((reason) => (
                           <div key={reason.reason} className="flex justify-between text-sm">
-                            <span className="text-gray-600">{getCustomLossReasonLabel(reason.reason)}</span>
+                            <span className="text-gray-300">{getCustomLossReasonLabel(reason.reason)}</span>
                             <span className="text-loss font-medium">{reason.count} ({reason.percentage}%)</span>
                           </div>
                         ))}
@@ -5400,7 +5400,7 @@ const dailyPnLChartData = useMemo(
         </div>
 
         {/* Panneau des statistiques */}
-        <div className="w-full lg:w-80 bg-gray-50 rounded-xl p-4 md:p-6" style={{ paddingTop: (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? 'calc(1rem + 1cm)' : '1rem' }}>
+        <div className="w-full lg:w-80 bg-gray-800 rounded-xl p-4 md:p-6" style={{ paddingTop: (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? 'calc(1rem + 1cm)' : '1rem' }}>
           {/* Métriques principales */}
           <div className="space-y-2 mb-8">
             {/* Mois / Jour - uniquement Journal perso et TPLN model */}
@@ -5409,14 +5409,14 @@ const dailyPnLChartData = useMemo(
                 <button
                   type="button"
                   onClick={() => setStatsPeriod('mois')}
-                  className={`flex-1 py-2 rounded-lg text-sm font-medium ${statsPeriod === 'mois' ? 'bg-gray-200 text-gray-900' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                  className={`flex-1 py-2 rounded-lg text-sm font-medium ${statsPeriod === 'mois' ? 'bg-gray-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
                 >
                   Mois
                 </button>
                 <button
                   type="button"
                   onClick={() => setStatsPeriod('jour')}
-                  className={`flex-1 py-2 rounded-lg text-sm font-medium ${statsPeriod === 'jour' ? 'bg-gray-200 text-gray-900' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                  className={`flex-1 py-2 rounded-lg text-sm font-medium ${statsPeriod === 'jour' ? 'bg-gray-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
                 >
                   Jour
                 </button>
@@ -5510,18 +5510,18 @@ const dailyPnLChartData = useMemo(
 
             {/* Profit Factor (Journal perso et TPLN model) - pas sur Journal Signaux */}
             {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') && (
-            <div className="bg-gray-100 rounded-lg p-4 border border-gray-300 flex items-center justify-between">
+            <div className="bg-gray-700 rounded-lg p-4 border border-gray-600 flex items-center justify-between">
               <div className="flex-1">
-                <div className="text-sm text-gray-500 mb-1 flex items-center gap-1">
+                <div className="text-sm text-gray-400 mb-1 flex items-center gap-1">
                   Profit Factor
                   <div className="group relative">
-                    <span className="text-gray-500 cursor-help">?</span>
-                    <div className="absolute left-0 bottom-full mb-2 w-48 p-2 bg-gray-50 text-xs text-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 border border-gray-300">
+                    <span className="text-gray-400 cursor-help">?</span>
+                    <div className="absolute left-0 bottom-full mb-2 w-48 p-2 bg-gray-800 text-xs text-white rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 border border-gray-600">
                       Ratio gains totaux<br />sur pertes totales
                     </div>
                   </div>
                 </div>
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-2xl font-bold text-white">
                   {((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? 
                     (() => {
                       const { totalWins, totalLosses } = getProfitFactorDataTradesForDisplay();
@@ -5541,15 +5541,15 @@ const dailyPnLChartData = useMemo(
             )}
             
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-gray-100 rounded-lg p-3 border border-gray-300">
-                <div className="text-xs text-gray-500 mb-1">Trade auj</div>
+              <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
+                <div className="text-xs text-gray-400 mb-1">Trade auj</div>
                 <div className="text-lg font-bold text-blue-400">
                   {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? getTodayTrades().length : getTodaySignals().length}
                 </div>
               </div>
-              <div className="bg-gray-100 rounded-lg p-3 border border-gray-300">
-                <div className="text-xs text-gray-500 mb-1">Trade ce mois</div>
-                <div className="text-lg font-bold text-gray-900">
+              <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
+                <div className="text-xs text-gray-400 mb-1">Trade ce mois</div>
+                <div className="text-lg font-bold text-white">
                   {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? getThisMonthTrades().length : getThisMonthSignals().length}
                 </div>
               </div>
@@ -5557,8 +5557,8 @@ const dailyPnLChartData = useMemo(
             
             {selectedChannel.id !== 'tpln-model' && (
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-gray-100 rounded-lg p-3 border border-gray-300">
-                <div className="text-xs text-gray-500 mb-1">Avg Win</div>
+              <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
+                <div className="text-xs text-gray-400 mb-1">Avg Win</div>
                 <div className="text-lg font-bold text-green-100">
                   {selectedChannel.id === 'trading-journal' ? 
                     (calculateAvgWinTradesForDisplay() > 0 ? `+$${calculateAvgWinTradesForDisplay()}` : '-') :
@@ -5566,8 +5566,8 @@ const dailyPnLChartData = useMemo(
                   }
                 </div>
               </div>
-              <div className="bg-gray-100 rounded-lg p-3 border border-gray-300">
-                <div className="text-xs text-gray-500 mb-1">Avg Loss</div>
+              <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
+                <div className="text-xs text-gray-400 mb-1">Avg Loss</div>
                 <div className="text-lg font-bold text-loss">
                   {selectedChannel.id === 'trading-journal' ? 
                     (calculateAvgLossTradesForDisplay() > 0 ? `-$${calculateAvgLossTradesForDisplay()}` : '-') :
@@ -5580,31 +5580,31 @@ const dailyPnLChartData = useMemo(
 
             {/* Perf par session (taux de réussite %): sous Avg Win - Asian/London | NY AM/NY PM */}
             {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') && (
-            <div className="bg-gray-100 rounded-lg p-4 border border-gray-300 grid grid-cols-2 gap-3">
+            <div className="bg-gray-700 rounded-lg p-4 border border-gray-600 grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-2">
                 <div>
-                  <div className="text-xs text-gray-500 mb-0.5">Asian</div>
-                  <div className="text-base font-bold text-gray-900">
+                  <div className="text-xs text-gray-400 mb-0.5">Asian</div>
+                  <div className="text-base font-bold text-white">
                     {getWinRateForSessionDisplay(['18h', 'Open Asian']) !== null ? `${getWinRateForSessionDisplay(['18h', 'Open Asian'])}%` : '–'}
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-500 mb-0.5">London</div>
-                  <div className="text-base font-bold text-gray-900">
+                  <div className="text-xs text-gray-400 mb-0.5">London</div>
+                  <div className="text-base font-bold text-white">
                     {getWinRateForSessionDisplay(['London']) !== null ? `${getWinRateForSessionDisplay(['London'])}%` : '–'}
                   </div>
                 </div>
               </div>
               <div className="flex flex-col gap-2">
                 <div>
-                  <div className="text-xs text-gray-500 mb-0.5">NY AM</div>
-                  <div className="text-base font-bold text-gray-900">
+                  <div className="text-xs text-gray-400 mb-0.5">NY AM</div>
+                  <div className="text-base font-bold text-white">
                     {getWinRateForSessionDisplay(['NY AM']) !== null ? `${getWinRateForSessionDisplay(['NY AM'])}%` : '–'}
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-500 mb-0.5">NY PM</div>
-                  <div className="text-base font-bold text-gray-900">
+                  <div className="text-xs text-gray-400 mb-0.5">NY PM</div>
+                  <div className="text-base font-bold text-white">
                     {getWinRateForSessionDisplay(['NY PM']) !== null ? `${getWinRateForSessionDisplay(['NY PM'])}%` : '–'}
                   </div>
                 </div>
@@ -5627,12 +5627,12 @@ const dailyPnLChartData = useMemo(
               const lossAnalysis = getLossAnalysis();
               if (lossAnalysis.totalLosses > 0) {
                 return (
-                  <div className="bg-gray-100 rounded-lg p-3 mt-3">
+                  <div className="bg-gray-700 rounded-lg p-3 mt-3">
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="text-sm font-medium text-loss">📊 Analyse des Pertes</h4>
                       <button
                         onClick={() => setShowLossReasonsModal(true)}
-                        className="text-gray-500 hover:text-gray-900 transition-colors"
+                        className="text-gray-400 hover:text-white transition-colors"
                         title="Gérer les raisons de perte"
                       >
                         ⚙️
@@ -5640,17 +5640,17 @@ const dailyPnLChartData = useMemo(
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">Total pertes:</span>
+                        <span className="text-gray-400">Total pertes:</span>
                         <span className="text-loss">{lossAnalysis.totalLosses}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">P&L total pertes:</span>
+                        <span className="text-gray-400">P&L total pertes:</span>
                         <span className="text-loss">${lossAnalysis.totalLossPnl}</span>
                       </div>
                       {lossAnalysis.reasons.length > 0 ? (
                         lossAnalysis.reasons.slice(0, 3).map((reason, index) => (
                           <div key={reason.reason} className="flex justify-between text-xs">
-                            <span className="text-gray-500 truncate">{getCustomLossReasonLabel(reason.reason)}</span>
+                            <span className="text-gray-400 truncate">{getCustomLossReasonLabel(reason.reason)}</span>
                             <span className="text-loss">{reason.count} ({reason.percentage}%)</span>
                           </div>
                         ))
@@ -5670,15 +5670,15 @@ const dailyPnLChartData = useMemo(
 
           {/* Résumé hebdomadaire */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-600 mb-4">Weekly Breakdown</h4>
+            <h4 className="text-sm font-semibold text-gray-300 mb-4">Weekly Breakdown</h4>
             <div className="space-y-2">
               {((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? getWeeklyBreakdownTrades() : getWeeklyBreakdown()).map((weekData, index) => (
                 <div 
                   key={index} 
-                  className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer hover:bg-gray-200/50 transition-colors ${
+                  className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer hover:bg-gray-600/50 transition-colors ${
                   weekData.isCurrentWeek 
                     ? 'bg-blue-600/20 border-blue-500/30' 
-                    : 'bg-gray-100/50 border-gray-300'
+                    : 'bg-gray-700/50 border-gray-600'
                   }`}
                   onClick={() => {
                     setSelectedWeek(weekData.weekNum);
@@ -5687,12 +5687,12 @@ const dailyPnLChartData = useMemo(
                 >
                   <div className="flex items-center gap-3">
                     <div className={`text-sm font-medium ${
-                      weekData.isCurrentWeek ? 'text-blue-300' : 'text-gray-600'
+                      weekData.isCurrentWeek ? 'text-blue-300' : 'text-gray-300'
                     }`}>
                       {weekData.week}
                     </div>
                     {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') && (
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-gray-400">
                       {weekData.trades} trade{weekData.trades !== 1 ? 's' : ''}
                     </div>
                     )}
@@ -5761,7 +5761,7 @@ const dailyPnLChartData = useMemo(
               </button>
               <button
                 onClick={() => setShowPerformanceTableModal(true)}
-                className="w-full px-3 py-2 rounded-lg bg-gray-200/50 border border-gray-400/50 text-gray-700 hover:bg-gray-200 transition-colors text-sm font-medium"
+                className="w-full px-3 py-2 rounded-lg bg-gray-600/50 border border-gray-500/50 text-gray-200 hover:bg-gray-600 transition-colors text-sm font-medium"
               >
                 📊 TABLEAU DE PERFORMANCE
               </button>
@@ -5774,10 +5774,10 @@ const dailyPnLChartData = useMemo(
   };
 
   return (
-    <div className="h-screen w-full bg-white text-gray-900 overflow-hidden flex" style={{ paddingTop: '0px', backgroundColor: '#ffffff', minHeight: '100vh' }}>
+    <div className="h-screen w-full bg-gray-900 text-white overflow-hidden flex" style={{ paddingTop: '0px', backgroundColor: '#111827', minHeight: '100vh' }}>
       {/* Desktop Sidebar */}
-      <div className="hidden md:flex w-56 min-w-56 flex-shrink-0 bg-gray-50 flex-col">
-        <div className="p-4 border-b border-gray-200">
+      <div className="hidden md:flex w-56 min-w-56 flex-shrink-0 bg-gray-800 flex-col">
+        <div className="p-4 border-b border-gray-700">
           <div className="flex items-center gap-3">
             <label className="cursor-pointer">
               <input
@@ -5801,7 +5801,7 @@ const dailyPnLChartData = useMemo(
                     type="text"
                     value={usernameInput}
                     onChange={(e) => setUsernameInput(e.target.value)}
-                    className="text-sm bg-transparent border border-blue-400 rounded px-1 py-0.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-300"
+                    className="text-sm bg-transparent border border-blue-400 rounded px-1 py-0.5 text-white placeholder-gray-400 focus:outline-none focus:border-blue-300"
                     placeholder="Nouveau nom..."
                     autoFocus
                     onKeyPress={(e) => e.key === 'Enter' && handleUsernameEdit()}
@@ -5810,7 +5810,7 @@ const dailyPnLChartData = useMemo(
                   <div className="flex gap-1">
                     <button
                       onClick={handleUsernameEdit}
-                      className="text-xs bg-green-600 hover:bg-green-700 px-2 py-0.5 rounded text-gray-900"
+                      className="text-xs bg-green-600 hover:bg-green-700 px-2 py-0.5 rounded text-white"
                     >
                       ✓
                     </button>
@@ -5852,7 +5852,7 @@ const dailyPnLChartData = useMemo(
                     >
                       {currentUsername}
                     </p>
-                    <p className="text-xs text-gray-500">En ligne</p>
+                    <p className="text-xs text-gray-400">En ligne</p>
                   </div>
                 </div>
               )}
@@ -5862,29 +5862,29 @@ const dailyPnLChartData = useMemo(
 
         <div ref={sidebarRef} className="flex-1 overflow-y-auto p-4 space-y-4">
           <div>
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">ÉDUCATION</h3>
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">ÉDUCATION</h3>
             <div className="space-y-1">
-              <button onClick={() => handleChannelChange('fondamentaux', 'fondamentaux')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'fondamentaux' ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'} relative`}>📚 Fondamentaux</button>
+              <button onClick={() => handleChannelChange('fondamentaux', 'fondamentaux')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'fondamentaux' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}>📚 Fondamentaux</button>
             </div>
           </div>
 
           <div>
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">SIGNAUX</h3>
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">SIGNAUX</h3>
             <div className="space-y-1">
-              <button onClick={() => handleChannelChange('general-chat-2', 'general-chat-2')} className={`w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2 ${selectedChannel.id === 'general-chat-2' ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'} relative`}><span className="inline-flex items-center justify-center w-5 h-5 shrink-0 text-center text-sm">📊</span>Indices</button>
-              <button onClick={() => handleChannelChange('general-chat-3', 'general-chat-3')} className={`w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2 ${selectedChannel.id === 'general-chat-3' ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'} relative`}><span className="inline-flex items-center justify-center w-5 h-5 shrink-0 text-center text-sm">₿</span>Crypto</button>
-              <button onClick={() => handleChannelChange('general-chat-4', 'general-chat-4')} className={`w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2 ${selectedChannel.id === 'general-chat-4' ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'} relative`}><span className="inline-flex items-center justify-center w-5 h-5 shrink-0 text-center text-sm">💵</span>Forex</button>
+              <button onClick={() => handleChannelChange('general-chat-2', 'general-chat-2')} className={`w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2 ${selectedChannel.id === 'general-chat-2' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}><span className="inline-flex items-center justify-center w-5 h-5 shrink-0 text-center text-sm">📊</span>Indices</button>
+              <button onClick={() => handleChannelChange('general-chat-3', 'general-chat-3')} className={`w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2 ${selectedChannel.id === 'general-chat-3' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}><span className="inline-flex items-center justify-center w-5 h-5 shrink-0 text-center text-sm">₿</span>Crypto</button>
+              <button onClick={() => handleChannelChange('general-chat-4', 'general-chat-4')} className={`w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2 ${selectedChannel.id === 'general-chat-4' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'} relative`}><span className="inline-flex items-center justify-center w-5 h-5 shrink-0 text-center text-sm">💵</span>Forex</button>
             </div>
           </div>
 
           <div>
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">TRADING HUB</h3>
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">TRADING HUB</h3>
             <div className="space-y-1">
               <button onClick={() => {
                 setSelectedChannel({id: 'tpln-model', name: 'tpln-model'});
                 setView('calendar');
                 scrollToTop();
-              }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'tpln-model' ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'}`}>📋 TPLN model</button>
+              }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'tpln-model' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📋 TPLN model</button>
               <button onClick={() => {
                 // Réinitialiser selectedDate si on quitte le Trading Journal
                 if (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') {
@@ -5894,8 +5894,8 @@ const dailyPnLChartData = useMemo(
                 setSelectedChannel({id: 'calendar', name: 'calendar'});
                 setView('calendar');
                 scrollToTop();
-              }} className={`w-full text-left px-3 py-2 rounded text-sm ${view === 'calendar' && selectedChannel.id === 'calendar' ? 'bg-gray-100 text-gray-900' : selectedChannel.id === 'tpln-model' ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'}`}>📅 Journal Signaux</button>
-              <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-100 text-gray-900' : selectedChannel.id === 'tpln-model' ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'}`}>📊 Journal Perso</button>
+              }} className={`w-full text-left px-3 py-2 rounded text-sm ${view === 'calendar' && selectedChannel.id === 'calendar' ? 'bg-gray-700 text-white' : selectedChannel.id === 'tpln-model' ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📅 Journal Signaux</button>
+              <button onClick={() => handleChannelChange('trading-journal', 'trading-journal')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'trading-journal' ? 'bg-gray-700 text-white' : selectedChannel.id === 'tpln-model' ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>📊 Journal Perso</button>
               <button onClick={() => {
                 // Sauvegarder la position du scroll de la sidebar
                 const scrollPos = sidebarRef.current?.scrollTop || 0;
@@ -5906,8 +5906,8 @@ const dailyPnLChartData = useMemo(
                     sidebarRef.current.scrollTop = scrollPos;
                   }
                 }, 0);
-              }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'check-trade' ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'}`}>✅ Check Trade</button>
-              <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'}`}>
+              }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'check-trade' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>✅ Check Trade</button>
+              <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>
                 <div className="flex items-start gap-2">
                   <span>⭐</span>
                   <div className="flex flex-col">
@@ -5921,36 +5921,36 @@ const dailyPnLChartData = useMemo(
                 if ((window as any).setCurrentPage) {
                   (window as any).setCurrentPage('livestream');
                 }
-              }} className="w-full text-left px-3 py-2 rounded text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100">📺 Livestream</button>
+              }} className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700">📺 Livestream</button>
             </div>
           </div>
 
-          <div className="bg-gray-100 rounded-lg p-3">
+          <div className="bg-gray-700 rounded-lg p-3">
             <h4 className="text-sm font-medium mb-2">Statistiques</h4>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Win Rate:</span>
-                <span className="text-gray-900">{calculateWinRate()}%</span>
+                <span className="text-gray-400">Win Rate:</span>
+                <span className="text-white">{calculateWinRate()}%</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">P&L Total:</span>
+                <span className="text-gray-400">P&L Total:</span>
                 <span className={calculateTotalPnL() >= 0 ? 'text-green-100' : 'text-red-100'}>
                   {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Signaux actifs:</span>
-                <span className="text-gray-900">{allSignalsForStats.filter(s => s.status === 'ACTIVE').length}</span>
+                <span className="text-gray-400">Signaux actifs:</span>
+                <span className="text-white">{allSignalsForStats.filter(s => s.status === 'ACTIVE').length}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Total Trades:</span>
-                <span className="text-gray-900">{allSignalsForStats.length}</span>
+                <span className="text-gray-400">Total Trades:</span>
+                <span className="text-white">{allSignalsForStats.length}</span>
               </div>
             </div>
           </div>
 
           <div>
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">NOTIFICATIONS</h3>
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">NOTIFICATIONS</h3>
             <div className="space-y-1">
               <button 
                 onClick={async () => {
@@ -5994,14 +5994,14 @@ const dailyPnLChartData = useMemo(
                     alert(errorMessage);
                   }
                 }}
-                className="w-full text-left px-3 py-2 rounded text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
               >
                 🔴 Livestream
               </button>
               
               <button 
                 onClick={() => setShowLivestreamModal(true)}
-                className="w-full text-left px-3 py-2 rounded text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
               >
                 📝 Notif Custom
               </button>
@@ -6010,10 +6010,10 @@ const dailyPnLChartData = useMemo(
 
 
           {/* Bouton déconnexion en bas de la sidebar - Desktop seulement */}
-          <div className="mt-4 pt-4 border-t border-gray-200">
+          <div className="mt-4 pt-4 border-t border-gray-700">
             <button 
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 rounded-lg transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white rounded-lg transition-colors"
             >
               <span className="text-lg">🏠</span>
               <span className="text-sm">Retour accueil</span>
@@ -6023,9 +6023,9 @@ const dailyPnLChartData = useMemo(
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col bg-white" style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
+      <div className="flex-1 flex flex-col bg-gray-900" style={{ minHeight: '100vh', backgroundColor: '#111827' }}>
         {/* Mobile Navigation - Fixed */}
-        <div className="md:hidden bg-gray-50 border-b border-gray-200 p-3 fixed top-0 left-0 right-0 z-30" style={{ height: '60px', backgroundColor: '#f9fafb' }}>
+        <div className="md:hidden bg-gray-800 border-b border-gray-700 p-3 fixed top-0 left-0 right-0 z-30" style={{ height: '60px', backgroundColor: '#1f2937' }}>
           {mobileView === 'channels' ? (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -6076,7 +6076,7 @@ const dailyPnLChartData = useMemo(
                   </div>
                 </div>
               </div>
-              <button onClick={handleLogout} className="text-gray-500 hover:text-gray-900">
+              <button onClick={handleLogout} className="text-gray-400 hover:text-white">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
@@ -6086,7 +6086,7 @@ const dailyPnLChartData = useMemo(
             <div className="flex items-center justify-between">
               <button 
                 onClick={() => setMobileView('channels')}
-                className="flex items-center gap-2 text-gray-500 hover:text-gray-900"
+                className="flex items-center gap-2 text-gray-400 hover:text-white"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -6103,44 +6103,44 @@ const dailyPnLChartData = useMemo(
         </div>
 
         {/* Mobile Content Container with Slide Animation */}
-        <div className="md:hidden relative flex-1 overflow-hidden bg-white" style={{ paddingTop: '60px', backgroundColor: '#ffffff' }}>
+        <div className="md:hidden relative flex-1 overflow-hidden bg-gray-900" style={{ paddingTop: '60px', backgroundColor: '#111827' }}>
           {/* Channels List - Slides from left */}
           <div 
-            className={`absolute inset-0 bg-gray-50 transform transition-transform duration-300 ease-in-out z-10 ${
+            className={`absolute inset-0 bg-gray-800 transform transition-transform duration-300 ease-in-out z-10 ${
               mobileView === 'channels' ? 'translate-x-0' : '-translate-x-full'
             }`}
-            style={{ backgroundColor: '#f9fafb', minHeight: '100vh' }}
+            style={{ backgroundColor: '#1f2937', minHeight: '100vh' }}
           >
                         <div className="p-4 space-y-6 h-full overflow-y-auto" style={{ paddingTop: '80px' }}>
-              <div className="bg-gray-100 rounded-lg p-4">
-                <h4 className="text-base font-medium mb-3 flex items-center justify-center gap-2 text-gray-900">
+              <div className="bg-gray-700 rounded-lg p-4">
+                <h4 className="text-base font-medium mb-3 flex items-center justify-center gap-2 text-white">
                   <span>📊</span>
                   <span>Statistiques signaux</span>
                 </h4>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-900">Win Rate:</span>
-                    <span className="text-gray-900">{calculateWinRate()}%</span>
+                    <span className="text-white">Win Rate:</span>
+                    <span className="text-white">{calculateWinRate()}%</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-900">Signaux actifs:</span>
-                    <span className="text-gray-900">{allSignalsForStats.filter(s => s.status === 'ACTIVE').length}</span>
+                    <span className="text-white">Signaux actifs:</span>
+                    <span className="text-white">{allSignalsForStats.filter(s => s.status === 'ACTIVE').length}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-900">P&L Total:</span>
+                    <span className="text-white">P&L Total:</span>
                     <span className={calculateTotalPnL() >= 0 ? 'text-green-100' : 'text-red-100'}>
                       {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-900">Total Trades:</span>
-                    <span className="text-gray-900">{allSignalsForStats.length}</span>
+                    <span className="text-white">Total Trades:</span>
+                    <span className="text-white">{allSignalsForStats.length}</span>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">ÉDUCATION</h3>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">ÉDUCATION</h3>
                 <div className="space-y-2">
                   {channels.filter(c => ['fondamentaux', 'letsgooo-model'].includes(c.id)).map(channel => (
                     <button
@@ -6149,13 +6149,13 @@ const dailyPnLChartData = useMemo(
                         handleChannelChange(channel.id, channel.name);
                         setMobileView('content');
                       }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <span className="text-lg">{channel.emoji}</span>
                         <div>
-                          <p className="font-medium text-gray-900">{channel.fullName}</p>
-                          <p className="text-sm text-gray-500">Contenu éducatif</p>
+                          <p className="font-medium text-white">{channel.fullName}</p>
+                          <p className="text-sm text-gray-400">Contenu éducatif</p>
                         </div>
                       </div>
                     </button>
@@ -6164,7 +6164,7 @@ const dailyPnLChartData = useMemo(
               </div>
 
               <div>
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">SIGNAUX</h3>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">SIGNAUX</h3>
                 <div className="space-y-2">
                   {channels.filter(c => ['general-chat-2', 'general-chat-3', 'general-chat-4'].includes(c.id)).map(channel => (
                     <button
@@ -6173,13 +6173,13 @@ const dailyPnLChartData = useMemo(
                         handleChannelChange(channel.id, channel.name);
                         setMobileView('content');
                       }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <span className="inline-flex items-center justify-center w-6 h-6 shrink-0 text-center text-lg">{channel.emoji}</span>
                         <div>
-                          <p className="font-medium text-gray-900">{channel.fullName}</p>
-                          <p className="text-sm text-gray-500">Signaux de trading</p>
+                          <p className="font-medium text-white">{channel.fullName}</p>
+                          <p className="text-sm text-gray-400">Signaux de trading</p>
                         </div>
                       </div>
                     </button>
@@ -6188,7 +6188,7 @@ const dailyPnLChartData = useMemo(
               </div>
 
               <div>
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">TRADING HUB</h3>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">TRADING HUB</h3>
                 <div className="space-y-2">
                   <button
                     onClick={() => {
@@ -6197,13 +6197,13 @@ const dailyPnLChartData = useMemo(
                       setMobileView('content');
                       scrollToTop();
                     }}
-                    className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'tpln-model' ? 'bg-gray-200' : 'bg-gray-100 hover:bg-gray-200'}`}
+                    className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'tpln-model' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-lg">📋</span>
                       <div>
-                        <p className="font-medium text-gray-900">TPLN model</p>
-                        <p className="text-sm text-gray-500">Calendrier et stats du modèle</p>
+                        <p className="font-medium text-white">TPLN model</p>
+                        <p className="text-sm text-gray-400">Calendrier et stats du modèle</p>
                       </div>
                     </div>
                   </button>
@@ -6218,13 +6218,13 @@ const dailyPnLChartData = useMemo(
                       setMobileView('content');
                       scrollToTop();
                     }}
-                    className="w-full text-left px-4 py-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                    className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-lg">📅</span>
                       <div>
-                        <p className="font-medium text-gray-900">Journal Signaux</p>
-                        <p className="text-sm text-gray-500">Suivi des performances</p>
+                        <p className="font-medium text-white">Journal Signaux</p>
+                        <p className="text-sm text-gray-400">Suivi des performances</p>
                       </div>
                     </div>
                   </button>
@@ -6234,13 +6234,13 @@ const dailyPnLChartData = useMemo(
                       handleChannelChange('trading-journal', 'trading-journal');
                       setMobileView('content');
                     }}
-                    className="w-full text-left px-4 py-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                    className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-lg">📊</span>
                       <div>
-                        <p className="font-medium text-gray-900">Journal Perso</p>
-                        <p className="text-sm text-gray-500">Journal de trading</p>
+                        <p className="font-medium text-white">Journal Perso</p>
+                        <p className="text-sm text-gray-400">Journal de trading</p>
                       </div>
                     </div>
                   </button>
@@ -6250,13 +6250,13 @@ const dailyPnLChartData = useMemo(
                       handleChannelChange('check-trade', 'check-trade');
                       setMobileView('content');
                     }}
-                    className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'check-trade' ? 'bg-gray-200' : 'bg-gray-100 hover:bg-gray-200'}`}
+                    className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'check-trade' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-lg">✅</span>
                       <div>
-                        <p className="font-medium text-gray-900">Check Trade</p>
-                        <p className="text-sm text-gray-500">Checklist de trade</p>
+                        <p className="font-medium text-white">Check Trade</p>
+                        <p className="text-sm text-gray-400">Checklist de trade</p>
                       </div>
                     </div>
                   </button>
@@ -6266,13 +6266,13 @@ const dailyPnLChartData = useMemo(
                       handleChannelChange('livestream-premium', 'livestream-premium');
                       setMobileView('content');
                     }}
-                    className="w-full text-left px-4 py-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                    className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-lg">⭐</span>
                       <div>
-                        <p className="font-medium text-gray-900">Livestream Premium</p>
-                        <p className="text-sm text-gray-500">Stream premium</p>
+                        <p className="font-medium text-white">Livestream Premium</p>
+                        <p className="text-sm text-gray-400">Stream premium</p>
                       </div>
                     </div>
                   </button>
@@ -6282,13 +6282,13 @@ const dailyPnLChartData = useMemo(
                       handleChannelChange('livestream', 'livestream');
                         setMobileView('content');
                       }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                       <span className="text-lg">📺</span>
                         <div>
-                        <p className="font-medium text-gray-900">Livestream</p>
-                        <p className="text-sm text-gray-500">Streaming en direct</p>
+                        <p className="font-medium text-white">Livestream</p>
+                        <p className="text-sm text-gray-400">Streaming en direct</p>
                         </div>
                       </div>
                     </button>
@@ -6297,7 +6297,7 @@ const dailyPnLChartData = useMemo(
 
               {/* Section NOTIFICATIONS */}
               <div className="mt-6">
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">NOTIFICATIONS</h3>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">NOTIFICATIONS</h3>
                 <div className="space-y-1">
                   <button 
                     onClick={async () => {
@@ -6341,14 +6341,14 @@ const dailyPnLChartData = useMemo(
                         alert(errorMessage);
                       }
                     }}
-                    className="w-full text-left px-3 py-2 rounded text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                    className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
                   >
                     🔴 Livestream
                   </button>
                   
                   <button 
                     onClick={() => setShowLivestreamModal(true)}
-                    className="w-full text-left px-3 py-2 rounded text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                    className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
                   >
                     📝 Notif Custom
                   </button>
@@ -6359,19 +6359,19 @@ const dailyPnLChartData = useMemo(
 
           {/* Content Area - Slides from right */}
           <div 
-            className={`absolute inset-0 bg-white transform transition-transform duration-300 ease-in-out z-10 ${
+            className={`absolute inset-0 bg-gray-900 transform transition-transform duration-300 ease-in-out z-10 ${
               mobileView === 'content' ? 'translate-x-0' : 'translate-x-full'
             }`}
-            style={{ backgroundColor: '#ffffff', minHeight: '100vh' }}
+            style={{ backgroundColor: '#111827', minHeight: '100vh' }}
           >
             {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'user-management' || selectedChannel.id === 'check-trade') ? (
-              <div className="bg-white text-gray-900 p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '0px' }}>
+              <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '0px' }}>
                 {/* Header avec bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
                 {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') && (
-                  <div className="hidden md:flex justify-between items-center mb-6 border-b border-gray-300 pb-4">
+                  <div className="hidden md:flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
                     <div>
-                      <h1 className="text-2xl font-bold text-gray-900">Mon Journal Perso</h1>
-                      <p className="text-sm text-gray-500 mt-1">Journal tous tes trades</p>
+                      <h1 className="text-2xl font-bold text-white">Mon Journal Perso</h1>
+                      <p className="text-sm text-gray-400 mt-1">Journal tous tes trades</p>
                     </div>
                     <div className="flex gap-2">
                       <button 
@@ -6390,7 +6390,7 @@ const dailyPnLChartData = useMemo(
                           mergeTradesUnique(trades);
                           console.log(`✅ ${trades.length} trades rechargés (mois courant) depuis Supabase`);
                         }}
-                        className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg text-sm font-medium"
+                        className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg text-sm font-medium"
                         title="Recharger les trades depuis Supabase"
                       >
                         🔄 Recharger
@@ -6440,13 +6440,13 @@ const dailyPnLChartData = useMemo(
                       </button>
                       <button 
                         onClick={handleAddTrade}
-                        className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg text-sm font-medium"
+                        className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg text-sm font-medium"
                       >
                         {typeof window !== 'undefined' && window.matchMedia('(display-mode: standalone)').matches ? '+ trade' : '+ Ajouter Trade'}
                       </button>
                       <button 
                         onClick={() => setShowFinSessionModal(true)}
-                        className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg text-sm font-medium"
+                        className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg text-sm font-medium"
                         title="Statistiques en fin de session"
                       >
                         Fin session
@@ -6457,20 +6457,20 @@ const dailyPnLChartData = useMemo(
                 
                   {/* Header pour le calendrier normal */}
                 {view === 'calendar' && selectedChannel.id !== 'trading-journal' && (
-                  <div className="flex justify-between items-center mb-6 border-b border-gray-300 pb-4">
+                  <div className="flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
                     <div>
-                      <h1 className="text-2xl font-bold text-gray-900">Journal des Signaux</h1>
-                      <p className="text-sm text-gray-500 mt-1">Suivi des performances des signaux</p>
+                      <h1 className="text-2xl font-bold text-white">Journal des Signaux</h1>
+                      <p className="text-sm text-gray-400 mt-1">Suivi des performances des signaux</p>
                     </div>
                   </div>
                 )}
                 
                 {selectedChannel.id === 'user-management' ? (
                   <div className="space-y-6" style={{ paddingTop: '80px' }}>
-                    <div className="flex justify-between items-center border-b border-gray-300 pb-4">
+                    <div className="flex justify-between items-center border-b border-gray-600 pb-4">
                       <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Gestion Utilisateurs</h1>
-                        <p className="text-sm text-gray-500 mt-1">Gérer tous les utilisateurs de la plateforme</p>
+                        <h1 className="text-2xl font-bold text-white">Gestion Utilisateurs</h1>
+                        <p className="text-sm text-gray-400 mt-1">Gérer tous les utilisateurs de la plateforme</p>
                       </div>
                       <button 
                         onClick={() => setShowUserModal(true)}
@@ -6481,33 +6481,33 @@ const dailyPnLChartData = useMemo(
                     </div>
 
                     {/* Liste des utilisateurs */}
-                    <div className="bg-gray-50 rounded-lg overflow-hidden">
+                    <div className="bg-gray-800 rounded-lg overflow-hidden">
                       <div className="overflow-x-auto">
                         <table className="w-full">
-                          <thead className="bg-gray-100">
+                          <thead className="bg-gray-700">
                             <tr>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Email</th>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Statut</th>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Créé le</th>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Dernière connexion</th>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Actions</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Email</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Statut</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Créé le</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Dernière connexion</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-gray-700">
                             {users.map((user) => (
-                              <tr key={user.id} className="hover:bg-gray-100">
-                                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{user.email}</td>
+                              <tr key={user.id} className="hover:bg-gray-700">
+                                <td className="px-4 py-4 whitespace-nowrap text-sm text-white">{user.email}</td>
                                 <td className="px-4 py-4 whitespace-nowrap">
                                   <span className={`px-2 py-1 text-xs rounded-full ${
-                                    user.status === 'active' ? 'bg-green-200/60 text-gray-900' : 'bg-red-300/50 text-gray-900'
+                                    user.status === 'active' ? 'bg-green-200/60 text-white' : 'bg-red-300/50 text-white'
                                   }`}>
                                     {user.status === 'active' ? 'Actif' : 'Inactif'}
                                   </span>
                                 </td>
-                                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600">
+                                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-300">
                                   {new Date(user.created_at).toLocaleDateString('fr-FR')}
                                 </td>
-                                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600">
+                                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-300">
                                   {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString('fr-FR') : 'Jamais'}
                                 </td>
                                 <td className="px-4 py-4 whitespace-nowrap text-sm">
@@ -6555,16 +6555,16 @@ const dailyPnLChartData = useMemo(
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="font-semibold text-gray-900">Admin</span>
-                              <span className="text-xs text-gray-500">{signal.timestamp}</span>
+                              <span className="font-semibold text-white">Admin</span>
+                              <span className="text-xs text-gray-400">{signal.timestamp}</span>
                             </div>
 
-                            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 max-w-2xl md:max-w-2xl max-w-full">
+                            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 max-w-2xl md:max-w-2xl max-w-full">
                               <div className="space-y-3">
                                 {/* Header avec titre et indicateur */}
                                 <div className="flex items-center gap-2">
-                                  <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-200/60' : 'bg-gray-300'}`}></div>
-                                  <h3 className="font-bold text-gray-900 text-lg">
+                                  <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-200/60' : 'bg-gray-500'}`}></div>
+                                  <h3 className="font-bold text-white text-lg">
                                     Signal {signal.type} {signal.symbol} {signal.referenceNumber || ''} – {signal.timeframe}
                                   </h3>
                                 </div>
@@ -6574,28 +6574,28 @@ const dailyPnLChartData = useMemo(
                                   {signal.entry !== 'N/A' && (
                                     <div className="flex items-center gap-2">
                                       <span className="text-blue-400 text-sm">🔹</span>
-                                      <span className="text-gray-900">Entrée : {signal.entry} USD</span>
+                                      <span className="text-white">Entrée : {signal.entry} USD</span>
                                     </div>
                                   )}
                                   {signal.stopLoss !== 'N/A' && (
                                     <div className="flex items-center gap-2">
                                       <span className="text-blue-400 text-sm">🔹</span>
-                                      <span className="text-gray-900">Stop Loss : {signal.stopLoss} USD</span>
+                                      <span className="text-white">Stop Loss : {signal.stopLoss} USD</span>
                                     </div>
                                   )}
                                   {signal.takeProfit !== 'N/A' && (
                                     <div className="flex items-center gap-2">
                                       <span className="text-blue-400 text-sm">🔹</span>
-                                      <span className="text-gray-900">Take Profit : {signal.takeProfit} USD</span>
+                                      <span className="text-white">Take Profit : {signal.takeProfit} USD</span>
                                     </div>
                                   )}
                                 </div>
                                 
                                 {/* Ratio R:R */}
                                 {signal.entry !== 'N/A' && signal.takeProfit !== 'N/A' && signal.stopLoss !== 'N/A' && (
-                                  <div className="flex items-center gap-2 pt-2 border-t border-gray-300">
+                                  <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
                                     <span className="text-red-100 text-sm">🎯</span>
-                                    <span className="text-gray-900 text-sm">
+                                    <span className="text-white text-sm">
                                       Ratio R:R : ≈ {calculateRiskReward(signal.entry, signal.takeProfit, signal.stopLoss)}
                                     </span>
                                   </div>
@@ -6603,7 +6603,7 @@ const dailyPnLChartData = useMemo(
 
                                 {/* Message de fermeture */}
                                 {signal.closeMessage && (
-                                  <div className="flex items-center gap-2 pt-2 border-t border-gray-300">
+                                  <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
                                     <span className="text-yellow-400 text-sm">🔒</span>
                                     <span className="text-yellow-400 text-sm font-medium">
                                       {signal.closeMessage}
@@ -6618,18 +6618,18 @@ const dailyPnLChartData = useMemo(
                                 <img 
                                   src={URL.createObjectURL(signal.image)} 
                                   alt="Signal screenshot"
-                                  className="max-w-full md:max-w-2xl rounded-lg border border-gray-300"
+                                  className="max-w-full md:max-w-2xl rounded-lg border border-gray-600"
                                 />
                               </div>
                             )}
 
                             {signal.closure_image && (
                               <div className="mt-2">
-                                <div className="text-xs text-gray-500 mb-1">📸 Photo de clôture:</div>
+                                <div className="text-xs text-gray-400 mb-1">📸 Photo de clôture:</div>
                                 <img 
                                   src={URL.createObjectURL(signal.closure_image)} 
                                   alt="Closure screenshot"
-                                  className="max-w-full md:max-w-2xl rounded-lg border border-gray-300"
+                                  className="max-w-full md:max-w-2xl rounded-lg border border-gray-600"
                                 />
                               </div>
                             )}
@@ -6640,8 +6640,8 @@ const dailyPnLChartData = useMemo(
                                 onClick={() => handleSignalStatus(signal.id, signal.status === 'WIN' ? 'ACTIVE' : 'WIN')}
                                 className={`px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-1 ${
                                   signal.status === 'WIN' 
-                                    ? 'bg-green-200/60 text-gray-900 shadow-lg shadow-green-200/20' 
-                                    : 'bg-gray-200 hover:bg-green-200/60 text-gray-600 hover:text-gray-900'
+                                    ? 'bg-green-200/60 text-white shadow-lg shadow-green-200/20' 
+                                    : 'bg-gray-600 hover:bg-green-200/60 text-gray-300 hover:text-white'
                                 }`}
                               >
                                 ✅ WIN
@@ -6650,8 +6650,8 @@ const dailyPnLChartData = useMemo(
                                 onClick={() => handleSignalStatus(signal.id, signal.status === 'LOSS' ? 'ACTIVE' : 'LOSS')}
                                 className={`px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-1 ${
                                   signal.status === 'LOSS' 
-                                    ? 'bg-red-300/50 text-gray-900 shadow-lg shadow-red-500/20' 
-                                    : 'bg-gray-200 hover:bg-red-300/50 text-gray-600 hover:text-gray-900'
+                                    ? 'bg-red-300/50 text-white shadow-lg shadow-red-500/20' 
+                                    : 'bg-gray-600 hover:bg-red-300/50 text-gray-300 hover:text-white'
                                 }`}
                               >
                                 ❌ LOSS
@@ -6661,7 +6661,7 @@ const dailyPnLChartData = useMemo(
                                 className={`px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-1 ${
                                   signal.status === 'BE' 
                                     ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
-                                    : 'bg-gray-200 hover:bg-blue-500 text-gray-600 hover:text-white'
+                                    : 'bg-gray-600 hover:bg-blue-500 text-gray-300 hover:text-white'
                                 }`}
                               >
                                 ⚖️ BE
@@ -6672,25 +6672,25 @@ const dailyPnLChartData = useMemo(
                             <div className="flex items-center gap-2 mt-3">
                               <button 
                                 onClick={() => handleReaction(signal.id, '🔥')}
-                                className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900"
+                                className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
                               >
                                 🔥 {signal.reactions?.filter(r => r === '🔥').length || 0}
                               </button>
                               <button 
                                 onClick={() => handleReaction(signal.id, '💎')}
-                                className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900"
+                                className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
                               >
                                 💎 {signal.reactions?.filter(r => r === '💎').length || 0}
                               </button>
                               <button 
                                 onClick={() => handleReaction(signal.id, '🚀')}
-                                className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900"
+                                className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
                               >
                                 🚀 {signal.reactions?.filter(r => r === '🚀').length || 0}
                               </button>
                               <button 
                                 onClick={() => handleReaction(signal.id, '👏')}
-                                className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900"
+                                className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
                               >
                                 👏 {signal.reactions?.filter(r => r === '👏').length || 0}
                               </button>
@@ -6723,8 +6723,8 @@ const dailyPnLChartData = useMemo(
                       {/* Header Fondamentaux */}
                       {selectedChannel.id === 'fondamentaux' && (
                         <div className="mb-4">
-                          <h1 className="text-xl md:text-2xl font-bold text-gray-900">📚 Fondamentaux</h1>
-                          <p className="text-sm text-gray-500 mt-1">Guide complet du trading - 16 pages</p>
+                          <h1 className="text-xl md:text-2xl font-bold text-white">📚 Fondamentaux</h1>
+                          <p className="text-sm text-gray-400 mt-1">Guide complet du trading - 16 pages</p>
                         </div>
                       )}
                       
@@ -6734,12 +6734,12 @@ const dailyPnLChartData = useMemo(
                           {Array.from({ length: 16 }, (_, i) => i + 1).map((pageNum) => (
                             <div key={pageNum} className="w-full flex flex-col items-center">
                               <div className="text-center mb-2">
-                                <span className="text-sm font-medium text-gray-500">Page {pageNum}/16</span>
+                                <span className="text-sm font-medium text-gray-400">Page {pageNum}/16</span>
                               </div>
                               <img 
                                 src={`/fondamentaux/page-${pageNum}.jpg`}
                                 alt={`Page ${pageNum}`}
-                                className="w-full max-w-3xl rounded-lg shadow-lg border border-gray-200"
+                                className="w-full max-w-3xl rounded-lg shadow-lg border border-gray-700"
                                 loading="lazy"
                               />
                             </div>
@@ -6761,12 +6761,12 @@ const dailyPnLChartData = useMemo(
                             </div>
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-1">
-                                <span className="font-semibold text-gray-900">{message.author}</span>
-                                <span className="text-xs text-gray-500">{message.timestamp}</span>
+                                <span className="font-semibold text-white">{message.author}</span>
+                                <span className="text-xs text-gray-400">{message.timestamp}</span>
                               </div>
-                              <div className="bg-gray-100 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
+                              <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
                                 {message.text && (
-                                  <div className="text-gray-900">
+                                  <div className="text-white">
                                     {message.text.includes('🎥 **Session Trading Live') ? (
                                       <div className="bg-purple-900/30 border border-purple-500 rounded-lg p-3">
                                         <div className="flex items-center gap-2 mb-2">
@@ -6816,12 +6816,12 @@ const dailyPnLChartData = useMemo(
                                         
                                         return (
                                           <div>
-                                            <div className="bg-gray-50 rounded-lg p-4 border border-gray-300">
+                                            <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
                                               {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
                                                 <div className="mb-3">
                                                   <div className="flex items-center gap-2 mb-2">
                                                     <span className="text-xs">📊</span>
-                                                    <span className="text-sm font-semibold text-gray-600">SIGNAL FERMÉ</span>
+                                                    <span className="text-sm font-semibold text-gray-300">SIGNAL FERMÉ</span>
                                                     {signalData.status === 'LOSS' && signalId && (
                                                       <button
                                                         onClick={() => {
@@ -6863,7 +6863,7 @@ const dailyPnLChartData = useMemo(
                                                       </span>
                                                     </div>
                                                     {signalData.pnl && (
-                                                      <div className="text-gray-600">
+                                                      <div className="text-gray-300">
                                                         P&L: <span className={signalData.pnl.includes('-') ? 'text-red-100' : 'text-green-100'}>{signalData.pnl}</span>
                                                       </div>
                                                     )}
@@ -6873,29 +6873,29 @@ const dailyPnLChartData = useMemo(
                                                 <div className="space-y-2">
                                                   <div className="flex items-center gap-2">
                                                     <span className="text-lg">🚀</span>
-                                                    <span className="font-bold text-gray-900">
+                                                    <span className="font-bold text-white">
                                                       {signalData.type} {signalData.symbol}
                                                     </span>
                                                     {signalData.timeframe && (
-                                                      <span className="text-sm text-gray-500">{signalData.timeframe}</span>
+                                                      <span className="text-sm text-gray-400">{signalData.timeframe}</span>
                                                     )}
                                                   </div>
                                                   {signalData.entry && (
                                                     <div className="flex items-center gap-2 text-sm">
-                                                      <span className="text-gray-500">📊</span>
-                                                      <span className="text-gray-900">Entry: {signalData.entry}</span>
+                                                      <span className="text-gray-400">📊</span>
+                                                      <span className="text-white">Entry: {signalData.entry}</span>
                                                     </div>
                                                   )}
                                                   {signalData.rr && (
                                                     <div className="flex items-center gap-2 text-sm">
-                                                      <span className="text-gray-500">🎯</span>
-                                                      <span className="text-gray-900">R:R ≈ {signalData.rr}</span>
+                                                      <span className="text-gray-400">🎯</span>
+                                                      <span className="text-white">R:R ≈ {signalData.rr}</span>
                                                     </div>
                                                   )}
                                                   {signalData.timeframe && (
                                                     <div className="flex items-center gap-2 text-sm">
-                                                      <span className="text-gray-500">⏰</span>
-                                                      <span className="text-gray-900">{signalData.timeframe}</span>
+                                                      <span className="text-gray-400">⏰</span>
+                                                      <span className="text-white">{signalData.timeframe}</span>
                                                     </div>
                                                   )}
                                                 </div>
@@ -6904,17 +6904,17 @@ const dailyPnLChartData = useMemo(
                                             
                                             {/* Boutons WIN/LOSS/BE pour clôturer les signaux */}
                                             {signalId && (
-                                              <div className="mt-3 pt-3 border-t border-gray-300">
+                                              <div className="mt-3 pt-3 border-t border-gray-600">
                                                 <div className="flex items-center gap-1.5 justify-center">
                                                   <button
                                                     onClick={() => handleSignalStatusFromMessage(message.text, 'WIN')}
                                                     disabled={isClosed && currentSignal?.status !== 'WIN'}
                                                     className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1 flex-1 ${
                                                       isClosed && currentSignal?.status === 'WIN'
-                                                        ? 'bg-green-200/60 text-gray-900 shadow-lg shadow-green-200/20'
+                                                        ? 'bg-green-200/60 text-white shadow-lg shadow-green-200/20'
                                                         : isClosed
-                                                        ? 'bg-gray-300/30 text-gray-500 cursor-not-allowed opacity-50'
-                                                        : 'bg-gray-200 hover:bg-green-200/60 text-gray-600 hover:text-gray-900'
+                                                        ? 'bg-gray-500/30 text-gray-400 cursor-not-allowed opacity-50'
+                                                        : 'bg-gray-600 hover:bg-green-200/60 text-gray-300 hover:text-white'
                                                     }`}
                                                   >
                                                     ✅ WIN
@@ -6924,10 +6924,10 @@ const dailyPnLChartData = useMemo(
                                                     disabled={isClosed && currentSignal?.status !== 'LOSS'}
                                                     className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1 flex-1 ${
                                                       isClosed && currentSignal?.status === 'LOSS'
-                                                        ? 'bg-red-300/50 text-gray-900 shadow-lg shadow-red-500/20'
+                                                        ? 'bg-red-300/50 text-white shadow-lg shadow-red-500/20'
                                                         : isClosed
-                                                        ? 'bg-gray-300/30 text-gray-500 cursor-not-allowed opacity-50'
-                                                        : 'bg-gray-200 hover:bg-red-300/50 text-gray-600 hover:text-gray-900'
+                                                        ? 'bg-gray-500/30 text-gray-400 cursor-not-allowed opacity-50'
+                                                        : 'bg-gray-600 hover:bg-red-300/50 text-gray-300 hover:text-white'
                                                     }`}
                                                   >
                                                     ❌ LOSS
@@ -6939,8 +6939,8 @@ const dailyPnLChartData = useMemo(
                                                       isClosed && currentSignal?.status === 'BE'
                                                         ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'
                                                         : isClosed
-                                                        ? 'bg-gray-300/30 text-gray-500 cursor-not-allowed opacity-50'
-                                                        : 'bg-gray-200 hover:bg-blue-500 text-gray-600 hover:text-white'
+                                                        ? 'bg-gray-500/30 text-gray-400 cursor-not-allowed opacity-50'
+                                                        : 'bg-gray-600 hover:bg-blue-500 text-gray-300 hover:text-white'
                                                     }`}
                                                   >
                                                     ⚖️ BE
@@ -6962,7 +6962,7 @@ const dailyPnLChartData = useMemo(
                                         <img 
                                           src={message.attachment_data} 
                                           alt="Attachment"
-                                          className="mt-2 max-w-[200px] max-h-32 rounded-lg border border-gray-300 cursor-pointer hover:opacity-80 transition-opacity"
+                                          className="mt-2 max-w-[200px] max-h-32 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
                                           onClick={() => {
                                             const newWindow = window.open();
                                             newWindow!.document.write(`<img src="${message.attachment_data}" style="max-width: 100%; height: auto;" />`);
@@ -6987,7 +6987,7 @@ const dailyPnLChartData = useMemo(
                                   className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-all duration-200 ${
                                     (messageReactions[message.id]?.users || []).includes('Admin')
                                       ? 'bg-orange-500 text-white'
-                                      : 'bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-900'
+                                      : 'bg-gray-600 hover:bg-gray-500 text-gray-300 hover:text-white'
                                   }`}
                                 >
                                   🔥
@@ -7004,7 +7004,7 @@ const dailyPnLChartData = useMemo(
                     </div>
                     
                     {/* Barre de message */}
-                    <div className="border-t border-gray-200 p-2 md:p-4 fixed bottom-0 left-0 right-0 bg-gray-50 z-30 md:left-64" style={{ backgroundColor: '#f9fafb' }}>
+                    <div className="border-t border-gray-700 p-2 md:p-4 fixed bottom-0 left-0 right-0 bg-gray-800 z-30 md:left-64" style={{ backgroundColor: '#1f2937' }}>
                       <div className="flex items-center gap-1.5 md:gap-2">
                         <input
                           type="text"
@@ -7012,7 +7012,7 @@ const dailyPnLChartData = useMemo(
                           onChange={(e) => setChatMessage(e.target.value)}
                           onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                           placeholder="Tapez votre message..."
-                          className="flex-1 bg-gray-100 border border-gray-300 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                          className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                         />
                         <label className="cursor-pointer flex-shrink-0">
                           <input
@@ -7021,13 +7021,13 @@ const dailyPnLChartData = useMemo(
                             className="hidden"
                             accept="image/*,.pdf,.doc,.docx"
                           />
-                          <span className="bg-gray-200 hover:bg-gray-300 p-1.5 md:p-2 rounded-lg text-gray-600 hover:text-gray-900 text-sm md:text-base">
+                          <span className="bg-gray-600 hover:bg-gray-500 p-1.5 md:p-2 rounded-lg text-gray-300 hover:text-white text-sm md:text-base">
                             📎
                           </span>
                         </label>
                         <button
                           onClick={handleCreateSignal}
-                          className="bg-green-600 hover:bg-green-700 px-2 md:px-3 py-1.5 md:py-2 rounded-lg text-gray-900 text-xs md:text-sm font-medium flex-shrink-0"
+                          className="bg-green-600 hover:bg-green-700 px-2 md:px-3 py-1.5 md:py-2 rounded-lg text-white text-xs md:text-sm font-medium flex-shrink-0"
                         >
                           + Signal
                         </button>
@@ -7043,20 +7043,20 @@ const dailyPnLChartData = useMemo(
                 ) : selectedChannel.id === 'chat-communaute' ? (
                   <ChatCommunauteAdmin />
                 ) : selectedChannel.id === 'livestream' ? (
-                  <div className="flex flex-col h-full bg-white">
+                  <div className="flex flex-col h-full bg-gray-900">
                     {/* Interface Livestream Desktop */}
                     <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
                       {/* Zone de stream */}
-                      <div className="flex-1 bg-white rounded-lg overflow-hidden">
+                      <div className="flex-1 bg-gray-900 rounded-lg overflow-hidden">
                         <div className="h-full flex flex-col items-center justify-center p-8">
                           <div className="text-center space-y-4">
                             <div className="w-20 h-20 bg-red-300/50 rounded-full flex items-center justify-center mx-auto">
-                              <svg className="w-10 h-10 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M8 5v14l11-7z"/>
                               </svg>
                             </div>
-                            <h2 className="text-xl font-bold text-gray-900">Livestream Trading</h2>
-                            <p className="text-gray-500">Session de trading en direct</p>
+                            <h2 className="text-xl font-bold text-white">Livestream Trading</h2>
+                            <p className="text-gray-400">Session de trading en direct</p>
                             
                             {/* Iframe 100ms */}
                             <div className="w-full max-w-7xl relative">
@@ -7085,16 +7085,16 @@ const dailyPnLChartData = useMemo(
                       </div>
                       
                       {/* Chat live */}
-                      <div className="w-full lg:w-80 bg-gray-50 rounded-lg flex flex-col">
-                        <div className="p-4 border-b border-gray-200">
-                          <h3 className="font-semibold text-gray-900">💬 Chat Live</h3>
-                          <p className="text-xs text-gray-500">Commentaires en direct</p>
+                      <div className="w-full lg:w-80 bg-gray-800 rounded-lg flex flex-col">
+                        <div className="p-4 border-b border-gray-700">
+                          <h3 className="font-semibold text-white">💬 Chat Live</h3>
+                          <p className="text-xs text-gray-400">Commentaires en direct</p>
                         </div>
                         
                         <div className="flex-1 overflow-y-auto p-4 space-y-3">
                           {(chatMessages['livestream'] || []).length === 0 ? (
                             <div className="text-center py-8">
-                              <div className="text-gray-500 text-sm">Aucun message</div>
+                              <div className="text-gray-400 text-sm">Aucun message</div>
                               <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
                             </div>
                           ) : (
@@ -7103,11 +7103,11 @@ const dailyPnLChartData = useMemo(
                                 <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs">T</div>
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2 mb-1">
-                                    <span className="font-medium text-gray-900 text-sm">{message.author}</span>
-                                    <span className="text-xs text-gray-500">{message.timestamp}</span>
+                                    <span className="font-medium text-white text-sm">{message.author}</span>
+                                    <span className="text-xs text-gray-400">{message.timestamp}</span>
                                   </div>
-                                  <div className="bg-gray-100 rounded-lg p-2">
-                                    <p className="text-gray-900 text-sm">{message.text}</p>
+                                  <div className="bg-gray-700 rounded-lg p-2">
+                                    <p className="text-white text-sm">{message.text}</p>
                                   </div>
                                 </div>
                               </div>
@@ -7116,7 +7116,7 @@ const dailyPnLChartData = useMemo(
                         </div>
                         
                         {/* Barre de message pour le chat live */}
-                        <div className="p-4 border-t border-gray-200">
+                        <div className="p-4 border-t border-gray-700">
                           <div className="flex items-center gap-2">
                             <input
                               type="text"
@@ -7124,7 +7124,7 @@ const dailyPnLChartData = useMemo(
                               onChange={(e) => setChatMessage(e.target.value)}
                               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                               placeholder="Commenter le stream..."
-                              className="flex-1 bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
+                              className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
                             />
                             <button
                               onClick={handleSendMessage}
@@ -7143,7 +7143,7 @@ const dailyPnLChartData = useMemo(
                   </div>
                 ) : (
                   <div className="text-center py-8">
-                    <div className="text-gray-500 text-sm">Bienvenue sur Admin</div>
+                    <div className="text-gray-400 text-sm">Bienvenue sur Admin</div>
                     <div className="text-gray-500 text-xs mt-1">Plateforme de trading en cours de développement</div>
                   </div>
                 )}
@@ -7173,16 +7173,16 @@ const dailyPnLChartData = useMemo(
                         <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-sm">T</div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <span className="font-semibold text-gray-900">Admin</span>
-                            <span className="text-xs text-gray-500">{signal.timestamp}</span>
+                            <span className="font-semibold text-white">Admin</span>
+                            <span className="text-xs text-gray-400">{signal.timestamp}</span>
                           </div>
 
-                          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 max-w-full md:max-w-2xl">
+                          <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 max-w-full md:max-w-2xl">
                             <div className="space-y-3">
                               {/* Header avec titre et indicateur */}
                               <div className="flex items-center gap-2">
-                                <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-200/60' : 'bg-gray-300'}`}></div>
-                                <h3 className="font-bold text-gray-900 text-lg">
+                                <div className={`w-3 h-3 rounded-full ${signal.status === 'ACTIVE' ? 'bg-green-200/60' : 'bg-gray-500'}`}></div>
+                                <h3 className="font-bold text-white text-lg">
                                   Signal {signal.type} {signal.symbol} {signal.referenceNumber || ''} – {signal.timeframe}
                                 </h3>
                               </div>
@@ -7192,28 +7192,28 @@ const dailyPnLChartData = useMemo(
                                 {signal.entry !== 'N/A' && (
                                   <div className="flex items-center gap-2">
                                     <span className="text-blue-400 text-sm">🔹</span>
-                                    <span className="text-gray-900">Entrée : {signal.entry} USD</span>
+                                    <span className="text-white">Entrée : {signal.entry} USD</span>
                                   </div>
                                 )}
                                 {signal.stopLoss !== 'N/A' && (
                                   <div className="flex items-center gap-2">
                                     <span className="text-blue-400 text-sm">🔹</span>
-                                    <span className="text-gray-900">Stop Loss : {signal.stopLoss} USD</span>
+                                    <span className="text-white">Stop Loss : {signal.stopLoss} USD</span>
                                   </div>
                                 )}
                                 {signal.takeProfit !== 'N/A' && (
                                   <div className="flex items-center gap-2">
                                     <span className="text-blue-400 text-sm">🔹</span>
-                                    <span className="text-gray-900">Take Profit : {signal.takeProfit} USD</span>
+                                    <span className="text-white">Take Profit : {signal.takeProfit} USD</span>
                                   </div>
                                 )}
                               </div>
                               
                               {/* Ratio R:R */}
                               {signal.entry !== 'N/A' && signal.takeProfit !== 'N/A' && signal.stopLoss !== 'N/A' && (
-                                <div className="flex items-center gap-2 pt-2 border-t border-gray-300">
+                                <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
                                   <span className="text-red-100 text-sm">🎯</span>
-                                  <span className="text-gray-900 text-sm">
+                                  <span className="text-white text-sm">
                                     Ratio R:R : ≈ {calculateRiskReward(signal.entry, signal.takeProfit, signal.stopLoss)}
                                   </span>
                                 </div>
@@ -7221,7 +7221,7 @@ const dailyPnLChartData = useMemo(
 
                               {/* P&L - affiché dans tous les salons sauf calendrier */}
                               {selectedChannel.id !== 'calendrier' && signal.pnl && (
-                                <div className="pt-2 border-t border-gray-300">
+                                <div className="pt-2 border-t border-gray-600">
                                   <div className="flex items-center gap-2">
                                     <span className="text-sm font-medium">P&L:</span>
                                     <span className={`text-sm font-bold ${
@@ -7235,7 +7235,7 @@ const dailyPnLChartData = useMemo(
 
                               {/* Message de fermeture */}
                               {signal.closeMessage && (
-                                <div className="flex items-center gap-2 pt-2 border-t border-gray-300">
+                                <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
                                   <span className="text-yellow-400 text-sm">🔒</span>
                                   <span className="text-yellow-400 text-sm font-medium">
                                     {signal.closeMessage}
@@ -7250,18 +7250,18 @@ const dailyPnLChartData = useMemo(
                               <img 
                                 src={URL.createObjectURL(signal.image)} 
                                 alt="Signal screenshot"
-                                className="max-w-full md:max-w-2xl rounded-lg border border-gray-300"
+                                className="max-w-full md:max-w-2xl rounded-lg border border-gray-600"
                               />
                             </div>
                           )}
 
                           {signal.closure_image && (
                             <div className="mt-2">
-                              <div className="text-xs text-gray-500 mb-1">📸 Photo de clôture:</div>
+                              <div className="text-xs text-gray-400 mb-1">📸 Photo de clôture:</div>
                               <img 
                                 src={URL.createObjectURL(signal.closure_image)} 
                                 alt="Closure screenshot"
-                                className="max-w-full md:max-w-2xl rounded-lg border border-gray-300"
+                                className="max-w-full md:max-w-2xl rounded-lg border border-gray-600"
                               />
                             </div>
                           )}
@@ -7271,8 +7271,8 @@ const dailyPnLChartData = useMemo(
                               onClick={() => handleSignalStatus(signal.id, signal.status === 'WIN' ? 'ACTIVE' : 'WIN')}
                               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
                                 signal.status === 'WIN' 
-                                  ? 'bg-green-200/60 text-gray-900 shadow-lg shadow-green-200/20' 
-                                  : 'bg-gray-200 hover:bg-green-200/60 text-gray-600 hover:text-gray-900'
+                                  ? 'bg-green-200/60 text-white shadow-lg shadow-green-200/20' 
+                                  : 'bg-gray-600 hover:bg-green-200/60 text-gray-300 hover:text-white'
                               }`}
                             >
                               ✅ WIN
@@ -7281,8 +7281,8 @@ const dailyPnLChartData = useMemo(
                               onClick={() => handleSignalStatus(signal.id, signal.status === 'LOSS' ? 'ACTIVE' : 'LOSS')}
                               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
                                 signal.status === 'LOSS' 
-                                  ? 'bg-red-300/50 text-gray-900 shadow-lg shadow-red-500/20' 
-                                  : 'bg-gray-200 hover:bg-red-300/50 text-gray-600 hover:text-gray-900'
+                                  ? 'bg-red-300/50 text-white shadow-lg shadow-red-500/20' 
+                                  : 'bg-gray-600 hover:bg-red-300/50 text-gray-300 hover:text-white'
                               }`}
                             >
                               ❌ LOSS
@@ -7292,7 +7292,7 @@ const dailyPnLChartData = useMemo(
                               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
                                 signal.status === 'BE' 
                                   ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
-                                  : 'bg-gray-200 hover:bg-blue-500 text-gray-600 hover:text-white'
+                                  : 'bg-gray-600 hover:bg-blue-500 text-gray-300 hover:text-white'
                               }`}
                             >
                               ⚖️ BE
@@ -7303,25 +7303,25 @@ const dailyPnLChartData = useMemo(
                           <div className="flex items-center gap-2 mt-3">
                             <button 
                               onClick={() => handleReaction(signal.id, '🔥')}
-                              className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900"
+                              className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
                             >
                               🔥 {signal.reactions?.filter(r => r === '🔥').length || 0}
                             </button>
                             <button 
                               onClick={() => handleReaction(signal.id, '💎')}
-                              className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900"
+                              className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
                             >
                               💎 {signal.reactions?.filter(r => r === '💎').length || 0}
                             </button>
                             <button 
                               onClick={() => handleReaction(signal.id, '🚀')}
-                              className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900"
+                              className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
                             >
                               🚀 {signal.reactions?.filter(r => r === '🚀').length || 0}
                             </button>
                             <button 
                               onClick={() => handleReaction(signal.id, '👏')}
-                              className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900"
+                              className="px-3 py-1.5 rounded-full text-sm transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white"
                             >
                               👏 {signal.reactions?.filter(r => r === '👏').length || 0}
                             </button>
@@ -7337,17 +7337,17 @@ const dailyPnLChartData = useMemo(
                   {/* Interface Livestream Desktop */}
                   <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
                     {/* Zone de stream */}
-                    <div className="flex-1 bg-white rounded-lg overflow-hidden">
+                    <div className="flex-1 bg-gray-900 rounded-lg overflow-hidden">
                       {!isLiveStreaming ? (
                         <div className="h-full flex flex-col items-center justify-center p-8">
                           <div className="text-center space-y-4">
                             <div className="w-20 h-20 bg-red-300/50 rounded-full flex items-center justify-center mx-auto">
-                              <svg className="w-10 h-10 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M8 5v14l11-7z"/>
                               </svg>
                             </div>
-                            <h2 className="text-xl font-bold text-gray-900">Aucun stream en cours</h2>
-                            <p className="text-gray-500">Commencez votre session de trading en direct</p>
+                            <h2 className="text-xl font-bold text-white">Aucun stream en cours</h2>
+                            <p className="text-gray-400">Commencez votre session de trading en direct</p>
                             
                             {/* Formulaire de démarrage */}
                             <div className="space-y-3 max-w-md mx-auto">
@@ -7356,13 +7356,13 @@ const dailyPnLChartData = useMemo(
                                 placeholder="Titre du stream (ex: Session TradingView - EURUSD)"
                                 value={streamTitle}
                                 onChange={(e) => setStreamTitle(e.target.value)}
-                                className="w-full bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                               />
                               <textarea
                                 placeholder="Description (optionnel)"
                                 value={streamDescription}
                                 onChange={(e) => setStreamDescription(e.target.value)}
-                                className="w-full bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                                 rows={2}
                               />
                               <div className="flex gap-2">
@@ -7385,18 +7385,18 @@ const dailyPnLChartData = useMemo(
                       ) : (
                         <div className="h-full flex flex-col">
                           {/* Header du stream */}
-                          <div className="bg-gray-50 p-4 border-b border-gray-200">
+                          <div className="bg-gray-800 p-4 border-b border-gray-700">
                             <div className="flex items-center justify-between">
                               <div>
-                                <h3 className="text-lg font-bold text-gray-900">{streamTitle}</h3>
-                                <p className="text-sm text-gray-500">{streamDescription}</p>
+                                <h3 className="text-lg font-bold text-white">{streamTitle}</h3>
+                                <p className="text-sm text-gray-400">{streamDescription}</p>
                               </div>
                               <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-2 text-red-100">
                                   <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
                                   <span className="text-sm font-medium">EN DIRECT</span>
                                 </div>
-                                <div className="flex items-center gap-1 text-gray-500">
+                                <div className="flex items-center gap-1 text-gray-400">
                                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                                   </svg>
@@ -7404,7 +7404,7 @@ const dailyPnLChartData = useMemo(
                                 </div>
                                 <button
                                   onClick={handleStopStream}
-                                  className="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded text-sm text-gray-900"
+                                  className="bg-gray-600 hover:bg-gray-500 px-3 py-1 rounded text-sm text-white"
                                 >
                                   Arrêter
                                 </button>
@@ -7414,8 +7414,8 @@ const dailyPnLChartData = useMemo(
                           
                           {/* Zone de vidéo */}
                           <div className="flex-1 bg-black flex items-center justify-center">
-                            <div className="text-center text-gray-500">
-                              <div className="w-16 h-16 bg-gray-50 rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <div className="text-center text-gray-400">
+                              <div className="w-16 h-16 bg-gray-800 rounded-lg flex items-center justify-center mx-auto mb-4">
                                 <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
                                   <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
                                 </svg>
@@ -7429,16 +7429,16 @@ const dailyPnLChartData = useMemo(
                     </div>
                     
                     {/* Chat live */}
-                    <div className="w-full lg:w-80 bg-gray-50 rounded-lg flex flex-col">
-                      <div className="p-4 border-b border-gray-200">
-                        <h3 className="font-semibold text-gray-900">💬 Chat Live</h3>
-                        <p className="text-xs text-gray-500">{viewerCount} spectateurs en ligne</p>
+                    <div className="w-full lg:w-80 bg-gray-800 rounded-lg flex flex-col">
+                      <div className="p-4 border-b border-gray-700">
+                        <h3 className="font-semibold text-white">💬 Chat Live</h3>
+                        <p className="text-xs text-gray-400">{viewerCount} spectateurs en ligne</p>
                       </div>
                       
                       <div className="flex-1 overflow-y-auto p-4 space-y-3">
                         {(chatMessages[''] || []).length === 0 ? (
                           <div className="text-center py-8">
-                            <div className="text-gray-500 text-sm">Aucun message</div>
+                            <div className="text-gray-400 text-sm">Aucun message</div>
                             <div className="text-gray-500 text-xs mt-1">Soyez le premier à commenter !</div>
                           </div>
                         ) : (
@@ -7447,11 +7447,11 @@ const dailyPnLChartData = useMemo(
                               <div className="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-xs">T</div>
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-1">
-                                  <span className="font-medium text-gray-900 text-sm">{message.author}</span>
-                                  <span className="text-xs text-gray-500">{message.timestamp}</span>
+                                  <span className="font-medium text-white text-sm">{message.author}</span>
+                                  <span className="text-xs text-gray-400">{message.timestamp}</span>
                                 </div>
-                                <div className="bg-gray-100 rounded-lg p-2">
-                                  <p className="text-gray-900 text-sm">{message.text}</p>
+                                <div className="bg-gray-700 rounded-lg p-2">
+                                  <p className="text-white text-sm">{message.text}</p>
                                 </div>
                               </div>
                             </div>
@@ -7460,7 +7460,7 @@ const dailyPnLChartData = useMemo(
                       </div>
                       
                       {/* Barre de message pour le chat live */}
-                      <div className="p-4 border-t border-gray-200">
+                      <div className="p-4 border-t border-gray-700">
                         <div className="flex items-center gap-2">
                           <input
                             type="text"
@@ -7468,7 +7468,7 @@ const dailyPnLChartData = useMemo(
                             onChange={(e) => setChatMessage(e.target.value)}
                             onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                             placeholder="Commenter le stream..."
-                            className="flex-1 bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
+                            className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
                           />
                           <button
                             onClick={handleSendMessage}
@@ -7503,8 +7503,8 @@ const dailyPnLChartData = useMemo(
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <span className="font-semibold text-gray-900">{message.author}</span>
-                              <span className="text-xs text-gray-500">{message.timestamp}</span>
+                              <span className="font-semibold text-white">{message.author}</span>
+                              <span className="text-xs text-gray-400">{message.timestamp}</span>
                               <button
                                 onClick={() => handleDeleteMessage(message.id, selectedChannel.id)}
                                 className="ml-auto text-red-100 hover:text-red-100 transition-colors"
@@ -7514,22 +7514,22 @@ const dailyPnLChartData = useMemo(
                               </button>
                             </div>
                             <div 
-                              className="bg-gray-100 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words"
+                              className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words"
                               data-signal-id={message.text.includes('[SIGNAL_ID:') ? message.text.match(/\[SIGNAL_ID:([^\]]+)\]/)?.[1] : undefined}
                               id={`message-${message.id}`}
                             >
-                                <div className="text-gray-900">
+                                <div className="text-white">
                                       {(() => {
                                     const signalData = formatSignalMessage(message.text);
                                     if (signalData) {
                                       return (
                                         <div>
-                                          <div className="bg-gray-50 rounded-lg p-4 border border-gray-300">
+                                          <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
                                             {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
                                               <div className="mb-3">
                                                 <div className="flex items-center gap-2 mb-2">
                                                   <span className="text-xs">📊</span>
-                                                  <span className="text-sm font-semibold text-gray-600">SIGNAL FERMÉ</span>
+                                                  <span className="text-sm font-semibold text-gray-300">SIGNAL FERMÉ</span>
                                                 </div>
                                                 <div className="text-sm">
                                                   <div className="flex items-center gap-2 mb-1">
@@ -7543,7 +7543,7 @@ const dailyPnLChartData = useMemo(
                                                     )}
                                                   </div>
                                                   {signalData.status === 'LOSS' && signalData.signalId && (
-                                                    <div className="mt-2 pt-2 border-t border-gray-300">
+                                                    <div className="mt-2 pt-2 border-t border-gray-600">
                                                       <button
                                           onClick={() => {
                                                           const currentSignalId = signalData.signalId;
@@ -7591,7 +7591,7 @@ const dailyPnLChartData = useMemo(
                                                             console.log('❌ Aucun message original trouvé');
                                                           }
                                                         }}
-                                                        className="flex items-center gap-1 text-gray-900 hover:text-gray-600 transition-colors text-sm font-medium cursor-pointer"
+                                                        className="flex items-center gap-1 text-white hover:text-gray-300 transition-colors text-sm font-medium cursor-pointer"
                                                         title="Remonter au signal d'origine"
                                                       >
                                                         <span className="text-lg">⬆️</span>
@@ -7605,29 +7605,29 @@ const dailyPnLChartData = useMemo(
                                               <div className="space-y-2">
                                                 <div className="flex items-center gap-2">
                                                   <span className="text-lg">🚀</span>
-                                                  <span className="font-bold text-gray-900">
+                                                  <span className="font-bold text-white">
                                                     {signalData.type} {signalData.symbol}
                                                   </span>
                                                   {signalData.timeframe && (
-                                                    <span className="text-sm text-gray-500">{signalData.timeframe}</span>
+                                                    <span className="text-sm text-gray-400">{signalData.timeframe}</span>
                                                   )}
                                                 </div>
                                                 {signalData.entry && (
                                                   <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-500">📊</span>
-                                                    <span className="text-gray-900">Entry: {signalData.entry}</span>
+                                                    <span className="text-gray-400">📊</span>
+                                                    <span className="text-white">Entry: {signalData.entry}</span>
                                                   </div>
                                                 )}
                                                 {signalData.rr && (
                                                   <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-500">🎯</span>
-                                                    <span className="text-gray-900">R:R ≈ {signalData.rr}</span>
+                                                    <span className="text-gray-400">🎯</span>
+                                                    <span className="text-white">R:R ≈ {signalData.rr}</span>
                                                   </div>
                                                 )}
                                                 {signalData.timeframe && (
                                                   <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-500">⏰</span>
-                                                    <span className="text-gray-900">{signalData.timeframe}</span>
+                                                    <span className="text-gray-400">⏰</span>
+                                                    <span className="text-white">{signalData.timeframe}</span>
                                                   </div>
                                                 )}
                                               </div>
@@ -7646,7 +7646,7 @@ const dailyPnLChartData = useMemo(
                                         <img 
                                           src={message.attachment_data} 
                                           alt="Attachment"
-                                          className="mt-2 max-w-xs max-h-48 rounded-lg border border-gray-300 cursor-pointer hover:opacity-80 transition-opacity"
+                                          className="mt-2 max-w-xs max-h-48 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
                                           onClick={() => setSelectedImage(message.attachment_data)}
                                         />
                                       </div>
@@ -7668,17 +7668,17 @@ const dailyPnLChartData = useMemo(
                                   const isClosed = currentSignal && ['WIN', 'LOSS', 'BE'].includes(currentSignal.status);
                                   
                                   return (
-                                    <div className="mt-3 pt-3 border-t border-gray-300">
+                                    <div className="mt-3 pt-3 border-t border-gray-600">
                                       <div className="flex items-center gap-2">
-                                        <span className="text-xs text-gray-500">Résultat du signal:</span>
+                                        <span className="text-xs text-gray-400">Résultat du signal:</span>
                                         <button
                                           onClick={() => handleSignalStatusFromMessage(message.text, 'WIN')}
                                           disabled={isClosed}
                                           className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                                             isClosed && currentSignal?.status === 'WIN'
-                                              ? 'bg-green-200/60 text-gray-900 border-2 border-green-200/50 shadow-lg scale-105' // Bouton WIN actif
+                                              ? 'bg-green-200/60 text-white border-2 border-green-200/50 shadow-lg scale-105' // Bouton WIN actif
                                               : isClosed
-                                              ? 'bg-gray-300/30 text-gray-500 border border-gray-400/30 cursor-not-allowed opacity-50' // Boutons désactivés
+                                              ? 'bg-gray-500/30 text-gray-400 border border-gray-500/30 cursor-not-allowed opacity-50' // Boutons désactivés
                                               : 'bg-green-200/20 hover:bg-green-200/30 text-green-100 border border-green-200/30 hover:scale-105' // Bouton WIN normal
                                           }`}
                                         >
@@ -7689,9 +7689,9 @@ const dailyPnLChartData = useMemo(
                                           disabled={isClosed}
                                           className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                                             isClosed && currentSignal?.status === 'LOSS'
-                                              ? 'bg-red-300/50 text-gray-900 border-2 border-red-400 shadow-lg scale-105' // Bouton LOSS actif
+                                              ? 'bg-red-300/50 text-white border-2 border-red-400 shadow-lg scale-105' // Bouton LOSS actif
                                               : isClosed
-                                              ? 'bg-gray-300/30 text-gray-500 border border-gray-400/30 cursor-not-allowed opacity-50' // Boutons désactivés
+                                              ? 'bg-gray-500/30 text-gray-400 border border-gray-500/30 cursor-not-allowed opacity-50' // Boutons désactivés
                                               : 'bg-red-400/20 hover:bg-red-400/30 text-red-100 border border-red-400/30 hover:scale-105' // Bouton LOSS normal
                                           }`}
                                         >
@@ -7704,7 +7704,7 @@ const dailyPnLChartData = useMemo(
                                             isClosed && currentSignal?.status === 'BE'
                                               ? 'bg-blue-500 text-white border-2 border-blue-400 shadow-lg scale-105' // Bouton BE actif
                                               : isClosed
-                                              ? 'bg-gray-300/30 text-gray-500 border border-gray-400/30 cursor-not-allowed opacity-50' // Boutons désactivés
+                                              ? 'bg-gray-500/30 text-gray-400 border border-gray-500/30 cursor-not-allowed opacity-50' // Boutons désactivés
                                               : 'bg-blue-400/20 hover:bg-blue-400/30 text-blue-300 border border-blue-400/30 hover:scale-105' // Bouton BE normal
                                           }`}
                                         >
@@ -7712,7 +7712,7 @@ const dailyPnLChartData = useMemo(
                                         </button>
                                       </div>
                                       {isClosed && (
-                                        <div className="mt-2 text-xs text-gray-500">
+                                        <div className="mt-2 text-xs text-gray-400">
                                           <span 
                                             className="cursor-pointer text-blue-400 hover:text-blue-300 underline"
                                             onClick={() => {
@@ -7744,7 +7744,7 @@ const dailyPnLChartData = useMemo(
                                   className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-all duration-200 ${
                                     (messageReactions[message.id]?.users || []).includes('Admin')
                                       ? 'bg-orange-500 text-white'
-                                      : 'bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-900'
+                                      : 'bg-gray-600 hover:bg-gray-500 text-gray-300 hover:text-white'
                                   }`}
                                 >
                                   🔥
@@ -7761,7 +7761,7 @@ const dailyPnLChartData = useMemo(
                   </div>
                   
                   {/* Barre de message */}
-                  <div className="border-t border-gray-200 p-2 md:p-4 fixed bottom-0 left-0 right-0 bg-gray-50 z-10 md:left-64 md:right-0" style={{ backgroundColor: '#f9fafb' }}>
+                  <div className="border-t border-gray-700 p-2 md:p-4 fixed bottom-0 left-0 right-0 bg-gray-800 z-10 md:left-64 md:right-0" style={{ backgroundColor: '#1f2937' }}>
                     <div className="flex items-center gap-1.5 md:gap-2">
                       <input
                         type="text"
@@ -7769,7 +7769,7 @@ const dailyPnLChartData = useMemo(
                         onChange={(e) => setChatMessage(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                         placeholder="Tapez votre message..."
-                        className="flex-1 bg-gray-100 border border-gray-300 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                        className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                       />
                       <label className="cursor-pointer flex-shrink-0">
                         <input
@@ -7778,13 +7778,13 @@ const dailyPnLChartData = useMemo(
                           className="hidden"
                           accept="image/*,.pdf,.doc,.docx"
                         />
-                        <span className="bg-gray-200 hover:bg-gray-300 p-1.5 md:p-2 rounded-lg text-gray-600 hover:text-gray-900 text-sm md:text-base">
+                        <span className="bg-gray-600 hover:bg-gray-500 p-1.5 md:p-2 rounded-lg text-gray-300 hover:text-white text-sm md:text-base">
                           📎
                         </span>
                       </label>
                       <button
                         onClick={handleCreateSignal}
-                        className="bg-green-600 hover:bg-green-700 px-2 md:px-3 py-1.5 md:py-2 rounded-lg text-gray-900 text-xs md:text-sm font-medium flex-shrink-0"
+                        className="bg-green-600 hover:bg-green-700 px-2 md:px-3 py-1.5 md:py-2 rounded-lg text-white text-xs md:text-sm font-medium flex-shrink-0"
                       >
                         + Signal
                       </button>
@@ -7803,7 +7803,7 @@ const dailyPnLChartData = useMemo(
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <div className="text-gray-500 text-sm">Bienvenue sur Admin</div>
+                  <div className="text-gray-400 text-sm">Bienvenue sur Admin</div>
                   <div className="text-gray-500 text-xs mt-1">Plateforme de trading en cours de développement</div>
                 </div>
               )}
@@ -7815,13 +7815,13 @@ const dailyPnLChartData = useMemo(
       {/* Modal de création de signal */}
       {showSignalModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-50 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+          <div className="bg-gray-800 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Créer un signal</h2>
+                <h2 className="text-lg font-semibold text-white">Créer un signal</h2>
                 <button 
                   onClick={() => setShowSignalModal(false)}
-                  className="text-gray-500 hover:text-gray-900"
+                  className="text-gray-400 hover:text-white"
                 >
                   ✕
                 </button>
@@ -7831,16 +7831,16 @@ const dailyPnLChartData = useMemo(
                 {/* Zone de collage TradingView */}
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <label className="block text-sm font-medium text-gray-600">📋 Coller données TradingView</label>
+                    <label className="block text-sm font-medium text-gray-300">📋 Coller données TradingView</label>
                     <button
                       onClick={() => setDebugMode(!debugMode)}
-                      className={`text-xs px-2 py-1 rounded ${debugMode ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}`}
+                      className={`text-xs px-2 py-1 rounded ${debugMode ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300'}`}
                     >
                       {debugMode ? '🔧 Debug ON' : '🔧 Debug OFF'}
                     </button>
                   </div>
                   <div
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 min-h-[80px] flex items-center justify-center cursor-pointer"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 min-h-[80px] flex items-center justify-center cursor-pointer"
                     onPaste={handleTradingViewPaste}
                     onDrop={(e) => {
                       e.preventDefault();
@@ -7866,7 +7866,7 @@ const dailyPnLChartData = useMemo(
                       <div className="text-blue-400">🔄 Traitement en cours...</div>
                     ) : (
                       <div className="text-center">
-                        <div className="text-gray-500 mb-1">📋 Cliquez ici et collez (Ctrl+V)</div>
+                        <div className="text-gray-400 mb-1">📋 Cliquez ici et collez (Ctrl+V)</div>
                         <div className="text-xs text-gray-500">ou glissez-déposez du texte</div>
                       </div>
                     )}
@@ -7875,27 +7875,27 @@ const dailyPnLChartData = useMemo(
                     <p className="text-xs text-red-100 mt-1">{error}</p>
                   )}
                   {debugMode && pasteDebug && (
-                    <div className="text-xs text-gray-500 mt-1 bg-white p-2 rounded">
+                    <div className="text-xs text-gray-400 mt-1 bg-gray-900 p-2 rounded">
                       <div className="font-semibold">Debug:</div>
                       <pre className="whitespace-pre-wrap text-xs">{pasteDebug}</pre>
                     </div>
                   )}
-                  <p className="text-xs text-gray-500 mt-1">Collez directement depuis TradingView (Risk/Reward tool)</p>
+                  <p className="text-xs text-gray-400 mt-1">Collez directement depuis TradingView (Risk/Reward tool)</p>
                 </div>
 
                 {/* Type de signal */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Type</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Type</label>
                   <div className="flex gap-2">
                     <button
                       onClick={() => setSignalData({...signalData, type: 'BUY'})}
-                      className={`px-3 py-2 rounded text-sm ${signalData.type === 'BUY' ? 'bg-green-600 text-gray-900' : 'bg-gray-200 text-gray-600'}`}
+                      className={`px-3 py-2 rounded text-sm ${signalData.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-300'}`}
                     >
                       📈 BUY
                     </button>
                     <button
                       onClick={() => setSignalData({...signalData, type: 'SELL'})}
-                      className={`px-3 py-2 rounded text-sm ${signalData.type === 'SELL' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-600'}`}
+                      className={`px-3 py-2 rounded text-sm ${signalData.type === 'SELL' ? 'bg-red-600 text-white' : 'bg-gray-600 text-gray-300'}`}
                     >
                       📉 SELL
                     </button>
@@ -7904,79 +7904,79 @@ const dailyPnLChartData = useMemo(
 
                 {/* Symbol */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Symbole</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Symbole</label>
                   <input
                     type="text"
                     value={signalData.symbol}
                     onChange={(e) => setSignalData({...signalData, symbol: e.target.value})}
                     placeholder="BTCUSD, EURUSD, etc."
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900 placeholder-gray-400"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
                 </div>
 
                 {/* Timeframe */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Timeframe</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Timeframe</label>
                   <input
                     type="text"
                     value={signalData.timeframe}
                     onChange={(e) => setSignalData({...signalData, timeframe: e.target.value})}
                     placeholder="1 min, 5 min, 1H, etc."
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900 placeholder-gray-400"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
                 </div>
 
                 {/* Entry */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Prix d'entrée</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Prix d'entrée</label>
                   <input
                     type="text"
                     value={signalData.entry}
                     onChange={(e) => setSignalData({...signalData, entry: e.target.value})}
                     placeholder="103474.00 USD"
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900 placeholder-gray-400"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
                 </div>
 
                 {/* Take Profit */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Take Profit</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Take Profit</label>
                   <input
                     type="text"
                     value={signalData.takeProfit}
                     onChange={(e) => setSignalData({...signalData, takeProfit: e.target.value})}
                     placeholder="104626.00 USD"
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900 placeholder-gray-400"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
                 </div>
 
                 {/* Stop Loss */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Stop Loss</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Stop Loss</label>
                   <input
                     type="text"
                     value={signalData.stopLoss}
                     onChange={(e) => setSignalData({...signalData, stopLoss: e.target.value})}
                     placeholder="102862.00 USD"
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900 placeholder-gray-400"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
                 </div>
 
                 {/* Description */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Description</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
                   <textarea
                     value={signalData.description}
                     onChange={(e) => setSignalData({...signalData, description: e.target.value})}
                     placeholder="Notes supplémentaires..."
                     rows={3}
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900 placeholder-gray-400"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
                 </div>
                 
                 {/* Image */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Capture d'écran</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Capture d'écran</label>
                   <input
                     type="file"
                     accept="image/*"
@@ -7984,7 +7984,7 @@ const dailyPnLChartData = useMemo(
                       const file = e.target.files?.[0];
                       if (file) setSignalData({...signalData, image: file});
                     }}
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
                   />
                 </div>
                
@@ -7992,7 +7992,7 @@ const dailyPnLChartData = useMemo(
                 <div className="flex gap-3 pt-4">
                   <button
                     onClick={() => setShowSignalModal(false)}
-                    className="flex-1 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded text-gray-900"
+                    className="flex-1 bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
                   >
                     Annuler
                   </button>
@@ -8012,28 +8012,28 @@ const dailyPnLChartData = useMemo(
               {/* Modal pour ajouter un utilisateur */}
         {showUserModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-gray-50 rounded-lg p-6 w-full max-w-md">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Ajouter un utilisateur</h3>
+            <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md">
+              <h3 className="text-xl font-bold text-white mb-4">Ajouter un utilisateur</h3>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Email</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
                   <input
                     type="email"
                     value={newUserData.email}
                     onChange={(e) => setNewUserData({ ...newUserData, email: e.target.value })}
-                    className="w-full p-3 bg-gray-100 text-gray-900 rounded border border-gray-300 focus:border-blue-500"
+                    className="w-full p-3 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500"
                     placeholder="email@exemple.com"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Mot de passe</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Mot de passe</label>
                   <input
                     type="password"
                     value={newUserData.password}
                     onChange={(e) => setNewUserData({ ...newUserData, password: e.target.value })}
-                    className="w-full p-3 bg-gray-100 text-gray-900 rounded border border-gray-300 focus:border-blue-500"
+                    className="w-full p-3 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500"
                     placeholder="Mot de passe"
                   />
                 </div>
@@ -8042,13 +8042,13 @@ const dailyPnLChartData = useMemo(
               <div className="flex gap-3 mt-6">
                 <button
                   onClick={() => setShowUserModal(false)}
-                  className="flex-1 px-4 py-2 bg-gray-200 text-gray-900 rounded hover:bg-gray-100"
+                  className="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
                 >
                   Annuler
                 </button>
                 <button
                   onClick={createUser}
-                  className="flex-1 px-4 py-2 bg-green-600 text-gray-900 rounded hover:bg-green-700"
+                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                 >
                   Créer
                 </button>
@@ -8060,9 +8060,9 @@ const dailyPnLChartData = useMemo(
         {/* Modal de confirmation suppression */}
         {showDeleteUserModal && selectedUser && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-gray-50 rounded-lg p-6 w-full max-w-md">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Confirmer la suppression</h3>
-              <p className="text-gray-600 mb-6">
+            <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md">
+              <h3 className="text-xl font-bold text-white mb-4">Confirmer la suppression</h3>
+              <p className="text-gray-300 mb-6">
                 Êtes-vous sûr de vouloir supprimer l'utilisateur <strong>{selectedUser.email}</strong> ?
                 Cette action est irréversible.
               </p>
@@ -8070,7 +8070,7 @@ const dailyPnLChartData = useMemo(
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowDeleteUserModal(false)}
-                  className="flex-1 px-4 py-2 bg-gray-200 text-gray-900 rounded hover:bg-gray-100"
+                  className="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
                 >
                   Annuler
                 </button>
@@ -8088,13 +8088,13 @@ const dailyPnLChartData = useMemo(
       {/* Modal pour ajouter un trade */}
       {showTradeModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-50 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+          <div className="bg-gray-800 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">{editingTrade ? 'Modifier le trade' : 'Ajouter un trade'}</h2>
+                <h2 className="text-lg font-semibold text-white">{editingTrade ? 'Modifier le trade' : 'Ajouter un trade'}</h2>
                 <button 
                   onClick={() => { setSelectedAccounts([]); setEditingTrade(null); setShowTradeModal(false); }}
-                  className="text-gray-500 hover:text-gray-900"
+                  className="text-gray-400 hover:text-white"
                 >
                   ✕
                 </button>
@@ -8103,9 +8103,9 @@ const dailyPnLChartData = useMemo(
               <div className="space-y-4">
                 {/* Zone de collage TradingView */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">📋 Coller données TradingView</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">📋 Coller données TradingView</label>
                   <div
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 min-h-[80px] flex items-center justify-center cursor-pointer"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 min-h-[80px] flex items-center justify-center cursor-pointer"
                     onPaste={handleTradingViewPasteTrade}
                     onDrop={(e) => {
                       e.preventDefault();
@@ -8127,18 +8127,18 @@ const dailyPnLChartData = useMemo(
                     onDragOver={(e) => e.preventDefault()}
                   >
                     <div className="text-center">
-                      <div className="text-gray-500 mb-1">📋 Cliquez ici et collez (Ctrl+V)</div>
+                      <div className="text-gray-400 mb-1">📋 Cliquez ici et collez (Ctrl+V)</div>
                       <div className="text-xs text-gray-500">ou glissez-déposez du texte</div>
                     </div>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">Collez directement depuis TradingView</p>
+                  <p className="text-xs text-gray-400 mt-1">Collez directement depuis TradingView</p>
                 </div>
 
                 {/* Compte destination */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Comptes (sélectionner plusieurs)</label>
-                  <div className="space-y-2 max-h-48 overflow-y-auto bg-gray-100 border border-gray-300 rounded p-3">
-                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-200 p-2 rounded">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Comptes (sélectionner plusieurs)</label>
+                  <div className="space-y-2 max-h-48 overflow-y-auto bg-gray-700 border border-gray-600 rounded p-3">
+                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-600 p-2 rounded">
                       <input
                         type="checkbox"
                         checked={selectedAccounts.includes('Tous les comptes')}
@@ -8152,9 +8152,9 @@ const dailyPnLChartData = useMemo(
                         }}
                         className="w-4 h-4"
                       />
-                      <span className="text-gray-900 text-sm">📊 Tous les comptes</span>
+                      <span className="text-white text-sm">📊 Tous les comptes</span>
                     </label>
-                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-200 p-2 rounded">
+                    <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-600 p-2 rounded">
                       <input
                         type="checkbox"
                         checked={selectedAccounts.includes('TPLN model')}
@@ -8167,10 +8167,10 @@ const dailyPnLChartData = useMemo(
                         }}
                         className="w-4 h-4"
                       />
-                      <span className="text-gray-900 text-sm">📋 TPLN model</span>
+                      <span className="text-white text-sm">📋 TPLN model</span>
                     </label>
                     {tradingAccounts.map((account) => (
-                      <label key={account.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-200 p-2 rounded">
+                      <label key={account.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-600 p-2 rounded">
                         <input
                           type="checkbox"
                           checked={selectedAccounts.includes(account.account_name)}
@@ -8183,11 +8183,11 @@ const dailyPnLChartData = useMemo(
                           }}
                           className="w-4 h-4"
                         />
-                        <span className="text-gray-900 text-sm">{account.account_name}</span>
+                        <span className="text-white text-sm">{account.account_name}</span>
                       </label>
                     ))}
                     {tradingAccounts.length === 0 && (
-                      <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-200 p-2 rounded">
+                      <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-600 p-2 rounded">
                         <input
                           type="checkbox"
                           checked={selectedAccounts.includes('Compte Principal')}
@@ -8200,12 +8200,12 @@ const dailyPnLChartData = useMemo(
                           }}
                           className="w-4 h-4"
                         />
-                        <span className="text-gray-900 text-sm">Compte Principal</span>
+                        <span className="text-white text-sm">Compte Principal</span>
                       </label>
                     )}
                   </div>
                   {selectedAccounts.length > 0 && (
-                    <p className="text-xs text-gray-500 mt-2">
+                    <p className="text-xs text-gray-400 mt-2">
                       {selectedAccounts.length} compte{selectedAccounts.length > 1 ? 's' : ''} sélectionné{selectedAccounts.length > 1 ? 's' : ''}
                     </p>
                   )}
@@ -8213,17 +8213,17 @@ const dailyPnLChartData = useMemo(
 
                 {/* Type de trade */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Type</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Type</label>
                   <div className="flex gap-2">
                     <button
                       onClick={() => setTradeData({...tradeData, type: 'BUY'})}
-                      className={`px-3 py-2 rounded text-sm ${tradeData.type === 'BUY' ? 'bg-green-600 text-gray-900' : 'bg-gray-200 text-gray-600'}`}
+                      className={`px-3 py-2 rounded text-sm ${tradeData.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-300'}`}
                     >
                       📈 BUY
                     </button>
                     <button
                       onClick={() => setTradeData({...tradeData, type: 'SELL'})}
-                      className={`px-3 py-2 rounded text-sm ${tradeData.type === 'SELL' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-600'}`}
+                      className={`px-3 py-2 rounded text-sm ${tradeData.type === 'SELL' ? 'bg-red-600 text-white' : 'bg-gray-600 text-gray-300'}`}
                     >
                       📉 SELL
                     </button>
@@ -8232,11 +8232,11 @@ const dailyPnLChartData = useMemo(
 
                 {/* Session */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Session</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Session</label>
                   <select
                     value={tradeData.session}
                     onChange={(e) => setTradeData({...tradeData, session: e.target.value})}
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
                   >
                     <option value="">— Choisir —</option>
                     <option value="18h">18h</option>
@@ -8249,83 +8249,83 @@ const dailyPnLChartData = useMemo(
 
                 {/* Symbol */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Symbole *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Symbole *</label>
                   <input
                     type="text"
                     value={tradeData.symbol}
                     onChange={(e) => setTradeData({...tradeData, symbol: e.target.value})}
                     placeholder="BTC, ETH, NQ1!, etc."
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900 placeholder-gray-400"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
                 </div>
 
                 {/* Entry */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Prix d'entrée *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Prix d'entrée *</label>
                   <input
                     type="text"
                     value={tradeData.entry}
                     onChange={(e) => setTradeData({...tradeData, entry: e.target.value})}
                     placeholder="45000"
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900 placeholder-gray-400"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
                 </div>
 
                 {/* Exit */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Prix de sortie *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Prix de sortie *</label>
                   <input
                     type="text"
                     value={tradeData.exit}
                     onChange={(e) => setTradeData({...tradeData, exit: e.target.value})}
                     placeholder="46000"
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900 placeholder-gray-400"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
                 </div>
 
                 {/* Stop Loss */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Stop Loss</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Stop Loss</label>
                   <input
                     type="text"
                     value={tradeData.stopLoss}
                     onChange={(e) => setTradeData({...tradeData, stopLoss: e.target.value})}
                     placeholder="44000"
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900 placeholder-gray-400"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
                 </div>
 
                 {/* PnL */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">P&L *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">P&L *</label>
                   <input
                     type="text"
                     value={tradeData.pnl}
                     onChange={(e) => setTradeData({...tradeData, pnl: e.target.value})}
                     placeholder="+500 ou -200"
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900 placeholder-gray-400"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
                 </div>
 
                 {/* Status */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Résultat</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Résultat</label>
                   <div className="flex gap-2">
                     <button
                       onClick={() => setTradeData({...tradeData, status: 'WIN'})}
-                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'WIN' ? 'bg-green-600 text-gray-900' : 'bg-gray-200 text-gray-600'}`}
+                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'WIN' ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-300'}`}
                     >
                       ✅ WIN
                     </button>
                     <button
                       onClick={() => setTradeData({...tradeData, status: 'LOSS'})}
-                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'LOSS' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-600'}`}
+                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'LOSS' ? 'bg-red-600 text-white' : 'bg-gray-600 text-gray-300'}`}
                     >
                       ❌ LOSS
                     </button>
                     <button
                       onClick={() => setTradeData({...tradeData, status: 'BE'})}
-                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'BE' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}`}
+                      className={`px-3 py-2 rounded text-sm ${tradeData.status === 'BE' ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300'}`}
                     >
                       ⚖️ BE
                     </button>
@@ -8335,7 +8335,7 @@ const dailyPnLChartData = useMemo(
                 {/* Raisons du stop-loss ou du BE (plusieurs raisons possibles) */}
                 {(tradeData.status === 'LOSS' || tradeData.status === 'BE') && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-600 mb-2">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
                       {tradeData.status === 'LOSS' ? 'Raisons du Stop-Loss' : 'Raisons du BE'}
                     </label>
                     <div className="space-y-2">
@@ -8353,7 +8353,7 @@ const dailyPnLChartData = useMemo(
                               }
                               setTradeData({ ...tradeData, lossReasons: newReasons.filter(Boolean) });
                             }}
-                            className="flex-1 bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900"
+                            className="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
                           >
                             <option value="">{index === 0 ? 'Sélectionner une raison...' : 'Autre raison...'}</option>
                             {customLossReasons.map(reason => (
@@ -8386,7 +8386,7 @@ const dailyPnLChartData = useMemo(
                       + Ajouter une raison
                     </button>
                     {tradeData.lossReasons.filter(Boolean).length > 0 && (
-                      <div className="mt-2 text-sm text-gray-500">
+                      <div className="mt-2 text-sm text-gray-400">
                         Raisons sélectionnées: {tradeData.lossReasons.filter(Boolean).map(r => {
                           const obj = customLossReasons.find(x => x.value === r);
                           return obj ? `${obj.emoji} ${obj.label}` : r;
@@ -8398,19 +8398,19 @@ const dailyPnLChartData = useMemo(
 
                 {/* Notes */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Notes</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Notes</label>
                   <textarea
                     value={tradeData.notes}
                     onChange={(e) => setTradeData({...tradeData, notes: e.target.value})}
                     placeholder="Notes sur le trade..."
                     rows={3}
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900 placeholder-gray-400"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
                 </div>
                 
                 {/* Images */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Image 1</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Image 1</label>
                   <input
                     type="file"
                     accept="image/*"
@@ -8418,12 +8418,12 @@ const dailyPnLChartData = useMemo(
                       const file = e.target.files?.[0];
                       if (file) setTradeData({...tradeData, image1: file});
                     }}
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">Image 2</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Image 2</label>
                   <input
                     type="file"
                     accept="image/*"
@@ -8431,7 +8431,7 @@ const dailyPnLChartData = useMemo(
                       const file = e.target.files?.[0];
                       if (file) setTradeData({...tradeData, image2: file});
                     }}
-                    className="w-full bg-gray-100 border border-gray-300 rounded px-3 py-2 text-gray-900"
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
                   />
                 </div>
                
@@ -8439,7 +8439,7 @@ const dailyPnLChartData = useMemo(
                 <div className="flex gap-3 pt-4">
                   <button
                     onClick={() => { setSelectedAccounts([]); setEditingTrade(null); setShowTradeModal(false); }}
-                    className="flex-1 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded text-gray-900"
+                    className="flex-1 bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
                   >
                     Annuler
                   </button>
@@ -8459,18 +8459,18 @@ const dailyPnLChartData = useMemo(
       {/* Modal Fin session - 4 stats psy */}
       {showFinSessionModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-50 rounded-lg w-full max-w-lg max-h-[90vh] overflow-y-auto">
+          <div className="bg-gray-800 rounded-lg w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">🧠 LES 4 STATS PSY ESSENTIELLES (fin de session)</h2>
-                <button onClick={() => setShowFinSessionModal(false)} className="text-gray-500 hover:text-gray-900">✕</button>
+                <h2 className="text-lg font-semibold text-white">🧠 LES 4 STATS PSY ESSENTIELLES (fin de session)</h2>
+                <button onClick={() => setShowFinSessionModal(false)} className="text-gray-400 hover:text-white">✕</button>
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-600 mb-2">Session</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Session</label>
                 <select
                   value={finSessionSelectedSession}
                   onChange={(e) => setFinSessionSelectedSession(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-gray-100 border border-gray-300 text-gray-900 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  className="w-full px-3 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 >
                   <option value="18h">18h</option>
                   <option value="Open Asian">Open Asian</option>
@@ -8484,7 +8484,7 @@ const dailyPnLChartData = useMemo(
                 const uniqueOptions = Array.from(new Set(accountOptions));
                 return (
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-600 mb-2">Comptes (mêmes stats enregistrées pour chaque compte coché)</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Comptes (mêmes stats enregistrées pour chaque compte coché)</label>
                     <div className="flex flex-wrap gap-3">
                       {uniqueOptions.map((name) => (
                         <label key={name} className="flex items-center gap-2 cursor-pointer">
@@ -8492,9 +8492,9 @@ const dailyPnLChartData = useMemo(
                             type="checkbox"
                             checked={finSessionSelectedAccounts.includes(name)}
                             onChange={() => setFinSessionSelectedAccounts(prev => prev.includes(name) ? prev.filter(a => a !== name) : [...prev, name])}
-                            className="rounded border-gray-400 bg-gray-100 text-blue-500 focus:ring-blue-500"
+                            className="rounded border-gray-500 bg-gray-700 text-blue-500 focus:ring-blue-500"
                           />
-                          <span className="text-sm text-gray-900">{name}</span>
+                          <span className="text-sm text-white">{name}</span>
                         </label>
                       ))}
                     </div>
@@ -8503,108 +8503,108 @@ const dailyPnLChartData = useMemo(
               })()}
               <div className="space-y-6">
                 {/* 1. Respect du plan */}
-                <div className="bg-gray-100/50 rounded-lg p-4 border border-gray-300">
+                <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="w-7 h-7 rounded bg-gray-200 text-gray-600 text-sm font-bold flex items-center justify-center">1</span>
-                    <span className="font-medium text-gray-900">Respect du plan</span>
+                    <span className="w-7 h-7 rounded bg-gray-600 text-gray-300 text-sm font-bold flex items-center justify-center">1</span>
+                    <span className="font-medium text-white">Respect du plan</span>
                     <span className="text-yellow-400">⭐⭐⭐</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-1"><strong>Question :</strong> <em>Ai-je respecté mon plan du début à la fin ?</em></p>
+                  <p className="text-sm text-gray-300 mb-1"><strong>Question :</strong> <em>Ai-je respecté mon plan du début à la fin ?</em></p>
                   <div className="flex gap-2 flex-wrap mb-2">
                     {(['Oui', 'Non', 'Partiel'] as const).map((opt) => (
                       <button
                         key={opt}
                         onClick={() => setFinSessionRespectPlan(opt)}
-                        className={`px-3 py-1.5 rounded text-sm ${finSessionRespectPlan === opt ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+                        className={`px-3 py-1.5 rounded text-sm ${finSessionRespectPlan === opt ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
                       >
                         {opt}
                       </button>
                     ))}
                   </div>
-                  <p className="text-xs text-gray-500">👍 Stat n°1 absolue. Un trader peut perdre en respectant → journée réussie.</p>
+                  <p className="text-xs text-gray-400">👍 Stat n°1 absolue. Un trader peut perdre en respectant → journée réussie.</p>
                 </div>
                 {/* 2. Qualité des décisions */}
-                <div className="bg-gray-100/50 rounded-lg p-4 border border-gray-300">
+                <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="w-7 h-7 rounded bg-gray-200 text-gray-600 text-sm font-bold flex items-center justify-center">2</span>
-                    <span className="font-medium text-gray-900">Qualité des décisions</span>
+                    <span className="w-7 h-7 rounded bg-gray-600 text-gray-300 text-sm font-bold flex items-center justify-center">2</span>
+                    <span className="font-medium text-white">Qualité des décisions</span>
                     <span className="text-yellow-400">⭐⭐</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-1"><strong>Question :</strong> <em>Mes trades étaient-ils pris par lecture ou par émotion ?</em></p>
+                  <p className="text-sm text-gray-300 mb-1"><strong>Question :</strong> <em>Mes trades étaient-ils pris par lecture ou par émotion ?</em></p>
                   <div className="flex gap-2 flex-wrap mb-2">
                     {(['Lecture', 'Mixte', 'Émotion'] as const).map((opt) => (
                       <button
                         key={opt}
                         onClick={() => setFinSessionQualiteDecisions(opt)}
-                        className={`px-3 py-1.5 rounded text-sm ${finSessionQualiteDecisions === opt ? (opt === 'Émotion' ? 'bg-red-600 text-white' : 'bg-blue-600 text-white') : opt === 'Émotion' ? 'bg-gray-200 text-red-100 hover:bg-gray-300' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+                        className={`px-3 py-1.5 rounded text-sm ${finSessionQualiteDecisions === opt ? (opt === 'Émotion' ? 'bg-red-600 text-white' : 'bg-blue-600 text-white') : opt === 'Émotion' ? 'bg-gray-600 text-red-100 hover:bg-gray-500' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
                       >
                         {opt}
                       </button>
                     ))}
                   </div>
                   {finSessionQualiteDecisions === 'Émotion' && <p className="text-sm text-red-100 font-medium">⚠️ Alerte : émotion détectée.</p>}
-                  <p className="text-xs text-gray-500">👍 Si &quot;émotion&quot; apparaît → alerte.</p>
+                  <p className="text-xs text-gray-400">👍 Si &quot;émotion&quot; apparaît → alerte.</p>
                 </div>
                 {/* 3. Gestion après erreur */}
-                <div className="bg-gray-100/50 rounded-lg p-4 border border-gray-300">
+                <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="w-7 h-7 rounded bg-gray-200 text-gray-600 text-sm font-bold flex items-center justify-center">3</span>
-                    <span className="font-medium text-gray-900">Gestion après erreur</span>
+                    <span className="w-7 h-7 rounded bg-gray-600 text-gray-300 text-sm font-bold flex items-center justify-center">3</span>
+                    <span className="font-medium text-white">Gestion après erreur</span>
                     <span className="text-yellow-400">⭐⭐⭐</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-1"><strong>Question :</strong> <em>Après une erreur (SL, entrée ratée), ai-je gardé le contrôle ?</em></p>
+                  <p className="text-sm text-gray-300 mb-1"><strong>Question :</strong> <em>Après une erreur (SL, entrée ratée), ai-je gardé le contrôle ?</em></p>
                   <div className="flex gap-2 flex-wrap mb-2">
                     {(['Oui', 'Non'] as const).map((opt) => (
                       <button
                         key={opt}
                         onClick={() => setFinSessionGestionErreur(opt)}
-                        className={`px-3 py-1.5 rounded text-sm ${finSessionGestionErreur === opt ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+                        className={`px-3 py-1.5 rounded text-sm ${finSessionGestionErreur === opt ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
                       >
                         {opt}
                       </button>
                     ))}
                   </div>
-                  <p className="text-xs text-gray-500">👍 C&apos;est LA stat qui prédit la régularité future.</p>
+                  <p className="text-xs text-gray-400">👍 C&apos;est LA stat qui prédit la régularité future.</p>
                 </div>
                 {/* 4. Niveau de pression ressenti */}
-                <div className="bg-gray-100/50 rounded-lg p-4 border border-gray-300">
+                <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="w-7 h-7 rounded bg-gray-200 text-gray-600 text-sm font-bold flex items-center justify-center">4</span>
-                    <span className="font-medium text-gray-900">Niveau de pression ressenti</span>
+                    <span className="w-7 h-7 rounded bg-gray-600 text-gray-300 text-sm font-bold flex items-center justify-center">4</span>
+                    <span className="font-medium text-white">Niveau de pression ressenti</span>
                     <span className="text-yellow-400">⭐⭐</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-1"><strong>Auto-note :</strong> 1 = très calme → 5 = très tendu</p>
+                  <p className="text-sm text-gray-300 mb-1"><strong>Auto-note :</strong> 1 = très calme → 5 = très tendu</p>
                   <div className="flex gap-2 flex-wrap mb-2">
                     {[1, 2, 3, 4, 5].map((n) => (
                       <button
                         key={n}
                         onClick={() => setFinSessionPression(n)}
-                        className={`w-10 h-10 rounded text-sm font-bold ${finSessionPression === n ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+                        className={`w-10 h-10 rounded text-sm font-bold ${finSessionPression === n ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
                       >
                         {n}
                       </button>
                     ))}
                   </div>
-                  <p className="text-xs text-gray-500">Tu veux voir : pression ≤ 3 les bons jours, pression maîtrisée même les jours rouges.</p>
+                  <p className="text-xs text-gray-400">Tu veux voir : pression ≤ 3 les bons jours, pression maîtrisée même les jours rouges.</p>
                 </div>
                 {/* 5. Max Drawdown (DD) */}
-                <div className="bg-gray-100/50 rounded-lg p-4 border border-gray-300">
+                <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="w-7 h-7 rounded bg-gray-200 text-gray-600 text-sm font-bold flex items-center justify-center">5</span>
-                    <span className="font-medium text-gray-900">Max Drawdown (DD)</span>
+                    <span className="w-7 h-7 rounded bg-gray-600 text-gray-300 text-sm font-bold flex items-center justify-center">5</span>
+                    <span className="font-medium text-white">Max Drawdown (DD)</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-2">Drawdown max de la session ($, ex: -50)</p>
+                  <p className="text-sm text-gray-300 mb-2">Drawdown max de la session ($, ex: -50)</p>
                   <input
                     type="number"
                     placeholder="-50"
                     value={finSessionMaxDrawdown}
                     onChange={(e) => setFinSessionMaxDrawdown(e.target.value)}
-                    className="w-full bg-gray-200 border border-gray-400 rounded px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                   />
                 </div>
               </div>
               <div className="flex justify-end gap-2 pt-4">
-                <button onClick={() => setShowFinSessionModal(false)} className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded text-gray-900 text-sm">
+                <button onClick={() => setShowFinSessionModal(false)} className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white text-sm">
                   Fermer
                 </button>
                 <button
@@ -8646,10 +8646,10 @@ const dailyPnLChartData = useMemo(
       {/* Modal des Trades */}
       {showTradesModal && selectedTradesDate && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-50 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900">
+                <h2 className="text-xl font-bold text-white">
                   Trades du {selectedTradesDate.toLocaleDateString('fr-FR', { 
                     weekday: 'long', 
                     year: 'numeric', 
@@ -8659,7 +8659,7 @@ const dailyPnLChartData = useMemo(
                 </h2>
                 <button
                   onClick={() => setShowTradesModal(false)}
-                  className="text-gray-500 hover:text-gray-900 text-2xl"
+                  className="text-gray-400 hover:text-white text-2xl"
                 >
                   ×
                 </button>
@@ -8671,9 +8671,9 @@ const dailyPnLChartData = useMemo(
                 if (!fs) return null;
                 const dateKey = getDateKey(selectedTradesDate);
                 return (
-                  <div className="mb-6 p-4 bg-gray-100/70 rounded-lg border border-gray-300 relative">
+                  <div className="mb-6 p-4 bg-gray-700/70 rounded-lg border border-gray-600 relative">
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-semibold text-gray-600">🧠 Stats fin de session</h3>
+                      <h3 className="text-sm font-semibold text-gray-300">🧠 Stats fin de session</h3>
                       <button
                         type="button"
                         onClick={async () => {
@@ -8683,7 +8683,7 @@ const dailyPnLChartData = useMemo(
                             if (ok) setFinSessionCache(prev => { const next = { ...prev }; delete next[getFinSessionCacheKey(dateKey, acc)]; return next; });
                           }
                         }}
-                        className="text-gray-500 hover:text-gray-900 p-1 rounded"
+                        className="text-gray-400 hover:text-white p-1 rounded"
                         title="Supprimer ces stats"
                         aria-label="Supprimer"
                       >
@@ -8691,11 +8691,11 @@ const dailyPnLChartData = useMemo(
                       </button>
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div><span className="text-gray-500">Respect du plan:</span> <span className="text-gray-900 font-medium">{fs.respectPlan}</span></div>
-                      <div><span className="text-gray-500">Qualité décisions:</span> <span className={fs.qualiteDecisions === 'Émotion' ? 'text-red-100 font-medium' : 'text-gray-900 font-medium'}>{fs.qualiteDecisions}</span></div>
-                      <div><span className="text-gray-500">Gestion après erreur:</span> <span className="text-gray-900 font-medium">{fs.gestionErreur}</span></div>
-                      <div><span className="text-gray-500">Pression (1-5):</span> <span className="text-gray-900 font-medium">{fs.pression}</span></div>
-                      {fs.maxDrawdown != null && <div className="col-span-2"><span className="text-gray-500">Max Drawdown (DD):</span> <span className={fs.maxDrawdown < 0 ? 'text-red-100 font-medium' : 'text-gray-900 font-medium'}>{fs.maxDrawdown}$</span></div>}
+                      <div><span className="text-gray-400">Respect du plan:</span> <span className="text-white font-medium">{fs.respectPlan}</span></div>
+                      <div><span className="text-gray-400">Qualité décisions:</span> <span className={fs.qualiteDecisions === 'Émotion' ? 'text-red-100 font-medium' : 'text-white font-medium'}>{fs.qualiteDecisions}</span></div>
+                      <div><span className="text-gray-400">Gestion après erreur:</span> <span className="text-white font-medium">{fs.gestionErreur}</span></div>
+                      <div><span className="text-gray-400">Pression (1-5):</span> <span className="text-white font-medium">{fs.pression}</span></div>
+                      {fs.maxDrawdown != null && <div className="col-span-2"><span className="text-gray-400">Max Drawdown (DD):</span> <span className={fs.maxDrawdown < 0 ? 'text-red-100 font-medium' : 'text-white font-medium'}>{fs.maxDrawdown}$</span></div>}
                     </div>
                   </div>
                 );
@@ -8713,9 +8713,9 @@ const dailyPnLChartData = useMemo(
                 
                 if (tradesForDay.length > 0) {
                   return (
-                    <div className="mb-4 p-4 bg-gray-100/50 rounded-lg border border-gray-300">
+                    <div className="mb-4 p-4 bg-gray-700/50 rounded-lg border border-gray-600">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-500">PnL total pour ce jour:</span>
+                        <span className="text-sm text-gray-400">PnL total pour ce jour:</span>
                         <span className={`text-lg font-bold ${totalPnL >= 0 ? 'text-green-100' : 'text-red-100'}`}>
                           {totalPnL >= 0 ? '+' : ''}${totalPnL.toFixed(0)}
                         </span>
@@ -8728,12 +8728,12 @@ const dailyPnLChartData = useMemo(
 
               <div className="space-y-4">
                 {getTradesForDate(selectedTradesDate).length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
+                  <div className="text-center py-8 text-gray-400">
                     Aucun trade pour cette date
                   </div>
                 ) : (
                   getTradesForDate(selectedTradesDate).map((trade) => (
-                  <div key={trade.id} className="bg-gray-100 rounded-lg p-4 border border-gray-300">
+                  <div key={trade.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
                         <span className={`px-2 py-1 rounded text-xs font-bold ${
@@ -8741,7 +8741,7 @@ const dailyPnLChartData = useMemo(
                         }`}>
                           {trade.type}
                         </span>
-                        <span className="text-lg font-bold text-gray-900">{trade.symbol}</span>
+                        <span className="text-lg font-bold text-white">{trade.symbol}</span>
                       </div>
                       <div className="flex items-center gap-3">
                         <span className={`text-lg font-bold ${
@@ -8754,7 +8754,7 @@ const dailyPnLChartData = useMemo(
                             setShowTradesModal(false);
                             await handleEditTrade(trade);
                           }}
-                          className="px-3 py-1 rounded text-sm bg-gray-200 hover:bg-gray-300 text-gray-900"
+                          className="px-3 py-1 rounded text-sm bg-gray-600 hover:bg-gray-500 text-white"
                           title="Modifier ce trade"
                         >
                           Modifier
@@ -8781,21 +8781,21 @@ const dailyPnLChartData = useMemo(
 
                     <div className="grid grid-cols-2 gap-4 mb-3">
                       <div>
-                        <span className="text-sm text-gray-500">Entry:</span>
-                        <span className="text-gray-900 ml-2">{trade.entry}</span>
+                        <span className="text-sm text-gray-400">Entry:</span>
+                        <span className="text-white ml-2">{trade.entry}</span>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-500">Exit:</span>
-                        <span className="text-gray-900 ml-2">{trade.exit}</span>
+                        <span className="text-sm text-gray-400">Exit:</span>
+                        <span className="text-white ml-2">{trade.exit}</span>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-500">Stop Loss:</span>
-                        <span className="text-gray-900 ml-2">{trade.stopLoss}</span>
+                        <span className="text-sm text-gray-400">Stop Loss:</span>
+                        <span className="text-white ml-2">{trade.stopLoss}</span>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-500">Status:</span>
+                        <span className="text-sm text-gray-400">Status:</span>
                         <span className={`ml-2 px-2 py-1 rounded text-xs ${
-                          trade.status === 'WIN' ? 'bg-green-600 text-gray-900' :
+                          trade.status === 'WIN' ? 'bg-green-600 text-white' :
                           trade.status === 'LOSS' ? 'bg-red-600 text-white' :
                           'bg-blue-600 text-white'
                         }`}>
@@ -8806,15 +8806,15 @@ const dailyPnLChartData = useMemo(
 
                     {trade.notes && (
                       <div className="mb-3">
-                        <span className="text-sm text-gray-500">Notes:</span>
-                        <p className="text-gray-900 mt-1">{trade.notes}</p>
+                        <span className="text-sm text-gray-400">Notes:</span>
+                        <p className="text-white mt-1">{trade.notes}</p>
                       </div>
                     )}
 
                     {/* Images */}
                     {(trade.image1 || trade.image2) && (
                       <div className="mb-3">
-                        <span className="text-sm text-gray-500">Images:</span>
+                        <span className="text-sm text-gray-400">Images:</span>
                         <div className="mt-2 space-y-3 flex flex-col items-center">
                           {trade.image1 && (
                             <div className="flex flex-col items-center">
@@ -8823,7 +8823,7 @@ const dailyPnLChartData = useMemo(
                                 <img 
                                   src={trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1} 
                                   alt="Trade image 1" 
-                                  className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-300"
+                                  className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
                                   onClick={() => setSelectedImage(trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1)}
                                 />
                               </div>
@@ -8836,7 +8836,7 @@ const dailyPnLChartData = useMemo(
                                 <img 
                                   src={trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2} 
                                   alt="Trade image 2" 
-                                  className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-300"
+                                  className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
                                   onClick={() => setSelectedImage(trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2)}
                                 />
                               </div>
@@ -8846,7 +8846,7 @@ const dailyPnLChartData = useMemo(
                       </div>
                     )}
 
-                    <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center justify-between text-sm text-gray-400">
                       <span>Ajouté le {trade.timestamp}</span>
                     </div>
                   </div>
@@ -8854,10 +8854,10 @@ const dailyPnLChartData = useMemo(
                 )}
               </div>
 
-              <div className="mt-6 pt-4 border-t border-gray-300">
+              <div className="mt-6 pt-4 border-t border-gray-600">
                 <button
                   onClick={() => setShowTradesModal(false)}
-                  className="w-full bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded text-gray-900"
+                  className="w-full bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
                 >
                   Fermer
                 </button>
@@ -8870,7 +8870,7 @@ const dailyPnLChartData = useMemo(
       {/* Modal Tous les WIN / Tous les LOSS - Journal perso, TPLN model, et Journal Signaux */}
       {showWinsLossModal && winsLossFilter && (
         <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4" onClick={() => setShowWinsLossModal(false)}>
-          <div className="bg-gray-50 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
+          <div className="bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
             {(() => {
               // Pour le calendrier (signaux) ou les trades (journal perso/TPLN)
               const isSignalsMode = selectedChannel.id === 'calendrier';
@@ -8883,12 +8883,12 @@ const dailyPnLChartData = useMemo(
                 return (
                   <div className="p-6">
                     <div className="flex justify-between items-center mb-4">
-                      <h2 className="text-xl font-bold text-gray-900">
+                      <h2 className="text-xl font-bold text-white">
                         {winsLossFilter === 'WIN' ? '📈 Tous les WIN' : winsLossFilter === 'LOSS' ? '📉 Tous les LOSS' : '🔵 Tous les BE'}
                       </h2>
-                      <button onClick={() => setShowWinsLossModal(false)} className="text-gray-500 hover:text-gray-900 text-2xl">×</button>
+                      <button onClick={() => setShowWinsLossModal(false)} className="text-gray-400 hover:text-white text-2xl">×</button>
                     </div>
-                    <div className="text-center py-12 text-gray-500">Aucun {isSignalsMode ? 'signal' : 'trade'} {winsLossFilter === 'WIN' ? 'gagnant' : winsLossFilter === 'LOSS' ? 'perdant' : 'break-even'}</div>
+                    <div className="text-center py-12 text-gray-400">Aucun {isSignalsMode ? 'signal' : 'trade'} {winsLossFilter === 'WIN' ? 'gagnant' : winsLossFilter === 'LOSS' ? 'perdant' : 'break-even'}</div>
                   </div>
                 );
               }
@@ -8901,44 +8901,44 @@ const dailyPnLChartData = useMemo(
               
               return (
                 <>
-                  <div className="flex justify-between items-center p-4 border-b border-gray-200">
-                    <h2 className="text-xl font-bold text-gray-900">
+                  <div className="flex justify-between items-center p-4 border-b border-gray-700">
+                    <h2 className="text-xl font-bold text-white">
                       {winsLossFilter === 'WIN' ? '📈 Tous les WIN' : winsLossFilter === 'LOSS' ? '📉 Tous les LOSS' : '🔵 Tous les BE'} ({winsLossTradeIndex + 1}/{filteredItems.length})
                     </h2>
-                    <button onClick={() => setShowWinsLossModal(false)} className="text-gray-500 hover:text-gray-900 text-2xl">×</button>
+                    <button onClick={() => setShowWinsLossModal(false)} className="text-gray-400 hover:text-white text-2xl">×</button>
                   </div>
                   <div className="flex-1 flex items-center justify-between gap-4 p-4 overflow-hidden">
                     <button
                       onClick={() => setWinsLossTradeIndex(i => (i <= 0 ? filteredItems.length - 1 : i - 1))}
-                      className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-2xl text-gray-900"
+                      className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-2xl text-white"
                     >
                       ←
                     </button>
                     <div className="flex-1 flex flex-col items-center min-w-0">
                       <div className="space-y-4">
                         {imgUrl ? (
-                          <img src={imgUrl} alt={isSignalsMode ? "Signal" : "Trade"} className="max-w-full max-h-[60vh] object-contain rounded-lg border border-gray-300" />
+                          <img src={imgUrl} alt={isSignalsMode ? "Signal" : "Trade"} className="max-w-full max-h-[60vh] object-contain rounded-lg border border-gray-600" />
                         ) : (
-                          <div className="w-96 h-96 flex items-center justify-center bg-gray-100 rounded-lg text-gray-500">Pas d'image</div>
+                          <div className="w-96 h-96 flex items-center justify-center bg-gray-700 rounded-lg text-gray-500">Pas d'image</div>
                         )}
                         {isSignalsMode && (currentItem as any).closure_image && (currentItem as any).image && (
                           <div>
-                            <div className="text-xs text-gray-500 mb-1">📸 Photo de clôture:</div>
-                            <img src={URL.createObjectURL((currentItem as any).closure_image)} alt="Closure" className="max-w-full max-h-[60vh] object-contain rounded-lg border border-gray-300" />
+                            <div className="text-xs text-gray-400 mb-1">📸 Photo de clôture:</div>
+                            <img src={URL.createObjectURL((currentItem as any).closure_image)} alt="Closure" className="max-w-full max-h-[60vh] object-contain rounded-lg border border-gray-600" />
                           </div>
                         )}
                       </div>
                       <div className="mt-4 text-center">
-                        <span className="text-lg font-bold text-gray-900">{currentItem.symbol}</span>
+                        <span className="text-lg font-bold text-white">{currentItem.symbol}</span>
                         <span className={`ml-2 text-lg font-bold ${currentItem.pnl && parseFloat(currentItem.pnl) >= 0 ? 'text-green-100' : 'text-red-100'}`}>
                           {(currentItem.pnl && parseFloat(currentItem.pnl) >= 0 ? '+' : '')}{currentItem.pnl || '0'}$
                         </span>
-                        <span className="ml-2 text-gray-500 text-sm">{isSignalsMode ? new Date((currentItem as any).timestamp).toLocaleDateString() : (currentItem as any).date}</span>
+                        <span className="ml-2 text-gray-400 text-sm">{isSignalsMode ? new Date((currentItem as any).timestamp).toLocaleDateString() : (currentItem as any).date}</span>
                       </div>
                     </div>
                     <button
                       onClick={() => setWinsLossTradeIndex(i => (i >= filteredItems.length - 1 ? 0 : i + 1))}
-                      className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-2xl text-gray-900"
+                      className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-2xl text-white"
                     >
                       →
                     </button>
@@ -8953,38 +8953,38 @@ const dailyPnLChartData = useMemo(
       {/* Modal Tableau de performance */}
       {showPerformanceTableModal && (selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'calendrier') && (
         <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4" onClick={() => setShowPerformanceTableModal(false)}>
-          <div className="bg-gray-50 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-gray-300" onClick={e => e.stopPropagation()}>
-            <div className="flex justify-between items-center p-4 border-b border-gray-300">
-              <h2 className="text-xl font-bold text-gray-900">Tableau de performance</h2>
-              <button onClick={() => setShowPerformanceTableModal(false)} className="text-gray-500 hover:text-gray-900 text-2xl">×</button>
+          <div className="bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-gray-600" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center p-4 border-b border-gray-600">
+              <h2 className="text-xl font-bold text-white">Tableau de performance</h2>
+              <button onClick={() => setShowPerformanceTableModal(false)} className="text-gray-400 hover:text-white text-2xl">×</button>
             </div>
             <div className="overflow-auto p-4">
               {monthlyPerformanceDataAdmin.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">Aucune donnée</p>
+                <p className="text-gray-400 text-center py-8">Aucune donnée</p>
               ) : (
                 <table className={`w-full text-left border-collapse ${window.matchMedia('(display-mode: standalone)').matches ? 'text-xs' : ''}`}>
                   <thead>
-                    <tr className="border-b border-gray-300">
-                      <th className={`py-2 text-gray-500 font-medium ${window.matchMedia('(display-mode: standalone)').matches ? 'pr-1' : 'pr-4'}`}>Mois</th>
-                      <th className={`py-2 text-gray-500 font-medium text-right ${window.matchMedia('(display-mode: standalone)').matches ? 'pr-1 w-10' : 'pr-4'}`}>Trades</th>
-                      <th className={`py-2 text-gray-500 font-medium text-right ${window.matchMedia('(display-mode: standalone)').matches ? 'pr-1' : 'pr-4'}`}>P&L ($)</th>
-                      <th className={`py-2 text-gray-500 font-medium text-right ${window.matchMedia('(display-mode: standalone)').matches ? 'pr-1 whitespace-nowrap' : 'pr-4'}`}>WR</th>
-                      <th className={`py-2 text-gray-500 font-medium text-right ${window.matchMedia('(display-mode: standalone)').matches ? 'pr-1' : 'pr-4'}`}>PF</th>
-                      <th className={`py-2 text-gray-500 font-medium text-right ${window.matchMedia('(display-mode: standalone)').matches ? 'pr-1' : ''}`}>Max DD ($)</th>
+                    <tr className="border-b border-gray-600">
+                      <th className={`py-2 text-gray-400 font-medium ${window.matchMedia('(display-mode: standalone)').matches ? 'pr-1' : 'pr-4'}`}>Mois</th>
+                      <th className={`py-2 text-gray-400 font-medium text-right ${window.matchMedia('(display-mode: standalone)').matches ? 'pr-1 w-10' : 'pr-4'}`}>Trades</th>
+                      <th className={`py-2 text-gray-400 font-medium text-right ${window.matchMedia('(display-mode: standalone)').matches ? 'pr-1' : 'pr-4'}`}>P&L ($)</th>
+                      <th className={`py-2 text-gray-400 font-medium text-right ${window.matchMedia('(display-mode: standalone)').matches ? 'pr-1 whitespace-nowrap' : 'pr-4'}`}>WR</th>
+                      <th className={`py-2 text-gray-400 font-medium text-right ${window.matchMedia('(display-mode: standalone)').matches ? 'pr-1' : 'pr-4'}`}>PF</th>
+                      <th className={`py-2 text-gray-400 font-medium text-right ${window.matchMedia('(display-mode: standalone)').matches ? 'pr-1' : ''}`}>Max DD ($)</th>
                     </tr>
                   </thead>
                   <tbody>
                     {monthlyPerformanceDataAdmin.map(row => {
                       const isPWA = window.matchMedia('(display-mode: standalone)').matches;
                       return (
-                        <tr key={row.monthKey} className="border-b border-gray-200">
-                          <td className={`py-2 text-gray-900 ${isPWA ? 'pr-1' : 'pr-4'}`}>{row.monthLabel}</td>
-                          <td className={`py-2 text-gray-900 text-right ${isPWA ? 'pr-1 w-10' : 'pr-4'}`}>{row.trades}</td>
+                        <tr key={row.monthKey} className="border-b border-gray-700">
+                          <td className={`py-2 text-white ${isPWA ? 'pr-1' : 'pr-4'}`}>{row.monthLabel}</td>
+                          <td className={`py-2 text-white text-right ${isPWA ? 'pr-1 w-10' : 'pr-4'}`}>{row.trades}</td>
                           <td className={`py-2 text-right font-medium ${row.pnl >= 0 ? 'text-green-100' : 'text-red-100'} ${isPWA ? 'pr-1' : 'pr-4'}`}>
                             {row.pnl >= 0 ? '+' : ''}{row.pnl.toFixed(0)}
                           </td>
-                          <td className={`py-2 text-gray-900 text-right ${isPWA ? 'pr-1 whitespace-nowrap' : 'pr-4'}`}>{row.wr}{isPWA ? '\u00A0%' : ' %'}</td>
-                          <td className={`py-2 text-gray-900 text-right ${isPWA ? 'pr-1 whitespace-nowrap' : 'pr-4'}`}>{row.pf === Infinity ? '∞' : row.pf.toFixed(1)}</td>
+                          <td className={`py-2 text-white text-right ${isPWA ? 'pr-1 whitespace-nowrap' : 'pr-4'}`}>{row.wr}{isPWA ? '\u00A0%' : ' %'}</td>
+                          <td className={`py-2 text-white text-right ${isPWA ? 'pr-1 whitespace-nowrap' : 'pr-4'}`}>{row.pf === Infinity ? '∞' : row.pf.toFixed(1)}</td>
                           <td className={`py-2 text-right text-red-100 ${isPWA ? 'pr-1' : ''}`}>{row.maxDdPnl != null ? `$${row.maxDdPnl}` : '–'}</td>
                         </tr>
                       );
@@ -9023,14 +9023,14 @@ const dailyPnLChartData = useMemo(
                         }, null);
 
                       return (
-                        <tr className="border-t border-gray-300 bg-white/60">
-                          <td className={`py-2 font-semibold text-gray-900 ${isPWA ? 'pr-1' : 'pr-4'}`}>Total</td>
-                          <td className={`py-2 font-semibold text-gray-900 text-right ${isPWA ? 'pr-1 w-10' : 'pr-4'}`}>{totalTrades}</td>
+                        <tr className="border-t border-gray-600 bg-gray-900/60">
+                          <td className={`py-2 font-semibold text-white ${isPWA ? 'pr-1' : 'pr-4'}`}>Total</td>
+                          <td className={`py-2 font-semibold text-white text-right ${isPWA ? 'pr-1 w-10' : 'pr-4'}`}>{totalTrades}</td>
                           <td className={`py-2 font-semibold text-right ${totalPnl >= 0 ? 'text-green-100' : 'text-red-100'} ${isPWA ? 'pr-1' : 'pr-4'}`}>
                             {totalPnl >= 0 ? '+' : ''}{totalPnl.toFixed(0)}
                           </td>
-                          <td className={`py-2 font-semibold text-gray-900 text-right ${isPWA ? 'pr-1 whitespace-nowrap' : 'pr-4'}`}>{globalWr}{isPWA ? '\u00A0%' : ' %'}</td>
-                          <td className={`py-2 font-semibold text-gray-900 text-right ${isPWA ? 'pr-1 whitespace-nowrap' : 'pr-4'}`}>{globalPf === Infinity ? '∞' : globalPf.toFixed(1)}</td>
+                          <td className={`py-2 font-semibold text-white text-right ${isPWA ? 'pr-1 whitespace-nowrap' : 'pr-4'}`}>{globalWr}{isPWA ? '\u00A0%' : ' %'}</td>
+                          <td className={`py-2 font-semibold text-white text-right ${isPWA ? 'pr-1 whitespace-nowrap' : 'pr-4'}`}>{globalPf === Infinity ? '∞' : globalPf.toFixed(1)}</td>
                           <td className={`py-2 font-semibold text-red-100 text-right ${isPWA ? 'pr-1' : ''}`}>{globalMaxDd != null ? `$${globalMaxDd}` : '–'}</td>
                         </tr>
                       );
@@ -9046,10 +9046,10 @@ const dailyPnLChartData = useMemo(
       {/* Modal des Signaux */}
       {showSignalsModal && selectedSignalsDate && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-50 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+          <div className="bg-gray-800 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900">
+                <h2 className="text-xl font-bold text-white">
                   Signaux du {selectedSignalsDate.toLocaleDateString('fr-FR', { 
                     weekday: 'long', 
                     year: 'numeric', 
@@ -9059,7 +9059,7 @@ const dailyPnLChartData = useMemo(
                 </h2>
                 <button
                   onClick={() => setShowSignalsModal(false)}
-                  className="text-gray-500 hover:text-gray-900 text-2xl"
+                  className="text-gray-400 hover:text-white text-2xl"
                 >
                   ×
                 </button>
@@ -9083,7 +9083,7 @@ const dailyPnLChartData = useMemo(
                   });
                   return signalsForDate;
                 })().map((signal) => (
-                  <div key={signal.id} className="bg-gray-100 rounded-lg p-4 border border-gray-300 relative">
+                  <div key={signal.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600 relative">
                     {/* Bouton supprimer */}
                     <button
                       onClick={async () => {
@@ -9115,11 +9115,11 @@ const dailyPnLChartData = useMemo(
                         }`}>
                           {signal.type}
                         </span>
-                        <span className="text-lg font-bold text-gray-900">{signal.symbol}</span>
-                        <span className="text-sm text-gray-500">{signal.timeframe}</span>
+                        <span className="text-lg font-bold text-white">{signal.symbol}</span>
+                        <span className="text-sm text-gray-400">{signal.timeframe}</span>
                       </div>
                       <span className={`px-2 py-1 rounded text-xs ${
-                        signal.status === 'WIN' ? 'bg-green-600 text-gray-900' :
+                        signal.status === 'WIN' ? 'bg-green-600 text-white' :
                         signal.status === 'LOSS' ? 'bg-red-600 text-white' :
                         signal.status === 'BE' ? 'bg-blue-600 text-white' :
                         'bg-yellow-600 text-white'
@@ -9130,20 +9130,20 @@ const dailyPnLChartData = useMemo(
 
                     <div className="grid grid-cols-2 gap-4 mb-3">
                       <div>
-                        <span className="text-sm text-gray-500">Entry:</span>
-                        <span className="text-gray-900 ml-2">{signal.entry}</span>
+                        <span className="text-sm text-gray-400">Entry:</span>
+                        <span className="text-white ml-2">{signal.entry}</span>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-500">Take Profit:</span>
-                        <span className="text-gray-900 ml-2">{signal.takeProfit}</span>
+                        <span className="text-sm text-gray-400">Take Profit:</span>
+                        <span className="text-white ml-2">{signal.takeProfit}</span>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-500">Stop Loss:</span>
-                        <span className="text-gray-900 ml-2">{signal.stopLoss}</span>
+                        <span className="text-sm text-gray-400">Stop Loss:</span>
+                        <span className="text-white ml-2">{signal.stopLoss}</span>
                       </div>
                       <div>
-                        <span className="text-sm text-gray-500">Channel:</span>
-                        <span className="text-gray-900 ml-2">
+                        <span className="text-sm text-gray-400">Channel:</span>
+                        <span className="text-white ml-2">
                           {channels.find(ch => ch.id === signal.channel_id)?.fullName || signal.channel_id}
                         </span>
                       </div>
@@ -9151,7 +9151,7 @@ const dailyPnLChartData = useMemo(
 
                     {signal.pnl && (
                       <div className="mb-3">
-                        <span className="text-sm text-gray-500">P&L:</span>
+                        <span className="text-sm text-gray-400">P&L:</span>
                         <span className={`ml-2 font-bold ${
                           signal.pnl.includes('+') || signal.pnl.includes('GAGNANT') ? 'text-green-100' : 
                           signal.pnl.includes('-') || signal.pnl.includes('PERDANT') ? 'text-red-100' : 
@@ -9164,14 +9164,14 @@ const dailyPnLChartData = useMemo(
 
                     {signal.description && (
                       <div className="mb-3">
-                        <span className="text-sm text-gray-500">Description:</span>
-                        <p className="text-gray-900 mt-1">{signal.description}</p>
+                        <span className="text-sm text-gray-400">Description:</span>
+                        <p className="text-white mt-1">{signal.description}</p>
                       </div>
                     )}
 
                     {(signal.attachment_data || signal.closure_image) && (
                       <div className="mb-3">
-                        <span className="text-sm text-gray-500">Images du signal:</span>
+                        <span className="text-sm text-gray-400">Images du signal:</span>
                         <div className="mt-2 space-y-3 flex flex-col items-center">
                           {signal.attachment_data && (
                             <div className="flex flex-col items-center">
@@ -9180,7 +9180,7 @@ const dailyPnLChartData = useMemo(
                                 <img 
                                   src={signal.attachment_data} 
                                   alt="Signal screenshot"
-                                  className="max-w-xs max-h-64 rounded-lg border border-gray-300 cursor-pointer hover:opacity-80 transition-opacity object-contain"
+                                  className="max-w-xs max-h-64 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity object-contain"
                                   onClick={() => setSelectedImage(signal.attachment_data)}
                                 />
                               </div>
@@ -9193,7 +9193,7 @@ const dailyPnLChartData = useMemo(
                                 <img 
                                   src={signal.closure_image} 
                                   alt="Signal closure screenshot"
-                                  className="max-w-xs max-h-64 rounded-lg border border-gray-300 cursor-pointer hover:opacity-80 transition-opacity object-contain"
+                                  className="max-w-xs max-h-64 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity object-contain"
                                   onClick={() => setSelectedImage(signal.closure_image)}
                                 />
                               </div>
@@ -9203,17 +9203,17 @@ const dailyPnLChartData = useMemo(
                       </div>
                     )}
 
-                    <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center justify-between text-sm text-gray-400">
                       <span>Créé le {signal.timestamp}</span>
                     </div>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-6 pt-4 border-t border-gray-300">
+              <div className="mt-6 pt-4 border-t border-gray-600">
                 <button
                   onClick={() => setShowSignalsModal(false)}
-                  className="w-full bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded text-gray-900"
+                  className="w-full bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
                 >
                   Fermer
                 </button>
@@ -9264,12 +9264,12 @@ const dailyPnLChartData = useMemo(
                   e.stopPropagation();
                   handleImageZoom(-0.2);
                 }}
-                className="bg-white/20 hover:bg-white/30 text-gray-900 px-3 py-1 rounded text-sm font-bold"
+                className="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded text-sm font-bold"
                 disabled={imageZoom <= 0.5}
               >
                 −
               </button>
-              <span className="text-gray-900 text-sm px-2 py-1 bg-white/20 rounded">
+              <span className="text-white text-sm px-2 py-1 bg-white/20 rounded">
                 {Math.round(imageZoom * 100)}%
               </span>
               <button
@@ -9277,7 +9277,7 @@ const dailyPnLChartData = useMemo(
                   e.stopPropagation();
                   handleImageZoom(0.2);
                 }}
-                className="bg-white/20 hover:bg-white/30 text-gray-900 px-3 py-1 rounded text-sm font-bold"
+                className="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded text-sm font-bold"
                 disabled={imageZoom >= 5}
               >
                 +
@@ -9299,13 +9299,13 @@ const dailyPnLChartData = useMemo(
                 setSelectedImage(null);
                 resetImageView();
               }}
-              className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-gray-900 rounded-full w-10 h-10 flex items-center justify-center text-xl transition-all"
+              className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl transition-all"
             >
               ×
             </button>
 
             {/* Instructions */}
-            <div className="absolute top-4 left-4 bg-black/50 text-gray-900 text-xs px-3 py-2 rounded-lg">
+            <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-3 py-2 rounded-lg">
               <div>🖱️ Clic pour zoomer</div>
               <div>🔄 Molette pour zoomer</div>
               <div>✋ Glisser quand zoomé</div>
@@ -9318,54 +9318,54 @@ const dailyPnLChartData = useMemo(
       {/* Modal pour ajouter un compte */}
       {showAddAccountModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-gray-50 rounded-lg p-6 w-full max-w-md mx-4">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Ajouter un nouveau compte</h3>
+          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
+            <h3 className="text-xl font-bold text-white mb-4">Ajouter un nouveau compte</h3>
             
             <div className="mb-4">
-              <label className="block text-sm text-gray-600 mb-2">Nom du compte</label>
+              <label className="block text-sm text-gray-300 mb-2">Nom du compte</label>
               <input
                 type="text"
                 value={newAccountName}
                 onChange={(e) => setNewAccountName(e.target.value)}
                 placeholder="Ex: Compte Demo"
-                className="w-full bg-gray-100 border border-gray-300 text-gray-900 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+                className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
                 onKeyPress={(e) => e.key === 'Enter' && handleAddAccount()}
               />
             </div>
             
             <div className="mb-4">
-              <label className="block text-sm text-gray-600 mb-2">Balance initiale ($)</label>
+              <label className="block text-sm text-gray-300 mb-2">Balance initiale ($)</label>
               <input
                 type="number"
                 value={newAccountBalance}
                 onChange={(e) => setNewAccountBalance(e.target.value)}
                 placeholder="Ex: 10000"
-                className="w-full bg-gray-100 border border-gray-300 text-gray-900 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+                className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
                 onKeyPress={(e) => e.key === 'Enter' && handleAddAccount()}
               />
             </div>
             
             <div className="mb-4">
-              <label className="block text-sm text-gray-600 mb-2">Balance actuelle ($) <span className="text-gray-500 text-xs">(optionnel)</span></label>
+              <label className="block text-sm text-gray-300 mb-2">Balance actuelle ($) <span className="text-gray-500 text-xs">(optionnel)</span></label>
               <input
                 type="number"
                 value={newAccountCurrentBalance}
                 onChange={(e) => setNewAccountCurrentBalance(e.target.value)}
                 placeholder="Ex: 12500 (si tu as déjà tradé)"
-                className="w-full bg-gray-100 border border-gray-300 text-gray-900 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+                className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
                 onKeyPress={(e) => e.key === 'Enter' && handleAddAccount()}
               />
               <p className="text-xs text-gray-500 mt-1">Si tu as déjà commencé à trader avec ce compte, indique ton solde actuel</p>
             </div>
             
             <div className="mb-6">
-              <label className="block text-sm text-gray-600 mb-2">Balance minimum ($)</label>
+              <label className="block text-sm text-gray-300 mb-2">Balance minimum ($)</label>
               <input
                 type="number"
                 value={newAccountMinimum}
                 onChange={(e) => setNewAccountMinimum(e.target.value)}
                 placeholder="Ex: 5000 (seuil d'arrêt)"
-                className="w-full bg-gray-100 border border-gray-300 text-gray-900 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+                className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
                 onKeyPress={(e) => e.key === 'Enter' && handleAddAccount()}
               />
             </div>
@@ -9373,7 +9373,7 @@ const dailyPnLChartData = useMemo(
             <div className="flex gap-3">
               <button
                 onClick={handleAddAccount}
-                className="flex-1 bg-green-600 hover:bg-green-700 text-gray-900 px-4 py-2 rounded-lg font-medium"
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium"
               >
                 Créer le compte
               </button>
@@ -9385,7 +9385,7 @@ const dailyPnLChartData = useMemo(
                   setNewAccountCurrentBalance('');
                   setNewAccountMinimum('');
                 }}
-                className="flex-1 bg-gray-200 hover:bg-gray-100 text-gray-900 px-4 py-2 rounded-lg font-medium"
+                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium"
               >
                 Annuler
               </button>
@@ -9397,30 +9397,30 @@ const dailyPnLChartData = useMemo(
       {/* Modal de notification admin */}
       {showNotificationModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-50 rounded-lg p-6 w-full max-w-md mx-4">
+          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">📢 Envoyer une notification</h3>
+              <h3 className="text-lg font-semibold text-white">📢 Envoyer une notification</h3>
               <button
                 onClick={() => {
                   setShowNotificationModal(false);
                   setNotificationMessage('');
                 }}
-                className="text-gray-500 hover:text-gray-900 text-2xl"
+                className="text-gray-400 hover:text-white text-2xl"
               >
                 ×
               </button>
             </div>
             
             <div className="mb-6">
-              <label className="block text-sm text-gray-600 mb-2">Message à envoyer</label>
+              <label className="block text-sm text-gray-300 mb-2">Message à envoyer</label>
               <textarea
                 value={notificationMessage}
                 onChange={(e) => setNotificationMessage(e.target.value)}
                 placeholder="Tapez votre message ici..."
-                className="w-full bg-gray-100 border border-gray-300 text-gray-900 rounded-lg px-3 py-2 h-24 resize-none focus:outline-none focus:border-blue-500"
+                className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 h-24 resize-none focus:outline-none focus:border-blue-500"
                 maxLength={200}
               />
-              <div className="text-xs text-gray-500 mt-1">
+              <div className="text-xs text-gray-400 mt-1">
                 {notificationMessage.length}/200 caractères
               </div>
             </div>
@@ -9437,7 +9437,7 @@ const dailyPnLChartData = useMemo(
                   setShowNotificationModal(false);
                   setNotificationMessage('');
                 }}
-                className="flex-1 bg-gray-200 hover:bg-gray-100 text-gray-900 px-4 py-2 rounded-lg font-medium"
+                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium"
               >
                 Annuler
               </button>
@@ -9450,30 +9450,30 @@ const dailyPnLChartData = useMemo(
       {/* Modal de notification livestream personnalisée */}
       {showLivestreamModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-50 rounded-lg p-6 w-full max-w-md mx-4">
+          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">🔴 Notification Livestream</h3>
+              <h3 className="text-lg font-semibold text-white">🔴 Notification Livestream</h3>
               <button
                 onClick={() => {
                   setShowLivestreamModal(false);
                   setLivestreamMessage('');
                 }}
-                className="text-gray-500 hover:text-gray-900 text-2xl"
+                className="text-gray-400 hover:text-white text-2xl"
               >
                 ×
               </button>
             </div>
             
             <div className="mb-6">
-              <label className="block text-sm text-gray-600 mb-2">Message de notification</label>
+              <label className="block text-sm text-gray-300 mb-2">Message de notification</label>
               <textarea
                 value={livestreamMessage}
                 onChange={(e) => setLivestreamMessage(e.target.value)}
                 placeholder="Exemple: 📈 Nouveau signal BTC en cours ! Entrée à 45,000$ - TP: 47,500$ - SL: 43,500$"
-                className="w-full bg-gray-100 border border-gray-300 text-gray-900 rounded-lg px-3 py-2 h-24 resize-none focus:outline-none focus:border-red-500 placeholder-gray-400"
+                className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 h-24 resize-none focus:outline-none focus:border-red-500 placeholder-gray-400"
                 maxLength={200}
               />
-              <div className="text-xs text-gray-500 mt-1">
+              <div className="text-xs text-gray-400 mt-1">
                 {livestreamMessage.length}/200 caractères
               </div>
             </div>
@@ -9490,7 +9490,7 @@ const dailyPnLChartData = useMemo(
                   setShowLivestreamModal(false);
                   setLivestreamMessage('');
                 }}
-                className="flex-1 bg-gray-200 hover:bg-gray-100 text-gray-900 px-4 py-2 rounded-lg font-medium"
+                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium"
               >
                 Annuler
               </button>
@@ -9502,25 +9502,25 @@ const dailyPnLChartData = useMemo(
       {/* Modal de gestion des raisons de perte */}
       {showLossReasonsModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-50 rounded-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-gray-800 rounded-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-semibold text-gray-900">⚙️ Gérer les raisons de perte</h3>
+                <h3 className="text-xl font-semibold text-white">⚙️ Gérer les raisons de perte</h3>
                 <button
                   onClick={() => {
                     setShowLossReasonsModal(false);
                     setEditingIndex(null);
                     setNewReason({ value: '', emoji: '', label: '' });
                   }}
-                  className="text-gray-500 hover:text-gray-900 text-2xl"
+                  className="text-gray-400 hover:text-white text-2xl"
                 >
                   ×
                 </button>
               </div>
 
               {/* Formulaire d'ajout/édition */}
-              <div className="mb-6 p-4 bg-gray-100 rounded-lg">
-                <h4 className="text-sm font-medium text-gray-600 mb-3">
+              <div className="mb-6 p-4 bg-gray-700 rounded-lg">
+                <h4 className="text-sm font-medium text-gray-300 mb-3">
                   {editingIndex !== null ? '✏️ Modifier la raison' : '➕ Ajouter une raison'}
                 </h4>
                 <div className="mb-3">
@@ -9533,7 +9533,7 @@ const dailyPnLChartData = useMemo(
                       const value = label.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
                       setNewReason({...newReason, label, value});
                     }}
-                    className="w-full bg-gray-200 border border-gray-400 rounded px-3 py-2 text-gray-900"
+                    className="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white"
                   />
                 </div>
                 <div className="flex gap-2">
@@ -9576,7 +9576,7 @@ const dailyPnLChartData = useMemo(
                         setEditingIndex(null);
                         setNewReason({ value: '', emoji: '', label: '' });
                       }}
-                      className="bg-gray-200 hover:bg-gray-100 px-4 py-2 rounded text-gray-900"
+                      className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded text-white"
                     >
                       Annuler
                     </button>
@@ -9586,16 +9586,16 @@ const dailyPnLChartData = useMemo(
 
               {/* Liste des raisons */}
               <div className="space-y-2 mb-6">
-                <h4 className="text-sm font-medium text-gray-600 mb-3">Raisons actuelles ({customLossReasons.length}) :</h4>
+                <h4 className="text-sm font-medium text-gray-300 mb-3">Raisons actuelles ({customLossReasons.length}) :</h4>
                 {customLossReasons.map((reason, index) => (
                   <div 
                     key={index}
-                    className="flex items-center gap-3 p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                    className="flex items-center gap-3 p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors"
                   >
                     <span className="text-2xl">{reason.emoji}</span>
                     <div className="flex-1">
-                      <div className="text-gray-900 font-medium">{reason.label}</div>
-                      <div className="text-xs text-gray-500 font-mono">{reason.value}</div>
+                      <div className="text-white font-medium">{reason.label}</div>
+                      <div className="text-xs text-gray-400 font-mono">{reason.value}</div>
                     </div>
                     <div className="flex gap-2">
                       <button
@@ -9649,7 +9649,7 @@ const dailyPnLChartData = useMemo(
                     setEditingIndex(null);
                     setNewReason({ value: '', emoji: '', label: '' });
                   }}
-                  className="flex-1 bg-gray-200 hover:bg-gray-100 px-4 py-2 rounded text-gray-900 font-medium"
+                  className="flex-1 bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded text-white font-medium"
                 >
                   Fermer
                 </button>
@@ -9662,15 +9662,15 @@ const dailyPnLChartData = useMemo(
       {/* Modal: Signaux/Trades de la semaine */}
       {showWeekSignalsModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" key={`week-modal-${selectedAccount}-${selectedWeek}`}>
-          <div className="bg-gray-50 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="text-2xl font-bold text-white">
                   {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? 'Trades de la Semaine' : 'Signaux de la Semaine'} {selectedWeek}
                 </h2>
                 <button
                   onClick={() => setShowWeekSignalsModal(false)}
-                  className="text-gray-500 hover:text-gray-900 text-2xl"
+                  className="text-gray-400 hover:text-white text-2xl"
                 >
                   ×
                 </button>
@@ -9721,7 +9721,7 @@ const dailyPnLChartData = useMemo(
 
                     return weekTrades.length > 0 ? (
                       weekTrades.map((trade) => (
-                        <div key={trade.id} className="bg-gray-100 rounded-lg p-4 border border-gray-300">
+                        <div key={trade.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
                           <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-3">
                               <span className={`px-2 py-1 rounded text-xs font-bold ${
@@ -9729,12 +9729,12 @@ const dailyPnLChartData = useMemo(
                               }`}>
                                 {trade.type}
                               </span>
-                              <span className="text-lg font-bold text-gray-900">{trade.symbol}</span>
-                              <span className="text-sm text-gray-500">{trade.date}</span>
+                              <span className="text-lg font-bold text-white">{trade.symbol}</span>
+                              <span className="text-sm text-gray-400">{trade.date}</span>
                             </div>
                             <div className="flex items-center gap-2">
                               <span className={`px-2 py-1 rounded text-xs ${
-                                trade.status === 'WIN' ? 'bg-green-600 text-gray-900' :
+                                trade.status === 'WIN' ? 'bg-green-600 text-white' :
                                 trade.status === 'LOSS' ? 'bg-red-600 text-white' :
                                 trade.status === 'BE' ? 'bg-blue-600 text-white' :
                                 'bg-yellow-600 text-white'
@@ -9743,7 +9743,7 @@ const dailyPnLChartData = useMemo(
                               </span>
                               <button
                                 onClick={() => handleEditTrade(trade)}
-                                className="px-3 py-1 rounded text-sm bg-gray-200 hover:bg-gray-300 text-gray-900"
+                                className="px-3 py-1 rounded text-sm bg-gray-600 hover:bg-gray-500 text-white"
                                 title="Modifier ce trade"
                               >
                                 Modifier
@@ -9753,19 +9753,19 @@ const dailyPnLChartData = useMemo(
 
                           <div className="grid grid-cols-2 gap-4 mb-3">
                             <div>
-                              <span className="text-sm text-gray-500">Entry:</span>
-                              <span className="text-gray-900 ml-2">{trade.entry}</span>
+                              <span className="text-sm text-gray-400">Entry:</span>
+                              <span className="text-white ml-2">{trade.entry}</span>
                             </div>
                             <div>
-                              <span className="text-sm text-gray-500">Exit:</span>
-                              <span className="text-gray-900 ml-2">{trade.exit}</span>
+                              <span className="text-sm text-gray-400">Exit:</span>
+                              <span className="text-white ml-2">{trade.exit}</span>
                             </div>
                             <div>
-                              <span className="text-sm text-gray-500">Stop Loss:</span>
-                              <span className="text-gray-900 ml-2">{trade.stopLoss}</span>
+                              <span className="text-sm text-gray-400">Stop Loss:</span>
+                              <span className="text-white ml-2">{trade.stopLoss}</span>
                             </div>
                             <div>
-                              <span className="text-sm text-gray-500">PnL:</span>
+                              <span className="text-sm text-gray-400">PnL:</span>
                               <span className={`ml-2 font-bold ${
                                 trade.pnl && trade.pnl.includes('-') ? 'text-red-100' : 'text-green-100'
                               }`}>
@@ -9776,15 +9776,15 @@ const dailyPnLChartData = useMemo(
 
                           {trade.notes && (
                             <div className="mb-3">
-                              <span className="text-sm text-gray-500">Notes:</span>
-                              <p className="text-gray-900 mt-1">{trade.notes}</p>
+                              <span className="text-sm text-gray-400">Notes:</span>
+                              <p className="text-white mt-1">{trade.notes}</p>
                             </div>
                           )}
 
                           {/* Affichage des images */}
                           {(trade.image1 || trade.image2) && (
                             <div className="mb-3">
-                              <span className="text-sm text-gray-500">Images:</span>
+                              <span className="text-sm text-gray-400">Images:</span>
                               <div className="mt-2 space-y-3 flex flex-col items-center">
                                 {trade.image1 && (
                                   <div className="flex flex-col items-center">
@@ -9793,7 +9793,7 @@ const dailyPnLChartData = useMemo(
                                       <img 
                                         src={trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1}
                                         alt="Trade image 1"
-                                        className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-300"
+                                        className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
                                         onClick={() => setSelectedImage(trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1)}
                                       />
                                     </div>
@@ -9806,7 +9806,7 @@ const dailyPnLChartData = useMemo(
                                       <img 
                                         src={trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2}
                                         alt="Trade image 2"
-                                        className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-300"
+                                        className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
                                         onClick={() => setSelectedImage(trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2)}
                                       />
                                     </div>
@@ -9816,15 +9816,15 @@ const dailyPnLChartData = useMemo(
                             </div>
                           )}
 
-                          <div className="flex items-center justify-between text-sm text-gray-500">
+                          <div className="flex items-center justify-between text-sm text-gray-400">
                             <span>Créé le {trade.timestamp}</span>
                           </div>
                         </div>
                       ))
                     ) : (
                       <div className="text-center py-8">
-                        <div className="text-gray-500 text-lg mb-2">📊</div>
-                        <div className="text-gray-600 text-lg font-medium">Aucun trade pour cette semaine</div>
+                        <div className="text-gray-400 text-lg mb-2">📊</div>
+                        <div className="text-gray-300 text-lg font-medium">Aucun trade pour cette semaine</div>
                         <div className="text-gray-500 text-sm mt-1">Tes trades apparaîtront ici quand tu les ajouteras</div>
                       </div>
                     );
@@ -9868,7 +9868,7 @@ const dailyPnLChartData = useMemo(
 
                     return weekSignals.length > 0 ? (
                       weekSignals.map((signal) => (
-                        <div key={signal.id} className="bg-gray-100 rounded-lg p-4 border border-gray-300">
+                        <div key={signal.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
                           <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-3">
                               <span className={`px-2 py-1 rounded text-xs font-bold ${
@@ -9876,11 +9876,11 @@ const dailyPnLChartData = useMemo(
                               }`}>
                                 {signal.type}
                               </span>
-                              <span className="text-lg font-bold text-gray-900">{signal.symbol}</span>
-                              <span className="text-sm text-gray-500">{signal.timeframe}</span>
+                              <span className="text-lg font-bold text-white">{signal.symbol}</span>
+                              <span className="text-sm text-gray-400">{signal.timeframe}</span>
                             </div>
                             <span className={`px-2 py-1 rounded text-xs ${
-                              signal.status === 'WIN' ? 'bg-green-600 text-gray-900' :
+                              signal.status === 'WIN' ? 'bg-green-600 text-white' :
                               signal.status === 'LOSS' ? 'bg-red-600 text-white' :
                               signal.status === 'BE' ? 'bg-blue-600 text-white' :
                               'bg-yellow-600 text-white'
@@ -9891,19 +9891,19 @@ const dailyPnLChartData = useMemo(
 
                           <div className="grid grid-cols-2 gap-4 mb-3">
                             <div>
-                              <span className="text-sm text-gray-500">Entry:</span>
-                              <span className="text-gray-900 ml-2">{signal.entry}</span>
+                              <span className="text-sm text-gray-400">Entry:</span>
+                              <span className="text-white ml-2">{signal.entry}</span>
                             </div>
                             <div>
-                              <span className="text-sm text-gray-500">Take Profit:</span>
-                              <span className="text-gray-900 ml-2">{signal.takeProfit}</span>
+                              <span className="text-sm text-gray-400">Take Profit:</span>
+                              <span className="text-white ml-2">{signal.takeProfit}</span>
                             </div>
                             <div>
-                              <span className="text-sm text-gray-500">Stop Loss:</span>
-                              <span className="text-gray-900 ml-2">{signal.stopLoss}</span>
+                              <span className="text-sm text-gray-400">Stop Loss:</span>
+                              <span className="text-white ml-2">{signal.stopLoss}</span>
                             </div>
                             <div>
-                              <span className="text-sm text-gray-500">PnL:</span>
+                              <span className="text-sm text-gray-400">PnL:</span>
                               <span className={`ml-2 font-bold ${
                                 signal.pnl && signal.pnl.includes('-') ? 'text-red-100' : 'text-green-100'
                               }`}>
@@ -9914,20 +9914,20 @@ const dailyPnLChartData = useMemo(
 
                           {signal.description && (
                             <div className="mb-3">
-                              <span className="text-sm text-gray-500">Description:</span>
-                              <p className="text-gray-900 mt-1 whitespace-pre-wrap">{signal.description}</p>
+                              <span className="text-sm text-gray-400">Description:</span>
+                              <p className="text-white mt-1 whitespace-pre-wrap">{signal.description}</p>
                             </div>
                           )}
 
                           {(signal.attachment_data || signal.closure_image) && (
                             <div className="mb-3">
-                              <span className="text-sm text-gray-500 block mb-2">Images:</span>
+                              <span className="text-sm text-gray-400 block mb-2">Images:</span>
                               <div className="flex flex-wrap gap-3">
                                 {signal.attachment_data && (
                                   <img 
                                     src={signal.attachment_data} 
                                     alt="Signal"
-                                    className="w-32 h-32 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-300"
+                                    className="w-32 h-32 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
                                     onClick={() => setSelectedImage(signal.attachment_data)}
                                   />
                                 )}
@@ -9935,7 +9935,7 @@ const dailyPnLChartData = useMemo(
                                   <img 
                                     src={signal.closure_image}
                                     alt="Closure"
-                                    className="w-32 h-32 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-300"
+                                    className="w-32 h-32 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
                                     onClick={() => setSelectedImage(signal.closure_image)}
                                   />
                                 )}
@@ -9943,15 +9943,15 @@ const dailyPnLChartData = useMemo(
                             </div>
                           )}
 
-                          <div className="flex items-center justify-between text-sm text-gray-500">
+                          <div className="flex items-center justify-between text-sm text-gray-400">
                             <span>Envoyé le {signal.timestamp}</span>
                           </div>
                         </div>
                       ))
                     ) : (
                       <div className="text-center py-8">
-                        <div className="text-gray-500 text-lg mb-2">📊</div>
-                        <div className="text-gray-600 text-lg font-medium">Aucun signal pour cette semaine</div>
+                        <div className="text-gray-400 text-lg mb-2">📊</div>
+                        <div className="text-gray-300 text-lg font-medium">Aucun signal pour cette semaine</div>
                         <div className="text-gray-500 text-sm mt-1">Les signaux apparaîtront ici quand ils seront publiés</div>
                       </div>
                     );
@@ -9959,10 +9959,10 @@ const dailyPnLChartData = useMemo(
                 )}
               </div>
 
-              <div className="mt-6 pt-4 border-t border-gray-300">
+              <div className="mt-6 pt-4 border-t border-gray-600">
                 <button
                   onClick={() => setShowWeekSignalsModal(false)}
-                  className="w-full bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded text-gray-900"
+                  className="w-full bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
                 >
                   Fermer
                 </button>
