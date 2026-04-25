@@ -23,7 +23,7 @@ const ARTICLES: Article[] = [
       },
       {
         heading: "Le vrai problème",
-        body: "Sans cadre clair — règles d'entrée définies, taille de position fixée à l'avance, conditions de sortie non négociables — chaque trade devient une décision émotionnelle. Et les décisions émotionnelles sont aléatoires par nature. Un jour tu coupes trop tôt parce que le marché t'a fait peur la veille. Le lendemain tu tiens trop longtemps parce que tu veux « récupérer ». Résultat : une performance chaotique qui ne reflète même pas ta capacité réelle à lire le marché.",
+        body: "Sans cadre clair, règles d'entrée définies, taille de position fixée à l'avance, conditions de sortie non négociables, chaque trade devient une décision émotionnelle. Et les décisions émotionnelles sont aléatoires par nature. Un jour tu coupes trop tôt parce que le marché t'a fait peur la veille. Le lendemain tu tiens trop longtemps parce que tu veux « récupérer ». Résultat : une performance chaotique qui ne reflète même pas ta capacité réelle à lire le marché.",
       },
       {
         heading: "Ce que la structure change",
@@ -49,7 +49,7 @@ const ARTICLES: Article[] = [
       },
       {
         heading: "Ce qu'un vrai journal capture",
-        body: "Un vrai journal capture ce qui se passe avant et pendant le trade : ton état mental au moment de l'entrée, la raison exacte pour laquelle tu as pris la position, si tu as respecté tes règles — indépendamment du résultat. C'est cette dernière distinction qui est critique.",
+        body: "Un vrai journal capture ce qui se passe avant et pendant le trade : ton état mental au moment de l'entrée, la raison exacte pour laquelle tu as pris la position, si tu as respecté tes règles, indépendamment du résultat. C'est cette dernière distinction qui est critique.",
       },
       {
         heading: "Le résultat ne dit pas tout",
@@ -57,7 +57,7 @@ const ARTICLES: Article[] = [
       },
       {
         heading: "Le format minimal",
-        body: "Date — Actif — Direction — Raison d'entrée — Respect des règles (oui/non) — Ce que j'aurais dû faire différemment. Cinq lignes suffisent. Ce n'est pas la longueur qui compte, c'est la régularité et l'honnêteté. Sans ça, tu analyses du bruit.",
+        body: "Date, Actif, Direction, Raison d'entrée, Respect des règles (oui/non), Ce que j'aurais dû faire différemment. Cinq lignes suffisent. Ce n'est pas la longueur qui compte, c'est la régularité et l'honnêteté. Sans ça, tu analyses du bruit.",
       },
     ],
   },
@@ -68,15 +68,15 @@ const ARTICLES: Article[] = [
     readTime: "5 min",
     date: "Avril 2026",
     intro:
-      "Même les traders structurés tombent dans ces pièges. Les connaître ne suffit pas — mais c'est le premier pas.",
+      "Même les traders structurés tombent dans ces pièges. Les connaître ne suffit pas, mais c'est le premier pas.",
     sections: [
       {
         heading: "1. Le biais de récence",
-        body: "Après 3 pertes consécutives, ton cerveau conclut que ta méthode est cassée. Après 3 gains, il conclut qu'elle est parfaite. Les deux sont faux. Un échantillon de 3 trades ne signifie rien statistiquement. Une méthode solide peut avoir 10 pertes de suite et rester profitable sur 100 trades. Le biais de récence te pousse à changer de méthode trop tôt — juste avant qu'elle ne commence à payer.",
+        body: "Après 3 pertes consécutives, ton cerveau conclut que ta méthode est cassée. Après 3 gains, il conclut qu'elle est parfaite. Les deux sont faux. Un échantillon de 3 trades ne signifie rien statistiquement. Une méthode solide peut avoir 10 pertes de suite et rester profitable sur 100 trades. Le biais de récence te pousse à changer de méthode trop tôt, juste avant qu'elle ne commence à payer.",
       },
       {
         heading: "2. L'aversion à la perte",
-        body: "Tu coupes tes gains trop tôt par peur de les perdre. Tu laisses courir tes pertes en espérant un retournement. Résultat : des petits gains et de grosses pertes. C'est l'inverse de ce qu'il faut pour être profitable sur le long terme. Ce biais est câblé dans notre cerveau — la douleur d'une perte est psychologiquement deux fois plus intense que le plaisir d'un gain équivalent. La seule façon de le contourner : des règles de sortie définies à l'avance, pas en temps réel.",
+        body: "Tu coupes tes gains trop tôt par peur de les perdre. Tu laisses courir tes pertes en espérant un retournement. Résultat : des petits gains et de grosses pertes. C'est l'inverse de ce qu'il faut pour être profitable sur le long terme. Ce biais est câblé dans notre cerveau, la douleur d'une perte est psychologiquement deux fois plus intense que le plaisir d'un gain équivalent. La seule façon de le contourner : des règles de sortie définies à l'avance, pas en temps réel.",
       },
       {
         heading: "3. Le biais de confirmation",
@@ -98,7 +98,7 @@ const ARTICLES: Article[] = [
       },
       {
         heading: "Pourquoi la constance crée de la donnée",
-        body: "Si ton exécution varie — si tu sizes différemment selon ton humeur, si tu sors plus tôt quand tu es stressé, si tu prends des positions supplémentaires quand tu es en confiance — tu ne sais pas si c'est ta stratégie ou ton comportement qui génère les résultats. Tu ne peux rien améliorer parce que tu n'as rien à analyser. La constance crée de la donnée. La donnée te permet de t'améliorer.",
+        body: "Si ton exécution varie, si tu sizes différemment selon ton humeur, si tu sors plus tôt quand tu es stressé, si tu prends des positions supplémentaires quand tu es en confiance, tu ne sais pas si c'est ta stratégie ou ton comportement qui génère les résultats. Tu ne peux rien améliorer parce que tu n'as rien à analyser. La constance crée de la donnée. La donnée te permet de t'améliorer.",
       },
       {
         heading: "Ce que les marchés récompensent vraiment",
@@ -106,7 +106,7 @@ const ARTICLES: Article[] = [
       },
       {
         heading: "Comment construire la constance",
-        body: "Fixe des règles que tu peux tenir même dans tes pires journées. Pas tes meilleures — tes pires. Si ta règle de risk demande trop de calcul mental quand tu es fatigué, simplifie-la. Si ta condition d'entrée est trop subjective pour être appliquée sous pression, rends-la plus objective. La constance se construit sur des règles simples, pas sur des intentions.",
+        body: "Fixe des règles que tu peux tenir même dans tes pires journées. Pas tes meilleures, tes pires. Si ta règle de risk demande trop de calcul mental quand tu es fatigué, simplifie-la. Si ta condition d'entrée est trop subjective pour être appliquée sous pression, rends-la plus objective. La constance se construit sur des règles simples, pas sur des intentions.",
       },
     ],
   },
@@ -117,7 +117,7 @@ const ARTICLES: Article[] = [
     readTime: "5 min",
     date: "Avril 2026",
     intro:
-      "Les pilotes de ligne ne décollent pas sans checklist. Les chirurgiens ne commencent pas sans protocole. Les traders professionnels ne rentrent pas dans un trade sans vérification systématique. Ce n'est pas de la bureaucratie — c'est ce qui sépare l'exécution fiable de l'improvisation.",
+      "Les pilotes de ligne ne décollent pas sans checklist. Les chirurgiens ne commencent pas sans protocole. Les traders professionnels ne rentrent pas dans un trade sans vérification systématique. Ce n'est pas de la bureaucratie, c'est ce qui sépare l'exécution fiable de l'improvisation.",
     sections: [
       {
         heading: "Pourquoi ta mémoire ne suffit pas",
@@ -133,7 +133,7 @@ const ARTICLES: Article[] = [
       },
       {
         heading: "L'erreur à éviter",
-        body: "Ne crée pas une checklist trop longue. Vingt critères ne te protègent pas mieux que huit — ils te paralysent. La checklist doit accélérer ta décision en la rendant plus fiable, pas la ralentir. Si elle devient un fardeau, tu cesseras de l'utiliser. Commence court, reste court.",
+        body: "Ne crée pas une checklist trop longue. Vingt critères ne te protègent pas mieux que huit, ils te paralysent. La checklist doit accélérer ta décision en la rendant plus fiable, pas la ralentir. Si elle devient un fardeau, tu cesseras de l'utiliser. Commence court, reste court.",
       },
     ],
   },
@@ -148,11 +148,11 @@ const ARTICLES: Article[] = [
     sections: [
       {
         heading: "Le problème avec « rester calme »",
-        body: "La peur, la frustration, l'euphorie — ce sont des réponses automatiques du cerveau face à l'incertitude et à l'enjeu financier. Tu ne peux pas les éteindre par la volonté. Essayer de « ne pas avoir peur » quand tu vois un trade partir en négatif, c'est comme essayer de ne pas avoir faim. L'émotion est là. La question c'est : est-ce qu'elle dirige ta décision ?",
+        body: "La peur, la frustration, l'euphorie, ce sont des réponses automatiques du cerveau face à l'incertitude et à l'enjeu financier. Tu ne peux pas les éteindre par la volonté. Essayer de « ne pas avoir peur » quand tu vois un trade partir en négatif, c'est comme essayer de ne pas avoir faim. L'émotion est là. La question c'est : est-ce qu'elle dirige ta décision ?",
       },
       {
         heading: "Ce que le cadre change",
-        body: "Quand tes règles sont définies avant d'entrer dans le trade — taille de position, stop loss, conditions de sortie — l'émotion n'a plus de levier. Tu n'as pas à décider sous pression parce que la décision est déjà prise. Tu exécutes un plan. L'émotion peut être là, elle ne change rien à ce que tu fais.",
+        body: "Quand tes règles sont définies avant d'entrer dans le trade, taille de position, stop loss, conditions de sortie, l'émotion n'a plus de levier. Tu n'as pas à décider sous pression parce que la décision est déjà prise. Tu exécutes un plan. L'émotion peut être là, elle ne change rien à ce que tu fais.",
       },
       {
         heading: "Les deux situations à risque",
@@ -160,7 +160,7 @@ const ARTICLES: Article[] = [
       },
       {
         heading: "Ce que tu dois construire",
-        body: "Un environnement de trading où les décisions importantes sont prises hors marché. Taille de position calculée avant l'entrée. Niveaux de sortie posés avant l'entrée. Nombre maximum de trades par jour défini à l'avance. Quand le marché est ouvert, ton seul rôle est d'exécuter ce que tu as planifié — pas de penser, pas de décider, pas de ressentir. Juste exécuter.",
+        body: "Un environnement de trading où les décisions importantes sont prises hors marché. Taille de position calculée avant l'entrée. Niveaux de sortie posés avant l'entrée. Nombre maximum de trades par jour défini à l'avance. Quand le marché est ouvert, ton seul rôle est d'exécuter ce que tu as planifié, pas de penser, pas de décider, pas de ressentir. Juste exécuter.",
       },
     ],
   },
