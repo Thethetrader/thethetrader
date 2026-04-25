@@ -126,17 +126,84 @@ const LEARNING_TILES: { src: string; kind: "img" | "video"; poster?: string }[] 
   { src: "/images/hero/hero-mobile-1.webp", kind: "img" },
 ];
 
-const MOBILE_LEARNING_TILES: { src: string; kind: "img" | "video" }[] = [
-  { src: "/images/hero/hero-tpln-1.webp", kind: "img" },
-  { src: "/images/hero/hero-mobile-3.webp", kind: "img" },
-  { src: "/images/hero/hero-tpln-2.webp", kind: "img" },
-  { src: "/images/hero/hero-mobile-1.webp", kind: "img" },
-  { src: "/images/hero/hero-tpln.mov", kind: "video" },
-  { src: "/images/hero/hero-mobile-2.webp", kind: "img" },
-  { src: "/images/hero/hero-tpln-3.webp", kind: "img" },
-  { src: "/images/ecosystem/tpln-section2-1.webp", kind: "img" },
-  { src: "/images/ecosystem/tpln-section4-1.webp", kind: "img" },
+type TileMedia = { src: string; kind: "img" | "video" };
+
+const SWIPE_TILE_GROUPS: TileMedia[][] = [
+  [{ src: "/images/hero/hero-tpln-1.webp", kind: "img" }, { src: "/images/hero/hero-mobile-3.webp", kind: "img" }],
+  [{ src: "/images/hero/hero-mobile-1.webp", kind: "img" }, { src: "/images/ecosystem/tpln-section2-1.webp", kind: "img" }],
+  [{ src: "/images/hero/hero-tpln-2.webp", kind: "img" }, { src: "/images/hero/hero-tpln-3.webp", kind: "img" }],
+  [{ src: "/images/hero/hero-mobile-2.webp", kind: "img" }, { src: "/images/ecosystem/tpln-section4-1.webp", kind: "img" }],
+  [{ src: "/images/hero/hero-tpln.mov", kind: "video" }, { src: "/images/hero/hero-tpln-1.webp", kind: "img" }],
+  [{ src: "/images/hero/hero-mobile-2.webp", kind: "img" }, { src: "/images/hero/hero-tpln-2.webp", kind: "img" }],
+  [{ src: "/images/hero/hero-tpln-3.webp", kind: "img" }, { src: "/images/hero/hero-mobile-3.webp", kind: "img" }],
+  [{ src: "/images/ecosystem/tpln-section2-1.webp", kind: "img" }, { src: "/images/hero/hero-mobile-1.webp", kind: "img" }],
+  [{ src: "/images/ecosystem/tpln-section4-1.webp", kind: "img" }, { src: "/images/hero/hero-tpln.mov", kind: "video" }],
 ];
+
+function SwipeTile({ items, onExpand }: { items: TileMedia[]; onExpand?: (item: TileMedia) => void }) {
+  const [idx, setIdx] = useState(0);
+  const startXRef = useRef<number | null>(null);
+  const [liveOffset, setLiveOffset] = useState(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    startXRef.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (startXRef.current === null) return;
+    e.stopPropagation();
+    setLiveOffset(e.touches[0].clientX - startXRef.current);
+  };
+
+  const handleTouchEnd = () => {
+    const delta = liveOffset;
+    setLiveOffset(0);
+    startXRef.current = null;
+    if (delta < -30 && idx < items.length - 1) setIdx(idx + 1);
+    else if (delta > 30 && idx > 0) setIdx(idx - 1);
+  };
+
+  return (
+    <div
+      style={{ width: 160, height: 90, borderRadius: 8, overflow: "hidden", background: "#111", flexShrink: 0, position: "relative", touchAction: "pan-y" }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onClick={() => onExpand?.(items[idx])}
+    >
+      <div style={{
+        display: "flex",
+        height: "100%",
+        transform: `translateX(calc(${-idx * 160}px + ${liveOffset}px))`,
+        transition: liveOffset !== 0 ? "none" : "transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+        willChange: "transform",
+      }}>
+        {items.map((t, i) => (
+          <div key={i} style={{ width: 160, height: 90, flexShrink: 0 }}>
+            {t.kind === "img" ? (
+              <img src={t.src} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+            ) : (
+              <video autoPlay loop muted playsInline style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}>
+                <source src={t.src} type="video/mp4" />
+              </video>
+            )}
+          </div>
+        ))}
+      </div>
+      {items.length > 1 && (
+        <div style={{ position: "absolute", bottom: 5, left: 0, right: 0, display: "flex", justifyContent: "center", gap: 3, pointerEvents: "none" }}>
+          {items.map((_, i) => (
+            <div key={i} style={{
+              width: i === idx ? 10 : 3, height: 3, borderRadius: 2,
+              background: i === idx ? "#fff" : "rgba(255,255,255,0.5)",
+              transition: "width 0.2s, background 0.2s",
+            }} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function Tile({
   src,
@@ -708,9 +775,9 @@ export function EcosystemSection() {
                         @keyframes slide-right { from { transform: translateX(-50%); } to { transform: translateX(0); } }
                       `}</style>
                       {[
-                        { tiles: [MOBILE_LEARNING_TILES[0], MOBILE_LEARNING_TILES[1], MOBILE_LEARNING_TILES[2], MOBILE_LEARNING_TILES[3]], dir: "left", dur: "50s" },
-                        { tiles: [MOBILE_LEARNING_TILES[4], MOBILE_LEARNING_TILES[5], MOBILE_LEARNING_TILES[6], MOBILE_LEARNING_TILES[7]], dir: "right", dur: "60s" },
-                        { tiles: [MOBILE_LEARNING_TILES[8], MOBILE_LEARNING_TILES[0], MOBILE_LEARNING_TILES[4], MOBILE_LEARNING_TILES[2]], dir: "left", dur: "45s" },
+                        { tiles: [SWIPE_TILE_GROUPS[0], SWIPE_TILE_GROUPS[1], SWIPE_TILE_GROUPS[2], SWIPE_TILE_GROUPS[3]], dir: "left", dur: "50s" },
+                        { tiles: [SWIPE_TILE_GROUPS[4], SWIPE_TILE_GROUPS[5], SWIPE_TILE_GROUPS[6], SWIPE_TILE_GROUPS[7]], dir: "right", dur: "60s" },
+                        { tiles: [SWIPE_TILE_GROUPS[8], SWIPE_TILE_GROUPS[0], SWIPE_TILE_GROUPS[4], SWIPE_TILE_GROUPS[2]], dir: "left", dur: "45s" },
                       ].map((row, rowIdx) => (
                         <div key={rowIdx} style={{ overflow: "hidden" }}>
                           <div style={{
@@ -719,16 +786,8 @@ export function EcosystemSection() {
                             width: "max-content",
                             animation: `${row.dir === "left" ? "slide-left" : "slide-right"} ${row.dur} linear infinite`,
                           }}>
-                            {[...row.tiles, ...row.tiles].map((t, i) => (
-                              <div key={i} onClick={() => setLightbox({ src: t.src, kind: t.kind })} style={{ width: 160, height: 90, borderRadius: 8, overflow: "hidden", background: "#fff", flexShrink: 0, cursor: "pointer" }}>
-                                {t.kind === "img" ? (
-                                  <img src={t.src} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-                                ) : (
-                                  <video autoPlay loop muted playsInline style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}>
-                                    <source src={t.src} type="video/mp4" />
-                                  </video>
-                                )}
-                              </div>
+                            {[...row.tiles, ...row.tiles].map((group, i) => (
+                              <SwipeTile key={i} items={group} onExpand={(item) => setLightbox({ src: item.src, kind: item.kind })} />
                             ))}
                           </div>
                         </div>
