@@ -69,9 +69,10 @@ export const handler = async (event) => {
         return { statusCode: 400, headers: hdrs, body: JSON.stringify({ error: 'Type de fichier non autorisé' }) };
       const buf = Buffer.from(file_data, 'base64');
       const ext = file_mime.split('/')[1].replace('jpeg', 'jpg');
-      const { error: uploadErr } = await supabase.storage.from('chat-files').upload(`${convId}/${Date.now()}.${ext}`, buf, { contentType: file_mime });
+      const storagePath = `${convId}/${Date.now()}.${ext}`;
+      const { error: uploadErr } = await supabase.storage.from('chat-files').upload(storagePath, buf, { contentType: file_mime });
       if (uploadErr) return { statusCode: 500, headers: hdrs, body: JSON.stringify({ error: 'upload: ' + uploadErr.message }) };
-      const { data: { publicUrl } } = supabase.storage.from('chat-files').getPublicUrl(`${convId}/${Date.now()}.${ext}`);
+      const { data: { publicUrl } } = supabase.storage.from('chat-files').getPublicUrl(storagePath);
       file_url = publicUrl;
     }
 

@@ -147,8 +147,28 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
     const isImage = mime.startsWith('image/');
     const isPdf = mime === 'application/pdf';
     if (!isImage && !isPdf) { setError('Seuls les images et PDF sont acceptés'); return; }
+
+    // Aperçu immédiat
+    const localUrl = URL.createObjectURL(file);
+    const tempId = `tmp_${Date.now()}`;
+    const tempMsg: Msg = { id: tempId, sender_type: 'visitor', content: null, message_type: isImage ? 'image' : 'pdf', file_url: localUrl, file_name: file.name, duration_seconds: null, created_at: new Date().toISOString() };
+    setMessages(prev => [...prev, tempMsg]);
+
     const file_data = await toBase64(file);
-    await doSend({ message_type: isImage ? 'image' : 'pdf', file_data, file_name: file.name, file_mime: mime });
+    setSending(true);
+    setError('');
+    try {
+      const json = await postSend({ ...basePayload(), message_type: isImage ? 'image' : 'pdf', file_data, file_name: file.name, file_mime: mime });
+      if (!conversationId) saveConvId(json.conversation_id);
+      // Remplace le message temporaire par le vrai
+      setMessages(prev => prev.map(m => m.id === tempId ? json.message : m));
+      lastCreatedAt.current = json.message.created_at;
+      URL.revokeObjectURL(localUrl);
+    } catch (err: any) {
+      setMessages(prev => prev.filter(m => m.id !== tempId));
+      URL.revokeObjectURL(localUrl);
+      setError(err.message || 'Erreur lors de l\'envoi');
+    } finally { setSending(false); }
   }
 
   async function startRecording() {

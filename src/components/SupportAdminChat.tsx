@@ -149,13 +149,37 @@ export default function SupportAdminChat() {
     const isImage = mime.startsWith('image/');
     const isPdf = mime === 'application/pdf';
     if (!isImage && !isPdf) { alert('Seuls les images et PDF sont acceptés'); return; }
+
+    const localUrl = URL.createObjectURL(file);
+    const tempId = `tmp_${Date.now()}`;
+    const tempMsg: Msg = { id: tempId, sender_type: 'admin', content: null, message_type: isImage ? 'image' : 'pdf', file_url: localUrl, file_name: file.name, duration_seconds: null, created_at: new Date().toISOString(), read_by_admin: true };
+    setMessages(prev => [...prev, tempMsg]);
+
     const b64: string = await new Promise((res, rej) => {
       const r = new FileReader();
       r.onload = () => res((r.result as string).split(',')[1]);
       r.onerror = rej;
       r.readAsDataURL(file);
     });
-    await doSend({ message_type: isImage ? 'image' : 'pdf', file_data: b64, file_name: file.name, file_mime: mime });
+
+    if (!activeId || sending) { setMessages(prev => prev.filter(m => m.id !== tempId)); URL.revokeObjectURL(localUrl); return; }
+    setSending(true);
+    try {
+      const token = await getToken();
+      const res = await fetch(SEND_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+        body: JSON.stringify({ conversation_id: activeId, message_type: isImage ? 'image' : 'pdf', file_data: b64, file_name: file.name, file_mime: mime }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error);
+      setMessages(prev => prev.map(m => m.id === tempId ? json.message : m));
+      URL.revokeObjectURL(localUrl);
+    } catch (err: any) {
+      setMessages(prev => prev.filter(m => m.id !== tempId));
+      URL.revokeObjectURL(localUrl);
+      alert(err.message || 'Erreur envoi');
+    } finally { setSending(false); }
   }
 
   async function startRecording() {
