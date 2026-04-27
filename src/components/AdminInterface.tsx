@@ -6388,7 +6388,7 @@ const dailyPnLChartData = useMemo(
             }`}
             style={{ backgroundColor: '#111827', minHeight: '100vh' }}
           >
-            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'user-management' || selectedChannel.id === 'check-trade') ? (
+            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'user-management' || selectedChannel.id === 'check-trade' || selectedChannel.id === 'support-admin') ? (
               <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '0px' }}>
                 {/* Header avec bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
                 {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') && (
@@ -7178,7 +7178,7 @@ const dailyPnLChartData = useMemo(
 
         {/* Desktop Content Area */}
         <div className="hidden md:block flex-1 overflow-y-auto overflow-x-hidden">
-          {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'user-management' || selectedChannel.id === 'check-trade') ? (
+          {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'user-management' || selectedChannel.id === 'check-trade' || selectedChannel.id === 'support-admin') ? (
             getTradingCalendar()
           ) : (
             <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '80px', paddingBottom: '80px' }}>
