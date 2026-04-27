@@ -9741,7 +9741,7 @@ export default function TradingPlatformShell() {
         borderTop: '1px solid #374151',
         paddingBottom: 'env(safe-area-inset-bottom, 6px)',
       }}>
-        <div className="flex items-end justify-around" style={{ height: 64 }}>
+        <div className="flex items-end justify-around" style={{ height: 78 }}>
           {/* Accueil */}
           <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setMobileView('channels'); }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: mobileView === 'channels' ? '#c9a84c' : '#6b7280' }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill={mobileView === 'channels' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
