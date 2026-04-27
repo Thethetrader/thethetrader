@@ -9,13 +9,10 @@ const urlsToCache = [
 
 // Installation du service worker
 self.addEventListener('install', (event) => {
-  console.log('🚀 Service Worker installé');
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('📦 Cache ouvert');
-        return cache.addAll(urlsToCache);
-      })
+      .then((cache) => cache.addAll(urlsToCache))
+      .then(() => self.skipWaiting()) // take over immediately, don't wait for old SW to die
   );
 });
 
@@ -23,23 +20,13 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   console.log('✅ Service Worker activé - FORCE REFRESH');
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('🗑️ Suppression ancien cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => {
-      // Forcer le rechargement de toutes les pages ouvertes
-      self.clients.matchAll().then(clients => {
-        clients.forEach(client => {
-          client.postMessage({ type: 'FORCE_REFRESH' });
-        });
-      });
-    })
+    caches.keys()
+      .then((cacheNames) => Promise.all(
+        cacheNames.map((cacheName) => cacheName !== CACHE_NAME && caches.delete(cacheName))
+      ))
+      .then(() => self.clients.claim()) // take control of all open pages immediately
+      .then(() => self.clients.matchAll())
+      .then((clients) => clients.forEach(client => client.postMessage({ type: 'FORCE_REFRESH' })))
   );
 });
 
