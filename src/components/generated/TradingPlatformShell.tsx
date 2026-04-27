@@ -15,6 +15,7 @@ import { useCalendarSync } from '../../hooks/useCalendarSync';
 import RumbleTalk from '../RumbleTalk';
 import DailyPnLChart from '../DailyPnLChart';
 import CheckTradeChecklist from '../CheckTradeChecklist';
+import SupportChat from '../SupportChat';
 
 // Configuration Supabase
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
@@ -1297,7 +1298,7 @@ export default function TradingPlatformShell() {
     console.log('🔄 Changement de canal utilisateur:', selectedChannel.id);
     
     // Ne pas charger messages/signaux pour les canaux spéciaux
-    const isSpecialChannel = ['calendrier', 'trading-journal', 'journal', 'video', 'livestream-premium', 'trading-hub'].includes(selectedChannel.id);
+    const isSpecialChannel = ['calendrier', 'trading-journal', 'journal', 'video', 'livestream-premium', 'trading-hub', 'support'].includes(selectedChannel.id);
     
     if (!isSpecialChannel) {
       loadMessages(selectedChannel.id);
@@ -1743,8 +1744,8 @@ export default function TradingPlatformShell() {
     
     // Vérifier l'accès pour les abonnés "journal" (sauf admin)
     if (!isAdmin && currentPlan === 'journal') {
-      // Les abonnés journal ont accès UNIQUEMENT à journal
-      const allowedChannels = ['journal'];
+      // Les abonnés journal ont accès UNIQUEMENT à journal + support
+      const allowedChannels = ['journal', 'support'];
       if (!allowedChannels.includes(channelId)) {
         console.log('❌❌❌ ACCÈS REFUSÉ pour plan journal:', channelId, 'PWA:', isPWA, 'userPlan:', currentPlan);
         setShowAccessRestrictedPopup(true);
@@ -4698,6 +4699,18 @@ export default function TradingPlatformShell() {
       );
     }
 
+    if (selectedChannel.id === 'support') {
+      return (
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <SupportChat
+            userId={user?.id || 'guest'}
+            userEmail={user?.email || ''}
+            visitorName={currentUsername || user?.email?.split('@')[0] || 'Utilisateur'}
+          />
+        </div>
+      );
+    }
+
     const isJournalPerso = selectedChannel.id === 'journal' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model';
     const isMobile = window.innerWidth < 768;
     return (
@@ -5633,6 +5646,7 @@ export default function TradingPlatformShell() {
               {channels.find(c => c.id === 'check-trade') && (
                 <button onClick={() => handleChannelChange('check-trade', 'check-trade')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'check-trade' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>✅ Check Trade</button>
               )}
+              <button onClick={() => handleChannelChange('support', 'support')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'support' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 Support</button>
               {channels.find(c => c.id === 'livestream-premium') && (
                 <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>
                   <div className="flex items-start gap-2">
@@ -6001,6 +6015,19 @@ export default function TradingPlatformShell() {
                       </div>
                     </button>
                   )}
+
+                  <button
+                    onClick={() => { handleChannelChange('support', 'support'); setMobileView('content'); }}
+                    className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'support' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg">💬</span>
+                      <div>
+                        <p className="font-semibold text-white">Support</p>
+                        <p className="text-sm text-gray-400">Contacte-nous directement</p>
+                      </div>
+                    </div>
+                  </button>
 
                   {channels.find(c => c.id === 'livestream-premium') && (
                     <button

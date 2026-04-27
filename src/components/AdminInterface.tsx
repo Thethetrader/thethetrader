@@ -13,6 +13,7 @@ import { signOutAdmin } from '../utils/admin-utils';
 import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, supabase, getPersonalTrades as getPersonalTradesFromSupabase, getPersonalTradesRange, getPersonalTradesLight, getPersonalTradeById, addPersonalTrade as addPersonalTradeToSupabase, updatePersonalTrade, listenToPersonalTrades, PersonalTrade, type PersonalTradesUpdate, deletePersonalTrade, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, getFinSessionCacheKey, type FinSessionData } from '../lib/supabase';
 import DailyPnLChart from './DailyPnLChart';
 import CheckTradeChecklist from './CheckTradeChecklist';
+import SupportAdminChat from './SupportAdminChat';
 
 // Composant Profit Factor Gauge
 function ProfitFactorGauge({ totalWins, totalLosses }: { totalWins: number; totalLosses: number }) {
@@ -971,7 +972,7 @@ export default function AdminInterface() {
     setCalendarKey(prev => prev + 1);
     
     // Ne pas scroller pour ces vues statiques/embarquées
-    if (channelId !== 'check-trade') {
+    if (channelId !== 'check-trade' && channelId !== 'support-admin') {
       scrollToTop();
     }
     
@@ -3412,7 +3413,7 @@ const dailyPnLChartData = useMemo(
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' },
     { id: 'check-trade', name: 'check-trade', emoji: '✅', fullName: 'Check Trade' },
-
+    { id: 'support-admin', name: 'support-admin', emoji: '💬', fullName: 'Support clients' },
   ];
 
   const handleCreateSignal = () => {
@@ -4614,7 +4615,13 @@ const dailyPnLChartData = useMemo(
       );
     }
 
-
+    if (selectedChannel.id === 'support-admin') {
+      return (
+        <div style={{ height: '100%', paddingTop: 60 }}>
+          <SupportAdminChat />
+        </div>
+      );
+    }
 
     if (selectedChannel.id === 'user-management') {
       const stats = getUserStats();
@@ -5910,6 +5917,7 @@ const dailyPnLChartData = useMemo(
                   }
                 }, 0);
               }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'check-trade' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>✅ Check Trade</button>
+              <button onClick={() => handleChannelChange('support-admin', 'support-admin')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'support-admin' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 Support clients</button>
               <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>
                 <div className="flex items-start gap-2">
                   <span>⭐</span>
@@ -6260,6 +6268,19 @@ const dailyPnLChartData = useMemo(
                       <div>
                         <p className="font-medium text-white">Check Trade</p>
                         <p className="text-sm text-gray-400">Checklist de trade</p>
+                      </div>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => { handleChannelChange('support-admin', 'support-admin'); setMobileView('content'); }}
+                    className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'support-admin' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg">💬</span>
+                      <div>
+                        <p className="font-medium text-white">Support clients</p>
+                        <p className="text-sm text-gray-400">Messages des utilisateurs</p>
                       </div>
                     </div>
                   </button>
