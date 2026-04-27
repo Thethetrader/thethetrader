@@ -4565,7 +4565,7 @@ const dailyPnLChartData = useMemo(
 
     if (selectedChannel.id === 'support-admin') {
       return (
-        <div style={{ height: '100%', paddingTop: 60 }}>
+        <div style={{ height: '100%' }}>
           <SupportAdminChat />
         </div>
       );
@@ -7125,7 +7125,7 @@ const dailyPnLChartData = useMemo(
         </div>
 
         {/* Desktop Content Area */}
-        <div className="hidden md:block flex-1 overflow-y-auto overflow-x-hidden">
+        <div className={`hidden md:flex flex-col flex-1 ${selectedChannel.id === 'support-admin' ? 'overflow-hidden' : 'overflow-y-auto overflow-x-hidden'}`}>
           {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'user-management' || selectedChannel.id === 'check-trade' || selectedChannel.id === 'support-admin') ? (
             getTradingCalendar()
           ) : (
