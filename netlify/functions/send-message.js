@@ -30,6 +30,7 @@ const headers = {
 };
 
 export const handler = async (event) => {
+  try {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers, body: '' };
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
 
@@ -103,4 +104,7 @@ export const handler = async (event) => {
   if (msgErr) return { statusCode: 500, headers, body: JSON.stringify({ error: msgErr.message }) };
 
   return { statusCode: 200, headers, body: JSON.stringify({ message, conversation_id: convId }) };
+  } catch (e) {
+    return { statusCode: 500, headers, body: JSON.stringify({ error: e.message, stack: e.stack?.slice(0, 300) }) };
+  }
 };
