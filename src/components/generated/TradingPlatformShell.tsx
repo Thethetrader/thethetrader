@@ -5479,7 +5479,12 @@ export default function TradingPlatformShell() {
           email={user?.email || ''}
           plan={userPlan}
           profileImage={profileImage}
+          notificationsEnabled={notificationsEnabled}
           onLogout={() => { setShowMonCompte(false); handleLogout(); }}
+          onToggleNotifications={handleToggleNotifications}
+          onNavigateToSupport={() => { setShowMonCompte(false); handleChannelChange('support', 'support'); }}
+          onUpdateUsername={async (name: string) => { await updateUserProfile(name, undefined, 'user'); setCurrentUsername(name); }}
+          onUpdatePhoto={(file: File) => { const evt = { target: { files: [file] } } as any; handleProfileImageChange(evt); }}
         />
       )}
       {/* Desktop Sidebar */}
