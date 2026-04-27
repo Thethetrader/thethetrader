@@ -5791,15 +5791,17 @@ export default function TradingPlatformShell() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
+                {/* Bouton support chat */}
                 <button
-                  onClick={handleToggleNotifications}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                    notificationsEnabled
-                      ? 'bg-green-400/20 hover:bg-green-400/30 text-green-100 border border-green-200/50/30'
-                      : 'bg-gray-600/20 hover:bg-gray-600/30 text-gray-300 border border-gray-600/30'
-                  }`}
+                  onClick={() => { handleChannelChange('support', 'support'); setSupportUnread(false); setMobileView('content'); }}
+                  className="relative text-gray-400 hover:text-white"
                 >
-                  {notificationsEnabled ? '🔔' : '🔕'}
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                  </svg>
+                  {supportUnread && (
+                    <span style={{ position: 'absolute', top: -2, right: -2, width: 8, height: 8, borderRadius: '50%', background: '#ef4444', display: 'block' }} />
+                  )}
                 </button>
                 <button onClick={handleLogout} className="text-gray-400 hover:text-white">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
