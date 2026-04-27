@@ -268,61 +268,6 @@ export default function AdminInterface() {
   const [showLivestreamModal, setShowLivestreamModal] = useState(false);
   const [livestreamMessage, setLivestreamMessage] = useState('');
 
-  // Supprimer Tawk.to côté admin
-  useEffect(() => {
-    // Supprimer le script Tawk s'il existe
-    const tawkScript = document.getElementById('tawkto-admin-script') || document.getElementById('tawkto-user-script') || document.getElementById('tawkto-script-admin');
-    if (tawkScript) {
-      tawkScript.remove();
-    }
-
-    // Masquer/cacher le widget Tawk s'il est déjà chargé
-    if ((window as any).Tawk_API) {
-      (window as any).Tawk_API.hideWidget();
-      (window as any).Tawk_API.maximize = () => {};
-      (window as any).Tawk_API.minimize = () => {};
-      (window as any).Tawk_API.showWidget = () => {};
-    }
-
-    // Supprimer l'iframe Tawk si elle existe
-    const tawkIframe = document.querySelector('iframe[src*="tawk.to"]');
-    if (tawkIframe) {
-      (tawkIframe as HTMLElement).style.display = 'none';
-      tawkIframe.remove();
-    }
-
-    // Supprimer le conteneur Tawk s'il existe
-    const tawkContainer = document.getElementById('tawkchat-container') || document.querySelector('[id*="tawk"]');
-    if (tawkContainer) {
-      (tawkContainer as HTMLElement).style.display = 'none';
-      tawkContainer.remove();
-    }
-
-    // Observer pour supprimer tout nouveau widget Tawk qui pourrait être ajouté
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        mutation.addedNodes.forEach((node) => {
-          if (node.nodeType === 1) {
-            const element = node as HTMLElement;
-            if (element.id && element.id.includes('tawk')) {
-              element.style.display = 'none';
-              element.remove();
-            }
-            if (element.tagName === 'IFRAME' && (element as HTMLIFrameElement).src.includes('tawk.to')) {
-              element.style.display = 'none';
-              element.remove();
-            }
-          }
-        });
-      });
-    });
-
-    observer.observe(document.body, { childList: true, subtree: true });
-    
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showGifPicker, setShowGifPicker] = useState(false);

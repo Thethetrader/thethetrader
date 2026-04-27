@@ -476,46 +476,6 @@ export default function TradingPlatformShell() {
   const [showGifPicker, setShowGifPicker] = useState(false);
   const [showFileUpload, setShowFileUpload] = useState(false);
 
-  // Charger Tawk.to au montage de TradingPlatformShell
-  useEffect(() => {
-    console.log('💬 Chargement Tawk.to pour utilisateur...');
-    
-    // Vérifier si déjà chargé
-    if (document.getElementById('tawkto-user-script')) {
-      console.log('⚠️ Tawk.to déjà chargé');
-      return;
-    }
-
-    // Initialiser Tawk_API
-    (window as any).Tawk_API = (window as any).Tawk_API || {};
-    (window as any).Tawk_LoadStart = new Date();
-
-    // Créer le script
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = 'https://embed.tawk.to/68ec2d91af8498194f4f9fc1/1j7d940jh';
-    script.charset = 'UTF-8';
-    script.setAttribute('crossorigin', '*');
-    script.id = 'tawkto-user-script';
-    
-    script.onload = () => {
-      console.log('✅ Tawk.to chargé pour utilisateur');
-    };
-    
-    script.onerror = () => {
-      console.error('❌ Erreur chargement Tawk.to');
-    };
-
-    document.head.appendChild(script);
-    
-    return () => {
-      // Cleanup si besoin
-      const scriptElement = document.getElementById('tawkto-user-script');
-      if (scriptElement) {
-        scriptElement.remove();
-      }
-    };
-  }, []);
 
   // Charger les comptes depuis localStorage
   // Charger les comptes depuis Supabase au démarrage
