@@ -2,6 +2,46 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { subscribeSupportPush } from '../utils/support-push';
 
+function AudioPlayer({ src, isSent }: { src: string; isSent: boolean }) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [playing, setPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  const toggle = () => {
+    const a = audioRef.current;
+    if (!a) return;
+    if (playing) { a.pause(); } else { a.play(); }
+    setPlaying(!playing);
+  };
+
+  const fmtSec = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+  const accent = isSent ? '#fff' : '#10b981';
+  const bg = isSent ? 'rgba(255,255,255,0.2)' : '#374151';
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: 200 }}>
+      <audio ref={audioRef} src={src}
+        onTimeUpdate={() => { const a = audioRef.current; if (a) setProgress(a.currentTime / (a.duration || 1) * 100); }}
+        onLoadedMetadata={() => { const a = audioRef.current; if (a) setDuration(a.duration); }}
+        onEnded={() => { setPlaying(false); setProgress(0); if (audioRef.current) audioRef.current.currentTime = 0; }}
+      />
+      <button onClick={toggle} style={{ width: 32, height: 32, borderRadius: '50%', background: accent, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: isSent ? '#10b981' : '#111827' }}>
+        {playing
+          ? <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+          : <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        }
+      </button>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
+        <div style={{ height: 3, background: bg, borderRadius: 2, overflow: 'hidden' }}>
+          <div style={{ height: '100%', width: `${progress}%`, background: accent, borderRadius: 2, transition: 'width 0.1s' }} />
+        </div>
+        <span style={{ fontSize: 11, color: isSent ? 'rgba(255,255,255,0.7)' : '#6b7280' }}>{fmtSec(duration)}</span>
+      </div>
+    </div>
+  );
+}
+
 const SEND_URL = '/.netlify/functions/send-message';
 const GET_URL = '/.netlify/functions/get-conversation';
 const POLL_MS = 5000;
@@ -278,7 +318,7 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
                   </a>
                 )}
                 {m.message_type === 'audio' && m.file_url && (
-                  <audio controls src={m.file_url} style={{ maxWidth: 220, display: 'block' }} />
+                  <AudioPlayer src={m.file_url} isSent={isSent} />
                 )}
               </div>
               <div style={{ fontSize: 11, color: '#4b5563', marginTop: 2, padding: '0 4px' }}>{fmtTime(m.created_at)}</div>
