@@ -17,6 +17,7 @@ import DailyPnLChart from '../DailyPnLChart';
 import CheckTradeChecklist from '../CheckTradeChecklist';
 import SupportChat from '../SupportChat';
 import SupportPoller from '../SupportPoller';
+import MonCompteModal from '../MonCompteModal';
 
 // Configuration Supabase
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
@@ -455,6 +456,7 @@ export default function TradingPlatformShell() {
   // État pour les messages non lus par salon
   const [unreadCounts, setUnreadCounts] = useState<{[channelId: string]: number}>({});
   const [supportUnread, setSupportUnread] = useState(false);
+  const [showMonCompte, setShowMonCompte] = useState(false);
 
   // Fonction callback pour recevoir les changements de messages non lus
   const handleUnreadCountChange = (channelId: string, count: number) => {
@@ -5470,6 +5472,16 @@ export default function TradingPlatformShell() {
         isOnSupportChannel={selectedChannel.id === 'support'}
         onNewAdminMessage={() => setSupportUnread(true)}
       />
+      {showMonCompte && (
+        <MonCompteModal
+          onClose={() => setShowMonCompte(false)}
+          username={currentUsername || ''}
+          email={user?.email || ''}
+          plan={userPlan}
+          profileImage={profileImage}
+          onLogout={() => { setShowMonCompte(false); handleLogout(); }}
+        />
+      )}
       {/* Desktop Sidebar */}
       <div className="hidden md:flex w-56 min-w-56 flex-shrink-0 bg-gray-800 flex-col">
         <div className="p-4 border-b border-gray-700">
@@ -5491,8 +5503,17 @@ export default function TradingPlatformShell() {
             </label>
             <div className="flex-1">
               <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setShowMonCompte(true)}
+                  className="p-1 rounded-full hover:bg-gray-600 transition-colors text-gray-400 hover:text-white"
+                  title="Mon compte"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </button>
                 <div>
-                  <p 
+                  <p
                     className="text-sm font-medium cursor-pointer hover:text-blue-300 transition-colors"
                     onContextMenu={(e) => {
                       e.preventDefault();
@@ -5726,8 +5747,17 @@ export default function TradingPlatformShell() {
                     </div>
                   ) : (
                     <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setShowMonCompte(true)}
+                        className="p-1 rounded-full hover:bg-gray-600 transition-colors text-gray-400 hover:text-white"
+                        title="Mon compte"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                        </svg>
+                      </button>
                       <div>
-                        <p 
+                        <p
                           className="text-sm font-medium cursor-pointer hover:text-blue-300 transition-colors"
                           onContextMenu={(e) => {
                             e.preventDefault();
