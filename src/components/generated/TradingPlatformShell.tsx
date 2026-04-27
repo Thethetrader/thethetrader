@@ -4701,7 +4701,7 @@ export default function TradingPlatformShell() {
 
     if (selectedChannel.id === 'support') {
       return (
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
           <SupportChat
             userId={user?.id || 'guest'}
             userEmail={user?.email || ''}
@@ -6154,8 +6154,8 @@ export default function TradingPlatformShell() {
                 )}
                 
                 {/* Affichage du calendrier (Journal Perso, Journal Signaux, TPLN model, Check Trade) */}
-                {(selectedChannel.id === 'calendrier' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'check-trade') && getTradingCalendar()}
-                
+                {(selectedChannel.id === 'calendrier' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'check-trade' || selectedChannel.id === 'support') && getTradingCalendar()}
+
                 {/* Interface Livestream pour mobile */}
                 {(selectedChannel.id === 'video' || selectedChannel.id === 'livestream-premium') && (
                   <div className="flex flex-col h-full bg-gray-900">
