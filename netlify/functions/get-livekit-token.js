@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 
 const LIVEKIT_API_KEY = process.env.LIVEKIT_API_KEY;
@@ -14,6 +15,32 @@ const ROOM_ACCESS = {
   'stream-admin': 'admin',
 };
 
+function b64url(str) {
+  return Buffer.from(str)
+    .toString('base64')
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+
+function createLiveKitJwt({ apiKey, apiSecret, identity, roomName, canPublish, canSubscribe, ttl = 14400 }) {
+  const header = b64url(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+  const now = Math.floor(Date.now() / 1000);
+  const claims = {
+    iss: apiKey,
+    sub: identity,
+    iat: now,
+    nbf: now,
+    exp: now + ttl,
+    video: { roomJoin: true, room: roomName, canPublish, canSubscribe },
+  };
+  const payload = b64url(JSON.stringify(claims));
+  const sig = crypto
+    .createHmac('sha256', apiSecret)
+    .update(`${header}.${payload}`)
+    .digest('base64')
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+  return `${header}.${payload}.${sig}`;
+}
+
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
@@ -29,21 +56,14 @@ exports.handler = async (event) => {
   const { roomName, userId, identity, isPublisher = false } = body;
 
   if (!roomName || !userId) {
-    return { statusCode: 400, body: 'Missing roomName or userId' };
+    return { statusCode: 400, body: JSON.stringify({ error: 'Missing roomName or userId' }) };
   }
 
   if (!LIVEKIT_API_KEY || !LIVEKIT_API_SECRET) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'LIVEKIT_API_KEY / LIVEKIT_API_SECRET manquants dans Netlify' }),
-    };
+    return { statusCode: 500, body: JSON.stringify({ error: 'LIVEKIT_API_KEY ou LIVEKIT_API_SECRET manquant' }) };
   }
 
   try {
-    // Dynamic import for ESM-only livekit-server-sdk
-    const { AccessToken } = await import('livekit-server-sdk');
-
-    // Fetch user profile to check plan and role
     const { data: profile } = await supabase
       .from('user_profiles')
       .select('role, plan_type')
@@ -53,7 +73,6 @@ exports.handler = async (event) => {
     const isAdmin = profile?.role === 'admin';
     const plan = profile?.plan_type || 'journal';
 
-    // Check access for the requested room
     const accessRule = ROOM_ACCESS[roomName];
     if (accessRule === 'premium' && !isAdmin && plan === 'journal') {
       return { statusCode: 403, body: JSON.stringify({ error: 'Premium required' }) };
@@ -62,27 +81,19 @@ exports.handler = async (event) => {
       return { statusCode: 403, body: JSON.stringify({ error: 'Admin only' }) };
     }
 
-    const canPublish = isAdmin && isPublisher;
-
-    const token = new AccessToken(LIVEKIT_API_KEY, LIVEKIT_API_SECRET, {
+    const token = createLiveKitJwt({
+      apiKey: LIVEKIT_API_KEY,
+      apiSecret: LIVEKIT_API_SECRET,
       identity: identity || userId,
-      ttl: 14400,
-    });
-
-    token.addGrant({
-      roomJoin: true,
-      room: roomName,
-      canPublish,
+      roomName,
+      canPublish: isAdmin && isPublisher,
       canSubscribe: true,
-      canPublishData: isAdmin,
     });
-
-    const jwt = await token.toJwt();
 
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: jwt, url: process.env.LIVEKIT_URL }),
+      body: JSON.stringify({ token, url: process.env.LIVEKIT_URL }),
     };
   } catch (err) {
     console.error('LiveKit token error:', err);
