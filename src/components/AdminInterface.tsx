@@ -269,6 +269,33 @@ export default function AdminInterface() {
   const [showLivestreamModal, setShowLivestreamModal] = useState(false);
   const [livestreamMessage, setLivestreamMessage] = useState('');
 
+  // États OBS Setup
+  const [showObsModal, setShowObsModal] = useState(false);
+  const [obsRoom, setObsRoom] = useState<'stream-public' | 'stream-premium'>('stream-public');
+  const [obsToken, setObsToken] = useState('');
+  const [obsTokenLoading, setObsTokenLoading] = useState(false);
+
+  const generateObsToken = async () => {
+    setObsTokenLoading(true);
+    setObsToken('');
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id;
+      if (!userId) return;
+      const res = await fetch('/.netlify/functions/get-livekit-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ roomName: obsRoom, userId, identity: 'OBS-Admin', isPublisher: true }),
+      });
+      const data = await res.json();
+      setObsToken(data.token || '');
+    } catch (e) {
+      setObsToken('Erreur — vérifie les variables LIVEKIT dans Netlify');
+    } finally {
+      setObsTokenLoading(false);
+    }
+  };
+
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showGifPicker, setShowGifPicker] = useState(false);
@@ -5957,8 +5984,15 @@ const dailyPnLChartData = useMemo(
               >
                 🔴 Livestream
               </button>
-              
-              <button 
+
+              <button
+                onClick={() => setShowObsModal(true)}
+                className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
+              >
+                🎙️ OBS Setup
+              </button>
+
+              <button
                 onClick={() => setShowLivestreamModal(true)}
                 className="w-full text-left px-3 py-2 rounded text-sm text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
               >
@@ -9410,6 +9444,84 @@ const dailyPnLChartData = useMemo(
 
 
       {/* Modal de notification livestream personnalisée */}
+      {showObsModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-xl w-full max-w-lg border border-gray-700">
+            <div className="flex justify-between items-center p-5 border-b border-gray-700">
+              <h3 className="text-white font-bold text-lg">🎙️ Configurer OBS</h3>
+              <button onClick={() => { setShowObsModal(false); setObsToken(''); }} className="text-gray-400 hover:text-white text-xl">✕</button>
+            </div>
+            <div className="p-5 space-y-5">
+              {/* Room selector */}
+              <div>
+                <label className="text-sm text-gray-400 mb-2 block">Canal de stream</label>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => { setObsRoom('stream-public'); setObsToken(''); }}
+                    className={`flex-1 py-2 rounded-lg text-sm font-semibold border transition-colors ${obsRoom === 'stream-public' ? 'bg-blue-600 border-blue-500 text-white' : 'bg-gray-700 border-gray-600 text-gray-300'}`}
+                  >📺 Public</button>
+                  <button
+                    onClick={() => { setObsRoom('stream-premium'); setObsToken(''); }}
+                    className={`flex-1 py-2 rounded-lg text-sm font-semibold border transition-colors ${obsRoom === 'stream-premium' ? 'bg-yellow-600 border-yellow-500 text-white' : 'bg-gray-700 border-gray-600 text-gray-300'}`}
+                  >⭐ Premium</button>
+                </div>
+              </div>
+
+              {/* WHIP URL */}
+              <div>
+                <label className="text-sm text-gray-400 mb-2 block">URL WHIP (OBS → Settings → Stream → Service: WHIP)</label>
+                <div className="flex gap-2">
+                  <input
+                    readOnly
+                    value="https://tpln-a6a5zbjf.livekit.cloud/rtc/whip"
+                    className="flex-1 bg-gray-900 border border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-200 font-mono"
+                  />
+                  <button
+                    onClick={() => navigator.clipboard.writeText('https://tpln-a6a5zbjf.livekit.cloud/rtc/whip')}
+                    className="px-3 py-2 bg-gray-600 hover:bg-gray-500 rounded-lg text-sm text-white"
+                  >Copier</button>
+                </div>
+              </div>
+
+              {/* Token */}
+              <div>
+                <label className="text-sm text-gray-400 mb-2 block">Bearer Token (OBS → Settings → Stream → Bearer Token)</label>
+                {obsToken ? (
+                  <div className="flex gap-2">
+                    <input
+                      readOnly
+                      value={obsToken}
+                      className="flex-1 bg-gray-900 border border-gray-600 rounded-lg px-3 py-2 text-xs text-gray-200 font-mono truncate"
+                    />
+                    <button
+                      onClick={() => navigator.clipboard.writeText(obsToken)}
+                      className="px-3 py-2 bg-green-700 hover:bg-green-600 rounded-lg text-sm text-white"
+                    >Copier</button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={generateObsToken}
+                    disabled={obsTokenLoading}
+                    className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-lg text-sm font-semibold text-white transition-colors"
+                  >
+                    {obsTokenLoading ? 'Génération...' : 'Générer le token'}
+                  </button>
+                )}
+                <p className="text-xs text-gray-500 mt-2">Le token expire dans 4h. Régénère-en un si OBS refuse la connexion.</p>
+              </div>
+
+              <div className="bg-gray-900 rounded-lg p-4 text-xs text-gray-400 space-y-1">
+                <p className="font-semibold text-gray-300 mb-2">Étapes OBS :</p>
+                <p>1. Settings → Stream → Service → <strong className="text-white">WHIP</strong></p>
+                <p>2. Colle l'URL WHIP ci-dessus</p>
+                <p>3. Génère et colle le Bearer Token</p>
+                <p>4. Démarre le stream dans OBS → les viewers voient le stream en direct</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showLivestreamModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
