@@ -9707,37 +9707,37 @@ export default function TradingPlatformShell() {
       }}>
         <div className="flex items-end justify-around" style={{ height: 64 }}>
           {/* Accueil */}
-          <button onClick={() => setMobileView('channels')} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: mobileView === 'channels' ? '#22c55e' : '#6b7280' }}>
+          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setMobileView('channels'); }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: mobileView === 'channels' ? '#c9a84c' : '#6b7280' }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill={mobileView === 'channels' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/>
             </svg>
             <span style={{ fontSize: 10, fontWeight: 500 }}>Accueil</span>
           </button>
           {/* Journal */}
-          <button onClick={() => { setSelectedChannel({id:'trading-journal',name:'trading-journal'}); setView('calendar'); setMobileView('content'); }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: selectedChannel.id === 'trading-journal' && mobileView === 'content' ? '#22c55e' : '#6b7280' }}>
+          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); const ch = channels.find(c => c.id === 'calendrier'); if (ch) { handleChannelChange(ch.id, ch.name); setView('calendar'); setMobileView('content'); } }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: selectedChannel.id === 'calendrier' && mobileView === 'content' ? '#c9a84c' : '#6b7280' }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
             </svg>
             <span style={{ fontSize: 10, fontWeight: 500 }}>Journal</span>
           </button>
           {/* Live - Centre proéminent */}
-          <button onClick={() => { const ch = channels.find(c => c.id === 'livestream'); if (ch) { handleChannelChange(ch.id, ch.name); setMobileView('content'); } }} className="flex flex-col items-center justify-center flex-1" style={{ marginTop: -18 }}>
-            <div style={{ width: 54, height: 54, borderRadius: '50%', border: '2.5px solid #22c55e', backgroundColor: '#1f2937', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1, color: '#22c55e' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-                <circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); window.location.href = '/'; }} className="flex flex-col items-center justify-center flex-1" style={{ marginTop: -18 }}>
+            <div style={{ width: 54, height: 54, borderRadius: '50%', border: '2.5px solid #c9a84c', backgroundColor: '#1f2937', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1, color: '#c9a84c' }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                <path d="M12 2L2 9l2 11h16l2-11L12 2zm0 2.5l7.5 5.5-1.5 8h-12l-1.5-8L12 4.5z"/>
               </svg>
-              <span style={{ fontSize: 9, fontWeight: 700, lineHeight: 1 }}>LIVE</span>
+              <span style={{ fontSize: 9, fontWeight: 700, lineHeight: 1 }}>Premium</span>
             </div>
           </button>
           {/* Signaux */}
-          <button onClick={() => { const ch = channels.find(c => ['general-chat-2','general-chat-3','general-chat-4'].includes(c.id)); if (ch) { handleChannelChange(ch.id, ch.name); setMobileView('content'); } }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: ['general-chat-2','general-chat-3','general-chat-4'].includes(selectedChannel.id) && mobileView === 'content' ? '#22c55e' : '#6b7280' }}>
+          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); const ch = channels.find(c => ['general-chat-2','general-chat-3','general-chat-4'].includes(c.id)); if (ch) { handleChannelChange(ch.id, ch.name); setMobileView('content'); } }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: ['general-chat-2','general-chat-3','general-chat-4'].includes(selectedChannel.id) && mobileView === 'content' ? '#c9a84c' : '#6b7280' }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
             </svg>
             <span style={{ fontSize: 10, fontWeight: 500 }}>Signaux</span>
           </button>
           {/* Formation */}
-          <button onClick={() => { const ch = channels.find(c => c.id === 'fondamentaux'); if (ch) { handleChannelChange(ch.id, ch.name); setMobileView('content'); } }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: selectedChannel.id === 'fondamentaux' && mobileView === 'content' ? '#22c55e' : '#6b7280' }}>
+          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); const ch = channels.find(c => c.id === 'fondamentaux'); if (ch) { handleChannelChange(ch.id, ch.name); setMobileView('content'); } }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: selectedChannel.id === 'fondamentaux' && mobileView === 'content' ? '#c9a84c' : '#6b7280' }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
             </svg>
