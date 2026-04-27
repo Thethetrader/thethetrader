@@ -7218,7 +7218,7 @@ export default function TradingPlatformShell() {
         </div>
         {/* Desktop Content Area */}
         <div className="hidden md:block flex-1 overflow-y-auto overflow-x-hidden">
-          {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'check-trade') ? (
+          {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'check-trade' || selectedChannel.id === 'support') ? (
             getTradingCalendar()
           ) : (
             <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '80px', paddingBottom: '80px' }}>
