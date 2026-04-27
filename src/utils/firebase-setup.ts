@@ -279,8 +279,6 @@ export const subscribeToSignals = (channelId: string, callback: (signal: Signal)
   const q = query(signalsRef, orderByChild('channel_id'), equalTo(channelId), limitToLast(3));
 
   const unsubscribe = onValue(q, (snapshot) => {
-    console.log('🔄 Signaux temps réel reçus pour', channelId, ':', snapshot.numChildren());
-    
     snapshot.forEach((childSnapshot) => {
       const data = childSnapshot.val();
       const signalId = childSnapshot.key as string;
