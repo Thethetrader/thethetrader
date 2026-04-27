@@ -57,7 +57,7 @@ export const handler = async (event) => {
     if (!convId) {
       if (!visitor_email) return { statusCode: 400, headers: hdrs, body: JSON.stringify({ error: 'visitor_email requis' }) };
       const { data: conv, error: convErr } = await supabase
-        .from('conversations')
+        .from('support_conversations')
         .insert({ visitor_name: visitor_name || visitor_email.split('@')[0], visitor_email, status: 'active' })
         .select('id').single();
       if (convErr) return { statusCode: 500, headers: hdrs, body: JSON.stringify({ error: 'conv: ' + convErr.message }) };
@@ -77,7 +77,7 @@ export const handler = async (event) => {
     }
 
     const { data: message, error: msgErr } = await supabase
-      .from('messages')
+      .from('support_messages')
       .insert({ conversation_id: convId, sender_type: isAdmin ? 'admin' : 'visitor', message_type, content: message_type === 'text' ? content.trim() : null, file_url, file_name: file_name || null, read_by_admin: isAdmin })
       .select('*').single();
 

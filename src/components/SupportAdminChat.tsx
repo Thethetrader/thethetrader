@@ -47,17 +47,17 @@ export default function SupportAdminChat() {
 
   const loadConversations = useCallback(async () => {
     const { data, error } = await supabase
-      .from('conversations')
+      .from('support_conversations')
       .select('id, visitor_name, visitor_email, status, last_message_at, created_at')
       .order('last_message_at', { ascending: false, nullsFirst: false })
       .limit(200);
     if (error) { console.error('Support convs:', error); setLoading(false); return; }
 
     const convs: Conv[] = await Promise.all((data || []).map(async (c) => {
-      const { count } = await supabase.from('messages')
+      const { count } = await supabase.from('support_messages')
         .select('id', { count: 'exact', head: true })
         .eq('conversation_id', c.id).eq('sender_type', 'visitor').eq('read_by_admin', false);
-      const { data: last } = await supabase.from('messages')
+      const { data: last } = await supabase.from('support_messages')
         .select('content, message_type').eq('conversation_id', c.id)
         .order('created_at', { ascending: false }).limit(1);
       return {
@@ -72,10 +72,10 @@ export default function SupportAdminChat() {
 
   const openConversation = useCallback(async (id: string) => {
     setActiveId(id);
-    const { data } = await supabase.from('messages')
+    const { data } = await supabase.from('support_messages')
       .select('*').eq('conversation_id', id).order('created_at', { ascending: true });
     setMessages(data || []);
-    await supabase.from('messages').update({ read_by_admin: true })
+    await supabase.from('support_messages').update({ read_by_admin: true })
       .eq('conversation_id', id).eq('sender_type', 'visitor').eq('read_by_admin', false);
     setConversations(prev => prev.map(c => c.id === id ? { ...c, unread: 0 } : c));
   }, []);
@@ -85,12 +85,12 @@ export default function SupportAdminChat() {
   useEffect(() => {
     loadConversations();
     const ch = supabase.channel('support-admin-chat')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, async (payload) => {
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'support_messages' }, async (payload) => {
         const m = payload.new as Msg;
         if ((m as any).conversation_id === activeId) {
           setMessages(prev => [...prev, m]);
           if (m.sender_type === 'visitor') {
-            await supabase.from('messages').update({ read_by_admin: true }).eq('id', m.id);
+            await supabase.from('support_messages').update({ read_by_admin: true }).eq('id', m.id);
           }
         } else {
           setConversations(prev => prev.map(c =>
@@ -100,7 +100,7 @@ export default function SupportAdminChat() {
           ));
         }
       })
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'conversations' }, () => loadConversations())
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'support_conversations' }, () => loadConversations())
       .subscribe();
     realtimeRef.current = ch;
     return () => { supabase.removeChannel(ch); };
@@ -132,7 +132,7 @@ export default function SupportAdminChat() {
     const c = conversations.find(c => c.id === activeId);
     if (!c) return;
     const next = c.status === 'resolved' ? 'active' : 'resolved';
-    await supabase.from('conversations').update({ status: next }).eq('id', c.id);
+    await supabase.from('support_conversations').update({ status: next }).eq('id', c.id);
     setConversations(prev => prev.map(x => x.id === c.id ? { ...x, status: next } : x));
   }
 

@@ -22,7 +22,7 @@ export const handler = async (event) => {
 
   if (!conversation_id) return { statusCode: 400, headers, body: JSON.stringify({ error: 'conversation_id requis' }) };
 
-  let query = supabase.from('messages').select('*').eq('conversation_id', conversation_id).order('created_at', { ascending: true });
+  let query = supabase.from('support_messages').select('*').eq('conversation_id', conversation_id).order('created_at', { ascending: true });
   if (since) query = query.gt('created_at', since);
 
   const { data: messages, error } = await query;
