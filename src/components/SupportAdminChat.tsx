@@ -89,7 +89,7 @@ export default function SupportAdminChat() {
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'support_messages' }, async (payload) => {
         const m = payload.new as Msg;
         if ((m as any).conversation_id === activeId) {
-          setMessages(prev => [...prev, m]);
+          setMessages(prev => prev.some(x => x.id === m.id) ? prev : [...prev, m]);
           if (m.sender_type === 'visitor') {
             await supabase.from('support_messages').update({ read_by_admin: true }).eq('id', m.id);
           }
