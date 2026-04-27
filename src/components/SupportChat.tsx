@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
+import { subscribeSupportPush } from '../utils/support-push';
 
 const SEND_URL = '/.netlify/functions/send-message';
 const GET_URL = '/.netlify/functions/get-conversation';
@@ -79,6 +80,7 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
     conversation_id: conversationId ?? undefined,
     visitor_name: visitorName || userEmail.split('@')[0],
     visitor_email: userEmail,
+    visitor_id: userId,
   });
 
   const fetchMessages = useCallback(async (convId: string) => {
@@ -125,6 +127,10 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
         if (data?.avatar_url) setAdminAvatar(data.avatar_url);
       });
   }, []);
+
+  useEffect(() => {
+    if (userId) subscribeSupportPush(userId, 'user');
+  }, [userId]);
 
   async function doSend(payload: Record<string, unknown>) {
     setSending(true);

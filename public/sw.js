@@ -84,52 +84,41 @@ self.addEventListener('fetch', (event) => {
 // Gestion des notifications push
 self.addEventListener('push', (event) => {
   let title = 'TPLN';
-  let body = 'Nouveau signal';
-  
+  let body = 'Nouveau message';
+  let tag = 'trading-signal';
+
   if (event.data) {
     try {
       const payload = event.data.json();
-      
-      // Extraire le titre et le body depuis le champ notification de Firebase
-      if (payload.notification) {
+
+      // Web Push direct (support chat) : { title, body, icon, tag }
+      if (payload.title) {
+        title = payload.title;
+        body = payload.body || body;
+        tag = payload.tag || tag;
+      }
+      // FCM format : { notification: { title, body } }
+      else if (payload.notification) {
         title = payload.notification.title || title;
         body = payload.notification.body || body;
       }
-      // Ou depuis les champs data si pas de notification
-      else if (payload.data) {
-        const data = payload.data;
+      // FCM data only
+      else if (payload.data?.signalType) {
         title = 'Signal Trade';
-        body = `${data.signalType} ${data.symbol} - Nouveau signal`;
+        body = `${payload.data.signalType} ${payload.data.symbol} - Nouveau signal`;
+        tag = 'trading-signal';
       }
-      
-      // Options minimales pour garantir la compatibilité mobile
-      const options = {
-        body: body,
-        icon: '/FAVICON.png',
-        badge: '/FAVICON.png',
-        tag: 'trading-signal',
-        data: payload.data || {}
-      };
-      
-      event.waitUntil(
-        self.registration.showNotification(title, options)
-          .catch((error) => {
-            // Essayer avec des options encore plus simples en cas d'erreur
-            const minimalOptions = {
-              body: body,
-              icon: '/FAVICON.png'
-            };
-            return self.registration.showNotification(title, minimalOptions);
-          })
-          .catch((error2) => {
-            console.error('❌ Erreur affichage notification:', error2);
-          })
-      );
-      
-    } catch (error) {
-      console.error('❌ Erreur parsing notification:', error);
-    }
+    } catch (_) {}
   }
+
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body,
+      icon: '/FAVICON.png',
+      badge: '/FAVICON.png',
+      tag,
+    }).catch(() => self.registration.showNotification(title, { body, icon: '/FAVICON.png' }))
+  );
 });
 
 // Gestion des clics sur les notifications

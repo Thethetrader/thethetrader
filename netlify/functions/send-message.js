@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import webpush from 'web-push';
 
 const SUPABASE_URL = 'https://bamwcozzfshuozsfmjah.supabase.co';
 
@@ -21,6 +22,21 @@ const hdrs = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   'Content-Type': 'application/json',
 };
+
+async function sendPush(subscription, title, body) {
+  const vapidPublic = process.env.VAPID_PUBLIC_KEY;
+  const vapidPrivate = process.env.VAPID_PRIVATE_KEY;
+  if (!vapidPublic || !vapidPrivate) return;
+  try {
+    webpush.setVapidDetails('mailto:support@thethetrader.com', vapidPublic, vapidPrivate);
+    await webpush.sendNotification(
+      subscription,
+      JSON.stringify({ title, body, icon: '/FAVICON.png', badge: '/FAVICON.png', tag: 'support-chat' })
+    );
+  } catch (e) {
+    // Subscription expirée ou invalide — best effort
+  }
+}
 
 export const handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: hdrs, body: '' };
@@ -45,7 +61,7 @@ export const handler = async (event) => {
     let body;
     try { body = JSON.parse(event.body || '{}'); } catch { return { statusCode: 400, headers: hdrs, body: JSON.stringify({ error: 'Invalid JSON' }) }; }
 
-    const { conversation_id, visitor_name, visitor_email, message_type = 'text', content, file_data, file_name, file_mime } = body;
+    const { conversation_id, visitor_name, visitor_email, visitor_id, message_type = 'text', content, file_data, file_name, file_mime, duration_seconds } = body;
 
     if (!['text', 'image', 'pdf', 'audio'].includes(message_type))
       return { statusCode: 400, headers: hdrs, body: JSON.stringify({ error: 'message_type invalide' }) };
@@ -78,10 +94,42 @@ export const handler = async (event) => {
 
     const { data: message, error: msgErr } = await supabase
       .from('support_messages')
-      .insert({ conversation_id: convId, sender_type: isAdmin ? 'admin' : 'visitor', message_type, content: message_type === 'text' ? content.trim() : null, file_url, file_name: file_name || null, read_by_admin: isAdmin })
+      .insert({
+        conversation_id: convId,
+        sender_type: isAdmin ? 'admin' : 'visitor',
+        message_type,
+        content: message_type === 'text' ? content.trim() : null,
+        file_url,
+        file_name: file_name || null,
+        duration_seconds: duration_seconds || null,
+        read_by_admin: isAdmin,
+      })
       .select('*').single();
 
     if (msgErr) return { statusCode: 500, headers: hdrs, body: JSON.stringify({ error: 'msg: ' + msgErr.message }) };
+
+    // Envoyer notification push au destinataire (best-effort)
+    const preview = message_type === 'text'
+      ? (content.trim().length > 80 ? content.trim().slice(0, 80) + '…' : content.trim())
+      : message_type === 'image' ? '📷 Image'
+      : message_type === 'pdf' ? '📄 PDF'
+      : '🎙️ Message vocal';
+
+    if (isAdmin) {
+      // Admin → notifier le visiteur
+      const userKey = visitor_id || visitor_email;
+      if (userKey) {
+        const { data: row } = await supabase.from('push_tokens').select('subscription').eq('user_key', userKey).single();
+        if (row?.subscription) await sendPush(row.subscription, 'Support', preview);
+      }
+    } else {
+      // Visiteur → notifier l'admin
+      const { data: rows } = await supabase.from('push_tokens').select('subscription').eq('role', 'admin').order('updated_at', { ascending: false }).limit(1);
+      if (rows?.[0]?.subscription) {
+        const senderName = visitor_name || visitor_email?.split('@')[0] || 'Utilisateur';
+        await sendPush(rows[0].subscription, `💬 ${senderName}`, preview);
+      }
+    }
 
     return { statusCode: 200, headers: hdrs, body: JSON.stringify({ message, conversation_id: convId }) };
 

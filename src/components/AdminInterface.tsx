@@ -14,6 +14,7 @@ import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType
 import DailyPnLChart from './DailyPnLChart';
 import CheckTradeChecklist from './CheckTradeChecklist';
 import SupportAdminChat from './SupportAdminChat';
+import { subscribeSupportPush } from '../utils/support-push';
 
 // Composant Profit Factor Gauge
 function ProfitFactorGauge({ totalWins, totalLosses }: { totalWins: number; totalLosses: number }) {
@@ -710,6 +711,8 @@ export default function AdminInterface() {
         const user = await getCurrentUser();
         if (user) {
           console.log('👤 Utilisateur admin connecté:', user.id, user.email);
+          // Abonnement aux notifications Web Push pour le chat support
+          subscribeSupportPush(user.id, 'admin');
           
           const { data } = await getUserProfileByType('admin');
           console.log('📦 Profil admin récupéré de Supabase:', data);
