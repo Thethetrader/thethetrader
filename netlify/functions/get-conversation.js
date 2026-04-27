@@ -5,28 +5,28 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY
 );
 
-export default async function handler(req) {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json',
-  };
+const headers = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+  'Content-Type': 'application/json',
+};
 
-  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers });
-  if (req.method !== 'GET') return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers });
+export const handler = async (event) => {
+  if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers, body: '' };
+  if (event.httpMethod !== 'GET') return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
 
-  const url = new URL(req.url);
-  const conversation_id = url.searchParams.get('conversation_id');
-  const since = url.searchParams.get('since');
+  const params = event.queryStringParameters || {};
+  const conversation_id = params.conversation_id;
+  const since = params.since;
 
-  if (!conversation_id) return new Response(JSON.stringify({ error: 'conversation_id requis' }), { status: 400, headers });
+  if (!conversation_id) return { statusCode: 400, headers, body: JSON.stringify({ error: 'conversation_id requis' }) };
 
   let query = supabase.from('messages').select('*').eq('conversation_id', conversation_id).order('created_at', { ascending: true });
   if (since) query = query.gt('created_at', since);
 
   const { data: messages, error } = await query;
-  if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500, headers });
+  if (error) return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
 
-  return new Response(JSON.stringify({ messages: messages || [] }), { status: 200, headers });
-}
+  return { statusCode: 200, headers, body: JSON.stringify({ messages: messages || [] }) };
+};

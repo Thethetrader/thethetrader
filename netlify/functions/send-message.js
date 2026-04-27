@@ -7,7 +7,6 @@ const supabase = createClient(
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || '';
 
-// Simple in-memory rate limiting (resets on cold start)
 const rateLimitMap = new Map();
 function isRateLimited(ip) {
   const now = Date.now();
@@ -23,23 +22,23 @@ function isRateLimited(ip) {
 
 const ALLOWED_MIME = ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'application/pdf', 'audio/webm', 'audio/ogg', 'audio/mp4'];
 
-export default async function handler(req, context) {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Content-Type': 'application/json',
-  };
+const headers = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Content-Type': 'application/json',
+};
 
-  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers });
-  if (req.method !== 'POST') return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers });
+export const handler = async (event) => {
+  if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers, body: '' };
+  if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
 
-  const ip = context.ip || req.headers.get('x-forwarded-for') || 'unknown';
-  if (isRateLimited(ip)) return new Response(JSON.stringify({ error: 'Trop de messages, réessaie dans une minute.' }), { status: 429, headers });
+  const ip = event.headers['x-forwarded-for'] || 'unknown';
+  if (isRateLimited(ip)) return { statusCode: 429, headers, body: JSON.stringify({ error: 'Trop de messages, réessaie dans une minute.' }) };
 
   // Detect admin via Bearer token
   let isAdmin = false;
-  const authHeader = req.headers.get('authorization') || '';
+  const authHeader = event.headers['authorization'] || '';
   if (authHeader.startsWith('Bearer ')) {
     const token = authHeader.slice(7);
     const { data: { user } } = await supabase.auth.getUser(token);
@@ -47,33 +46,30 @@ export default async function handler(req, context) {
   }
 
   let body;
-  try { body = await req.json(); } catch { return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400, headers }); }
+  try { body = JSON.parse(event.body || '{}'); } catch { return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid JSON' }) }; }
 
   const { conversation_id, visitor_name, visitor_email, message_type = 'text', content, file_data, file_name, file_mime } = body;
 
-  // Validate
   if (!message_type || !['text', 'image', 'pdf', 'audio'].includes(message_type)) {
-    return new Response(JSON.stringify({ error: 'message_type invalide' }), { status: 400, headers });
+    return { statusCode: 400, headers, body: JSON.stringify({ error: 'message_type invalide' }) };
   }
   if (message_type === 'text' && (!content || content.trim().length === 0)) {
-    return new Response(JSON.stringify({ error: 'Contenu vide' }), { status: 400, headers });
+    return { statusCode: 400, headers, body: JSON.stringify({ error: 'Contenu vide' }) };
   }
-  if (['image', 'pdf', 'audio'].includes(message_type) && file_data) {
-    if (!ALLOWED_MIME.includes(file_mime)) {
-      return new Response(JSON.stringify({ error: 'Type de fichier non autorisé' }), { status: 400, headers });
-    }
+  if (['image', 'pdf', 'audio'].includes(message_type) && file_data && !ALLOWED_MIME.includes(file_mime)) {
+    return { statusCode: 400, headers, body: JSON.stringify({ error: 'Type de fichier non autorisé' }) };
   }
 
   // Get or create conversation
   let convId = conversation_id;
   if (!convId) {
-    if (!visitor_email) return new Response(JSON.stringify({ error: 'visitor_email requis' }), { status: 400, headers });
+    if (!visitor_email) return { statusCode: 400, headers, body: JSON.stringify({ error: 'visitor_email requis' }) };
     const { data: conv, error: convErr } = await supabase
       .from('conversations')
       .insert({ visitor_name: visitor_name || visitor_email.split('@')[0], visitor_email, status: 'active' })
       .select('id')
       .single();
-    if (convErr) return new Response(JSON.stringify({ error: convErr.message }), { status: 500, headers });
+    if (convErr) return { statusCode: 500, headers, body: JSON.stringify({ error: convErr.message }) };
     convId = conv.id;
   }
 
@@ -81,10 +77,10 @@ export default async function handler(req, context) {
   let file_url = null;
   if (['image', 'pdf', 'audio'].includes(message_type) && file_data) {
     const buf = Buffer.from(file_data, 'base64');
-    const ext = file_mime.split('/')[1].replace('jpeg', 'jpg').replace('webm', 'webm');
+    const ext = file_mime.split('/')[1].replace('jpeg', 'jpg');
     const path = `${convId}/${Date.now()}.${ext}`;
     const { error: uploadErr } = await supabase.storage.from('chat-files').upload(path, buf, { contentType: file_mime, upsert: false });
-    if (uploadErr) return new Response(JSON.stringify({ error: uploadErr.message }), { status: 500, headers });
+    if (uploadErr) return { statusCode: 500, headers, body: JSON.stringify({ error: uploadErr.message }) };
     const { data: { publicUrl } } = supabase.storage.from('chat-files').getPublicUrl(path);
     file_url = publicUrl;
   }
@@ -104,7 +100,7 @@ export default async function handler(req, context) {
     .select('*')
     .single();
 
-  if (msgErr) return new Response(JSON.stringify({ error: msgErr.message }), { status: 500, headers });
+  if (msgErr) return { statusCode: 500, headers, body: JSON.stringify({ error: msgErr.message }) };
 
-  return new Response(JSON.stringify({ message, conversation_id: convId }), { status: 200, headers });
-}
+  return { statusCode: 200, headers, body: JSON.stringify({ message, conversation_id: convId }) };
+};
