@@ -48,8 +48,8 @@ export default function SupportAdminChat() {
   const loadConversations = useCallback(async () => {
     const { data, error } = await supabase
       .from('support_conversations')
-      .select('id, visitor_name, visitor_email, status, last_message_at, created_at')
-      .order('last_message_at', { ascending: false, nullsFirst: false })
+      .select('id, visitor_name, visitor_email, status, created_at')
+      .order('created_at', { ascending: false })
       .limit(200);
     if (error) { console.error('Support convs:', error); setLoading(false); return; }
 
@@ -58,10 +58,11 @@ export default function SupportAdminChat() {
         .select('id', { count: 'exact', head: true })
         .eq('conversation_id', c.id).eq('sender_type', 'visitor').eq('read_by_admin', false);
       const { data: last } = await supabase.from('support_messages')
-        .select('content, message_type').eq('conversation_id', c.id)
+        .select('content, message_type, created_at').eq('conversation_id', c.id)
         .order('created_at', { ascending: false }).limit(1);
       return {
         ...c,
+        last_message_at: last?.[0] ? (last[0] as any).created_at : null,
         unread: count || 0,
         preview: last?.[0] ? (last[0].message_type === 'text' ? (last[0].content || '') : `[${last[0].message_type}]`) : '',
       };
