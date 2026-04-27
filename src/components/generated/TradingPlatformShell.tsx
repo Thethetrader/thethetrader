@@ -5701,17 +5701,6 @@ export default function TradingPlatformShell() {
             )}
           </button>
 
-          {/* Bouton Toggle Notifications */}
-          <button
-            onClick={handleToggleNotifications}
-            className={`w-full px-4 py-3 rounded-lg font-medium transition-all duration-200 shadow-sm ${
-              notificationsEnabled
-                ? 'bg-green-200/20 hover:bg-green-200/30 text-green-100 border border-green-200/30 hover:border-green-200/40'
-                : 'bg-gray-600/20 hover:bg-gray-600/30 text-gray-400 border border-gray-600/30 hover:border-gray-600/50'
-            }`}
-          >
-            {notificationsEnabled ? '🔔 Notifications ON' : '🔕 Notifications OFF'}
-          </button>
         </div>
       </div>
       {/* Main Content */}
