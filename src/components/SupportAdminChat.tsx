@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
+import LiveOneToOne from './LiveOneToOne';
 
 function AudioPlayer({ src, isSent }: { src: string; isSent: boolean }) {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -90,6 +91,8 @@ export default function SupportAdminChat() {
   const [userSearch, setUserSearch] = useState('');
   const [showUserDrop, setShowUserDrop] = useState(false);
   const [recording, setRecording] = useState(false);
+  const [sessionActive, setSessionActive] = useState(false);
+  const [adminUserId, setAdminUserId] = useState<string | null>(null);
   const [recordSecs, setRecordSecs] = useState(0);
   const bottomRef = useRef<HTMLDivElement>(null);
   const realtimeRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
@@ -97,6 +100,30 @@ export default function SupportAdminChat() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const recordTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Load admin user ID on mount
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data?.session?.user?.id) setAdminUserId(data.session.user.id);
+    });
+  }, []);
+
+  const startSession = useCallback(async () => {
+    if (!activeId || !adminUserId) return;
+    const roomName = `session-${activeId}`;
+    await supabase.from('live_sessions').upsert({
+      conversation_id: activeId,
+      room_name: roomName,
+      status: 'active',
+    }, { onConflict: 'conversation_id' });
+    setSessionActive(true);
+  }, [activeId, adminUserId]);
+
+  const endSession = useCallback(async () => {
+    if (!activeId) return;
+    await supabase.from('live_sessions').update({ status: 'ended' }).eq('conversation_id', activeId);
+    setSessionActive(false);
+  }, [activeId]);
 
   const loadUsers = useCallback(async () => {
     const token = (await supabase.auth.getSession()).data?.session?.access_token;
@@ -398,12 +425,23 @@ export default function SupportAdminChat() {
               <div style={{ fontWeight: 700, fontSize: 14, color: '#f9fafb' }}>{activeConv?.visitor_name}</div>
               <div style={{ fontSize: 12, color: '#6b7280' }}>{activeConv?.visitor_email}</div>
             </div>
-            <button
-              onClick={toggleResolved}
-              style={{ background: activeConv?.status === 'resolved' ? '#374151' : '#065f46', color: activeConv?.status === 'resolved' ? '#9ca3af' : '#6ee7b7', border: 'none', borderRadius: 8, padding: '6px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}
-            >
-              {activeConv?.status === 'resolved' ? 'Réouvrir' : '✓ Résolu'}
-            </button>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <button
+                onClick={sessionActive ? endSession : startSession}
+                style={{ background: sessionActive ? '#7f1d1d' : '#1e3a5f', color: sessionActive ? '#fca5a5' : '#93c5fd', border: 'none', borderRadius: 8, padding: '6px 10px', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5 }}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.89L15 14M3 8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>
+                </svg>
+                {sessionActive ? 'Terminer' : 'Session'}
+              </button>
+              <button
+                onClick={toggleResolved}
+                style={{ background: activeConv?.status === 'resolved' ? '#374151' : '#065f46', color: activeConv?.status === 'resolved' ? '#9ca3af' : '#6ee7b7', border: 'none', borderRadius: 8, padding: '6px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}
+              >
+                {activeConv?.status === 'resolved' ? 'Réouvrir' : '✓ Résolu'}
+              </button>
+            </div>
           </div>
 
           <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: 6, background: '#111827' }}>
@@ -466,6 +504,20 @@ export default function SupportAdminChat() {
               )}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Overlay session vidéo */}
+      {sessionActive && activeId && adminUserId && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: '#111827', display: 'flex', flexDirection: 'column' }}>
+          <LiveOneToOne
+            roomName={`session-${activeId}`}
+            userId={adminUserId}
+            identity="Admin"
+            isAdmin
+            otherName={activeConv?.visitor_name}
+            onEnd={endSession}
+          />
         </div>
       )}
     </div>

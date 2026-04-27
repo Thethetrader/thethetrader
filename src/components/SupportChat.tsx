@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { subscribeSupportPush } from '../utils/support-push';
+import LiveOneToOne from './LiveOneToOne';
 
 function AudioPlayer({ src, isSent }: { src: string; isSent: boolean }) {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -102,6 +103,8 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
   const [recordSecs, setRecordSecs] = useState(0);
   const [adminName, setAdminName] = useState('Support');
   const [adminAvatar, setAdminAvatar] = useState<string | null>(null);
+  const [sessionRoom, setSessionRoom] = useState<string | null>(null);
+  const [sessionJoined, setSessionJoined] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastCreatedAt = useRef<string | null>(null);
@@ -171,6 +174,24 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
   useEffect(() => {
     if (userId) subscribeSupportPush(userId, 'user');
   }, [userId]);
+
+  // Poll for active live session on this conversation
+  useEffect(() => {
+    if (!conversationId) return;
+    const check = async () => {
+      const { data } = await supabase
+        .from('live_sessions')
+        .select('room_name, status')
+        .eq('conversation_id', conversationId)
+        .eq('status', 'active')
+        .limit(1)
+        .maybeSingle();
+      setSessionRoom(data?.room_name ?? null);
+    };
+    check();
+    const interval = setInterval(check, 5000);
+    return () => clearInterval(interval);
+  }, [conversationId]);
 
   async function doSend(payload: Record<string, unknown>) {
     setSending(true);
@@ -278,8 +299,39 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
     background: 'transparent', color: '#94a3b8',
   });
 
+  // Session overlay
+  if (sessionJoined && sessionRoom) {
+    return (
+      <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: '#111827', display: 'flex', flexDirection: 'column' }}>
+        <LiveOneToOne
+          roomName={sessionRoom}
+          userId={userId}
+          identity={userId}
+          isAdmin={false}
+          otherName={adminName}
+          onEnd={() => setSessionJoined(false)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#111827' }}>
+      {/* Bandeau session vidéo */}
+      {sessionRoom && !sessionJoined && (
+        <div style={{ background: '#1e3a5f', borderBottom: '1px solid #2563eb', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#3b82f6', display: 'inline-block', animation: 'pulse 2s infinite' }} />
+            <span style={{ fontSize: 13, color: '#93c5fd', fontWeight: 600 }}>L'admin vous invite à une session vidéo</span>
+          </div>
+          <button
+            onClick={() => setSessionJoined(true)}
+            style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: 8, padding: '6px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}
+          >
+            Rejoindre
+          </button>
+        </div>
+      )}
       {/* Header */}
       <div style={{ padding: '14px 20px', background: '#1f2937', borderBottom: '1px solid #374151', display: 'flex', alignItems: 'center', gap: 12 }}>
         <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 16, flexShrink: 0, overflow: 'hidden' }}>
