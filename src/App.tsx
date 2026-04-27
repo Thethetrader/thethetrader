@@ -22,6 +22,7 @@ const MentionsLegalesPage = lazy(() => import('./components/pages/MentionsLegale
 const ConfidentialitePage = lazy(() => import('./components/pages/ConfidentialitePage').then(m => ({ default: m.ConfidentialitePage })));
 const CgvPage = lazy(() => import('./components/pages/CgvPage').then(m => ({ default: m.CgvPage })));
 const ReserverPage = lazy(() => import('./components/pages/ReserverPage').then(m => ({ default: m.ReserverPage })));
+const PremiumPage = lazy(() => import('./components/landing/PremiumPage').then(m => ({ default: m.PremiumPage })));
 
 // FORCE DEPLOYMENT: 2025-01-13 04:25:00 - FIX OLD CONTENT
 
@@ -1370,6 +1371,7 @@ const App = () => {
 
   // Pages statiques
   const p = window.location.pathname.replace(/\/$/, "");
+  if (p === "/premium") return <Suspense fallback={<div />}><PremiumPage /></Suspense>;
   if (p === "/faq") return <Suspense fallback={<div />}><FaqPage /></Suspense>;
   if (p === "/contact") return <Suspense fallback={<div />}><ContactPage onOpenAuth={() => setShowAuthModal(true)} /></Suspense>;
   if (p === "/reserver") return <Suspense fallback={<div />}><ReserverPage onOpenAuth={() => setShowAuthModal(true)} /></Suspense>;

@@ -9721,12 +9721,12 @@ export default function TradingPlatformShell() {
             <span style={{ fontSize: 10, fontWeight: 500 }}>Journal</span>
           </button>
           {/* Live - Centre proéminent */}
-          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); window.location.href = '/'; }} className="flex flex-col items-center justify-center flex-1" style={{ marginTop: -18 }}>
+          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); window.location.href = '/premium'; }} className="flex flex-col items-center justify-center flex-1" style={{ marginTop: -18 }}>
             <div style={{ width: 54, height: 54, borderRadius: '50%', border: '2.5px solid #c9a84c', backgroundColor: '#1f2937', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1, color: '#c9a84c' }}>
               <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="none">
                 <path d="M12 2L2 9l2 11h16l2-11L12 2zm0 2.5l7.5 5.5-1.5 8h-12l-1.5-8L12 4.5z"/>
               </svg>
-              <span style={{ fontSize: 9, fontWeight: 700, lineHeight: 1 }}>Premium</span>
+              <span style={{ fontSize: 8, fontWeight: 700, lineHeight: 1.1, textAlign: 'center' }}>Devenir{'\n'}Premium</span>
             </div>
           </button>
           {/* Signaux */}
