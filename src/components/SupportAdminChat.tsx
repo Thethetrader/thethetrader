@@ -365,7 +365,7 @@ export default function SupportAdminChat() {
             </button>
           </div>
 
-          <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', gap: 6, background: '#111827' }}>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: 6, background: '#111827' }}>
             {messages.map(m => {
               const isSent = m.sender_type === 'admin';
               return (

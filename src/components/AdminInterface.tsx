@@ -4565,7 +4565,7 @@ const dailyPnLChartData = useMemo(
 
     if (selectedChannel.id === 'support-admin') {
       return (
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+        <div style={{ height: '100%' }}>
           <SupportAdminChat />
         </div>
       );
