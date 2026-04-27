@@ -970,7 +970,7 @@ export default function AdminInterface() {
     setView('signals');
     setCalendarKey(prev => prev + 1);
     
-    // Ne pas scroller pour check-trade car c'est une vue statique
+    // Ne pas scroller pour ces vues statiques/embarquées
     if (channelId !== 'check-trade') {
       scrollToTop();
     }
@@ -3411,7 +3411,8 @@ const dailyPnLChartData = useMemo(
     { id: 'tpln-model', name: 'tpln-model', emoji: '📋', fullName: 'TPLN model' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' },
     { id: 'trading-journal', name: 'trading-journal', emoji: '📊', fullName: 'Journal Perso' },
-    { id: 'check-trade', name: 'check-trade', emoji: '✅', fullName: 'Check Trade' }
+    { id: 'check-trade', name: 'check-trade', emoji: '✅', fullName: 'Check Trade' },
+
   ];
 
   const handleCreateSignal = () => {
@@ -4612,6 +4613,8 @@ const dailyPnLChartData = useMemo(
         </div>
       );
     }
+
+
 
     if (selectedChannel.id === 'user-management') {
       const stats = getUserStats();
@@ -6260,7 +6263,7 @@ const dailyPnLChartData = useMemo(
                       </div>
                     </div>
                   </button>
-                  
+
                   <button
                     onClick={() => {
                       handleChannelChange('livestream-premium', 'livestream-premium');

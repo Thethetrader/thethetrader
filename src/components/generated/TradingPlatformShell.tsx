@@ -290,7 +290,8 @@ export default function TradingPlatformShell() {
     { id: 'trading-journal', name: 'trading-journal', emoji: '📓', fullName: 'Journal Perso' },
     { id: 'tpln-model', name: 'tpln-model', emoji: '📋', fullName: 'TPLN model' },
     { id: 'calendrier', name: 'calendrier', emoji: '📅', fullName: 'Journal Signaux' },
-    { id: 'check-trade', name: 'check-trade', emoji: '✅', fullName: 'Check Trade' }
+    { id: 'check-trade', name: 'check-trade', emoji: '✅', fullName: 'Check Trade' },
+
   ];
 
   // Filtrer les canaux selon le plan de l'utilisateur
@@ -1742,7 +1743,7 @@ export default function TradingPlatformShell() {
     
     // Vérifier l'accès pour les abonnés "journal" (sauf admin)
     if (!isAdmin && currentPlan === 'journal') {
-      // Les abonnés journal ont accès UNIQUEMENT à journal (pas calendrier/Journal Signaux)
+      // Les abonnés journal ont accès UNIQUEMENT à journal
       const allowedChannels = ['journal'];
       if (!allowedChannels.includes(channelId)) {
         console.log('❌❌❌ ACCÈS REFUSÉ pour plan journal:', channelId, 'PWA:', isPWA, 'userPlan:', currentPlan);
@@ -4696,7 +4697,7 @@ export default function TradingPlatformShell() {
         </div>
       );
     }
-    
+
     const isJournalPerso = selectedChannel.id === 'journal' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model';
     const isMobile = window.innerWidth < 768;
     return (
