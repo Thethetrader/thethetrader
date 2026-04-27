@@ -4666,14 +4666,12 @@ export default function TradingPlatformShell() {
     if (selectedChannel.id === 'support') {
       if (supportUnread) setSupportUnread(false);
       return (
-        <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-          <SupportChat
-            userId={user?.id || 'guest'}
-            userEmail={user?.email || ''}
-            visitorName={currentUsername || user?.email?.split('@')[0] || 'Utilisateur'}
-            onNewAdminMessage={() => setSupportUnread(true)}
-          />
-        </div>
+        <SupportChat
+          userId={user?.id || 'guest'}
+          userEmail={user?.email || ''}
+          visitorName={currentUsername || user?.email?.split('@')[0] || 'Utilisateur'}
+          onNewAdminMessage={() => setSupportUnread(true)}
+        />
       );
     }
 
@@ -5976,7 +5974,7 @@ export default function TradingPlatformShell() {
                           setActiveJournalButton('trading-journal');
                           setMobileView('content');
                         }}
-                        className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'journal' && activeJournalButton === 'trading-journal' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
+                        className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'journal' && activeJournalButton === 'trading-journal' && mobileView === 'content' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
                       >
                         <div className="flex items-center gap-3">
                           <span className="text-lg">📓</span>
@@ -5992,7 +5990,7 @@ export default function TradingPlatformShell() {
                           setActiveJournalButton('tpln');
                           setMobileView('content');
                         }}
-                        className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'journal' && activeJournalButton === 'tpln' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
+                        className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'journal' && activeJournalButton === 'tpln' && mobileView === 'content' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
                       >
                         <div className="flex items-center gap-3">
                           <span className="text-lg">📓</span>
@@ -6011,7 +6009,7 @@ export default function TradingPlatformShell() {
                         handleChannelChange('check-trade', 'check-trade');
                         setMobileView('content');
                       }}
-                      className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'check-trade' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
+                      className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'check-trade' && mobileView === 'content' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
                     >
                       <div className="flex items-center gap-3">
                         <span className="text-lg">✅</span>
@@ -6025,7 +6023,7 @@ export default function TradingPlatformShell() {
 
                   <button
                     onClick={() => { handleChannelChange('support', 'support'); setMobileView('content'); setSupportUnread(false); }}
-                    className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'support' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
+                    className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'support' && mobileView === 'content' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-lg">💬</span>
@@ -6084,7 +6082,11 @@ export default function TradingPlatformShell() {
               mobileView === 'content' ? 'translate-x-0 pointer-events-auto' : 'translate-x-full pointer-events-none'
             }`}
           >
-            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'video' || selectedChannel.id === 'livestream-premium' || selectedChannel.id === 'journal') ? (
+            {selectedChannel.id === 'support' ? (
+              <div style={{ position: 'absolute', top: 60, left: 0, right: 0, bottom: 78, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                {getTradingCalendar()}
+              </div>
+            ) : (view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'video' || selectedChannel.id === 'livestream-premium' || selectedChannel.id === 'journal') ? (
               <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '0px', WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}>
                 {/* Header avec sélecteur de compte et bouton Ajouter Trade pour Trading Journal (pas sur TPLN model) */}
                 {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? (
@@ -9759,11 +9761,8 @@ export default function TradingPlatformShell() {
           </button>
           {/* Live - Centre proéminent */}
           <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); window.location.href = '/premium'; }} className="flex flex-col items-center justify-center flex-1" style={{ marginTop: -16 }}>
-            <div style={{ width: 54, height: 54, borderRadius: '50%', border: '2.5px solid #c9a84c', backgroundColor: '#1f2937', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1, color: '#c9a84c' }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-                <path d="M12 2L2 9l2 11h16l2-11L12 2zm0 2.5l7.5 5.5-1.5 8h-12l-1.5-8L12 4.5z"/>
-              </svg>
-              <span style={{ fontSize: 8, fontWeight: 700, lineHeight: 1.1, textAlign: 'center' }}>Devenir{'\n'}Premium</span>
+            <div style={{ width: 54, height: 54, borderRadius: '50%', border: '2.5px solid #c9a84c', backgroundColor: '#1f2937', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#c9a84c' }}>
+              <span style={{ fontSize: 9, fontWeight: 700, lineHeight: 1.2, textAlign: 'center' }}>Devenir{'\n'}Premium</span>
             </div>
           </button>
           {/* Signaux */}

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { supabase } from '../lib/supabase';
 
 const SEND_URL = '/.netlify/functions/send-message';
 const GET_URL = '/.netlify/functions/get-conversation';
@@ -58,6 +59,8 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
   const [error, setError] = useState('');
   const [recording, setRecording] = useState(false);
   const [recordSecs, setRecordSecs] = useState(0);
+  const [adminName, setAdminName] = useState('Support');
+  const [adminAvatar, setAdminAvatar] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastCreatedAt = useRef<string | null>(null);
@@ -65,6 +68,7 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const recordTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const recordSecsRef = useRef(0);
 
   const saveConvId = (cid: string) => {
     setConversationId(cid);
@@ -113,6 +117,14 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
   }, [conversationId, fetchMessages]);
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
+
+  useEffect(() => {
+    supabase.from('user_profiles').select('name, avatar_url').eq('role', 'admin').limit(1).single()
+      .then(({ data }) => {
+        if (data?.name) setAdminName(data.name);
+        if (data?.avatar_url) setAdminAvatar(data.avatar_url);
+      });
+  }, []);
 
   async function doSend(payload: Record<string, unknown>) {
     setSending(true);
@@ -180,22 +192,28 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
       mr.ondataavailable = e => { if (e.data.size > 0) audioChunksRef.current.push(e.data); };
       mr.onstop = async () => {
         stream.getTracks().forEach(t => t.stop());
+        if (recordTimerRef.current) clearInterval(recordTimerRef.current);
+        const duration = recordSecsRef.current;
+        setRecordSecs(0);
+        recordSecsRef.current = 0;
         const blob = new Blob(audioChunksRef.current, { type: mimeType });
         if (blob.size < 100) return;
         const reader = new FileReader();
         reader.onload = async () => {
           const b64 = (reader.result as string).split(',')[1];
-          await doSend({ message_type: 'audio', file_data: b64, file_name: 'vocal.webm', file_mime: mimeType });
+          await doSend({ message_type: 'audio', file_data: b64, file_name: 'vocal.webm', file_mime: mimeType, duration_seconds: duration });
         };
         reader.readAsDataURL(blob);
-        if (recordTimerRef.current) clearInterval(recordTimerRef.current);
-        setRecordSecs(0);
       };
       mr.start();
       mediaRecorderRef.current = mr;
       setRecording(true);
       setRecordSecs(0);
-      recordTimerRef.current = setInterval(() => setRecordSecs(s => s + 1), 1000);
+      recordSecsRef.current = 0;
+      recordTimerRef.current = setInterval(() => {
+        recordSecsRef.current += 1;
+        setRecordSecs(s => s + 1);
+      }, 1000);
     } catch { setError('Micro non disponible'); }
   }
 
@@ -215,25 +233,27 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
   });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#f8f9fa' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#111827' }}>
       {/* Header */}
-      <div style={{ padding: '16px 20px', background: '#fff', borderBottom: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', gap: 12 }}>
-        <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 16, flexShrink: 0 }}>T</div>
+      <div style={{ padding: '14px 20px', background: '#1f2937', borderBottom: '1px solid #374151', display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 16, flexShrink: 0, overflow: 'hidden' }}>
+          {adminAvatar ? <img src={adminAvatar} alt={adminName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : adminName.charAt(0).toUpperCase()}
+        </div>
         <div>
-          <div style={{ fontWeight: 700, fontSize: 15, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 6 }}>
-            TheThe Trader
+          <div style={{ fontWeight: 700, fontSize: 15, color: '#f9fafb', display: 'flex', alignItems: 'center', gap: 6 }}>
+            {adminName}
             <svg width="16" height="16" viewBox="0 0 24 24" fill="#10b981"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>
-          <div style={{ fontSize: 12, color: '#64748b' }}>Support — répond rapidement</div>
+          <div style={{ fontSize: 12, color: '#6b7280' }}>Support — répond rapidement</div>
         </div>
       </div>
 
       {/* Messages */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 6 }}>
         {messages.length === 0 && (
-          <div style={{ textAlign: 'center', color: '#94a3b8', fontSize: 13, margin: 'auto', paddingTop: 40 }}>
+          <div style={{ textAlign: 'center', color: '#6b7280', fontSize: 13, margin: 'auto', paddingTop: 40 }}>
             <div style={{ fontSize: 32, marginBottom: 12 }}>💬</div>
-            <div style={{ fontWeight: 600, marginBottom: 4 }}>Comment puis-je t'aider ?</div>
+            <div style={{ fontWeight: 600, marginBottom: 4, color: '#9ca3af' }}>Comment puis-je t'aider ?</div>
             <div>Envoie un message ci-dessous.</div>
           </div>
         )}
@@ -241,13 +261,13 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
           const isSent = m.sender_type === 'visitor';
           return (
             <div key={m.id} style={{ display: 'flex', flexDirection: 'column', alignItems: isSent ? 'flex-end' : 'flex-start', maxWidth: '78%', alignSelf: isSent ? 'flex-end' : 'flex-start', marginLeft: isSent ? 'auto' : '0', marginRight: isSent ? '0' : 'auto' }}>
-              <div style={{ padding: m.message_type === 'text' ? '10px 14px' : '6px', borderRadius: isSent ? '18px 18px 4px 18px' : '18px 18px 18px 4px', background: isSent ? '#10b981' : '#fff', color: isSent ? '#fff' : '#0f172a', fontSize: 14, lineHeight: 1.45, wordBreak: 'break-word', whiteSpace: 'pre-wrap', boxShadow: '0 1px 2px rgba(0,0,0,0.07)' }}>
+              <div style={{ padding: m.message_type === 'text' ? '10px 14px' : '6px', borderRadius: isSent ? '18px 18px 4px 18px' : '18px 18px 18px 4px', background: isSent ? '#10b981' : '#1f2937', color: '#f9fafb', fontSize: 14, lineHeight: 1.45, wordBreak: 'break-word', whiteSpace: 'pre-wrap', border: isSent ? 'none' : '1px solid #374151' }}>
                 {m.message_type === 'text' && m.content}
                 {m.message_type === 'image' && m.file_url && (
                   <img src={m.file_url} alt="image" style={{ maxWidth: 220, borderRadius: 12, display: 'block', cursor: 'pointer' }} onClick={() => window.open(m.file_url!)} />
                 )}
                 {m.message_type === 'pdf' && m.file_url && (
-                  <a href={m.file_url} target="_blank" rel="noopener noreferrer" style={{ color: isSent ? '#fff' : '#10b981', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6, padding: '4px 8px' }}>
+                  <a href={m.file_url} target="_blank" rel="noopener noreferrer" style={{ color: '#10b981', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6, padding: '4px 8px' }}>
                     📄 {m.file_name || 'document.pdf'}
                   </a>
                 )}
@@ -255,7 +275,7 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
                   <audio controls src={m.file_url} style={{ maxWidth: 220, display: 'block' }} />
                 )}
               </div>
-              <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2, padding: '0 4px' }}>{fmtTime(m.created_at)}</div>
+              <div style={{ fontSize: 11, color: '#4b5563', marginTop: 2, padding: '0 4px' }}>{fmtTime(m.created_at)}</div>
             </div>
           );
         })}
@@ -264,11 +284,11 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
       </div>
 
       {/* Input */}
-      <div style={{ padding: '8px 10px', background: '#fff', borderTop: '1px solid #e5e7eb' }}>
+      <div style={{ padding: '8px 10px', background: '#1f2937', borderTop: '1px solid #374151' }}>
         {recording && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 12px', background: '#fef2f2', borderRadius: 20, marginBottom: 8, border: '1px solid #fecaca' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 12px', background: 'rgba(239,68,68,0.15)', borderRadius: 20, marginBottom: 8, border: '1px solid rgba(239,68,68,0.3)' }}>
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444', animation: 'pulse 1s infinite', flexShrink: 0 }} />
-            <span style={{ fontSize: 13, color: '#dc2626', flex: 1 }}>Enregistrement… {recordSecs}s</span>
+            <span style={{ fontSize: 13, color: '#fca5a5', flex: 1 }}>Enregistrement… {recordSecs}s</span>
             <button onClick={stopRecording} style={{ background: '#ef4444', color: '#fff', border: 'none', borderRadius: 12, padding: '4px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>Envoyer</button>
           </div>
         )}
@@ -290,9 +310,9 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
             placeholder="Écrire ici..."
             maxLength={2000}
             disabled={sending || recording}
-            style={{ flex: 1, border: '1px solid #e5e7eb', borderRadius: 20, padding: '9px 14px', fontSize: 14, outline: 'none', resize: 'none', maxHeight: 80, fontFamily: 'inherit', background: '#f8f9fa', color: '#0f172a' }}
+            style={{ flex: 1, border: '1px solid #374151', borderRadius: 20, padding: '9px 14px', fontSize: 14, outline: 'none', resize: 'none', maxHeight: 80, fontFamily: 'inherit', background: '#111827', color: '#f9fafb' }}
             onFocus={e => (e.target.style.borderColor = '#10b981')}
-            onBlur={e => (e.target.style.borderColor = '#e5e7eb')}
+            onBlur={e => (e.target.style.borderColor = '#374151')}
           />
 
           {/* Mic or Send */}
@@ -301,7 +321,7 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
             </button>
           ) : (
-            <button onClick={recording ? stopRecording : startRecording} disabled={sending} style={{ width: 38, height: 38, borderRadius: '50%', background: recording ? '#ef4444' : '#e2e8f0', color: recording ? '#fff' : '#64748b', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.15s' }} title={recording ? 'Arrêter' : 'Message vocal'}>
+            <button onClick={recording ? stopRecording : startRecording} disabled={sending} style={{ width: 38, height: 38, borderRadius: '50%', background: recording ? '#ef4444' : '#374151', color: recording ? '#fff' : '#9ca3af', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.15s' }} title={recording ? 'Arrêter' : 'Message vocal'}>
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
               </svg>
