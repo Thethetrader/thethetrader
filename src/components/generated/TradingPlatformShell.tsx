@@ -16,6 +16,7 @@ import RumbleTalk from '../RumbleTalk';
 import DailyPnLChart from '../DailyPnLChart';
 import CheckTradeChecklist from '../CheckTradeChecklist';
 import SupportChat from '../SupportChat';
+import SupportPoller from '../SupportPoller';
 
 // Configuration Supabase
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
@@ -5504,6 +5505,11 @@ export default function TradingPlatformShell() {
 
   return (
     <div className="h-screen w-full bg-gray-900 text-white overflow-hidden flex" style={{ paddingTop: '0px' }}>
+      <SupportPoller
+        userId={user?.id || 'guest'}
+        isOnSupportChannel={selectedChannel.id === 'support'}
+        onNewAdminMessage={() => setSupportUnread(true)}
+      />
       {/* Desktop Sidebar */}
       <div className="hidden md:flex w-56 min-w-56 flex-shrink-0 bg-gray-800 flex-col">
         <div className="p-4 border-b border-gray-700">
