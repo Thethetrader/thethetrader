@@ -166,17 +166,19 @@ export default function SupportAdminChat() {
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, marginBottom: 3 }}>
                 <span style={{ fontWeight: 600, fontSize: 13, color: '#f3f4f6', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.visitor_name}</span>
-                <span style={{ fontSize: 11, color: '#6b7280', flexShrink: 0 }}>{fmtRel(c.last_message_at)}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                  <span style={{ fontSize: 11, color: '#6b7280' }}>{fmtRel(c.last_message_at)}</span>
+                  {c.unread > 0 && c.status !== 'resolved' && (
+                    <span style={{ background: '#ef4444', color: '#fff', fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 10, minWidth: 18, textAlign: 'center', display: 'inline-block' }}>{c.unread}</span>
+                  )}
+                  {c.status === 'resolved' && (
+                    <span style={{ fontSize: 10, background: '#374151', color: '#6b7280', padding: '1px 6px', borderRadius: 6 }}>résolu</span>
+                  )}
+                </div>
               </div>
-              <div style={{ fontSize: 12, color: '#9ca3af', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: c.unread > 0 ? 24 : 0 }}>
+              <div style={{ fontSize: 12, color: '#9ca3af', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {c.preview || c.visitor_email}
               </div>
-              {c.status === 'resolved' && (
-                <span style={{ position: 'absolute', top: 10, right: 10, fontSize: 10, background: '#374151', color: '#6b7280', padding: '1px 6px', borderRadius: 6 }}>résolu</span>
-              )}
-              {c.unread > 0 && c.status !== 'resolved' && (
-                <span style={{ position: 'absolute', top: 10, right: 10, background: '#ef4444', color: '#fff', fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 10, minWidth: 18, textAlign: 'center' }}>{c.unread}</span>
-              )}
             </div>
           ))}
         </div>
