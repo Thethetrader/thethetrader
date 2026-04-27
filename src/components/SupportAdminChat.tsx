@@ -2,6 +2,9 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 
 const SEND_URL = '/.netlify/functions/send-message';
+const GET_USERS_URL = '/.netlify/functions/get-users';
+
+type UserItem = { id: string; email: string; name: string };
 
 type Conv = {
   id: string;
@@ -42,6 +45,9 @@ export default function SupportAdminChat() {
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState<UserItem[]>([]);
+  const [userSearch, setUserSearch] = useState('');
+  const [showUserDrop, setShowUserDrop] = useState(false);
   const [recording, setRecording] = useState(false);
   const [recordSecs, setRecordSecs] = useState(0);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -50,6 +56,31 @@ export default function SupportAdminChat() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const recordTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const loadUsers = useCallback(async () => {
+    const token = (await supabase.auth.getSession()).data?.session?.access_token;
+    if (!token) return;
+    const res = await fetch(GET_USERS_URL, { headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) return;
+    const json = await res.json();
+    setUsers(json.users || []);
+  }, []);
+
+  const startConversationWith = useCallback(async (u: UserItem) => {
+    setShowUserDrop(false);
+    setUserSearch('');
+    // Check if conversation already exists
+    const { data } = await supabase.from('support_conversations').select('id').eq('visitor_email', u.email).limit(1);
+    if (data?.length) {
+      openConversation(data[0].id);
+    } else {
+      // Create new conversation
+      const { data: conv } = await supabase.from('support_conversations')
+        .insert({ visitor_name: u.name || u.email.split('@')[0], visitor_email: u.email, status: 'active' })
+        .select('id').single();
+      if (conv) { await loadConversations(); openConversation(conv.id); }
+    }
+  }, []);
 
   const loadConversations = useCallback(async () => {
     const { data, error } = await supabase
@@ -91,6 +122,7 @@ export default function SupportAdminChat() {
 
   useEffect(() => {
     loadConversations();
+    loadUsers();
     const ch = supabase.channel('support-admin-chat')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'support_messages' }, async (payload) => {
         const m = payload.new as Msg;
@@ -227,9 +259,54 @@ export default function SupportAdminChat() {
 
       {/* Sidebar */}
       <div style={{ width: 280, minWidth: 280, borderRight: '1px solid #374151', display: 'flex', flexDirection: 'column', background: '#1f2937' }}>
-        <div style={{ padding: '16px', borderBottom: '1px solid #374151', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ padding: '12px 14px', borderBottom: '1px solid #374151', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{ fontWeight: 700, fontSize: 14, color: '#f9fafb' }}>Support clients</span>
           <button onClick={loadConversations} style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer', fontSize: 16, padding: 2 }} title="Actualiser">↻</button>
+        </div>
+
+        {/* User picker */}
+        <div style={{ padding: '10px 12px', borderBottom: '1px solid #374151', position: 'relative' }}>
+          <div
+            style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#111827', border: '1px solid #374151', borderRadius: 8, padding: '7px 10px', cursor: 'pointer' }}
+            onClick={() => { setShowUserDrop(v => !v); if (!showUserDrop) setUserSearch(''); }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span style={{ fontSize: 13, color: '#6b7280', flex: 1 }}>Nouveau message…</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          {showUserDrop && (
+            <div style={{ position: 'absolute', left: 12, right: 12, top: '100%', zIndex: 50, background: '#1f2937', border: '1px solid #374151', borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.4)', overflow: 'hidden' }}>
+              <div style={{ padding: '8px 10px', borderBottom: '1px solid #374151' }}>
+                <input
+                  autoFocus
+                  value={userSearch}
+                  onChange={e => setUserSearch(e.target.value)}
+                  placeholder="Rechercher un utilisateur…"
+                  style={{ width: '100%', background: '#111827', border: '1px solid #374151', borderRadius: 6, padding: '6px 10px', fontSize: 13, color: '#f3f4f6', outline: 'none', boxSizing: 'border-box' }}
+                />
+              </div>
+              <div style={{ maxHeight: 220, overflowY: 'auto' }}>
+                {users
+                  .filter(u => !userSearch || u.email.toLowerCase().includes(userSearch.toLowerCase()) || u.name.toLowerCase().includes(userSearch.toLowerCase()))
+                  .map(u => (
+                    <div
+                      key={u.id}
+                      onClick={() => startConversationWith(u)}
+                      style={{ padding: '9px 12px', cursor: 'pointer', borderBottom: '1px solid #2d3748' }}
+                      onMouseEnter={e => (e.currentTarget.style.background = '#374151')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      <div style={{ fontSize: 13, color: '#f3f4f6', fontWeight: 500 }}>{u.name || u.email.split('@')[0]}</div>
+                      <div style={{ fontSize: 11, color: '#6b7280' }}>{u.email}</div>
+                    </div>
+                  ))
+                }
+                {users.filter(u => !userSearch || u.email.toLowerCase().includes(userSearch.toLowerCase()) || u.name.toLowerCase().includes(userSearch.toLowerCase())).length === 0 && (
+                  <div style={{ padding: 16, fontSize: 13, color: '#6b7280', textAlign: 'center' }}>Aucun résultat</div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
         <div style={{ flex: 1, overflowY: 'auto' }}>
           {loading && <div style={{ padding: 16, color: '#6b7280', fontSize: 13, textAlign: 'center' }}>Chargement…</div>}
