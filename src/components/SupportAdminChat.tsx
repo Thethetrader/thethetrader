@@ -369,7 +369,7 @@ export default function SupportAdminChat() {
             {messages.map(m => {
               const isSent = m.sender_type === 'admin';
               return (
-                <div key={m.id} style={{ display: 'flex', flexDirection: 'column', alignItems: isSent ? 'flex-end' : 'flex-start', maxWidth: '70%', alignSelf: isSent ? 'flex-end' : 'flex-start' }}>
+                <div key={m.id} style={{ display: 'flex', flexDirection: 'column', alignItems: isSent ? 'flex-end' : 'flex-start', maxWidth: '70%', alignSelf: isSent ? 'flex-end' : 'flex-start', marginLeft: isSent ? 'auto' : '0', marginRight: isSent ? '0' : 'auto' }}>
                   <div style={{ padding: '9px 13px', borderRadius: isSent ? '16px 16px 4px 16px' : '16px 16px 16px 4px', background: isSent ? '#10b981' : '#1f2937', color: isSent ? '#fff' : '#f3f4f6', fontSize: 14, lineHeight: 1.45, wordBreak: 'break-word', whiteSpace: 'pre-wrap', border: isSent ? 'none' : '1px solid #374151' }}>
                     {m.message_type === 'text' && m.content}
                     {m.message_type === 'image' && m.file_url && (

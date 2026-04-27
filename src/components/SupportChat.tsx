@@ -240,7 +240,7 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
         {messages.map((m) => {
           const isSent = m.sender_type === 'visitor';
           return (
-            <div key={m.id} style={{ display: 'flex', flexDirection: 'column', alignItems: isSent ? 'flex-end' : 'flex-start', maxWidth: '78%', alignSelf: isSent ? 'flex-end' : 'flex-start' }}>
+            <div key={m.id} style={{ display: 'flex', flexDirection: 'column', alignItems: isSent ? 'flex-end' : 'flex-start', maxWidth: '78%', alignSelf: isSent ? 'flex-end' : 'flex-start', marginLeft: isSent ? 'auto' : '0', marginRight: isSent ? '0' : 'auto' }}>
               <div style={{ padding: m.message_type === 'text' ? '10px 14px' : '6px', borderRadius: isSent ? '18px 18px 4px 18px' : '18px 18px 18px 4px', background: isSent ? '#10b981' : '#fff', color: isSent ? '#fff' : '#0f172a', fontSize: 14, lineHeight: 1.45, wordBreak: 'break-word', whiteSpace: 'pre-wrap', boxShadow: '0 1px 2px rgba(0,0,0,0.07)' }}>
                 {m.message_type === 'text' && m.content}
                 {m.message_type === 'image' && m.file_url && (
