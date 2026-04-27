@@ -42,8 +42,14 @@ export default function SupportAdminChat() {
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [recording, setRecording] = useState(false);
+  const [recordSecs, setRecordSecs] = useState(0);
   const bottomRef = useRef<HTMLDivElement>(null);
   const realtimeRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const recordTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const loadConversations = useCallback(async () => {
     const { data, error } = await supabase
@@ -107,27 +113,80 @@ export default function SupportAdminChat() {
     return () => { supabase.removeChannel(ch); };
   }, [activeId, loadConversations]);
 
-  async function send() {
-    const content = text.trim();
-    if (!content || !activeId || sending) return;
+  async function getToken() {
+    const { data } = await supabase.auth.getSession();
+    return data?.session?.access_token;
+  }
+
+  async function doSend(payload: Record<string, unknown>) {
+    if (!activeId || sending) return;
     setSending(true);
-    setText('');
     try {
-      const { data } = await supabase.auth.getSession();
-      const token = data?.session?.access_token;
+      const token = await getToken();
       const res = await fetch(SEND_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-        body: JSON.stringify({ conversation_id: activeId, message_type: 'text', content }),
+        body: JSON.stringify({ conversation_id: activeId, ...payload }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error);
       setMessages(prev => [...prev, json.message]);
     } catch (err: any) {
       alert(err.message || 'Erreur envoi');
-      setText(content);
     } finally { setSending(false); }
   }
+
+  async function send() {
+    const content = text.trim();
+    if (!content) return;
+    setText('');
+    await doSend({ message_type: 'text', content });
+  }
+
+  async function sendFile(file: File) {
+    if (file.size > 4 * 1024 * 1024) { alert('Fichier trop lourd (max 4 Mo)'); return; }
+    const mime = file.type;
+    const isImage = mime.startsWith('image/');
+    const isPdf = mime === 'application/pdf';
+    if (!isImage && !isPdf) { alert('Seuls les images et PDF sont acceptés'); return; }
+    const b64: string = await new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res((r.result as string).split(',')[1]);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+    await doSend({ message_type: isImage ? 'image' : 'pdf', file_data: b64, file_name: file.name, file_mime: mime });
+  }
+
+  async function startRecording() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/ogg';
+      const mr = new MediaRecorder(stream, { mimeType });
+      audioChunksRef.current = [];
+      mr.ondataavailable = e => { if (e.data.size > 0) audioChunksRef.current.push(e.data); };
+      mr.onstop = async () => {
+        stream.getTracks().forEach(t => t.stop());
+        const blob = new Blob(audioChunksRef.current, { type: mimeType });
+        if (blob.size < 100) return;
+        const reader = new FileReader();
+        reader.onload = async () => {
+          const b64 = (reader.result as string).split(',')[1];
+          await doSend({ message_type: 'audio', file_data: b64, file_name: 'vocal.webm', file_mime: mimeType });
+        };
+        reader.readAsDataURL(blob);
+        if (recordTimerRef.current) clearInterval(recordTimerRef.current);
+        setRecordSecs(0);
+      };
+      mr.start();
+      mediaRecorderRef.current = mr;
+      setRecording(true);
+      setRecordSecs(0);
+      recordTimerRef.current = setInterval(() => setRecordSecs(s => s + 1), 1000);
+    } catch { alert('Micro non disponible'); }
+  }
+
+  function stopRecording() { mediaRecorderRef.current?.stop(); setRecording(false); }
 
   async function toggleResolved() {
     const c = conversations.find(c => c.id === activeId);
@@ -229,28 +288,41 @@ export default function SupportAdminChat() {
             <div ref={bottomRef} />
           </div>
 
-          <div style={{ padding: '10px 12px', borderTop: '1px solid #374151', background: '#1f2937', display: 'flex', alignItems: 'flex-end', gap: 8 }}>
-            <textarea
-              value={text}
-              onChange={e => setText(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
-              rows={1}
-              placeholder="Répondre…"
-              maxLength={2000}
-              disabled={sending}
-              style={{ flex: 1, background: '#111827', border: '1px solid #374151', borderRadius: 20, padding: '9px 14px', fontSize: 14, color: '#f3f4f6', outline: 'none', resize: 'none', maxHeight: 80, fontFamily: 'inherit' }}
-              onFocus={e => (e.target.style.borderColor = '#10b981')}
-              onBlur={e => (e.target.style.borderColor = '#374151')}
-            />
-            <button
-              onClick={send}
-              disabled={!text.trim() || sending}
-              style={{ width: 38, height: 38, borderRadius: '50%', background: text.trim() ? '#10b981' : '#374151', color: '#fff', border: 'none', cursor: text.trim() ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.15s' }}
-            >
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
-              </svg>
-            </button>
+          <div style={{ padding: '8px 10px', borderTop: '1px solid #374151', background: '#1f2937' }}>
+            <input ref={fileInputRef} type="file" accept="image/*,application/pdf" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) sendFile(f); e.target.value = ''; }} />
+            {recording && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 12px', background: '#450a0a', borderRadius: 20, marginBottom: 8, border: '1px solid #7f1d1d' }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444', flexShrink: 0 }} />
+                <span style={{ fontSize: 13, color: '#fca5a5', flex: 1 }}>Enregistrement… {recordSecs}s</span>
+                <button onClick={stopRecording} style={{ background: '#ef4444', color: '#fff', border: 'none', borderRadius: 12, padding: '4px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>Envoyer</button>
+              </div>
+            )}
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4 }}>
+              <button onClick={() => fileInputRef.current?.click()} disabled={sending || recording} style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', background: 'transparent', color: '#6b7280', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }} title="Image ou PDF">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+              </button>
+              <textarea
+                value={text}
+                onChange={e => setText(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
+                rows={1}
+                placeholder="Répondre…"
+                maxLength={2000}
+                disabled={sending || recording}
+                style={{ flex: 1, background: '#111827', border: '1px solid #374151', borderRadius: 20, padding: '9px 14px', fontSize: 14, color: '#f3f4f6', outline: 'none', resize: 'none', maxHeight: 80, fontFamily: 'inherit' }}
+                onFocus={e => (e.target.style.borderColor = '#10b981')}
+                onBlur={e => (e.target.style.borderColor = '#374151')}
+              />
+              {text.trim() ? (
+                <button onClick={send} disabled={sending} style={{ width: 38, height: 38, borderRadius: '50%', background: '#10b981', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                </button>
+              ) : (
+                <button onClick={recording ? stopRecording : startRecording} disabled={sending} style={{ width: 38, height: 38, borderRadius: '50%', background: recording ? '#ef4444' : '#374151', color: recording ? '#fff' : '#9ca3af', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.15s' }} title={recording ? 'Arrêter' : 'Message vocal'}>
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}
