@@ -5685,6 +5685,22 @@ export default function TradingPlatformShell() {
           </div>
 
 
+          {/* Bouton Support */}
+          <button
+            onClick={() => { handleChannelChange('support', 'support'); setSupportUnread(false); }}
+            className={`w-full px-4 py-3 rounded-lg font-medium transition-all duration-200 shadow-sm flex items-center justify-between ${selectedChannel.id === 'support' ? 'bg-gray-600 text-white border border-gray-500' : 'bg-gray-700/50 hover:bg-gray-700 text-gray-300 border border-gray-600/30'}`}
+          >
+            <div className="flex items-center gap-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span>Support</span>
+            </div>
+            {supportUnread && selectedChannel.id !== 'support' && (
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444', display: 'inline-block' }} />
+            )}
+          </button>
+
           {/* Bouton Toggle Notifications */}
           <button
             onClick={handleToggleNotifications}
