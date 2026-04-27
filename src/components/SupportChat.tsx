@@ -255,7 +255,7 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
       </div>
 
       {/* Messages */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '20px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', gap: 6 }}>
         {messages.length === 0 && (
           <div style={{ textAlign: 'center', color: '#6b7280', fontSize: 13, margin: 'auto', paddingTop: 40 }}>
             <div style={{ fontSize: 32, marginBottom: 12 }}>💬</div>
