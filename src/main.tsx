@@ -3,6 +3,26 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.tsx';
 
+// Auto-reload on stale chunk errors (after a new deploy)
+window.addEventListener('error', (e) => {
+  const msg = e.message || '';
+  if (msg.includes('Failed to fetch dynamically imported module') || msg.includes('Importing a module script failed')) {
+    if (!sessionStorage.getItem('chunk_reload')) {
+      sessionStorage.setItem('chunk_reload', '1');
+      window.location.reload();
+    }
+  }
+});
+window.addEventListener('unhandledrejection', (e) => {
+  const msg = String(e.reason?.message || e.reason || '');
+  if (msg.includes('Failed to fetch dynamically imported module') || msg.includes('Importing a module script failed')) {
+    if (!sessionStorage.getItem('chunk_reload')) {
+      sessionStorage.setItem('chunk_reload', '1');
+      window.location.reload();
+    }
+  }
+});
+
 // Register service worker for PWA
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -17,8 +37,7 @@ if ('serviceWorker' in navigator) {
         if ('caches' in window) {
           caches.keys().then((cacheNames) => {
             cacheNames.forEach((cacheName) => {
-              if (cacheName.includes('thethetrader-v7') || cacheName.includes('thethetrader-v6')) {
-                console.log('🗑️ Suppression ancien cache:', cacheName);
+              if (cacheName !== 'thethetrader-v15') {
                 caches.delete(cacheName);
               }
             });

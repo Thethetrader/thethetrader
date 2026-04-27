@@ -1,12 +1,8 @@
 // Service Worker pour Tradingpourlesnuls PWA
 // Gère les notifications push en arrière-plan
 
-const CACHE_NAME = 'thethetrader-v14-favicon';
+const CACHE_NAME = 'thethetrader-v15';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/src/index.css',
-  '/src/main.tsx',
   '/FAVICON.png',
   '/manifest.json'
 ];
@@ -76,14 +72,22 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
+  // Network-first for HTML (never serve stale index.html)
+  const url = event.request.url;
+  const isHtml = url.endsWith('/') || url.includes('index.html') || !url.includes('.');
+  if (isHtml) {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
-        // Retourner la réponse du cache si disponible
         if (response) {
           return response;
         }
-        // Sinon, faire la requête réseau
         return fetch(event.request);
       }
     )
