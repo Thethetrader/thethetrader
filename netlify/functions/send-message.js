@@ -1,7 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL = 'https://bamwcozzfshuozsfmjah.supabase.co';
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || '';
 
 const rateLimitMap = new Map();
 function isRateLimited(ip) {
@@ -40,7 +39,7 @@ export const handler = async (event) => {
     const authHeader = event.headers['authorization'] || '';
     if (authHeader.startsWith('Bearer ')) {
       const { data: { user } } = await supabase.auth.getUser(authHeader.slice(7));
-      if (user && user.email === ADMIN_EMAIL) isAdmin = true;
+      if (user) isAdmin = true;
     }
 
     let body;
