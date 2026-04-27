@@ -9741,7 +9741,7 @@ export default function TradingPlatformShell() {
         borderTop: '1px solid #374151',
         paddingBottom: 'env(safe-area-inset-bottom, 6px)',
       }}>
-        <div className="flex items-end justify-around" style={{ height: 78 }}>
+        <div className="flex items-center justify-around" style={{ height: 78 }}>
           {/* Accueil */}
           <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setMobileView('channels'); }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: mobileView === 'channels' ? '#c9a84c' : '#6b7280' }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill={mobileView === 'channels' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -9757,7 +9757,7 @@ export default function TradingPlatformShell() {
             <span style={{ fontSize: 10, fontWeight: 500 }}>Journal</span>
           </button>
           {/* Live - Centre proéminent */}
-          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); window.location.href = '/premium'; }} className="flex flex-col items-center justify-center flex-1" style={{ marginTop: -18 }}>
+          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); window.location.href = '/premium'; }} className="flex flex-col items-center justify-center flex-1" style={{ marginTop: -22 }}>
             <div style={{ width: 54, height: 54, borderRadius: '50%', border: '2.5px solid #c9a84c', backgroundColor: '#1f2937', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1, color: '#c9a84c' }}>
               <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="none">
                 <path d="M12 2L2 9l2 11h16l2-11L12 2zm0 2.5l7.5 5.5-1.5 8h-12l-1.5-8L12 4.5z"/>
