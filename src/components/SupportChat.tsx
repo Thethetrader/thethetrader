@@ -111,6 +111,13 @@ export default function SupportChat({ userId, userEmail, visitorName }: Props) {
       setMessages(prev => [...prev, json.message]);
       lastCreatedAt.current = json.message.created_at;
     } catch (err: any) {
+      // If the stored conversation_id is invalid, clear it and retry fresh
+      if (conversationId && (err.message?.includes('foreign key') || err.message?.includes('violates') || err.message?.includes('conv'))) {
+        localStorage.removeItem(storageKey(userId));
+        setConversationId(null);
+        setMessages([]);
+        lastCreatedAt.current = null;
+      }
       setError(err.message || 'Erreur lors de l\'envoi');
       setText(content);
     } finally {
