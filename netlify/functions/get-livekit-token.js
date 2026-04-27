@@ -1,15 +1,13 @@
-const { AccessToken } = require('livekit-server-sdk');
 const { createClient } = require('@supabase/supabase-js');
 
 const LIVEKIT_API_KEY = process.env.LIVEKIT_API_KEY;
 const LIVEKIT_API_SECRET = process.env.LIVEKIT_API_SECRET;
 
 const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
+  process.env.SUPABASE_URL || '',
+  process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
-// Rooms and their access rules
 const ROOM_ACCESS = {
   'stream-public': 'all',
   'stream-premium': 'premium',
@@ -34,7 +32,17 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: 'Missing roomName or userId' };
   }
 
+  if (!LIVEKIT_API_KEY || !LIVEKIT_API_SECRET) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'LIVEKIT_API_KEY / LIVEKIT_API_SECRET manquants dans Netlify' }),
+    };
+  }
+
   try {
+    // Dynamic import for ESM-only livekit-server-sdk
+    const { AccessToken } = await import('livekit-server-sdk');
+
     // Fetch user profile to check plan and role
     const { data: profile } = await supabase
       .from('user_profiles')
@@ -54,12 +62,11 @@ exports.handler = async (event) => {
       return { statusCode: 403, body: JSON.stringify({ error: 'Admin only' }) };
     }
 
-    // Only admin can publish
     const canPublish = isAdmin && isPublisher;
 
     const token = new AccessToken(LIVEKIT_API_KEY, LIVEKIT_API_SECRET, {
       identity: identity || userId,
-      ttl: 14400, // 4 hours
+      ttl: 14400,
     });
 
     token.addGrant({
@@ -75,10 +82,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        token: jwt,
-        url: process.env.LIVEKIT_URL,
-      }),
+      body: JSON.stringify({ token: jwt, url: process.env.LIVEKIT_URL }),
     };
   } catch (err) {
     console.error('LiveKit token error:', err);
