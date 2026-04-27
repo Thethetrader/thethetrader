@@ -19,6 +19,7 @@ interface Props {
   userId: string;
   userEmail: string;
   visitorName: string;
+  onNewAdminMessage?: () => void;
 }
 
 function fmtTime(iso: string) {
@@ -41,7 +42,7 @@ async function postSend(payload: Record<string, unknown>) {
   return json as { message: Msg; conversation_id: string };
 }
 
-export default function SupportChat({ userId, userEmail, visitorName }: Props) {
+export default function SupportChat({ userId, userEmail, visitorName, onNewAdminMessage }: Props) {
   const [conversationId, setConversationId] = useState<string | null>(() => localStorage.getItem(storageKey(userId)));
   const [messages, setMessages] = useState<Msg[]>([]);
   const [text, setText] = useState('');
@@ -63,6 +64,7 @@ export default function SupportChat({ userId, userEmail, visitorName }: Props) {
         const existingIds = new Set(prev.map(m => m.id));
         const fresh = json.messages.filter((m: Msg) => !existingIds.has(m.id));
         if (!fresh.length) return prev;
+        if (fresh.some((m: Msg) => m.sender_type === 'admin')) onNewAdminMessage?.();
         if (lastCreatedAt.current === null) {
           if (json.messages.length) lastCreatedAt.current = json.messages[json.messages.length - 1].created_at;
           return json.messages;

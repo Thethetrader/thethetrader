@@ -453,6 +453,7 @@ export default function TradingPlatformShell() {
 
   // État pour les messages non lus par salon
   const [unreadCounts, setUnreadCounts] = useState<{[channelId: string]: number}>({});
+  const [supportUnread, setSupportUnread] = useState(false);
 
   // Fonction callback pour recevoir les changements de messages non lus
   const handleUnreadCountChange = (channelId: string, count: number) => {
@@ -4700,12 +4701,14 @@ export default function TradingPlatformShell() {
     }
 
     if (selectedChannel.id === 'support') {
+      if (supportUnread) setSupportUnread(false);
       return (
         <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
           <SupportChat
             userId={user?.id || 'guest'}
             userEmail={user?.email || ''}
             visitorName={currentUsername || user?.email?.split('@')[0] || 'Utilisateur'}
+            onNewAdminMessage={() => setSupportUnread(true)}
           />
         </div>
       );
@@ -5646,7 +5649,10 @@ export default function TradingPlatformShell() {
               {channels.find(c => c.id === 'check-trade') && (
                 <button onClick={() => handleChannelChange('check-trade', 'check-trade')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'check-trade' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>✅ Check Trade</button>
               )}
-              <button onClick={() => handleChannelChange('support', 'support')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'support' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 Support</button>
+              <button onClick={() => { handleChannelChange('support', 'support'); setSupportUnread(false); }} className={`w-full text-left px-3 py-2 rounded text-sm flex items-center justify-between ${selectedChannel.id === 'support' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>
+                <span>💬 Support</span>
+                {supportUnread && selectedChannel.id !== 'support' && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444', display: 'inline-block', flexShrink: 0 }} />}
+              </button>
               {channels.find(c => c.id === 'livestream-premium') && (
                 <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>
                   <div className="flex items-start gap-2">
@@ -6017,15 +6023,16 @@ export default function TradingPlatformShell() {
                   )}
 
                   <button
-                    onClick={() => { handleChannelChange('support', 'support'); setMobileView('content'); }}
+                    onClick={() => { handleChannelChange('support', 'support'); setMobileView('content'); setSupportUnread(false); }}
                     className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'support' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-lg">💬</span>
-                      <div>
+                      <div className="flex-1">
                         <p className="font-semibold text-white">Support</p>
                         <p className="text-sm text-gray-400">Contacte-nous directement</p>
                       </div>
+                      {supportUnread && <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#ef4444', display: 'inline-block', flexShrink: 0 }} />}
                     </div>
                   </button>
 
