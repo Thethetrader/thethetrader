@@ -80,6 +80,23 @@
     }
     </script>
     
+  <script>
+    /* Auto-reload once if a Vite chunk is missing after a new deploy */
+    (function() {
+      function handleChunkError(msg) {
+        if (typeof msg === 'string' && (msg.indexOf('Failed to fetch dynamically imported module') !== -1 || msg.indexOf('Importing a module script failed') !== -1 || msg.indexOf('Unable to preload CSS') !== -1)) {
+          if (!sessionStorage.getItem('_cr')) {
+            sessionStorage.setItem('_cr', '1');
+            location.reload(true);
+          }
+        }
+      }
+      window.addEventListener('error', function(e) { handleChunkError(e.message); });
+      window.addEventListener('unhandledrejection', function(e) {
+        handleChunkError(String((e.reason && e.reason.message) || e.reason || ''));
+      });
+    })();
+  </script>
   </head>
   <body>
     <div id="root"></div>

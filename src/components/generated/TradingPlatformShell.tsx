@@ -1857,7 +1857,7 @@ export default function TradingPlatformShell() {
           const trades = tradesOrUpdater;
           if (trades.length === 0) {
             if (prevTrades.length > 0 || pendingIds.length > 0) return prevTrades;
-            return mockTrades as PersonalTrade[];
+            return [] as PersonalTrade[];
           }
           if (pendingIds.length > 0) {
             const hasAll = pendingIds.every(id => trades.some(t => t.id === id));
@@ -1876,7 +1876,7 @@ export default function TradingPlatformShell() {
             return prevTrades;
           }
           console.log('📊 Erreur, garde les données fictives pour screenshots');
-          return mockTrades;
+          return [];
         });
       }
     );
