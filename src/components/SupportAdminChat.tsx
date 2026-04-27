@@ -300,7 +300,7 @@ export default function SupportAdminChat() {
 
       {/* Sidebar */}
       <div style={{ width: 280, minWidth: 280, borderRight: '1px solid #374151', display: 'flex', flexDirection: 'column', background: '#1f2937' }}>
-        <div style={{ padding: '12px 14px', borderBottom: '1px solid #374151', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 57 }}>
+        <div style={{ padding: '0 14px', borderBottom: '1px solid #374151', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 61, flexShrink: 0 }}>
           <span style={{ fontWeight: 700, fontSize: 14, color: '#f9fafb' }}>Support clients</span>
           <button onClick={loadConversations} style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer', fontSize: 16, padding: 2 }} title="Actualiser">↻</button>
         </div>
@@ -393,7 +393,7 @@ export default function SupportAdminChat() {
         </div>
       ) : (
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-          <div style={{ padding: '12px 16px', borderBottom: '1px solid #374151', background: '#1f2937', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, minHeight: 57 }}>
+          <div style={{ padding: '0 16px', borderBottom: '1px solid #374151', background: '#1f2937', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, height: 61, flexShrink: 0 }}>
             <div>
               <div style={{ fontWeight: 700, fontSize: 14, color: '#f9fafb' }}>{activeConv?.visitor_name}</div>
               <div style={{ fontSize: 12, color: '#6b7280' }}>{activeConv?.visitor_email}</div>
