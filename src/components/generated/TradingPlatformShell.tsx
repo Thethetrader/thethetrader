@@ -20,6 +20,8 @@ import SupportPoller from '../SupportPoller';
 import MonCompteModal from '../MonCompteModal';
 import LiveStreamViewer from '../LiveStreamViewer';
 import HomeFeed, { ShareChannel } from '../HomeFeed';
+import ThemeToggle from '../ThemeToggle';
+import { useTheme } from '../../contexts/ThemeContext';
 
 // Configuration Supabase
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
@@ -5488,7 +5490,7 @@ export default function TradingPlatformShell() {
 
 
   return (
-    <div className="h-screen w-full bg-gray-900 text-white overflow-hidden flex" style={{ paddingTop: '0px' }}>
+    <div className="h-screen w-full overflow-hidden flex" style={{ paddingTop: '0px', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
       <SupportPoller
         userId={user?.id || 'guest'}
         isOnSupportChannel={selectedChannel.id === 'support'}
@@ -5575,8 +5577,8 @@ export default function TradingPlatformShell() {
         />
       )}
       {/* Desktop Sidebar */}
-      <div className="hidden md:flex w-56 min-w-56 flex-shrink-0 bg-gray-800 flex-col">
-        <div className="p-4 border-b border-gray-700">
+      <div className="hidden md:flex w-56 min-w-56 flex-shrink-0 flex-col" style={{ background: 'var(--bg-secondary)', borderRight: '1px solid var(--border-color)' }}>
+        <div className="p-4 border-b" style={{ borderColor: 'var(--border-color)' }}>
           <div className="flex items-center gap-3">
             <label className="cursor-pointer">
               <input
@@ -5671,6 +5673,9 @@ export default function TradingPlatformShell() {
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {/* Thème */}
+          <ThemeToggle />
+          <div style={{ height: 1, background: 'var(--border-color)', margin: '4px 0 8px' }} />
           {/* Accueil Feed - Desktop */}
           <button onClick={() => setShowFeed(v => !v)} className={`w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2 ${showFeed ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill={showFeed ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
@@ -5883,13 +5888,13 @@ export default function TradingPlatformShell() {
                 {/* Bulle support chat */}
                 <button
                   onClick={() => { if (userPlan !== 'premium' && !isAdmin) { setShowSupportPaywall(true); return; } handleChannelChange('support', 'support'); setSupportUnread(false); setMobileView('content'); }}
-                  style={{ position: 'relative', width: 34, height: 34, borderRadius: '50%', background: selectedChannel.id === 'support' ? '#10b981' : '#1f2937', border: '1.5px solid #374151', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}
+                  style={{ position: 'relative', width: 34, height: 34, borderRadius: '50%', background: selectedChannel.id === 'support' ? '#10b981' : 'var(--bg-tertiary)', border: '1.5px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}
                 >
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={selectedChannel.id === 'support' ? '#fff' : '#9ca3af'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={selectedChannel.id === 'support' ? '#fff' : 'var(--text-secondary)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                   </svg>
                   {supportUnread && (
-                    <span style={{ position: 'absolute', top: -2, right: -2, width: 9, height: 9, borderRadius: '50%', background: '#ef4444', border: '1.5px solid #111827', display: 'block' }} />
+                    <span style={{ position: 'absolute', top: -2, right: -2, width: 9, height: 9, borderRadius: '50%', background: '#ef4444', border: '1.5px solid var(--bg-primary)', display: 'block' }} />
                   )}
                 </button>
                 <button onClick={() => setShowMonCompte(true)} className="text-gray-400 hover:text-white">
@@ -5953,6 +5958,8 @@ export default function TradingPlatformShell() {
             }`}
           >
             <div className="p-4 space-y-3 h-full overflow-y-auto" style={{ paddingTop: '80px', paddingBottom: '80px', WebkitOverflowScrolling: 'touch' }}>
+              {/* Thème */}
+              <ThemeToggle />
               {/* Statistiques en haut */}
               <div className="bg-gray-700 rounded-lg p-6">
                 <h3 className="font-medium text-white mb-3 text-center">📊 Statistiques signaux</h3>
@@ -9667,21 +9674,21 @@ export default function TradingPlatformShell() {
 
       {/* Mobile Bottom Tab Bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50" style={{
-        backgroundColor: '#1f2937',
-        borderTop: '1px solid #374151',
+        backgroundColor: 'var(--bg-secondary)',
+        borderTop: '1px solid var(--border-color)',
         paddingBottom: 'env(safe-area-inset-bottom, 6px)',
         overflow: 'visible',
       }}>
         <div className="flex items-center justify-around" style={{ height: 78 }}>
           {/* Accueil - Feed */}
-          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(true); }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: showFeed ? '#e5e7eb' : '#6b7280' }}>
+          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(true); }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: showFeed ? 'var(--text-primary)' : 'var(--text-muted)' }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill={showFeed ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/>
             </svg>
             <span style={{ fontSize: 10, fontWeight: 500 }}>Accueil</span>
           </button>
           {/* Journal */}
-          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(false); const ch = channels.find(c => c.id === 'calendrier'); if (ch) { handleChannelChange(ch.id, ch.name); setView('calendar'); setMobileView('content'); } }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: selectedChannel.id === 'calendrier' && mobileView === 'content' && !showFeed ? '#e5e7eb' : '#6b7280' }}>
+          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(false); const ch = channels.find(c => c.id === 'calendrier'); if (ch) { handleChannelChange(ch.id, ch.name); setView('calendar'); setMobileView('content'); } }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: selectedChannel.id === 'calendrier' && mobileView === 'content' && !showFeed ? 'var(--text-primary)' : 'var(--text-muted)' }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
             </svg>
@@ -9689,7 +9696,7 @@ export default function TradingPlatformShell() {
           </button>
           {/* Salons - Centre proéminent */}
           <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(false); setMobileView('channels'); }} className="flex flex-col items-center justify-center flex-1" style={{ marginTop: -16 }}>
-            <div style={{ width: 54, height: 54, borderRadius: '50%', border: `2.5px solid ${mobileView === 'channels' && !showFeed ? '#e5e7eb' : '#4b5563'}`, backgroundColor: '#1f2937', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: mobileView === 'channels' && !showFeed ? '#e5e7eb' : '#6b7280' }}>
+            <div style={{ width: 54, height: 54, borderRadius: '50%', border: `2.5px solid ${mobileView === 'channels' && !showFeed ? 'var(--text-primary)' : 'var(--border-color)'}`, backgroundColor: 'var(--bg-tertiary)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: mobileView === 'channels' && !showFeed ? 'var(--text-primary)' : 'var(--text-muted)' }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
               </svg>
@@ -9697,14 +9704,14 @@ export default function TradingPlatformShell() {
             </div>
           </button>
           {/* Signaux */}
-          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(false); const ch = channels.find(c => ['general-chat-2','general-chat-3','general-chat-4'].includes(c.id)); if (ch) { handleChannelChange(ch.id, ch.name); setMobileView('content'); } }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: ['general-chat-2','general-chat-3','general-chat-4'].includes(selectedChannel.id) && mobileView === 'content' && !showFeed ? '#e5e7eb' : '#6b7280' }}>
+          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(false); const ch = channels.find(c => ['general-chat-2','general-chat-3','general-chat-4'].includes(c.id)); if (ch) { handleChannelChange(ch.id, ch.name); setMobileView('content'); } }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: ['general-chat-2','general-chat-3','general-chat-4'].includes(selectedChannel.id) && mobileView === 'content' && !showFeed ? 'var(--text-primary)' : 'var(--text-muted)' }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
             </svg>
             <span style={{ fontSize: 10, fontWeight: 500 }}>Signaux</span>
           </button>
           {/* Formation */}
-          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(false); const ch = channels.find(c => c.id === 'fondamentaux'); if (ch) { handleChannelChange(ch.id, ch.name); setMobileView('content'); } }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: selectedChannel.id === 'fondamentaux' && mobileView === 'content' && !showFeed ? '#e5e7eb' : '#6b7280' }}>
+          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(false); const ch = channels.find(c => c.id === 'fondamentaux'); if (ch) { handleChannelChange(ch.id, ch.name); setMobileView('content'); } }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: selectedChannel.id === 'fondamentaux' && mobileView === 'content' && !showFeed ? 'var(--text-primary)' : 'var(--text-muted)' }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
             </svg>

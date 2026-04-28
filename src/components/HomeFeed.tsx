@@ -184,10 +184,10 @@ export default function HomeFeed({ isAdmin, userId, username, sessionToken, shar
   });
 
   return (
-    <div style={{ background: '#111827', minHeight: '100%', color: '#fff' }}>
+    <div style={{ background: 'var(--bg-primary)', minHeight: '100%', color: 'var(--text-primary)' }}>
       {/* Header */}
       <div style={{ padding: '16px 16px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <h1 style={{ fontSize: 26, fontWeight: 700, color: '#fff', margin: 0 }}>Accueil</h1>
+        <h1 style={{ fontSize: 26, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>Accueil</h1>
         {isAdmin && (
           <button
             onClick={() => setShowCreate(true)}
@@ -209,31 +209,31 @@ export default function HomeFeed({ isAdmin, userId, username, sessionToken, shar
 
       {/* Feed */}
       {loading ? (
-        <div style={{ textAlign: 'center', padding: 40, color: '#6b7280' }}>Chargement…</div>
+        <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>Chargement…</div>
       ) : posts.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: 40, color: '#6b7280' }}>Aucune publication pour l'instant</div>
+        <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>Aucune publication pour l'instant</div>
       ) : (
         <div style={{ padding: '0 0 calc(20px + env(safe-area-inset-bottom, 0px))' }}>
           {grouped.map(group => (
             <div key={group.key}>
-              <div style={{ padding: '16px 16px 8px', fontSize: 20, fontWeight: 700, color: '#fff' }}>{group.label}</div>
+              <div style={{ padding: '16px 16px 8px', fontSize: 20, fontWeight: 700, color: 'var(--text-primary)' }}>{group.label}</div>
               {group.posts.map(post => {
                 const cfg = POST_CONFIG[post.type] || POST_CONFIG.info;
                 const uid = userId || 'anon';
                 const expanded = expandedComments.has(post.id);
                 return (
-                  <div key={post.id} style={{ margin: '0 12px 12px', borderRadius: 12, background: '#1f2937', overflow: 'hidden', borderLeft: `4px solid ${cfg.color}` }}>
+                  <div key={post.id} style={{ margin: '0 12px 12px', borderRadius: 12, background: 'var(--bg-secondary)', overflow: 'hidden', borderLeft: `4px solid ${cfg.color}` }}>
                     {/* Post header */}
                     <div style={{ padding: '12px 14px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <span style={{ fontSize: 14 }}>{cfg.emoji}</span>
                         <span style={{ fontSize: 13, fontWeight: 700, color: cfg.color }}>{cfg.label}</span>
                       </div>
-                      <span style={{ fontSize: 11, color: '#6b7280' }}>{formatTime(post.created_at)}</span>
+                      <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{formatTime(post.created_at)}</span>
                     </div>
 
                     {/* Content */}
-                    <div style={{ padding: '0 14px 10px', fontSize: 14, color: '#e5e7eb', lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>{post.content}</div>
+                    <div style={{ padding: '0 14px 10px', fontSize: 14, color: 'var(--text-primary)', lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>{post.content}</div>
 
                     {/* Image */}
                     {post.image_url && (
@@ -249,17 +249,17 @@ export default function HomeFeed({ isAdmin, userId, username, sessionToken, shar
                           <button
                             key={emoji}
                             onClick={() => toggleReaction(post.id, emoji)}
-                            style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 20, border: mine ? `1.5px solid ${cfg.color}` : '1.5px solid #374151', background: mine ? cfg.lightBg : 'transparent', cursor: 'pointer', fontSize: 13, color: '#e5e7eb', transition: 'all 0.15s' }}
+                            style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 20, border: mine ? `1.5px solid ${cfg.color}` : '1.5px solid var(--border-color)', background: mine ? cfg.lightBg : 'transparent', cursor: 'pointer', fontSize: 13, color: 'var(--text-primary)', transition: 'all 0.15s' }}
                           >
                             <span>{emoji}</span>
-                            {count > 0 && <span style={{ fontSize: 12, color: mine ? cfg.color : '#9ca3af', fontWeight: 600 }}>{count}</span>}
+                            {count > 0 && <span style={{ fontSize: 12, color: mine ? cfg.color : 'var(--text-secondary)', fontWeight: 600 }}>{count}</span>}
                           </button>
                         );
                       })}
                       {/* Comment toggle */}
                       <button
                         onClick={() => toggleComments(post.id)}
-                        style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 20, border: '1.5px solid #374151', background: 'transparent', cursor: 'pointer', color: '#9ca3af', fontSize: 13 }}
+                        style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 20, border: '1.5px solid var(--border-color)', background: 'transparent', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: 13 }}
                       >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -270,14 +270,14 @@ export default function HomeFeed({ isAdmin, userId, username, sessionToken, shar
 
                     {/* Comments */}
                     {expanded && (
-                      <div style={{ borderTop: '1px solid #374151' }}>
+                      <div style={{ borderTop: '1px solid var(--border-color)' }}>
                         {post.comments.map(c => (
-                          <div key={c.id} style={{ padding: '8px 14px', borderBottom: '1px solid #1f2937' }}>
+                          <div key={c.id} style={{ padding: '8px 14px', borderBottom: '1px solid var(--border-subtle)' }}>
                             <div style={{ display: 'flex', gap: 6, alignItems: 'baseline' }}>
                               <span style={{ fontSize: 12, fontWeight: 600, color: cfg.color }}>{c.author_name}</span>
-                              <span style={{ fontSize: 10, color: '#6b7280' }}>{formatTime(c.created_at)}</span>
+                              <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{formatTime(c.created_at)}</span>
                             </div>
-                            <p style={{ margin: '2px 0 0', fontSize: 13, color: '#d1d5db', lineHeight: 1.4 }}>{c.content}</p>
+                            <p style={{ margin: '2px 0 0', fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.4 }}>{c.content}</p>
                           </div>
                         ))}
                         {/* Comment input */}
@@ -287,7 +287,7 @@ export default function HomeFeed({ isAdmin, userId, username, sessionToken, shar
                             onChange={e => setCommentInput(prev => ({ ...prev, [post.id]: e.target.value }))}
                             onKeyDown={e => e.key === 'Enter' && submitComment(post.id)}
                             placeholder="Commenter…"
-                            style={{ flex: 1, background: '#374151', border: 'none', borderRadius: 20, padding: '6px 12px', color: '#fff', fontSize: 13, outline: 'none' }}
+                            style={{ flex: 1, background: 'var(--bg-tertiary)', border: 'none', borderRadius: 20, padding: '6px 12px', color: 'var(--text-primary)', fontSize: 13, outline: 'none' }}
                           />
                           <button
                             onClick={() => submitComment(post.id)}
@@ -310,20 +310,20 @@ export default function HomeFeed({ isAdmin, userId, username, sessionToken, shar
       {/* Create post modal */}
       {showCreate && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 200, display: 'flex', alignItems: 'flex-end' }}>
-          <div style={{ width: '100%', background: '#1f2937', borderRadius: '20px 20px 0 0', padding: '20px 16px', paddingBottom: 'calc(90px + env(safe-area-inset-bottom, 0px))', maxHeight: '90vh', overflowY: 'auto' }}>
+          <div style={{ width: '100%', background: 'var(--bg-secondary)', borderRadius: '20px 20px 0 0', padding: '20px 16px', paddingBottom: 'calc(90px + env(safe-area-inset-bottom, 0px))', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h2 style={{ margin: 0, fontSize: 17, fontWeight: 700 }}>Nouvelle publication</h2>
-              <button onClick={() => setShowCreate(false)} style={{ background: 'none', border: 'none', color: '#9ca3af', fontSize: 22, cursor: 'pointer' }}>✕</button>
+              <h2 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>Nouvelle publication</h2>
+              <button onClick={() => setShowCreate(false)} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', fontSize: 22, cursor: 'pointer' }}>✕</button>
             </div>
 
             {/* Type selector */}
-            <p style={{ margin: '0 0 10px', fontSize: 12, color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>Type</p>
+            <p style={{ margin: '0 0 10px', fontSize: 12, color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>Type</p>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 16 }}>
               {(Object.entries(POST_CONFIG) as [PostType, typeof POST_CONFIG[PostType]][]).map(([type, cfg]) => (
                 <button
                   key={type}
                   onClick={() => setNewType(type)}
-                  style={{ padding: '10px 12px', borderRadius: 10, border: `2px solid ${newType === type ? cfg.color : '#374151'}`, background: newType === type ? cfg.lightBg : '#111827', color: newType === type ? cfg.color : '#9ca3af', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.15s' }}
+                  style={{ padding: '10px 12px', borderRadius: 10, border: `2px solid ${newType === type ? cfg.color : 'var(--border-color)'}`, background: newType === type ? cfg.lightBg : 'var(--bg-primary)', color: newType === type ? cfg.color : 'var(--text-secondary)', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.15s' }}
                 >
                   <span style={{ fontSize: 16 }}>{cfg.emoji}</span>
                   {cfg.label}
@@ -332,13 +332,13 @@ export default function HomeFeed({ isAdmin, userId, username, sessionToken, shar
             </div>
 
             {/* Content */}
-            <p style={{ margin: '0 0 6px', fontSize: 12, color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>Contenu</p>
+            <p style={{ margin: '0 0 6px', fontSize: 12, color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>Contenu</p>
             <textarea
               value={newContent}
               onChange={e => setNewContent(e.target.value)}
               placeholder="Écris ta publication…"
               rows={4}
-              style={{ width: '100%', background: '#111827', border: `1.5px solid ${POST_CONFIG[newType].color}40`, borderRadius: 10, padding: '10px 12px', color: '#fff', fontSize: 14, resize: 'vertical', outline: 'none', boxSizing: 'border-box', lineHeight: 1.5 }}
+              style={{ width: '100%', background: 'var(--bg-primary)', border: `1.5px solid ${POST_CONFIG[newType].color}40`, borderRadius: 10, padding: '10px 12px', color: 'var(--text-primary)', fontSize: 14, resize: 'vertical', outline: 'none', boxSizing: 'border-box', lineHeight: 1.5 }}
             />
 
             {/* Image */}
@@ -352,7 +352,7 @@ export default function HomeFeed({ isAdmin, userId, username, sessionToken, shar
               ) : (
                 <button
                   onClick={() => imageInputRef.current?.click()}
-                  style={{ width: '100%', padding: '10px', borderRadius: 10, border: '1.5px dashed #374151', background: 'transparent', color: '#6b7280', fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+                  style={{ width: '100%', padding: '10px', borderRadius: 10, border: '1.5px dashed var(--border-color)', background: 'transparent', color: 'var(--text-muted)', fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                   Ajouter une photo
@@ -362,7 +362,7 @@ export default function HomeFeed({ isAdmin, userId, username, sessionToken, shar
 
             {/* Share to salon — only for Signal type */}
             {newType === 'achat' && shareChannels && shareChannels.length > 0 && onShareToChannel && (
-              <div style={{ marginTop: 14, padding: '12px 14px', borderRadius: 10, background: '#111827', border: '1.5px solid #374151' }}>
+              <div style={{ marginTop: 14, padding: '12px 14px', borderRadius: 10, background: 'var(--bg-primary)', border: '1.5px solid var(--border-color)' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
                   <div
                     onClick={() => setShareToSalon(v => !v)}
@@ -370,13 +370,13 @@ export default function HomeFeed({ isAdmin, userId, username, sessionToken, shar
                   >
                     {shareToSalon && <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><polyline points="2 6 5 9 10 3" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                   </div>
-                  <span style={{ fontSize: 13, color: '#e5e7eb', fontWeight: 600 }}>Partager aussi dans un salon</span>
+                  <span style={{ fontSize: 13, color: 'var(--text-primary)', fontWeight: 600 }}>Partager aussi dans un salon</span>
                 </label>
                 {shareToSalon && (
                   <select
                     value={selectedShareChannel}
                     onChange={e => setSelectedShareChannel(e.target.value)}
-                    style={{ marginTop: 10, width: '100%', background: '#1f2937', border: '1.5px solid #374151', borderRadius: 8, padding: '8px 10px', color: '#e5e7eb', fontSize: 13, outline: 'none', cursor: 'pointer' }}
+                    style={{ marginTop: 10, width: '100%', background: 'var(--bg-secondary)', border: '1.5px solid var(--border-color)', borderRadius: 8, padding: '8px 10px', color: 'var(--text-primary)', fontSize: 13, outline: 'none', cursor: 'pointer' }}
                   >
                     <option value="">— Choisir un salon —</option>
                     {shareChannels.map(ch => (

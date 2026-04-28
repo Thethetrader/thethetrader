@@ -1,6 +1,102 @@
 /* Polices chargées en async dans index.html pour éviter le blocage du rendu */
 @import "tailwindcss";
 
+/* ─── THEME DARK (défaut) ─────────────────────────────────────── */
+:root, [data-theme="dark"] {
+  --bg-app:        #0f1115;
+  --bg-primary:    #111827;
+  --bg-secondary:  #1f2937;
+  --bg-tertiary:   #374151;
+  --bg-input:      #374151;
+  --bg-hover:      #374151;
+  --bg-selected:   #374151;
+  --text-primary:  #ffffff;
+  --text-secondary:#9ca3af;
+  --text-muted:    #6b7280;
+  --border-color:  #374151;
+  --border-subtle: #222836;
+  --shadow-theme:  0 4px 20px rgba(0,0,0,0.4);
+  --star-color:    #fbbf24;
+  --btn-ghost-bg:  transparent;
+  --btn-ghost-hover: #374151;
+  --scrollbar-thumb: #374151;
+  --badge-bg:      #374151;
+}
+
+/* ─── THEME LIGHT ─────────────────────────────────────────────── */
+[data-theme="light"] {
+  --bg-app:        #f1f5f9;
+  --bg-primary:    #f8fafc;
+  --bg-secondary:  #ffffff;
+  --bg-tertiary:   #f1f5f9;
+  --bg-input:      #f8fafc;
+  --bg-hover:      #e2e8f0;
+  --bg-selected:   #e2e8f0;
+  --text-primary:  #0f172a;
+  --text-secondary:#475569;
+  --text-muted:    #94a3b8;
+  --border-color:  #e2e8f0;
+  --border-subtle: #e2e8f0;
+  --shadow-theme:  0 4px 20px rgba(0,0,0,0.08);
+  --star-color:    #d97706;
+  --btn-ghost-bg:  transparent;
+  --btn-ghost-hover: #e2e8f0;
+  --scrollbar-thumb: #cbd5e1;
+  --badge-bg:      #e2e8f0;
+}
+
+/* ─── OVERRIDES TAILWIND EN MODE CLAIR ───────────────────────── */
+[data-theme="light"] .bg-gray-950,
+[data-theme="light"] .bg-gray-900  { background-color: var(--bg-primary)  !important; }
+[data-theme="light"] .bg-gray-800  { background-color: var(--bg-secondary) !important; }
+[data-theme="light"] .bg-gray-700  { background-color: var(--bg-tertiary)  !important; }
+[data-theme="light"] .bg-gray-600  { background-color: #cbd5e1 !important; }
+
+[data-theme="light"] .text-white   { color: var(--text-primary)   !important; }
+[data-theme="light"] .text-gray-100,
+[data-theme="light"] .text-gray-200,
+[data-theme="light"] .text-gray-300 { color: #1e293b !important; }
+[data-theme="light"] .text-gray-400 { color: var(--text-secondary) !important; }
+[data-theme="light"] .text-gray-500 { color: var(--text-muted)     !important; }
+
+[data-theme="light"] .border-gray-700,
+[data-theme="light"] .border-gray-600,
+[data-theme="light"] .border-gray-800 { border-color: var(--border-color) !important; }
+
+[data-theme="light"] .divide-gray-700 > * + * { border-color: var(--border-color) !important; }
+
+/* Inputs en mode clair */
+[data-theme="light"] input:not([type="range"]),
+[data-theme="light"] textarea,
+[data-theme="light"] select {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder { color: var(--text-muted) !important; }
+
+/* Scrollbars */
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb) !important; }
+[data-theme="light"] ::-webkit-scrollbar-track  { background: var(--bg-tertiary) !important; }
+
+/* Hover states */
+[data-theme="light"] .hover\:bg-gray-700:hover { background-color: var(--bg-hover) !important; }
+[data-theme="light"] .hover\:bg-gray-600:hover { background-color: #e2e8f0 !important; }
+
+/* Étoiles discipline et éléments jaunes */
+[data-theme="light"] .star-yellow,
+[data-theme="light"] .text-yellow-400,
+[data-theme="light"] [style*="color: #fbbf24"],
+[data-theme="light"] [style*="color:#fbbf24"] { color: var(--star-color) !important; }
+[data-theme="light"] .text-yellow-300 { color: #92400e !important; }
+
+/* Boutons et textes dans les modals de signal */
+[data-theme="light"] .bg-gray-900.text-white { background-color: var(--bg-primary) !important; color: var(--text-primary) !important; }
+
+/* PWA login en clair */
+[data-theme="light"] .pwa-login-screen { background: var(--bg-primary) !important; }
+
 :root {
   --background: 222.2 84% 4.9%;
   --foreground: 210 40% 98%;

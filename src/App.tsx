@@ -5,6 +5,7 @@ import { supabase } from './lib/supabase';
 import { useNotifications } from './hooks/use-notifications';
 import { usePWA } from './hooks/use-pwa';
 import { redirectToCheckout } from './utils/stripe';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 // Lazy-load everything that's not needed on the landing page
 const TradingPlatformShell = lazy(() => import('./components/generated/TradingPlatformShell'));
@@ -1679,54 +1680,54 @@ const App = () => {
 
       {/* Version PWA - Page scrollable quand connecté */}
       {isPWA ? (
-        <div className={`w-screen ${user ? 'min-h-screen' : 'h-screen overflow-hidden flex items-center justify-center'} bg-[#0F1115]`}>
+        <div className={`w-screen ${user ? 'min-h-screen' : 'h-screen overflow-hidden flex items-center justify-center'}`} style={{ background: user ? '#0F1115' : 'var(--bg-primary)' }}>
           {/* Hero Section - Centré verticalement quand pas connecté, scrollable quand connecté */}
           <div className={`text-center ${user ? 'pt-20 pb-8' : 'w-full'} px-4 sm:px-6 max-w-full`}>
-            <div className="mb-0 flex justify-center hover:scale-105 transition-transform duration-300">
-              <img 
-                src="/logo-removebg-preview.png" 
-                alt="Trading pour les nuls" 
-                width={252}
-                height={168}
-                className="h-64 sm:h-80 w-auto object-cover"
-                style={{ clipPath: 'inset(10% 5% 15% 5%)' }}
-
-              />
-            </div>
-            <p className="text-lg sm:text-2xl text-[#AAB3C2] mb-6 sm:mb-8 max-w-4xl mx-auto px-2 -mt-8" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400 }}>
-              Un setup très simple, des signaux expliqués, un journal de performance. Rejoins la communauté et trade en confiance.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mb-6 sm:mb-8 px-4">
-              <button 
-                onClick={() => setShowAuthModal(true)}
-                className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-8 sm:px-10 py-4 sm:py-5 rounded-[14px] text-lg sm:text-xl font-medium transition-all duration-200 w-full sm:w-auto"
-              >
-                Se connecter
-              </button>
-            </div>
-
-
-            
-            
-            {/* Lien Twitter */}
-            <div className="text-center mt-6">
-              <a 
-                href="https://x.com/thethetrader" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 justify-center bg-[#141821] hover:bg-[#171C26] text-[#F2F4F8] px-3 py-2 rounded-[12px] font-medium transition-all duration-200 border border-[#222836] text-xs"
-              >
-                <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                </svg>
-                <span>Suivez @thethetrader</span>
-              </a>
-            </div>
+            {!user && (
+              <>
+                <div className="mb-0 flex justify-center hover:scale-105 transition-transform duration-300">
+                  <img
+                    src="/logo-removebg-preview.png"
+                    alt="Trading pour les nuls"
+                    width={252}
+                    height={168}
+                    className="h-64 sm:h-80 w-auto object-cover"
+                    style={{ clipPath: 'inset(10% 5% 15% 5%)' }}
+                  />
+                </div>
+                <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, color: 'var(--text-secondary)' }} className="text-lg sm:text-2xl mb-6 sm:mb-8 max-w-4xl mx-auto px-2 -mt-8">
+                  Un setup très simple, des signaux expliqués, un journal de performance. Rejoins la communauté et trade en confiance.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mb-6 sm:mb-8 px-4">
+                  <button
+                    onClick={() => setShowAuthModal(true)}
+                    className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-8 sm:px-10 py-4 sm:py-5 rounded-[14px] text-lg sm:text-xl font-medium transition-all duration-200 w-full sm:w-auto"
+                  >
+                    Se connecter
+                  </button>
+                </div>
+                {/* Lien Twitter */}
+                <div className="text-center mt-6">
+                  <a
+                    href="https://x.com/thethetrader"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}
+                    className="inline-flex items-center gap-2 justify-center px-3 py-2 rounded-[12px] font-medium transition-all duration-200 border text-xs"
+                  >
+                    <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                    <span>Suivez @thethetrader</span>
+                  </a>
+                </div>
+              </>
+            )}
           </div>
           {/* Contenu complet quand connecté */}
           {user && (
-            <>
-              {/* Hero Section complète */}
+          <>
+            {/* Hero Section complète */}
               <div className={`text-center pt-28 sm:pt-40 pb-0 px-4 sm:px-6 ${isPWA ? 'w-full max-w-full box-border' : ''}`}>
                 <h1 className="font-bold mb-6 sm:mb-8 leading-tight" style={{ fontSize: 'clamp(1.6rem, 8vw, 4.5rem)', fontFamily: 'Sora, sans-serif', fontWeight: 700, lineHeight: 1.1 }}>
                   <span className="text-[#F2F4F8]">Trader avec précision.</span>
@@ -6090,4 +6091,10 @@ const App = () => {
   );
 };
 
-export default App;// Force rebuild Fri Aug  8 01:13:24 CEST 2025
+const AppWithTheme = () => (
+  <ThemeProvider>
+    <App />
+  </ThemeProvider>
+);
+
+export default AppWithTheme;// Force rebuild Fri Aug  8 01:13:24 CEST 2025
