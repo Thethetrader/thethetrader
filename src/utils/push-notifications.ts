@@ -214,7 +214,7 @@ export const notifySignalClosed = (signal: any): void => {
 };
 
 // Initialiser le système de notifications
-export const initializeNotifications = async (): Promise<void> => {
+export const initializeNotifications = async (options?: { userId?: string; isAdmin?: boolean }): Promise<void> => {
   console.log('🚀 Initialisation du système de notifications push...');
   
   // VÉRIFIER SI L'UTILISATEUR A DÉSACTIVÉ LES NOTIFICATIONS (après déconnexion)
@@ -249,7 +249,9 @@ export const initializeNotifications = async (): Promise<void> => {
             await set(tokenRef, {
               token: token,
               timestamp: Date.now(),
-              userAgent: navigator.userAgent
+              userAgent: navigator.userAgent,
+              ...(options?.userId ? { userId: options.userId } : {}),
+              ...(options?.isAdmin ? { isAdmin: true } : {}),
             });
             console.log('💾 Token FCM sauvegardé dans Firebase Database');
           } catch (error) {

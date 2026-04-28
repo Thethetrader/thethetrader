@@ -708,7 +708,7 @@ export default function AdminInterface() {
     loadSignals(selectedChannel.id);
     
     // Initialiser les notifications push
-    initializeNotifications();
+    initializeNotifications({ isAdmin: true });
   }, []);
 
   // Charger les messages quand on change de canal

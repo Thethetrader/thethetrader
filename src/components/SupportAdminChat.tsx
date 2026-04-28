@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import { supabase } from '../lib/supabase';
 import LiveOneToOne from './LiveOneToOne';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '../utils/firebase-setup';
 
 function AudioPlayer({ src, isSent }: { src: string; isSent: boolean }) {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -252,6 +254,16 @@ export default function SupportAdminChat() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error);
       setMessages(prev => [...prev, json.message]);
+      // Notifier l'utilisateur via FCM
+      const conv = activeConv;
+      if (conv?.visitor_email) {
+        const preview = (payload.content as string)?.slice(0, 80) || (payload.message_type === 'image' ? '📷 Image' : payload.message_type === 'audio' ? '🎙️ Vocal' : '📄 Fichier');
+        // Chercher l'userId Supabase de l'utilisateur pour retrouver son token FCM
+        supabase.from('user_profiles').select('id').eq('email', conv.visitor_email).maybeSingle().then(({ data }) => {
+          const toUserId = data?.id;
+          httpsCallable(functions, 'sendSupportNotification')({ toUserId, title: '💬 Support TheThe', body: preview }).catch(() => {});
+        }).catch(() => {});
+      }
     } catch (err: any) {
       alert(err.message || 'Erreur envoi');
     } finally { setSending(false); }

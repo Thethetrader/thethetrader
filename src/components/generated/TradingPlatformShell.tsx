@@ -1192,7 +1192,7 @@ export default function TradingPlatformShell() {
       await loadSignals(selectedChannel.id);
       
       // Initialiser les notifications push
-      await initializeNotifications();
+      await initializeNotifications({ userId: user?.id });
     };
     initApp();
   }, []);
@@ -1390,7 +1390,7 @@ export default function TradingPlatformShell() {
       localStorage.removeItem('notificationsDisabled');
       
       try {
-        await initializeNotifications();
+        await initializeNotifications({ userId: user?.id });
         setNotificationsEnabled(true);
         console.log('✅ Notifications activées');
       } catch (error) {

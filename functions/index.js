@@ -339,6 +339,50 @@ exports.sendLivestreamNotification = onCall(async (request) => {
   }
 });
 
+// Notifs support : user→admin (toAdmin:true) ou admin→user (toUserId)
+exports.sendSupportNotification = onCall(async (request) => {
+  try {
+    const { toAdmin, toUserId, title, body } = request.data;
+    const { getDatabase } = require('firebase-admin/database');
+    const db = getDatabase();
+    const snap = await db.ref('fcm_tokens').once('value');
+    if (!snap.exists()) return { success: true, successCount: 0 };
+
+    const allTokens = Object.values(snap.val());
+    let targets = [];
+
+    if (toAdmin) {
+      targets = allTokens.filter(d => d.isAdmin && d.token).map(d => d.token);
+    } else if (toUserId) {
+      targets = allTokens.filter(d => d.userId === toUserId && d.token).map(d => d.token);
+    }
+
+    if (targets.length === 0) return { success: true, successCount: 0 };
+
+    const messaging = getMessaging();
+    let successCount = 0;
+    for (const token of targets) {
+      try {
+        await messaging.send({
+          notification: { title: title || 'Support', body: body || '' },
+          data: { type: 'support' },
+          token,
+          android: { priority: 'high', notification: { sound: 'default', channelId: 'support' } },
+          apns: { payload: { aps: { sound: 'default', badge: 1 } } },
+          webpush: { notification: { title: title || 'Support', body: body || '', icon: '/FAVICON.png' } },
+        });
+        successCount++;
+      } catch (e) {
+        logger.error(`Erreur token support ${token}:`, e.message);
+      }
+    }
+    return { success: true, successCount };
+  } catch (error) {
+    logger.error('sendSupportNotification error:', error);
+    throw new Error(error.message);
+  }
+});
+
 exports.sendHomeFeedNotification = onCall(async (request) => {
   try {
     const { tokens, title, body } = request.data;

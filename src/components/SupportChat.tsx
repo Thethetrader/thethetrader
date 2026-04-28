@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import { supabase } from '../lib/supabase';
 import { subscribeSupportPush } from '../utils/support-push';
 import LiveOneToOne from './LiveOneToOne';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '../utils/firebase-setup';
 
 function AudioPlayer({ src, isSent }: { src: string; isSent: boolean }) {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -238,6 +240,9 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
       if (!conversationId) saveConvId(json.conversation_id);
       setMessages(prev => [...prev, json.message]);
       lastCreatedAt.current = json.message.created_at;
+      // Notifier l'admin via FCM
+      const preview = (payload.content as string)?.slice(0, 80) || (payload.message_type === 'image' ? '📷 Image' : payload.message_type === 'audio' ? '🎙️ Vocal' : '📄 Fichier');
+      httpsCallable(functions, 'sendSupportNotification')({ toAdmin: true, title: `💬 ${visitorName || userEmail?.split('@')[0] || 'Client'}`, body: preview }).catch(() => {});
     } catch (err: any) {
       if (conversationId && (err.message?.includes('foreign key') || err.message?.includes('violates') || err.message?.includes('conv'))) {
         localStorage.removeItem(storageKey(userId));
