@@ -338,3 +338,37 @@ exports.sendLivestreamNotification = onCall(async (request) => {
     throw new Error(`Erreur envoi notification livestream: ${error.message}`);
   }
 });
+
+exports.sendHomeFeedNotification = onCall(async (request) => {
+  try {
+    const { tokens, title, body } = request.data;
+    if (!tokens || !Array.isArray(tokens) || tokens.length === 0) throw new Error("Tokens requis");
+
+    const messaging = getMessaging();
+    let successCount = 0;
+    let failureCount = 0;
+
+    for (const token of tokens) {
+      try {
+        await messaging.send({
+          notification: { title: title || '📢 Nouvelle publication', body: body || '' },
+          data: { type: 'home_feed' },
+          token,
+          android: { priority: 'high', notification: { sound: 'default', channelId: 'home_feed' } },
+          apns: { payload: { aps: { sound: 'default', badge: 1 } } },
+          webpush: { notification: { title: title || '📢 Nouvelle publication', body: body || '', icon: '/FAVICON.png' } },
+        });
+        successCount++;
+      } catch (e) {
+        logger.error(`Erreur token ${token}:`, e.message);
+        failureCount++;
+      }
+    }
+
+    logger.info(`HomeFeed notif: ${successCount} succès, ${failureCount} échecs`);
+    return { success: true, successCount, failureCount };
+  } catch (error) {
+    logger.error("Erreur sendHomeFeedNotification:", error);
+    throw new Error(error.message);
+  }
+});

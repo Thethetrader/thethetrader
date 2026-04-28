@@ -260,26 +260,24 @@ export default function AdminInterface() {
     await addMessage({ channel_id: channelId, content, author: 'Admin', author_type: 'admin' as const });
   };
 
-  const handleFeedPostCreated = async (type: string, content: string) => {
+  const sendHomeFeedNotif = async (type: string, content: string) => {
     try {
       const fcmTokens: string[] = [];
       const fcmSnap = await get(ref(database, 'fcm_tokens'));
       if (fcmSnap.exists()) {
         Object.values(fcmSnap.val()).forEach((d: any) => { if (d?.token) fcmTokens.push(d.token); });
       }
-      if (fcmTokens.length > 0) {
-        const TYPE_LABELS: Record<string, string> = { achat: '📈 Signal', suivi_trade: '📊 Suivi de trade', news: '📰 News', info: 'ℹ️ Info' };
-        const sendLivestreamNotification = httpsCallable(functions, 'sendLivestreamNotification');
-        const preview = content.length > 80 ? content.slice(0, 80) + '…' : content;
-        await sendLivestreamNotification({
-          tokens: fcmTokens,
-          customMessage: `${TYPE_LABELS[type] || 'Accueil'} — ${preview}`,
-        });
-      }
+      if (fcmTokens.length === 0) return;
+      const TYPE_LABELS: Record<string, string> = { achat: '📈 Signal', suivi_trade: '📊 Suivi de trade', news: '📰 News', info: 'ℹ️ Info' };
+      const preview = content.length > 80 ? content.slice(0, 80) + '…' : content;
+      const sendHomeFeedNotification = httpsCallable(functions, 'sendHomeFeedNotification');
+      await sendHomeFeedNotification({ tokens: fcmTokens, title: TYPE_LABELS[type] || 'Nouvelle publication', body: preview });
     } catch (e) {
-      console.error('❌ Notif FCM post Accueil:', e);
+      console.error('❌ Notif FCM HomeFeed:', e);
     }
   };
+
+  const handleFeedPostCreated = (type: string, content: string) => { sendHomeFeedNotif(type, content); };
 
   const [showChannelsOverlay, setShowChannelsOverlay] = useState(true);
   const [calendarKey, setCalendarKey] = useState(0);
@@ -4107,23 +4105,8 @@ const dailyPnLChartData = useMemo(
           if (!feedJson.post) {
             console.error('❌ Accueil post échoué:', feedRes.status, feedJson);
           } else {
-            // Envoyer notif FCM via Firebase (même système que les signaux)
-            try {
-              const fcmTokens: string[] = [];
-              const fcmSnap = await get(ref(database, 'fcm_tokens'));
-              if (fcmSnap.exists()) {
-                Object.values(fcmSnap.val()).forEach((d: any) => { if (d?.token) fcmTokens.push(d.token); });
-              }
-              if (fcmTokens.length > 0) {
-                const sendLivestreamNotification = httpsCallable(functions, 'sendLivestreamNotification');
-                await sendLivestreamNotification({
-                  tokens: fcmTokens,
-                  customMessage: `📈 Signal ${signalData.symbol || ''} — ${signalData.type} · Entrée ${signalData.entry || 'N/A'}`,
-                });
-              }
-            } catch (notifErr) {
-              console.error('❌ Notif FCM Accueil:', notifErr);
-            }
+            // Envoyer notif FCM
+            await sendHomeFeedNotif('achat', `${signalData.type} ${signalData.symbol || ''} — Entrée ${signalData.entry || 'N/A'} · TP ${signalData.takeProfit || 'N/A'} · SL ${signalData.stopLoss || 'N/A'}`);
           }
         }
       } catch (e) {
