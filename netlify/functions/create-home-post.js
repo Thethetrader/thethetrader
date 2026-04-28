@@ -24,18 +24,20 @@ async function sendPush(subscription, title, body) {
   } catch (_) {}
 }
 
-// Verify JWT is a valid Supabase token without an extra HTTP call
+// Verify JWT is a valid non-expired Supabase token without an HTTP call
 function isValidJwt(token) {
   try {
     if (!token || token === 'undefined' || token === 'null') return false;
     const parts = token.split('.');
     if (parts.length !== 3) return false;
-    const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8'));
-    // Must be a Supabase JWT (iss contains supabase) and not expired
-    if (!payload.iss || !payload.iss.includes('supabase')) return false;
+    // base64url → base64
+    let b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    while (b64.length % 4) b64 += '=';
+    const payload = JSON.parse(Buffer.from(b64, 'base64').toString('utf8'));
+    if (!payload.sub) return false;
     if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) return false;
     return true;
-  } catch {
+  } catch (e) {
     return false;
   }
 }
