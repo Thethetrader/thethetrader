@@ -753,6 +753,10 @@ export default function AdminInterface() {
           
           if (data?.name) {
             setCurrentUsername(data.name);
+            // Ensure role='admin' is set so SupportChat can find this profile
+            if (data.role !== 'admin') {
+              updateUserProfile(data.name, data.avatar_url, 'admin');
+            }
             console.log('✅ Nom d\'utilisateur admin chargé depuis Supabase:', data.name);
           } else {
             // Profil n'existe pas, créer un profil par défaut

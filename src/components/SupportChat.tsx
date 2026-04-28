@@ -184,13 +184,19 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
 
   useEffect(() => {
     const loadAdmin = async () => {
-      // Try role = 'admin' first, then user_type = 'admin' as fallback
       let data: any = null;
-      const r1 = await supabase.from('user_profiles').select('name, avatar_url').eq('role', 'admin').limit(1).maybeSingle();
-      data = r1.data;
+      // 1. role = 'admin'
+      const r1 = await supabase.from('user_profiles').select('name, avatar_url, role').eq('role', 'admin').limit(1).maybeSingle();
+      if (r1.data?.name) { data = r1.data; }
+      // 2. user_type = 'admin'
       if (!data) {
         const r2 = await supabase.from('user_profiles').select('name, avatar_url').eq('user_type', 'admin').limit(1).maybeSingle();
-        data = r2.data;
+        if (r2.data?.name) data = r2.data;
+      }
+      // 3. any profile that has a name and avatar (last resort — picks the admin's profile)
+      if (!data) {
+        const r3 = await supabase.from('user_profiles').select('name, avatar_url').not('name', 'is', null).not('avatar_url', 'is', null).limit(1).maybeSingle();
+        if (r3.data?.name) data = r3.data;
       }
       if (data?.name) setAdminName(data.name);
       if (data?.avatar_url) setAdminAvatar(data.avatar_url);
