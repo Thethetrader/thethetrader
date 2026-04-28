@@ -6065,7 +6065,7 @@ export default function TradingPlatformShell() {
             }`}
           >
             {selectedChannel.id === 'support' ? (
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 78, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: 'calc(60px + env(safe-area-inset-top, 0px))', left: 0, right: 0, bottom: 78, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                 {getTradingCalendar()}
               </div>
             ) : (view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'video' || selectedChannel.id === 'livestream-premium' || selectedChannel.id === 'journal') ? (
