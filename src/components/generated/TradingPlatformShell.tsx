@@ -5956,6 +5956,7 @@ export default function TradingPlatformShell() {
                         <span className="text-lg">📅</span>
                         <div>
                           <p className="font-semibold text-white">Journal Signaux</p>
+                          <p className="text-sm text-gray-400">Suivi des signaux du mois</p>
                         </div>
                       </div>
                     </button>
@@ -6015,6 +6016,20 @@ export default function TradingPlatformShell() {
                       </div>
                     </button>
                   )}
+
+                  {/* Séance one-to-one */}
+                  <button
+                    onClick={() => { handleChannelChange('support', 'support'); setSupportUnread(false); setMobileView('content'); }}
+                    className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'support' && mobileView === 'content' ? 'bg-indigo-900/60' : 'bg-gray-700 hover:bg-gray-600'}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg">📹</span>
+                      <div>
+                        <p className="font-semibold text-white">Séance 1:1</p>
+                        <p className="text-sm text-gray-400">Session individuelle</p>
+                      </div>
+                    </div>
+                  </button>
 
                   {channels.find(c => c.id === 'livestream-premium') && (
                     <button

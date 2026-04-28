@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { subscribeSupportPush } from '../utils/support-push';
 import LiveOneToOne from './LiveOneToOne';
@@ -69,6 +69,25 @@ interface Props {
 function fmtTime(iso: string) {
   const d = new Date(iso);
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
+function fmtDateSep(iso: string) {
+  const d = new Date(iso);
+  const now = new Date();
+  if (d.toDateString() === now.toDateString()) return "Aujourd'hui";
+  const yest = new Date(now); yest.setDate(now.getDate() - 1);
+  if (d.toDateString() === yest.toDateString()) return 'Hier';
+  return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+}
+
+function DateSep({ iso }: { iso: string }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '8px 0' }}>
+      <div style={{ flex: 1, height: 1, background: '#374151' }} />
+      <span style={{ fontSize: 11, color: '#6b7280', background: '#111827', padding: '2px 10px', borderRadius: 20, border: '1px solid #374151', whiteSpace: 'nowrap' }}>{fmtDateSep(iso)}</span>
+      <div style={{ flex: 1, height: 1, background: '#374151' }} />
+    </div>
+  );
 }
 
 function storageKey(userId: string) { return `tplnchat_conv_${userId}`; }
@@ -355,26 +374,39 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
             <div>Envoie un message ci-dessous.</div>
           </div>
         )}
-        {messages.map((m) => {
+        {messages.map((m, i) => {
           const isSent = m.sender_type === 'visitor';
+          const showSep = i === 0 || new Date(m.created_at).toDateString() !== new Date(messages[i - 1].created_at).toDateString();
           return (
-            <div key={m.id} style={{ display: 'flex', flexDirection: 'column', alignItems: isSent ? 'flex-end' : 'flex-start', maxWidth: '78%', alignSelf: isSent ? 'flex-end' : 'flex-start', marginLeft: isSent ? 'auto' : '0', marginRight: isSent ? '0' : 'auto' }}>
-              <div style={{ padding: m.message_type === 'text' ? '10px 14px' : '6px', borderRadius: isSent ? '18px 18px 4px 18px' : '18px 18px 18px 4px', background: isSent ? '#10b981' : '#1f2937', color: '#f9fafb', fontSize: 14, lineHeight: 1.45, wordBreak: 'break-word', whiteSpace: 'pre-wrap', border: isSent ? 'none' : '1px solid #374151' }}>
-                {m.message_type === 'text' && m.content}
-                {m.message_type === 'image' && m.file_url && (
-                  <img src={m.file_url} alt="image" style={{ maxWidth: 220, borderRadius: 12, display: 'block', cursor: 'pointer' }} onClick={() => window.open(m.file_url!)} />
+            <React.Fragment key={m.id}>
+              {showSep && <DateSep iso={m.created_at} />}
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, flexDirection: isSent ? 'row-reverse' : 'row', alignSelf: isSent ? 'flex-end' : 'flex-start', maxWidth: '82%' }}>
+                {/* Avatar admin (messages reçus seulement) */}
+                {!isSent && (
+                  <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'linear-gradient(135deg,#10b981,#059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 11, flexShrink: 0, overflow: 'hidden', marginBottom: 18 }}>
+                    {adminAvatar ? <img src={adminAvatar} alt={adminName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : adminName.charAt(0).toUpperCase()}
+                  </div>
                 )}
-                {m.message_type === 'pdf' && m.file_url && (
-                  <a href={m.file_url} target="_blank" rel="noopener noreferrer" style={{ color: '#10b981', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6, padding: '4px 8px' }}>
-                    📄 {m.file_name || 'document.pdf'}
-                  </a>
-                )}
-                {m.message_type === 'audio' && m.file_url && (
-                  <AudioPlayer src={m.file_url} isSent={isSent} />
-                )}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: isSent ? 'flex-end' : 'flex-start' }}>
+                  {!isSent && <span style={{ fontSize: 11, color: '#6b7280', marginBottom: 3, paddingLeft: 4 }}>{adminName}</span>}
+                  <div style={{ padding: m.message_type === 'text' ? '10px 14px' : '6px', borderRadius: isSent ? '18px 18px 4px 18px' : '18px 18px 18px 4px', background: isSent ? '#10b981' : '#1f2937', color: '#f9fafb', fontSize: 14, lineHeight: 1.45, wordBreak: 'break-word', whiteSpace: 'pre-wrap', border: isSent ? 'none' : '1px solid #374151' }}>
+                    {m.message_type === 'text' && m.content}
+                    {m.message_type === 'image' && m.file_url && (
+                      <img src={m.file_url} alt="image" style={{ maxWidth: 220, borderRadius: 12, display: 'block', cursor: 'pointer' }} onClick={() => window.open(m.file_url!)} />
+                    )}
+                    {m.message_type === 'pdf' && m.file_url && (
+                      <a href={m.file_url} target="_blank" rel="noopener noreferrer" style={{ color: '#10b981', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6, padding: '4px 8px' }}>
+                        📄 {m.file_name || 'document.pdf'}
+                      </a>
+                    )}
+                    {m.message_type === 'audio' && m.file_url && (
+                      <AudioPlayer src={m.file_url} isSent={isSent} />
+                    )}
+                  </div>
+                  <div style={{ fontSize: 11, color: '#4b5563', marginTop: 2, padding: '0 4px' }}>{fmtTime(m.created_at)}</div>
+                </div>
               </div>
-              <div style={{ fontSize: 11, color: '#4b5563', marginTop: 2, padding: '0 4px' }}>{fmtTime(m.created_at)}</div>
-            </div>
+            </React.Fragment>
           );
         })}
         {error && <div style={{ fontSize: 12, color: '#ef4444', textAlign: 'center', padding: '4px 8px' }}>{error}</div>}

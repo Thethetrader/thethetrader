@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import LiveOneToOne from './LiveOneToOne';
 
@@ -72,6 +72,22 @@ type Msg = {
 };
 
 const fmt = (iso: string) => { const d = new Date(iso); return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; };
+const fmtDateSep = (iso: string) => {
+  const d = new Date(iso); const now = new Date();
+  if (d.toDateString() === now.toDateString()) return "Aujourd'hui";
+  const yest = new Date(now); yest.setDate(now.getDate() - 1);
+  if (d.toDateString() === yest.toDateString()) return 'Hier';
+  return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+};
+function DateSep({ iso }: { iso: string }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '8px 0' }}>
+      <div style={{ flex: 1, height: 1, background: '#374151' }} />
+      <span style={{ fontSize: 11, color: '#6b7280', background: '#111827', padding: '2px 10px', borderRadius: 20, border: '1px solid #374151', whiteSpace: 'nowrap' }}>{fmtDateSep(iso)}</span>
+      <div style={{ flex: 1, height: 1, background: '#374151' }} />
+    </div>
+  );
+}
 const fmtRel = (iso: string | null) => {
   if (!iso) return '';
   const d = new Date(iso); const now = new Date();
@@ -456,24 +472,38 @@ export default function SupportAdminChat() {
           </div>
 
           <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: 6, background: '#111827' }}>
-            {messages.map(m => {
+            {messages.map((m, i) => {
               const isSent = m.sender_type === 'admin';
+              const showSep = i === 0 || new Date(m.created_at).toDateString() !== new Date(messages[i - 1].created_at).toDateString();
+              const visitorInitial = (activeConv?.visitor_name || activeConv?.visitor_email || '?').charAt(0).toUpperCase();
               return (
-                <div key={m.id} style={{ display: 'flex', flexDirection: 'column', alignItems: isSent ? 'flex-end' : 'flex-start', maxWidth: '70%', alignSelf: isSent ? 'flex-end' : 'flex-start', marginLeft: isSent ? 'auto' : '0', marginRight: isSent ? '0' : 'auto' }}>
-                  <div style={{ padding: '9px 13px', borderRadius: isSent ? '16px 16px 4px 16px' : '16px 16px 16px 4px', background: isSent ? '#10b981' : '#1f2937', color: isSent ? '#fff' : '#f3f4f6', fontSize: 14, lineHeight: 1.45, wordBreak: 'break-word', whiteSpace: 'pre-wrap', border: isSent ? 'none' : '1px solid #374151' }}>
-                    {m.message_type === 'text' && m.content}
-                    {m.message_type === 'image' && m.file_url && (
-                      <img src={m.file_url} alt="" style={{ maxWidth: 220, borderRadius: 8, display: 'block', cursor: 'pointer' }} onClick={() => window.open(m.file_url!)} />
+                <React.Fragment key={m.id}>
+                  {showSep && <DateSep iso={m.created_at} />}
+                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, flexDirection: isSent ? 'row-reverse' : 'row', alignSelf: isSent ? 'flex-end' : 'flex-start', maxWidth: '75%' }}>
+                    {/* Avatar visitor */}
+                    {!isSent && (
+                      <div style={{ width: 26, height: 26, borderRadius: '50%', background: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 11, flexShrink: 0, marginBottom: 18 }}>
+                        {visitorInitial}
+                      </div>
                     )}
-                    {m.message_type === 'pdf' && m.file_url && (
-                      <a href={m.file_url} target="_blank" rel="noopener noreferrer" style={{ color: isSent ? '#fff' : '#10b981', fontWeight: 600, textDecoration: 'none' }}>📄 {m.file_name || 'document.pdf'}</a>
-                    )}
-                    {m.message_type === 'audio' && m.file_url && (
-                      <AudioPlayer src={m.file_url} isSent={isSent} />
-                    )}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: isSent ? 'flex-end' : 'flex-start' }}>
+                      {!isSent && <span style={{ fontSize: 11, color: '#6b7280', marginBottom: 3, paddingLeft: 4 }}>{activeConv?.visitor_name || activeConv?.visitor_email}</span>}
+                      <div style={{ padding: '9px 13px', borderRadius: isSent ? '16px 16px 4px 16px' : '16px 16px 16px 4px', background: isSent ? '#10b981' : '#1f2937', color: isSent ? '#fff' : '#f3f4f6', fontSize: 14, lineHeight: 1.45, wordBreak: 'break-word', whiteSpace: 'pre-wrap', border: isSent ? 'none' : '1px solid #374151' }}>
+                        {m.message_type === 'text' && m.content}
+                        {m.message_type === 'image' && m.file_url && (
+                          <img src={m.file_url} alt="" style={{ maxWidth: 220, borderRadius: 8, display: 'block', cursor: 'pointer' }} onClick={() => window.open(m.file_url!)} />
+                        )}
+                        {m.message_type === 'pdf' && m.file_url && (
+                          <a href={m.file_url} target="_blank" rel="noopener noreferrer" style={{ color: isSent ? '#fff' : '#10b981', fontWeight: 600, textDecoration: 'none' }}>📄 {m.file_name || 'document.pdf'}</a>
+                        )}
+                        {m.message_type === 'audio' && m.file_url && (
+                          <AudioPlayer src={m.file_url} isSent={isSent} />
+                        )}
+                      </div>
+                      <div style={{ fontSize: 11, color: '#4b5563', marginTop: 2, padding: '0 4px' }}>{fmt(m.created_at)}</div>
+                    </div>
                   </div>
-                  <div style={{ fontSize: 11, color: '#4b5563', marginTop: 2, padding: '0 4px' }}>{fmt(m.created_at)}</div>
-                </div>
+                </React.Fragment>
               );
             })}
             <div ref={bottomRef} />
