@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import ReactDOM from 'react-dom';
 import { supabase } from '../lib/supabase';
 import { subscribeSupportPush } from '../utils/support-push';
 import LiveOneToOne from './LiveOneToOne';
@@ -335,27 +336,29 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
     background: 'transparent', color: '#94a3b8',
   });
 
-  // Session overlay
-  if (sessionJoined && sessionRoom) {
-    return (
-      <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: '#111827', display: 'flex', flexDirection: 'column', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
-        <LiveOneToOne
-          roomName={sessionRoom}
-          userId={userId}
-          identity={userId}
-          isAdmin={false}
-          otherName={adminName}
-          onEnd={() => setSessionJoined(false)}
-          conversationId={conversationId ?? undefined}
-          senderName={visitorName || userEmail.split('@')[0]}
-          senderEmail={userEmail}
-        />
-      </div>
-    );
-  }
+  // Session overlay — rendered via portal to escape transform stacking context
+  const sessionOverlay = sessionJoined && sessionRoom
+    ? ReactDOM.createPortal(
+        <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: '#111827', display: 'flex', flexDirection: 'column', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+          <LiveOneToOne
+            roomName={sessionRoom}
+            userId={userId}
+            identity={userId}
+            isAdmin={false}
+            otherName={adminName}
+            onEnd={() => setSessionJoined(false)}
+            conversationId={conversationId ?? undefined}
+            senderName={visitorName || userEmail.split('@')[0]}
+            senderEmail={userEmail}
+          />
+        </div>,
+        document.body
+      )
+    : null;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#111827' }}>
+      {sessionOverlay}
       {/* Bandeau session vidéo */}
       {sessionRoom && !sessionJoined && (
         <div style={{ background: '#1e3a5f', borderBottom: '1px solid #2563eb', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, flexShrink: 0 }}>

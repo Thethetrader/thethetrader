@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import ReactDOM from 'react-dom';
 import { supabase } from '../lib/supabase';
 import LiveOneToOne from './LiveOneToOne';
 
@@ -550,9 +551,9 @@ export default function SupportAdminChat() {
         </div>
       )}
 
-      {/* Overlay session vidéo */}
-      {sessionActive && activeId && adminUserId && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: '#111827', display: 'flex', flexDirection: 'column', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+      {/* Overlay session vidéo — portal to escape transform stacking context */}
+      {sessionActive && activeId && adminUserId && ReactDOM.createPortal(
+        <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: '#111827', display: 'flex', flexDirection: 'column', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
           <LiveOneToOne
             roomName={`session-${activeId}`}
             userId={adminUserId}
@@ -564,7 +565,8 @@ export default function SupportAdminChat() {
             senderName="Admin"
             senderEmail={adminEmail}
           />
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
