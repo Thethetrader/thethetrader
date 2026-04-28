@@ -23,22 +23,23 @@ exports.handler = async (event) => {
       .order('created_at', { ascending: false })
       .limit(50);
 
-    // Table doesn't exist yet — return empty feed gracefully
     if (error) {
       if (error.code === '42P01') return { statusCode: 200, headers: hdrs, body: JSON.stringify({ posts: [] }) };
       return { statusCode: 500, headers: hdrs, body: JSON.stringify({ error: error.message }) };
     }
 
     const postIds = (posts || []).map(p => p.id);
-    let reactions = [];
-    let comments = [];
 
-    if (postIds.length > 0) {
-      const { data: r } = await supabase.from('home_reactions').select('*').in('post_id', postIds);
-      reactions = r || [];
-      const { data: c } = await supabase.from('home_comments').select('*').in('post_id', postIds).order('created_at', { ascending: true });
-      comments = c || [];
-    }
+    // Fetch reactions and comments in parallel
+    const [reactionsRes, commentsRes] = postIds.length > 0
+      ? await Promise.all([
+          supabase.from('home_reactions').select('*').in('post_id', postIds),
+          supabase.from('home_comments').select('*').in('post_id', postIds).order('created_at', { ascending: true }),
+        ])
+      : [{ data: [] }, { data: [] }];
+
+    const reactions = reactionsRes.data || [];
+    const comments = commentsRes.data || [];
 
     const postsWithData = (posts || []).map(post => ({
       ...post,

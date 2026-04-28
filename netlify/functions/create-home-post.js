@@ -1,7 +1,15 @@
 const { createClient } = require('@supabase/supabase-js');
 const webpush = require('web-push');
 
+const SUPABASE_URL = 'https://bamwcozzfshuozsfmjah.supabase.co';
 const TYPE_LABELS = { achat: '📈 Achat', suivi_trade: '📊 Suivi de trade', news: '📰 News', info: 'ℹ️ Info' };
+
+const hdrs = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Content-Type': 'application/json',
+};
 
 async function sendPush(subscription, title, body) {
   const vapidPublic = process.env.VAPID_PUBLIC_KEY;
@@ -16,13 +24,21 @@ async function sendPush(subscription, title, body) {
   } catch (_) {}
 }
 
-const SUPABASE_URL = 'https://bamwcozzfshuozsfmjah.supabase.co';
-const hdrs = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  'Content-Type': 'application/json',
-};
+// Verify JWT is a valid Supabase token without an extra HTTP call
+function isValidJwt(token) {
+  try {
+    if (!token || token === 'undefined' || token === 'null') return false;
+    const parts = token.split('.');
+    if (parts.length !== 3) return false;
+    const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8'));
+    // Must be a Supabase JWT (iss contains supabase) and not expired
+    if (!payload.iss || !payload.iss.includes('supabase')) return false;
+    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: hdrs, body: '' };
@@ -31,13 +47,13 @@ exports.handler = async (event) => {
   const serviceKey = process.env.SUPABASE_SERVICE_KEY;
   if (!serviceKey) return { statusCode: 500, headers: hdrs, body: JSON.stringify({ error: 'Not configured' }) };
 
-  const supabase = createClient(SUPABASE_URL, serviceKey);
-
   const authHeader = event.headers['authorization'] || '';
   if (!authHeader.startsWith('Bearer ')) return { statusCode: 401, headers: hdrs, body: JSON.stringify({ error: 'Non autorisé' }) };
 
-  const { data: { user }, error: authErr } = await supabase.auth.getUser(authHeader.slice(7));
-  if (authErr || !user) return { statusCode: 401, headers: hdrs, body: JSON.stringify({ error: 'Non autorisé' }) };
+  const token = authHeader.slice(7);
+  if (!isValidJwt(token)) return { statusCode: 401, headers: hdrs, body: JSON.stringify({ error: 'Token invalide' }) };
+
+  const supabase = createClient(SUPABASE_URL, serviceKey);
 
   try {
     let body;
@@ -67,16 +83,15 @@ exports.handler = async (event) => {
 
     if (error) return { statusCode: 500, headers: hdrs, body: JSON.stringify({ error: error.message }) };
 
-    // Push notifications to all users (best-effort, 5s max to avoid timeout)
+    // Push notifications (best-effort, 5s max)
     try {
       const { data: tokens } = await supabase.from('push_tokens').select('subscription').neq('role', 'admin');
       if (tokens?.length) {
         const title = TYPE_LABELS[type] || 'Nouvelle publication';
         const preview = content.trim().length > 80 ? content.trim().slice(0, 80) + '…' : content.trim();
-        const timeout = new Promise(resolve => setTimeout(resolve, 5000));
         await Promise.race([
           Promise.allSettled(tokens.map(t => t.subscription ? sendPush(t.subscription, title, preview) : null)),
-          timeout,
+          new Promise(resolve => setTimeout(resolve, 5000)),
         ]);
       }
     } catch (_) {}
