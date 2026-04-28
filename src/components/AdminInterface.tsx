@@ -6377,7 +6377,7 @@ const dailyPnLChartData = useMemo(
             style={{ backgroundColor: '#111827', minHeight: '100vh' }}
           >
             {selectedChannel.id === 'support-admin' ? (
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 78, overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: 60, left: 0, right: 0, bottom: 78, overflow: 'hidden' }}>
                 <SupportAdminChat />
               </div>
             ) : (view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'user-management' || selectedChannel.id === 'check-trade') ? (
