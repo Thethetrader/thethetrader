@@ -1,4 +1,20 @@
 const { createClient } = require('@supabase/supabase-js');
+const webpush = require('web-push');
+
+const TYPE_LABELS = { achat: '📈 Achat', suivi_trade: '📊 Suivi de trade', news: '📰 News', info: 'ℹ️ Info' };
+
+async function sendPush(subscription, title, body) {
+  const vapidPublic = process.env.VAPID_PUBLIC_KEY;
+  const vapidPrivate = process.env.VAPID_PRIVATE_KEY;
+  if (!vapidPublic || !vapidPrivate) return;
+  try {
+    webpush.setVapidDetails('mailto:support@thethetrader.com', vapidPublic, vapidPrivate);
+    await webpush.sendNotification(
+      subscription,
+      JSON.stringify({ title, body, icon: '/FAVICON.png', badge: '/FAVICON.png', tag: 'home-feed' })
+    );
+  } catch (_) {}
+}
 
 const SUPABASE_URL = 'https://bamwcozzfshuozsfmjah.supabase.co';
 const hdrs = {
@@ -50,6 +66,16 @@ exports.handler = async (event) => {
       .select('*').single();
 
     if (error) return { statusCode: 500, headers: hdrs, body: JSON.stringify({ error: error.message }) };
+
+    // Push notifications to all users (best-effort)
+    try {
+      const { data: tokens } = await supabase.from('push_tokens').select('subscription').neq('role', 'admin');
+      if (tokens?.length) {
+        const title = TYPE_LABELS[type] || 'Nouvelle publication';
+        const preview = content.trim().length > 80 ? content.trim().slice(0, 80) + '…' : content.trim();
+        await Promise.allSettled(tokens.map(t => t.subscription ? sendPush(t.subscription, title, preview) : null));
+      }
+    } catch (_) {}
 
     return { statusCode: 200, headers: hdrs, body: JSON.stringify({ post: { ...post, reactions: [], comments: [] } }) };
   } catch (e) {
