@@ -235,40 +235,39 @@ function SessionRoom({ isAdmin, otherName, onEnd, conversationId, senderType, se
           </span>
         </div>
 
-        {/* Center: tab toggle */}
-        {conversationId && (
-          <div style={{ display: 'flex', background: '#111827', borderRadius: 10, padding: 3, gap: 2 }}>
+        {/* Right: tab toggle + end call (chat tab only, small) */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {conversationId && (
+            <div style={{ display: 'flex', background: '#111827', borderRadius: 10, padding: 3, gap: 2 }}>
+              <button
+                onClick={() => setTab('video')}
+                style={{ padding: '5px 12px', borderRadius: 7, border: 'none', background: tab === 'video' ? '#374151' : 'transparent', color: tab === 'video' ? '#fff' : '#6b7280', cursor: 'pointer', fontSize: 16, lineHeight: 1, transition: 'background 0.15s' }}
+                title="Vidéo"
+              >
+                📹
+              </button>
+              <button
+                onClick={() => setTab('chat')}
+                style={{ padding: '5px 12px', borderRadius: 7, border: 'none', background: tab === 'chat' ? '#374151' : 'transparent', color: tab === 'chat' ? '#fff' : '#6b7280', cursor: 'pointer', fontSize: 16, lineHeight: 1, transition: 'background 0.15s' }}
+                title="Chat"
+              >
+                💬
+              </button>
+            </div>
+          )}
+          {/* End call — visible in chat tab since controls bar is hidden */}
+          {tab === 'chat' && (
             <button
-              onClick={() => setTab('video')}
-              style={{ padding: '5px 12px', borderRadius: 7, border: 'none', background: tab === 'video' ? '#374151' : 'transparent', color: tab === 'video' ? '#fff' : '#6b7280', cursor: 'pointer', fontSize: 16, lineHeight: 1, transition: 'background 0.15s' }}
-              title="Vidéo"
+              onClick={onEnd}
+              title="Quitter la session"
+              style={{ width: 36, height: 36, borderRadius: '50%', background: '#ef4444', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 2px 8px rgba(239,68,68,0.45)' }}
             >
-              📹
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/>
+              </svg>
             </button>
-            <button
-              onClick={() => setTab('chat')}
-              style={{ padding: '5px 12px', borderRadius: 7, border: 'none', background: tab === 'chat' ? '#374151' : 'transparent', color: tab === 'chat' ? '#fff' : '#6b7280', cursor: 'pointer', fontSize: 16, lineHeight: 1, transition: 'background 0.15s' }}
-              title="Chat"
-            >
-              💬
-            </button>
-          </div>
-        )}
-
-        {/* Right: end call button */}
-        <button
-          onClick={onEnd}
-          title="Quitter la session"
-          style={{ width: 40, height: 40, borderRadius: '50%', background: '#ef4444', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 2px 8px rgba(239,68,68,0.5)', transition: 'background 0.15s, transform 0.1s' }}
-          onMouseEnter={e => (e.currentTarget.style.background = '#dc2626')}
-          onMouseLeave={e => (e.currentTarget.style.background = '#ef4444')}
-          onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.93)')}
-          onMouseUp={e => (e.currentTarget.style.transform = 'scale(1)')}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-            <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/>
-          </svg>
-        </button>
+          )}
+        </div>
       </div>
 
       {/* Content */}
@@ -291,8 +290,22 @@ function SessionRoom({ isAdmin, otherName, onEnd, conversationId, senderType, se
               </div>
             )}
           </div>
-          <div className="flex items-center justify-center gap-4 bg-gray-800 border-t border-gray-700 flex-shrink-0" style={{ padding: '16px', paddingBottom: 'calc(16px + env(safe-area-inset-bottom, 0px))' }}>
+          <div className="flex items-center justify-center gap-6 bg-gray-800 border-t border-gray-700 flex-shrink-0" style={{ padding: '16px 24px', paddingBottom: 'calc(16px + env(safe-area-inset-bottom, 0px))' }}>
             <TrackToggle source={Track.Source.Microphone} className="flex flex-col items-center gap-1 text-xs text-gray-300" />
+            {/* End call button — centre, prominent */}
+            <button
+              onClick={onEnd}
+              title="Quitter la session"
+              style={{ width: 56, height: 56, borderRadius: '50%', background: '#ef4444', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 16px rgba(239,68,68,0.55)', transition: 'transform 0.1s, background 0.15s' }}
+              onMouseEnter={e => (e.currentTarget.style.background = '#dc2626')}
+              onMouseLeave={e => (e.currentTarget.style.background = '#ef4444')}
+              onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.92)')}
+              onMouseUp={e => (e.currentTarget.style.transform = 'scale(1)')}
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+                <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/>
+              </svg>
+            </button>
             <TrackToggle source={Track.Source.Camera} className="flex flex-col items-center gap-1 text-xs text-gray-300" />
           </div>
         </>
