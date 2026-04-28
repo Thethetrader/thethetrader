@@ -6360,7 +6360,11 @@ const dailyPnLChartData = useMemo(
             }`}
             style={{ backgroundColor: '#111827', minHeight: '100vh' }}
           >
-            {(view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'user-management' || selectedChannel.id === 'check-trade' || selectedChannel.id === 'support-admin') ? (
+            {selectedChannel.id === 'support-admin' ? (
+              <div style={{ position: 'absolute', top: 60, left: 0, right: 0, bottom: 78, overflow: 'hidden' }}>
+                <SupportAdminChat />
+              </div>
+            ) : (view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'user-management' || selectedChannel.id === 'check-trade') ? (
               <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '0px' }}>
                 {/* Header avec bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
                 {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') && (
