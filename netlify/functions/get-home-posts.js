@@ -23,7 +23,11 @@ exports.handler = async (event) => {
       .order('created_at', { ascending: false })
       .limit(50);
 
-    if (error) return { statusCode: 500, headers: hdrs, body: JSON.stringify({ error: error.message }) };
+    // Table doesn't exist yet — return empty feed gracefully
+    if (error) {
+      if (error.code === '42P01') return { statusCode: 200, headers: hdrs, body: JSON.stringify({ posts: [] }) };
+      return { statusCode: 500, headers: hdrs, body: JSON.stringify({ error: error.message }) };
+    }
 
     const postIds = (posts || []).map(p => p.id);
     let reactions = [];

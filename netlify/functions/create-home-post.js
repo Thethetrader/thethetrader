@@ -67,13 +67,17 @@ exports.handler = async (event) => {
 
     if (error) return { statusCode: 500, headers: hdrs, body: JSON.stringify({ error: error.message }) };
 
-    // Push notifications to all users (best-effort)
+    // Push notifications to all users (best-effort, 5s max to avoid timeout)
     try {
       const { data: tokens } = await supabase.from('push_tokens').select('subscription').neq('role', 'admin');
       if (tokens?.length) {
         const title = TYPE_LABELS[type] || 'Nouvelle publication';
         const preview = content.trim().length > 80 ? content.trim().slice(0, 80) + '…' : content.trim();
-        await Promise.allSettled(tokens.map(t => t.subscription ? sendPush(t.subscription, title, preview) : null));
+        const timeout = new Promise(resolve => setTimeout(resolve, 5000));
+        await Promise.race([
+          Promise.allSettled(tokens.map(t => t.subscription ? sendPush(t.subscription, title, preview) : null)),
+          timeout,
+        ]);
       }
     } catch (_) {}
 
