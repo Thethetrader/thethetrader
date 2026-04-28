@@ -473,6 +473,8 @@ export default function TradingPlatformShell() {
 
   const [view, setView] = useState<'signals' | 'calendar'>('signals');
   const [mobileView, setMobileView] = useState<'channels' | 'content'>('channels');
+  const [contentReady, setContentReady] = useState(true);
+  const contentReadyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<{[channelId: string]: Array<{id: string, text: string, user: string, timestamp: string, file?: File}>}>({});
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -1680,6 +1682,12 @@ export default function TradingPlatformShell() {
 
   // Fonction pour changer de canal et réinitialiser selectedDate si nécessaire
   const handleChannelChange = async (channelId: string, channelName: string) => {
+    // Masquer le contenu pendant la transition slide (évite le flash du salon précédent)
+    if (window.innerWidth < 768) {
+      setContentReady(false);
+      if (contentReadyTimer.current) clearTimeout(contentReadyTimer.current);
+      contentReadyTimer.current = setTimeout(() => setContentReady(true), 320);
+    }
     const isPWA = window.matchMedia('(display-mode: standalone)').matches;
     console.log('🔄 handleChannelChange appelé:', { channelId, channelName, userPlan, isPWA, isAdmin, user: user?.id });
     
@@ -6059,10 +6067,11 @@ export default function TradingPlatformShell() {
           </div>
 
           {/* Content Area - Slides from right */}
-          <div 
+          <div
             className={`absolute inset-0 bg-gray-900 transform transition-transform duration-300 ease-in-out z-10 ${
               mobileView === 'content' ? 'translate-x-0 pointer-events-auto' : 'translate-x-full pointer-events-none'
             }`}
+            style={{ opacity: contentReady ? 1 : 0, transition: 'transform 300ms ease-in-out, opacity 150ms ease-in' }}
           >
             {selectedChannel.id === 'support' ? (
               <div style={{ position: 'absolute', top: 'calc(60px + env(safe-area-inset-top, 0px))', left: 0, right: 0, bottom: 78, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
