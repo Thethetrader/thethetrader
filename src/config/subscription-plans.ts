@@ -30,6 +30,7 @@ export const CHANNELS = {
   JOURNAL_PERSO: 'journal',
   LIVESTREAM: 'video',
   LIVESTREAM_PREMIUM: 'livestream-premium',
+  SUPPORT: 'support',
 } as const;
 
 // Plans d'abonnement
@@ -66,6 +67,7 @@ export const SUBSCRIPTION_PLANS: Record<PlanType, SubscriptionPlan> = {
       CHANNELS.JOURNAL_PERSO,
       CHANNELS.LIVESTREAM,
       CHANNELS.LIVESTREAM_PREMIUM,
+      CHANNELS.SUPPORT,
     ],
   },
   journal: {

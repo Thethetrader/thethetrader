@@ -278,6 +278,7 @@ export default function TradingPlatformShell() {
   // États pour l'abonnement
   const [userPlan, setUserPlan] = useState<PlanType | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showSupportPaywall, setShowSupportPaywall] = useState(false);
   
   // État pour l'utilisateur connecté
   const [user, setUser] = useState<{id: string, email: string} | null>(null);
@@ -5479,6 +5480,71 @@ export default function TradingPlatformShell() {
         isOnSupportChannel={selectedChannel.id === 'support'}
         onNewAdminMessage={() => setSupportUnread(true)}
       />
+      {/* Support Paywall Modal */}
+      {showSupportPaywall && (
+        <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }} onClick={() => setShowSupportPaywall(false)}>
+          <div className="w-full md:max-w-md bg-gray-900 rounded-t-3xl md:rounded-2xl overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()} style={{ border: '1px solid rgba(201,168,76,0.3)' }}>
+            {/* Header gradient */}
+            <div style={{ background: 'linear-gradient(135deg, #1a1200 0%, #2d1f00 50%, #1a1200 100%)', padding: '32px 28px 24px', position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.15) 0%, transparent 70%)' }} />
+              <div style={{ position: 'relative' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(201,168,76,0.15)', border: '1.5px solid rgba(201,168,76,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 11, color: '#c9a84c', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Premium</div>
+                      <div style={{ fontSize: 17, fontWeight: 800, color: '#fff' }}>Support prioritaire</div>
+                    </div>
+                  </div>
+                  <button onClick={() => setShowSupportPaywall(false)} style={{ background: 'rgba(255,255,255,0.08)', border: 'none', borderRadius: '50%', width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#9ca3af' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </button>
+                </div>
+                <p style={{ fontSize: 14, color: '#d1a84a', lineHeight: 1.5 }}>Accède au chat direct avec le formateur, inclus dans la formule Premium.</p>
+              </div>
+            </div>
+            {/* Features */}
+            <div style={{ padding: '20px 28px' }}>
+              {[
+                { icon: '💬', text: 'Chat privé direct avec le formateur' },
+                { icon: '⚡', text: 'Réponse en moins de 24h garantie' },
+                { icon: '📹', text: 'Sessions vidéo 1:1 incluses' },
+                { icon: '🎯', text: 'Suivi personnalisé de ton trading' },
+              ].map(({ icon, text }) => (
+                <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(201,168,76,0.08)', border: '1px solid rgba(201,168,76,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, flexShrink: 0 }}>{icon}</div>
+                  <span style={{ fontSize: 14, color: '#e5e7eb', fontWeight: 500 }}>{text}</span>
+                </div>
+              ))}
+              <div style={{ marginTop: 8, padding: '12px 16px', background: 'rgba(201,168,76,0.06)', borderRadius: 12, border: '1px solid rgba(201,168,76,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ fontSize: 12, color: '#9ca3af' }}>Formule Premium</div>
+                  <div style={{ fontSize: 22, fontWeight: 800, color: '#c9a84c' }}>69€<span style={{ fontSize: 13, fontWeight: 500, color: '#9ca3af' }}>/mois</span></div>
+                </div>
+                <div style={{ fontSize: 12, color: '#6b7280', textAlign: 'right' }}>
+                  <div>ou 57€/mois</div>
+                  <div>en annuel</div>
+                </div>
+              </div>
+            </div>
+            {/* CTA */}
+            <div style={{ padding: '0 28px 32px' }}>
+              <button
+                onClick={() => { setShowSupportPaywall(false); window.location.href = '/premium'; }}
+                style={{ width: '100%', padding: '15px', borderRadius: 14, background: 'linear-gradient(135deg, #c9a84c, #a07830)', border: 'none', color: '#000', fontWeight: 800, fontSize: 16, cursor: 'pointer', letterSpacing: '0.02em', boxShadow: '0 4px 20px rgba(201,168,76,0.35)' }}
+              >
+                Passer Premium →
+              </button>
+              <button onClick={() => setShowSupportPaywall(false)} style={{ width: '100%', marginTop: 10, padding: '12px', background: 'none', border: 'none', color: '#6b7280', fontSize: 14, cursor: 'pointer' }}>
+                Pas maintenant
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showMonCompte && (
         <MonCompteModal
           onClose={() => setShowMonCompte(false)}
@@ -5692,7 +5758,7 @@ export default function TradingPlatformShell() {
 
           {/* Bouton Support */}
           <button
-            onClick={() => { handleChannelChange('support', 'support'); setSupportUnread(false); }}
+            onClick={() => { if (userPlan !== 'premium' && !isAdmin) { setShowSupportPaywall(true); return; } handleChannelChange('support', 'support'); setSupportUnread(false); }}
             className={`w-full px-4 py-3 rounded-lg font-medium transition-all duration-200 shadow-sm flex items-center justify-between ${selectedChannel.id === 'support' ? 'bg-gray-600 text-white border border-gray-500' : 'bg-gray-700/50 hover:bg-gray-700 text-gray-300 border border-gray-600/30'}`}
           >
             <div className="flex items-center gap-2">
@@ -5794,7 +5860,7 @@ export default function TradingPlatformShell() {
               <div className="flex items-center gap-3">
                 {/* Bulle support chat */}
                 <button
-                  onClick={() => { handleChannelChange('support', 'support'); setSupportUnread(false); setMobileView('content'); }}
+                  onClick={() => { if (userPlan !== 'premium' && !isAdmin) { setShowSupportPaywall(true); return; } handleChannelChange('support', 'support'); setSupportUnread(false); setMobileView('content'); }}
                   style={{ position: 'relative', width: 34, height: 34, borderRadius: '50%', background: selectedChannel.id === 'support' ? '#10b981' : '#1f2937', border: '1.5px solid #374151', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}
                 >
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={selectedChannel.id === 'support' ? '#fff' : '#9ca3af'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
