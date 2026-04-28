@@ -5640,10 +5640,6 @@ export default function TradingPlatformShell() {
               {channels.find(c => c.id === 'check-trade') && (
                 <button onClick={() => handleChannelChange('check-trade', 'check-trade')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'check-trade' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>✅ Check Trade</button>
               )}
-              <button onClick={() => { handleChannelChange('support', 'support'); setSupportUnread(false); }} className={`w-full text-left px-3 py-2 rounded text-sm flex items-center justify-between ${selectedChannel.id === 'support' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>
-                <span>💬 Support</span>
-                {supportUnread && selectedChannel.id !== 'support' && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444', display: 'inline-block', flexShrink: 0 }} />}
-              </button>
               {channels.find(c => c.id === 'livestream-premium') && (
                 <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>
                   <div className="flex items-start gap-2">
@@ -5788,16 +5784,16 @@ export default function TradingPlatformShell() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                {/* Bouton support chat */}
+                {/* Bulle support chat */}
                 <button
                   onClick={() => { handleChannelChange('support', 'support'); setSupportUnread(false); setMobileView('content'); }}
-                  className="relative text-gray-400 hover:text-white"
+                  style={{ position: 'relative', width: 34, height: 34, borderRadius: '50%', background: selectedChannel.id === 'support' ? '#10b981' : '#1f2937', border: '1.5px solid #374151', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}
                 >
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={selectedChannel.id === 'support' ? '#fff' : '#9ca3af'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                   </svg>
                   {supportUnread && (
-                    <span style={{ position: 'absolute', top: -2, right: -2, width: 8, height: 8, borderRadius: '50%', background: '#ef4444', display: 'block' }} />
+                    <span style={{ position: 'absolute', top: -2, right: -2, width: 9, height: 9, borderRadius: '50%', background: '#ef4444', border: '1.5px solid #111827', display: 'block' }} />
                   )}
                 </button>
                 <button onClick={() => setShowMonCompte(true)} className="text-gray-400 hover:text-white">
@@ -6019,20 +6015,6 @@ export default function TradingPlatformShell() {
                       </div>
                     </button>
                   )}
-
-                  <button
-                    onClick={() => { handleChannelChange('support', 'support'); setMobileView('content'); setSupportUnread(false); }}
-                    className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'support' && mobileView === 'content' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">💬</span>
-                      <div className="flex-1">
-                        <p className="font-semibold text-white">Support</p>
-                        <p className="text-sm text-gray-400">Contacte-nous directement</p>
-                      </div>
-                      {supportUnread && <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#ef4444', display: 'inline-block', flexShrink: 0 }} />}
-                    </div>
-                  </button>
 
                   {channels.find(c => c.id === 'livestream-premium') && (
                     <button

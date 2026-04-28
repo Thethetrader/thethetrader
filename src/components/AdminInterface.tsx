@@ -5892,7 +5892,6 @@ const dailyPnLChartData = useMemo(
                   }
                 }, 0);
               }} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'check-trade' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>✅ Check Trade</button>
-              <button onClick={() => handleChannelChange('support-admin', 'support-admin')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'support-admin' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>💬 Support clients</button>
               <button onClick={() => handleChannelChange('livestream-premium', 'livestream-premium')} className={`w-full text-left px-3 py-2 rounded text-sm ${selectedChannel.id === 'livestream-premium' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}>
                 <div className="flex items-start gap-2">
                   <span>⭐</span>
@@ -5934,6 +5933,19 @@ const dailyPnLChartData = useMemo(
               </div>
             </div>
           </div>
+
+          {/* Bouton Support sous les stats */}
+          <button
+            onClick={() => handleChannelChange('support-admin', 'support-admin')}
+            className={`w-full px-4 py-3 rounded-lg font-medium transition-all duration-200 shadow-sm flex items-center justify-between ${selectedChannel.id === 'support-admin' ? 'bg-gray-600 text-white border border-gray-500' : 'bg-gray-700/50 hover:bg-gray-700 text-gray-300 border border-gray-600/30'}`}
+          >
+            <div className="flex items-center gap-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span>Support clients</span>
+            </div>
+          </button>
 
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">NOTIFICATIONS</h3>
