@@ -6024,7 +6024,7 @@ const dailyPnLChartData = useMemo(
       {/* Main Content */}
       <div className="flex-1 flex flex-col bg-gray-900" style={{ minHeight: '100vh', backgroundColor: '#111827' }}>
         {/* Mobile Navigation - Fixed */}
-        <div className="md:hidden bg-gray-800 border-b border-gray-700 p-3 fixed top-0 left-0 right-0 z-30" style={{ height: '60px', backgroundColor: '#1f2937' }}>
+        <div className="md:hidden bg-gray-800 border-b border-gray-700 p-3 fixed top-0 left-0 right-0 z-30" style={{ height: 'calc(60px + env(safe-area-inset-top, 0px))', paddingTop: 'calc(12px + env(safe-area-inset-top, 0px))', backgroundColor: '#1f2937' }}>
           {mobileView === 'channels' ? (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -6102,7 +6102,7 @@ const dailyPnLChartData = useMemo(
         </div>
 
         {/* Mobile Content Container with Slide Animation */}
-        <div className="md:hidden relative flex-1 overflow-hidden bg-gray-900" style={{ paddingTop: '60px', backgroundColor: '#111827' }}>
+        <div className="md:hidden relative flex-1 overflow-hidden bg-gray-900" style={{ paddingTop: 'calc(60px + env(safe-area-inset-top, 0px))', backgroundColor: '#111827' }}>
           {/* Channels List - Slides from left */}
           <div 
             className={`absolute inset-0 bg-gray-800 transform transition-transform duration-300 ease-in-out z-10 ${
@@ -6377,7 +6377,7 @@ const dailyPnLChartData = useMemo(
             style={{ backgroundColor: '#111827', minHeight: '100vh' }}
           >
             {selectedChannel.id === 'support-admin' ? (
-              <div style={{ position: 'absolute', top: 60, left: 0, right: 0, bottom: 78, overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 78, overflow: 'hidden' }}>
                 <SupportAdminChat />
               </div>
             ) : (view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'user-management' || selectedChannel.id === 'check-trade') ? (

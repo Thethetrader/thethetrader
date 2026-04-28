@@ -5703,7 +5703,7 @@ export default function TradingPlatformShell() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Mobile Navigation - Fixed */}
-        <div className={`md:hidden bg-gray-800 p-3 fixed top-0 left-0 right-0 z-30 ${selectedChannel.id === 'calendrier' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model' ? '' : 'border-b border-gray-700'}`} style={{ height: '60px' }}>
+        <div className={`md:hidden bg-gray-800 p-3 fixed top-0 left-0 right-0 z-30 ${selectedChannel.id === 'calendrier' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model' ? '' : 'border-b border-gray-700'}`} style={{ height: 'calc(60px + env(safe-area-inset-top, 0px))', paddingTop: 'calc(12px + env(safe-area-inset-top, 0px))' }}>
           {mobileView === 'channels' ? (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -5835,7 +5835,7 @@ export default function TradingPlatformShell() {
         </div>
 
         {/* Mobile Content Container with Slide Animation */}
-        <div className="md:hidden relative flex-1 overflow-hidden" style={{ paddingTop: '60px' }}>
+        <div className="md:hidden relative flex-1 overflow-hidden" style={{ paddingTop: 'calc(60px + env(safe-area-inset-top, 0px))' }}>
           {/* Channels List - Slides from left */}
           <div 
             className={`absolute inset-0 bg-gray-800 transform transition-transform duration-300 ease-in-out z-10 ${
@@ -6065,7 +6065,7 @@ export default function TradingPlatformShell() {
             }`}
           >
             {selectedChannel.id === 'support' ? (
-              <div style={{ position: 'absolute', top: 60, left: 0, right: 0, bottom: 78, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 78, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                 {getTradingCalendar()}
               </div>
             ) : (view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'video' || selectedChannel.id === 'livestream-premium' || selectedChannel.id === 'journal') ? (
