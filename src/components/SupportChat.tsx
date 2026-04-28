@@ -168,6 +168,21 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
     } catch {}
   }, [onNewAdminMessage]);
 
+  // Recover conversationId from server when localStorage was cleared (e.g. PWA reinstall)
+  useEffect(() => {
+    if (conversationId || !userEmail) return;
+    fetch(`${GET_URL}?visitor_email=${encodeURIComponent(userEmail)}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data?.conversation_id) saveConvId(data.conversation_id);
+        if (data?.messages?.length) {
+          setMessages(data.messages);
+          lastCreatedAt.current = data.messages[data.messages.length - 1].created_at;
+        }
+      })
+      .catch(() => {});
+  }, [userEmail]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     if (!conversationId) return;
     lastCreatedAt.current = null;

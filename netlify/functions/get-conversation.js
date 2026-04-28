@@ -18,7 +18,28 @@ export const handler = async (event) => {
 
   const params = event.queryStringParameters || {};
   const conversation_id = params.conversation_id;
+  const visitor_email = params.visitor_email;
   const since = params.since;
+
+  // Lookup conversation by visitor_email (used when localStorage was cleared)
+  if (!conversation_id && visitor_email) {
+    const { data: conv, error: convErr } = await supabase
+      .from('support_conversations')
+      .select('id')
+      .eq('visitor_email', visitor_email)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (convErr) return { statusCode: 500, headers, body: JSON.stringify({ error: convErr.message }) };
+    if (!conv) return { statusCode: 200, headers, body: JSON.stringify({ conversation_id: null, messages: [] }) };
+    const { data: messages, error: msgErr } = await supabase
+      .from('support_messages')
+      .select('*')
+      .eq('conversation_id', conv.id)
+      .order('created_at', { ascending: true });
+    if (msgErr) return { statusCode: 500, headers, body: JSON.stringify({ error: msgErr.message }) };
+    return { statusCode: 200, headers, body: JSON.stringify({ conversation_id: conv.id, messages: messages || [] }) };
+  }
 
   if (!conversation_id) return { statusCode: 400, headers, body: JSON.stringify({ error: 'conversation_id requis' }) };
 
