@@ -346,6 +346,9 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
           isAdmin={false}
           otherName={adminName}
           onEnd={() => setSessionJoined(false)}
+          conversationId={conversationId ?? undefined}
+          senderName={visitorName || userEmail.split('@')[0]}
+          senderEmail={userEmail}
         />
       </div>
     );

@@ -110,6 +110,7 @@ export default function SupportAdminChat() {
   const [mobilePane, setMobilePane] = useState<'list' | 'chat'>('list');
   const [sessionActive, setSessionActive] = useState(false);
   const [adminUserId, setAdminUserId] = useState<string | null>(null);
+  const [adminEmail, setAdminEmail] = useState<string>('');
   const [recordSecs, setRecordSecs] = useState(0);
   const bottomRef = useRef<HTMLDivElement>(null);
   const realtimeRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
@@ -122,6 +123,7 @@ export default function SupportAdminChat() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (data?.session?.user?.id) setAdminUserId(data.session.user.id);
+      if (data?.session?.user?.email) setAdminEmail(data.session.user.email);
     });
   }, []);
 
@@ -558,6 +560,9 @@ export default function SupportAdminChat() {
             isAdmin
             otherName={activeConv?.visitor_name}
             onEnd={endSession}
+            conversationId={activeId}
+            senderName="Admin"
+            senderEmail={adminEmail}
           />
         </div>
       )}
