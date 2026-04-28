@@ -183,11 +183,19 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
   useEffect(() => {
-    supabase.from('user_profiles').select('name, avatar_url').eq('role', 'admin').limit(1).single()
-      .then(({ data }) => {
-        if (data?.name) setAdminName(data.name);
-        if (data?.avatar_url) setAdminAvatar(data.avatar_url);
-      });
+    const loadAdmin = async () => {
+      // Try role = 'admin' first, then user_type = 'admin' as fallback
+      let data: any = null;
+      const r1 = await supabase.from('user_profiles').select('name, avatar_url').eq('role', 'admin').limit(1).maybeSingle();
+      data = r1.data;
+      if (!data) {
+        const r2 = await supabase.from('user_profiles').select('name, avatar_url').eq('user_type', 'admin').limit(1).maybeSingle();
+        data = r2.data;
+      }
+      if (data?.name) setAdminName(data.name);
+      if (data?.avatar_url) setAdminAvatar(data.avatar_url);
+    };
+    loadAdmin();
   }, []);
 
   useEffect(() => {

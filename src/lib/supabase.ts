@@ -602,6 +602,7 @@ export const updateUserProfile = async (name: string, avatarUrl?: string, userTy
       id: user.id,
       name: name,
       email: user.email,
+      role: userType,
       updated_at: new Date().toISOString()
     };
 
