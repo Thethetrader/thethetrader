@@ -3382,11 +3382,12 @@ const dailyPnLChartData = useMemo(
 
   // Scroll automatique vers le bas quand de nouveaux messages arrivent ou quand on change de canal
   useEffect(() => {
-    setTimeout(() => {
-      if (messagesContainerRef.current) {
-        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-      }
-    }, 100);
+    const el = messagesContainerRef.current;
+    if (!el) return;
+    el.scrollTop = el.scrollHeight;
+    const t1 = setTimeout(() => { el.scrollTop = el.scrollHeight; }, 150);
+    const t2 = setTimeout(() => { el.scrollTop = el.scrollHeight; }, 400);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [chatMessages, selectedChannel.id]);
 
   const channels = [

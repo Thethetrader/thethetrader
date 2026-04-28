@@ -20,7 +20,7 @@ exports.handler = async (event) => {
     const { data: posts, error } = await supabase
       .from('home_posts')
       .select('*')
-      .order('created_at', { ascending: false })
+      .order('created_at', { ascending: true })
       .limit(50);
 
     if (error) {

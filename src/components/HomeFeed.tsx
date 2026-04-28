@@ -59,14 +59,23 @@ export default function HomeFeed({ isAdmin, userId, username, sessionToken }: Pr
   const [posting, setPosting] = useState(false);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = useCallback(() => {
+    setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 80);
+  }, []);
+
   const load = useCallback(async () => {
     try {
       const res = await fetch(`${API}/get-home-posts`);
       const json = await res.json();
-      if (json.posts) setPosts(json.posts);
+      if (json.posts) {
+        setPosts(json.posts);
+        scrollToBottom();
+      }
     } catch {}
     setLoading(false);
-  }, []);
+  }, [scrollToBottom]);
 
   useEffect(() => {
     load();
@@ -97,10 +106,11 @@ export default function HomeFeed({ isAdmin, userId, username, sessionToken }: Pr
       });
       const json = await res.json();
       if (json.post) {
-        setPosts(prev => [json.post, ...prev]);
+        setPosts(prev => [...prev, json.post]);
         setNewContent('');
         setNewImage(null);
         setShowCreate(false);
+        scrollToBottom();
       }
     } catch {}
     setPosting(false);
@@ -187,7 +197,7 @@ export default function HomeFeed({ isAdmin, userId, username, sessionToken }: Pr
       ) : posts.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 40, color: '#6b7280' }}>Aucune publication pour l'instant</div>
       ) : (
-        <div style={{ padding: '0 0 calc(100px + env(safe-area-inset-bottom, 0px))' }}>
+        <div style={{ padding: '0 0 calc(20px + env(safe-area-inset-bottom, 0px))' }}>
           {grouped.map(group => (
             <div key={group.key}>
               <div style={{ padding: '16px 16px 8px', fontSize: 20, fontWeight: 700, color: '#fff' }}>{group.label}</div>
@@ -277,6 +287,7 @@ export default function HomeFeed({ isAdmin, userId, username, sessionToken }: Pr
               })}
             </div>
           ))}
+        <div ref={bottomRef} style={{ height: 'calc(78px + env(safe-area-inset-bottom, 0px))' }} />
         </div>
       )}
 

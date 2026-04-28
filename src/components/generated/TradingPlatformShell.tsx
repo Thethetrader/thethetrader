@@ -3775,18 +3775,17 @@ export default function TradingPlatformShell() {
 
   // Fonction handleSignalStatus supprimée - seul admin peut changer le statut des signaux
 
-  // Scroll automatique vers le bas quand de nouveaux messages arrivent, quand on change de canal, ou quand les signaux changent
-  // Mais PAS pour le calendrier et trading journal
+  // Scroll automatique vers le bas quand de nouveaux messages arrivent ou quand on change de canal
   useEffect(() => {
-    // Exclure le calendrier et trading journal du scroll automatique
-    if (!['calendrier', 'trading-journal'].includes(selectedChannel.id)) {
-      setTimeout(() => {
-        if (messagesContainerRef.current) {
-          messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-        }
-      }, 100);
-    }
-  }, [messages, selectedChannel.id, signals]);
+    if (['calendrier', 'trading-journal', 'tpln-model', 'check-trade'].includes(selectedChannel.id)) return;
+    const el = messagesContainerRef.current;
+    if (!el) return;
+    // Scroll immédiat + après rendu
+    el.scrollTop = el.scrollHeight;
+    const t1 = setTimeout(() => { el.scrollTop = el.scrollHeight; }, 150);
+    const t2 = setTimeout(() => { el.scrollTop = el.scrollHeight; }, 400);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [messages, selectedChannel.id]);
 
   // Fonction supprimée - seul admin peut créer des signaux
 
