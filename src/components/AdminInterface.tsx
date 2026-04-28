@@ -14,6 +14,7 @@ import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType
 import DailyPnLChart from './DailyPnLChart';
 import CheckTradeChecklist from './CheckTradeChecklist';
 import SupportAdminChat from './SupportAdminChat';
+import HomeFeed from './HomeFeed';
 import { subscribeSupportPush } from '../utils/support-push';
 
 // Composant Profit Factor Gauge
@@ -245,6 +246,8 @@ export default function AdminInterface() {
   const [selectedChannel, setSelectedChannel] = useState({ id: 'fondamentaux', name: 'fondamentaux' });
   const [view, setView] = useState<'signals' | 'calendar'>('signals');
   const [mobileView, setMobileView] = useState<'channels' | 'content'>('channels');
+  const [showFeed, setShowFeed] = useState(false);
+  const [sessionToken, setSessionToken] = useState<string | undefined>(undefined);
   const [showChannelsOverlay, setShowChannelsOverlay] = useState(true);
   const [calendarKey, setCalendarKey] = useState(0);
   const [message, setMessage] = useState('');
@@ -708,6 +711,12 @@ export default function AdminInterface() {
   }, []);
   const [chatMessage, setChatMessage] = useState('');
   const [profileImage, setProfileImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.access_token) setSessionToken(session.access_token);
+    });
+  }, []);
 
   // Initialiser le profil au chargement
   useEffect(() => {
@@ -6030,7 +6039,11 @@ const dailyPnLChartData = useMemo(
       <div className="flex-1 flex flex-col bg-gray-900" style={{ minHeight: '100vh', backgroundColor: '#111827' }}>
         {/* Mobile Navigation - Fixed */}
         <div className="md:hidden bg-gray-800 border-b border-gray-700 p-3 fixed top-0 left-0 right-0 z-30" style={{ height: 'calc(60px + env(safe-area-inset-top, 0px))', paddingTop: 'calc(12px + env(safe-area-inset-top, 0px))', backgroundColor: '#1f2937' }}>
-          {mobileView === 'channels' ? (
+          {showFeed ? (
+            <div className="flex items-center justify-between h-full">
+              <span className="text-white font-bold text-lg">Accueil</span>
+            </div>
+          ) : mobileView === 'channels' ? (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <label className="cursor-pointer">
@@ -6105,6 +6118,13 @@ const dailyPnLChartData = useMemo(
             </div>
           )}
         </div>
+
+        {/* Mobile Feed View */}
+        {showFeed && (
+          <div className="md:hidden fixed inset-0 bg-gray-900 z-20 overflow-y-auto" style={{ paddingTop: 'calc(60px + env(safe-area-inset-top, 0px))', paddingBottom: 78 }}>
+            <HomeFeed isAdmin={true} userId="admin" username="Admin" sessionToken={sessionToken} />
+          </div>
+        )}
 
         {/* Mobile Content Container with Slide Animation */}
         <div className="md:hidden relative flex-1 overflow-hidden bg-gray-900" style={{ paddingTop: 'calc(60px + env(safe-area-inset-top, 0px))', backgroundColor: '#111827' }}>
@@ -10085,35 +10105,38 @@ const dailyPnLChartData = useMemo(
         overflow: 'visible',
       }}>
         <div className="flex items-center justify-around" style={{ height: 78 }}>
-          {/* Accueil */}
-          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setMobileView('channels'); }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: mobileView === 'channels' ? '#e5e7eb' : '#6b7280' }}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill={mobileView === 'channels' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          {/* Accueil - Feed */}
+          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(true); }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: showFeed ? '#e5e7eb' : '#6b7280' }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill={showFeed ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/>
             </svg>
             <span style={{ fontSize: 10, fontWeight: 500 }}>Accueil</span>
           </button>
           {/* Journal */}
-          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); const ch = channels.find((c: {id:string}) => c.id === 'calendrier'); if (ch) { handleChannelChange(ch.id, ch.name); setView('calendar'); setMobileView('content'); } }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: selectedChannel.id === 'calendrier' && mobileView === 'content' ? '#e5e7eb' : '#6b7280' }}>
+          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(false); const ch = channels.find((c: {id:string}) => c.id === 'calendrier'); if (ch) { handleChannelChange(ch.id, ch.name); setView('calendar'); setMobileView('content'); } }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: selectedChannel.id === 'calendrier' && mobileView === 'content' && !showFeed ? '#e5e7eb' : '#6b7280' }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
             </svg>
             <span style={{ fontSize: 10, fontWeight: 500 }}>Journal</span>
           </button>
-          {/* Live - Centre proéminent */}
-          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); window.location.href = '/premium'; }} className="flex flex-col items-center justify-center flex-1" style={{ marginTop: -16 }}>
-            <div style={{ width: 54, height: 54, borderRadius: '50%', border: '2.5px solid #e5e7eb', backgroundColor: '#1f2937', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>
-              <span style={{ fontSize: 9, fontWeight: 700, lineHeight: 1.2, textAlign: 'center' }}>Devenir{'\n'}Premium</span>
+          {/* Salons - Centre proéminent */}
+          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(false); setMobileView('channels'); }} className="flex flex-col items-center justify-center flex-1" style={{ marginTop: -16 }}>
+            <div style={{ width: 54, height: 54, borderRadius: '50%', border: `2.5px solid ${mobileView === 'channels' && !showFeed ? '#e5e7eb' : '#4b5563'}`, backgroundColor: '#1f2937', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: mobileView === 'channels' && !showFeed ? '#e5e7eb' : '#6b7280' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span style={{ fontSize: 8, fontWeight: 700, lineHeight: 1.2, textAlign: 'center', marginTop: 2 }}>Salons</span>
             </div>
           </button>
           {/* Signaux */}
-          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); const ch = channels.find((c: {id:string}) => ['general-chat-2','general-chat-3','general-chat-4'].includes(c.id)); if (ch) { handleChannelChange(ch.id, ch.name); setMobileView('content'); } }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: ['general-chat-2','general-chat-3','general-chat-4'].includes(selectedChannel.id) && mobileView === 'content' ? '#e5e7eb' : '#6b7280' }}>
+          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(false); const ch = channels.find((c: {id:string}) => ['general-chat-2','general-chat-3','general-chat-4'].includes(c.id)); if (ch) { handleChannelChange(ch.id, ch.name); setMobileView('content'); } }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: ['general-chat-2','general-chat-3','general-chat-4'].includes(selectedChannel.id) && mobileView === 'content' && !showFeed ? '#e5e7eb' : '#6b7280' }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
             </svg>
             <span style={{ fontSize: 10, fontWeight: 500 }}>Signaux</span>
           </button>
           {/* Formation */}
-          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); const ch = channels.find((c: {id:string}) => c.id === 'fondamentaux'); if (ch) { handleChannelChange(ch.id, ch.name); setMobileView('content'); } }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: selectedChannel.id === 'fondamentaux' && mobileView === 'content' ? '#e5e7eb' : '#6b7280' }}>
+          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(false); const ch = channels.find((c: {id:string}) => c.id === 'fondamentaux'); if (ch) { handleChannelChange(ch.id, ch.name); setMobileView('content'); } }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: selectedChannel.id === 'fondamentaux' && mobileView === 'content' && !showFeed ? '#e5e7eb' : '#6b7280' }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
             </svg>
