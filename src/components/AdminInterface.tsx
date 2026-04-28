@@ -9483,25 +9483,9 @@ const dailyPnLChartData = useMemo(
                 </div>
               </div>
 
-              {/* WHIP URL */}
+              {/* Token d'abord */}
               <div>
-                <label className="text-sm text-gray-400 mb-2 block">URL WHIP (OBS → Settings → Stream → Service: WHIP)</label>
-                <div className="flex gap-2">
-                  <input
-                    readOnly
-                    value="https://tpln-a6a5zbjf.livekit.cloud/rtc/whip"
-                    className="flex-1 bg-gray-900 border border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-200 font-mono"
-                  />
-                  <button
-                    onClick={() => navigator.clipboard.writeText('https://tpln-a6a5zbjf.livekit.cloud/rtc/whip')}
-                    className="px-3 py-2 bg-gray-600 hover:bg-gray-500 rounded-lg text-sm text-white"
-                  >Copier</button>
-                </div>
-              </div>
-
-              {/* Token */}
-              <div>
-                <label className="text-sm text-gray-400 mb-2 block">Bearer Token (OBS → Settings → Stream → Bearer Token)</label>
+                <label className="text-sm text-gray-400 mb-2 block">Étape 1 — Génère le token</label>
                 {obsToken ? (
                   <div className="flex gap-2">
                     <input
@@ -9510,9 +9494,9 @@ const dailyPnLChartData = useMemo(
                       className="flex-1 bg-gray-900 border border-gray-600 rounded-lg px-3 py-2 text-xs text-gray-200 font-mono truncate"
                     />
                     <button
-                      onClick={() => navigator.clipboard.writeText(obsToken)}
-                      className="px-3 py-2 bg-green-700 hover:bg-green-600 rounded-lg text-sm text-white"
-                    >Copier</button>
+                      onClick={() => { setObsToken(''); }}
+                      className="px-3 py-2 bg-gray-600 hover:bg-gray-500 rounded-lg text-xs text-white"
+                    >↺</button>
                   </div>
                 ) : (
                   <button
@@ -9523,16 +9507,38 @@ const dailyPnLChartData = useMemo(
                     {obsTokenLoading ? 'Génération...' : 'Générer le token'}
                   </button>
                 )}
-                <p className="text-xs text-gray-500 mt-2">Le token expire dans 4h. Régénère-en un si OBS refuse la connexion.</p>
               </div>
 
-              <div className="bg-gray-900 rounded-lg p-4 text-xs text-gray-400 space-y-1">
-                <p className="font-semibold text-gray-300 mb-2">Étapes OBS :</p>
-                <p>1. Settings → Stream → Service → <strong className="text-white">WHIP</strong></p>
-                <p>2. Colle l'URL WHIP ci-dessus</p>
-                <p>3. Génère et colle le Bearer Token</p>
-                <p>4. Démarre le stream dans OBS → les viewers voient le stream en direct</p>
-              </div>
+              {obsToken && (
+                <>
+                  {/* Méthode recommandée: URL avec token */}
+                  <div>
+                    <label className="text-sm text-gray-400 mb-1 block">Étape 2 — Colle cette URL dans OBS <span className="text-green-400 font-semibold">(Server)</span></label>
+                    <p className="text-xs text-gray-500 mb-2">Le token est intégré dans l'URL — laisse le champ "Bearer Token" vide dans OBS.</p>
+                    <div className="flex gap-2">
+                      <input
+                        readOnly
+                        value={`https://tpln-a6a5zbjf.livekit.cloud/rtc/whip?access_token=${obsToken}`}
+                        className="flex-1 bg-gray-900 border border-green-700 rounded-lg px-3 py-2 text-xs text-gray-200 font-mono truncate"
+                      />
+                      <button
+                        onClick={() => navigator.clipboard.writeText(`https://tpln-a6a5zbjf.livekit.cloud/rtc/whip?access_token=${obsToken}`)}
+                        className="px-3 py-2 bg-green-700 hover:bg-green-600 rounded-lg text-sm text-white whitespace-nowrap"
+                      >Copier</button>
+                    </div>
+                  </div>
+
+                  <div className="bg-gray-900 rounded-lg p-4 text-xs text-gray-400 space-y-1.5">
+                    <p className="font-semibold text-gray-300 mb-2">Configuration OBS :</p>
+                    <p>1. <strong className="text-white">Settings → Stream</strong></p>
+                    <p>2. Service → <strong className="text-white">WHIP</strong></p>
+                    <p>3. Colle l'URL complète ci-dessus dans <strong className="text-white">Server</strong></p>
+                    <p>4. Laisse <strong className="text-white">Bearer Token vide</strong></p>
+                    <p>5. <strong className="text-white">Start Streaming</strong> dans OBS</p>
+                    <p className="text-gray-500 mt-2">Le token expire dans 4h — régénère si OBS refuse.</p>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
