@@ -5731,31 +5731,6 @@ export default function TradingPlatformShell() {
             </div>
           </div>
 
-          <div className="bg-gray-700 rounded-lg p-3">
-            <h4 className="text-sm font-medium mb-2">Statistiques</h4>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Win Rate:</span>
-                <span className="text-white">{calculateWinRate()}%</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">P&L Total:</span>
-                <span className={calculateTotalPnL() >= 0 ? 'text-green-100' : 'text-red-400'}>
-                  {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
-                </span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Signaux actifs:</span>
-                <span className="text-white">{realTimeSignals.filter(s => s.status === 'ACTIVE').length}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Total Trades:</span>
-                <span className="text-white">{realTimeSignals.length}</span>
-              </div>
-            </div>
-          </div>
-
-
           {/* Bouton Support */}
           <button
             onClick={() => { if (userPlan !== 'premium' && !isAdmin) { setShowSupportPaywall(true); return; } handleChannelChange('support', 'support'); setSupportUnread(false); }}
