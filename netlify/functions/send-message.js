@@ -108,27 +108,29 @@ export const handler = async (event) => {
 
     if (msgErr) return { statusCode: 500, headers: hdrs, body: JSON.stringify({ error: 'msg: ' + msgErr.message }) };
 
-    // Envoyer notification push au destinataire (best-effort)
-    const preview = message_type === 'text'
-      ? (content.trim().length > 80 ? content.trim().slice(0, 80) + '…' : content.trim())
-      : message_type === 'image' ? '📷 Image'
-      : message_type === 'pdf' ? '📄 PDF'
-      : '🎙️ Message vocal';
+    // Envoyer notification push au destinataire (best-effort, ne bloque jamais le send)
+    try {
+      const preview = message_type === 'text'
+        ? (content?.trim().length > 80 ? content.trim().slice(0, 80) + '…' : content?.trim())
+        : message_type === 'image' ? '📷 Image'
+        : message_type === 'pdf' ? '📄 PDF'
+        : '🎙️ Message vocal';
 
-    if (isAdmin) {
-      // Admin → notifier le visiteur
-      const userKey = visitor_id || visitor_email;
-      if (userKey) {
-        const { data: row } = await supabase.from('push_tokens').select('subscription').eq('user_key', userKey).single();
-        if (row?.subscription) await sendPush(row.subscription, 'Support', preview);
+      if (isAdmin) {
+        const userKey = visitor_id || visitor_email;
+        if (userKey) {
+          const { data: row } = await supabase.from('push_tokens').select('subscription').eq('user_key', userKey).maybeSingle();
+          if (row?.subscription) await sendPush(row.subscription, 'Support', preview);
+        }
+      } else {
+        const { data: rows } = await supabase.from('push_tokens').select('subscription').eq('role', 'admin').limit(1);
+        if (rows?.[0]?.subscription) {
+          const senderName = visitor_name || visitor_email?.split('@')[0] || 'Utilisateur';
+          await sendPush(rows[0].subscription, `💬 ${senderName}`, preview);
+        }
       }
-    } else {
-      // Visiteur → notifier l'admin
-      const { data: rows } = await supabase.from('push_tokens').select('subscription').eq('role', 'admin').order('updated_at', { ascending: false }).limit(1);
-      if (rows?.[0]?.subscription) {
-        const senderName = visitor_name || visitor_email?.split('@')[0] || 'Utilisateur';
-        await sendPush(rows[0].subscription, `💬 ${senderName}`, preview);
-      }
+    } catch (_pushErr) {
+      // Push échoué — ne pas faire échouer le message
     }
 
     return { statusCode: 200, headers: hdrs, body: JSON.stringify({ message, conversation_id: convId }) };

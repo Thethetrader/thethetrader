@@ -91,6 +91,7 @@ export default function SupportAdminChat() {
   const [userSearch, setUserSearch] = useState('');
   const [showUserDrop, setShowUserDrop] = useState(false);
   const [recording, setRecording] = useState(false);
+  const [mobilePane, setMobilePane] = useState<'list' | 'chat'>('list');
   const [sessionActive, setSessionActive] = useState(false);
   const [adminUserId, setAdminUserId] = useState<string | null>(null);
   const [recordSecs, setRecordSecs] = useState(0);
@@ -178,6 +179,7 @@ export default function SupportAdminChat() {
 
   const openConversation = useCallback(async (id: string) => {
     setActiveId(id);
+    setMobilePane('chat');
     const { data } = await supabase.from('support_messages')
       .select('*').eq('conversation_id', id).order('created_at', { ascending: true });
     setMessages(data || []);
@@ -322,11 +324,13 @@ export default function SupportAdminChat() {
 
   const activeConv = conversations.find(c => c.id === activeId);
 
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
   return (
     <div style={{ display: 'flex', height: '100%', background: '#111827', overflow: 'hidden' }}>
 
-      {/* Sidebar */}
-      <div style={{ width: 280, minWidth: 280, borderRight: '1px solid #374151', display: 'flex', flexDirection: 'column', background: '#1f2937' }}>
+      {/* Sidebar — cachée sur mobile en mode chat */}
+      <div style={{ width: isMobile ? '100%' : 280, minWidth: isMobile ? 0 : 280, borderRight: '1px solid #374151', display: isMobile && mobilePane === 'chat' ? 'none' : 'flex', flexDirection: 'column', background: '#1f2937' }}>
         <div style={{ padding: '0 14px', borderBottom: '1px solid #374151', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 61, flexShrink: 0 }}>
           <span style={{ fontWeight: 700, fontSize: 14, color: '#f9fafb' }}>Support clients</span>
           <button onClick={loadConversations} style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer', fontSize: 16, padding: 2 }} title="Actualiser">↻</button>
@@ -412,18 +416,25 @@ export default function SupportAdminChat() {
         </div>
       </div>
 
-      {/* Main */}
-      {!activeId ? (
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4b5563', flexDirection: 'column', gap: 8 }}>
+      {/* Main — caché sur mobile en mode liste */}
+      {(!activeId || (isMobile && mobilePane === 'list')) ? (
+        <div style={{ flex: 1, display: isMobile ? 'none' : 'flex', alignItems: 'center', justifyContent: 'center', color: '#4b5563', flexDirection: 'column', gap: 8 }}>
           <div style={{ fontSize: 36 }}>💬</div>
           <div style={{ fontSize: 14 }}>Sélectionne une conversation</div>
         </div>
       ) : (
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
           <div style={{ padding: '0 16px', borderBottom: '1px solid #374151', background: '#1f2937', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, height: 61, flexShrink: 0 }}>
-            <div>
-              <div style={{ fontWeight: 700, fontSize: 14, color: '#f9fafb' }}>{activeConv?.visitor_name}</div>
-              <div style={{ fontSize: 12, color: '#6b7280' }}>{activeConv?.visitor_email}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+              {isMobile && (
+                <button onClick={() => setMobilePane('list')} style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', padding: 4, flexShrink: 0 }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+              )}
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontWeight: 700, fontSize: 14, color: '#f9fafb', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{activeConv?.visitor_name}</div>
+                <div style={{ fontSize: 12, color: '#6b7280' }}>{activeConv?.visitor_email}</div>
+              </div>
             </div>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <button
