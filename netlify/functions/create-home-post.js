@@ -2,7 +2,7 @@ const { createClient } = require('@supabase/supabase-js');
 const webpush = require('web-push');
 
 const SUPABASE_URL = 'https://bamwcozzfshuozsfmjah.supabase.co';
-const TYPE_LABELS = { achat: '📈 Achat', suivi_trade: '📊 Suivi de trade', news: '📰 News', info: 'ℹ️ Info' };
+const TYPE_LABELS = { achat: '📈 Signal', suivi_trade: '📊 Suivi de trade', news: '📰 News', info: 'ℹ️ Info' };
 
 const hdrs = {
   'Access-Control-Allow-Origin': '*',

@@ -5,7 +5,7 @@ const API = '/.netlify/functions';
 export type PostType = 'achat' | 'suivi_trade' | 'news' | 'info';
 
 const POST_CONFIG: Record<PostType, { label: string; color: string; lightBg: string; emoji: string }> = {
-  achat:       { label: 'Achat',           color: '#10b981', lightBg: 'rgba(16,185,129,0.12)', emoji: '📈' },
+  achat:       { label: 'Signal',          color: '#10b981', lightBg: 'rgba(16,185,129,0.12)', emoji: '📈' },
   suivi_trade: { label: 'Suivi de trade',  color: '#f97316', lightBg: 'rgba(249,115,22,0.12)',  emoji: '📊' },
   news:        { label: 'News',            color: '#3b82f6', lightBg: 'rgba(59,130,246,0.12)',  emoji: '📰' },
   info:        { label: 'Info',            color: '#a78bfa', lightBg: 'rgba(167,139,250,0.12)', emoji: 'ℹ️' },
@@ -182,14 +182,16 @@ export default function HomeFeed({ isAdmin, userId, username, sessionToken }: Pr
         )}
       </div>
 
-      {/* Type filter chips */}
-      <div style={{ display: 'flex', gap: 8, padding: '12px 16px', overflowX: 'auto' }}>
-        {(Object.entries(POST_CONFIG) as [PostType, typeof POST_CONFIG[PostType]][]).map(([type, cfg]) => (
-          <span key={type} style={{ flexShrink: 0, padding: '4px 12px', borderRadius: 20, background: cfg.lightBg, border: `1px solid ${cfg.color}`, color: cfg.color, fontSize: 12, fontWeight: 600 }}>
-            {cfg.emoji} {cfg.label}
-          </span>
-        ))}
-      </div>
+      {/* Type filter chips — admin only */}
+      {isAdmin && (
+        <div style={{ display: 'flex', gap: 8, padding: '12px 16px', overflowX: 'auto' }}>
+          {(Object.entries(POST_CONFIG) as [PostType, typeof POST_CONFIG[PostType]][]).map(([type, cfg]) => (
+            <span key={type} style={{ flexShrink: 0, padding: '4px 12px', borderRadius: 20, background: cfg.lightBg, border: `1px solid ${cfg.color}`, color: cfg.color, fontSize: 12, fontWeight: 600 }}>
+              {cfg.emoji} {cfg.label}
+            </span>
+          ))}
+        </div>
+      )}
 
       {/* Feed */}
       {loading ? (
