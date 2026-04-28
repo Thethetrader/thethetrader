@@ -550,7 +550,7 @@ export default function SupportAdminChat() {
 
       {/* Overlay session vidéo */}
       {sessionActive && activeId && adminUserId && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: '#111827', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: '#111827', display: 'flex', flexDirection: 'column', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
           <LiveOneToOne
             roomName={`session-${activeId}`}
             userId={adminUserId}

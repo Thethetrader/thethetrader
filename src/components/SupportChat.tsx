@@ -338,7 +338,7 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
   // Session overlay
   if (sessionJoined && sessionRoom) {
     return (
-      <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: '#111827', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: '#111827', display: 'flex', flexDirection: 'column', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         <LiveOneToOne
           roomName={sessionRoom}
           userId={userId}
