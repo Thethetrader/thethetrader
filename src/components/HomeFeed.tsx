@@ -187,7 +187,7 @@ export default function HomeFeed({ isAdmin, userId, username, sessionToken }: Pr
       ) : posts.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 40, color: '#6b7280' }}>Aucune publication pour l'instant</div>
       ) : (
-        <div style={{ padding: '0 0 100px' }}>
+        <div style={{ padding: '0 0 calc(100px + env(safe-area-inset-bottom, 0px))' }}>
           {grouped.map(group => (
             <div key={group.key}>
               <div style={{ padding: '16px 16px 8px', fontSize: 20, fontWeight: 700, color: '#fff' }}>{group.label}</div>
@@ -283,7 +283,7 @@ export default function HomeFeed({ isAdmin, userId, username, sessionToken }: Pr
       {/* Create post modal */}
       {showCreate && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 200, display: 'flex', alignItems: 'flex-end' }}>
-          <div style={{ width: '100%', background: '#1f2937', borderRadius: '20px 20px 0 0', padding: '20px 16px 40px', maxHeight: '90vh', overflowY: 'auto' }}>
+          <div style={{ width: '100%', background: '#1f2937', borderRadius: '20px 20px 0 0', padding: '20px 16px', paddingBottom: 'calc(90px + env(safe-area-inset-bottom, 0px))', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <h2 style={{ margin: 0, fontSize: 17, fontWeight: 700 }}>Nouvelle publication</h2>
               <button onClick={() => setShowCreate(false)} style={{ background: 'none', border: 'none', color: '#9ca3af', fontSize: 22, cursor: 'pointer' }}>✕</button>
