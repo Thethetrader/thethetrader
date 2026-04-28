@@ -316,6 +316,7 @@ export default function AdminInterface() {
   const [showGifPicker, setShowGifPicker] = useState(false);
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [showSignalModal, setShowSignalModal] = useState(false);
+  const [shareSignalToFeed, setShareSignalToFeed] = useState(false);
   const [showTradesModal, setShowTradesModal] = useState(false);
   const [showSignalsModal, setShowSignalsModal] = useState(false);
   const [selectedTradesDate, setSelectedTradesDate] = useState<Date | null>(null);
@@ -4063,6 +4064,24 @@ const dailyPnLChartData = useMemo(
       return;
     }
     
+    // Partager dans Accueil si demandé
+    if (shareSignalToFeed && sessionToken) {
+      try {
+        const feedContent = `${signalData.type === 'BUY' ? '📈' : '📉'} ${signalData.type} ${signalData.symbol || 'N/A'}\n` +
+          `Entrée : ${signalData.entry || 'N/A'}\n` +
+          `TP : ${signalData.takeProfit || 'N/A'}  ·  SL : ${signalData.stopLoss || 'N/A'}\n` +
+          (signalData.timeframe ? `Timeframe : ${signalData.timeframe}\n` : '') +
+          (signalData.description ? `\n${signalData.description}` : '');
+        await fetch('/.netlify/functions/create-home-post', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sessionToken}` },
+          body: JSON.stringify({ type: 'achat', content: feedContent.trim() }),
+        });
+      } catch (e) {
+        console.error('❌ Erreur partage Accueil:', e);
+      }
+    }
+
     // Reset form et fermer modal
     setSignalData({
       type: 'BUY',
@@ -4074,6 +4093,7 @@ const dailyPnLChartData = useMemo(
       description: '',
       image: null
     });
+    setShareSignalToFeed(false);
     setShowSignalModal(false);
   };
 
@@ -8050,6 +8070,20 @@ const dailyPnLChartData = useMemo(
                   />
                 </div>
                
+                {/* Partager dans Accueil */}
+                <div
+                  onClick={() => setShareSignalToFeed(v => !v)}
+                  className="flex items-center gap-3 p-3 rounded-lg bg-gray-700 cursor-pointer select-none"
+                >
+                  <div className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 transition-colors ${shareSignalToFeed ? 'bg-green-500' : 'bg-gray-500'}`} style={{ border: shareSignalToFeed ? '2px solid #10b981' : '2px solid #6b7280' }}>
+                    {shareSignalToFeed && <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><polyline points="2 6 5 9 10 3" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-white">Partager dans Accueil</div>
+                    <div className="text-xs text-gray-400">Publier aussi comme Signal dans le fil Accueil</div>
+                  </div>
+                </div>
+
                 {/* Boutons */}
                 <div className="flex gap-3 pt-4">
                   <button
