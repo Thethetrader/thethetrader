@@ -19,12 +19,11 @@ interface LiveOneToOneProps {
 }
 
 function SessionRoom({ isAdmin, otherName, onEnd }: { isAdmin: boolean; otherName?: string; onEnd?: () => void }) {
-  const remoteTracks = useTracks([
+  const allTracks = useTracks([
     { source: Track.Source.Camera, withPlaceholder: false },
-    { source: Track.Source.ScreenShare, withPlaceholder: false },
-  ]).filter(t => !t.participant.isLocal);
-
-  const remoteVideo = remoteTracks[0];
+  ]);
+  const remoteVideo = allTracks.find(t => !t.participant.isLocal);
+  const localVideo = allTracks.find(t => t.participant.isLocal);
 
   return (
     <div className="flex flex-col h-full bg-gray-900">
@@ -32,7 +31,7 @@ function SessionRoom({ isAdmin, otherName, onEnd }: { isAdmin: boolean; otherNam
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-700 bg-gray-800 flex-shrink-0">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-sm text-white font-medium">Session avec {otherName || 'Admin'}</span>
+          <span className="text-sm text-white font-medium">Session avec {otherName || (isAdmin ? 'Utilisateur' : 'Admin')}</span>
         </div>
         <button
           onClick={onEnd}
@@ -42,8 +41,9 @@ function SessionRoom({ isAdmin, otherName, onEnd }: { isAdmin: boolean; otherNam
         </button>
       </div>
 
-      {/* Video */}
+      {/* Video area */}
       <div className="flex-1 relative bg-black overflow-hidden">
+        {/* Remote video (main) */}
         {remoteVideo ? (
           <VideoTrack trackRef={remoteVideo} className="w-full h-full object-contain" />
         ) : (
@@ -51,7 +51,13 @@ function SessionRoom({ isAdmin, otherName, onEnd }: { isAdmin: boolean; otherNam
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.89L15 14M3 8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>
             </svg>
-            <p className="text-sm">En attente de la caméra...</p>
+            <p className="text-sm">En attente de {isAdmin ? "l'utilisateur" : "l'admin"}...</p>
+          </div>
+        )}
+        {/* Local video (picture-in-picture) */}
+        {localVideo && (
+          <div style={{ position: 'absolute', bottom: 10, right: 10, width: 90, height: 120, borderRadius: 8, overflow: 'hidden', border: '2px solid #374151', background: '#000' }}>
+            <VideoTrack trackRef={localVideo} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           </div>
         )}
       </div>
