@@ -19,7 +19,7 @@ import SupportChat from '../SupportChat';
 import SupportPoller from '../SupportPoller';
 import MonCompteModal from '../MonCompteModal';
 import LiveStreamViewer from '../LiveStreamViewer';
-import HomeFeed from '../HomeFeed';
+import HomeFeed, { ShareChannel } from '../HomeFeed';
 
 // Configuration Supabase
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
@@ -299,6 +299,17 @@ export default function TradingPlatformShell() {
     { id: 'check-trade', name: 'check-trade', emoji: '✅', fullName: 'Check Trade' },
 
   ];
+
+  const feedShareChannels: ShareChannel[] = [
+    { id: 'general-chat-2', label: '📈 Indices' },
+    { id: 'general-chat-3', label: '₿ Crypto' },
+    { id: 'general-chat-4', label: '💵 Forex' },
+    { id: 'fondamentaux',   label: '📚 Fondamentaux' },
+  ];
+
+  const handleShareToChannel = async (channelId: string, content: string) => {
+    await addMessage({ channel_id: channelId, content, author: 'Admin', author_type: 'admin' as const });
+  };
 
   // Filtrer les canaux selon le plan de l'utilisateur
   // Note: Pour le plan "journal", on garde tous les canaux visibles mais on bloque l'accès au clic
@@ -5926,6 +5937,8 @@ export default function TradingPlatformShell() {
               userId={user?.id || ''}
               username={currentUsername || ''}
               sessionToken={sessionToken}
+              shareChannels={isAdmin ? feedShareChannels : undefined}
+              onShareToChannel={isAdmin ? handleShareToChannel : undefined}
             />
           </div>
         )}
@@ -7263,6 +7276,8 @@ export default function TradingPlatformShell() {
               userId={user?.id || ''}
               username={currentUsername || ''}
               sessionToken={sessionToken}
+              shareChannels={isAdmin ? feedShareChannels : undefined}
+              onShareToChannel={isAdmin ? handleShareToChannel : undefined}
             />
           ) : (view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'check-trade' || selectedChannel.id === 'support') ? (
             getTradingCalendar()

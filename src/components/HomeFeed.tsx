@@ -38,14 +38,18 @@ function dayKey(iso: string) {
   return new Date(iso).toDateString();
 }
 
+export interface ShareChannel { id: string; label: string; }
+
 interface Props {
   isAdmin: boolean;
   userId: string;
   username: string;
   sessionToken?: string;
+  shareChannels?: ShareChannel[];
+  onShareToChannel?: (channelId: string, content: string) => Promise<void>;
 }
 
-export default function HomeFeed({ isAdmin, userId, username, sessionToken }: Props) {
+export default function HomeFeed({ isAdmin, userId, username, sessionToken, shareChannels, onShareToChannel }: Props) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
@@ -57,6 +61,8 @@ export default function HomeFeed({ isAdmin, userId, username, sessionToken }: Pr
   const [newContent, setNewContent] = useState('');
   const [newImage, setNewImage] = useState<{ data: string; mime: string; preview: string } | null>(null);
   const [posting, setPosting] = useState(false);
+  const [shareToSalon, setShareToSalon] = useState(false);
+  const [selectedShareChannel, setSelectedShareChannel] = useState<string>('');
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -99,16 +105,22 @@ export default function HomeFeed({ isAdmin, userId, username, sessionToken }: Pr
     if (!newContent.trim() || posting) return;
     setPosting(true);
     try {
-      const res = await fetch(`${API}/create-home-post`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sessionToken}` },
-        body: JSON.stringify({ type: newType, content: newContent, image_data: newImage?.data, image_mime: newImage?.mime }),
-      });
+      const [res] = await Promise.all([
+        fetch(`${API}/create-home-post`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sessionToken}` },
+          body: JSON.stringify({ type: newType, content: newContent, image_data: newImage?.data, image_mime: newImage?.mime }),
+        }),
+        shareToSalon && selectedShareChannel && onShareToChannel
+          ? onShareToChannel(selectedShareChannel, newContent)
+          : Promise.resolve(),
+      ]);
       const json = await res.json();
       if (json.post) {
         setPosts(prev => [...prev, json.post]);
         setNewContent('');
         setNewImage(null);
+        setShareToSalon(false);
         setShowCreate(false);
         scrollToBottom();
       }
@@ -346,10 +358,37 @@ export default function HomeFeed({ isAdmin, userId, username, sessionToken }: Pr
               )}
             </div>
 
+            {/* Share to salon — only for Signal type */}
+            {newType === 'achat' && shareChannels && shareChannels.length > 0 && onShareToChannel && (
+              <div style={{ marginTop: 14, padding: '12px 14px', borderRadius: 10, background: '#111827', border: '1.5px solid #374151' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
+                  <div
+                    onClick={() => setShareToSalon(v => !v)}
+                    style={{ width: 20, height: 20, borderRadius: 5, border: `2px solid ${shareToSalon ? '#10b981' : '#4b5563'}`, background: shareToSalon ? '#10b981' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'all 0.15s', cursor: 'pointer' }}
+                  >
+                    {shareToSalon && <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><polyline points="2 6 5 9 10 3" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                  </div>
+                  <span style={{ fontSize: 13, color: '#e5e7eb', fontWeight: 600 }}>Partager aussi dans un salon</span>
+                </label>
+                {shareToSalon && (
+                  <select
+                    value={selectedShareChannel}
+                    onChange={e => setSelectedShareChannel(e.target.value)}
+                    style={{ marginTop: 10, width: '100%', background: '#1f2937', border: '1.5px solid #374151', borderRadius: 8, padding: '8px 10px', color: '#e5e7eb', fontSize: 13, outline: 'none', cursor: 'pointer' }}
+                  >
+                    <option value="">— Choisir un salon —</option>
+                    {shareChannels.map(ch => (
+                      <option key={ch.id} value={ch.id}>{ch.label}</option>
+                    ))}
+                  </select>
+                )}
+              </div>
+            )}
+
             <button
               onClick={handlePost}
-              disabled={!newContent.trim() || posting}
-              style={{ marginTop: 14, width: '100%', padding: '14px', borderRadius: 12, background: POST_CONFIG[newType].color, border: 'none', color: '#fff', fontSize: 15, fontWeight: 700, cursor: 'pointer', opacity: (!newContent.trim() || posting) ? 0.5 : 1, transition: 'opacity 0.15s' }}
+              disabled={!newContent.trim() || posting || (shareToSalon && !selectedShareChannel)}
+              style={{ marginTop: 14, width: '100%', padding: '14px', borderRadius: 12, background: POST_CONFIG[newType].color, border: 'none', color: '#fff', fontSize: 15, fontWeight: 700, cursor: 'pointer', opacity: (!newContent.trim() || posting || (shareToSalon && !selectedShareChannel)) ? 0.5 : 1, transition: 'opacity 0.15s' }}
             >
               {posting ? 'Publication…' : 'Publier'}
             </button>

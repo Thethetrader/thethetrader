@@ -14,7 +14,7 @@ import { updateUserProfile, getCurrentUser, getUserProfile, getUserProfileByType
 import DailyPnLChart from './DailyPnLChart';
 import CheckTradeChecklist from './CheckTradeChecklist';
 import SupportAdminChat from './SupportAdminChat';
-import HomeFeed from './HomeFeed';
+import HomeFeed, { ShareChannel } from './HomeFeed';
 import { subscribeSupportPush } from '../utils/support-push';
 
 // Composant Profit Factor Gauge
@@ -241,6 +241,13 @@ function WinRateGauge({ wins, losses }: { wins: number; losses: number }) {
   );
 }
 
+const FEED_SHARE_CHANNELS: ShareChannel[] = [
+  { id: 'general-chat-2', label: '📈 Indices' },
+  { id: 'general-chat-3', label: '₿ Crypto' },
+  { id: 'general-chat-4', label: '💵 Forex' },
+  { id: 'fondamentaux',   label: '📚 Fondamentaux' },
+];
+
 export default function AdminInterface() {
 
   const [selectedChannel, setSelectedChannel] = useState({ id: 'fondamentaux', name: 'fondamentaux' });
@@ -248,6 +255,11 @@ export default function AdminInterface() {
   const [mobileView, setMobileView] = useState<'channels' | 'content'>('channels');
   const [showFeed, setShowFeed] = useState(false);
   const [sessionToken, setSessionToken] = useState<string | undefined>(undefined);
+
+  const handleFeedShareToChannel = async (channelId: string, content: string) => {
+    await addMessage({ channel_id: channelId, content, author: 'Admin', author_type: 'admin' as const });
+  };
+
   const [showChannelsOverlay, setShowChannelsOverlay] = useState(true);
   const [calendarKey, setCalendarKey] = useState(0);
   const [message, setMessage] = useState('');
@@ -6128,7 +6140,7 @@ const dailyPnLChartData = useMemo(
         {/* Mobile Feed View */}
         {showFeed && (
           <div className="md:hidden fixed inset-0 bg-gray-900 z-20 overflow-y-auto" style={{ paddingTop: 'calc(60px + env(safe-area-inset-top, 0px))', paddingBottom: 78 }}>
-            <HomeFeed isAdmin={true} userId="admin" username="Admin" sessionToken={sessionToken} />
+            <HomeFeed isAdmin={true} userId="admin" username="Admin" sessionToken={sessionToken} shareChannels={FEED_SHARE_CHANNELS} onShareToChannel={handleFeedShareToChannel} />
           </div>
         )}
 
@@ -7202,7 +7214,7 @@ const dailyPnLChartData = useMemo(
         {/* Desktop Content Area */}
         <div className={`hidden md:flex flex-col flex-1 ${selectedChannel.id === 'support-admin' ? 'overflow-hidden' : 'overflow-y-auto overflow-x-hidden'}`}>
           {showFeed ? (
-            <HomeFeed isAdmin={true} userId="admin" username="Admin" sessionToken={sessionToken} />
+            <HomeFeed isAdmin={true} userId="admin" username="Admin" sessionToken={sessionToken} shareChannels={FEED_SHARE_CHANNELS} onShareToChannel={handleFeedShareToChannel} />
           ) : (view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'user-management' || selectedChannel.id === 'check-trade' || selectedChannel.id === 'support-admin') ? (
             getTradingCalendar()
           ) : (
