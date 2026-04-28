@@ -1,5 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
-import webpush from 'web-push';
+const { createClient } = require('@supabase/supabase-js');
+const webpush = require('web-push');
 
 const SUPABASE_URL = 'https://bamwcozzfshuozsfmjah.supabase.co';
 
@@ -33,12 +33,10 @@ async function sendPush(subscription, title, body) {
       subscription,
       JSON.stringify({ title, body, icon: '/FAVICON.png', badge: '/FAVICON.png', tag: 'support-chat' })
     );
-  } catch (e) {
-    // Subscription expirée ou invalide — best effort
-  }
+  } catch (_) {}
 }
 
-export const handler = async (event) => {
+exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: hdrs, body: '' };
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers: hdrs, body: JSON.stringify({ error: 'Method not allowed' }) };
 
@@ -108,7 +106,7 @@ export const handler = async (event) => {
 
     if (msgErr) return { statusCode: 500, headers: hdrs, body: JSON.stringify({ error: 'msg: ' + msgErr.message }) };
 
-    // Envoyer notification push au destinataire (best-effort, ne bloque jamais le send)
+    // Push notification best-effort
     try {
       const preview = message_type === 'text'
         ? (content?.trim().length > 80 ? content.trim().slice(0, 80) + '…' : content?.trim())
@@ -129,9 +127,7 @@ export const handler = async (event) => {
           await sendPush(rows[0].subscription, `💬 ${senderName}`, preview);
         }
       }
-    } catch (_pushErr) {
-      // Push échoué — ne pas faire échouer le message
-    }
+    } catch (_) {}
 
     return { statusCode: 200, headers: hdrs, body: JSON.stringify({ message, conversation_id: convId }) };
 
