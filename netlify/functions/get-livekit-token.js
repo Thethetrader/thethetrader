@@ -81,12 +81,13 @@ exports.handler = async (event) => {
       return { statusCode: 403, body: JSON.stringify({ error: 'Admin only' }) };
     }
 
+    const isOneToOne = roomName.startsWith('session-');
     const token = createLiveKitJwt({
       apiKey: LIVEKIT_API_KEY,
       apiSecret: LIVEKIT_API_SECRET,
       identity: identity || userId,
       roomName,
-      canPublish: isAdmin && isPublisher,
+      canPublish: isOneToOne ? true : (isAdmin && isPublisher),
       canSubscribe: true,
     });
 

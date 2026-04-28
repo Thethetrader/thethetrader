@@ -57,11 +57,9 @@ function SessionRoom({ isAdmin, otherName, onEnd }: { isAdmin: boolean; otherNam
       </div>
 
       {/* Controls */}
-      <div className="flex items-center justify-center gap-4 p-4 bg-gray-800 border-t border-gray-700 flex-shrink-0">
+      <div className="flex items-center justify-center gap-4 bg-gray-800 border-t border-gray-700 flex-shrink-0" style={{ padding: '16px', paddingBottom: 'calc(16px + env(safe-area-inset-bottom, 0px))' }}>
         <TrackToggle source={Track.Source.Microphone} className="flex flex-col items-center gap-1 text-xs text-gray-300" />
-        {isAdmin && (
-          <TrackToggle source={Track.Source.Camera} className="flex flex-col items-center gap-1 text-xs text-gray-300" />
-        )}
+        <TrackToggle source={Track.Source.Camera} className="flex flex-col items-center gap-1 text-xs text-gray-300" />
       </div>
     </div>
   );
@@ -123,7 +121,7 @@ export default function LiveOneToOne({ roomName, userId, identity, isAdmin = fal
       serverUrl={serverUrl}
       connect
       audio
-      video={isAdmin}
+      video
       style={{ height: '100%' }}
     >
       <RoomAudioRenderer />
