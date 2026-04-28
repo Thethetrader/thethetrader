@@ -260,6 +260,27 @@ export default function AdminInterface() {
     await addMessage({ channel_id: channelId, content, author: 'Admin', author_type: 'admin' as const });
   };
 
+  const handleFeedPostCreated = async (type: string, content: string) => {
+    try {
+      const fcmTokens: string[] = [];
+      const fcmSnap = await get(ref(database, 'fcm_tokens'));
+      if (fcmSnap.exists()) {
+        Object.values(fcmSnap.val()).forEach((d: any) => { if (d?.token) fcmTokens.push(d.token); });
+      }
+      if (fcmTokens.length > 0) {
+        const TYPE_LABELS: Record<string, string> = { achat: '📈 Signal', suivi_trade: '📊 Suivi de trade', news: '📰 News', info: 'ℹ️ Info' };
+        const sendLivestreamNotification = httpsCallable(functions, 'sendLivestreamNotification');
+        const preview = content.length > 80 ? content.slice(0, 80) + '…' : content;
+        await sendLivestreamNotification({
+          tokens: fcmTokens,
+          customMessage: `${TYPE_LABELS[type] || 'Accueil'} — ${preview}`,
+        });
+      }
+    } catch (e) {
+      console.error('❌ Notif FCM post Accueil:', e);
+    }
+  };
+
   const [showChannelsOverlay, setShowChannelsOverlay] = useState(true);
   const [calendarKey, setCalendarKey] = useState(0);
   const [message, setMessage] = useState('');
@@ -4067,7 +4088,6 @@ const dailyPnLChartData = useMemo(
     // Partager dans Accueil si demandé
     if (shareSignalToFeed) {
       try {
-        // Toujours récupérer un token frais
         const { data: { session: freshSession } } = await supabase.auth.getSession();
         const token = freshSession?.access_token;
         if (!token) {
@@ -4084,7 +4104,27 @@ const dailyPnLChartData = useMemo(
             body: JSON.stringify({ type: 'achat', content: feedContent.trim() }),
           });
           const feedJson = await feedRes.json();
-          if (!feedJson.post) console.error('❌ Accueil post échoué:', feedRes.status, feedJson);
+          if (!feedJson.post) {
+            console.error('❌ Accueil post échoué:', feedRes.status, feedJson);
+          } else {
+            // Envoyer notif FCM via Firebase (même système que les signaux)
+            try {
+              const fcmTokens: string[] = [];
+              const fcmSnap = await get(ref(database, 'fcm_tokens'));
+              if (fcmSnap.exists()) {
+                Object.values(fcmSnap.val()).forEach((d: any) => { if (d?.token) fcmTokens.push(d.token); });
+              }
+              if (fcmTokens.length > 0) {
+                const sendLivestreamNotification = httpsCallable(functions, 'sendLivestreamNotification');
+                await sendLivestreamNotification({
+                  tokens: fcmTokens,
+                  customMessage: `📈 Signal ${signalData.symbol || ''} — ${signalData.type} · Entrée ${signalData.entry || 'N/A'}`,
+                });
+              }
+            } catch (notifErr) {
+              console.error('❌ Notif FCM Accueil:', notifErr);
+            }
+          }
         }
       } catch (e) {
         console.error('❌ Erreur partage Accueil:', e);
@@ -6170,7 +6210,7 @@ const dailyPnLChartData = useMemo(
         {/* Mobile Feed View */}
         {showFeed && (
           <div className="md:hidden fixed inset-0 bg-gray-900 z-20 overflow-y-auto" style={{ paddingTop: 'calc(60px + env(safe-area-inset-top, 0px))', paddingBottom: 78 }}>
-            <HomeFeed isAdmin={true} userId="admin" username="Admin" sessionToken={sessionToken} shareChannels={FEED_SHARE_CHANNELS} onShareToChannel={handleFeedShareToChannel} />
+            <HomeFeed isAdmin={true} userId="admin" username="Admin" sessionToken={sessionToken} shareChannels={FEED_SHARE_CHANNELS} onShareToChannel={handleFeedShareToChannel} onPostCreated={handleFeedPostCreated} />
           </div>
         )}
 
@@ -7244,7 +7284,7 @@ const dailyPnLChartData = useMemo(
         {/* Desktop Content Area */}
         <div className={`hidden md:flex flex-col flex-1 ${selectedChannel.id === 'support-admin' ? 'overflow-hidden' : 'overflow-y-auto overflow-x-hidden'}`}>
           {showFeed ? (
-            <HomeFeed isAdmin={true} userId="admin" username="Admin" sessionToken={sessionToken} shareChannels={FEED_SHARE_CHANNELS} onShareToChannel={handleFeedShareToChannel} />
+            <HomeFeed isAdmin={true} userId="admin" username="Admin" sessionToken={sessionToken} shareChannels={FEED_SHARE_CHANNELS} onShareToChannel={handleFeedShareToChannel} onPostCreated={handleFeedPostCreated} />
           ) : (view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'user-management' || selectedChannel.id === 'check-trade' || selectedChannel.id === 'support-admin') ? (
             getTradingCalendar()
           ) : (

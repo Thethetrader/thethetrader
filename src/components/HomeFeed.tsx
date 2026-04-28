@@ -47,9 +47,10 @@ interface Props {
   sessionToken?: string;
   shareChannels?: ShareChannel[];
   onShareToChannel?: (channelId: string, content: string) => Promise<void>;
+  onPostCreated?: (type: PostType, content: string) => void;
 }
 
-export default function HomeFeed({ isAdmin, userId, username, sessionToken, shareChannels, onShareToChannel }: Props) {
+export default function HomeFeed({ isAdmin, userId, username, sessionToken, shareChannels, onShareToChannel, onPostCreated }: Props) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
@@ -118,6 +119,7 @@ export default function HomeFeed({ isAdmin, userId, username, sessionToken, shar
       const json = await res.json();
       if (json.post) {
         setPosts(prev => [...prev, json.post]);
+        onPostCreated?.(newType, newContent);
         setNewContent('');
         setNewImage(null);
         setShareToSalon(false);
