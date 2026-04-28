@@ -4065,18 +4065,21 @@ const dailyPnLChartData = useMemo(
     }
     
     // Partager dans Accueil si demandé
-    if (shareSignalToFeed && sessionToken) {
+    if (shareSignalToFeed) {
       try {
         const feedContent = `${signalData.type === 'BUY' ? '📈' : '📉'} ${signalData.type} ${signalData.symbol || 'N/A'}\n` +
           `Entrée : ${signalData.entry || 'N/A'}\n` +
           `TP : ${signalData.takeProfit || 'N/A'}  ·  SL : ${signalData.stopLoss || 'N/A'}\n` +
           (signalData.timeframe ? `Timeframe : ${signalData.timeframe}\n` : '') +
           (signalData.description ? `\n${signalData.description}` : '');
-        await fetch('/.netlify/functions/create-home-post', {
+        console.log('📤 Partage Accueil - token:', sessionToken ? `${sessionToken.slice(0,20)}…` : 'MANQUANT');
+        const feedRes = await fetch('/.netlify/functions/create-home-post', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sessionToken}` },
           body: JSON.stringify({ type: 'achat', content: feedContent.trim() }),
         });
+        const feedJson = await feedRes.json();
+        console.log('📥 Réponse Accueil:', feedRes.status, feedJson);
       } catch (e) {
         console.error('❌ Erreur partage Accueil:', e);
       }
