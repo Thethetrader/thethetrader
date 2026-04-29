@@ -1381,6 +1381,22 @@ export default function TradingPlatformShell() {
       newSignalSubscription.unsubscribe();
     };
   }, [selectedChannel.id]);
+
+  // Recharger les messages/signaux quand l'app revient au premier plan (PWA)
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        const isSpecialChannel = ['calendrier', 'trading-journal', 'journal', 'video', 'livestream-premium', 'trading-hub', 'support'].includes(selectedChannel.id);
+        if (!isSpecialChannel) {
+          loadMessages(selectedChannel.id);
+          loadSignals(selectedChannel.id);
+        }
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, [selectedChannel.id]);
+
   const [chatMessage, setChatMessage] = useState('');
   const [profileImage, setProfileImage] = useState<string | null>(null);
   
@@ -4721,7 +4737,7 @@ export default function TradingPlatformShell() {
     const isJournalPerso = selectedChannel.id === 'journal' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model';
     const isMobile = window.innerWidth < 768;
     return (
-    <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: (isMobile && isJournalPerso) ? '20px' : '0px', marginTop: (isMobile && !isJournalPerso) ? '-9px' : '0px', touchAction: 'pan-y', maxWidth: '100%', overflowX: 'clip' }}>
+    <div className="bg-gray-900 text-white p-2 md:p-4" style={{ height: (isMobile && isJournalPerso) ? 'auto' : '100%', overflowY: (isMobile && isJournalPerso) ? 'visible' : 'auto', paddingTop: (isMobile && isJournalPerso) ? '20px' : '0px', marginTop: (isMobile && !isJournalPerso) ? '-9px' : '0px', touchAction: 'pan-y', maxWidth: '100%', overflowX: 'clip' }}>
       {/* Header */}
       <div className={`flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 pb-4 gap-4 md:gap-0 ${isMobile && !isJournalPerso ? '' : 'border-b border-gray-600'}`}>
         <div className="hidden md:flex md:items-center md:gap-6">
@@ -5031,7 +5047,9 @@ export default function TradingPlatformShell() {
                             <div className="flex flex-col items-center space-y-1">
                               {totalPnL !== 0 && (
                                 <div className="text-xs font-bold text-center">
-                                  ${totalPnL.toFixed(0)}
+                                  {selectedChannel.id === 'calendrier'
+                                    ? `${totalPnL > 0 ? '+' : ''}${totalPnL % 1 === 0 ? totalPnL : totalPnL.toFixed(1)}R`
+                                    : `$${totalPnL.toFixed(0)}`}
                                 </div>
                               )}
                               {tradeCount > 0 && (
@@ -6263,6 +6281,7 @@ export default function TradingPlatformShell() {
                 <button
                   onClick={() => { window.location.href = '/premium'; }}
                   style={{
+                    marginTop: 16,
                     width: '100%',
                     background: 'linear-gradient(135deg, #1a1200 0%, #2d1f00 50%, #1a1200 100%)',
                     border: '1px solid rgba(201,168,76,0.4)',
@@ -6301,7 +6320,7 @@ export default function TradingPlatformShell() {
                 {getTradingCalendar()}
               </div>
             ) : (view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'video' || selectedChannel.id === 'livestream-premium' || selectedChannel.id === 'journal') ? (
-              <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: 'calc(60px + env(safe-area-inset-top, 0px))', WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}>
+              <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: 'calc(60px + env(safe-area-inset-top, 0px) + 2mm)', WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}>
                 {/* Header avec sélecteur de compte et bouton Ajouter Trade pour Trading Journal (pas sur TPLN model) */}
                 {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? (
                   <div className="mb-4 md:mb-6 border-b border-gray-600 pb-4">
@@ -6647,28 +6666,28 @@ export default function TradingPlatformShell() {
                                 <div className="space-y-2">
                                     {signal.entry !== 'N/A' && (
                                       <div className="flex items-center gap-2">
-                                      <span className="text-blue-400 text-sm">🔹</span>
+                                      <span className="text-gray-400 text-sm">📈</span>
                                       <span className="text-white">Entrée : {signal.entry} USD</span>
                                       </div>
                                     )}
                                     {signal.stopLoss !== 'N/A' && (
                                       <div className="flex items-center gap-2">
-                                      <span className="text-blue-400 text-sm">🔹</span>
+                                      <span className="text-gray-400 text-sm">🛡️</span>
                                       <span className="text-white">Stop Loss : {signal.stopLoss} USD</span>
                                       </div>
                                     )}
                                   {signal.takeProfit !== 'N/A' && (
                                       <div className="flex items-center gap-2">
-                                      <span className="text-blue-400 text-sm">🔹</span>
+                                      <span className="text-gray-400 text-sm">🎯</span>
                                       <span className="text-white">Take Profit : {signal.takeProfit} USD</span>
                                       </div>
                                     )}
                                   </div>
-                                
+
                                 {/* Ratio R:R */}
                                 {signal.entry !== 'N/A' && signal.takeProfit !== 'N/A' && signal.stopLoss !== 'N/A' && (
                                   <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
-                                    <span className="text-red-400 text-sm">🎯</span>
+                                    <span className="text-gray-400 text-sm">⚖️</span>
                                     <span className="text-white text-sm">
                                       R:R {calculateRiskReward(signal.entry, signal.takeProfit, signal.stopLoss)}
                                     </span>
@@ -7028,20 +7047,14 @@ export default function TradingPlatformShell() {
                                           <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
                                             {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
                                               <div className="mb-3">
-                                                <div className="flex items-center gap-2 mb-2">
-                                                  <span className="text-xs">📊</span>
-                                                  <span className="text-sm font-semibold text-gray-300">SIGNAL FERMÉ</span>
-                                                </div>
-                                                <div className="text-sm">
-                                                  <div className="flex items-center gap-2 mb-1">
-                                                    <span className={signalData.status === 'WIN' ? 'text-green-100' : 'text-red-400'}>
-                                                      {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
-                                                    </span>
-                                                  </div>
+                                                <div className={`rounded-lg p-3 flex items-center justify-between ${signalData.status === 'WIN' ? 'bg-green-200/20 border border-green-200/40' : 'bg-red-500/20 border border-red-500/40'}`}>
+                                                  <span className={`font-bold text-sm ${signalData.status === 'WIN' ? 'text-green-100' : 'text-red-400'}`}>
+                                                    {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
+                                                  </span>
                                                   {signalData.pnl && (
-                                                    <div className="text-gray-300">
-                                                      R: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}>{signalData.pnl}</span>
-                                                    </div>
+                                                    <span className={`text-base font-bold ${signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}`}>
+                                                      {signalData.pnl}
+                                                    </span>
                                                   )}
                                                 </div>
                                               </div>
@@ -7055,7 +7068,7 @@ export default function TradingPlatformShell() {
                                                 </div>
                                                 {signalData.entry && (
                                                   <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-400">📊</span>
+                                                    <span className="text-gray-400">📈</span>
                                                     <span className="text-white">Entry: {signalData.entry}</span>
                                                   </div>
                                                 )}
@@ -7067,13 +7080,13 @@ export default function TradingPlatformShell() {
                                                 )}
                                                 {signalData.sl && (
                                                   <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-400">🛑</span>
+                                                    <span className="text-gray-400">🛡️</span>
                                                     <span className="text-white">SL: {signalData.sl}</span>
                                                   </div>
                                                 )}
                                                 {signalData.rr && (
                                                   <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-400">📐</span>
+                                                    <span className="text-gray-400">⚖️</span>
                                                     <span className="text-white">R:R {signalData.rr}</span>
                                                   </div>
                                                 )}
@@ -7672,20 +7685,14 @@ export default function TradingPlatformShell() {
                                           <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
                                             {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
                                               <div className="mb-3">
-                                                <div className="flex items-center gap-2 mb-2">
-                                                  <span className="text-xs">📊</span>
-                                                  <span className="text-sm font-semibold text-gray-300">SIGNAL FERMÉ</span>
-                                                </div>
-                                                <div className="text-sm">
-                                                  <div className="flex items-center gap-2 mb-1">
-                                                    <span className={signalData.status === 'WIN' ? 'text-green-100' : 'text-red-400'}>
-                                                      {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
-                                                    </span>
-                                                  </div>
+                                                <div className={`rounded-lg p-3 flex items-center justify-between ${signalData.status === 'WIN' ? 'bg-green-200/20 border border-green-200/40' : 'bg-red-500/20 border border-red-500/40'}`}>
+                                                  <span className={`font-bold text-sm ${signalData.status === 'WIN' ? 'text-green-100' : 'text-red-400'}`}>
+                                                    {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
+                                                  </span>
                                                   {signalData.pnl && (
-                                                    <div className="text-gray-300">
-                                                      R: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}>{signalData.pnl}</span>
-                                                    </div>
+                                                    <span className={`text-base font-bold ${signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}`}>
+                                                      {signalData.pnl}
+                                                    </span>
                                                   )}
                                                 </div>
                                               </div>
@@ -7699,7 +7706,7 @@ export default function TradingPlatformShell() {
                                                 </div>
                                                 {signalData.entry && (
                                                   <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-400">📊</span>
+                                                    <span className="text-gray-400">📈</span>
                                                     <span className="text-white">Entry: {signalData.entry}</span>
                                                   </div>
                                                 )}
@@ -7711,13 +7718,13 @@ export default function TradingPlatformShell() {
                                                 )}
                                                 {signalData.sl && (
                                                   <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-400">🛑</span>
+                                                    <span className="text-gray-400">🛡️</span>
                                                     <span className="text-white">SL: {signalData.sl}</span>
                                                   </div>
                                                 )}
                                                 {signalData.rr && (
                                                   <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-400">📐</span>
+                                                    <span className="text-gray-400">⚖️</span>
                                                     <span className="text-white">R:R {signalData.rr}</span>
                                                   </div>
                                                 )}

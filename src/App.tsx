@@ -1397,7 +1397,7 @@ const App = () => {
                 <button onClick={() => setShowAuthModal(false)} className="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100">✕</button>
               </div>
               <div className="flex flex-col items-center px-8 pb-2 pt-0">
-                <img src="/faviconsansfond.webp" alt="TPLN" className="h-24 w-auto object-contain mb-2" />
+                <img src="/faviconsansfond.webp" alt="TPLN" className="h-36 w-auto object-contain mb-2" />
                 <h2 className="text-xl font-bold text-gray-900 mb-1">Connexion</h2>
                 <p className="text-sm text-gray-400 mb-4">Trading Pour Les Nuls</p>
               </div>
@@ -5969,7 +5969,7 @@ const App = () => {
               </button>
             </div>
             <div className="flex flex-col items-center px-8 pb-2 pt-0">
-              <img src="/faviconsansfond.webp" alt="TPLN" className="h-24 w-auto object-contain mb-2" />
+              <img src="/faviconsansfond.webp" alt="TPLN" className="h-36 w-auto object-contain mb-2" />
               <h2 className="text-xl font-bold text-gray-900 mb-1">Connexion</h2>
               <p className="text-sm text-gray-400 mb-4">Trading Pour Les Nuls</p>
             </div>
