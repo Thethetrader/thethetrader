@@ -6333,8 +6333,8 @@ export default function TradingPlatformShell() {
                             <select
                               value={selectedAccount}
                               onChange={(e) => handleAccountChange(e.target.value)}
-                              className="bg-green-200/20 hover:bg-green-200/30 border border-green-200/40 text-green-100 hover:text-green-100 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-green-200/50 cursor-pointer h-9"
-                  style={{ height: '36px', background: 'rgba(34, 197, 94, 0.2)' }}
+                              className="bg-gray-700 hover:bg-gray-600 border border-gray-600 text-gray-200 hover:text-white rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-gray-500 cursor-pointer h-9"
+                  style={{ height: '36px', background: 'rgba(55,65,81,1)' }}
                             >
                               <option value="Tous les comptes">📊 Tous les comptes</option>
                               <option value="TPLN">📋 TPLN model</option>
@@ -6356,7 +6356,7 @@ export default function TradingPlatformShell() {
                             className={`px-3 py-2 rounded-lg text-sm font-medium ${
                               tradingAccounts.length === 0
                                 ? 'bg-gray-700 border border-gray-600 text-gray-500 cursor-not-allowed'
-                                : 'bg-green-200/20 hover:bg-green-200/30 border border-green-200/40 text-green-100 hover:text-green-100'
+                                : 'bg-gray-700 hover:bg-gray-600 border border-gray-600 text-gray-200 hover:text-white'
                             }`}
                             title="Options du compte"
                           >
@@ -6371,7 +6371,7 @@ export default function TradingPlatformShell() {
                                 setShowAddAccountModal(true);
                               }
                             }}
-                            className="bg-green-200/20 hover:bg-green-200/30 border border-green-200/40 text-green-100 hover:text-green-100 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
+                            className="bg-gray-700 hover:bg-gray-600 border border-gray-600 text-gray-200 hover:text-white px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
                           >
                             + Compte
                           </button>
