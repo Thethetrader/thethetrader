@@ -7044,23 +7044,18 @@ export default function TradingPlatformShell() {
                                     if (signalData) {
                                       return (
                                         <div>
-                                          <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
+                                          <div className="bg-gray-800 rounded-lg p-3 border border-gray-600">
                                             {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
-                                              <div className="mb-3">
-                                                <div className="flex items-center gap-2 mb-2">
-                                                  <span className="text-xs">📊</span>
-                                                  <span className="text-sm font-semibold text-gray-300">SIGNAL FERMÉ</span>
-                                                </div>
-                                                <div className="text-sm">
-                                                  <div className="flex items-center gap-2 mb-1">
-                                                    <span className={signalData.status === 'WIN' ? 'text-green-100' : 'text-red-400'}>
-                                                      {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
-                                                    </span>
-                                                  </div>
+                                              <div className="mb-2">
+                                                <div className="text-xs text-gray-500 uppercase tracking-wider mb-1.5">Signal fermé</div>
+                                                <div className="flex items-center gap-2">
+                                                  <span className={`text-sm font-bold ${signalData.status === 'WIN' ? 'text-green-100' : 'text-red-400'}`}>
+                                                    {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
+                                                  </span>
                                                   {signalData.pnl && (
-                                                    <div className="text-gray-300">
-                                                      R: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}>{signalData.pnl}</span>
-                                                    </div>
+                                                    <span className={`text-sm font-bold ${signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}`}>
+                                                      · {signalData.pnl}
+                                                    </span>
                                                   )}
                                                 </div>
                                               </div>
@@ -7696,23 +7691,18 @@ export default function TradingPlatformShell() {
                                     if (signalData) {
                                       return (
                                         <div>
-                                          <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
+                                          <div className="bg-gray-800 rounded-lg p-3 border border-gray-600">
                                             {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
-                                              <div className="mb-3">
-                                                <div className="flex items-center gap-2 mb-2">
-                                                  <span className="text-xs">📊</span>
-                                                  <span className="text-sm font-semibold text-gray-300">SIGNAL FERMÉ</span>
-                                                </div>
-                                                <div className="text-sm">
-                                                  <div className="flex items-center gap-2 mb-1">
-                                                    <span className={signalData.status === 'WIN' ? 'text-green-100' : 'text-red-400'}>
-                                                      {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
-                                                    </span>
-                                                  </div>
+                                              <div className="mb-2">
+                                                <div className="text-xs text-gray-500 uppercase tracking-wider mb-1.5">Signal fermé</div>
+                                                <div className="flex items-center gap-2">
+                                                  <span className={`text-sm font-bold ${signalData.status === 'WIN' ? 'text-green-100' : 'text-red-400'}`}>
+                                                    {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
+                                                  </span>
                                                   {signalData.pnl && (
-                                                    <div className="text-gray-300">
-                                                      R: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}>{signalData.pnl}</span>
-                                                    </div>
+                                                    <span className={`text-sm font-bold ${signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}`}>
+                                                      · {signalData.pnl}
+                                                    </span>
                                                   )}
                                                 </div>
                                               </div>
