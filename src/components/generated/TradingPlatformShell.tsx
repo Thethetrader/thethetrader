@@ -580,7 +580,17 @@ export default function TradingPlatformShell() {
       alert('Ce nom de compte existe déjà');
       return;
     }
-    
+
+    // Vérifier la limite de comptes selon le plan
+    if (!isAdmin && userPlan) {
+      const { getMaxJournalAccounts } = await import('../../config/subscription-plans');
+      const maxAccounts = getMaxJournalAccounts(userPlan);
+      if (tradingAccounts.length >= maxAccounts) {
+        alert(`Votre formule ${userPlan.toUpperCase()} est limitée à ${maxAccounts} compte${maxAccounts > 1 ? 's' : ''}. Passez à une formule supérieure pour en ajouter davantage.`);
+        return;
+      }
+    }
+
     try {
       const initialBalance = parseFloat(newAccountBalance) || 0;
       const minimumBalance = parseFloat(newAccountMinimum) || 0;
@@ -3370,10 +3380,13 @@ export default function TradingPlatformShell() {
         }
       }
       if (line.includes('Entry:')) {
-        entry = line.split('Entry:')[1]?.trim() || '';
+        entry = line.split('Entry:')[1]?.split('TP:')[0]?.trim() || '';
       }
       if (line.includes('TP:')) {
         tp = line.split('TP:')[1]?.split('SL:')[0]?.trim() || '';
+        if (line.includes('SL:')) sl = line.split('SL:')[1]?.trim() || '';
+      }
+      if (line.includes('SL:') && !line.includes('TP:')) {
         sl = line.split('SL:')[1]?.trim() || '';
       }
       if (line.includes('⏰')) {
@@ -3393,6 +3406,9 @@ export default function TradingPlatformShell() {
       }
       if (line.includes('P&L:')) {
         pnl = line.split('P&L:')[1]?.trim() || '';
+      }
+      if (line.includes(' R:') && line.includes('fermée')) {
+        pnl = line.split(' R:')[1]?.trim() || '';
       }
       if (line.includes('fermé Résultat:') && !closeMessage) {
         closeMessage = line;
@@ -5049,7 +5065,7 @@ export default function TradingPlatformShell() {
                 <span className="text-xs text-gray-300">WIN</span>
               </div>
               <div className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-loss/60 border border-loss/50 rounded"></div>
+                <div className="w-3 h-3 rounded" style={{ background: 'var(--loss-color)', opacity: 0.85 }}></div>
                 <span className="text-xs text-gray-300">LOSS</span>
               </div>
               <div className="flex items-center gap-1">
@@ -5075,7 +5091,7 @@ export default function TradingPlatformShell() {
                   <span className="text-gray-300">WIN</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="inline-flex items-center justify-center w-3 h-3 rounded bg-loss/70 border border-loss/60"></span>
+                  <span className="inline-flex items-center justify-center w-3 h-3 rounded" style={{ background: 'var(--loss-color)', opacity: 0.85 }}></span>
                   <span className="text-gray-300">LOSS</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
@@ -5249,16 +5265,32 @@ export default function TradingPlatformShell() {
                 <div className="text-lg font-bold" style={{ color: '#22c55e' }}>
                   {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ?
                     (calculateAvgWinTradesForDisplay() > 0 ? `+$${calculateAvgWinTradesForDisplay()}` : '-') :
-                    (getCalendarMonthlyStats(currentDate).avgWin > 0 ? `+$${getCalendarMonthlyStats(currentDate).avgWin}` : '-')
+                    (() => {
+                      const monthWins = realTimeSignals.filter(s => {
+                        const d = new Date(s.originalTimestamp || s.timestamp);
+                        return s.status === 'WIN' && s.pnl && d.getMonth() === currentDate.getMonth() && d.getFullYear() === currentDate.getFullYear();
+                      });
+                      if (monthWins.length === 0) return '-';
+                      const avg = monthWins.reduce((sum, s) => sum + parsePnL(s.pnl || '0'), 0) / monthWins.length;
+                      return `+${avg.toFixed(1)}R`;
+                    })()
                   }
                 </div>
               </div>
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Avg Loss</div>
                 <div className="text-lg font-bold text-loss">
-                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? 
+                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ?
                     (calculateAvgLossTradesForDisplay() > 0 ? `-$${calculateAvgLossTradesForDisplay()}` : '-') :
-                    (getCalendarMonthlyStats(currentDate).avgLoss > 0 ? `-$${getCalendarMonthlyStats(currentDate).avgLoss}` : '-')
+                    (() => {
+                      const monthLosses = realTimeSignals.filter(s => {
+                        const d = new Date(s.originalTimestamp || s.timestamp);
+                        return s.status === 'LOSS' && s.pnl && d.getMonth() === currentDate.getMonth() && d.getFullYear() === currentDate.getFullYear();
+                      });
+                      if (monthLosses.length === 0) return '-';
+                      const avg = Math.abs(monthLosses.reduce((sum, s) => sum + parsePnL(s.pnl || '0'), 0) / monthLosses.length);
+                      return `-${avg.toFixed(1)}R`;
+                    })()
                   }
                 </div>
               </div>
@@ -5514,7 +5546,7 @@ export default function TradingPlatformShell() {
       {/* Support Paywall Modal */}
       {showSupportPaywall && (
         <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }} onClick={() => setShowSupportPaywall(false)}>
-          <div className="w-full md:max-w-md bg-gray-900 rounded-t-3xl md:rounded-2xl overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()} style={{ border: '1px solid rgba(201,168,76,0.3)' }}>
+          <div className="w-full md:max-w-md rounded-t-3xl md:rounded-2xl overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()} style={{ background: '#0f0a00', border: '1px solid rgba(201,168,76,0.4)', boxShadow: '0 0 60px rgba(201,168,76,0.1)' }}>
             {/* Header gradient */}
             <div style={{ background: 'linear-gradient(135deg, #1a1200 0%, #2d1f00 50%, #1a1200 100%)', padding: '32px 28px 24px', position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.15) 0%, transparent 70%)' }} />
@@ -5539,14 +5571,14 @@ export default function TradingPlatformShell() {
             {/* Features */}
             <div style={{ padding: '20px 28px' }}>
               {[
-                { icon: '💬', text: 'Chat privé direct avec le formateur' },
-                { icon: '⚡', text: 'Réponse en moins de 24h garantie' },
-                { icon: '📹', text: 'Sessions vidéo 1:1 incluses' },
-                { icon: '🎯', text: 'Suivi personnalisé de ton trading' },
-              ].map(({ icon, text }) => (
+                { svg: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>, text: 'Chat privé direct avec le formateur' },
+                { svg: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>, text: 'Réponse en moins de 24h garantie' },
+                { svg: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>, text: 'Sessions vidéo 1:1 incluses' },
+                { svg: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>, text: 'Suivi personnalisé de ton trading' },
+              ].map(({ svg, text }) => (
                 <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
-                  <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(201,168,76,0.08)', border: '1px solid rgba(201,168,76,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, flexShrink: 0 }}>{icon}</div>
-                  <span style={{ fontSize: 14, color: '#e5e7eb', fontWeight: 500 }}>{text}</span>
+                  <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(201,168,76,0.08)', border: '1px solid rgba(201,168,76,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{svg}</div>
+                  <span style={{ fontSize: 14, color: '#d1a84a', fontWeight: 500 }}>{text}</span>
                 </div>
               ))}
               <div style={{ marginTop: 8, padding: '12px 16px', background: 'rgba(201,168,76,0.06)', borderRadius: 12, border: '1px solid rgba(201,168,76,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -5554,7 +5586,7 @@ export default function TradingPlatformShell() {
                   <div style={{ fontSize: 12, color: '#9ca3af' }}>Formule Premium</div>
                   <div style={{ fontSize: 22, fontWeight: 800, color: '#c9a84c' }}>69€<span style={{ fontSize: 13, fontWeight: 500, color: '#9ca3af' }}>/mois</span></div>
                 </div>
-                <div style={{ fontSize: 12, color: '#6b7280', textAlign: 'right' }}>
+                <div style={{ fontSize: 12, color: '#a07830', textAlign: 'right' }}>
                   <div>ou 57€/mois</div>
                   <div>en annuel</div>
                 </div>
@@ -5824,7 +5856,21 @@ export default function TradingPlatformShell() {
         <div className={`md:hidden bg-gray-800 p-3 fixed top-0 left-0 right-0 z-30 ${selectedChannel.id === 'calendrier' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model' ? '' : 'border-b border-gray-700'}`} style={{ height: 'calc(60px + env(safe-area-inset-top, 0px))', paddingTop: 'calc(12px + env(safe-area-inset-top, 0px))' }}>
           {showFeed ? (
             <div className="flex items-center justify-between h-full">
-              <span className="text-white font-bold text-lg">Accueil</span>
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden" onClick={() => setShowMonCompte(true)} style={{ cursor: 'pointer' }}>
+                  {profileImage ? <img src={profileImage} alt="Profile" className="w-full h-full object-cover" /> : 'TT'}
+                </div>
+                <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{currentUsername || 'Accueil'}</span>
+              </div>
+              <button
+                onClick={() => { if (userPlan !== 'premium' && !isAdmin) { setShowSupportPaywall(true); return; } handleChannelChange('support', 'support'); setSupportUnread(false); setShowFeed(false); setMobileView('content'); }}
+                style={{ position: 'relative', width: 34, height: 34, borderRadius: '50%', background: 'var(--bg-tertiary)', border: '1.5px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}
+              >
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                {supportUnread && <span style={{ position: 'absolute', top: -2, right: -2, width: 9, height: 9, borderRadius: '50%', background: '#ef4444', border: '1.5px solid var(--bg-primary)', display: 'block' }} />}
+              </button>
             </div>
           ) : mobileView === 'channels' ? (
             <div className="flex items-center justify-between">
@@ -6192,6 +6238,34 @@ export default function TradingPlatformShell() {
                   )}
 
               </div>
+
+              {/* Noble Premium CTA */}
+              {userPlan !== 'premium' && (
+                <button
+                  onClick={() => { window.location.href = '/premium'; }}
+                  style={{
+                    width: '100%',
+                    background: 'linear-gradient(135deg, #1a1200 0%, #2d1f00 50%, #1a1200 100%)',
+                    border: '1px solid rgba(201,168,76,0.4)',
+                    borderRadius: 14,
+                    padding: '16px 20px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 14,
+                    boxShadow: '0 0 24px rgba(201,168,76,0.12)',
+                  }}
+                >
+                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg, #c9a84c, #a07830)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  </div>
+                  <div style={{ textAlign: 'left', flex: 1 }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: '#c9a84c', letterSpacing: '0.04em' }}>Passer Premium</div>
+                    <div style={{ fontSize: 12, color: '#8b6914', marginTop: 2 }}>Accès illimité à tous les salons</div>
+                  </div>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+              )}
               </div>
             </div>
           </div>
@@ -6208,7 +6282,7 @@ export default function TradingPlatformShell() {
                 {getTradingCalendar()}
               </div>
             ) : (view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'video' || selectedChannel.id === 'livestream-premium' || selectedChannel.id === 'journal') ? (
-              <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: '0px', WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}>
+              <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: 'calc(60px + env(safe-area-inset-top, 0px))', WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}>
                 {/* Header avec sélecteur de compte et bouton Ajouter Trade pour Trading Journal (pas sur TPLN model) */}
                 {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? (
                   <div className="mb-4 md:mb-6 border-b border-gray-600 pb-4">
@@ -6392,6 +6466,24 @@ export default function TradingPlatformShell() {
                                 <span className="text-gray-400">Time:</span>
                                 <span className="text-white ml-2">{trade.timestamp}</span>
                               </div>
+                              {(() => {
+                                const entry = parseFloat(trade.entry);
+                                const exit = parseFloat(trade.exit);
+                                const sl = parseFloat(trade.stopLoss);
+                                if (!isNaN(entry) && !isNaN(exit) && !isNaN(sl) && entry !== sl) {
+                                  const rr = trade.type === 'BUY'
+                                    ? (exit - entry) / (entry - sl)
+                                    : (entry - exit) / (sl - entry);
+                                  const color = rr >= 2 ? '#10b981' : rr >= 1 ? '#f59e0b' : '#ef4444';
+                                  return (
+                                    <div>
+                                      <span className="text-gray-400">R:R</span>
+                                      <span className="ml-2 font-semibold" style={{ color }}>{rr >= 0 ? `${rr.toFixed(2)}R` : 'N/A'}</span>
+                                    </div>
+                                  );
+                                }
+                                return null;
+                              })()}
                             </div>
                             
                             {trade.notes && (
@@ -6564,7 +6656,7 @@ export default function TradingPlatformShell() {
                                   <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
                                     <span className="text-red-400 text-sm">🎯</span>
                                     <span className="text-white text-sm">
-                                      Ratio R:R : ≈ {calculateRiskReward(signal.entry, signal.takeProfit, signal.stopLoss)}
+                                      R:R {calculateRiskReward(signal.entry, signal.takeProfit, signal.stopLoss)}
                                     </span>
                                 </div>
                                 )}
@@ -6934,7 +7026,7 @@ export default function TradingPlatformShell() {
                                                   </div>
                                                   {signalData.pnl && (
                                                     <div className="text-gray-300">
-                                                      P&L: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}>{signalData.pnl}</span>
+                                                      R: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}>{signalData.pnl}</span>
                                                     </div>
                                                   )}
                                                   {(signalData.status === 'LOSS' || signalData.status === 'WIN') && signalData.signalId && (
@@ -7003,9 +7095,6 @@ export default function TradingPlatformShell() {
                                                   <span className="font-bold text-white">
                                                     {signalData.type} {signalData.symbol}
                                                   </span>
-                                                  {signalData.timeframe && (
-                                                    <span className="text-sm text-gray-400">{signalData.timeframe}</span>
-                                                  )}
                                                 </div>
                                                 {signalData.entry && (
                                                   <div className="flex items-center gap-2 text-sm">
@@ -7015,14 +7104,8 @@ export default function TradingPlatformShell() {
                                                 )}
                                                 {signalData.rr && (
                                                   <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-400">🎯</span>
-                                                    <span className="text-white">R:R ≈ {signalData.rr}</span>
-                                                  </div>
-                                                )}
-                                                {signalData.timeframe && (
-                                                  <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-400">⏰</span>
-                                                    <span className="text-white">{signalData.timeframe}</span>
+                                                    <span className="text-gray-400">📐</span>
+                                                    <span className="text-white">R:R {signalData.rr}</span>
                                                   </div>
                                                 )}
                                               </div>
@@ -7072,7 +7155,7 @@ export default function TradingPlatformShell() {
                                             currentSignal.status === 'LOSS' ? 'text-red-400' :
                                             'text-blue-400'
                                           }`}>
-                                            P&L: {currentSignal.pnl}
+                                            R: {currentSignal.pnl}
                                           </span>
                                         )}
                                       </div>
@@ -7589,7 +7672,7 @@ export default function TradingPlatformShell() {
                                                   </div>
                                                   {signalData.pnl && (
                                                     <div className="text-gray-300">
-                                                      P&L: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}>{signalData.pnl}</span>
+                                                      R: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}>{signalData.pnl}</span>
                                                     </div>
                                                   )}
                                                   {(signalData.status === 'LOSS' || signalData.status === 'WIN') && signalData.signalId && (
@@ -7658,9 +7741,6 @@ export default function TradingPlatformShell() {
                                                   <span className="font-bold text-white">
                                                     {signalData.type} {signalData.symbol}
                                                   </span>
-                                                  {signalData.timeframe && (
-                                                    <span className="text-sm text-gray-400">{signalData.timeframe}</span>
-                                                  )}
                                                 </div>
                                                 {signalData.entry && (
                                                   <div className="flex items-center gap-2 text-sm">
@@ -7670,14 +7750,8 @@ export default function TradingPlatformShell() {
                                                 )}
                                                 {signalData.rr && (
                                                   <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-400">🎯</span>
-                                                    <span className="text-white">R:R ≈ {signalData.rr}</span>
-                                                  </div>
-                                                )}
-                                                {signalData.timeframe && (
-                                                  <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-400">⏰</span>
-                                                    <span className="text-white">{signalData.timeframe}</span>
+                                                    <span className="text-gray-400">📐</span>
+                                                    <span className="text-white">R:R {signalData.rr}</span>
                                                   </div>
                                                 )}
                                               </div>
@@ -7727,7 +7801,7 @@ export default function TradingPlatformShell() {
                                             currentSignal.status === 'LOSS' ? 'text-red-400' :
                                             'text-blue-400'
                                           }`}>
-                                            P&L: {currentSignal.pnl}
+                                            R: {currentSignal.pnl}
                                           </span>
                                         )}
                                       </div>
@@ -8699,33 +8773,22 @@ export default function TradingPlatformShell() {
                     {/* Images */}
                     {(trade.image1 || trade.image2) && (
                       <div className="mb-3">
-                        <span className="text-sm text-gray-400">Images:</span>
                         <div className="mt-2 space-y-3 flex flex-col items-center">
                           {trade.image1 && (
-                            <div className="flex flex-col items-center">
-                              <span className="text-xs text-gray-500">📸 Image 1:</span>
-                              <div className="mt-1">
-                                <img 
-                                  src={trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1} 
-                                  alt="Trade image 1" 
-                                  className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
-                                  onClick={() => setSelectedImage(trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1)}
-                                />
-                              </div>
-                            </div>
+                            <img
+                              src={trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1}
+                              alt="Trade image 1"
+                              className="w-full max-w-sm object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                              onClick={() => setSelectedImage(trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1)}
+                            />
                           )}
                           {trade.image2 && (
-                            <div className="flex flex-col items-center">
-                              <span className="text-xs text-gray-500">📸 Image 2:</span>
-                              <div className="mt-1">
-                                <img 
-                                  src={trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2} 
-                                  alt="Trade image 2" 
-                                  className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
-                                  onClick={() => setSelectedImage(trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2)}
-                                />
-                              </div>
-                            </div>
+                            <img
+                              src={trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2}
+                              alt="Trade image 2"
+                              className="w-full max-w-sm object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                              onClick={() => setSelectedImage(trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2)}
+                            />
                           )}
                         </div>
                       </div>
@@ -8759,8 +8822,9 @@ export default function TradingPlatformShell() {
             {(() => {
               // Pour le calendrier (signaux) ou les trades (journal perso/TPLN)
               const isSignalsMode = selectedChannel.id === 'calendrier';
-              const filteredItems = isSignalsMode 
-                ? signals.filter(s => s.status === winsLossFilter && s.channel_id === 'calendrier')
+              const signalChannelIds = ['general-chat-2', 'general-chat-3', 'general-chat-4'];
+              const filteredItems = isSignalsMode
+                ? allSignalsForStats.filter(s => s.status === winsLossFilter && signalChannelIds.includes(s.channel_id))
                 : getTradesForSelectedAccount.filter(t => t.status === winsLossFilter);
               const currentItem = filteredItems[winsLossTradeIndex];
               
@@ -8784,6 +8848,7 @@ export default function TradingPlatformShell() {
                 : (currentItem as any).image1 || (currentItem as any).image2;
               const imgUrl = imgSrc ? (typeof imgSrc === 'string' ? imgSrc : URL.createObjectURL(imgSrc as any)) : null;
               
+              let wlSwipeStartX = 0;
               return (
                 <>
                   <div className="flex justify-between items-center p-4 border-b border-gray-700">
@@ -8792,41 +8857,45 @@ export default function TradingPlatformShell() {
                     </h2>
                     <button onClick={() => setShowWinsLossModal(false)} className="text-gray-400 hover:text-white text-2xl">×</button>
                   </div>
-                  <div className="flex-1 flex items-center justify-between gap-4 p-4 overflow-hidden">
-                    <button
-                      onClick={() => setWinsLossTradeIndex(i => (i <= 0 ? filteredItems.length - 1 : i - 1))}
-                      className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-2xl text-white"
-                    >
-                      ←
-                    </button>
-                    <div className="flex-1 flex flex-col items-center min-w-0">
-                      <div className="space-y-4">
-                        {imgUrl ? (
-                          <img src={imgUrl} alt={isSignalsMode ? "Signal" : "Trade"} className="max-w-full max-h-[60vh] object-contain rounded-lg border border-gray-600" />
-                        ) : (
-                          <div className="w-96 h-96 flex items-center justify-center bg-gray-700 rounded-lg text-gray-500">Pas d'image</div>
-                        )}
-                        {isSignalsMode && (currentItem as any).closure_image && (currentItem as any).image && (
-                          <div>
-                            <div className="text-xs text-gray-400 mb-1">📸 Photo de clôture:</div>
-                            <img src={(currentItem as any).closure_image} alt="Closure" className="max-w-full max-h-[60vh] object-contain rounded-lg border border-gray-600" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="mt-4 text-center">
-                        <span className="text-lg font-bold text-white">{currentItem.symbol}</span>
-                        <span className={`ml-2 text-lg font-bold ${currentItem.pnl && parseFloat(currentItem.pnl) >= 0 ? 'text-green-100' : 'text-red-400'}`}>
-                          {(currentItem.pnl && parseFloat(currentItem.pnl) >= 0 ? '+' : '')}{currentItem.pnl || '0'}$
+                  <div
+                    className="flex-1 flex flex-col items-center p-4 overflow-y-auto"
+                    onTouchStart={e => { wlSwipeStartX = e.touches[0].clientX; }}
+                    onTouchEnd={e => {
+                      const dx = e.changedTouches[0].clientX - wlSwipeStartX;
+                      if (Math.abs(dx) > 50) {
+                        if (dx < 0) setWinsLossTradeIndex(i => (i >= filteredItems.length - 1 ? 0 : i + 1));
+                        else setWinsLossTradeIndex(i => (i <= 0 ? filteredItems.length - 1 : i - 1));
+                      }
+                    }}
+                  >
+                    {imgUrl ? (
+                      <img
+                        src={imgUrl}
+                        alt={isSignalsMode ? "Signal" : "Trade"}
+                        className="w-full max-h-[75vh] object-contain rounded-lg border border-gray-600 cursor-zoom-in"
+                        onClick={() => setSelectedImage(imgUrl)}
+                      />
+                    ) : (
+                      <div className="w-full h-64 flex items-center justify-center bg-gray-700 rounded-lg text-gray-500">Pas d'image</div>
+                    )}
+                    {isSignalsMode && (currentItem as any).closure_image && (currentItem as any).image && (
+                      <img
+                        src={(currentItem as any).closure_image}
+                        alt="Closure"
+                        className="w-full max-h-[75vh] object-contain rounded-lg border border-gray-600 mt-3 cursor-zoom-in"
+                        onClick={() => setSelectedImage((currentItem as any).closure_image)}
+                      />
+                    )}
+                    <div className="mt-4 text-center">
+                      <span className="text-lg font-bold text-white">{currentItem.symbol}</span>
+                      {currentItem.pnl && (
+                        <span className={`ml-2 text-lg font-bold ${currentItem.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}`}>
+                          {isSignalsMode ? `R: ${currentItem.pnl}` : `${parseFloat(currentItem.pnl) >= 0 ? '+' : ''}${currentItem.pnl}$`}
                         </span>
-                        <span className="ml-2 text-gray-400 text-sm">{isSignalsMode ? new Date((currentItem as any).timestamp).toLocaleDateString() : (currentItem as any).date}</span>
-                      </div>
+                      )}
+                      <span className="ml-2 text-gray-400 text-sm">{isSignalsMode ? new Date((currentItem as any).originalTimestamp || (currentItem as any).timestamp).toLocaleDateString('fr-FR') : (currentItem as any).date}</span>
                     </div>
-                    <button
-                      onClick={() => setWinsLossTradeIndex(i => (i >= filteredItems.length - 1 ? 0 : i + 1))}
-                      className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-2xl text-white"
-                    >
-                      →
-                    </button>
+                    <div className="mt-3 text-xs text-gray-500">← Swipe pour naviguer →</div>
                   </div>
                 </>
               );
@@ -8943,10 +9012,10 @@ export default function TradingPlatformShell() {
                                 <span className="text-sm text-gray-400">{signal.timeframe}</span>
                               </div>
                               <span className={`px-2 py-1 rounded text-xs ${
-                                signal.status === 'WIN' ? 'bg-green-600 text-white' :
-                                signal.status === 'LOSS' ? 'bg-red-600 text-white' :
-                                signal.status === 'BE' ? 'bg-blue-600 text-white' :
-                                'bg-yellow-600 text-white'
+                                signal.status === 'WIN' ? 'bg-green-700/60 text-green-100' :
+                                signal.status === 'LOSS' ? 'bg-red-900/60 text-red-300' :
+                                signal.status === 'BE' ? 'bg-blue-900/60 text-blue-300' :
+                                'bg-yellow-900/60 text-yellow-200'
                               }`}>
                                 {signal.status}
                               </span>
@@ -8984,36 +9053,25 @@ export default function TradingPlatformShell() {
                             )}
                           </div>
 
-                          {/* Images à droite des cadres */}
+                          {/* Images */}
                           {(signal.image || signal.attachment_data || signal.closure_image) && (
                             <div className="flex-shrink-0 flex flex-col gap-3">
-                              <span className="text-sm text-gray-400">Images:</span>
                               <div className="flex flex-col gap-3">
                                 {(signal.image || signal.attachment_data) && (
-                                  <div className="flex flex-col">
-                                    <span className="text-xs text-gray-500">📸 Image de création:</span>
-                                    <div className="mt-1">
-                                      <img 
-                                        src={signal.image || signal.attachment_data}
-                                        alt="Signal image"
-                                        className="max-w-[200px] sm:max-w-[240px] h-auto max-h-64 object-contain rounded cursor-pointer hover:opacity-80 border border-gray-600"
-                                        onClick={() => setSelectedImage(signal.image || signal.attachment_data)}
-                                      />
-                                    </div>
-                                  </div>
+                                  <img
+                                    src={signal.image || signal.attachment_data}
+                                    alt="Signal image"
+                                    className="max-w-[200px] sm:max-w-[240px] h-auto max-h-64 object-contain rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                    onClick={() => setSelectedImage(signal.image || signal.attachment_data)}
+                                  />
                                 )}
                                 {signal.closure_image && (
-                                  <div className="flex flex-col">
-                                    <span className="text-xs text-gray-500">📸 Image de fermeture:</span>
-                                    <div className="mt-1">
-                                      <img 
-                                        src={signal.closure_image}
-                                        alt="Signal closure image"
-                                        className="max-w-[200px] sm:max-w-[240px] h-auto max-h-64 object-contain rounded cursor-pointer hover:opacity-80 border border-gray-600"
-                                        onClick={() => setSelectedImage(signal.closure_image)}
-                                      />
-                                    </div>
-                                  </div>
+                                  <img
+                                    src={signal.closure_image}
+                                    alt="Signal closure image"
+                                    className="max-w-[200px] sm:max-w-[240px] h-auto max-h-64 object-contain rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                    onClick={() => setSelectedImage(signal.closure_image)}
+                                  />
                                 )}
                               </div>
                             </div>
@@ -9143,36 +9201,23 @@ export default function TradingPlatformShell() {
 
                         {/* Affichage des images */}
                         {(trade.image1 || trade.image2) && (
-                          <div className="mb-3">
-                            <span className="text-sm text-gray-400">Images:</span>
-                            <div className="mt-2 space-y-3 flex flex-col items-center">
-                              {trade.image1 && (
-                                <div className="flex flex-col items-center">
-                                  <span className="text-xs text-gray-500">📸 Image 1:</span>
-                                  <div className="mt-1">
-                                    <img 
-                                      src={trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1}
-                                      alt="Trade image 1"
-                                      className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
-                                      onClick={() => setSelectedImage(trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1)}
-                                    />
-                                  </div>
-                                </div>
-                              )}
-                              {trade.image2 && (
-                                <div className="flex flex-col items-center">
-                                  <span className="text-xs text-gray-500">📸 Image 2:</span>
-                                  <div className="mt-1">
-                                    <img 
-                                      src={trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2}
-                                      alt="Trade image 2"
-                                      className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
-                                      onClick={() => setSelectedImage(trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2)}
-                                    />
-                                  </div>
-                                </div>
-                              )}
-                            </div>
+                          <div className="mb-3 flex flex-col items-center gap-3">
+                            {trade.image1 && (
+                              <img
+                                src={trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1}
+                                alt="Trade image 1"
+                                className="w-full max-w-sm object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                onClick={() => setSelectedImage(trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1)}
+                              />
+                            )}
+                            {trade.image2 && (
+                              <img
+                                src={trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2}
+                                alt="Trade image 2"
+                                className="w-full max-w-sm object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                onClick={() => setSelectedImage(trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2)}
+                              />
+                            )}
                           </div>
                         )}
 
@@ -9246,36 +9291,23 @@ export default function TradingPlatformShell() {
 
                         {/* Affichage des images */}
                         {(signal.image || signal.attachment_data || signal.closure_image) && (
-                          <div className="mb-3">
-                            <span className="text-sm text-gray-400">Images:</span>
-                            <div className="mt-2 space-y-3 flex flex-col items-center">
-                              {(signal.image || signal.attachment_data) && (
-                                <div className="flex flex-col items-center">
-                                  <span className="text-xs text-gray-500">📸 Image de création:</span>
-                                  <div className="mt-1">
-                                    <img 
-                                      src={signal.image || signal.attachment_data}
-                                      alt="Signal image"
-                                      className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
-                                      onClick={() => setSelectedImage(signal.image || signal.attachment_data)}
-                                    />
-                                  </div>
-                                </div>
-                              )}
-                              {signal.closure_image && (
-                                <div className="flex flex-col items-center">
-                                  <span className="text-xs text-gray-500">📸 Image de fermeture:</span>
-                                  <div className="mt-1">
-                                    <img 
-                                      src={signal.closure_image}
-                                      alt="Signal closure image"
-                                      className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
-                                      onClick={() => setSelectedImage(signal.closure_image)}
-                                    />
-                                  </div>
-                                </div>
-                              )}
-                            </div>
+                          <div className="mb-3 flex flex-col items-center gap-3">
+                            {(signal.image || signal.attachment_data) && (
+                              <img
+                                src={signal.image || signal.attachment_data}
+                                alt="Signal image"
+                                className="w-full max-w-sm object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                onClick={() => setSelectedImage(signal.image || signal.attachment_data)}
+                              />
+                            )}
+                            {signal.closure_image && (
+                              <img
+                                src={signal.closure_image}
+                                alt="Signal closure image"
+                                className="w-full max-w-sm object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                onClick={() => setSelectedImage(signal.closure_image)}
+                              />
+                            )}
                           </div>
                         )}
                       </div>
@@ -9385,15 +9417,6 @@ export default function TradingPlatformShell() {
               ×
             </button>
 
-            {/* Instructions - Cachées sur PWA */}
-            {!window.matchMedia('(display-mode: standalone)').matches && (
-              <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-3 py-2 rounded-lg">
-                <div>🖱️ Clic pour zoomer</div>
-                <div>🔄 Molette pour zoomer</div>
-                <div>✋ Glisser quand zoomé</div>
-                <div>📱 Pinch pour zoomer (mobile)</div>
-              </div>
-            )}
           </div>
         </div>
       )}
@@ -9700,39 +9723,53 @@ export default function TradingPlatformShell() {
         paddingBottom: 'env(safe-area-inset-bottom, 6px)',
         overflow: 'visible',
       }}>
-        <div className="flex items-center justify-around" style={{ height: 78 }}>
-          {/* Accueil - Feed */}
-          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(true); }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: showFeed ? 'var(--text-primary)' : 'var(--text-muted)' }}>
+        {/* All 4 side buttons centered at the same height as the salon button center */}
+        <div style={{ display: 'flex', alignItems: 'flex-end', height: 78, position: 'relative' }}>
+          {/* Accueil */}
+          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(true); }} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, height: '100%', color: showFeed ? 'var(--text-primary)' : 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill={showFeed ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/>
             </svg>
             <span style={{ fontSize: 10, fontWeight: 500 }}>Accueil</span>
           </button>
           {/* Journal */}
-          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(false); const ch = channels.find(c => c.id === 'calendrier'); if (ch) { handleChannelChange(ch.id, ch.name); setView('calendar'); setMobileView('content'); } }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: selectedChannel.id === 'calendrier' && mobileView === 'content' && !showFeed ? 'var(--text-primary)' : 'var(--text-muted)' }}>
+          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(false); const ch = channels.find(c => c.id === 'calendrier'); if (ch) { handleChannelChange(ch.id, ch.name); setView('calendar'); setMobileView('content'); } }} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, height: '100%', color: selectedChannel.id === 'calendrier' && mobileView === 'content' && !showFeed ? 'var(--text-primary)' : 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
             </svg>
             <span style={{ fontSize: 10, fontWeight: 500 }}>Journal</span>
           </button>
           {/* Salons - Centre proéminent */}
-          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(false); setMobileView('channels'); }} className="flex flex-col items-center justify-center flex-1" style={{ marginTop: -16 }}>
-            <div style={{ width: 54, height: 54, borderRadius: '50%', border: `2.5px solid ${mobileView === 'channels' && !showFeed ? 'var(--text-primary)' : 'var(--border-color)'}`, backgroundColor: 'var(--bg-tertiary)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: mobileView === 'channels' && !showFeed ? 'var(--text-primary)' : 'var(--text-muted)' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(false); setMobileView('channels'); }} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 8, background: 'none', border: 'none', cursor: 'pointer' }}>
+            <div style={{
+              width: 58, height: 58,
+              borderRadius: '50%',
+              background: mobileView === 'channels' && !showFeed
+                ? 'linear-gradient(135deg, #6366f1, #8b5cf6)'
+                : 'linear-gradient(135deg, #374151, #4b5563)',
+              boxShadow: mobileView === 'channels' && !showFeed
+                ? '0 4px 20px rgba(99,102,241,0.5)'
+                : '0 2px 8px rgba(0,0,0,0.4)',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              color: '#fff',
+              transform: 'translateY(-14px)',
+              transition: 'all 0.2s',
+            }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
               </svg>
-              <span style={{ fontSize: 8, fontWeight: 700, lineHeight: 1.2, textAlign: 'center', marginTop: 2 }}>Salons</span>
+              <span style={{ fontSize: 8, fontWeight: 700, marginTop: 2, lineHeight: 1 }}>Salons</span>
             </div>
           </button>
           {/* Signaux */}
-          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(false); const ch = channels.find(c => ['general-chat-2','general-chat-3','general-chat-4'].includes(c.id)); if (ch) { handleChannelChange(ch.id, ch.name); setMobileView('content'); } }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: ['general-chat-2','general-chat-3','general-chat-4'].includes(selectedChannel.id) && mobileView === 'content' && !showFeed ? 'var(--text-primary)' : 'var(--text-muted)' }}>
+          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(false); const ch = channels.find(c => ['general-chat-2','general-chat-3','general-chat-4'].includes(c.id)); if (ch) { handleChannelChange(ch.id, ch.name); setMobileView('content'); } }} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, height: '100%', color: ['general-chat-2','general-chat-3','general-chat-4'].includes(selectedChannel.id) && mobileView === 'content' && !showFeed ? 'var(--text-primary)' : 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
             </svg>
             <span style={{ fontSize: 10, fontWeight: 500 }}>Signaux</span>
           </button>
           {/* Formation */}
-          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(false); const ch = channels.find(c => c.id === 'fondamentaux'); if (ch) { handleChannelChange(ch.id, ch.name); setMobileView('content'); } }} className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full" style={{ color: selectedChannel.id === 'fondamentaux' && mobileView === 'content' && !showFeed ? 'var(--text-primary)' : 'var(--text-muted)' }}>
+          <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(false); const ch = channels.find(c => c.id === 'fondamentaux'); if (ch) { handleChannelChange(ch.id, ch.name); setMobileView('content'); } }} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, height: '100%', color: selectedChannel.id === 'fondamentaux' && mobileView === 'content' && !showFeed ? 'var(--text-primary)' : 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
             </svg>

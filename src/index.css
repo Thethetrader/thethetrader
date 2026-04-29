@@ -105,6 +105,12 @@
 /* PWA login en clair */
 [data-theme="light"] .pwa-login-screen { background: var(--bg-primary) !important; }
 
+/* Light mode: override dark body background */
+[data-theme="light"] body,
+[data-theme="light"] html {
+  background: var(--bg-primary) !important;
+}
+
 :root {
   --background: 222.2 84% 4.9%;
   --foreground: 210 40% 98%;

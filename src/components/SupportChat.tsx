@@ -48,6 +48,7 @@ function AudioPlayer({ src, isSent }: { src: string; isSent: boolean }) {
 
 const SEND_URL = '/.netlify/functions/send-message';
 const GET_URL = '/.netlify/functions/get-conversation';
+const DELETE_URL = '/.netlify/functions/delete-conversation';
 const POLL_MS = 5000;
 const MAX_FILE_MB = 4;
 
@@ -127,6 +128,8 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
   const [adminAvatar, setAdminAvatar] = useState<string | null>(null);
   const [sessionRoom, setSessionRoom] = useState<string | null>(null);
   const [sessionJoined, setSessionJoined] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastCreatedAt = useRef<string | null>(null);
@@ -231,6 +234,34 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
     const interval = setInterval(check, 5000);
     return () => clearInterval(interval);
   }, [conversationId]);
+
+  async function deleteConversation() {
+    if (!conversationId) {
+      setMessages([]);
+      return;
+    }
+    setDeleting(true);
+    try {
+      const res = await fetch(DELETE_URL, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversation_id: conversationId, visitor_id: userId }),
+      });
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}));
+        throw new Error((json as any).error || 'Erreur suppression');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Erreur lors de la suppression');
+    } finally {
+      localStorage.removeItem(storageKey(userId));
+      setConversationId(null);
+      setMessages([]);
+      lastCreatedAt.current = null;
+      setShowDeleteConfirm(false);
+      setDeleting(false);
+    }
+  }
 
   async function doSend(payload: Record<string, unknown>) {
     setSending(true);
@@ -362,7 +393,7 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
     : null;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#111827' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#111827', position: 'relative' }}>
       {sessionOverlay}
       {/* Bandeau session vidéo */}
       {sessionRoom && !sessionJoined && (
@@ -384,14 +415,45 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
         <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 16, flexShrink: 0, overflow: 'hidden' }}>
           {adminAvatar ? <img src={adminAvatar} alt={adminName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : adminName.charAt(0).toUpperCase()}
         </div>
-        <div>
+        <div style={{ flex: 1 }}>
           <div style={{ fontWeight: 700, fontSize: 15, color: '#f9fafb', display: 'flex', alignItems: 'center', gap: 6 }}>
             {adminName}
             <svg width="16" height="16" viewBox="0 0 24 24" fill="#10b981"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>
           <div style={{ fontSize: 12, color: '#6b7280' }}>Support — répond rapidement</div>
         </div>
+        {messages.length > 0 && (
+          <button
+            onClick={() => setShowDeleteConfirm(true)}
+            title="Supprimer la conversation"
+            style={{ width: 34, height: 34, borderRadius: '50%', background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6b7280', flexShrink: 0, transition: 'color 0.15s' }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#ef4444')}
+            onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}
+          >
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>
+            </svg>
+          </button>
+        )}
       </div>
+
+      {/* Delete confirmation dialog */}
+      {showDeleteConfirm && (
+        <div style={{ position: 'absolute', inset: 0, zIndex: 100, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+          <div style={{ background: '#1f2937', border: '1px solid #374151', borderRadius: 16, padding: 24, maxWidth: 320, width: '100%', textAlign: 'center' }}>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>🗑️</div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: '#f9fafb', marginBottom: 8 }}>Supprimer la conversation ?</div>
+            <div style={{ fontSize: 13, color: '#9ca3af', marginBottom: 24 }}>Tous les messages seront définitivement supprimés.</div>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button onClick={() => setShowDeleteConfirm(false)} style={{ flex: 1, padding: '10px 0', borderRadius: 10, border: '1px solid #374151', background: 'transparent', color: '#d1d5db', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Annuler</button>
+              <button onClick={deleteConversation} disabled={deleting} style={{ flex: 1, padding: '10px 0', borderRadius: 10, border: 'none', background: '#ef4444', color: '#fff', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
+                {deleting ? '...' : 'Supprimer'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {/* Messages */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 6 }}>

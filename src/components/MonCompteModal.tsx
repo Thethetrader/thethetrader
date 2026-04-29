@@ -17,11 +17,11 @@ interface Props {
 
 type View = 'menu' | 'profil' | 'mdp' | 'contact';
 
-const BG = '#111827';
-const CARD = '#1f2937';
-const BORDER = '#374151';
-const TEXT = '#f9fafb';
-const MUTED = '#9ca3af';
+const BG = '#f8fafc';
+const CARD = '#ffffff';
+const BORDER = '#e2e8f0';
+const TEXT = '#0f172a';
+const MUTED = '#94a3b8';
 const GREEN = '#10b981';
 
 const planLabel = (plan: string | null) => {
@@ -39,7 +39,7 @@ function Row({ icon, label, right, onClick, danger }: { icon: React.ReactNode; l
     <div
       onClick={onClick}
       style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 20px', cursor: onClick ? 'pointer' : 'default', borderBottom: `1px solid ${BORDER}`, background: 'transparent', transition: 'background 0.12s' }}
-      onMouseEnter={e => { if (onClick) (e.currentTarget as HTMLElement).style.background = '#2d3748'; }}
+      onMouseEnter={e => { if (onClick) (e.currentTarget as HTMLElement).style.background = '#f1f5f9'; }}
       onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'transparent'}
     >
       <span style={{ color: danger ? '#ef4444' : MUTED, flexShrink: 0, width: 22, display: 'flex', justifyContent: 'center' }}>{icon}</span>
@@ -113,9 +113,9 @@ export default function MonCompteModal({ onClose, username, email, plan, profile
         {view === 'menu' && (<>
           {/* Profile row */}
           <div onClick={() => setView('profil')} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '16px 20px', background: CARD, cursor: 'pointer', borderBottom: `1px solid ${BORDER}`, marginTop: 12 }}
-            onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#2d3748'}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#f1f5f9'}
             onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = CARD}>
-            <div style={{ width: 50, height: 50, borderRadius: '50%', background: '#374151', overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: 50, height: 50, borderRadius: '50%', background: '#e2e8f0', overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {profileImage ? <img src={profileImage} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> :
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>}
             </div>
@@ -137,7 +137,7 @@ export default function MonCompteModal({ onClose, username, email, plan, profile
                 label="Notifications"
                 onClick={onToggleNotifications}
                 right={
-                  <div style={{ width: 42, height: 24, borderRadius: 12, background: notificationsEnabled ? GREEN : '#374151', position: 'relative', transition: 'background 0.2s', flexShrink: 0 }}>
+                  <div style={{ width: 42, height: 24, borderRadius: 12, background: notificationsEnabled ? GREEN : '#cbd5e1', position: 'relative', transition: 'background 0.2s', flexShrink: 0 }}>
                     <div style={{ position: 'absolute', top: 2, left: notificationsEnabled ? 20 : 2, width: 20, height: 20, borderRadius: '50%', background: '#fff', transition: 'left 0.2s' }} />
                   </div>
                 }
@@ -162,7 +162,7 @@ export default function MonCompteModal({ onClose, username, email, plan, profile
           {/* Avatar + edit */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '28px 20px 20px' }}>
             <div style={{ position: 'relative', marginBottom: 16 }}>
-              <div style={{ width: 88, height: 88, borderRadius: '50%', background: '#374151', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', border: `3px solid ${GREEN}` }}>
+              <div style={{ width: 88, height: 88, borderRadius: '50%', background: '#e2e8f0', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', border: `3px solid ${GREEN}` }}>
                 {profileImage ? <img src={profileImage} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> :
                   <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>}
               </div>
@@ -181,9 +181,9 @@ export default function MonCompteModal({ onClose, username, email, plan, profile
               {editingName ? (
                 <div style={{ display: 'flex', gap: 8, flex: 1 }}>
                   <input value={editUsername} onChange={e => setEditUsername(e.target.value)} autoFocus onKeyDown={e => { if (e.key === 'Enter') saveName(); if (e.key === 'Escape') setEditingName(false); }}
-                    style={{ flex: 1, background: '#374151', border: `1px solid ${GREEN}`, borderRadius: 8, padding: '5px 10px', color: TEXT, fontSize: 14, outline: 'none' }} />
+                    style={{ flex: 1, background: CARD, border: `1px solid ${GREEN}`, borderRadius: 8, padding: '5px 10px', color: TEXT, fontSize: 14, outline: 'none' }} />
                   <button onClick={saveName} disabled={savingName} style={{ background: GREEN, color: '#fff', border: 'none', borderRadius: 8, padding: '5px 12px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>{savingName ? '…' : '✓'}</button>
-                  <button onClick={() => setEditingName(false)} style={{ background: '#374151', color: MUTED, border: 'none', borderRadius: 8, padding: '5px 10px', fontSize: 13, cursor: 'pointer' }}>✗</button>
+                  <button onClick={() => setEditingName(false)} style={{ background: '#e2e8f0', color: MUTED, border: 'none', borderRadius: 8, padding: '5px 10px', fontSize: 13, cursor: 'pointer' }}>✗</button>
                 </div>
               ) : (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, justifyContent: 'flex-end' }}>
@@ -257,7 +257,7 @@ export default function MonCompteModal({ onClose, username, email, plan, profile
               { label: 'Twitter / X', icon: '🐦', sub: '@tradingpourlesnuls', action: () => window.open('https://twitter.com/tradingpourlesnuls') },
             ].map(item => (
               <div key={item.label} onClick={item.action} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '16px 18px', background: CARD, borderRadius: 12, border: `1px solid ${BORDER}`, cursor: 'pointer', transition: 'background 0.12s' }}
-                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#2d3748'}
+                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#f1f5f9'}
                 onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = CARD}>
                 <span style={{ fontSize: 28, flexShrink: 0 }}>{item.icon}</span>
                 <div style={{ flex: 1 }}>

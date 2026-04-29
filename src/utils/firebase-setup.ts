@@ -556,6 +556,17 @@ export const deleteMessage = async (messageId: string): Promise<boolean> => {
   }
 };
 
+export const updateMessageContent = async (messageId: string, content: string): Promise<boolean> => {
+  try {
+    const messageRef = ref(database, `messages/${messageId}`);
+    await update(messageRef, { content, edited: true });
+    return true;
+  } catch (error) {
+    console.error('❌ Erreur modification message Firebase:', error);
+    return false;
+  }
+};
+
 // Supprimer un trade personnel
 export const deletePersonalTrade = async (tradeId: string): Promise<boolean> => {
   try {

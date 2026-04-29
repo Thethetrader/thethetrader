@@ -3,7 +3,7 @@ import ProfitLoss from './ProfitLoss';
 import ChatZone from './ChatZone';
 import RumbleTalk from './RumbleTalk';
 import ChatCommunauteAdmin from './ChatCommunauteAdmin';
-import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, deleteMessage, functions } from '../utils/firebase-setup';
+import { addMessage, getMessages, addSignal, getSignals, updateSignalStatus, subscribeToMessages, uploadImage, updateSignalReactions, subscribeToSignals, database, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, deleteMessage, updateMessageContent, functions } from '../utils/firebase-setup';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, sendLocalNotification } from '../utils/push-notifications';
 import { ref, update, onValue, get, remove, push, set } from 'firebase/database';
 import { httpsCallable } from 'firebase/functions';
@@ -300,6 +300,9 @@ export default function AdminInterface() {
   // États pour les notifications admin
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
+  const [notificationTarget, setNotificationTarget] = useState<'all' | 'specific'>('all');
+  const [notificationSelectedUsers, setNotificationSelectedUsers] = useState<string[]>([]); // user IDs
+  const [notificationUserSearch, setNotificationUserSearch] = useState('');
   
   // États pour la notification livestream personnalisée
   const [showLivestreamModal, setShowLivestreamModal] = useState(false);
@@ -654,13 +657,14 @@ export default function AdminInterface() {
       const formattedMessages = messages.map(msg => ({
         id: msg.id || '',
         text: msg.content,
-        timestamp: new Date(msg.timestamp || Date.now()).toLocaleString('fr-FR', { 
-          day: '2-digit', 
-          month: '2-digit', 
-          hour: '2-digit', 
-          minute: '2-digit' 
+        timestamp: new Date(msg.timestamp || Date.now()).toLocaleString('fr-FR', {
+          day: '2-digit',
+          month: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
         }),
         author: msg.author,
+        author_type: msg.author_type,
         author_avatar: msg.author_avatar, // CONSERVER l'avatar de l'auteur !
         attachment: msg.attachment_data ? {
           type: msg.attachment_type || 'image/jpeg',
@@ -744,6 +748,8 @@ export default function AdminInterface() {
 
   }, []);
   const [chatMessage, setChatMessage] = useState('');
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [editingMessageText, setEditingMessageText] = useState('');
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -877,6 +883,7 @@ export default function AdminInterface() {
     text: string;
     timestamp: string;
     author: string;
+    author_type?: string;
     author_avatar?: string;
     attachment?: any;
     attachment_data?: string;
@@ -1200,45 +1207,67 @@ export default function AdminInterface() {
       alert('Veuillez saisir un message');
       return;
     }
+    if (notificationTarget === 'specific' && notificationSelectedUsers.length === 0) {
+      alert('Sélectionnez au moins un utilisateur');
+      return;
+    }
 
     try {
-      // Créer un message dans tous les canaux de chat pour que les utilisateurs le voient
-      const channels = ['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'];
-      
-      for (const channelId of channels) {
-        await addMessage(channelId, `📢 MESSAGE ADMIN: ${notificationMessage}`, 'Admin');
+      if (notificationTarget === 'all') {
+        // Envoyer à tous les utilisateurs via les canaux
+        const channels = ['general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss'];
+        for (const channelId of channels) {
+          await addMessage(channelId, `📢 MESSAGE ADMIN: ${notificationMessage}`, 'Admin');
+        }
+        await notifyNewSignal({
+          symbol: '📢 MESSAGE ADMIN',
+          type: 'ADMIN_MESSAGE',
+          entry: notificationMessage,
+          status: 'ACTIVE',
+          timestamp: new Date().toISOString(),
+          channel_id: 'admin-notification'
+        });
+        alert('Notification envoyée à tous les utilisateurs !');
+      } else {
+        // Envoyer aux utilisateurs sélectionnés via leurs tokens FCM
+        const { ref: fbRef, get: fbGet } = await import('firebase/database');
+        const { database: db, functions: fbFunctions } = await import('../utils/firebase-setup');
+        const { httpsCallable: fbCallable } = await import('firebase/functions');
+
+        const fcmTokensRef = fbRef(db, 'fcm_tokens');
+        const snapshot = await fbGet(fcmTokensRef);
+        const tokens: string[] = [];
+
+        if (snapshot.exists()) {
+          const tokensData = snapshot.val();
+          Object.values(tokensData).forEach((tokenData: any) => {
+            if (tokenData.token && tokenData.userId && notificationSelectedUsers.includes(tokenData.userId)) {
+              tokens.push(tokenData.token);
+            }
+          });
+        }
+
+        if (tokens.length === 0) {
+          alert('Aucun token FCM trouvé pour ces utilisateurs (notifications peut-être désactivées)');
+          return;
+        }
+
+        const sendFn = fbCallable(fbFunctions, 'sendLivestreamNotification');
+        const result: any = await sendFn({
+          tokens,
+          customMessage: notificationMessage,
+          title: '📢 Message Admin',
+        });
+        alert(`Notification ciblée envoyée à ${result.data?.successCount ?? tokens.length} utilisateur(s) !`);
       }
 
-      // Aussi ajouter comme signal pour les notifications push
-      await addSignal('admin-notification', {
-        symbol: '📢 MESSAGE ADMIN',
-        type: 'ADMIN_MESSAGE',
-        entry: notificationMessage,
-        status: 'ACTIVE',
-        timestamp: new Date().toISOString(),
-        channel_id: 'admin-notification',
-        pnl: 0,
-        reactions: {}
-      });
-
-      // Déclencher la notification push comme pour les signaux
-      await notifyNewSignal({
-        symbol: '📢 MESSAGE ADMIN',
-        type: 'ADMIN_MESSAGE',
-        entry: notificationMessage,
-        status: 'ACTIVE',
-        timestamp: new Date().toISOString(),
-        channel_id: 'admin-notification'
-      });
-      
-      // Réinitialiser le modal
       setNotificationMessage('');
+      setNotificationSelectedUsers([]);
+      setNotificationTarget('all');
       setShowNotificationModal(false);
-      
-      alert('Message admin envoyé dans tous les salons de chat !');
     } catch (error) {
       console.error('❌ Erreur envoi notification:', error);
-      alert('Erreur lors de l\'envoi du message: ' + error.message);
+      alert('Erreur lors de l\'envoi: ' + (error as any).message);
     }
   };
 
@@ -2643,10 +2672,14 @@ const dailyPnLChartData = useMemo(
         }
       }
       if (line.includes('Entry:')) {
-        entry = line.split('Entry:')[1]?.trim() || '';
+        entry = line.split('Entry:')[1]?.split('TP:')[0]?.trim() || '';
       }
       if (line.includes('TP:')) {
         tp = line.split('TP:')[1]?.split('SL:')[0]?.trim() || '';
+        // SL may be on same line (old format) or not
+        if (line.includes('SL:')) sl = line.split('SL:')[1]?.trim() || '';
+      }
+      if (line.includes('SL:') && !line.includes('TP:')) {
         sl = line.split('SL:')[1]?.trim() || '';
       }
       if (line.includes('⏰')) {
@@ -2666,6 +2699,9 @@ const dailyPnLChartData = useMemo(
       }
       if (line.includes('P&L:')) {
         pnl = line.split('P&L:')[1]?.trim() || '';
+      }
+      if (line.includes(' R:') && line.includes('fermée')) {
+        pnl = line.split(' R:')[1]?.trim() || '';
       }
       if (line.includes('fermé Résultat:') && !closeMessage) {
         closeMessage = line;
@@ -3348,12 +3384,12 @@ const dailyPnLChartData = useMemo(
       // Les stats seront mises à jour automatiquement via allSignalsForStats
       
     } else {
-      // Sinon on demande le P&L
-      const pnl = prompt(`Entrez le P&L final pour ce signal (ex: +$150 ou -$50):`);
+      // Sinon on demande le R
+      const pnl = prompt(`Entrez le résultat en R (ex: +1R ou -2R):`);
       if (pnl !== null) {
         // Générer la phrase de fermeture
         const statusText = newStatus === 'WIN' ? 'gagnante' : newStatus === 'LOSS' ? 'perdante' : 'break-even';
-        const closeMessage = `Position ${statusText} fermée - P&L: ${pnl}`;
+        const closeMessage = `Position ${statusText} fermée - R: ${pnl}`;
         
         console.log('🔍 Debug signal dans handleSignalStatus:', signal);
         console.log('🔍 Debug referenceNumber dans handleSignalStatus:', (signal as any).referenceNumber);
@@ -3380,7 +3416,7 @@ const dailyPnLChartData = useMemo(
         const conclusionMessage = `📊 SIGNAL FERMÉ 📊\n\n` +
           `Signal ${(signal as any).referenceNumber || ''} fermé\n` +
           `Résultat: ${newStatus === 'WIN' ? '🟢 GAGNANT' : newStatus === 'LOSS' ? '🔴 PERDANT' : '🔵 BREAK-EVEN'}\n` +
-          `${newStatus !== 'BE' ? `P&L: ${pnl}` : ''}\n` +
+          `${newStatus !== 'BE' ? `R: ${pnl}` : ''}\n` +
           `[SIGNAL_ID:${signalId}]`;
         
         const messageData = {
@@ -4041,9 +4077,10 @@ const dailyPnLChartData = useMemo(
         console.log('🔍 Debug referenceNumber:', savedSignal.referenceNumber);
         
         const signalMessage = `🚀 **${signalData.type} ${signalData.symbol || 'N/A'}** ${savedSignal.referenceNumber || ''}\n` +
-          `📊 Entry: ${signalData.entry || 'N/A'} TP: ${signalData.takeProfit || 'N/A'} SL: ${signalData.stopLoss || 'N/A'}\n` +
-          `🎯 R:R ≈ ${rr}\n` +
-          `⏰ ${signalData.timeframe || '1 min'}\n` +
+          `📊 Entry: ${signalData.entry || 'N/A'}\n` +
+          `🎯 TP: ${signalData.takeProfit || 'N/A'}\n` +
+          `🛑 SL: ${signalData.stopLoss || 'N/A'}\n` +
+          `📐 R:R ${rr}\n` +
           `[SIGNAL_ID:${savedSignal.id}]`;
         
         try {
@@ -4188,12 +4225,12 @@ const dailyPnLChartData = useMemo(
             
             <div style="margin-bottom: 20px;">
               <label style="display: block; margin-bottom: 8px; color: #d1d5db;">
-                P&L Final (ex: +$150 ou -$50):
+                Résultat en R (ex: +1R ou -2R):
               </label>
               <input 
                 id="pnlInput"
                 type="text" 
-                placeholder="+$150"
+                placeholder="+1R"
                 style="
                   width: 100%;
                   padding: 8px 12px;
@@ -4302,7 +4339,7 @@ const dailyPnLChartData = useMemo(
           confirmBtn.onclick = () => {
             const pnlValue = pnlInput.value.trim();
             if (!pnlValue) {
-              console.warn('Veuillez entrer le P&L');
+              console.warn('Veuillez entrer le résultat en R');
               return;
             }
             
@@ -4322,7 +4359,7 @@ const dailyPnLChartData = useMemo(
       const statusText = newStatus === 'WIN' ? 'gagnante' : newStatus === 'LOSS' ? 'perdante' : 'break-even';
       const closeMessage = newStatus === 'BE' 
         ? `Position ${statusText} fermée - Break-even`
-        : `Position ${statusText} fermée - P&L: ${pnl}`;
+        : `Position ${statusText} fermée - R: ${pnl}`;
       
       // Convertir l'image de fermeture en base64 si elle existe
       let closureImageBase64: string | undefined;
@@ -4452,7 +4489,7 @@ const dailyPnLChartData = useMemo(
       const conclusionMessage = `📊 SIGNAL FERMÉ 📊\n\n` +
         `Signal ${updatedSignal.referenceNumber || ''} fermé\n` +
         `Résultat: ${newStatus === 'WIN' ? '🟢 GAGNANT' : newStatus === 'LOSS' ? '🔴 PERDANT' : '🔵 BREAK-EVEN'}\n` +
-        `${newStatus !== 'BE' ? `P&L: ${pnl}` : ''}\n` +
+        `${newStatus !== 'BE' ? `R: ${pnl}` : ''}\n` +
         `[SIGNAL_ID:${signalId}]`;
       
       try {
@@ -6869,7 +6906,7 @@ const dailyPnLChartData = useMemo(
                       
                       {(chatMessages[selectedChannel.id] || []).length > 0 && (
                         (chatMessages[selectedChannel.id] || []).map((message, messageIndex) => (
-                          <div key={message.id} id={`message-${message.id}`} className="flex items-start gap-3">
+                          <div key={message.id} id={`message-${message.id}`} className="flex items-start gap-3 group">
                             <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-sm overflow-hidden">
                               {message.author_avatar ? (
                                 <img src={message.author_avatar} alt="Profile" className="w-full h-full object-cover" />
@@ -6883,8 +6920,54 @@ const dailyPnLChartData = useMemo(
                               <div className="flex items-center gap-2 mb-1">
                                 <span className="font-semibold text-white">{message.author}</span>
                                 <span className="text-xs text-gray-400">{message.timestamp}</span>
+                                {message.author_type === 'admin' && (
+                                  <div className="hidden group-hover:flex items-center gap-1 ml-1">
+                                    {!message.text.includes('[SIGNAL_ID:') && (
+                                      <button
+                                        onClick={() => { setEditingMessageId(message.id); setEditingMessageText(message.text); }}
+                                        className="text-gray-500 hover:text-blue-400 transition-colors p-1 rounded"
+                                        title="Modifier"
+                                      >
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                      </button>
+                                    )}
+                                    <button
+                                      onClick={async () => { if (window.confirm('Supprimer ce message ?')) { await deleteMessage(message.id); setChatMessages(prev => ({ ...prev, [selectedChannel.id]: (prev[selectedChannel.id] || []).filter(m => m.id !== message.id) })); } }}
+                                      className="text-gray-500 hover:text-red-400 transition-colors p-1 rounded"
+                                      title="Supprimer"
+                                    >
+                                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                                    </button>
+                                  </div>
+                                )}
                               </div>
-                              <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words">
+                              {editingMessageId === message.id ? (
+                                <div className="flex gap-2 items-end">
+                                  <textarea
+                                    className="flex-1 bg-gray-700 text-white rounded-lg p-2 text-sm border border-blue-500 outline-none resize-none"
+                                    rows={3}
+                                    value={editingMessageText}
+                                    onChange={e => setEditingMessageText(e.target.value)}
+                                    onKeyDown={async e => {
+                                      if (e.key === 'Enter' && !e.shiftKey) {
+                                        e.preventDefault();
+                                        if (editingMessageText.trim()) {
+                                          await updateMessageContent(message.id, editingMessageText.trim());
+                                          setChatMessages(prev => ({ ...prev, [selectedChannel.id]: (prev[selectedChannel.id] || []).map(m => m.id === message.id ? { ...m, text: editingMessageText.trim() } : m) }));
+                                        }
+                                        setEditingMessageId(null);
+                                      } else if (e.key === 'Escape') {
+                                        setEditingMessageId(null);
+                                      }
+                                    }}
+                                  />
+                                  <div className="flex flex-col gap-1">
+                                    <button onClick={async () => { if (editingMessageText.trim()) { await updateMessageContent(message.id, editingMessageText.trim()); setChatMessages(prev => ({ ...prev, [selectedChannel.id]: (prev[selectedChannel.id] || []).map(m => m.id === message.id ? { ...m, text: editingMessageText.trim() } : m) })); } setEditingMessageId(null); }} className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded">✓</button>
+                                    <button onClick={() => setEditingMessageId(null)} className="bg-gray-600 hover:bg-gray-500 text-white text-xs px-2 py-1 rounded">✕</button>
+                                  </div>
+                                </div>
+                              ) : null}
+                              <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words" style={{ display: editingMessageId === message.id ? 'none' : undefined }}>
                                 {message.text && (
                                   <div className="text-white">
                                     {message.text.includes('🎥 **Session Trading Live') ? (
@@ -6984,7 +7067,7 @@ const dailyPnLChartData = useMemo(
                                                     </div>
                                                     {signalData.pnl && (
                                                       <div className="text-gray-300">
-                                                        P&L: <span className={signalData.pnl.includes('-') ? 'text-red-100' : 'text-green-100'}>{signalData.pnl}</span>
+                                                        R: <span className={signalData.pnl.includes('-') ? 'text-red-100' : 'text-green-100'}>{signalData.pnl}</span>
                                                       </div>
                                                     )}
                                                   </div>
@@ -6996,9 +7079,6 @@ const dailyPnLChartData = useMemo(
                                                     <span className="font-bold text-white">
                                                       {signalData.type} {signalData.symbol}
                                                     </span>
-                                                    {signalData.timeframe && (
-                                                      <span className="text-sm text-gray-400">{signalData.timeframe}</span>
-                                                    )}
                                                   </div>
                                                   {signalData.entry && (
                                                     <div className="flex items-center gap-2 text-sm">
@@ -7008,14 +7088,8 @@ const dailyPnLChartData = useMemo(
                                                   )}
                                                   {signalData.rr && (
                                                     <div className="flex items-center gap-2 text-sm">
-                                                      <span className="text-gray-400">🎯</span>
-                                                      <span className="text-white">R:R ≈ {signalData.rr}</span>
-                                                    </div>
-                                                  )}
-                                                  {signalData.timeframe && (
-                                                    <div className="flex items-center gap-2 text-sm">
-                                                      <span className="text-gray-400">⏰</span>
-                                                      <span className="text-white">{signalData.timeframe}</span>
+                                                      <span className="text-gray-400">📐</span>
+                                                      <span className="text-white">R:R {signalData.rr}</span>
                                                     </div>
                                                   )}
                                                 </div>
@@ -7124,7 +7198,7 @@ const dailyPnLChartData = useMemo(
                     </div>
                     
                     {/* Barre de message */}
-                    <div className="border-t border-gray-700 p-2 md:p-4 fixed bottom-0 left-0 right-0 bg-gray-800 z-30 md:left-64" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                    <div className="border-t border-gray-700 p-2 md:p-4 fixed bottom-0 left-0 right-0 bg-gray-800 z-30 md:left-64" style={{ backgroundColor: 'var(--bg-secondary)', paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}>
                       <div className="flex items-center gap-1.5 md:gap-2">
                         <input
                           type="text"
@@ -7341,15 +7415,15 @@ const dailyPnLChartData = useMemo(
                                 </div>
                               )}
 
-                              {/* P&L - affiché dans tous les salons sauf calendrier */}
+                              {/* R - affiché dans tous les salons sauf calendrier */}
                               {selectedChannel.id !== 'calendrier' && signal.pnl && (
                                 <div className="pt-2 border-t border-gray-600">
                                   <div className="flex items-center gap-2">
-                                    <span className="text-sm font-medium">P&L:</span>
+                                    <span className="text-sm font-medium">R:</span>
                                     <span className={`text-sm font-bold ${
-                                      parseFloat(signal.pnl) >= 0 ? 'text-green-100' : 'text-red-100'
+                                      signal.pnl.includes('-') ? 'text-red-100' : 'text-green-100'
                                     }`}>
-                                      {parseFloat(signal.pnl) >= 0 ? '+' : ''}{signal.pnl}$
+                                      {signal.pnl}
                                     </span>
                                   </div>
                                 </div>
@@ -7660,7 +7734,7 @@ const dailyPnLChartData = useMemo(
                                                     </span>
                                                     {signalData.pnl && (
                                                       <span className={`text-sm ${signalData.pnl.includes('-') ? 'text-red-100' : 'text-green-100'}`}>
-                                                        P&L: {signalData.pnl}
+                                                        R: {signalData.pnl}
                                                       </span>
                                                     )}
                                                   </div>
@@ -7743,7 +7817,7 @@ const dailyPnLChartData = useMemo(
                                                 {signalData.rr && (
                                                   <div className="flex items-center gap-2 text-sm">
                                                     <span className="text-gray-400">🎯</span>
-                                                    <span className="text-white">R:R ≈ {signalData.rr}</span>
+                                                    <span className="text-white">R:R {signalData.rr}</span>
                                                   </div>
                                                 )}
                                                 {signalData.timeframe && (
@@ -7850,7 +7924,7 @@ const dailyPnLChartData = useMemo(
                                               }
                                             }}
                                           >
-                                            Signal {currentSignal?.referenceNumber || ''} fermé avec {currentSignal?.pnl ? `P&L: ${currentSignal.pnl}` : 'aucun P&L'}
+                                            Signal {currentSignal?.referenceNumber || ''} fermé avec {currentSignal?.pnl ? `R: ${currentSignal.pnl}` : 'sans résultat'}
                                           </span>
                                         </div>
                                       )}
@@ -7883,7 +7957,7 @@ const dailyPnLChartData = useMemo(
                   </div>
                   
                   {/* Barre de message */}
-                  <div className="border-t border-gray-700 p-2 md:p-4 fixed bottom-0 left-0 right-0 bg-gray-800 z-10 md:left-64 md:right-0" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                  <div className="border-t border-gray-700 p-2 md:p-4 fixed bottom-0 left-0 right-0 bg-gray-800 z-10 md:left-64 md:right-0" style={{ backgroundColor: 'var(--bg-secondary)', paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}>
                     <div className="flex items-center gap-1.5 md:gap-2">
                       <input
                         type="text"
@@ -8084,6 +8158,26 @@ const dailyPnLChartData = useMemo(
                   />
                 </div>
 
+                {/* RR calculé */}
+                {(() => {
+                  const entry = parseFloat(signalData.entry.replace(',', '.'));
+                  const tp = parseFloat(signalData.takeProfit.replace(',', '.'));
+                  const sl = parseFloat(signalData.stopLoss.replace(',', '.'));
+                  if (!isNaN(entry) && !isNaN(tp) && !isNaN(sl) && entry !== sl) {
+                    const rr = signalData.type === 'BUY'
+                      ? (tp - entry) / (entry - sl)
+                      : (entry - tp) / (sl - entry);
+                    const color = rr >= 2 ? '#10b981' : rr >= 1 ? '#f59e0b' : '#ef4444';
+                    return (
+                      <div className="flex items-center gap-2 px-3 py-2 rounded-lg border" style={{ borderColor: color, background: `${color}15` }}>
+                        <span className="text-sm font-medium" style={{ color }}>R:R</span>
+                        <span className="font-bold text-lg" style={{ color }}>{rr >= 0 ? `${rr.toFixed(2)}R` : 'Invalide'}</span>
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
+
                 {/* Description */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
@@ -8095,7 +8189,7 @@ const dailyPnLChartData = useMemo(
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
                 </div>
-                
+
                 {/* Image */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">Capture d'écran</label>
@@ -8430,6 +8524,26 @@ const dailyPnLChartData = useMemo(
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
                   />
                 </div>
+
+                {/* RR calculé trade */}
+                {(() => {
+                  const entry = parseFloat(tradeData.entry.replace(',', '.'));
+                  const exit = parseFloat(tradeData.exit.replace(',', '.'));
+                  const sl = parseFloat(tradeData.stopLoss.replace(',', '.'));
+                  if (!isNaN(entry) && !isNaN(exit) && !isNaN(sl) && entry !== sl) {
+                    const rr = tradeData.type === 'BUY'
+                      ? (exit - entry) / (entry - sl)
+                      : (entry - exit) / (sl - entry);
+                    const color = rr >= 2 ? '#10b981' : rr >= 1 ? '#f59e0b' : '#ef4444';
+                    return (
+                      <div className="flex items-center gap-2 px-3 py-2 rounded-lg border" style={{ borderColor: color, background: `${color}15` }}>
+                        <span className="text-sm font-medium" style={{ color }}>R:R</span>
+                        <span className="font-bold text-lg" style={{ color }}>{rr >= 0 ? `${rr.toFixed(2)}R` : 'Invalide'}</span>
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
 
                 {/* PnL */}
                 <div>
@@ -9287,7 +9401,7 @@ const dailyPnLChartData = useMemo(
 
                     {signal.pnl && (
                       <div className="mb-3">
-                        <span className="text-sm text-gray-400">P&L:</span>
+                        <span className="text-sm text-gray-400">R:</span>
                         <span className={`ml-2 font-bold ${
                           signal.pnl.includes('+') || signal.pnl.includes('GAGNANT') ? 'text-green-100' : 
                           signal.pnl.includes('-') || signal.pnl.includes('PERDANT') ? 'text-red-100' : 
@@ -9547,6 +9661,53 @@ const dailyPnLChartData = useMemo(
               </button>
             </div>
             
+            {/* Target toggle */}
+            <div className="mb-4 flex gap-2">
+              <button
+                onClick={() => setNotificationTarget('all')}
+                className={`flex-1 py-2 rounded-lg text-sm font-semibold border transition-colors ${notificationTarget === 'all' ? 'bg-blue-600 border-blue-500 text-white' : 'bg-gray-700 border-gray-600 text-gray-300'}`}
+              >Tous les utilisateurs</button>
+              <button
+                onClick={() => setNotificationTarget('specific')}
+                className={`flex-1 py-2 rounded-lg text-sm font-semibold border transition-colors ${notificationTarget === 'specific' ? 'bg-purple-600 border-purple-500 text-white' : 'bg-gray-700 border-gray-600 text-gray-300'}`}
+              >Utilisateurs ciblés</button>
+            </div>
+
+            {/* User selector for targeted mode */}
+            {notificationTarget === 'specific' && (
+              <div className="mb-4">
+                <label className="block text-sm text-gray-300 mb-2">
+                  Sélectionner les utilisateurs ({notificationSelectedUsers.length} sélectionné{notificationSelectedUsers.length > 1 ? 's' : ''})
+                </label>
+                <input
+                  type="text"
+                  value={notificationUserSearch}
+                  onChange={e => setNotificationUserSearch(e.target.value)}
+                  placeholder="Rechercher par email..."
+                  className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 mb-2 text-sm focus:outline-none focus:border-purple-500"
+                />
+                <div className="max-h-40 overflow-y-auto rounded-lg border border-gray-600 bg-gray-750">
+                  {users
+                    .filter(u => !notificationUserSearch || u.email?.toLowerCase().includes(notificationUserSearch.toLowerCase()))
+                    .map(u => (
+                      <label key={u.id} className="flex items-center gap-3 px-3 py-2 hover:bg-gray-700 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={notificationSelectedUsers.includes(u.id)}
+                          onChange={e => {
+                            if (e.target.checked) setNotificationSelectedUsers(prev => [...prev, u.id]);
+                            else setNotificationSelectedUsers(prev => prev.filter(id => id !== u.id));
+                          }}
+                          className="w-4 h-4 rounded accent-purple-500"
+                        />
+                        <span className="text-sm text-gray-200 truncate">{u.email}</span>
+                      </label>
+                    ))
+                  }
+                </div>
+              </div>
+            )}
+
             <div className="mb-6">
               <label className="block text-sm text-gray-300 mb-2">Message à envoyer</label>
               <textarea
@@ -9560,7 +9721,7 @@ const dailyPnLChartData = useMemo(
                 {notificationMessage.length}/200 caractères
               </div>
             </div>
-            
+
             <div className="flex gap-3">
               <button
                 onClick={handleSendNotification}
@@ -9572,6 +9733,8 @@ const dailyPnLChartData = useMemo(
                 onClick={() => {
                   setShowNotificationModal(false);
                   setNotificationMessage('');
+                  setNotificationSelectedUsers([]);
+                  setNotificationTarget('all');
                 }}
                 className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium"
               >

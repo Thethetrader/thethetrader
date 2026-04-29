@@ -1680,7 +1680,7 @@ const App = () => {
 
       {/* Version PWA - Page scrollable quand connecté */}
       {isPWA ? (
-        <div className={`w-screen ${user ? 'min-h-screen' : 'h-screen overflow-hidden flex items-center justify-center'}`} style={{ background: user ? '#0F1115' : 'var(--bg-primary)' }}>
+        <div className={`w-screen ${user ? 'min-h-screen' : 'h-screen overflow-hidden flex items-center justify-center'}`} style={{ background: user ? '#0F1115' : '#f8fafc' }}>
           {/* Hero Section - Centré verticalement quand pas connecté, scrollable quand connecté */}
           <div className={`text-center ${user ? 'pt-20 pb-8' : 'w-full'} px-4 sm:px-6 max-w-full`}>
             {!user && (
@@ -1695,7 +1695,7 @@ const App = () => {
                     style={{ clipPath: 'inset(10% 5% 15% 5%)' }}
                   />
                 </div>
-                <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, color: 'var(--text-secondary)' }} className="text-lg sm:text-2xl mb-6 sm:mb-8 max-w-4xl mx-auto px-2 -mt-8">
+                <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, color: '#4b5563' }} className="text-lg sm:text-2xl mb-6 sm:mb-8 max-w-4xl mx-auto px-2 -mt-8">
                   Un setup très simple, des signaux expliqués, un journal de performance. Rejoins la communauté et trade en confiance.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mb-6 sm:mb-8 px-4">
@@ -1712,7 +1712,7 @@ const App = () => {
                     href="https://x.com/thethetrader"
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}
+                    style={{ background: '#f1f5f9', color: '#374151', borderColor: '#e2e8f0' }}
                     className="inline-flex items-center gap-2 justify-center px-3 py-2 rounded-[12px] font-medium transition-all duration-200 border text-xs"
                   >
                     <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
