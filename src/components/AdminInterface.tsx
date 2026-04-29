@@ -5817,7 +5817,7 @@ const dailyPnLChartData = useMemo(
 
           {/* Résumé hebdomadaire */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-widest mb-3 text-gray-400">Weekly Breakdown</h4>
+            <h4 className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: 'var(--text-muted)' }}>Weekly Breakdown</h4>
             <div className="space-y-1">
               {((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? getWeeklyBreakdownTrades() : getWeeklyBreakdown()).map((weekData, index) => (
                 <div
@@ -5826,17 +5826,17 @@ const dailyPnLChartData = useMemo(
                   className="flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-all duration-150"
                   style={{
                     borderLeft: `3px solid ${weekData.isCurrentWeek ? '#3b82f6' : weekData.pnl > 0 ? '#22c55e' : weekData.pnl < 0 ? 'var(--loss-color)' : 'var(--border-color)'}`,
-                    background: weekData.isCurrentWeek ? 'rgba(59,130,246,0.07)' : 'rgba(55,65,81,0.5)',
+                    background: weekData.isCurrentWeek ? 'rgba(59,130,246,0.07)' : 'var(--bg-secondary)',
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.background = weekData.isCurrentWeek ? 'rgba(59,130,246,0.13)' : 'rgba(75,85,99,0.5)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = weekData.isCurrentWeek ? 'rgba(59,130,246,0.07)' : 'rgba(55,65,81,0.5)')}
+                  onMouseEnter={e => (e.currentTarget.style.background = weekData.isCurrentWeek ? 'rgba(59,130,246,0.13)' : 'var(--bg-tertiary)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = weekData.isCurrentWeek ? 'rgba(59,130,246,0.07)' : 'var(--bg-secondary)')}
                 >
-                  <span className="text-xs font-semibold" style={{ color: weekData.isCurrentWeek ? '#3b82f6' : '#9ca3af', minWidth: 44 }}>
+                  <span className="text-xs font-semibold" style={{ color: weekData.isCurrentWeek ? '#3b82f6' : 'var(--text-secondary)', minWidth: 44 }}>
                     {weekData.week}
                   </span>
                   <div className="flex items-center gap-1 flex-1 justify-center">
                     {weekData.wins === 0 && weekData.losses === 0 ? (
-                      <span style={{ fontSize: 11, color: '#6b7280' }}>—</span>
+                      <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>—</span>
                     ) : (
                       <>
                         {weekData.wins > 0 && (
@@ -5854,7 +5854,7 @@ const dailyPnLChartData = useMemo(
                   </div>
                   <span style={{
                     fontSize: 11, fontWeight: 700, minWidth: 52, textAlign: 'right',
-                    color: weekData.pnl > 0 ? '#22c55e' : weekData.pnl < 0 ? 'var(--loss-color)' : '#6b7280'
+                    color: weekData.pnl > 0 ? '#22c55e' : weekData.pnl < 0 ? 'var(--loss-color)' : 'var(--text-muted)'
                   }}>
                     {weekData.pnl !== 0
                       ? (selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendar')
