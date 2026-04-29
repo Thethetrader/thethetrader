@@ -2286,6 +2286,24 @@ const dailyPnLChartData = useMemo(
     return monthSignals;
   };
 
+  // Fonctions pour Journal Signaux filtrées par mois calendrier
+  const calculateTotalPnLForMonth = (): number => {
+    const monthSignals = getThisMonthSignals().filter(s => s.pnl && s.status !== 'ACTIVE');
+    return monthSignals.reduce((total, signal) => total + parsePnL(signal.pnl), 0);
+  };
+
+  const getTodaySignalsForMonth = (): number => {
+    return allSignalsForStats.filter(signal => {
+      const signalDate = new Date(signal.originalTimestamp || signal.timestamp);
+      const today = new Date(currentDate);
+      return signalDate.getDate() === today.getDate() &&
+             signalDate.getMonth() === today.getMonth() &&
+             signalDate.getFullYear() === today.getFullYear();
+    }).length;
+  };
+
+  const getThisMonthSignalsForMonth = (): number => getThisMonthSignals().length;
+
   // Fonctions pour les statistiques des trades personnels - DYNAMIQUES selon mois sélectionné
   const calculateTotalPnLTrades = (): number => {
     const monthTrades = getTradesForSelectedAccount.filter(t => {
@@ -5275,7 +5293,9 @@ const dailyPnLChartData = useMemo(
                             <div className="flex flex-col items-center space-y-1">
                               {totalPnL !== 0 && (
                                 <div className="text-xs font-bold text-center">
-                                  ${totalPnL.toFixed(0)}
+                                  {(selectedChannel.id !== 'trading-journal' && selectedChannel.id !== 'tpln-model')
+                                    ? `${totalPnL > 0 ? '+' : ''}${totalPnL % 1 === 0 ? totalPnL : totalPnL.toFixed(1)}R`
+                                    : `$${totalPnL.toFixed(0)}`}
                                 </div>
                               )}
                               {tradeCount > 0 && (
@@ -5596,6 +5616,20 @@ const dailyPnLChartData = useMemo(
               );
             })()}
 
+            {/* Résultat (somme des R du mois) - Journal Signaux uniquement */}
+            {selectedChannel.id === 'calendrier' && (() => {
+              const totalR = calculateTotalPnLForMonth();
+              const isPositive = totalR >= 0;
+              return (
+                <div className={`border rounded-lg p-4 ${isPositive ? 'bg-green-200/20 border-green-200/30' : 'bg-loss/20 border-loss/30'}`}>
+                  <div className={`text-sm mb-1 ${isPositive ? 'text-green-100' : 'text-loss'}`}>Résultat</div>
+                  <div className={`text-2xl font-bold ${isPositive ? 'text-green-100' : 'text-loss'}`}>
+                    {isPositive ? '+' : ''}{totalR % 1 === 0 ? totalR : totalR.toFixed(1)}R
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* Win Rate */}
             <div className="bg-blue-600/20 border-blue-500/30 rounded-lg py-1 px-4 border flex items-center justify-between">
               <div className="flex-1">
@@ -5605,8 +5639,8 @@ const dailyPnLChartData = useMemo(
                 </div>
               </div>
               <div style={{ marginLeft: '-4cm' }}>
-                <WinRateGauge 
-                  {...((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? getWinsAndLossesTradesForDisplay() : getWinsAndLosses())} 
+                <WinRateGauge
+                  {...((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? getWinsAndLossesTradesForDisplay() : getWinsAndLosses())}
                 />
               </div>
             </div>
@@ -5647,13 +5681,13 @@ const dailyPnLChartData = useMemo(
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Trade auj</div>
                 <div className="text-lg font-bold text-blue-400">
-                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? getTodayTrades().length : getTodaySignals().length}
+                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? getTodayTrades().length : getTodaySignalsForMonth()}
                 </div>
               </div>
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Trade ce mois</div>
                 <div className="text-lg font-bold text-white">
-                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? getThisMonthTrades().length : getThisMonthSignals().length}
+                  {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? getThisMonthTrades().length : getThisMonthSignalsForMonth()}
                 </div>
               </div>
             </div>
@@ -5663,18 +5697,28 @@ const dailyPnLChartData = useMemo(
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Avg Win</div>
                 <div className="text-lg font-bold text-green-100">
-                  {selectedChannel.id === 'trading-journal' ? 
+                  {selectedChannel.id === 'trading-journal' ?
                     (calculateAvgWinTradesForDisplay() > 0 ? `+$${calculateAvgWinTradesForDisplay()}` : '-') :
-                    (calculateAvgWin() > 0 ? `+$${calculateAvgWin()}` : '-')
+                    (() => {
+                      const wins = getThisMonthSignals().filter(s => s.status === 'WIN' && s.pnl);
+                      if (wins.length === 0) return '-';
+                      const avg = wins.reduce((sum, s) => sum + parsePnL(s.pnl), 0) / wins.length;
+                      return `+${avg.toFixed(1)}R`;
+                    })()
                   }
                 </div>
               </div>
               <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
                 <div className="text-xs text-gray-400 mb-1">Avg Loss</div>
                 <div className="text-lg font-bold text-loss">
-                  {selectedChannel.id === 'trading-journal' ? 
+                  {selectedChannel.id === 'trading-journal' ?
                     (calculateAvgLossTradesForDisplay() > 0 ? `-$${calculateAvgLossTradesForDisplay()}` : '-') :
-                    (calculateAvgLoss() > 0 ? `-$${calculateAvgLoss()}` : '-')
+                    (() => {
+                      const losses = getThisMonthSignals().filter(s => s.status === 'LOSS' && s.pnl);
+                      if (losses.length === 0) return '-';
+                      const avg = Math.abs(losses.reduce((sum, s) => sum + parsePnL(s.pnl), 0) / losses.length);
+                      return `-${avg.toFixed(1)}R`;
+                    })()
                   }
                 </div>
               </div>
