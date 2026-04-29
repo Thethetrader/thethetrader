@@ -7047,14 +7047,20 @@ export default function TradingPlatformShell() {
                                           <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
                                             {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
                                               <div className="mb-3">
-                                                <div className={`rounded-lg p-3 flex items-center justify-between ${signalData.status === 'WIN' ? 'bg-green-200/20 border border-green-200/40' : 'bg-red-500/20 border border-red-500/40'}`}>
-                                                  <span className={`font-bold text-sm ${signalData.status === 'WIN' ? 'text-green-100' : 'text-red-400'}`}>
-                                                    {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
-                                                  </span>
-                                                  {signalData.pnl && (
-                                                    <span className={`text-base font-bold ${signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}`}>
-                                                      {signalData.pnl}
+                                                <div className="flex items-center gap-2 mb-2">
+                                                  <span className="text-xs">📊</span>
+                                                  <span className="text-sm font-semibold text-gray-300">SIGNAL FERMÉ</span>
+                                                </div>
+                                                <div className="text-sm">
+                                                  <div className="flex items-center gap-2 mb-1">
+                                                    <span className={signalData.status === 'WIN' ? 'text-green-100' : 'text-red-400'}>
+                                                      {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
                                                     </span>
+                                                  </div>
+                                                  {signalData.pnl && (
+                                                    <div className="text-gray-300">
+                                                      R: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}>{signalData.pnl}</span>
+                                                    </div>
                                                   )}
                                                 </div>
                                               </div>
@@ -7116,31 +7122,39 @@ export default function TradingPlatformShell() {
                                   
                                   return (
                                     <div className="mt-3 pt-3 border-t border-gray-600">
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-xs text-gray-400">Résultat du signal:</span>
-                                        <div className={`px-3 py-1.5 rounded-lg text-xs font-medium ${
-                                          isClosed && currentSignal?.status === 'WIN'
-                                            ? 'bg-green-200/60 text-white border-2 border-green-200/50 shadow-lg' // Bouton WIN actif
-                                            : isClosed && currentSignal?.status === 'LOSS'
-                                            ? 'bg-red-500 text-white border-2 border-red-400 shadow-lg' // Bouton LOSS actif
-                                            : isClosed && currentSignal?.status === 'BE'
-                                            ? 'bg-blue-500 text-white border-2 border-blue-400 shadow-lg' // Bouton BE actif
-                                            : 'bg-gray-500/30 text-gray-400 border border-gray-500/30' // Bouton neutre
-                                        }`}>
-                                          {isClosed && currentSignal?.status === 'WIN' ? '🟢 WIN' :
-                                           isClosed && currentSignal?.status === 'LOSS' ? '🔴 LOSS' :
-                                           isClosed && currentSignal?.status === 'BE' ? '🔵 BE' : '⏳ EN ATTENTE'}
-                                        </div>
-                                        {isClosed && currentSignal?.pnl && (
-                                          <span className={`text-xs font-medium ${
-                                            currentSignal.status === 'WIN' ? 'text-green-100' :
-                                            currentSignal.status === 'LOSS' ? 'text-red-400' :
-                                            'text-blue-400'
-                                          }`}>
-                                            R: {currentSignal.pnl}
+                                      {isClosed ? (
+                                        <div
+                                          className="px-3 py-2 rounded-lg flex items-center justify-between"
+                                          style={
+                                            currentSignal?.status === 'WIN'
+                                              ? { background: 'rgba(134,239,172,0.15)', border: '1px solid rgba(134,239,172,0.3)' }
+                                              : currentSignal?.status === 'LOSS'
+                                              ? { background: 'rgba(217,115,115,0.15)', border: '1px solid rgba(217,115,115,0.35)' }
+                                              : { background: 'rgba(96,165,250,0.15)', border: '1px solid rgba(96,165,250,0.3)' }
+                                          }
+                                        >
+                                          <span
+                                            className="text-xs font-semibold"
+                                            style={{
+                                              color: currentSignal?.status === 'WIN' ? '#86efac' : currentSignal?.status === 'LOSS' ? '#d97373' : '#93c5fd'
+                                            }}
+                                          >
+                                            {currentSignal?.status === 'WIN' ? '🟢 WIN' : currentSignal?.status === 'LOSS' ? '🔴 LOSS' : '🔵 BE'}
                                           </span>
-                                        )}
-                                      </div>
+                                          {currentSignal?.pnl && (
+                                            <span
+                                              className="text-xs font-bold"
+                                              style={{
+                                                color: currentSignal?.status === 'WIN' ? '#86efac' : currentSignal?.status === 'LOSS' ? '#d97373' : '#93c5fd'
+                                              }}
+                                            >
+                                              {currentSignal.pnl}
+                                            </span>
+                                          )}
+                                        </div>
+                                      ) : (
+                                        <span className="text-xs text-gray-400">⏳ EN ATTENTE</span>
+                                      )}
                                     </div>
                                   );
                                 })()}
@@ -7685,14 +7699,20 @@ export default function TradingPlatformShell() {
                                           <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
                                             {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
                                               <div className="mb-3">
-                                                <div className={`rounded-lg p-3 flex items-center justify-between ${signalData.status === 'WIN' ? 'bg-green-200/20 border border-green-200/40' : 'bg-red-500/20 border border-red-500/40'}`}>
-                                                  <span className={`font-bold text-sm ${signalData.status === 'WIN' ? 'text-green-100' : 'text-red-400'}`}>
-                                                    {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
-                                                  </span>
-                                                  {signalData.pnl && (
-                                                    <span className={`text-base font-bold ${signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}`}>
-                                                      {signalData.pnl}
+                                                <div className="flex items-center gap-2 mb-2">
+                                                  <span className="text-xs">📊</span>
+                                                  <span className="text-sm font-semibold text-gray-300">SIGNAL FERMÉ</span>
+                                                </div>
+                                                <div className="text-sm">
+                                                  <div className="flex items-center gap-2 mb-1">
+                                                    <span className={signalData.status === 'WIN' ? 'text-green-100' : 'text-red-400'}>
+                                                      {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
                                                     </span>
+                                                  </div>
+                                                  {signalData.pnl && (
+                                                    <div className="text-gray-300">
+                                                      R: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}>{signalData.pnl}</span>
+                                                    </div>
                                                   )}
                                                 </div>
                                               </div>
@@ -7754,31 +7774,39 @@ export default function TradingPlatformShell() {
                                   
                                   return (
                                     <div className="mt-3 pt-3 border-t border-gray-600">
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-xs text-gray-400">Résultat du signal:</span>
-                                        <div className={`px-3 py-1.5 rounded-lg text-xs font-medium ${
-                                          isClosed && currentSignal?.status === 'WIN'
-                                            ? 'bg-green-200/60 text-white border-2 border-green-200/50 shadow-lg' // Bouton WIN actif
-                                            : isClosed && currentSignal?.status === 'LOSS'
-                                            ? 'bg-red-500 text-white border-2 border-red-400 shadow-lg' // Bouton LOSS actif
-                                            : isClosed && currentSignal?.status === 'BE'
-                                            ? 'bg-blue-500 text-white border-2 border-blue-400 shadow-lg' // Bouton BE actif
-                                            : 'bg-gray-500/30 text-gray-400 border border-gray-500/30' // Bouton neutre
-                                        }`}>
-                                          {isClosed && currentSignal?.status === 'WIN' ? '🟢 WIN' :
-                                           isClosed && currentSignal?.status === 'LOSS' ? '🔴 LOSS' :
-                                           isClosed && currentSignal?.status === 'BE' ? '🔵 BE' : '⏳ EN ATTENTE'}
-                                        </div>
-                                        {isClosed && currentSignal?.pnl && (
-                                          <span className={`text-xs font-medium ${
-                                            currentSignal.status === 'WIN' ? 'text-green-100' :
-                                            currentSignal.status === 'LOSS' ? 'text-red-400' :
-                                            'text-blue-400'
-                                          }`}>
-                                            R: {currentSignal.pnl}
+                                      {isClosed ? (
+                                        <div
+                                          className="px-3 py-2 rounded-lg flex items-center justify-between"
+                                          style={
+                                            currentSignal?.status === 'WIN'
+                                              ? { background: 'rgba(134,239,172,0.15)', border: '1px solid rgba(134,239,172,0.3)' }
+                                              : currentSignal?.status === 'LOSS'
+                                              ? { background: 'rgba(217,115,115,0.15)', border: '1px solid rgba(217,115,115,0.35)' }
+                                              : { background: 'rgba(96,165,250,0.15)', border: '1px solid rgba(96,165,250,0.3)' }
+                                          }
+                                        >
+                                          <span
+                                            className="text-xs font-semibold"
+                                            style={{
+                                              color: currentSignal?.status === 'WIN' ? '#86efac' : currentSignal?.status === 'LOSS' ? '#d97373' : '#93c5fd'
+                                            }}
+                                          >
+                                            {currentSignal?.status === 'WIN' ? '🟢 WIN' : currentSignal?.status === 'LOSS' ? '🔴 LOSS' : '🔵 BE'}
                                           </span>
-                                        )}
-                                      </div>
+                                          {currentSignal?.pnl && (
+                                            <span
+                                              className="text-xs font-bold"
+                                              style={{
+                                                color: currentSignal?.status === 'WIN' ? '#86efac' : currentSignal?.status === 'LOSS' ? '#d97373' : '#93c5fd'
+                                              }}
+                                            >
+                                              {currentSignal.pnl}
+                                            </span>
+                                          )}
+                                        </div>
+                                      ) : (
+                                        <span className="text-xs text-gray-400">⏳ EN ATTENTE</span>
+                                      )}
                                     </div>
                                   );
                                 })()}
@@ -9762,10 +9790,10 @@ export default function TradingPlatformShell() {
               width: 58, height: 58,
               borderRadius: '50%',
               background: mobileView === 'channels' && !showFeed
-                ? 'linear-gradient(135deg, #6366f1, #8b5cf6)'
+                ? 'linear-gradient(135deg, #c9a84c, #a07830)'
                 : 'linear-gradient(135deg, #374151, #4b5563)',
               boxShadow: mobileView === 'channels' && !showFeed
-                ? '0 4px 20px rgba(99,102,241,0.5)'
+                ? '0 4px 20px rgba(201,168,76,0.45)'
                 : '0 2px 8px rgba(0,0,0,0.4)',
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
               color: '#fff',
