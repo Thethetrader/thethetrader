@@ -7086,6 +7086,18 @@ const dailyPnLChartData = useMemo(
                                                       <span className="text-white">Entry: {signalData.entry}</span>
                                                     </div>
                                                   )}
+                                                  {signalData.tp && (
+                                                    <div className="flex items-center gap-2 text-sm">
+                                                      <span className="text-gray-400">🎯</span>
+                                                      <span className="text-white">TP: {signalData.tp}</span>
+                                                    </div>
+                                                  )}
+                                                  {signalData.sl && (
+                                                    <div className="flex items-center gap-2 text-sm">
+                                                      <span className="text-gray-400">🛑</span>
+                                                      <span className="text-white">SL: {signalData.sl}</span>
+                                                    </div>
+                                                  )}
                                                   {signalData.rr && (
                                                     <div className="flex items-center gap-2 text-sm">
                                                       <span className="text-gray-400">📐</span>
@@ -7814,9 +7826,21 @@ const dailyPnLChartData = useMemo(
                                                     <span className="text-white">Entry: {signalData.entry}</span>
                                                   </div>
                                                 )}
-                                                {signalData.rr && (
+                                                {signalData.tp && (
                                                   <div className="flex items-center gap-2 text-sm">
                                                     <span className="text-gray-400">🎯</span>
+                                                    <span className="text-white">TP: {signalData.tp}</span>
+                                                  </div>
+                                                )}
+                                                {signalData.sl && (
+                                                  <div className="flex items-center gap-2 text-sm">
+                                                    <span className="text-gray-400">🛑</span>
+                                                    <span className="text-white">SL: {signalData.sl}</span>
+                                                  </div>
+                                                )}
+                                                {signalData.rr && (
+                                                  <div className="flex items-center gap-2 text-sm">
+                                                    <span className="text-gray-400">📐</span>
                                                     <span className="text-white">R:R {signalData.rr}</span>
                                                   </div>
                                                 )}

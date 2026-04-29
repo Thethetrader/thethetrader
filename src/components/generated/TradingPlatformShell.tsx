@@ -1709,6 +1709,7 @@ export default function TradingPlatformShell() {
 
   // Fonction pour changer de canal et réinitialiser selectedDate si nécessaire
   const handleChannelChange = async (channelId: string, channelName: string) => {
+    if (navigator.vibrate) navigator.vibrate(12);
     setShowFeed(false);
     // Masquer le contenu pendant la transition slide (évite le flash du salon précédent)
     if (window.innerWidth < 768) {
@@ -5197,6 +5198,20 @@ export default function TradingPlatformShell() {
               );
             })()}
 
+            {/* Résultat (somme des R du mois) - Journal Signaux uniquement */}
+            {selectedChannel.id === 'calendrier' && (() => {
+              const totalR = calculateTotalPnLForMonth();
+              const isPositive = totalR >= 0;
+              return (
+                <div className={`border rounded-lg p-4 ${isPositive ? 'bg-green-200/20 border-green-200/30' : 'bg-loss/20 border-loss/30'}`}>
+                  <div className={`text-sm mb-1 ${isPositive ? 'text-green-100' : 'text-loss'}`}>Résultat</div>
+                  <div className={`text-2xl font-bold ${isPositive ? 'text-green-100' : 'text-loss'}`}>
+                    {isPositive ? '+' : ''}{totalR % 1 === 0 ? totalR : totalR.toFixed(1)}R
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* Win Rate */}
             <div className="rounded-lg py-1 px-4 border flex items-center justify-between" style={{ background: 'rgba(59,130,246,0.12)', borderColor: 'rgba(59,130,246,0.35)' }}>
               <div className="flex-1">
@@ -5400,12 +5415,16 @@ export default function TradingPlatformShell() {
                     )}
                   </div>
 
-                  {/* PnL */}
+                  {/* PnL / R */}
                   <span style={{
                     fontSize: 11, fontWeight: 700, minWidth: 52, textAlign: 'right',
                     color: weekData.pnl > 0 ? '#22c55e' : weekData.pnl < 0 ? 'var(--loss-color)' : 'var(--text-muted)'
                   }}>
-                    {weekData.pnl !== 0 ? `${weekData.pnl > 0 ? '+' : ''}$${weekData.pnl}` : ''}
+                    {weekData.pnl !== 0
+                      ? selectedChannel.id === 'calendrier'
+                        ? `${weekData.pnl > 0 ? '+' : ''}${weekData.pnl % 1 === 0 ? weekData.pnl : weekData.pnl.toFixed(1)}R`
+                        : `${weekData.pnl > 0 ? '+' : ''}$${weekData.pnl}`
+                      : ''}
                   </span>
                 </div>
               ))}
@@ -6287,11 +6306,6 @@ export default function TradingPlatformShell() {
                 {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? (
                   <div className="mb-4 md:mb-6 border-b border-gray-600 pb-4">
                     <div className="space-y-4">
-                      {/* Titre */}
-                      <div>
-                        <h1 className="text-xl md:text-2xl font-bold text-white">{activeJournalButton === 'tpln' ? 'TPLN model' : 'Trading Journal'}</h1>
-                      </div>
-                      
                       {/* Sélecteur de compte et boutons (pas sur TPLN) */}
                       {activeJournalButton !== 'tpln' && (
                       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
@@ -6350,7 +6364,7 @@ export default function TradingPlatformShell() {
                 ) : null}
                 
                   {/* Header pour le calendrier normal */}
-                {(view === 'calendar' || selectedChannel.id === 'calendrier') && selectedChannel.id !== 'trading-journal' && (
+                {false && (view === 'calendar' || selectedChannel.id === 'calendrier') && selectedChannel.id !== 'trading-journal' && (
                   <div className="flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
                     <div>
                       <h1 className="text-2xl font-bold text-white">Journal des Signaux</h1>
@@ -7029,63 +7043,6 @@ export default function TradingPlatformShell() {
                                                       R: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}>{signalData.pnl}</span>
                                                     </div>
                                                   )}
-                                                  {(signalData.status === 'LOSS' || signalData.status === 'WIN') && signalData.signalId && (
-                                                    <div className="mt-2 pt-2 border-t border-gray-600">
-                                                      <button
-                                                        onClick={() => {
-                                                          const currentSignalId = signalData.signalId;
-                                                          console.log('🔍 Flèche cliquée - signalId:', currentSignalId);
-                                                          
-                                                          // Chercher le signal d'origine dans les messages
-                                                          const channelMessages = (messages[selectedChannel.id] || []);
-                                                          const originalMessage = channelMessages.find((msg) => {
-                                                            const msgSignalData = formatSignalMessage(msg.text);
-                                                            return msgSignalData && 
-                                                                   msgSignalData.signalId === currentSignalId && 
-                                                                   msgSignalData.status !== 'CLOSED' && 
-                                                                   msgSignalData.status !== 'WIN' && 
-                                                                   msgSignalData.status !== 'LOSS' &&
-                                                                   msg.id !== message.id;
-                                                          });
-                                                          
-                                                          console.log('🔍 Message original trouvé:', originalMessage);
-                                                          
-                                                          if (originalMessage) {
-                                                            const element = document.getElementById(`message-${originalMessage.id}`);
-                                                            console.log('🔍 Élément trouvé par ID:', element);
-                                                            if (element) {
-                                                              element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                                              element.style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
-                                                              setTimeout(() => {
-                                                                element.style.backgroundColor = '';
-                                                              }, 2000);
-                                                            } else {
-                                                              // Fallback : chercher par data-signal-id
-                                                              const fallbackElement = document.querySelector(`[data-signal-id="${currentSignalId}"]`);
-                                                              console.log('🔍 Élément fallback trouvé:', fallbackElement);
-                                                              if (fallbackElement) {
-                                                                const messageContainer = fallbackElement.closest('[id^="message-"]') || fallbackElement.parentElement;
-                                                                if (messageContainer) {
-                                                                  (messageContainer as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                                                  (messageContainer as HTMLElement).style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
-                                                                  setTimeout(() => {
-                                                                    (messageContainer as HTMLElement).style.backgroundColor = '';
-                                                                  }, 2000);
-                                                                }
-                                                              }
-                                                            }
-                                                          } else {
-                                                            console.log('❌ Aucun message original trouvé');
-                                                          }
-                                                        }}
-                                                        className="flex items-center gap-1 text-white hover:text-gray-300 transition-colors text-sm font-medium cursor-pointer"
-                                                        title="Remonter au signal d'origine"
-                                                      >
-                                                        <span className="text-lg">⬆️</span>
-                                                        <span>Voir le signal d'origine</span>
-                                                      </button>
-                                                    </div>
-                                                  )}
                                                 </div>
                                               </div>
                                             ) : (
@@ -7100,6 +7057,18 @@ export default function TradingPlatformShell() {
                                                   <div className="flex items-center gap-2 text-sm">
                                                     <span className="text-gray-400">📊</span>
                                                     <span className="text-white">Entry: {signalData.entry}</span>
+                                                  </div>
+                                                )}
+                                                {signalData.tp && (
+                                                  <div className="flex items-center gap-2 text-sm">
+                                                    <span className="text-gray-400">🎯</span>
+                                                    <span className="text-white">TP: {signalData.tp}</span>
+                                                  </div>
+                                                )}
+                                                {signalData.sl && (
+                                                  <div className="flex items-center gap-2 text-sm">
+                                                    <span className="text-gray-400">🛑</span>
+                                                    <span className="text-white">SL: {signalData.sl}</span>
                                                   </div>
                                                 )}
                                                 {signalData.rr && (
@@ -7177,8 +7146,8 @@ export default function TradingPlatformShell() {
                                 )}
                               </div>
                               
-                              {/* Bouton de réaction flamme */}
-                              <div className="mt-2 flex justify-start">
+                              {/* Bouton de réaction flamme + voir signal d'origine */}
+                              <div className="mt-2 flex items-center gap-2 justify-start">
                                 <button
                                   onClick={() => handleAddReaction(message.id)}
                                   className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
@@ -7192,6 +7161,49 @@ export default function TradingPlatformShell() {
                                     {messageReactions[message.id]?.fire || 0}
                                   </span>
                                 </button>
+                                {(() => {
+                                  const sd = formatSignalMessage(message.text);
+                                  if (!sd || (sd.status !== 'WIN' && sd.status !== 'LOSS') || !sd.signalId) return null;
+                                  const currentSignalId = sd.signalId;
+                                  return (
+                                    <button
+                                      onClick={() => {
+                                        const channelMessages = (messages[selectedChannel.id] || []);
+                                        const originalMessage = channelMessages.find((msg) => {
+                                          const msgSignalData = formatSignalMessage(msg.text);
+                                          return msgSignalData &&
+                                                 msgSignalData.signalId === currentSignalId &&
+                                                 msgSignalData.status !== 'CLOSED' &&
+                                                 msgSignalData.status !== 'WIN' &&
+                                                 msgSignalData.status !== 'LOSS' &&
+                                                 msg.id !== message.id;
+                                        });
+                                        if (originalMessage) {
+                                          const element = document.getElementById(`message-${originalMessage.id}`);
+                                          if (element) {
+                                            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                            element.style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
+                                            setTimeout(() => { element.style.backgroundColor = ''; }, 2000);
+                                          } else {
+                                            const fallbackElement = document.querySelector(`[data-signal-id="${currentSignalId}"]`);
+                                            if (fallbackElement) {
+                                              const container = fallbackElement.closest('[id^="message-"]') || fallbackElement.parentElement;
+                                              if (container) {
+                                                (container as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                (container as HTMLElement).style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
+                                                setTimeout(() => { (container as HTMLElement).style.backgroundColor = ''; }, 2000);
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }}
+                                      className="flex items-center gap-1 px-2 py-1 rounded text-xs bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white transition-colors"
+                                      title="Remonter au signal d'origine"
+                                    >
+                                      ⬆️
+                                    </button>
+                                  );
+                                })()}
                               </div>
 
                             </div>
@@ -7675,63 +7687,6 @@ export default function TradingPlatformShell() {
                                                       R: <span className={signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}>{signalData.pnl}</span>
                                                     </div>
                                                   )}
-                                                  {(signalData.status === 'LOSS' || signalData.status === 'WIN') && signalData.signalId && (
-                                                    <div className="mt-2 pt-2 border-t border-gray-600">
-                                                      <button
-                                                        onClick={() => {
-                                                          const currentSignalId = signalData.signalId;
-                                                          console.log('🔍 Flèche cliquée - signalId:', currentSignalId);
-                                                          
-                                                          // Chercher le signal d'origine dans les messages
-                                                          const channelMessages = (messages[selectedChannel.id] || []);
-                                                          const originalMessage = channelMessages.find((msg) => {
-                                                            const msgSignalData = formatSignalMessage(msg.text);
-                                                            return msgSignalData && 
-                                                                   msgSignalData.signalId === currentSignalId && 
-                                                                   msgSignalData.status !== 'CLOSED' && 
-                                                                   msgSignalData.status !== 'WIN' && 
-                                                                   msgSignalData.status !== 'LOSS' &&
-                                                                   msg.id !== message.id;
-                                                          });
-                                                          
-                                                          console.log('🔍 Message original trouvé:', originalMessage);
-                                                          
-                                                          if (originalMessage) {
-                                                            const element = document.getElementById(`message-${originalMessage.id}`);
-                                                            console.log('🔍 Élément trouvé par ID:', element);
-                                                            if (element) {
-                                                              element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                                              element.style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
-                                                              setTimeout(() => {
-                                                                element.style.backgroundColor = '';
-                                                              }, 2000);
-                                                            } else {
-                                                              // Fallback : chercher par data-signal-id
-                                                              const fallbackElement = document.querySelector(`[data-signal-id="${currentSignalId}"]`);
-                                                              console.log('🔍 Élément fallback trouvé:', fallbackElement);
-                                                              if (fallbackElement) {
-                                                                const messageContainer = fallbackElement.closest('[id^="message-"]') || fallbackElement.parentElement;
-                                                                if (messageContainer) {
-                                                                  (messageContainer as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                                                  (messageContainer as HTMLElement).style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
-                                                                  setTimeout(() => {
-                                                                    (messageContainer as HTMLElement).style.backgroundColor = '';
-                                                                  }, 2000);
-                                                                }
-                                                              }
-                                                            }
-                                                          } else {
-                                                            console.log('❌ Aucun message original trouvé');
-                                                          }
-                                                        }}
-                                                        className="flex items-center gap-1 text-white hover:text-gray-300 transition-colors text-sm font-medium cursor-pointer"
-                                                        title="Remonter au signal d'origine"
-                                                      >
-                                                        <span className="text-lg">⬆️</span>
-                                                        <span>Voir le signal d'origine</span>
-                                                      </button>
-                                                    </div>
-                                                  )}
                                                 </div>
                                               </div>
                                             ) : (
@@ -7746,6 +7701,18 @@ export default function TradingPlatformShell() {
                                                   <div className="flex items-center gap-2 text-sm">
                                                     <span className="text-gray-400">📊</span>
                                                     <span className="text-white">Entry: {signalData.entry}</span>
+                                                  </div>
+                                                )}
+                                                {signalData.tp && (
+                                                  <div className="flex items-center gap-2 text-sm">
+                                                    <span className="text-gray-400">🎯</span>
+                                                    <span className="text-white">TP: {signalData.tp}</span>
+                                                  </div>
+                                                )}
+                                                {signalData.sl && (
+                                                  <div className="flex items-center gap-2 text-sm">
+                                                    <span className="text-gray-400">🛑</span>
+                                                    <span className="text-white">SL: {signalData.sl}</span>
                                                   </div>
                                                 )}
                                                 {signalData.rr && (
@@ -7823,8 +7790,8 @@ export default function TradingPlatformShell() {
                                 )}
                               </div>
                               
-                              {/* Bouton de réaction flamme */}
-                              <div className="mt-2 flex justify-start">
+                              {/* Bouton de réaction flamme + voir signal d'origine */}
+                              <div className="mt-2 flex items-center gap-2 justify-start">
                                 <button
                                   onClick={() => handleAddReaction(message.id)}
                                   className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
@@ -7838,6 +7805,49 @@ export default function TradingPlatformShell() {
                                     {messageReactions[message.id]?.fire || 0}
                                   </span>
                                 </button>
+                                {(() => {
+                                  const sd = formatSignalMessage(message.text);
+                                  if (!sd || (sd.status !== 'WIN' && sd.status !== 'LOSS') || !sd.signalId) return null;
+                                  const currentSignalId = sd.signalId;
+                                  return (
+                                    <button
+                                      onClick={() => {
+                                        const channelMessages = (messages[selectedChannel.id] || []);
+                                        const originalMessage = channelMessages.find((msg) => {
+                                          const msgSignalData = formatSignalMessage(msg.text);
+                                          return msgSignalData &&
+                                                 msgSignalData.signalId === currentSignalId &&
+                                                 msgSignalData.status !== 'CLOSED' &&
+                                                 msgSignalData.status !== 'WIN' &&
+                                                 msgSignalData.status !== 'LOSS' &&
+                                                 msg.id !== message.id;
+                                        });
+                                        if (originalMessage) {
+                                          const element = document.getElementById(`message-${originalMessage.id}`);
+                                          if (element) {
+                                            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                            element.style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
+                                            setTimeout(() => { element.style.backgroundColor = ''; }, 2000);
+                                          } else {
+                                            const fallbackElement = document.querySelector(`[data-signal-id="${currentSignalId}"]`);
+                                            if (fallbackElement) {
+                                              const container = fallbackElement.closest('[id^="message-"]') || fallbackElement.parentElement;
+                                              if (container) {
+                                                (container as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                (container as HTMLElement).style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
+                                                setTimeout(() => { (container as HTMLElement).style.backgroundColor = ''; }, 2000);
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }}
+                                      className="flex items-center gap-1 px-2 py-1 rounded text-xs bg-gray-600 text-gray-300 hover:bg-gray-500 hover:text-white transition-colors"
+                                      title="Remonter au signal d'origine"
+                                    >
+                                      ⬆️
+                                    </button>
+                                  );
+                                })()}
                               </div>
 
                             </div>

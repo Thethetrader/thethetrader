@@ -1392,49 +1392,26 @@ const App = () => {
         <LandingPage onOpenAuth={() => setShowAuthModal(true)} />
         {showAuthModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-8 rounded-lg max-w-md w-full mx-4">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Connexion</h2>
-                <button
-                  onClick={() => setShowAuthModal(false)}
-                  className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
-                >
-                  ✕
-                </button>
+            <div className="bg-white rounded-2xl max-w-md w-full mx-4 overflow-hidden">
+              <div className="flex justify-end p-4 pb-0">
+                <button onClick={() => setShowAuthModal(false)} className="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100">✕</button>
               </div>
-              <div className="space-y-4">
+              <div className="flex flex-col items-center px-8 pb-2 pt-0">
+                <img src="/faviconsansfond.webp" alt="TPLN" className="h-24 w-auto object-contain mb-2" />
+                <h2 className="text-xl font-bold text-gray-900 mb-1">Connexion</h2>
+                <p className="text-sm text-gray-400 mb-4">Trading Pour Les Nuls</p>
+              </div>
+              <div className="px-8 pb-8 space-y-4">
                 <div>
                   <label className="block text-gray-700 mb-2">Email</label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                    placeholder="votre@email.com"
-                  />
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 text-gray-900" placeholder="votre@email.com" />
                 </div>
                 <div>
                   <label className="block text-gray-700 mb-2">Mot de passe</label>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                    placeholder="••••••••"
-                  />
+                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 text-gray-900" placeholder="••••••••" />
                 </div>
-                <button
-                  onClick={handleForgotPassword}
-                  className="text-sm text-blue-600 hover:text-blue-800 text-left w-full"
-                >
-                  Mot de passe oublié ?
-                </button>
-                <button
-                  onClick={handleLogin}
-                  className="w-full bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white py-3 rounded-[14px] font-medium transition-all duration-200"
-                >
-                  Se connecter
-                </button>
+                <button onClick={handleForgotPassword} className="text-sm text-left w-full" style={{ color: '#c9a84c' }}>Mot de passe oublié ?</button>
+                <button onClick={handleLogin} className="w-full py-3 rounded-[14px] font-medium text-white" style={{ background: 'linear-gradient(135deg, #c9a84c, #a07830)', boxShadow: '0 4px 16px rgba(201,168,76,0.3)' }}>Se connecter</button>
               </div>
             </div>
           </div>
@@ -1687,12 +1664,9 @@ const App = () => {
               <>
                 <div className="mb-0 flex justify-center hover:scale-105 transition-transform duration-300">
                   <img
-                    src="/logo-removebg-preview.png"
+                    src="/faviconsansfond.webp"
                     alt="Trading pour les nuls"
-                    width={252}
-                    height={168}
-                    className="h-64 sm:h-80 w-auto object-cover"
-                    style={{ clipPath: 'inset(10% 5% 15% 5%)' }}
+                    className="h-40 sm:h-52 w-auto object-contain"
                   />
                 </div>
                 <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, color: '#4b5563' }} className="text-lg sm:text-2xl mb-6 sm:mb-8 max-w-4xl mx-auto px-2 -mt-8">
@@ -1701,7 +1675,8 @@ const App = () => {
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mb-6 sm:mb-8 px-4">
                   <button
                     onClick={() => setShowAuthModal(true)}
-                    className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-8 sm:px-10 py-4 sm:py-5 rounded-[14px] text-lg sm:text-xl font-medium transition-all duration-200 w-full sm:w-auto"
+                    className="text-white px-8 sm:px-10 py-4 sm:py-5 rounded-[14px] text-lg sm:text-xl font-medium transition-all duration-200 w-full sm:w-auto"
+                    style={{ background: 'linear-gradient(135deg, #c9a84c, #a07830)', boxShadow: '0 4px 20px rgba(201,168,76,0.35)' }}
                   >
                     Se connecter
                   </button>
@@ -5984,16 +5959,21 @@ const App = () => {
       {/* Modal d'authentification */}
       {showAuthModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-8 rounded-lg max-w-md w-full mx-4">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Connexion</h2>
-              <button 
+          <div className="bg-white rounded-2xl max-w-md w-full mx-4 overflow-hidden">
+            <div className="flex justify-end p-4 pb-0">
+              <button
                 onClick={() => setShowAuthModal(false)}
-                className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                className="text-gray-400 hover:text-gray-600 transition-colors duration-200 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
               >
                 ✕
               </button>
             </div>
+            <div className="flex flex-col items-center px-8 pb-2 pt-0">
+              <img src="/faviconsansfond.webp" alt="TPLN" className="h-24 w-auto object-contain mb-2" />
+              <h2 className="text-xl font-bold text-gray-900 mb-1">Connexion</h2>
+              <p className="text-sm text-gray-400 mb-4">Trading Pour Les Nuls</p>
+            </div>
+            <div className="px-8 pb-8">
             <div className="space-y-4">
               <div>
                 <label className="block text-gray-700 mb-2">Email</label>
@@ -6023,10 +6003,12 @@ const App = () => {
               </button>
               <button
                 onClick={handleLogin}
-                className="w-full bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white py-3 rounded-[14px] font-medium transition-all duration-200"
+                className="w-full py-3 rounded-[14px] font-medium transition-all duration-200 text-white"
+                style={{ background: 'linear-gradient(135deg, #c9a84c, #a07830)', boxShadow: '0 4px 16px rgba(201,168,76,0.3)' }}
               >
                 Se connecter
               </button>
+            </div>
             </div>
           </div>
         </div>
