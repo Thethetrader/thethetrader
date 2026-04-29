@@ -6873,7 +6873,7 @@ const dailyPnLChartData = useMemo(
                     <ChatZone onUnreadCountChange={() => {}} isActive={true} />
                   </div>
                 ) : ['fondamentaux', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
-                  <div className="flex flex-col h-full">
+                  <div className="flex flex-col h-full" style={{ background: '#f8fafc' }}>
                                         {/* Messages de chat */}
                     <div ref={messagesContainerRef} className={`flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 ${selectedChannel.id === 'fondamentaux' ? '' : 'pb-32'}`}>
                       
@@ -6918,8 +6918,8 @@ const dailyPnLChartData = useMemo(
                             </div>
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-1">
-                                <span className="font-semibold text-white">{message.author}</span>
-                                <span className="text-xs text-gray-400">{message.timestamp}</span>
+                                <span className="font-semibold text-gray-900">{message.author}</span>
+                                <span className="text-xs text-gray-500">{message.timestamp}</span>
                                 {message.author_type === 'admin' && (
                                   <div className="hidden group-hover:flex items-center gap-1 ml-1">
                                     {!message.text.includes('[SIGNAL_ID:') && (
@@ -6944,7 +6944,7 @@ const dailyPnLChartData = useMemo(
                               {editingMessageId === message.id ? (
                                 <div className="flex gap-2 items-end">
                                   <textarea
-                                    className="flex-1 bg-gray-700 text-white rounded-lg p-2 text-sm border border-blue-500 outline-none resize-none"
+                                    className="flex-1 bg-gray-50 text-gray-900 rounded-lg p-2 text-sm border border-blue-500 outline-none resize-none"
                                     rows={3}
                                     value={editingMessageText}
                                     onChange={e => setEditingMessageText(e.target.value)}
@@ -6963,13 +6963,13 @@ const dailyPnLChartData = useMemo(
                                   />
                                   <div className="flex flex-col gap-1">
                                     <button onClick={async () => { if (editingMessageText.trim()) { await updateMessageContent(message.id, editingMessageText.trim()); setChatMessages(prev => ({ ...prev, [selectedChannel.id]: (prev[selectedChannel.id] || []).map(m => m.id === message.id ? { ...m, text: editingMessageText.trim() } : m) })); } setEditingMessageId(null); }} className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded">✓</button>
-                                    <button onClick={() => setEditingMessageId(null)} className="bg-gray-600 hover:bg-gray-500 text-white text-xs px-2 py-1 rounded">✕</button>
+                                    <button onClick={() => setEditingMessageId(null)} className="bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs px-2 py-1 rounded">✕</button>
                                   </div>
                                 </div>
                               ) : null}
-                              <div className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words" style={{ display: editingMessageId === message.id ? 'none' : undefined }}>
+                              <div className="bg-white rounded-lg p-3 hover:shadow-md transition-shadow duration-200 max-w-full break-words border border-gray-100" style={{ display: editingMessageId === message.id ? 'none' : undefined }}>
                                 {message.text && (
-                                  <div className="text-white">
+                                  <div className="text-gray-900">
                                     {message.text.includes('🎥 **Session Trading Live') ? (
                                       <div className="bg-purple-900/30 border border-purple-500 rounded-lg p-3">
                                         <div className="flex items-center gap-2 mb-2">
@@ -7019,12 +7019,12 @@ const dailyPnLChartData = useMemo(
                                         
                                         return (
                                           <div>
-                                            <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
+                                            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                                               {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
                                                 <div className="mb-3">
                                                   <div className="flex items-center gap-2 mb-2">
                                                     <span className="text-xs">📊</span>
-                                                    <span className="text-sm font-semibold text-gray-300">SIGNAL FERMÉ</span>
+                                                    <span className="text-sm font-semibold text-gray-500">SIGNAL FERMÉ</span>
                                                     {signalData.status === 'LOSS' && signalId && (
                                                       <button
                                                         onClick={() => {
@@ -7076,32 +7076,32 @@ const dailyPnLChartData = useMemo(
                                                 <div className="space-y-2">
                                                   <div className="flex items-center gap-2">
                                                     <span className="text-lg">🚀</span>
-                                                    <span className="font-bold text-white">
+                                                    <span className="font-bold text-gray-900">
                                                       {signalData.type} {signalData.symbol}
                                                     </span>
                                                   </div>
                                                   {signalData.entry && (
                                                     <div className="flex items-center gap-2 text-sm">
-                                                      <span className="text-gray-400">📊</span>
-                                                      <span className="text-white">Entry: {signalData.entry}</span>
+                                                      <span className="text-gray-400">📈</span>
+                                                      <span className="text-gray-800">Entry: {signalData.entry}</span>
                                                     </div>
                                                   )}
                                                   {signalData.tp && (
                                                     <div className="flex items-center gap-2 text-sm">
                                                       <span className="text-gray-400">🎯</span>
-                                                      <span className="text-white">TP: {signalData.tp}</span>
+                                                      <span className="text-gray-800">TP: {signalData.tp}</span>
                                                     </div>
                                                   )}
                                                   {signalData.sl && (
                                                     <div className="flex items-center gap-2 text-sm">
-                                                      <span className="text-gray-400">🛑</span>
-                                                      <span className="text-white">SL: {signalData.sl}</span>
+                                                      <span className="text-gray-400">🛡️</span>
+                                                      <span className="text-gray-800">SL: {signalData.sl}</span>
                                                     </div>
                                                   )}
                                                   {signalData.rr && (
                                                     <div className="flex items-center gap-2 text-sm">
-                                                      <span className="text-gray-400">📐</span>
-                                                      <span className="text-white">R:R {signalData.rr}</span>
+                                                      <span className="text-gray-400">⚖️</span>
+                                                      <span className="text-gray-800">R:R {signalData.rr}</span>
                                                     </div>
                                                   )}
                                                 </div>
@@ -7110,7 +7110,7 @@ const dailyPnLChartData = useMemo(
                                             
                                             {/* Boutons WIN/LOSS/BE pour clôturer les signaux */}
                                             {signalId && (
-                                              <div className="mt-3 pt-3 border-t border-gray-600">
+                                              <div className="mt-3 pt-3 border-t border-gray-200">
                                                 <div className="flex items-center gap-1.5 justify-center">
                                                   <button
                                                     onClick={() => handleSignalStatusFromMessage(message.text, 'WIN')}
@@ -7120,7 +7120,7 @@ const dailyPnLChartData = useMemo(
                                                         ? 'bg-green-200/60 text-white shadow-lg shadow-green-200/20'
                                                         : isClosed
                                                         ? 'bg-gray-500/30 text-gray-400 cursor-not-allowed opacity-50'
-                                                        : 'bg-gray-600 hover:bg-green-200/60 text-gray-300 hover:text-white'
+                                                        : 'bg-gray-100 hover:bg-green-200/60 text-gray-600 hover:text-white'
                                                     }`}
                                                   >
                                                     ✅ WIN
@@ -7132,8 +7132,8 @@ const dailyPnLChartData = useMemo(
                                                       isClosed && currentSignal?.status === 'LOSS'
                                                         ? 'bg-red-300/50 text-white shadow-lg shadow-red-500/20'
                                                         : isClosed
-                                                        ? 'bg-gray-500/30 text-gray-400 cursor-not-allowed opacity-50'
-                                                        : 'bg-gray-600 hover:bg-red-300/50 text-gray-300 hover:text-white'
+                                                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-50'
+                                                        : 'bg-gray-100 hover:bg-red-300/50 text-gray-600 hover:text-white'
                                                     }`}
                                                   >
                                                     ❌ LOSS
@@ -7145,8 +7145,8 @@ const dailyPnLChartData = useMemo(
                                                       isClosed && currentSignal?.status === 'BE'
                                                         ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'
                                                         : isClosed
-                                                        ? 'bg-gray-500/30 text-gray-400 cursor-not-allowed opacity-50'
-                                                        : 'bg-gray-600 hover:bg-blue-500 text-gray-300 hover:text-white'
+                                                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-50'
+                                                        : 'bg-gray-100 hover:bg-blue-500 text-gray-600 hover:text-white'
                                                     }`}
                                                   >
                                                     ⚖️ BE
@@ -7168,7 +7168,7 @@ const dailyPnLChartData = useMemo(
                                         <img 
                                           src={message.attachment_data} 
                                           alt="Attachment"
-                                          className="mt-2 max-w-[200px] max-h-32 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                                          className="mt-2 max-w-[200px] max-h-32 rounded-lg border border-gray-200 cursor-pointer hover:opacity-80 transition-opacity"
                                           onClick={() => {
                                             const newWindow = window.open();
                                             newWindow!.document.write(`<img src="${message.attachment_data}" style="max-width: 100%; height: auto;" />`);
@@ -7193,7 +7193,7 @@ const dailyPnLChartData = useMemo(
                                   className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-all duration-200 ${
                                     (messageReactions[message.id]?.users || []).includes('Admin')
                                       ? 'bg-orange-500 text-white'
-                                      : 'bg-gray-600 hover:bg-gray-500 text-gray-300 hover:text-white'
+                                      : 'bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900'
                                   }`}
                                 >
                                   🔥
@@ -7210,7 +7210,7 @@ const dailyPnLChartData = useMemo(
                     </div>
                     
                     {/* Barre de message */}
-                    <div className="border-t border-gray-700 p-2 md:p-4 fixed bottom-0 left-0 right-0 bg-gray-800 z-30 md:left-64" style={{ backgroundColor: 'var(--bg-secondary)', paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}>
+                    <div className="border-t border-gray-200 p-2 md:p-4 fixed bottom-0 left-0 right-0 bg-white z-30 md:left-64" style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}>
                       <div className="flex items-center gap-1.5 md:gap-2">
                         <input
                           type="text"
@@ -7218,7 +7218,7 @@ const dailyPnLChartData = useMemo(
                           onChange={(e) => setChatMessage(e.target.value)}
                           onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                           placeholder="Tapez votre message..."
-                          className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                          className="flex-1 bg-gray-50 border border-gray-300 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
                         />
                         <label className="cursor-pointer flex-shrink-0">
                           <input
@@ -7227,7 +7227,7 @@ const dailyPnLChartData = useMemo(
                             className="hidden"
                             accept="image/*,.pdf,.doc,.docx"
                           />
-                          <span className="bg-gray-600 hover:bg-gray-500 p-1.5 md:p-2 rounded-lg text-gray-300 hover:text-white text-sm md:text-base">
+                          <span className="bg-gray-100 hover:bg-gray-200 p-1.5 md:p-2 rounded-lg text-gray-600 hover:text-gray-900 text-sm md:text-base">
                             📎
                           </span>
                         </label>
@@ -7964,7 +7964,7 @@ const dailyPnLChartData = useMemo(
                                   className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-all duration-200 ${
                                     (messageReactions[message.id]?.users || []).includes('Admin')
                                       ? 'bg-orange-500 text-white'
-                                      : 'bg-gray-600 hover:bg-gray-500 text-gray-300 hover:text-white'
+                                      : 'bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900'
                                   }`}
                                 >
                                   🔥
