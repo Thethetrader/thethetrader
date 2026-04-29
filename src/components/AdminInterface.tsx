@@ -4866,7 +4866,7 @@ const dailyPnLChartData = useMemo(
     const isJournalSignaux = selectedChannel.id !== 'trading-journal';
     
     return (
-            <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: (isMobile && isJournalSignaux) ? 'calc(20px - 0.5cm)' : '80px', touchAction: 'pan-y', maxWidth: '100%' }}>
+            <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: (isMobile && isJournalSignaux) ? 'calc(20px - 0.5cm)' : '80px', touchAction: 'pan-y', maxWidth: '100%', overflowX: 'clip' }}>
       {/* Header */}
       <div className="mb-6 md:mb-8 border-b border-gray-600 pb-4">
         {/* Sélecteur de compte - MOBILE (pas sur TPLN model) */}
@@ -5010,11 +5010,11 @@ const dailyPnLChartData = useMemo(
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start" style={{ maxWidth: '100%', overflowX: 'hidden' }} key={(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? `perso-calendar-${calendarKey}` : `signaux-calendar-${calendarKey}`}>
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start" style={{ maxWidth: '100%' }} key={(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? `perso-calendar-${calendarKey}` : `signaux-calendar-${calendarKey}`}>
         {/* Calendrier principal */}
-        <div className="flex-1 w-full" style={{ maxWidth: '100%', overflowX: 'hidden' }}>
+        <div className="flex-1 w-full" style={{ maxWidth: '100%' }}>
           {/* Jours de la semaine */}
-          <div className="grid grid-cols-7 gap-0.5 md:gap-1 mb-4 w-full" style={{ maxWidth: '100%', overflowX: 'hidden' }}>
+          <div className="grid grid-cols-7 gap-0.5 md:gap-1 mb-4 w-full">
             {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
               <div key={day} className="text-center text-gray-400 font-semibold py-3 text-sm uppercase tracking-wide">
                 {day.substring(0, 3)}
@@ -5023,7 +5023,7 @@ const dailyPnLChartData = useMemo(
           </div>
 
           {/* Grille du calendrier */}
-          <div className="grid grid-cols-7 gap-0.5 md:gap-1 w-full" style={{ maxWidth: '100%', overflowX: 'hidden', touchAction: 'pan-y' }} key={`calendar-${selectedChannel.id}-${calendarKey}-${selectedAccount}-${personalTrades.length}-${allSignalsForStats.length}-${currentDate.getMonth()}-${currentDate.getFullYear()}`}>
+          <div className="grid grid-cols-7 gap-0.5 md:gap-1 w-full pb-1" style={{ touchAction: 'pan-y' }} key={`calendar-${selectedChannel.id}-${calendarKey}-${selectedAccount}-${personalTrades.length}-${allSignalsForStats.length}-${currentDate.getMonth()}-${currentDate.getFullYear()}`}>
             {(() => {
               console.log('🔍 [ADMIN] Rendering calendar for channel:', selectedChannel.id);
               console.log('🔍 [ADMIN] personalTrades count:', personalTrades.length);
@@ -6031,14 +6031,17 @@ const dailyPnLChartData = useMemo(
           {/* Bouton Support sous les stats */}
           <button
             onClick={() => handleChannelChange('support-admin', 'support-admin')}
-            className={`w-full px-4 py-3 rounded-lg font-medium transition-all duration-200 shadow-sm flex items-center justify-between ${selectedChannel.id === 'support-admin' ? 'bg-gray-600 text-white border border-gray-500' : 'bg-gray-700/50 hover:bg-gray-700 text-gray-300 border border-gray-600/30'}`}
+            className="w-full px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
+            style={{
+              background: selectedChannel.id === 'support-admin' ? 'rgba(16,185,129,0.18)' : 'var(--btn-ghost-bg)',
+              border: `1px solid ${selectedChannel.id === 'support-admin' ? 'rgba(16,185,129,0.45)' : 'var(--border-color)'}`,
+              color: selectedChannel.id === 'support-admin' ? '#10b981' : 'var(--text-secondary)',
+            }}
           >
-            <div className="flex items-center gap-2">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-              </svg>
-              <span>Support clients</span>
-            </div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span>Support clients</span>
           </button>
 
           <div>

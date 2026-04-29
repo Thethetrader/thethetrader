@@ -84,6 +84,14 @@
 [data-theme="light"] .hover\:bg-gray-700:hover { background-color: var(--bg-hover) !important; }
 [data-theme="light"] .hover\:bg-gray-600:hover { background-color: #e2e8f0 !important; }
 
+/* Couleurs de gain/perte en mode clair */
+[data-theme="light"] .text-green-100 { color: #16a34a !important; }
+[data-theme="light"] .text-green-300 { color: #15803d !important; }
+[data-theme="light"] .text-blue-300  { color: #2563eb !important; }
+[data-theme="light"] .text-blue-200  { color: #1d4ed8 !important; }
+[data-theme="light"] .text-red-200   { color: #dc2626 !important; }
+[data-theme="light"] .text-red-400   { color: #b91c1c !important; }
+
 /* Étoiles discipline et éléments jaunes */
 [data-theme="light"] .star-yellow,
 [data-theme="light"] .text-yellow-400,
