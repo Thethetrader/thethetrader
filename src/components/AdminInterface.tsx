@@ -5817,100 +5817,97 @@ const dailyPnLChartData = useMemo(
 
           {/* Résumé hebdomadaire */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-300 mb-4">Weekly Breakdown</h4>
-            <div className="space-y-2">
+            <h4 className="text-xs font-semibold uppercase tracking-widest mb-3 text-gray-400">Weekly Breakdown</h4>
+            <div className="space-y-1">
               {((selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? getWeeklyBreakdownTrades() : getWeeklyBreakdown()).map((weekData, index) => (
-                <div 
-                  key={index} 
-                  className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer hover:bg-gray-600/50 transition-colors ${
-                  weekData.isCurrentWeek 
-                    ? 'bg-blue-600/20 border-blue-500/30' 
-                    : 'bg-gray-700/50 border-gray-600'
-                  }`}
-                  onClick={() => {
-                    setSelectedWeek(weekData.weekNum);
-                    setShowWeekSignalsModal(true);
+                <div
+                  key={index}
+                  onClick={() => { setSelectedWeek(weekData.weekNum); setShowWeekSignalsModal(true); }}
+                  className="flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-all duration-150"
+                  style={{
+                    borderLeft: `3px solid ${weekData.isCurrentWeek ? '#3b82f6' : weekData.pnl > 0 ? '#22c55e' : weekData.pnl < 0 ? 'var(--loss-color)' : 'var(--border-color)'}`,
+                    background: weekData.isCurrentWeek ? 'rgba(59,130,246,0.07)' : 'rgba(55,65,81,0.5)',
                   }}
+                  onMouseEnter={e => (e.currentTarget.style.background = weekData.isCurrentWeek ? 'rgba(59,130,246,0.13)' : 'rgba(75,85,99,0.5)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = weekData.isCurrentWeek ? 'rgba(59,130,246,0.07)' : 'rgba(55,65,81,0.5)')}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className={`text-sm font-medium ${
-                      weekData.isCurrentWeek ? 'text-blue-300' : 'text-gray-300'
-                    }`}>
-                      {weekData.week}
-                    </div>
-                    {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') && (
-                    <div className="text-xs text-gray-400">
-                      {weekData.trades} trade{weekData.trades !== 1 ? 's' : ''}
-                    </div>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="grid grid-cols-2 gap-1" style={{ width: '84px' }}>
-                      {weekData.wins === 0 && weekData.losses === 0 ? (
-                        <div className="col-span-2 text-sm text-gray-500 text-center">
-                          -
-                      </div>
+                  <span className="text-xs font-semibold" style={{ color: weekData.isCurrentWeek ? '#3b82f6' : '#9ca3af', minWidth: 44 }}>
+                    {weekData.week}
+                  </span>
+                  <div className="flex items-center gap-1 flex-1 justify-center">
+                    {weekData.wins === 0 && weekData.losses === 0 ? (
+                      <span style={{ fontSize: 11, color: '#6b7280' }}>—</span>
                     ) : (
-                        <>
-                          <div className={`text-sm py-1 rounded-lg font-bold shadow-lg border flex items-center justify-center ${weekData.wins > 0 ? 'bg-green-200/30 text-green-100 border-green-200/20' : 'bg-transparent border-transparent'}`} style={{ width: '40px', height: '28px' }}>
-                            {weekData.wins > 0 ? `${weekData.wins}W` : ''}
-                      </div>
-                          <div className={`text-sm py-1 rounded-lg font-bold shadow-lg border flex items-center justify-center ${weekData.losses > 0 ? 'bg-loss/30 text-loss border-loss/20' : 'bg-transparent border-transparent'}`} style={{ width: '40px', height: '28px' }}>
-                            {weekData.losses > 0 ? `${weekData.losses}L` : ''}
-                          </div>
-                        </>
+                      <>
+                        {weekData.wins > 0 && (
+                          <span style={{ fontSize: 10, fontWeight: 700, padding: '1px 7px', borderRadius: 20, background: 'rgba(34,197,94,0.15)', color: '#22c55e' }}>
+                            {weekData.wins}W
+                          </span>
+                        )}
+                        {weekData.losses > 0 && (
+                          <span style={{ fontSize: 10, fontWeight: 700, padding: '1px 7px', borderRadius: 20, background: 'rgba(211,115,115,0.15)', color: 'var(--loss-color)' }}>
+                            {weekData.losses}L
+                          </span>
+                        )}
+                      </>
                     )}
-                    </div>
-                    <div className={`text-xs ${
-                      weekData.pnl > 0 ? 'text-green-100' : 
-                      weekData.pnl < 0 ? 'text-loss' : 'text-gray-500'
-                    }`} style={{ minWidth: '60px', textAlign: 'right' }}>
-                      {weekData.pnl !== 0 ? `${weekData.pnl > 0 ? '+' : ''}$${weekData.pnl}` : ''}
-                    </div>
                   </div>
+                  <span style={{
+                    fontSize: 11, fontWeight: 700, minWidth: 52, textAlign: 'right',
+                    color: weekData.pnl > 0 ? '#22c55e' : weekData.pnl < 0 ? 'var(--loss-color)' : '#6b7280'
+                  }}>
+                    {weekData.pnl !== 0
+                      ? (selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendar')
+                        ? `${weekData.pnl > 0 ? '+' : ''}${weekData.pnl % 1 === 0 ? weekData.pnl : weekData.pnl.toFixed(1)}R`
+                        : `${weekData.pnl > 0 ? '+' : ''}$${weekData.pnl}`
+                      : ''}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Boutons Tous les WIN / LOSS / Tableau - tout en bas, en colonne (comme PWA) */}
+          {/* Boutons Tous les WIN / LOSS / Tableau - tout en bas, en colonne */}
           {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendar') && (
             <div className="flex flex-col gap-2 mt-6 mb-10">
               <button
-                onClick={() => {
-                  setWinsLossFilter('WIN');
-                  setWinsLossTradeIndex(0);
-                  setShowWinsLossModal(true);
-                }}
-                className="w-full px-3 py-2 rounded-lg bg-green-200/30 border border-green-200/40 text-green-100 hover:bg-green-200/40 transition-colors text-sm font-medium"
+                onClick={() => { setWinsLossFilter('WIN'); setWinsLossTradeIndex(0); setShowWinsLossModal(true); }}
+                className="w-full px-3 py-2.5 rounded-lg transition-colors text-sm font-semibold flex items-center justify-between"
+                style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.35)', color: '#22c55e' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(34,197,94,0.22)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(34,197,94,0.12)')}
               >
-                📈 Tous les WIN ({(selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendar') ? signals.filter(s => s.status === 'WIN' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount.filter(t => t.status === 'WIN').length})
+                <span>📈 Tous les WIN</span>
+                <span className="text-xs opacity-75 font-bold">{(selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendar') ? signals.filter(s => s.status === 'WIN' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount.filter(t => t.status === 'WIN').length}</span>
               </button>
               <button
-                onClick={() => {
-                  setWinsLossFilter('LOSS');
-                  setWinsLossTradeIndex(0);
-                  setShowWinsLossModal(true);
-                }}
-                className="w-full px-3 py-2 rounded-lg bg-loss/30 border border-loss/50 text-loss hover:bg-loss/50 transition-colors text-sm font-medium"
+                onClick={() => { setWinsLossFilter('LOSS'); setWinsLossTradeIndex(0); setShowWinsLossModal(true); }}
+                className="w-full px-3 py-2.5 rounded-lg transition-colors text-sm font-semibold flex items-center justify-between"
+                style={{ background: 'rgba(211,115,115,0.12)', border: '1px solid rgba(211,115,115,0.35)', color: 'var(--loss-color)' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(211,115,115,0.22)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(211,115,115,0.12)')}
               >
-                📉 Tous les LOSS ({(selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendar') ? signals.filter(s => s.status === 'LOSS' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount.filter(t => t.status === 'LOSS').length})
+                <span>📉 Tous les LOSS</span>
+                <span className="text-xs opacity-75 font-bold">{(selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendar') ? signals.filter(s => s.status === 'LOSS' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount.filter(t => t.status === 'LOSS').length}</span>
               </button>
               <button
-                onClick={() => {
-                  setWinsLossFilter('BE');
-                  setWinsLossTradeIndex(0);
-                  setShowWinsLossModal(true);
-                }}
-                className="w-full px-3 py-2 rounded-lg bg-blue-600/30 border border-blue-500/50 text-blue-300 hover:bg-blue-600/50 transition-colors text-sm font-medium"
+                onClick={() => { setWinsLossFilter('BE'); setWinsLossTradeIndex(0); setShowWinsLossModal(true); }}
+                className="w-full px-3 py-2.5 rounded-lg transition-colors text-sm font-semibold flex items-center justify-between"
+                style={{ background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.35)', color: '#3b82f6' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(59,130,246,0.22)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(59,130,246,0.12)')}
               >
-                🔵 Tous les BE ({(selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendar') ? signals.filter(s => s.status === 'BE' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount.filter(t => t.status === 'BE').length})
+                <span>🔵 Tous les BE</span>
+                <span className="text-xs opacity-75 font-bold">{(selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendar') ? signals.filter(s => s.status === 'BE' && s.channel_id === 'calendrier').length : getTradesForSelectedAccount.filter(t => t.status === 'BE').length}</span>
               </button>
               <button
                 onClick={() => setShowPerformanceTableModal(true)}
-                className="w-full px-3 py-2 rounded-lg bg-gray-600/50 border border-gray-500/50 text-gray-200 hover:bg-gray-600 transition-colors text-sm font-medium"
+                className="w-full px-3 py-2.5 rounded-lg transition-colors text-sm font-semibold"
+                style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-hover)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'var(--bg-tertiary)')}
               >
-                📊 TABLEAU DE PERFORMANCE
+                📊 Tableau de performance
               </button>
             </div>
           )}
