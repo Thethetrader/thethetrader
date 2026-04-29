@@ -9797,7 +9797,7 @@ export default function TradingPlatformShell() {
                 : '0 2px 8px rgba(0,0,0,0.4)',
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
               color: '#fff',
-              transform: 'translateY(-14px)',
+              transform: 'translateY(0px)',
               transition: 'all 0.2s',
             }}>
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
