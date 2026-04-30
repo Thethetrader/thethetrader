@@ -354,6 +354,17 @@ export default function SupportAdminChat() {
     setConversations(prev => prev.map(x => x.id === c.id ? { ...x, status: next } : x));
   }
 
+  async function deleteConversation() {
+    if (!activeId) return;
+    if (!window.confirm('Supprimer définitivement cette conversation et tous ses messages ?')) return;
+    await supabase.from('support_messages').delete().eq('conversation_id', activeId);
+    await supabase.from('support_conversations').delete().eq('id', activeId);
+    setConversations(prev => prev.filter(c => c.id !== activeId));
+    setActiveId(null);
+    setMessages([]);
+    setMobilePane('list');
+  }
+
   const activeConv = conversations.find(c => c.id === activeId);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
@@ -502,6 +513,12 @@ export default function SupportAdminChat() {
                 style={{ background: activeConv?.status === 'resolved' ? '#374151' : '#065f46', color: activeConv?.status === 'resolved' ? '#9ca3af' : '#6ee7b7', border: 'none', borderRadius: 8, padding: '6px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}
               >
                 {activeConv?.status === 'resolved' ? 'Réouvrir' : '✓ Résolu'}
+              </button>
+              <button
+                onClick={deleteConversation}
+                style={{ background: '#450a0a', color: '#fca5a5', border: 'none', borderRadius: 8, padding: '6px 10px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}
+              >
+                🗑️
               </button>
             </div>
           </div>

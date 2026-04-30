@@ -7240,8 +7240,9 @@ const dailyPnLChartData = useMemo(
                                   className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-all duration-200 ${
                                     (messageReactions[message.id]?.users || []).includes('Admin')
                                       ? 'bg-orange-500 text-white'
-                                      : 'bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900'
+                                      : 'hover:bg-orange-500/20 hover:text-orange-400'
                                   }`}
+                                  style={(messageReactions[message.id]?.users || []).includes('Admin') ? undefined : { background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}
                                 >
                                   🔥
                                   <span className="ml-1">
@@ -7475,27 +7476,20 @@ const dailyPnLChartData = useMemo(
                                 </div>
                               )}
 
-                              {/* R - affiché dans tous les salons sauf calendrier */}
-                              {selectedChannel.id !== 'calendrier' && signal.pnl && (
-                                <div className="pt-2 border-t border-gray-600">
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-sm font-medium">R:</span>
-                                    <span className={`text-sm font-bold ${
-                                      signal.pnl.includes('-') ? 'text-red-100' : 'text-green-100'
-                                    }`}>
-                                      {signal.pnl}
-                                    </span>
+                              {/* Résultat / message de fermeture */}
+                              {(signal.pnl || signal.closeMessage) && (
+                                <div className="flex items-center justify-between pt-2 border-t border-gray-600">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <span className="text-yellow-400 text-sm">🔒</span>
+                                    {signal.closeMessage && (
+                                      <span className="text-yellow-400 text-sm font-medium">{signal.closeMessage}</span>
+                                    )}
+                                    {signal.pnl && (
+                                      <span className={`text-sm font-bold ${signal.pnl.includes('-') ? 'text-red-400' : 'text-green-400'}`}>
+                                        · {signal.pnl}
+                                      </span>
+                                    )}
                                   </div>
-                                </div>
-                              )}
-
-                              {/* Message de fermeture */}
-                              {signal.closeMessage && (
-                                <div className="flex items-center gap-2 pt-2 border-t border-gray-600">
-                                  <span className="text-yellow-400 text-sm">🔒</span>
-                                  <span className="text-yellow-400 text-sm font-medium">
-                                    {signal.closeMessage}
-                                  </span>
                                 </div>
                               )}
                             </div>
@@ -7745,6 +7739,28 @@ const dailyPnLChartData = useMemo(
                 <div className="flex flex-col h-full" style={{ background: 'var(--bg-primary)' }}>
                   {/* Messages de chat */}
                   <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
+                    {/* Galerie fondamentaux - desktop */}
+                    {selectedChannel.id === 'fondamentaux' && (
+                      <div className="w-full space-y-6">
+                        <div className="mb-4">
+                          <h1 className="text-xl md:text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>📚 Fondamentaux</h1>
+                          <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>Guide complet du trading - 16 pages</p>
+                        </div>
+                        {Array.from({ length: 16 }, (_, i) => i + 1).map((pageNum) => (
+                          <div key={pageNum} className="w-full flex flex-col items-center">
+                            <div className="text-center mb-2">
+                              <span className="text-sm font-medium text-gray-400">Page {pageNum}/16</span>
+                            </div>
+                            <img
+                              src={`/fondamentaux/page-${pageNum}.jpg`}
+                              alt={`Page ${pageNum}`}
+                              className="w-full max-w-3xl rounded-lg shadow-lg border border-gray-700"
+                              loading="lazy"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     {(chatMessages[selectedChannel.id] || []).length > 0 && (
                       (chatMessages[selectedChannel.id] || []).map((message) => (
                         <div key={message.id} className="flex items-start gap-3">
@@ -7983,8 +7999,9 @@ const dailyPnLChartData = useMemo(
                                   className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-all duration-200 ${
                                     (messageReactions[message.id]?.users || []).includes('Admin')
                                       ? 'bg-orange-500 text-white'
-                                      : 'bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900'
+                                      : 'hover:bg-orange-500/20 hover:text-orange-400'
                                   }`}
+                                  style={(messageReactions[message.id]?.users || []).includes('Admin') ? undefined : { background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}
                                 >
                                   🔥
                                   <span className="ml-1">
