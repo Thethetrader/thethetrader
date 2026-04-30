@@ -5617,7 +5617,7 @@ const dailyPnLChartData = useMemo(
             })()}
 
             {/* Résultat (somme des R du mois) - Journal Signaux uniquement */}
-            {selectedChannel.id === 'calendrier' && (() => {
+            {(selectedChannel.id === 'calendrier' || selectedChannel.id === 'calendar') && (() => {
               const totalR = calculateTotalPnLForMonth();
               const isPositive = totalR >= 0;
               return (
