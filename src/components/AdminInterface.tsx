@@ -6916,7 +6916,7 @@ const dailyPnLChartData = useMemo(
                     <ChatZone onUnreadCountChange={() => {}} isActive={true} />
                   </div>
                 ) : ['fondamentaux', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
-                  <div className="flex flex-col h-full" style={{ background: '#f8fafc' }}>
+                  <div className="flex flex-col h-full" style={{ background: 'var(--bg-primary)' }}>
                                         {/* Messages de chat */}
                     <div ref={messagesContainerRef} className={`flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 ${selectedChannel.id === 'fondamentaux' ? '' : 'pb-32'}`}>
                       
@@ -6961,7 +6961,7 @@ const dailyPnLChartData = useMemo(
                             </div>
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-1">
-                                <span className="font-semibold text-gray-900">{message.author}</span>
+                                <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{message.author}</span>
                                 <span className="text-xs text-gray-500">{message.timestamp}</span>
                                 {message.author_type === 'admin' && (
                                   <div className="hidden group-hover:flex items-center gap-1 ml-1">
@@ -6987,7 +6987,8 @@ const dailyPnLChartData = useMemo(
                               {editingMessageId === message.id ? (
                                 <div className="flex gap-2 items-end">
                                   <textarea
-                                    className="flex-1 bg-gray-50 text-gray-900 rounded-lg p-2 text-sm border border-blue-500 outline-none resize-none"
+                                    className="flex-1 rounded-lg p-2 text-sm border border-blue-500 outline-none resize-none"
+                                    style={{ background: 'var(--bg-tertiary)', color: 'var(--text-primary)' }}
                                     rows={3}
                                     value={editingMessageText}
                                     onChange={e => setEditingMessageText(e.target.value)}
@@ -7010,9 +7011,9 @@ const dailyPnLChartData = useMemo(
                                   </div>
                                 </div>
                               ) : null}
-                              <div className="bg-white rounded-lg p-3 hover:shadow-md transition-shadow duration-200 max-w-full break-words border border-gray-100" style={{ display: editingMessageId === message.id ? 'none' : undefined }}>
+                              <div className="rounded-lg p-3 hover:shadow-md transition-shadow duration-200 max-w-full break-words" style={{ display: editingMessageId === message.id ? 'none' : undefined, background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
                                 {message.text && (
-                                  <div className="text-gray-900">
+                                  <div style={{ color: 'var(--text-primary)' }}>
                                     {message.text.includes('🎥 **Session Trading Live') ? (
                                       <div className="bg-purple-900/30 border border-purple-500 rounded-lg p-3">
                                         <div className="flex items-center gap-2 mb-2">
@@ -7062,12 +7063,12 @@ const dailyPnLChartData = useMemo(
                                         
                                         return (
                                           <div>
-                                            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                            <div className="rounded-lg p-4" style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)' }}>
                                               {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
                                                 <div className="mb-3">
                                                   <div className="flex items-center gap-2 mb-2">
                                                     <span className="text-xs">📊</span>
-                                                    <span className="text-sm font-semibold text-gray-500">SIGNAL FERMÉ</span>
+                                                    <span className="text-sm font-semibold" style={{ color: 'var(--text-muted)' }}>SIGNAL FERMÉ</span>
                                                     {signalData.status === 'LOSS' && signalId && (
                                                       <button
                                                         onClick={() => {
@@ -7119,41 +7120,41 @@ const dailyPnLChartData = useMemo(
                                                 <div className="space-y-2">
                                                   <div className="flex items-center gap-2">
                                                     <span className="text-lg">🚀</span>
-                                                    <span className="font-bold text-gray-900">
+                                                    <span className="font-bold" style={{ color: 'var(--text-primary)' }}>
                                                       {signalData.type} {signalData.symbol}
                                                     </span>
                                                   </div>
                                                   {signalData.entry && (
                                                     <div className="flex items-center gap-2 text-sm">
                                                       <span className="text-gray-400">📈</span>
-                                                      <span className="text-gray-800">Entry: {signalData.entry}</span>
+                                                      <span style={{ color: 'var(--text-secondary)' }}>Entry: {signalData.entry}</span>
                                                     </div>
                                                   )}
                                                   {signalData.tp && (
                                                     <div className="flex items-center gap-2 text-sm">
                                                       <span className="text-gray-400">🎯</span>
-                                                      <span className="text-gray-800">TP: {signalData.tp}</span>
+                                                      <span style={{ color: 'var(--text-secondary)' }}>TP: {signalData.tp}</span>
                                                     </div>
                                                   )}
                                                   {signalData.sl && (
                                                     <div className="flex items-center gap-2 text-sm">
                                                       <span className="text-gray-400">🛡️</span>
-                                                      <span className="text-gray-800">SL: {signalData.sl}</span>
+                                                      <span style={{ color: 'var(--text-secondary)' }}>SL: {signalData.sl}</span>
                                                     </div>
                                                   )}
                                                   {signalData.rr && (
                                                     <div className="flex items-center gap-2 text-sm">
                                                       <span className="text-gray-400">⚖️</span>
-                                                      <span className="text-gray-800">R:R {signalData.rr}</span>
+                                                      <span style={{ color: 'var(--text-secondary)' }}>R:R {signalData.rr}</span>
                                                     </div>
                                                   )}
                                                 </div>
                                               )}
                                             </div>
-                                            
+
                                             {/* Boutons WIN/LOSS/BE pour clôturer les signaux */}
                                             {signalId && (
-                                              <div className="mt-3 pt-3 border-t border-gray-200">
+                                              <div className="mt-3 pt-3" style={{ borderTop: '1px solid var(--border-color)' }}>
                                                 <div className="flex items-center gap-1.5 justify-center">
                                                   <button
                                                     onClick={() => handleSignalStatusFromMessage(message.text, 'WIN')}
@@ -7163,8 +7164,9 @@ const dailyPnLChartData = useMemo(
                                                         ? 'bg-green-200/60 text-white shadow-lg shadow-green-200/20'
                                                         : isClosed
                                                         ? 'bg-gray-500/30 text-gray-400 cursor-not-allowed opacity-50'
-                                                        : 'bg-gray-100 hover:bg-green-200/60 text-gray-600 hover:text-white'
+                                                        : 'hover:bg-green-200/60 hover:text-white'
                                                     }`}
+                                                    style={!(isClosed) ? { background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' } : undefined}
                                                   >
                                                     ✅ WIN
                                                   </button>
@@ -7175,9 +7177,10 @@ const dailyPnLChartData = useMemo(
                                                       isClosed && currentSignal?.status === 'LOSS'
                                                         ? 'bg-red-300/50 text-white shadow-lg shadow-red-500/20'
                                                         : isClosed
-                                                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-50'
-                                                        : 'bg-gray-100 hover:bg-red-300/50 text-gray-600 hover:text-white'
+                                                        ? 'bg-gray-500/30 text-gray-400 cursor-not-allowed opacity-50'
+                                                        : 'hover:bg-red-300/50 hover:text-white'
                                                     }`}
+                                                    style={!(isClosed) ? { background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' } : undefined}
                                                   >
                                                     ❌ LOSS
                                                   </button>
@@ -7188,9 +7191,10 @@ const dailyPnLChartData = useMemo(
                                                       isClosed && currentSignal?.status === 'BE'
                                                         ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'
                                                         : isClosed
-                                                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-50'
-                                                        : 'bg-gray-100 hover:bg-blue-500 text-gray-600 hover:text-white'
+                                                        ? 'bg-gray-500/30 text-gray-400 cursor-not-allowed opacity-50'
+                                                        : 'hover:bg-blue-500 hover:text-white'
                                                     }`}
+                                                    style={!(isClosed) ? { background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' } : undefined}
                                                   >
                                                     ⚖️ BE
                                                   </button>
@@ -7253,7 +7257,7 @@ const dailyPnLChartData = useMemo(
                     </div>
                     
                     {/* Barre de message */}
-                    <div className="border-t border-gray-200 p-2 md:p-4 fixed bottom-0 left-0 right-0 bg-white z-30 md:left-64" style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}>
+                    <div className="p-2 md:p-4 fixed bottom-0 left-0 right-0 z-30 md:left-64" style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)' }}>
                       <div className="flex items-center gap-1.5 md:gap-2">
                         <input
                           type="text"
@@ -7261,7 +7265,8 @@ const dailyPnLChartData = useMemo(
                           onChange={(e) => setChatMessage(e.target.value)}
                           onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                           placeholder="Tapez votre message..."
-                          className="flex-1 bg-gray-50 border border-gray-300 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                          className="flex-1 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                          style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
                         />
                         <label className="cursor-pointer flex-shrink-0">
                           <input
@@ -7270,7 +7275,7 @@ const dailyPnLChartData = useMemo(
                             className="hidden"
                             accept="image/*,.pdf,.doc,.docx"
                           />
-                          <span className="bg-gray-100 hover:bg-gray-200 p-1.5 md:p-2 rounded-lg text-gray-600 hover:text-gray-900 text-sm md:text-base">
+                          <span className="p-1.5 md:p-2 rounded-lg text-sm md:text-base" style={{ background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}>
                             📎
                           </span>
                         </label>
@@ -7737,7 +7742,7 @@ const dailyPnLChartData = useMemo(
                     <ProfitLoss channelId="profit-loss" currentUserId="admin" />
                   </div>
                 ) : ['fondamentaux', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
-                <div className="flex flex-col h-full" style={{ background: '#f8fafc' }}>
+                <div className="flex flex-col h-full" style={{ background: 'var(--bg-primary)' }}>
                   {/* Messages de chat */}
                   <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
                     {(chatMessages[selectedChannel.id] || []).length > 0 && (
@@ -7754,7 +7759,7 @@ const dailyPnLChartData = useMemo(
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <span className="font-semibold text-gray-900">{message.author}</span>
+                              <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{message.author}</span>
                               <span className="text-xs text-gray-500">{message.timestamp}</span>
                               <button
                                 onClick={() => handleDeleteMessage(message.id, selectedChannel.id)}
@@ -7765,22 +7770,23 @@ const dailyPnLChartData = useMemo(
                               </button>
                             </div>
                             <div
-                              className="bg-white rounded-lg p-3 hover:shadow-md border border-gray-100 transition-shadow duration-200 max-w-full break-words"
+                              className="rounded-lg p-3 hover:shadow-md transition-shadow duration-200 max-w-full break-words"
                               data-signal-id={message.text.includes('[SIGNAL_ID:') ? message.text.match(/\[SIGNAL_ID:([^\]]+)\]/)?.[1] : undefined}
                               id={`message-${message.id}`}
+                              style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}
                             >
-                                <div className="text-gray-900">
+                                <div style={{ color: 'var(--text-primary)' }}>
                                       {(() => {
                                     const signalData = formatSignalMessage(message.text);
                                     if (signalData) {
                                       return (
                                         <div>
-                                          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                          <div className="rounded-lg p-4" style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)' }}>
                                             {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
                                               <div className="mb-3">
                                                 <div className="flex items-center gap-2 mb-2">
                                                   <span className="text-xs">📊</span>
-                                                  <span className="text-sm font-semibold text-gray-500">SIGNAL FERMÉ</span>
+                                                  <span className="text-sm font-semibold" style={{ color: 'var(--text-muted)' }}>SIGNAL FERMÉ</span>
                                                 </div>
                                                 <div className="text-sm">
                                                   <div className="flex items-center gap-2 mb-1">
@@ -7794,7 +7800,7 @@ const dailyPnLChartData = useMemo(
                                                     )}
                                                   </div>
                                                   {signalData.status === 'LOSS' && signalData.signalId && (
-                                                    <div className="mt-2 pt-2 border-t border-gray-200">
+                                                    <div className="mt-2 pt-2" style={{ borderTop: '1px solid var(--border-color)' }}>
                                                       <button
                                           onClick={() => {
                                                           const currentSignalId = signalData.signalId;
@@ -7817,7 +7823,8 @@ const dailyPnLChartData = useMemo(
                                                             }
                                                           }
                                                         }}
-                                                        className="flex items-center gap-1 text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium cursor-pointer"
+                                                        className="flex items-center gap-1 transition-colors text-sm font-medium cursor-pointer"
+                                                        style={{ color: 'var(--text-secondary)' }}
                                                         title="Remonter au signal d'origine"
                                                       >
                                                         <span className="text-lg">⬆️</span>
@@ -7831,7 +7838,7 @@ const dailyPnLChartData = useMemo(
                                               <div className="space-y-2">
                                                 <div className="flex items-center gap-2">
                                                   <span className="text-lg">🚀</span>
-                                                  <span className="font-bold text-gray-900">
+                                                  <span className="font-bold" style={{ color: 'var(--text-primary)' }}>
                                                     {signalData.type} {signalData.symbol}
                                                   </span>
                                                   {signalData.timeframe && (
@@ -7841,25 +7848,25 @@ const dailyPnLChartData = useMemo(
                                                 {signalData.entry && (
                                                   <div className="flex items-center gap-2 text-sm">
                                                     <span className="text-gray-400">📈</span>
-                                                    <span className="text-gray-800">Entry: {signalData.entry}</span>
+                                                    <span style={{ color: 'var(--text-secondary)' }}>Entry: {signalData.entry}</span>
                                                   </div>
                                                 )}
                                                 {signalData.tp && (
                                                   <div className="flex items-center gap-2 text-sm">
                                                     <span className="text-gray-400">🎯</span>
-                                                    <span className="text-gray-800">TP: {signalData.tp}</span>
+                                                    <span style={{ color: 'var(--text-secondary)' }}>TP: {signalData.tp}</span>
                                                   </div>
                                                 )}
                                                 {signalData.sl && (
                                                   <div className="flex items-center gap-2 text-sm">
                                                     <span className="text-gray-400">🛡️</span>
-                                                    <span className="text-gray-800">SL: {signalData.sl}</span>
+                                                    <span style={{ color: 'var(--text-secondary)' }}>SL: {signalData.sl}</span>
                                                   </div>
                                                 )}
                                                 {signalData.rr && (
                                                   <div className="flex items-center gap-2 text-sm">
                                                     <span className="text-gray-400">⚖️</span>
-                                                    <span className="text-gray-800">R:R {signalData.rr}</span>
+                                                    <span style={{ color: 'var(--text-secondary)' }}>R:R {signalData.rr}</span>
                                                   </div>
                                                 )}
                                               </div>
@@ -7868,7 +7875,7 @@ const dailyPnLChartData = useMemo(
                                         </div>
                                       );
                                     }
-                                    return <p className="whitespace-pre-wrap text-gray-900">{message.text}</p>;
+                                    return <p className="whitespace-pre-wrap" style={{ color: 'var(--text-primary)' }}>{message.text}</p>;
                                   })()}
                                 </div>
                                 {message.attachment_data && (
@@ -7900,7 +7907,7 @@ const dailyPnLChartData = useMemo(
                                   const isClosed = currentSignal && ['WIN', 'LOSS', 'BE'].includes(currentSignal.status);
                                   
                                   return (
-                                    <div className="mt-3 pt-3 border-t border-gray-200">
+                                    <div className="mt-3 pt-3" style={{ borderTop: '1px solid var(--border-color)' }}>
                                       <div className="flex items-center gap-2">
                                         <span className="text-xs text-gray-500">Résultat du signal:</span>
                                         <button
@@ -7993,7 +8000,7 @@ const dailyPnLChartData = useMemo(
                   </div>
                   
                   {/* Barre de message */}
-                  <div className="border-t border-gray-200 p-2 md:p-4 fixed bottom-0 left-0 right-0 bg-white z-10 md:left-64 md:right-0" style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}>
+                  <div className="p-2 md:p-4 fixed bottom-0 left-0 right-0 z-10 md:left-64 md:right-0" style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)' }}>
                     <div className="flex items-center gap-1.5 md:gap-2">
                       <input
                         type="text"
@@ -8001,7 +8008,8 @@ const dailyPnLChartData = useMemo(
                         onChange={(e) => setChatMessage(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                         placeholder="Tapez votre message..."
-                        className="flex-1 bg-gray-50 border border-gray-300 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                        className="flex-1 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                        style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
                       />
                       <label className="cursor-pointer flex-shrink-0">
                         <input
@@ -8010,7 +8018,7 @@ const dailyPnLChartData = useMemo(
                           className="hidden"
                           accept="image/*,.pdf,.doc,.docx"
                         />
-                        <span className="bg-gray-100 hover:bg-gray-200 p-1.5 md:p-2 rounded-lg text-gray-600 hover:text-gray-900 text-sm md:text-base">
+                        <span className="p-1.5 md:p-2 rounded-lg text-sm md:text-base" style={{ background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}>
                           📎
                         </span>
                       </label>
