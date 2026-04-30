@@ -7119,7 +7119,7 @@ export default function TradingPlatformShell() {
                                     <div className="mt-3 pt-3 border-t border-gray-600">
                                       {isClosed ? (
                                         <div
-                                          className="px-3 py-2 rounded-lg flex items-center justify-between"
+                                          className="px-3 py-2 rounded-lg flex flex-col gap-1"
                                           style={
                                             currentSignal?.status === 'WIN'
                                               ? { background: 'rgba(134,239,172,0.15)', border: '1px solid rgba(134,239,172,0.3)' }
@@ -7128,24 +7128,27 @@ export default function TradingPlatformShell() {
                                               : { background: 'rgba(96,165,250,0.15)', border: '1px solid rgba(96,165,250,0.3)' }
                                           }
                                         >
-                                          <span
-                                            className="text-xs font-semibold"
-                                            style={{
-                                              color: currentSignal?.status === 'WIN' ? '#86efac' : currentSignal?.status === 'LOSS' ? '#d97373' : '#93c5fd'
-                                            }}
-                                          >
-                                            {currentSignal?.status === 'WIN' ? '🟢 WIN' : currentSignal?.status === 'LOSS' ? '🔴 LOSS' : '🔵 BE'}
-                                          </span>
-                                          {currentSignal?.pnl && (
+                                          <span className="text-xs text-gray-400 uppercase tracking-wide">Signal fermé</span>
+                                          <div className="flex items-center justify-between">
                                             <span
-                                              className="text-xs font-bold"
+                                              className="text-sm font-bold"
                                               style={{
                                                 color: currentSignal?.status === 'WIN' ? '#86efac' : currentSignal?.status === 'LOSS' ? '#d97373' : '#93c5fd'
                                               }}
                                             >
-                                              {currentSignal.pnl}
+                                              {currentSignal?.status === 'WIN' ? '🟢 GAGNANT' : currentSignal?.status === 'LOSS' ? '🔴 PERDANT' : '🔵 BREAK-EVEN'}
                                             </span>
-                                          )}
+                                            {currentSignal?.pnl && (
+                                              <span
+                                                className="text-sm font-bold"
+                                                style={{
+                                                  color: currentSignal?.status === 'WIN' ? '#86efac' : currentSignal?.status === 'LOSS' ? '#d97373' : '#93c5fd'
+                                                }}
+                                              >
+                                                {currentSignal.pnl}
+                                              </span>
+                                            )}
+                                          </div>
                                         </div>
                                       ) : (
                                         <span className="text-xs text-gray-400">⏳ EN ATTENTE</span>
@@ -7153,7 +7156,7 @@ export default function TradingPlatformShell() {
                                     </div>
                                   );
                                 })()}
-                                
+
                                 {message.attachment_data && (
                                   <div className="mt-2 max-w-full overflow-hidden">
                                     <div className="relative">
@@ -7766,7 +7769,7 @@ export default function TradingPlatformShell() {
                                     <div className="mt-3 pt-3 border-t border-gray-600">
                                       {isClosed ? (
                                         <div
-                                          className="px-3 py-2 rounded-lg flex items-center justify-between"
+                                          className="px-3 py-2 rounded-lg flex flex-col gap-1"
                                           style={
                                             currentSignal?.status === 'WIN'
                                               ? { background: 'rgba(134,239,172,0.15)', border: '1px solid rgba(134,239,172,0.3)' }
@@ -7775,24 +7778,27 @@ export default function TradingPlatformShell() {
                                               : { background: 'rgba(96,165,250,0.15)', border: '1px solid rgba(96,165,250,0.3)' }
                                           }
                                         >
-                                          <span
-                                            className="text-xs font-semibold"
-                                            style={{
-                                              color: currentSignal?.status === 'WIN' ? '#86efac' : currentSignal?.status === 'LOSS' ? '#d97373' : '#93c5fd'
-                                            }}
-                                          >
-                                            {currentSignal?.status === 'WIN' ? '🟢 WIN' : currentSignal?.status === 'LOSS' ? '🔴 LOSS' : '🔵 BE'}
-                                          </span>
-                                          {currentSignal?.pnl && (
+                                          <span className="text-xs text-gray-400 uppercase tracking-wide">Signal fermé</span>
+                                          <div className="flex items-center justify-between">
                                             <span
-                                              className="text-xs font-bold"
+                                              className="text-sm font-bold"
                                               style={{
                                                 color: currentSignal?.status === 'WIN' ? '#86efac' : currentSignal?.status === 'LOSS' ? '#d97373' : '#93c5fd'
                                               }}
                                             >
-                                              {currentSignal.pnl}
+                                              {currentSignal?.status === 'WIN' ? '🟢 GAGNANT' : currentSignal?.status === 'LOSS' ? '🔴 PERDANT' : '🔵 BREAK-EVEN'}
                                             </span>
-                                          )}
+                                            {currentSignal?.pnl && (
+                                              <span
+                                                className="text-sm font-bold"
+                                                style={{
+                                                  color: currentSignal?.status === 'WIN' ? '#86efac' : currentSignal?.status === 'LOSS' ? '#d97373' : '#93c5fd'
+                                                }}
+                                              >
+                                                {currentSignal.pnl}
+                                              </span>
+                                            )}
+                                          </div>
                                         </div>
                                       ) : (
                                         <span className="text-xs text-gray-400">⏳ EN ATTENTE</span>
@@ -7800,7 +7806,7 @@ export default function TradingPlatformShell() {
                                     </div>
                                   );
                                 })()}
-                                
+
                                 {message.attachment_data && (
                                   <div className="mt-2 max-w-full overflow-hidden">
                                     <div className="relative">
