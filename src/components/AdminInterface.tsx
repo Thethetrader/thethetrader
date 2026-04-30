@@ -7735,7 +7735,7 @@ const dailyPnLChartData = useMemo(
                     <ProfitLoss channelId="profit-loss" currentUserId="admin" />
                   </div>
                 ) : ['fondamentaux', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id) ? (
-                <div className="flex flex-col h-full">
+                <div className="flex flex-col h-full" style={{ background: '#f8fafc' }}>
                   {/* Messages de chat */}
                   <div ref={messagesContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 pb-32">
                     {(chatMessages[selectedChannel.id] || []).length > 0 && (
@@ -7752,95 +7752,70 @@ const dailyPnLChartData = useMemo(
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <span className="font-semibold text-white">{message.author}</span>
-                              <span className="text-xs text-gray-400">{message.timestamp}</span>
+                              <span className="font-semibold text-gray-900">{message.author}</span>
+                              <span className="text-xs text-gray-500">{message.timestamp}</span>
                               <button
                                 onClick={() => handleDeleteMessage(message.id, selectedChannel.id)}
-                                className="ml-auto text-red-100 hover:text-red-100 transition-colors"
+                                className="ml-auto text-red-400 hover:text-red-600 transition-colors"
                                 title="Supprimer ce message"
                               >
                                 🗑️
                               </button>
                             </div>
-                            <div 
-                              className="bg-gray-700 rounded-lg p-3 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow duration-200 max-w-full break-words"
+                            <div
+                              className="bg-white rounded-lg p-3 hover:shadow-md border border-gray-100 transition-shadow duration-200 max-w-full break-words"
                               data-signal-id={message.text.includes('[SIGNAL_ID:') ? message.text.match(/\[SIGNAL_ID:([^\]]+)\]/)?.[1] : undefined}
                               id={`message-${message.id}`}
                             >
-                                <div className="text-white">
+                                <div className="text-gray-900">
                                       {(() => {
                                     const signalData = formatSignalMessage(message.text);
                                     if (signalData) {
                                       return (
                                         <div>
-                                          <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
+                                          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                                             {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
                                               <div className="mb-3">
                                                 <div className="flex items-center gap-2 mb-2">
                                                   <span className="text-xs">📊</span>
-                                                  <span className="text-sm font-semibold text-gray-300">SIGNAL FERMÉ</span>
+                                                  <span className="text-sm font-semibold text-gray-500">SIGNAL FERMÉ</span>
                                                 </div>
                                                 <div className="text-sm">
                                                   <div className="flex items-center gap-2 mb-1">
-                                                    <span className={signalData.status === 'WIN' ? 'text-green-100' : 'text-red-100'}>
+                                                    <span className={signalData.status === 'WIN' ? 'text-green-100' : 'text-red-400'}>
                                                       {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
                                                     </span>
                                                     {signalData.pnl && (
-                                                      <span className={`text-sm ${signalData.pnl.includes('-') ? 'text-red-100' : 'text-green-100'}`}>
-                                                        R: {signalData.pnl}
+                                                      <span className={`text-sm font-bold ${signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}`}>
+                                                        · {signalData.pnl}
                                                       </span>
                                                     )}
                                                   </div>
                                                   {signalData.status === 'LOSS' && signalData.signalId && (
-                                                    <div className="mt-2 pt-2 border-t border-gray-600">
+                                                    <div className="mt-2 pt-2 border-t border-gray-200">
                                                       <button
                                           onClick={() => {
                                                           const currentSignalId = signalData.signalId;
-                                                          console.log('🔍 Flèche cliquée - signalId:', currentSignalId);
-                                                          
-                                                          // Chercher le signal d'origine dans les messages
                                                           const channelMessages = (chatMessages[selectedChannel.id] || []);
                                                           const originalMessage = channelMessages.find((msg) => {
                                                             const msgSignalData = formatSignalMessage(msg.text);
-                                                            return msgSignalData && 
-                                                                   msgSignalData.signalId === currentSignalId && 
-                                                                   msgSignalData.status !== 'CLOSED' && 
-                                                                   msgSignalData.status !== 'WIN' && 
+                                                            return msgSignalData &&
+                                                                   msgSignalData.signalId === currentSignalId &&
+                                                                   msgSignalData.status !== 'CLOSED' &&
+                                                                   msgSignalData.status !== 'WIN' &&
                                                                    msgSignalData.status !== 'LOSS' &&
                                                                    msg.id !== message.id;
                                                           });
-                                                          
-                                                          console.log('🔍 Message original trouvé:', originalMessage);
-                                            
-                                            if (originalMessage) {
+                                                          if (originalMessage) {
                                                             const element = document.getElementById(`message-${originalMessage.id}`);
-                                                            console.log('🔍 Élément trouvé par ID:', element);
                                                             if (element) {
                                                               element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                                              element.style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
-                                              setTimeout(() => {
-                                                                element.style.backgroundColor = '';
-                                                              }, 2000);
-                                            } else {
-                                                              // Fallback : chercher par data-signal-id
-                                                              const fallbackElement = document.querySelector(`[data-signal-id="${currentSignalId}"]`);
-                                                              console.log('🔍 Élément fallback trouvé:', fallbackElement);
-                                                              if (fallbackElement) {
-                                                                const messageContainer = fallbackElement.closest('[id^="message-"]') || fallbackElement.parentElement;
-                                                                if (messageContainer) {
-                                                                  (messageContainer as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                                                  (messageContainer as HTMLElement).style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
-                                                                  setTimeout(() => {
-                                                                    (messageContainer as HTMLElement).style.backgroundColor = '';
-                                                                  }, 2000);
-                                                                }
-                                                              }
+                                                              element.style.backgroundColor = 'rgba(59,130,246,0.15)';
+                                                              setTimeout(() => { element.style.backgroundColor = ''; }, 2000);
                                                             }
-                                                          } else {
-                                                            console.log('❌ Aucun message original trouvé');
                                                           }
                                                         }}
-                                                        className="flex items-center gap-1 text-white hover:text-gray-300 transition-colors text-sm font-medium cursor-pointer"
+                                                        className="flex items-center gap-1 text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium cursor-pointer"
                                                         title="Remonter au signal d'origine"
                                                       >
                                                         <span className="text-lg">⬆️</span>
@@ -7854,41 +7829,35 @@ const dailyPnLChartData = useMemo(
                                               <div className="space-y-2">
                                                 <div className="flex items-center gap-2">
                                                   <span className="text-lg">🚀</span>
-                                                  <span className="font-bold text-white">
+                                                  <span className="font-bold text-gray-900">
                                                     {signalData.type} {signalData.symbol}
                                                   </span>
                                                   {signalData.timeframe && (
-                                                    <span className="text-sm text-gray-400">{signalData.timeframe}</span>
+                                                    <span className="text-sm text-gray-500">{signalData.timeframe}</span>
                                                   )}
                                                 </div>
                                                 {signalData.entry && (
                                                   <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-400">📊</span>
-                                                    <span className="text-white">Entry: {signalData.entry}</span>
+                                                    <span className="text-gray-400">📈</span>
+                                                    <span className="text-gray-800">Entry: {signalData.entry}</span>
                                                   </div>
                                                 )}
                                                 {signalData.tp && (
                                                   <div className="flex items-center gap-2 text-sm">
                                                     <span className="text-gray-400">🎯</span>
-                                                    <span className="text-white">TP: {signalData.tp}</span>
+                                                    <span className="text-gray-800">TP: {signalData.tp}</span>
                                                   </div>
                                                 )}
                                                 {signalData.sl && (
                                                   <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-400">🛑</span>
-                                                    <span className="text-white">SL: {signalData.sl}</span>
+                                                    <span className="text-gray-400">🛡️</span>
+                                                    <span className="text-gray-800">SL: {signalData.sl}</span>
                                                   </div>
                                                 )}
                                                 {signalData.rr && (
                                                   <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-400">📐</span>
-                                                    <span className="text-white">R:R {signalData.rr}</span>
-                                                  </div>
-                                                )}
-                                                {signalData.timeframe && (
-                                                  <div className="flex items-center gap-2 text-sm">
-                                                    <span className="text-gray-400">⏰</span>
-                                                    <span className="text-white">{signalData.timeframe}</span>
+                                                    <span className="text-gray-400">⚖️</span>
+                                                    <span className="text-gray-800">R:R {signalData.rr}</span>
                                                   </div>
                                                 )}
                                               </div>
@@ -7897,17 +7866,17 @@ const dailyPnLChartData = useMemo(
                                         </div>
                                       );
                                     }
-                                    return message.text;
+                                    return <p className="whitespace-pre-wrap text-gray-900">{message.text}</p>;
                                   })()}
                                 </div>
                                 {message.attachment_data && (
                                   <div className="mt-2">
                                     {true ? (
                                       <div className="relative flex flex-col items-center">
-                                        <img 
-                                          src={message.attachment_data} 
+                                        <img
+                                          src={message.attachment_data}
                                           alt="Attachment"
-                                          className="mt-2 max-w-xs max-h-48 rounded-lg border border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                                          className="mt-2 max-w-xs max-h-48 rounded-lg border border-gray-200 cursor-pointer hover:opacity-80 transition-opacity"
                                           onClick={() => setSelectedImage(message.attachment_data)}
                                         />
                                       </div>
@@ -7929,9 +7898,9 @@ const dailyPnLChartData = useMemo(
                                   const isClosed = currentSignal && ['WIN', 'LOSS', 'BE'].includes(currentSignal.status);
                                   
                                   return (
-                                    <div className="mt-3 pt-3 border-t border-gray-600">
+                                    <div className="mt-3 pt-3 border-t border-gray-200">
                                       <div className="flex items-center gap-2">
-                                        <span className="text-xs text-gray-400">Résultat du signal:</span>
+                                        <span className="text-xs text-gray-500">Résultat du signal:</span>
                                         <button
                                           onClick={() => handleSignalStatusFromMessage(message.text, 'WIN')}
                                           disabled={isClosed}
@@ -8022,7 +7991,7 @@ const dailyPnLChartData = useMemo(
                   </div>
                   
                   {/* Barre de message */}
-                  <div className="border-t border-gray-700 p-2 md:p-4 fixed bottom-0 left-0 right-0 bg-gray-800 z-10 md:left-64 md:right-0" style={{ backgroundColor: 'var(--bg-secondary)', paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}>
+                  <div className="border-t border-gray-200 p-2 md:p-4 fixed bottom-0 left-0 right-0 bg-white z-10 md:left-64 md:right-0" style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}>
                     <div className="flex items-center gap-1.5 md:gap-2">
                       <input
                         type="text"
@@ -8030,7 +7999,7 @@ const dailyPnLChartData = useMemo(
                         onChange={(e) => setChatMessage(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                         placeholder="Tapez votre message..."
-                        className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                        className="flex-1 bg-gray-50 border border-gray-300 rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
                       />
                       <label className="cursor-pointer flex-shrink-0">
                         <input
@@ -8039,7 +8008,7 @@ const dailyPnLChartData = useMemo(
                           className="hidden"
                           accept="image/*,.pdf,.doc,.docx"
                         />
-                        <span className="bg-gray-600 hover:bg-gray-500 p-1.5 md:p-2 rounded-lg text-gray-300 hover:text-white text-sm md:text-base">
+                        <span className="bg-gray-100 hover:bg-gray-200 p-1.5 md:p-2 rounded-lg text-gray-600 hover:text-gray-900 text-sm md:text-base">
                           📎
                         </span>
                       </label>
