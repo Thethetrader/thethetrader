@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import LiveOneToOne from './LiveOneToOne';
 import { httpsCallable } from 'firebase/functions';
 import { functions } from '../utils/firebase-setup';
+import { useTheme } from '../contexts/ThemeContext';
 
 function AudioPlayer({ src, isSent }: { src: string; isSent: boolean }) {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -82,12 +83,12 @@ const fmtDateSep = (iso: string) => {
   if (d.toDateString() === yest.toDateString()) return 'Hier';
   return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
 };
-function DateSep({ iso }: { iso: string }) {
+function DateSep({ iso, border, bg }: { iso: string; border: string; bg: string }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '8px 0' }}>
-      <div style={{ flex: 1, height: 1, background: '#374151' }} />
-      <span style={{ fontSize: 11, color: '#6b7280', background: '#111827', padding: '2px 10px', borderRadius: 20, border: '1px solid #374151', whiteSpace: 'nowrap' }}>{fmtDateSep(iso)}</span>
-      <div style={{ flex: 1, height: 1, background: '#374151' }} />
+      <div style={{ flex: 1, height: 1, background: border }} />
+      <span style={{ fontSize: 11, color: '#6b7280', background: bg, padding: '2px 10px', borderRadius: 20, border: `1px solid ${border}`, whiteSpace: 'nowrap' }}>{fmtDateSep(iso)}</span>
+      <div style={{ flex: 1, height: 1, background: border }} />
     </div>
   );
 }
@@ -354,23 +355,42 @@ export default function SupportAdminChat() {
   }
 
   const activeConv = conversations.find(c => c.id === activeId);
-
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  const C = {
+    bg:         isDark ? '#111827' : '#f8fafc',
+    sidebarBg:  isDark ? '#1f2937' : '#ffffff',
+    border:     isDark ? '#374151' : '#e5e7eb',
+    textPrimary: isDark ? '#f9fafb' : '#111827',
+    textSecondary: isDark ? '#6b7280' : '#6b7280',
+    inputBg:    isDark ? '#111827' : '#f1f5f9',
+    inputBorder: isDark ? '#374151' : '#d1d5db',
+    inputText:  isDark ? '#f3f4f6' : '#111827',
+    hoverBg:    isDark ? '#2d3748' : '#f3f4f6',
+    activeBg:   isDark ? '#374151' : '#e5e7eb',
+    msgVisitorBg: isDark ? '#1f2937' : '#ffffff',
+    msgVisitorText: isDark ? '#f3f4f6' : '#111827',
+    userPickerBg: isDark ? '#111827' : '#f1f5f9',
+    dropdownBg: isDark ? '#1f2937' : '#ffffff',
+    dropdownItemBorder: isDark ? '#2d3748' : '#f3f4f6',
+  };
+
   return (
-    <div style={{ display: 'flex', height: '100%', background: '#111827', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', height: '100%', background: C.bg, overflow: 'hidden' }}>
 
       {/* Sidebar — cachée sur mobile en mode chat */}
-      <div style={{ width: isMobile ? '100%' : 280, minWidth: isMobile ? 0 : 280, borderRight: '1px solid #374151', display: isMobile && mobilePane === 'chat' ? 'none' : 'flex', flexDirection: 'column', background: '#1f2937' }}>
-        <div style={{ padding: '0 14px', borderBottom: '1px solid #374151', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 61, flexShrink: 0 }}>
-          <span style={{ fontWeight: 700, fontSize: 14, color: '#f9fafb' }}>Support clients</span>
+      <div style={{ width: isMobile ? '100%' : 280, minWidth: isMobile ? 0 : 280, borderRight: `1px solid ${C.border}`, display: isMobile && mobilePane === 'chat' ? 'none' : 'flex', flexDirection: 'column', background: C.sidebarBg }}>
+        <div style={{ padding: '0 14px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 61, flexShrink: 0 }}>
+          <span style={{ fontWeight: 700, fontSize: 14, color: C.textPrimary }}>Support clients</span>
           <button onClick={loadConversations} style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer', fontSize: 16, padding: 2 }} title="Actualiser">↻</button>
         </div>
 
         {/* User picker */}
-        <div style={{ padding: '10px 12px', borderBottom: '1px solid #374151', position: 'relative' }}>
+        <div style={{ padding: '10px 12px', borderBottom: `1px solid ${C.border}`, position: 'relative' }}>
           <div
-            style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#111827', border: '1px solid #374151', borderRadius: 8, padding: '7px 10px', cursor: 'pointer' }}
+            style={{ display: 'flex', alignItems: 'center', gap: 8, background: C.userPickerBg, border: `1px solid ${C.border}`, borderRadius: 8, padding: '7px 10px', cursor: 'pointer' }}
             onClick={() => { setShowUserDrop(v => !v); if (!showUserDrop) setUserSearch(''); }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -378,14 +398,14 @@ export default function SupportAdminChat() {
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
           </div>
           {showUserDrop && (
-            <div style={{ position: 'absolute', left: 12, right: 12, top: '100%', zIndex: 50, background: '#1f2937', border: '1px solid #374151', borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.4)', overflow: 'hidden' }}>
-              <div style={{ padding: '8px 10px', borderBottom: '1px solid #374151' }}>
+            <div style={{ position: 'absolute', left: 12, right: 12, top: '100%', zIndex: 50, background: C.dropdownBg, border: `1px solid ${C.border}`, borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.15)', overflow: 'hidden' }}>
+              <div style={{ padding: '8px 10px', borderBottom: `1px solid ${C.border}` }}>
                 <input
                   autoFocus
                   value={userSearch}
                   onChange={e => setUserSearch(e.target.value)}
                   placeholder="Rechercher un utilisateur…"
-                  style={{ width: '100%', background: '#111827', border: '1px solid #374151', borderRadius: 6, padding: '6px 10px', fontSize: 13, color: '#f3f4f6', outline: 'none', boxSizing: 'border-box' }}
+                  style={{ width: '100%', background: C.inputBg, border: `1px solid ${C.inputBorder}`, borderRadius: 6, padding: '6px 10px', fontSize: 13, color: C.inputText, outline: 'none', boxSizing: 'border-box' }}
                 />
               </div>
               <div style={{ maxHeight: 220, overflowY: 'auto' }}>
@@ -395,11 +415,11 @@ export default function SupportAdminChat() {
                     <div
                       key={u.id}
                       onClick={() => startConversationWith(u)}
-                      style={{ padding: '9px 12px', cursor: 'pointer', borderBottom: '1px solid #2d3748' }}
-                      onMouseEnter={e => (e.currentTarget.style.background = '#374151')}
+                      style={{ padding: '9px 12px', cursor: 'pointer', borderBottom: `1px solid ${C.dropdownItemBorder}` }}
+                      onMouseEnter={e => (e.currentTarget.style.background = C.hoverBg)}
                       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                     >
-                      <div style={{ fontSize: 13, color: '#f3f4f6', fontWeight: 500 }}>{u.name || u.email.split('@')[0]}</div>
+                      <div style={{ fontSize: 13, color: C.textPrimary, fontWeight: 500 }}>{u.name || u.email.split('@')[0]}</div>
                       <div style={{ fontSize: 11, color: '#6b7280' }}>{u.email}</div>
                     </div>
                   ))
@@ -423,19 +443,19 @@ export default function SupportAdminChat() {
             <div
               key={c.id}
               onClick={() => openConversation(c.id)}
-              style={{ padding: '12px 14px', borderBottom: '1px solid #374151', cursor: 'pointer', background: activeId === c.id ? '#374151' : 'transparent', position: 'relative' }}
-              onMouseEnter={e => { if (activeId !== c.id) (e.currentTarget as HTMLElement).style.background = '#2d3748'; }}
+              style={{ padding: '12px 14px', borderBottom: `1px solid ${C.border}`, cursor: 'pointer', background: activeId === c.id ? C.activeBg : 'transparent', position: 'relative' }}
+              onMouseEnter={e => { if (activeId !== c.id) (e.currentTarget as HTMLElement).style.background = C.hoverBg; }}
               onMouseLeave={e => { if (activeId !== c.id) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, marginBottom: 3 }}>
-                <span style={{ fontWeight: 600, fontSize: 13, color: '#f3f4f6', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.visitor_name}</span>
+                <span style={{ fontWeight: 600, fontSize: 13, color: C.textPrimary, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.visitor_name}</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
                   <span style={{ fontSize: 11, color: '#6b7280' }}>{fmtRel(c.last_message_at)}</span>
                   {c.unread > 0 && c.status !== 'resolved' && (
                     <span style={{ background: '#ef4444', color: '#fff', fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 10, minWidth: 18, textAlign: 'center', display: 'inline-block' }}>{c.unread}</span>
                   )}
                   {c.status === 'resolved' && (
-                    <span style={{ fontSize: 10, background: '#374151', color: '#6b7280', padding: '1px 6px', borderRadius: 6 }}>résolu</span>
+                    <span style={{ fontSize: 10, background: C.activeBg, color: '#6b7280', padding: '1px 6px', borderRadius: 6 }}>résolu</span>
                   )}
                 </div>
               </div>
@@ -449,13 +469,13 @@ export default function SupportAdminChat() {
 
       {/* Main — caché sur mobile en mode liste */}
       {(!activeId || (isMobile && mobilePane === 'list')) ? (
-        <div style={{ flex: 1, display: isMobile ? 'none' : 'flex', alignItems: 'center', justifyContent: 'center', color: '#4b5563', flexDirection: 'column', gap: 8 }}>
+        <div style={{ flex: 1, display: isMobile ? 'none' : 'flex', alignItems: 'center', justifyContent: 'center', color: '#6b7280', flexDirection: 'column', gap: 8 }}>
           <div style={{ fontSize: 36 }}>💬</div>
           <div style={{ fontSize: 14 }}>Sélectionne une conversation</div>
         </div>
       ) : (
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-          <div style={{ padding: '0 16px', borderBottom: '1px solid #374151', background: '#1f2937', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, height: 61, flexShrink: 0 }}>
+          <div style={{ padding: '0 16px', borderBottom: `1px solid ${C.border}`, background: C.sidebarBg, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, height: 61, flexShrink: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
               {isMobile && (
                 <button onClick={() => setMobilePane('list')} style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', padding: 4, flexShrink: 0 }}>
@@ -463,7 +483,7 @@ export default function SupportAdminChat() {
                 </button>
               )}
               <div style={{ minWidth: 0 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, color: '#f9fafb', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{activeConv?.visitor_name}</div>
+                <div style={{ fontWeight: 700, fontSize: 14, color: C.textPrimary, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{activeConv?.visitor_name}</div>
                 <div style={{ fontSize: 12, color: '#6b7280' }}>{activeConv?.visitor_email}</div>
               </div>
             </div>
@@ -486,14 +506,14 @@ export default function SupportAdminChat() {
             </div>
           </div>
 
-          <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: 6, background: '#111827' }}>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: 6, background: C.bg }}>
             {messages.map((m, i) => {
               const isSent = m.sender_type === 'admin';
               const showSep = i === 0 || new Date(m.created_at).toDateString() !== new Date(messages[i - 1].created_at).toDateString();
               const visitorInitial = (activeConv?.visitor_name || activeConv?.visitor_email || '?').charAt(0).toUpperCase();
               return (
                 <React.Fragment key={m.id}>
-                  {showSep && <DateSep iso={m.created_at} />}
+                  {showSep && <DateSep iso={m.created_at} border={C.border} bg={C.bg} />}
                   <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, flexDirection: isSent ? 'row-reverse' : 'row', alignSelf: isSent ? 'flex-end' : 'flex-start', maxWidth: '75%' }}>
                     {/* Avatar visitor */}
                     {!isSent && (
@@ -503,7 +523,7 @@ export default function SupportAdminChat() {
                     )}
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: isSent ? 'flex-end' : 'flex-start' }}>
                       {!isSent && <span style={{ fontSize: 11, color: '#6b7280', marginBottom: 3, paddingLeft: 4 }}>{activeConv?.visitor_name || activeConv?.visitor_email}</span>}
-                      <div style={{ padding: '9px 13px', borderRadius: isSent ? '16px 16px 4px 16px' : '16px 16px 16px 4px', background: isSent ? '#10b981' : '#1f2937', color: isSent ? '#fff' : '#f3f4f6', fontSize: 14, lineHeight: 1.45, wordBreak: 'break-word', whiteSpace: 'pre-wrap', border: isSent ? 'none' : '1px solid #374151' }}>
+                      <div style={{ padding: '9px 13px', borderRadius: isSent ? '16px 16px 4px 16px' : '16px 16px 16px 4px', background: isSent ? '#10b981' : C.msgVisitorBg, color: isSent ? '#fff' : C.msgVisitorText, fontSize: 14, lineHeight: 1.45, wordBreak: 'break-word', whiteSpace: 'pre-wrap', border: isSent ? 'none' : `1px solid ${C.border}` }}>
                         {m.message_type === 'text' && m.content}
                         {m.message_type === 'image' && m.file_url && (
                           <img src={m.file_url} alt="" style={{ maxWidth: 220, borderRadius: 8, display: 'block', cursor: 'pointer' }} onClick={() => window.open(m.file_url!)} />
@@ -524,7 +544,7 @@ export default function SupportAdminChat() {
             <div ref={bottomRef} />
           </div>
 
-          <div style={{ padding: '8px 10px', borderTop: '1px solid #374151', background: '#1f2937' }}>
+          <div style={{ padding: '8px 10px', borderTop: `1px solid ${C.border}`, background: C.sidebarBg }}>
             <input ref={fileInputRef} type="file" accept="image/*,application/pdf" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) sendFile(f); e.target.value = ''; }} />
             {recording && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 12px', background: '#450a0a', borderRadius: 20, marginBottom: 8, border: '1px solid #7f1d1d' }}>
@@ -545,16 +565,16 @@ export default function SupportAdminChat() {
                 placeholder="Répondre…"
                 maxLength={2000}
                 disabled={sending || recording}
-                style={{ flex: 1, background: '#111827', border: '1px solid #374151', borderRadius: 20, padding: '9px 14px', fontSize: 14, color: '#f3f4f6', outline: 'none', resize: 'none', maxHeight: 80, fontFamily: 'inherit' }}
+                style={{ flex: 1, background: C.inputBg, border: `1px solid ${C.inputBorder}`, borderRadius: 20, padding: '9px 14px', fontSize: 14, color: C.inputText, outline: 'none', resize: 'none', maxHeight: 80, fontFamily: 'inherit' }}
                 onFocus={e => (e.target.style.borderColor = '#10b981')}
-                onBlur={e => (e.target.style.borderColor = '#374151')}
+                onBlur={e => (e.target.style.borderColor = C.inputBorder)}
               />
               {text.trim() ? (
                 <button onClick={send} disabled={sending} style={{ width: 38, height: 38, borderRadius: '50%', background: '#10b981', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
                 </button>
               ) : (
-                <button onClick={recording ? stopRecording : startRecording} disabled={sending} style={{ width: 38, height: 38, borderRadius: '50%', background: recording ? '#ef4444' : '#374151', color: recording ? '#fff' : '#9ca3af', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.15s' }} title={recording ? 'Arrêter' : 'Message vocal'}>
+                <button onClick={recording ? stopRecording : startRecording} disabled={sending} style={{ width: 38, height: 38, borderRadius: '50%', background: recording ? '#ef4444' : C.inputBorder, color: recording ? '#fff' : '#9ca3af', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.15s' }} title={recording ? 'Arrêter' : 'Message vocal'}>
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
                 </button>
               )}
