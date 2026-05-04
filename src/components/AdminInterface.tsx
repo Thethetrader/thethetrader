@@ -344,6 +344,7 @@ export default function AdminInterface() {
   const [showTradesModal, setShowTradesModal] = useState(false);
   const [showSignalsModal, setShowSignalsModal] = useState(false);
   const [selectedTradesDate, setSelectedTradesDate] = useState<Date | null>(null);
+  const [modalFullTrades, setModalFullTrades] = useState<PersonalTrade[]>([]);
   const [selectedSignalsDate, setSelectedSignalsDate] = useState<Date | null>(null);
   const [pasteArea, setPasteArea] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -5213,9 +5214,16 @@ const dailyPnLChartData = useMemo(
                           // Ouvrir le popup des trades (toujours, même s'il n'y en a pas)
                           const tradesForDate = getTradesForDate(clickedDate);
                           console.log('Clic sur jour:', dayNumber, 'Trades trouvés:', tradesForDate.length);
-                          
+
                           setSelectedTradesDate(clickedDate);
+                          setModalFullTrades(tradesForDate);
                           setShowTradesModal(true);
+                          // Lazy-load full trade data (avec images) en arrière-plan
+                          if (tradesForDate.length > 0) {
+                            Promise.all(tradesForDate.map(t => getPersonalTradeById(t.id))).then(full => {
+                              setModalFullTrades(full.filter(Boolean) as PersonalTrade[]);
+                            });
+                          }
                         } else {
                           // Ouvrir le popup des signaux si il y en a
                           const signalsForDate = getSignalsForDate(clickedDate);
@@ -8955,7 +8963,7 @@ const dailyPnLChartData = useMemo(
                   })}
                 </h2>
                 <button
-                  onClick={() => setShowTradesModal(false)}
+                  onClick={() => { setShowTradesModal(false); setModalFullTrades([]); }}
                   className="text-gray-400 hover:text-white text-2xl"
                 >
                   ×
@@ -9024,12 +9032,12 @@ const dailyPnLChartData = useMemo(
               })()}
 
               <div className="space-y-4">
-                {getTradesForDate(selectedTradesDate).length === 0 ? (
+                {modalFullTrades.length === 0 ? (
                   <div className="text-center py-8 text-gray-400">
                     Aucun trade pour cette date
                   </div>
                 ) : (
-                  getTradesForDate(selectedTradesDate).map((trade) => (
+                  modalFullTrades.map((trade) => (
                   <div key={trade.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
@@ -9153,7 +9161,7 @@ const dailyPnLChartData = useMemo(
 
               <div className="mt-6 pt-4 border-t border-gray-600">
                 <button
-                  onClick={() => setShowTradesModal(false)}
+                  onClick={() => { setShowTradesModal(false); setModalFullTrades([]); }}
                   className="w-full bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
                 >
                   Fermer
