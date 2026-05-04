@@ -208,12 +208,11 @@ export function HeroSection({ onOpenAuth }: { onOpenAuth?: () => void }) {
             Sans{" "}
             <span
               style={{
-                display: "inline-grid",
-                gridTemplateColumns: "auto",
-                gridTemplateRows: "74px",
+                display: "inline-block",
+                position: "relative",
+                height: "74px",
                 overflow: "hidden",
                 verticalAlign: "bottom",
-                justifyItems: "center",
               }}
             >
               {WORDS.map((word, idx) => {
@@ -222,8 +221,11 @@ export function HeroSection({ onOpenAuth }: { onOpenAuth?: () => void }) {
                   <span
                     key={word}
                     style={{
-                      gridArea: "1 / 1",
+                      position: isActive ? "relative" : "absolute",
+                      top: 0,
+                      left: 0,
                       lineHeight: "74px",
+                      whiteSpace: "nowrap",
                       opacity: isActive ? 1 : 0,
                       transform: isActive ? "translateY(0)" : "translateY(74px)",
                       transition: "opacity 0.45s ease, transform 0.45s ease",
