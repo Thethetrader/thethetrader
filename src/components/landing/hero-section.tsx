@@ -215,13 +215,17 @@ export function HeroSection({ onOpenAuth }: { onOpenAuth?: () => void }) {
                 verticalAlign: "bottom",
               }}
             >
+              {/* Spacer invisible qui force la largeur sur le mot le plus large */}
+              <span style={{ visibility: "hidden", lineHeight: "74px", fontWeight: 600, whiteSpace: "nowrap", display: "block" }}>
+                hasard.
+              </span>
               {WORDS.map((word, idx) => {
                 const isActive = idx === activeIdx;
                 return (
                   <span
                     key={word}
                     style={{
-                      position: isActive ? "relative" : "absolute",
+                      position: "absolute",
                       top: 0,
                       left: 0,
                       lineHeight: "74px",
