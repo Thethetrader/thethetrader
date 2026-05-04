@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import "./landing-responsive.css";
 import { SiteHeader } from "./site-header";
 import { HeroSection } from "./hero-section";
@@ -13,6 +14,15 @@ import { ProblemSection } from "./problem-section";
 import { SiteFooter } from "./site-footer";
 
 export function LandingPage({ onOpenAuth }: { onOpenAuth?: () => void }) {
+  useEffect(() => {
+    const prev = document.documentElement.getAttribute('data-theme');
+    document.documentElement.setAttribute('data-theme', 'light');
+    return () => {
+      if (prev) document.documentElement.setAttribute('data-theme', prev);
+      else document.documentElement.removeAttribute('data-theme');
+    };
+  }, []);
+
   return (
     <div
       style={{

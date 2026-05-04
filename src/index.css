@@ -153,10 +153,10 @@ body {
   overflow-x: clip;
   overflow-y: visible;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #ffffff;
+  background: var(--bg-app, #ffffff);
   color: hsl(var(--foreground));
   position: relative;
-  
+
 }
 
 html {
@@ -164,7 +164,7 @@ html {
   padding: 0;
   width: 100%;
   height: 100%;
-  background: #ffffff;
+  background: var(--bg-app, #ffffff);
 }
 
 #root {
