@@ -207,6 +207,7 @@ export function HeroSection({ onOpenAuth }: { onOpenAuth?: () => void }) {
             Trader avec précision.<br />
             Sans{" "}
             <span
+              className="hero-word-container"
               style={{
                 display: "inline-block",
                 position: "relative",
@@ -215,8 +216,8 @@ export function HeroSection({ onOpenAuth }: { onOpenAuth?: () => void }) {
                 verticalAlign: "bottom",
               }}
             >
-              {/* Spacer invisible qui force la largeur sur le mot le plus large */}
-              <span style={{ visibility: "hidden", lineHeight: "74px", fontWeight: 600, whiteSpace: "nowrap", display: "block" }}>
+              {/* Spacer invisible inline — force la largeur sur le mot le plus large */}
+              <span style={{ visibility: "hidden", lineHeight: "74px", fontWeight: 600, whiteSpace: "nowrap" }}>
                 hasard.
               </span>
               {WORDS.map((word, idx) => {
@@ -224,6 +225,7 @@ export function HeroSection({ onOpenAuth }: { onOpenAuth?: () => void }) {
                 return (
                   <span
                     key={word}
+                    className="hero-word-span"
                     style={{
                       position: "absolute",
                       top: 0,
