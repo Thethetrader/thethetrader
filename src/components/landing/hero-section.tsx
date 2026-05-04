@@ -213,6 +213,7 @@ export function HeroSection({ onOpenAuth }: { onOpenAuth?: () => void }) {
                 gridTemplateRows: "74px",
                 overflow: "hidden",
                 verticalAlign: "bottom",
+                justifyItems: "center",
               }}
             >
               {WORDS.map((word, idx) => {
