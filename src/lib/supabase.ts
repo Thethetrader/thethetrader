@@ -906,6 +906,27 @@ export interface PersonalTrade {
   session?: string; // Session: 18h, Open Asian, London, NY AM, NY PM
 }
 
+const compressImage = (file: File, maxPx = 1200, quality = 0.75): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = () => {
+        const scale = Math.min(1, maxPx / Math.max(img.width, img.height));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        const ctx = canvas.getContext('2d')!;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
+
 /**
  * Ajouter un trade personnel dans Supabase
  */
@@ -924,21 +945,13 @@ export const addPersonalTrade = async (trade: Omit<PersonalTrade, 'id' | 'user_i
     let image2Base64: string | null = null;
 
     if (trade.image1 && typeof trade.image1 === 'object') {
-      image1Base64 = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.readAsDataURL(trade.image1 as any);
-      });
+      image1Base64 = await compressImage(trade.image1 as File);
     } else if (typeof trade.image1 === 'string') {
       image1Base64 = trade.image1;
     }
 
     if (trade.image2 && typeof trade.image2 === 'object') {
-      image2Base64 = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.readAsDataURL(trade.image2 as any);
-      });
+      image2Base64 = await compressImage(trade.image2 as File);
     } else if (typeof trade.image2 === 'string') {
       image2Base64 = trade.image2;
     }
@@ -1097,7 +1110,7 @@ export const getPersonalTradesRange = async ({
 
     let q = supabase
       .from('personal_trades')
-      .select('*')
+      .select('id,user_id,date,symbol,type,entry,exit,stop_loss,pnl,status,account,session,loss_reason,loss_reasons,notes,created_at,updated_at')
       .eq('user_id', user.id)
       .gte('date', startDate)
       .lte('date', endDate)
@@ -1282,22 +1295,14 @@ export const updatePersonalTrade = async (
 
     if (updates.image1 !== undefined) {
       if (updates.image1 && typeof updates.image1 === 'object') {
-        tradeData.image1 = await new Promise<string>((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result as string);
-          reader.readAsDataURL(updates.image1 as any);
-        });
+        tradeData.image1 = await compressImage(updates.image1 as File);
       } else {
         tradeData.image1 = updates.image1;
       }
     }
     if (updates.image2 !== undefined) {
       if (updates.image2 && typeof updates.image2 === 'object') {
-        tradeData.image2 = await new Promise<string>((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result as string);
-          reader.readAsDataURL(updates.image2 as any);
-        });
+        tradeData.image2 = await compressImage(updates.image2 as File);
       } else {
         tradeData.image2 = updates.image2;
       }
@@ -1338,7 +1343,8 @@ export type PersonalTradesUpdate = PersonalTrade[] | ((prev: PersonalTrade[]) =>
 
 export const listenToPersonalTrades = (
   onTradesChange: (tradesOrUpdater: PersonalTradesUpdate) => void,
-  onError?: (error: any) => void
+  onError?: (error: any) => void,
+  options?: { skipInitialLoad?: boolean }
 ) => {
   let userId: string | null = null;
   let activeChannel: ReturnType<typeof supabase.channel> | null = null;
@@ -1350,9 +1356,11 @@ export const listenToPersonalTrades = (
     }
     userId = user.id;
 
-    getPersonalTrades(50).then(trades => {
-      onTradesChange(trades);
-    });
+    if (!options?.skipInitialLoad) {
+      getPersonalTrades(50).then(trades => {
+        onTradesChange(trades);
+      });
+    }
 
     activeChannel = supabase
       .channel(`personal_trades_changes_${userId}`)

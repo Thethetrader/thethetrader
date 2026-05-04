@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { getMessages, getSignals, subscribeToMessages, addMessage, uploadImage, addSignal, subscribeToSignals, updateMessageReactions, getMessageReactions, subscribeToMessageReactions, Signal, syncUserId, database } from '../../utils/firebase-setup';
 import { ref, onValue, push } from 'firebase/database';
-import { addPersonalTrade, getPersonalTrades, getPersonalTradeById, deletePersonalTrade, updatePersonalTrade, PersonalTrade, listenToPersonalTrades, type PersonalTradesUpdate, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, getUserSubscription, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, getFinSessionCacheKey, type FinSessionData } from '../../lib/supabase';
+import { addPersonalTrade, getPersonalTrades, getPersonalTradesRange, getPersonalTradeById, deletePersonalTrade, updatePersonalTrade, PersonalTrade, listenToPersonalTrades, type PersonalTradesUpdate, getUserAccounts, addUserAccount, deleteUserAccount, updateUserAccount, UserAccount, getUserSubscription, getFinSessionStatsFromSupabase, upsertFinSessionStatToSupabase, deleteFinSessionStatFromSupabase, getFinSessionCacheKey, type FinSessionData } from '../../lib/supabase';
 import ProfitLoss from '../ProfitLoss';
 import { createClient } from '@supabase/supabase-js';
 import { initializeNotifications, notifyNewSignal, notifySignalClosed, areNotificationsAvailable, requestNotificationPermission, sendLocalNotification } from '../../utils/push-notifications';
@@ -11,7 +11,6 @@ import { hasChannelAccess, type PlanType } from '../../config/subscription-plans
 import { syncProfileImage, getProfileImage, initializeProfile } from '../../utils/profile-manager';
 import { updateUserProfile, getUserProfile, getUserProfileByType } from '../../lib/supabase';
 import { useStatsSync } from '../../hooks/useStatsSync';
-import { useCalendarSync } from '../../hooks/useCalendarSync';
 import RumbleTalk from '../RumbleTalk';
 import DailyPnLChart from '../DailyPnLChart';
 import CheckTradeChecklist from '../CheckTradeChecklist';
@@ -268,15 +267,6 @@ export default function TradingPlatformShell() {
   
   // Hook pour les stats en temps réel synchronisées avec l'admin
   const { stats, allSignalsForStats: realTimeSignals, getWeeklyBreakdown: getCalendarWeeklyBreakdown, getTodaySignals: getCalendarTodaySignals, getThisMonthSignals: getCalendarThisMonthSignals } = useStatsSync();
-  
-  console.log('📊 Stats:', stats);
-  console.log('📡 RealTime Signals:', realTimeSignals);
-  
-  // Hook pour la synchronisation du calendrier
-  const { calendarStats, getMonthlyStats: getCalendarMonthlyStats, getWeeklyBreakdown: getCalendarWeeklyBreakdownFromHook } = useCalendarSync();
-  
-  console.log('📅 Calendar Stats:', calendarStats);
-  console.log('✅ Tous les hooks chargés !');
   
   // États pour l'abonnement
   const [userPlan, setUserPlan] = useState<PlanType | null>(null);
@@ -1819,6 +1809,8 @@ export default function TradingPlatformShell() {
   const [personalTrades, setPersonalTrades] = useState<PersonalTrade[]>([]);
   // IDs des trades qu'on vient d'ajouter : ne pas laisser le listener temps réel écraser la liste
   const justAddedTradeIdsRef = useRef<string[]>([]);
+  // Cache des mois déjà chargés depuis Supabase
+  const loadedMonthsRef = useRef<Set<string>>(new Set());
 
   // État pour les comptes multiples
   const [tradingAccounts, setTradingAccounts] = useState<UserAccount[]>([]);
@@ -1868,36 +1860,17 @@ export default function TradingPlatformShell() {
     // Démarrer l'écoute temps réel
     const unsubscribe = listenToPersonalTrades(
       (tradesOrUpdater: PersonalTradesUpdate) => {
-        const pendingIds = justAddedTradeIdsRef.current;
         setPersonalTrades(prevTrades => {
           if (typeof tradesOrUpdater === 'function') {
             return tradesOrUpdater(prevTrades);
           }
-          const trades = tradesOrUpdater;
-          if (trades.length === 0) {
-            if (prevTrades.length > 0 || pendingIds.length > 0) return prevTrades;
-            return [] as PersonalTrade[];
-          }
-          if (pendingIds.length > 0) {
-            const hasAll = pendingIds.every(id => trades.some(t => t.id === id));
-            if (!hasAll) return prevTrades;
-            justAddedTradeIdsRef.current = [];
-          }
-          return trades;
+          return prevTrades;
         });
       },
       (error) => {
         console.error('❌ Erreur synchronisation temps réel [PWA]:', error);
-        // En cas d'erreur, ne pas remplacer les trades existants
-        setPersonalTrades(prevTrades => {
-          if (prevTrades.length > 0) {
-            console.log('⚠️ Erreur mais trades existants conservés:', prevTrades.length);
-            return prevTrades;
-          }
-          console.log('📊 Erreur, garde les données fictives pour screenshots');
-          return [];
-        });
-      }
+      },
+      { skipInitialLoad: true }
     );
     
     // Nettoyer l'écoute au démontage du composant
@@ -1906,6 +1879,30 @@ export default function TradingPlatformShell() {
       unsubscribe();
     };
   }, []); // Une seule fois au démarrage
+
+  // Chargement par mois à la demande (cache pour éviter les re-fetches)
+  useEffect(() => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
+
+    if (loadedMonthsRef.current.has(monthKey)) return;
+    loadedMonthsRef.current.add(monthKey);
+
+    const startDate = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+    const lastDay = new Date(year, month + 1, 0).getDate();
+    const endDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
+
+    getPersonalTradesRange({ startDate, endDate, limit: 200 }).then(monthTrades => {
+      setPersonalTrades(prev => {
+        const others = prev.filter(t => {
+          const d = new Date(t.date);
+          return !(d.getFullYear() === year && d.getMonth() === month);
+        });
+        return [...others, ...monthTrades];
+      });
+    });
+  }, [currentDate]);
 
   // Debug: Afficher les trades au chargement
   useEffect(() => {

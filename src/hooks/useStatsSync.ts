@@ -50,26 +50,16 @@ export function useStatsSync() {
       console.log('📊 [STATS-SYNC] Chargement de TOUS les signaux pour synchronisation...');
       
       const channels = ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'];
-      let allSignals: any[] = [];
-      
-      for (const channelId of channels) {
-        try {
-          const channelSignals = await getSignals(channelId, 999);
-          if (channelSignals && channelSignals.length > 0) {
-            console.log(`🔍 [STATS-SYNC] Signaux bruts de ${channelId}:`, channelSignals);
-            channelSignals.forEach(signal => {
-              console.log(`🔍 [STATS-SYNC] Signal ${signal.id} de ${channelId}:`, {
-                image: signal.image,
-                attachment_data: signal.attachment_data,
-                ALL_KEYS: Object.keys(signal)
-              });
-            });
-            allSignals = [...allSignals, ...channelSignals];
-          }
-        } catch (error) {
-          console.error(`❌ [STATS-SYNC] Erreur chargement signaux pour ${channelId}:`, error);
-        }
-      }
+
+      const results = await Promise.all(
+        channels.map(channelId =>
+          getSignals(channelId, 200).catch(error => {
+            console.error(`❌ [STATS-SYNC] Erreur chargement signaux pour ${channelId}:`, error);
+            return [] as any[];
+          })
+        )
+      );
+      const allSignals = results.flat();
       
       if (allSignals.length > 0) {
         const formattedSignals = allSignals.map(signal => {

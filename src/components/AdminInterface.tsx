@@ -1041,28 +1041,14 @@ export default function AdminInterface() {
     // Démarrer l'écoute temps réel
     const unsubscribe = listenToPersonalTrades(
       (tradesOrUpdater: PersonalTradesUpdate) => {
-        const pendingIds = justAddedTradeIdsRef.current;
-        setPersonalTrades(prev => {
-          if (typeof tradesOrUpdater === 'function') {
-            return tradesOrUpdater(prev);
-          }
-          const trades = tradesOrUpdater;
-          if (trades.length === 0) {
-            if (prev.length > 0 || pendingIds.length > 0) return prev;
-            return trades;
-          }
-          if (pendingIds.length > 0) {
-            if (trades.length < prev.length) return prev;
-            const hasAll = pendingIds.every(id => trades.some(t => t.id === id));
-            if (!hasAll) return prev;
-            justAddedTradeIdsRef.current = [];
-          }
-          return trades;
-        });
+        if (typeof tradesOrUpdater === 'function') {
+          setPersonalTrades(prev => (tradesOrUpdater as (p: PersonalTrade[]) => PersonalTrade[])(prev));
+        }
       },
       (error) => {
         console.error('❌ Erreur synchronisation temps réel [ADMIN]:', error);
-      }
+      },
+      { skipInitialLoad: true }
     );
     
     // Nettoyer l'écoute au démontage du composant
