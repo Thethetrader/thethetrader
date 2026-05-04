@@ -823,6 +823,8 @@ export default function TradingPlatformShell() {
   const [winsLossFilter, setWinsLossFilter] = useState<'WIN' | 'LOSS' | 'BE' | null>(null);
   const [showPerformanceTableModal, setShowPerformanceTableModal] = useState(false);
   const [winsLossTradeIndex, setWinsLossTradeIndex] = useState(0);
+  const [winsLossCurrentFull, setWinsLossCurrentFull] = useState<PersonalTrade | null>(null);
+  const winsLossImageCache = useRef<Map<string, PersonalTrade>>(new Map());
   const [imageZoom, setImageZoom] = useState(1);
   const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -1904,6 +1906,24 @@ export default function TradingPlatformShell() {
       });
     });
   }, [currentDate]);
+
+  // Lazy-load image pour le trade courant dans le modal WIN/LOSS/BE
+  useEffect(() => {
+    if (!showWinsLossModal || !winsLossFilter || selectedChannel.id === 'calendrier') return;
+    const filteredTrades = getTradesForSelectedAccount.filter((t: PersonalTrade) => t.status === winsLossFilter);
+    const current = filteredTrades[winsLossTradeIndex];
+    if (!current) { setWinsLossCurrentFull(null); return; }
+    if (winsLossImageCache.current.has(current.id)) {
+      setWinsLossCurrentFull(winsLossImageCache.current.get(current.id)!);
+      return;
+    }
+    getPersonalTradeById(current.id).then(full => {
+      if (full) {
+        winsLossImageCache.current.set(full.id, full);
+        setWinsLossCurrentFull(full);
+      }
+    });
+  }, [showWinsLossModal, winsLossFilter, winsLossTradeIndex]);
 
   // Debug: Afficher les trades au chargement
   useEffect(() => {
@@ -8888,10 +8908,11 @@ export default function TradingPlatformShell() {
                 );
               }
               
-              // Image: pour les signaux, utiliser image ou closure_image; pour les trades, utiliser image1 ou image2
-              const imgSrc = isSignalsMode 
+              // Image: pour les signaux, utiliser image ou closure_image; pour les trades, utiliser le trade complet (avec images)
+              const tradeWithImg = isSignalsMode ? currentItem : (winsLossCurrentFull?.id === (currentItem as any).id ? winsLossCurrentFull : currentItem);
+              const imgSrc = isSignalsMode
                 ? (currentItem as any).image || (currentItem as any).closure_image
-                : (currentItem as any).image1 || (currentItem as any).image2;
+                : (tradeWithImg as any).image1 || (tradeWithImg as any).image2;
               const imgUrl = imgSrc ? (typeof imgSrc === 'string' ? imgSrc : URL.createObjectURL(imgSrc as any)) : null;
               
               let wlSwipeStartX = 0;

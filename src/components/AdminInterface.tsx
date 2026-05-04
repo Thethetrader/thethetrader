@@ -351,6 +351,8 @@ export default function AdminInterface() {
   const [showWinsLossModal, setShowWinsLossModal] = useState(false);
   const [winsLossFilter, setWinsLossFilter] = useState<'WIN' | 'LOSS' | 'BE' | null>(null);
   const [winsLossTradeIndex, setWinsLossTradeIndex] = useState(0);
+  const [winsLossCurrentFull, setWinsLossCurrentFull] = useState<PersonalTrade | null>(null);
+  const winsLossImageCache = useRef<Map<string, PersonalTrade>>(new Map());
   const [showPerformanceTableModal, setShowPerformanceTableModal] = useState(false);
   const [performanceTradesLight, setPerformanceTradesLight] = useState<PersonalTrade[] | null>(null);
   const [performanceTradesLightKey, setPerformanceTradesLightKey] = useState<string>('');
@@ -1648,6 +1650,24 @@ export default function AdminInterface() {
 
     load();
   }, [selectedChannel.id, currentDate, selectedAccount]);
+
+  // Lazy-load image pour le trade courant dans le modal WIN/LOSS/BE
+  useEffect(() => {
+    if (!showWinsLossModal || !winsLossFilter || selectedChannel.id === 'calendrier') return;
+    const filteredTrades = getTradesForSelectedAccount.filter((t: PersonalTrade) => t.status === winsLossFilter);
+    const current = filteredTrades[winsLossTradeIndex];
+    if (!current) { setWinsLossCurrentFull(null); return; }
+    if (winsLossImageCache.current.has(current.id)) {
+      setWinsLossCurrentFull(winsLossImageCache.current.get(current.id)!);
+      return;
+    }
+    getPersonalTradeById(current.id).then(full => {
+      if (full) {
+        winsLossImageCache.current.set(full.id, full);
+        setWinsLossCurrentFull(full);
+      }
+    });
+  }, [showWinsLossModal, winsLossFilter, winsLossTradeIndex]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -9199,9 +9219,10 @@ const dailyPnLChartData = useMemo(
               }
               
               // Image: pour les signaux, utiliser image ou closure_image; pour les trades, utiliser image1 ou image2
-              const imgSrc = isSignalsMode 
+              const tradeWithImg = isSignalsMode ? currentItem : (winsLossCurrentFull?.id === (currentItem as any).id ? winsLossCurrentFull : currentItem);
+              const imgSrc = isSignalsMode
                 ? (currentItem as any).image || (currentItem as any).closure_image
-                : (currentItem as any).image1 || (currentItem as any).image2;
+                : (tradeWithImg as any).image1 || (tradeWithImg as any).image2;
               const imgUrl = imgSrc ? (typeof imgSrc === 'string' ? imgSrc : URL.createObjectURL(imgSrc as any)) : null;
               
               return (
