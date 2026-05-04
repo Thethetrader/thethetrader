@@ -15,11 +15,13 @@ import { SiteFooter } from "./site-footer";
 
 export function LandingPage({ onOpenAuth }: { onOpenAuth?: () => void }) {
   useEffect(() => {
-    const prev = document.documentElement.getAttribute('data-theme');
-    document.documentElement.setAttribute('data-theme', 'light');
+    const prevHtml = document.documentElement.style.background;
+    const prevBody = document.body.style.background;
+    document.documentElement.style.background = '#ffffff';
+    document.body.style.background = '#ffffff';
     return () => {
-      if (prev) document.documentElement.setAttribute('data-theme', prev);
-      else document.documentElement.removeAttribute('data-theme');
+      document.documentElement.style.background = prevHtml;
+      document.body.style.background = prevBody;
     };
   }, []);
 
