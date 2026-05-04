@@ -229,7 +229,10 @@ export function HeroSection({ onOpenAuth }: { onOpenAuth?: () => void }) {
                       opacity: isActive ? 1 : 0,
                       transform: isActive ? "translateY(0)" : "translateY(74px)",
                       transition: "opacity 0.45s ease, transform 0.45s ease",
-                      color: "oklch(0.21 0.006 285.885)",
+                      background: "linear-gradient(90deg, rgb(10, 171, 240), rgb(143, 102, 255), rgb(231, 46, 235))",
+                      WebkitBackgroundClip: "text",
+                      backgroundClip: "text",
+                      color: "transparent",
                       fontWeight: 600,
                     }}
                   >
