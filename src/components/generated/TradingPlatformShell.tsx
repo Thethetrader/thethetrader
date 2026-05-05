@@ -6346,7 +6346,7 @@ export default function TradingPlatformShell() {
                 {getTradingCalendar()}
               </div>
             ) : (view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'video' || selectedChannel.id === 'livestream-premium' || selectedChannel.id === 'journal') ? (
-              <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: 'calc(60px + env(safe-area-inset-top, 0px) + 2mm)', WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}>
+              <div className="bg-gray-900 text-white p-4 md:p-6 h-full overflow-y-auto overflow-x-hidden" style={{ paddingTop: 'calc(60px + env(safe-area-inset-top, 0px) + 18px)', WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}>
                 {/* Header avec sélecteur de compte et bouton Ajouter Trade pour Trading Journal (pas sur TPLN model) */}
                 {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal') ? (
                   <div className="mb-4 md:mb-6 border-b border-gray-600 pb-4">
