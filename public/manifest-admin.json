@@ -1,6 +1,6 @@
 {
-  "name": "TPLN Admin",
-  "short_name": "TPLN Admin",
+  "name": "TPLN AD",
+  "short_name": "TPLN AD",
   "description": "Interface d'administration TPLN",
   "start_url": "/admin?v=2",
   "display": "standalone",
