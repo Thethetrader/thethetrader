@@ -116,13 +116,24 @@
   background: var(--bg-primary) !important;
 }
 
-/* Touch devices: ne pas assombrir les boutons pendant le scroll */
+/* Boutons dans listes scrollables : touch-action pan-y pour éviter l'état actif au scroll */
+.overflow-y-auto button,
+[style*="overflow-y: auto"] button,
+[style*="overflow-y:auto"] button {
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Touch devices: supprimer hover + transition sur les boutons dans les listes */
 @media (hover: none) and (pointer: coarse) {
   .hover\:bg-gray-600:hover {
     background-color: var(--bg-tertiary) !important;
   }
   .hover\:bg-gray-700:hover {
     background-color: var(--bg-secondary) !important;
+  }
+  .overflow-y-auto button {
+    transition: none !important;
   }
 }
 
