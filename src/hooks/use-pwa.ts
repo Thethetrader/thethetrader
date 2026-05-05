@@ -1,38 +1,25 @@
 import { useState, useEffect } from 'react';
 
+const detectPWA = () => {
+  try {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+    const isFromHomeScreen = (window.navigator as any).standalone === true || false;
+    return isStandalone || isFromHomeScreen;
+  } catch {
+    return false;
+  }
+};
+
 export const usePWA = () => {
-  const [isPWA, setIsPWA] = useState(false);
+  // Initialize synchronously to avoid a second render flash
+  const [isPWA, setIsPWA] = useState(() => detectPWA());
 
   useEffect(() => {
-    // Détecter si l'app est installée comme PWA
-    const checkPWA = () => {
-      // Vérifier si l'app est en mode standalone (PWA)
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-      
-      // Vérifier si l'app est ouverte depuis l'écran d'accueil (iOS)
-      const isFromHomeScreen = (window.navigator as any).standalone === true || false;
-      
-      // Vérifier si l'app est en mode fullscreen
-      const isFullscreen = document.fullscreenElement !== null;
-      
-      // Fallback pour Safari - éviter les erreurs
-      try {
-        setIsPWA(isStandalone || isFromHomeScreen || isFullscreen);
-      } catch (error) {
-        setIsPWA(false);
-      }
-    };
-
-    checkPWA();
-
-    // Écouter les changements de mode d'affichage
     const mediaQuery = window.matchMedia('(display-mode: standalone)');
-    mediaQuery.addEventListener('change', checkPWA);
-
-    return () => {
-      mediaQuery.removeEventListener('change', checkPWA);
-    };
+    const handleChange = () => setIsPWA(detectPWA());
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
   return { isPWA };
-}; 
+};
