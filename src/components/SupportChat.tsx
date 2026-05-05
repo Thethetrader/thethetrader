@@ -471,14 +471,7 @@ export default function SupportChat({ userId, userEmail, visitorName, onNewAdmin
             <React.Fragment key={m.id}>
               {showSep && <DateSep iso={m.created_at} />}
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, flexDirection: isSent ? 'row-reverse' : 'row', alignSelf: isSent ? 'flex-end' : 'flex-start', maxWidth: '82%' }}>
-                {/* Avatar admin (messages reçus seulement) */}
-                {!isSent && (
-                  <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'linear-gradient(135deg,#10b981,#059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 11, flexShrink: 0, overflow: 'hidden', marginBottom: 18 }}>
-                    {adminAvatar ? <img src={adminAvatar} alt={adminName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : adminName.charAt(0).toUpperCase()}
-                  </div>
-                )}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: isSent ? 'flex-end' : 'flex-start' }}>
-                  {!isSent && <span style={{ fontSize: 11, color: '#6b7280', marginBottom: 3, paddingLeft: 4 }}>{adminName}</span>}
                   <div style={{ padding: m.message_type === 'text' ? '10px 14px' : '6px', borderRadius: isSent ? '18px 18px 4px 18px' : '18px 18px 18px 4px', background: isSent ? '#10b981' : '#1f2937', color: '#f9fafb', fontSize: 14, lineHeight: 1.45, wordBreak: 'break-word', whiteSpace: 'pre-wrap', border: isSent ? 'none' : '1px solid #374151' }}>
                     {m.message_type === 'text' && m.content}
                     {m.message_type === 'image' && m.file_url && (
