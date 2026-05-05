@@ -25,8 +25,8 @@
 
 /* ─── THEME LIGHT ─────────────────────────────────────────────── */
 [data-theme="light"] {
-  --bg-app:        #f1f5f9;
-  --bg-primary:    #f8fafc;
+  --bg-app:        #ffffff;
+  --bg-primary:    #ffffff;
   --bg-secondary:  #ffffff;
   --bg-tertiary:   #f1f5f9;
   --bg-input:      #f8fafc;
@@ -116,6 +116,14 @@
   background: var(--bg-primary) !important;
 }
 
+/* Touch devices: disable hover states on channel list buttons to avoid grey-on-scroll */
+@media (hover: none) and (pointer: coarse) {
+  .hover\:bg-gray-600:hover,
+  .hover\:bg-gray-700:hover {
+    background-color: revert !important;
+  }
+}
+
 :root {
   --background: 222.2 84% 4.9%;
   --foreground: 210 40% 98%;
@@ -158,7 +166,7 @@ body {
   overflow-x: clip;
   overflow-y: visible;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: var(--bg-app, #ffffff);
+  background: var(--bg-app, #0f1115);
   color: hsl(var(--foreground));
   position: relative;
   -webkit-tap-highlight-color: transparent;
@@ -170,7 +178,7 @@ html {
   padding: 0;
   width: 100%;
   height: 100%;
-  background: var(--bg-app, #ffffff);
+  background: var(--bg-app, #0f1115);
 }
 
 #root {

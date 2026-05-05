@@ -192,7 +192,7 @@ function WinRateGauge({ wins, losses }: { wins: number; losses: number }) {
 
   return (
     <div className="flex-shrink-0 w-24 h-24 relative overflow-visible min-w-[6rem]">
-      <svg viewBox="0 0 120 60" className="w-full h-full block" preserveAspectRatio="xMidYMid meet">
+      <svg viewBox="-15 -5 150 75" overflow="visible" className="w-full h-full block" preserveAspectRatio="xMidYMid meet">
         {losses > 0 && (
           <>
             <path
@@ -6129,22 +6129,6 @@ const dailyPnLChartData = useMemo(
             </div>
           </div>
 
-          {/* Bouton Support sous les stats */}
-          <button
-            onClick={() => handleChannelChange('support-admin', 'support-admin')}
-            className="w-full px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
-            style={{
-              background: selectedChannel.id === 'support-admin' ? 'rgba(16,185,129,0.18)' : 'var(--btn-ghost-bg)',
-              border: `1px solid ${selectedChannel.id === 'support-admin' ? 'rgba(16,185,129,0.45)' : 'var(--border-color)'}`,
-              color: selectedChannel.id === 'support-admin' ? '#10b981' : 'var(--text-secondary)',
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
-            <span>Support clients</span>
-          </button>
-
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">NOTIFICATIONS</h3>
             <div className="space-y-1">
@@ -6331,7 +6315,7 @@ const dailyPnLChartData = useMemo(
             }`}
             style={{ backgroundColor: 'var(--bg-secondary)', minHeight: '100vh' }}
           >
-                        <div className="p-4 space-y-6 h-full overflow-y-auto" style={{ paddingTop: '80px', paddingBottom: '80px' }}>
+                        <div className="p-4 space-y-6 h-full overflow-y-auto" style={{ paddingTop: '80px', paddingBottom: '80px', touchAction: 'pan-y' }}>
               <div className="bg-gray-700 rounded-lg p-4">
                 <h4 className="text-base font-medium mb-3 flex items-center justify-center gap-2 text-white">
                   <span>📊</span>
@@ -6477,19 +6461,6 @@ const dailyPnLChartData = useMemo(
                       <div>
                         <p className="font-medium text-white">Check Trade</p>
                         <p className="text-sm text-gray-400">Checklist de trade</p>
-                      </div>
-                    </div>
-                  </button>
-
-                  <button
-                    onClick={() => { handleChannelChange('support-admin', 'support-admin'); setMobileView('content'); }}
-                    className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${selectedChannel.id === 'support-admin' ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600'}`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">💬</span>
-                      <div>
-                        <p className="font-medium text-white">Support clients</p>
-                        <p className="text-sm text-gray-400">Messages des utilisateurs</p>
                       </div>
                     </div>
                   </button>
@@ -9039,9 +9010,9 @@ const dailyPnLChartData = useMemo(
                 if (!fs) return null;
                 const dateKey = getDateKey(selectedTradesDate);
                 return (
-                  <div className="mb-6 p-4 bg-gray-700/70 rounded-lg border border-gray-600 relative">
+                  <div className="mb-6 p-4 bg-gray-700 rounded-lg border border-gray-600 relative">
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-semibold text-gray-300">🧠 Stats fin de session</h3>
+                      <h3 className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>🧠 Stats fin de session</h3>
                       <button
                         type="button"
                         onClick={async () => {
@@ -9058,12 +9029,12 @@ const dailyPnLChartData = useMemo(
                         ✕
                       </button>
                     </div>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div><span className="text-gray-400">Respect du plan:</span> <span className="text-white font-medium">{fs.respectPlan}</span></div>
-                      <div><span className="text-gray-400">Qualité décisions:</span> <span className={fs.qualiteDecisions === 'Émotion' ? 'text-red-100 font-medium' : 'text-white font-medium'}>{fs.qualiteDecisions}</span></div>
-                      <div><span className="text-gray-400">Gestion après erreur:</span> <span className="text-white font-medium">{fs.gestionErreur}</span></div>
-                      <div><span className="text-gray-400">Pression (1-5):</span> <span className="text-white font-medium">{fs.pression}</span></div>
-                      {fs.maxDrawdown != null && <div className="col-span-2"><span className="text-gray-400">Max Drawdown (DD):</span> <span className={fs.maxDrawdown < 0 ? 'text-red-100 font-medium' : 'text-white font-medium'}>{fs.maxDrawdown}$</span></div>}
+                    <div className="grid grid-cols-2 gap-2 text-sm" style={{ color: 'var(--text-primary)' }}>
+                      <div><span style={{ color: 'var(--text-muted)' }}>Respect du plan:</span> <span className="font-medium">{fs.respectPlan}</span></div>
+                      <div><span style={{ color: 'var(--text-muted)' }}>Qualité décisions:</span> <span className={fs.qualiteDecisions === 'Émotion' ? 'text-red-400 font-medium' : 'font-medium'}>{fs.qualiteDecisions}</span></div>
+                      <div><span style={{ color: 'var(--text-muted)' }}>Gestion après erreur:</span> <span className="font-medium">{fs.gestionErreur}</span></div>
+                      <div><span style={{ color: 'var(--text-muted)' }}>Pression (1-5):</span> <span className="font-medium">{fs.pression}</span></div>
+                      {fs.maxDrawdown != null && <div className="col-span-2"><span style={{ color: 'var(--text-muted)' }}>Max Drawdown (DD):</span> <span className={fs.maxDrawdown < 0 ? 'text-red-400 font-medium' : 'font-medium'}>{fs.maxDrawdown}$</span></div>}
                     </div>
                   </div>
                 );
@@ -9081,10 +9052,10 @@ const dailyPnLChartData = useMemo(
                 
                 if (tradesForDay.length > 0) {
                   return (
-                    <div className="mb-4 p-4 bg-gray-700/50 rounded-lg border border-gray-600">
+                    <div className="mb-4 p-4 bg-gray-700 rounded-lg border border-gray-600">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-400">PnL total pour ce jour:</span>
-                        <span className={`text-lg font-bold ${totalPnL >= 0 ? 'text-green-100' : 'text-red-100'}`}>
+                        <span className="text-sm" style={{ color: 'var(--text-muted)' }}>PnL total pour ce jour:</span>
+                        <span className="text-lg font-bold" style={{ color: totalPnL >= 0 ? 'var(--profit-color)' : 'var(--loss-color)' }}>
                           {totalPnL >= 0 ? '+' : ''}${totalPnL.toFixed(0)}
                         </span>
                       </div>
@@ -10182,44 +10153,30 @@ const dailyPnLChartData = useMemo(
                 {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') ? (
                   // Affichage des trades pour le journal perso
                   (() => {
-                    // Utiliser la même logique que getWeeklyBreakdownTrades
+                    // Utiliser la même logique que getWeeklyBreakdownTrades (comparaison par chaîne YYYY-MM-DD)
                     const currentMonth = currentDate.getMonth();
                     const currentYear = currentDate.getFullYear();
-                    
+
                     const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
                     const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
-                    const firstDayWeekday = firstDayOfMonth.getDay(); // 0 = dimanche, 1 = lundi, etc.
-                    
-                    // Ajuster pour que lundi soit 0
+                    const daysInMonth = lastDayOfMonth.getDate();
+                    const firstDayWeekday = firstDayOfMonth.getDay();
                     const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
-                    
-                    // Calculer les jours de la semaine
-                    const weekStartDay = (selectedWeek - 1) * 7 - adjustedFirstDay + 1;
-                    const weekEndDay = Math.min(selectedWeek * 7 - adjustedFirstDay, lastDayOfMonth.getDate());
-                    
-                    const weekStart = new Date(currentYear, currentMonth, weekStartDay);
-                    const weekEnd = new Date(currentYear, currentMonth, weekEndDay);
-                    // Ajouter 23h59 pour inclure toute la journée
-                    weekEnd.setHours(23, 59, 59, 999);
-                    
-                    console.log(`🔍 Modal - Recherche trades pour semaine ${selectedWeek} [ADMIN]:`, weekStart.toDateString(), 'à', weekEnd.toDateString());
-                    
-                    const weekTrades = personalTrades.filter(trade => {
-                      const tradeDate = new Date(trade.date);
-                      const isDateMatch = tradeDate >= weekStart && 
-                             tradeDate <= weekEnd &&
-                             tradeDate.getMonth() === currentMonth &&
-                             tradeDate.getFullYear() === currentYear;
-                      
-                      // Filtrer par compte sélectionné
-                      const tradeAccount = trade.account || 'Compte Principal';
-                      const isAccountMatch = selectedAccount === 'Tous les comptes' || tradeAccount === selectedAccount;
-                      
-                      console.log(`🔍 Modal - Trade ${trade.date} (${tradeDate.toDateString()}) dans semaine ${selectedWeek} [ADMIN]?`, isDateMatch, 'compte:', isAccountMatch);
-                      return isDateMatch && isAccountMatch;
+
+                    const weekStartIndex = (selectedWeek - 1) * 7;
+                    const weekEndIndex = selectedWeek * 7 - 1;
+                    const weekDays: number[] = [];
+                    for (let i = weekStartIndex; i <= weekEndIndex; i++) {
+                      const dayNumber = i - adjustedFirstDay + 1;
+                      if (dayNumber >= 1 && dayNumber <= daysInMonth) weekDays.push(dayNumber);
+                    }
+                    const weekDateStrs = new Set<string>();
+                    weekDays.forEach(d => weekDateStrs.add(`${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`));
+
+                    const weekTrades = getTradesForSelectedAccount.filter(trade => {
+                      if (!trade || !trade.date) return false;
+                      return weekDateStrs.has(trade.date);
                     });
-                    
-                    console.log(`✅ Modal - Trades trouvés pour semaine ${selectedWeek} [ADMIN]:`, weekTrades.length);
 
                     return weekTrades.length > 0 ? (
                       weekTrades.map((trade) => (

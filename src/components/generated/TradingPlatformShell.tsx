@@ -8713,7 +8713,7 @@ export default function TradingPlatformShell() {
                 if (!fs) return null;
                 const dateKey = getDateKey(selectedTradesDate);
                 return (
-                  <div className="mb-6 p-4 rounded-lg relative" style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)' }}>
+                  <div className="mb-6 p-4 rounded-lg relative bg-gray-700 border border-gray-600">
                     <div className="flex items-center justify-between mb-3">
                       <h3 className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>🧠 Stats fin de session</h3>
                       <button
