@@ -9302,7 +9302,7 @@ const dailyPnLChartData = useMemo(
               <h2 className="text-xl font-bold text-white">Tableau de performance</h2>
               <button onClick={() => setShowPerformanceTableModal(false)} className="text-gray-400 hover:text-white text-2xl">×</button>
             </div>
-            <div className="overflow-auto p-4">
+            <div className="overflow-auto p-4 pb-8">
               {monthlyPerformanceDataAdmin.length === 0 ? (
                 <p className="text-gray-400 text-center py-8">Aucune donnée</p>
               ) : (
