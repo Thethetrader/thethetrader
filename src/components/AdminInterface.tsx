@@ -7083,30 +7083,25 @@ const dailyPnLChartData = useMemo(
                                                   <div className="flex items-center gap-2 mb-2">
                                                     <span className="text-xs">📊</span>
                                                     <span className="text-sm font-semibold" style={{ color: 'var(--text-muted)' }}>SIGNAL FERMÉ</span>
-                                                    {signalData.status === 'LOSS' && signalId && (
+                                                    {(signalData.status === 'WIN' || signalData.status === 'LOSS' || signalData.status === 'CLOSED') && signalId && (
                                                       <button
                                                         onClick={() => {
-                                                          // Trouver le signal d'origine (message actif avec le même signalId)
                                                           const messages = chatMessages[selectedChannel.id] || [];
                                                           const originalSignalIndex = messages.findIndex((msg, idx) => {
                                                             if (idx >= messageIndex) return false;
                                                             const msgSignalData = formatSignalMessage(msg.text);
-                                                            return msgSignalData && msgSignalData.signalId === signalId && 
-                                                                   msgSignalData.status !== 'CLOSED' && 
-                                                                   msgSignalData.status !== 'WIN' && 
+                                                            return msgSignalData && msgSignalData.signalId === signalId &&
+                                                                   msgSignalData.status !== 'CLOSED' &&
+                                                                   msgSignalData.status !== 'WIN' &&
                                                                    msgSignalData.status !== 'LOSS';
                                                           });
-                                                          
                                                           if (originalSignalIndex !== -1) {
                                                             const originalMessage = messages[originalSignalIndex];
                                                             const element = document.getElementById(`message-${originalMessage.id}`);
                                                             if (element) {
                                                               element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                                              // Highlight temporaire
                                                               element.style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
-                                                              setTimeout(() => {
-                                                                element.style.backgroundColor = '';
-                                                              }, 2000);
+                                                              setTimeout(() => { element.style.backgroundColor = ''; }, 2000);
                                                             }
                                                           }
                                                         }}
@@ -7165,6 +7160,29 @@ const dailyPnLChartData = useMemo(
                                                 </div>
                                               )}
                                             </div>
+
+                                            {/* Résultat fermé (comme user) */}
+                                            {isClosed && signalId && (
+                                              <div className="mt-3 pt-2 px-3 py-2 rounded-lg flex flex-col gap-1" style={
+                                                currentSignal?.status === 'WIN'
+                                                  ? { background: 'rgba(134,239,172,0.15)', border: '1px solid rgba(134,239,172,0.3)' }
+                                                  : currentSignal?.status === 'LOSS'
+                                                  ? { background: 'rgba(217,115,115,0.15)', border: '1px solid rgba(217,115,115,0.35)' }
+                                                  : { background: 'rgba(96,165,250,0.15)', border: '1px solid rgba(96,165,250,0.3)' }
+                                              }>
+                                                <span className="text-xs text-gray-400 uppercase tracking-wide">Signal fermé</span>
+                                                <div className="flex items-center justify-between">
+                                                  <span className="text-sm font-bold" style={{ color: currentSignal?.status === 'WIN' ? '#86efac' : currentSignal?.status === 'LOSS' ? '#d97373' : '#93c5fd' }}>
+                                                    {currentSignal?.status === 'WIN' ? '🟢 GAGNANT' : currentSignal?.status === 'LOSS' ? '🔴 PERDANT' : '🔵 BREAK-EVEN'}
+                                                  </span>
+                                                  {currentSignal?.pnl && (
+                                                    <span className="text-sm font-bold" style={{ color: currentSignal?.status === 'WIN' ? '#86efac' : currentSignal?.status === 'LOSS' ? '#d97373' : '#93c5fd' }}>
+                                                      {currentSignal.pnl}
+                                                    </span>
+                                                  )}
+                                                </div>
+                                              </div>
+                                            )}
 
                                             {/* Boutons WIN/LOSS/BE pour clôturer les signaux */}
                                             {signalId && (
