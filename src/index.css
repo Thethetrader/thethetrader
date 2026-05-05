@@ -58,6 +58,11 @@
 [data-theme="light"] .text-gray-300 { color: #1e293b !important; }
 [data-theme="light"] .text-gray-400 { color: var(--text-secondary) !important; }
 [data-theme="light"] .text-gray-500 { color: var(--text-muted)     !important; }
+/* PnL colors: adapt for light backgrounds */
+[data-theme="light"] .text-green-100 { color: #059669 !important; }
+[data-theme="light"] .text-red-100   { color: #b91c1c !important; }
+[data-theme="light"] .text-red-400   { color: #dc2626 !important; }
+[data-theme="light"] .text-green-400 { color: #059669 !important; }
 
 [data-theme="light"] .border-gray-700,
 [data-theme="light"] .border-gray-600,
@@ -156,6 +161,7 @@ body {
   background: var(--bg-app, #ffffff);
   color: hsl(var(--foreground));
   position: relative;
+  -webkit-tap-highlight-color: transparent;
 
 }
 
@@ -516,6 +522,18 @@ html {
   color: var(--loss-color);
 }
 
+/* Cases profit du calendrier : vert pâle (dark) / vert émeraude (light) */
+.calendar-cell-profit {
+  background-color: rgba(187, 247, 208, 0.22); /* green-200 22% */
+  border-color: rgba(187, 247, 208, 0.25);
+  color: white;
+}
+[data-theme="light"] .calendar-cell-profit {
+  background-color: rgba(16, 185, 129, 0.13); /* emerald-500 13% */
+  border-color: rgba(16, 185, 129, 0.38);
+  color: #064e3b; /* green-900 */
+}
+
 /* Cases perte du calendrier : rouge pâle (--loss-color) */
 .calendar-cell-loss {
   background-color: rgba(217, 115, 115, 0.6); /* #d97373 60% */
@@ -525,6 +543,20 @@ html {
 .calendar-cell-loss {
   background-color: color-mix(in srgb, var(--loss-color) 60%, transparent);
   border-color: color-mix(in srgb, var(--loss-color) 50%, transparent);
+}
+[data-theme="light"] .calendar-cell-loss {
+  color: #7f1d1d;
+}
+
+/* Panneaux récap profit (mode clair) */
+[data-theme="light"] .bg-green-200\/20 {
+  background-color: rgba(16, 185, 129, 0.10) !important;
+}
+[data-theme="light"] .bg-green-200\/30 {
+  background-color: rgba(16, 185, 129, 0.14) !important;
+}
+[data-theme="light"] .border-green-200\/30 {
+  border-color: rgba(16, 185, 129, 0.35) !important;
 }
 
 .neutral-indicator {

@@ -256,6 +256,9 @@ export default function AdminInterface() {
   const [view, setView] = useState<'signals' | 'calendar'>('signals');
   const [mobileView, setMobileView] = useState<'channels' | 'content'>('channels');
   const [showFeed, setShowFeed] = useState(false);
+  const [supportUnread, setSupportUnread] = useState(0);
+  const [contentReady, setContentReady] = useState(true);
+  const contentReadyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [sessionToken, setSessionToken] = useState<string | undefined>(undefined);
 
   const handleFeedShareToChannel = async (channelId: string, content: string) => {
@@ -541,7 +544,7 @@ export default function AdminInterface() {
   
   // S'abonner aux changements des signaux pour synchroniser les réactions
   useEffect(() => {
-    const channels = ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4'];
+    const channels = ['fondamentaux', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4'];
     
     const subscriptions = channels.map(channelId => {
       return subscribeToSignals(channelId, (updatedSignal) => {
@@ -694,7 +697,7 @@ export default function AdminInterface() {
 
   // Subscription globale pour tous les canaux (ne se recrée pas à chaque changement de canal)
   useEffect(() => {
-    const channels = ['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4'];
+    const channels = ['fondamentaux', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4'];
     
     const subscriptions = channels.map(channelId => {
       return subscribeToMessages(channelId, (newMessage) => {
@@ -994,6 +997,11 @@ export default function AdminInterface() {
   // Fonction pour changer de canal et réinitialiser selectedDate si nécessaire
   const handleChannelChange = (channelId: string, channelName: string) => {
     setShowFeed(false);
+    if (window.innerWidth < 768) {
+      setContentReady(false);
+      if (contentReadyTimer.current) clearTimeout(contentReadyTimer.current);
+      contentReadyTimer.current = setTimeout(() => setContentReady(true), 320);
+    }
     console.log(`📊 [ADMIN] Channel changed from ${selectedChannel.id} to ${channelId}`);
     
     // Réinitialiser selectedDate quand on change de canal
@@ -2089,7 +2097,7 @@ const dailyPnLChartData = useMemo(
         console.log('📊 [ADMIN] Chargement de TOUS les signaux pour statistiques et calendrier...');
         
         // Charger les signaux de tous les canaux individuellement
-        const channels = ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'];
+        const channels = ['fondamentaux', 'general-chat-2', 'general-chat-3', 'general-chat-4'];
         let allSignals: any[] = [];
         
         for (const channelId of channels) {
@@ -3059,7 +3067,7 @@ const dailyPnLChartData = useMemo(
 
   const scrollToTop = () => {
     // Pour les salons de chat, scroller dans le conteneur de messages
-    if (messagesContainerRef.current && ['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id)) {
+    if (messagesContainerRef.current && ['fondamentaux', 'general-chat-2', 'general-chat-3', 'general-chat-4'].includes(selectedChannel.id)) {
       messagesContainerRef.current.scrollTop = 0;
     } else {
       // Pour les autres vues, scroller la page
@@ -3491,7 +3499,6 @@ const dailyPnLChartData = useMemo(
     { id: 'general-chat-3', name: 'general-chat-3', emoji: '₿', fullName: 'Crypto' },
     { id: 'general-chat-4', name: 'general-chat-4', emoji: '💵', fullName: 'Forex' },
     { id: 'fondamentaux', name: 'fondamentaux', emoji: '📚', fullName: 'Fondamentaux' },
-    { id: 'letsgooo-model', name: 'letsgooo-model', emoji: '🚀', fullName: 'Letsgooo model' },
     { id: 'livestream', name: 'livestream', emoji: '📺', fullName: 'Livestream' },
 
     { id: 'tpln-model', name: 'tpln-model', emoji: '📋', fullName: 'TPLN model' },
@@ -4736,7 +4743,7 @@ const dailyPnLChartData = useMemo(
     if (selectedChannel.id === 'support-admin') {
       return (
         <div style={{ height: '100%' }}>
-          <SupportAdminChat />
+          <SupportAdminChat onUnreadChange={setSupportUnread} />
         </div>
       );
     }
@@ -5035,18 +5042,20 @@ const dailyPnLChartData = useMemo(
         
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3 text-white">
-            <button 
+            <button
               onClick={goToPreviousMonth}
-              className="p-2 hover:bg-gray-700 rounded-lg text-lg font-bold"
+              className="p-2 hover:bg-gray-700 rounded-lg text-lg font-bold text-white active:opacity-70"
+              style={{ WebkitTapHighlightColor: 'transparent' }}
             >
               ‹
             </button>
             <span className="px-4 text-lg font-semibold min-w-[120px] text-center">
               {getMonthName(currentDate)} {currentDate.getFullYear()}
             </span>
-            <button 
+            <button
               onClick={goToNextMonth}
-              className="p-2 hover:bg-gray-700 rounded-lg text-lg font-bold"
+              className="p-2 hover:bg-gray-700 rounded-lg text-lg font-bold text-white active:opacity-70"
+              style={{ WebkitTapHighlightColor: 'transparent' }}
             >
               ›
             </button>
@@ -5177,7 +5186,7 @@ const dailyPnLChartData = useMemo(
                     
                     // Déterminer la couleur selon le PnL total
                     if (totalPnL > 0) {
-                      bgColor = 'bg-green-200/30 border-green-300/30 text-white'; // PnL positif - vert plus pale
+                      bgColor = 'calendar-cell-profit'; // PnL positif
                     } else if (totalPnL < 0) {
                       bgColor = 'calendar-cell-loss border-2'; // PnL négatif - rouge pâle (cases calendrier)
                     } else {
@@ -5209,7 +5218,7 @@ const dailyPnLChartData = useMemo(
                     
                     // Déterminer la couleur selon le PnL total
                     if (totalPnL > 0) {
-                      bgColor = 'bg-green-200/30 border-green-300/30 text-white'; // PnL positif - vert plus pale
+                      bgColor = 'calendar-cell-profit'; // PnL positif
                     } else if (totalPnL < 0) {
                       bgColor = 'calendar-cell-loss border-2'; // PnL négatif - rouge pâle (cases calendrier)
                     } else {
@@ -5337,26 +5346,26 @@ const dailyPnLChartData = useMemo(
             </div>
 
           {/* Légende */}
-          <div className="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-gray-600">
+          <div className="flex items-center justify-center gap-3 mt-4 pt-3" style={{ borderTop: '1px solid var(--border-color)' }}>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 bg-green-200/50 border border-green-200/50/50 rounded"></div>
-              <span className="text-xs text-gray-300">WIN</span>
+              <div className="w-3 h-3 rounded" style={{ background: 'rgba(134,239,172,0.5)', border: '1px solid rgba(134,239,172,0.4)' }}></div>
+              <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>WIN</span>
             </div>
             <div className="flex items-center gap-1">
-<div className="w-3 h-3 bg-loss/60 border border-loss/50 rounded"></div>
-                <span className="text-xs text-gray-300">LOSS</span>
+              <div className="w-3 h-3 rounded" style={{ background: 'rgba(217,115,115,0.6)', border: '1px solid rgba(217,115,115,0.5)' }}></div>
+              <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>LOSS</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 bg-blue-500/60 border border-blue-400/50 rounded"></div>
-              <span className="text-xs text-gray-300">BREAK</span>
+              <div className="w-3 h-3 rounded" style={{ background: 'rgba(59,130,246,0.6)', border: '1px solid rgba(96,165,250,0.5)' }}></div>
+              <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>BREAK</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 bg-gray-700 border border-gray-600 rounded"></div>
-              <span className="text-xs text-gray-300">NO TRADE</span>
+              <div className="w-3 h-3 rounded" style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)' }}></div>
+              <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>NO TRADE</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 border-2 border-blue-400 rounded"></div>
-              <span className="text-xs text-gray-300">Today</span>
+              <div className="w-3 h-3 rounded" style={{ border: '2px solid #60a5fa' }}></div>
+              <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>Today</span>
             </div>
           </div>
 
@@ -6106,7 +6115,7 @@ const dailyPnLChartData = useMemo(
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">P&L Total:</span>
                 <span className={calculateTotalPnL() >= 0 ? 'text-green-100' : 'text-red-100'}>
-                  {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
+                  {calculateTotalPnL() >= 0 ? '+' : ''}{calculateTotalPnL()}R
                 </span>
               </div>
               <div className="flex justify-between text-sm">
@@ -6264,11 +6273,27 @@ const dailyPnLChartData = useMemo(
                   </div>
                 </div>
               </div>
-              <button onClick={handleLogout} className="text-gray-400 hover:text-white">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => { handleChannelChange('support-admin', 'support-admin'); setMobileView('content'); }}
+                  className="relative flex items-center justify-center w-8 h-8 rounded-full text-gray-400 hover:text-white transition-colors"
+                  style={{ background: 'var(--btn-ghost-bg)' }}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  {supportUnread > 0 && (
+                    <span style={{ position: 'absolute', top: -2, right: -2, background: '#ef4444', color: '#fff', fontSize: 9, fontWeight: 700, minWidth: 16, height: 16, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}>
+                      {supportUnread > 9 ? '9+' : supportUnread}
+                    </span>
+                  )}
+                </button>
+                <button onClick={handleLogout} className="text-gray-400 hover:text-white">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                  </svg>
+                </button>
+              </div>
             </div>
           ) : (
             <div className="flex items-center justify-between">
@@ -6292,7 +6317,7 @@ const dailyPnLChartData = useMemo(
 
         {/* Mobile Feed View */}
         {showFeed && (
-          <div className="md:hidden fixed inset-0 bg-gray-900 z-20 overflow-y-auto" style={{ paddingTop: 'calc(60px + env(safe-area-inset-top, 0px))', paddingBottom: 78 }}>
+          <div className="md:hidden fixed inset-0 bg-gray-900 z-20 overflow-y-auto" style={{ paddingTop: 'calc(60px + env(safe-area-inset-top, 0px))', paddingBottom: 'calc(78px + env(safe-area-inset-bottom, 0px))' }}>
             <HomeFeed isAdmin={true} userId="admin" username="Admin" sessionToken={sessionToken} shareChannels={FEED_SHARE_CHANNELS} onShareToChannel={handleFeedShareToChannel} onPostCreated={handleFeedPostCreated} />
           </div>
         )}
@@ -6302,13 +6327,11 @@ const dailyPnLChartData = useMemo(
           {/* Channels List - Slides from left */}
           <div
             className={`absolute inset-0 bg-gray-800 transform transition-transform duration-300 ease-in-out z-10 ${
-              mobileView === 'channels' ? 'translate-x-0' : '-translate-x-full'
+              mobileView === 'channels' && !showFeed ? 'translate-x-0' : '-translate-x-full'
             }`}
             style={{ backgroundColor: 'var(--bg-secondary)', minHeight: '100vh' }}
           >
                         <div className="p-4 space-y-6 h-full overflow-y-auto" style={{ paddingTop: '80px', paddingBottom: '80px' }}>
-              {/* Thème */}
-              <ThemeToggle />
               <div className="bg-gray-700 rounded-lg p-4">
                 <h4 className="text-base font-medium mb-3 flex items-center justify-center gap-2 text-white">
                   <span>📊</span>
@@ -6326,7 +6349,7 @@ const dailyPnLChartData = useMemo(
                   <div className="flex justify-between text-sm">
                     <span className="text-white">P&L Total:</span>
                     <span className={calculateTotalPnL() >= 0 ? 'text-green-100' : 'text-red-100'}>
-                      {calculateTotalPnL() >= 0 ? '+' : ''}${calculateTotalPnL()}
+                      {calculateTotalPnL() >= 0 ? '+' : ''}{calculateTotalPnL()}R
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
@@ -6339,7 +6362,7 @@ const dailyPnLChartData = useMemo(
               <div>
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">ÉDUCATION</h3>
                 <div className="space-y-2">
-                  {channels.filter(c => ['fondamentaux', 'letsgooo-model'].includes(c.id)).map(channel => (
+                  {channels.filter(c => ['fondamentaux'].includes(c.id)).map(channel => (
                     <button
                       key={channel.id}
                       onClick={() => {
@@ -6564,19 +6587,21 @@ const dailyPnLChartData = useMemo(
                   </button>
                 </div>
               </div>
+              {/* Thème - bas de la liste */}
+              <ThemeToggle />
             </div>
           </div>
 
           {/* Content Area - Slides from right */}
           <div
-            className={`absolute inset-0 bg-gray-900 transform transition-transform duration-300 ease-in-out z-10 ${
-              mobileView === 'content' ? 'translate-x-0' : 'translate-x-full'
+            className={`absolute inset-0 bg-gray-900 transform z-10 ${
+              mobileView === 'content' ? 'translate-x-0 pointer-events-auto' : 'translate-x-full pointer-events-none'
             }`}
-            style={{ backgroundColor: 'var(--bg-primary)', minHeight: '100vh' }}
+            style={{ backgroundColor: 'var(--bg-primary)', minHeight: '100vh', opacity: contentReady ? 1 : 0, transition: 'transform 300ms ease-in-out, opacity 150ms ease-in' }}
           >
             {selectedChannel.id === 'support-admin' ? (
-              <div style={{ position: 'absolute', top: 'calc(60px + env(safe-area-inset-top, 0px))', left: 0, right: 0, bottom: 78, overflow: 'hidden' }}>
-                <SupportAdminChat />
+              <div style={{ position: 'absolute', top: 'calc(60px + env(safe-area-inset-top, 0px))', left: 0, right: 0, bottom: 'calc(78px + env(safe-area-inset-bottom, 0px))', overflow: 'hidden' }}>
+                <SupportAdminChat onUnreadChange={setSupportUnread} />
               </div>
             ) : (view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'user-management' || selectedChannel.id === 'check-trade') ? (
               <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: '0px' }}>
@@ -6669,9 +6694,9 @@ const dailyPnLChartData = useMemo(
                   </div>
                 )}
                 
-                  {/* Header pour le calendrier normal */}
+                  {/* Header pour le calendrier normal - desktop seulement */}
                 {view === 'calendar' && selectedChannel.id !== 'trading-journal' && (
-                  <div className="flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
+                  <div className="hidden md:flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
                     <div>
                       <h1 className="text-2xl font-bold text-white">Journal des Signaux</h1>
                       <p className="text-sm text-gray-400 mt-1">Suivi des performances des signaux</p>
@@ -6753,7 +6778,7 @@ const dailyPnLChartData = useMemo(
 
 
                 {/* Affichage des signaux */}
-                {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'chatzone', ''].includes(selectedChannel.id) ? (
+                {view === 'signals' && !['fondamentaux', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'profit-loss', 'chatzone', ''].includes(selectedChannel.id) ? (
                   <div className="space-y-4">
                     {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                       <div></div>
@@ -7449,7 +7474,7 @@ const dailyPnLChartData = useMemo(
             <div className="p-4 md:p-6 space-y-4 w-full" style={{ paddingTop: '80px', paddingBottom: '80px' }}>
 
               {/* Affichage des signaux */}
-              {view === 'signals' && !['fondamentaux', 'letsgooo-model', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'chatzone', ''].includes(selectedChannel.id) ? (
+              {view === 'signals' && !['fondamentaux', 'general-chat', 'general-chat-2', 'general-chat-3', 'general-chat-4', 'chatzone', ''].includes(selectedChannel.id) ? (
                 <div className="space-y-4">
                   {signals.filter(signal => signal.channel_id === selectedChannel.id).length === 0 ? (
                     <div></div>
@@ -10473,7 +10498,7 @@ const dailyPnLChartData = useMemo(
           </button>
           {/* Salons - Centre proéminent */}
           <button onClick={() => { if(navigator.vibrate)navigator.vibrate(12); setShowFeed(false); setMobileView('channels'); }} className="flex flex-col items-center justify-center flex-1" style={{ marginTop: -16 }}>
-            <div style={{ width: 54, height: 54, borderRadius: '50%', border: `2.5px solid ${mobileView === 'channels' && !showFeed ? 'var(--text-primary)' : 'var(--border-color)'}`, backgroundColor: 'var(--bg-tertiary)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: mobileView === 'channels' && !showFeed ? 'var(--text-primary)' : 'var(--text-muted)' }}>
+            <div style={{ width: 54, height: 54, borderRadius: '50%', border: `2.5px solid ${(!showFeed && (mobileView === 'channels' || (mobileView === 'content' && !['calendrier','general-chat-2','general-chat-3','general-chat-4','fondamentaux'].includes(selectedChannel.id)))) ? 'var(--text-primary)' : 'var(--border-color)'}`, backgroundColor: 'var(--bg-tertiary)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: (!showFeed && (mobileView === 'channels' || (mobileView === 'content' && !['calendrier','general-chat-2','general-chat-3','general-chat-4','fondamentaux'].includes(selectedChannel.id)))) ? 'var(--text-primary)' : 'var(--text-muted)' }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
               </svg>

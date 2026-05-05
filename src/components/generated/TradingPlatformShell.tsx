@@ -4830,9 +4830,10 @@ export default function TradingPlatformShell() {
         
         <div className={`flex items-center ${(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') ? 'gap-4' : ''}`}>
           <div className="flex items-center gap-3 text-white">
-            <button 
+            <button
               onClick={goToPreviousMonth}
-              className="p-2 hover:bg-gray-700 rounded-lg text-lg font-bold"
+              className="p-2 hover:bg-gray-700 rounded-lg text-lg font-bold text-white active:opacity-70"
+              style={{ WebkitTapHighlightColor: 'transparent' }}
             >
               ‹
             </button>
@@ -4840,9 +4841,10 @@ export default function TradingPlatformShell() {
               <div className="text-lg font-semibold">{getMonthName(currentDate)}</div>
               <div className="text-sm text-gray-400">{currentDate.getFullYear()}</div>
             </div>
-            <button 
+            <button
               onClick={goToNextMonth}
-              className="p-2 hover:bg-gray-700 rounded-lg text-lg font-bold"
+              className="p-2 hover:bg-gray-700 rounded-lg text-lg font-bold text-white active:opacity-70"
+              style={{ WebkitTapHighlightColor: 'transparent' }}
             >
               ›
             </button>
@@ -4950,7 +4952,7 @@ export default function TradingPlatformShell() {
                     
                     // Déterminer la couleur selon le PnL total
                     if (totalPnL > 0) {
-                      bgColor = 'bg-green-200/30 border-green-200/30 text-white'; // PnL positif - vert plus pale
+                      bgColor = 'calendar-cell-profit'; // PnL positif
                     } else if (totalPnL < 0) {
                       bgColor = 'calendar-cell-loss border-2'; // PnL négatif - rouge pâle (cases calendrier)
                     } else {
@@ -4972,7 +4974,7 @@ export default function TradingPlatformShell() {
                     
                     // Déterminer la couleur selon le PnL total
                     if (totalPnL > 0) {
-                      bgColor = 'bg-green-200/30 border-green-200/30 text-white'; // PnL positif - vert plus pale
+                      bgColor = 'calendar-cell-profit'; // PnL positif
                     } else if (totalPnL < 0) {
                       bgColor = 'calendar-cell-loss border-2'; // PnL négatif - rouge pâle (cases calendrier)
                     } else {
@@ -5101,52 +5103,52 @@ export default function TradingPlatformShell() {
 
           {/* Légende - directement sous le calendrier pour journal perso */}
           {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'journal' || selectedChannel.id === 'tpln-model') && (
-            <div className="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-gray-600">
+            <div className="flex items-center justify-center gap-3 mt-4 pt-3" style={{ borderTop: '1px solid var(--border-color)' }}>
               <div className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-green-200/50 border border-green-200/40 rounded"></div>
-                <span className="text-xs text-gray-300">WIN</span>
+                <div className="w-3 h-3 rounded" style={{ background: 'rgba(134,239,172,0.5)', border: '1px solid rgba(134,239,172,0.4)' }}></div>
+                <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>WIN</span>
               </div>
               <div className="flex items-center gap-1">
-                <div className="w-3 h-3 rounded" style={{ background: 'var(--loss-color)', opacity: 0.85 }}></div>
-                <span className="text-xs text-gray-300">LOSS</span>
+                <div className="w-3 h-3 rounded" style={{ background: 'rgba(217,115,115,0.6)', border: '1px solid rgba(217,115,115,0.5)' }}></div>
+                <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>LOSS</span>
               </div>
               <div className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-blue-500/60 border border-blue-400/50 rounded"></div>
-                <span className="text-xs text-gray-300">BREAK</span>
+                <div className="w-3 h-3 rounded" style={{ background: 'rgba(59,130,246,0.6)', border: '1px solid rgba(96,165,250,0.5)' }}></div>
+                <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>BREAK</span>
               </div>
               <div className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-gray-700 border border-gray-600 rounded"></div>
-                <span className="text-xs text-gray-300">NO TRADE</span>
+                <div className="w-3 h-3 rounded" style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)' }}></div>
+                <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>NO TRADE</span>
               </div>
               <div className="flex items-center gap-1">
-                <div className="w-3 h-3 border-2 border-blue-400 rounded"></div>
-                <span className="text-xs text-gray-300">Today</span>
+                <div className="w-3 h-3 rounded" style={{ border: '2px solid #60a5fa' }}></div>
+                <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>Today</span>
               </div>
             </div>
           )}
 
           {selectedChannel.id !== 'trading-journal' && selectedChannel.id !== 'journal' && selectedChannel.id !== 'tpln-model' && (
             <>
-              <div className="border-t border-gray-700 mt-6 pt-4 flex items-center justify-center gap-3">
+              <div className="mt-6 pt-4 flex items-center justify-center gap-3" style={{ borderTop: '1px solid var(--border-color)' }}>
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="inline-flex items-center justify-center w-3 h-3 rounded bg-green-200/50 border border-green-200/50/60"></span>
-                  <span className="text-gray-300">WIN</span>
+                  <span className="inline-flex items-center justify-center w-3 h-3 rounded" style={{ background: 'rgba(134,239,172,0.5)', border: '1px solid rgba(134,239,172,0.4)' }}></span>
+                  <span style={{ color: 'var(--text-secondary)' }}>WIN</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="inline-flex items-center justify-center w-3 h-3 rounded" style={{ background: 'var(--loss-color)', opacity: 0.85 }}></span>
-                  <span className="text-gray-300">LOSS</span>
+                  <span className="inline-flex items-center justify-center w-3 h-3 rounded" style={{ background: 'rgba(217,115,115,0.6)', border: '1px solid rgba(217,115,115,0.5)' }}></span>
+                  <span style={{ color: 'var(--text-secondary)' }}>LOSS</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="inline-flex items-center justify-center w-3 h-3 rounded bg-blue-500/70 border border-blue-400/60"></span>
-                  <span className="text-gray-300">BREAK</span>
+                  <span className="inline-flex items-center justify-center w-3 h-3 rounded" style={{ background: 'rgba(59,130,246,0.6)', border: '1px solid rgba(96,165,250,0.5)' }}></span>
+                  <span style={{ color: 'var(--text-secondary)' }}>BREAK</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="inline-flex items-center justify-center w-3 h-3 rounded bg-gray-600 border border-gray-500"></span>
-                  <span className="text-gray-300">NO TRADE</span>
+                  <span className="inline-flex items-center justify-center w-3 h-3 rounded" style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)' }}></span>
+                  <span style={{ color: 'var(--text-secondary)' }}>NO TRADE</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="inline-flex items-center justify-center w-3 h-3 rounded border border-blue-400"></span>
-                  <span className="text-gray-300">Today</span>
+                  <span className="inline-flex items-center justify-center w-3 h-3 rounded" style={{ border: '2px solid #60a5fa' }}></span>
+                  <span style={{ color: 'var(--text-secondary)' }}>Today</span>
                 </div>
               </div>
 
@@ -5597,7 +5599,7 @@ export default function TradingPlatformShell() {
 
 
   return (
-    <div className="h-screen w-full overflow-hidden flex" style={{ paddingTop: '0px', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+    <div className="h-screen w-full overflow-hidden flex" style={{ paddingTop: '0px', background: 'var(--bg-primary)', color: 'var(--text-primary)', minHeight: '100vh' }}>
       <SupportPoller
         userId={user?.id || 'guest'}
         isOnSupportChannel={selectedChannel.id === 'support'}
@@ -6064,7 +6066,7 @@ export default function TradingPlatformShell() {
 
         {/* Mobile Feed View */}
         {showFeed && (
-          <div className="md:hidden fixed inset-0 bg-gray-900 z-20 overflow-y-auto" style={{ paddingTop: 'calc(60px + env(safe-area-inset-top, 0px))', paddingBottom: 78 }}>
+          <div className="md:hidden fixed inset-0 bg-gray-900 z-20 overflow-y-auto" style={{ paddingTop: 'calc(60px + env(safe-area-inset-top, 0px))', paddingBottom: 'calc(78px + env(safe-area-inset-bottom, 0px))' }}>
             <HomeFeed
               isAdmin={isAdmin}
               userId={user?.id || ''}
@@ -6085,8 +6087,6 @@ export default function TradingPlatformShell() {
             }`}
           >
             <div className="p-4 space-y-3 h-full overflow-y-auto" style={{ paddingTop: '80px', paddingBottom: '80px', WebkitOverflowScrolling: 'touch' }}>
-              {/* Thème */}
-              <ThemeToggle />
               {/* Statistiques en haut */}
               <div className="bg-gray-700 rounded-lg p-6">
                 <h3 className="font-medium text-white mb-3 text-center">📊 Statistiques signaux</h3>
@@ -6267,13 +6267,14 @@ export default function TradingPlatformShell() {
                         handleChannelChange('livestream-premium', 'livestream-premium');
                         setMobileView('content');
                       }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                      className="w-full text-left px-4 py-3 rounded-lg transition-colors"
+                      style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.12), rgba(160,120,48,0.08))', border: '1px solid rgba(201,168,76,0.25)' }}
                     >
                       <div className="flex items-center gap-3">
                         <span className="text-lg">⭐</span>
                         <div>
-                          <p className="font-semibold text-white">Livestream Premium</p>
-                          <p className="text-sm text-gray-400">Stream premium</p>
+                          <p className="font-semibold" style={{ color: '#c9a84c' }}>Livestream Premium</p>
+                          <p className="text-sm text-gray-400">Accès exclusif</p>
                         </div>
                       </div>
                     </button>
@@ -6327,6 +6328,8 @@ export default function TradingPlatformShell() {
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
                 </button>
               )}
+              {/* Thème - bas de la liste */}
+              <ThemeToggle />
               </div>
             </div>
           </div>
@@ -6339,7 +6342,7 @@ export default function TradingPlatformShell() {
             style={{ opacity: contentReady ? 1 : 0, transition: 'transform 300ms ease-in-out, opacity 150ms ease-in' }}
           >
             {selectedChannel.id === 'support' ? (
-              <div style={{ position: 'absolute', top: 'calc(60px + env(safe-area-inset-top, 0px))', left: 0, right: 0, bottom: 78, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: 'calc(60px + env(safe-area-inset-top, 0px))', left: 0, right: 0, bottom: 'calc(78px + env(safe-area-inset-bottom, 0px))', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                 {getTradingCalendar()}
               </div>
             ) : (view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'calendrier' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'video' || selectedChannel.id === 'livestream-premium' || selectedChannel.id === 'journal') ? (
@@ -8710,9 +8713,9 @@ export default function TradingPlatformShell() {
                 if (!fs) return null;
                 const dateKey = getDateKey(selectedTradesDate);
                 return (
-                  <div className="mb-6 p-4 bg-gray-700/70 rounded-lg border border-gray-600 relative">
+                  <div className="mb-6 p-4 rounded-lg relative" style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)' }}>
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-semibold text-gray-300">🧠 Stats fin de session</h3>
+                      <h3 className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>🧠 Stats fin de session</h3>
                       <button
                         type="button"
                         onClick={async () => {
@@ -8729,12 +8732,12 @@ export default function TradingPlatformShell() {
                         ✕
                       </button>
                     </div>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div><span className="text-gray-400">Respect du plan:</span> <span className="text-white font-medium">{fs.respectPlan}</span></div>
-                      <div><span className="text-gray-400">Qualité décisions:</span> <span className={fs.qualiteDecisions === 'Émotion' ? 'text-red-400 font-medium' : 'text-white font-medium'}>{fs.qualiteDecisions}</span></div>
-                      <div><span className="text-gray-400">Gestion après erreur:</span> <span className="text-white font-medium">{fs.gestionErreur}</span></div>
-                      <div><span className="text-gray-400">Pression (1-5):</span> <span className="text-white font-medium">{fs.pression}</span></div>
-                      {fs.maxDrawdown != null && <div className="col-span-2"><span className="text-gray-400">Max Drawdown (DD):</span> <span className={fs.maxDrawdown < 0 ? 'text-red-400 font-medium' : 'text-white font-medium'}>{fs.maxDrawdown}$</span></div>}
+                    <div className="grid grid-cols-2 gap-2 text-sm" style={{ color: 'var(--text-primary)' }}>
+                      <div><span style={{ color: 'var(--text-muted)' }}>Respect du plan:</span> <span className="font-medium">{fs.respectPlan}</span></div>
+                      <div><span style={{ color: 'var(--text-muted)' }}>Qualité décisions:</span> <span className={fs.qualiteDecisions === 'Émotion' ? 'text-red-400 font-medium' : 'font-medium'}>{fs.qualiteDecisions}</span></div>
+                      <div><span style={{ color: 'var(--text-muted)' }}>Gestion après erreur:</span> <span className="font-medium">{fs.gestionErreur}</span></div>
+                      <div><span style={{ color: 'var(--text-muted)' }}>Pression (1-5):</span> <span className="font-medium">{fs.pression}</span></div>
+                      {fs.maxDrawdown != null && <div className="col-span-2"><span style={{ color: 'var(--text-muted)' }}>Max Drawdown (DD):</span> <span className={fs.maxDrawdown < 0 ? 'text-red-400 font-medium' : 'font-medium'}>{fs.maxDrawdown}$</span></div>}
                     </div>
                   </div>
                 );
@@ -8758,9 +8761,7 @@ export default function TradingPlatformShell() {
                         <span className="text-lg font-bold text-white">{trade.symbol}</span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className={`text-lg font-bold ${
-                          (trade.pnl && parseFloat(trade.pnl) >= 0) ? 'text-green-100' : 'text-red-400'
-                        }`}>
+                        <span className="text-lg font-bold" style={{ color: (trade.pnl && parseFloat(trade.pnl) >= 0) ? 'var(--profit-color)' : 'var(--loss-color)' }}>
                           {(trade.pnl && parseFloat(trade.pnl) >= 0) ? '+' : ''}{trade.pnl || '0'}$
                         </span>
                         <button
@@ -8941,7 +8942,9 @@ export default function TradingPlatformShell() {
                         onClick={() => setSelectedImage(imgUrl)}
                       />
                     ) : (
-                      <div className="w-full h-64 flex items-center justify-center bg-gray-700 rounded-lg text-gray-500">Pas d'image</div>
+                      <div className="w-full h-64 flex items-center justify-center bg-gray-700 rounded-lg text-gray-500">
+                        {!isSignalsMode && winsLossCurrentFull?.id !== (currentItem as any).id ? '⏳ Chargement...' : "Pas d'image"}
+                      </div>
                     )}
                     {isSignalsMode && (currentItem as any).closure_image && (currentItem as any).image && (
                       <img

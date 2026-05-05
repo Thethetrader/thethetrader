@@ -100,7 +100,7 @@ const fmtRel = (iso: string | null) => {
   return days < 7 ? `${days}j` : d.toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit' });
 };
 
-export default function SupportAdminChat() {
+export default function SupportAdminChat({ onUnreadChange }: { onUnreadChange?: (count: number) => void } = {}) {
   const [conversations, setConversations] = useState<Conv[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Msg[]>([]);
@@ -211,6 +211,11 @@ export default function SupportAdminChat() {
   }, []);
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
+
+  useEffect(() => {
+    const total = conversations.reduce((sum, c) => sum + (c.status !== 'resolved' ? c.unread : 0), 0);
+    onUnreadChange?.(total);
+  }, [conversations, onUnreadChange]);
 
   useEffect(() => {
     loadConversations();
