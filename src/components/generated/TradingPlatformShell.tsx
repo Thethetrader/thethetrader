@@ -1883,47 +1883,6 @@ export default function TradingPlatformShell() {
     };
   }, []); // Une seule fois au démarrage
 
-  // Chargement par mois à la demande (cache pour éviter les re-fetches)
-  useEffect(() => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
-
-    if (loadedMonthsRef.current.has(monthKey)) return;
-    loadedMonthsRef.current.add(monthKey);
-
-    const startDate = `${year}-${String(month + 1).padStart(2, '0')}-01`;
-    const lastDay = new Date(year, month + 1, 0).getDate();
-    const endDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
-
-    getPersonalTradesRange({ startDate, endDate, limit: 200 }).then(monthTrades => {
-      setPersonalTrades(prev => {
-        const others = prev.filter(t => {
-          const d = new Date(t.date);
-          return !(d.getFullYear() === year && d.getMonth() === month);
-        });
-        return [...others, ...monthTrades];
-      });
-    });
-  }, [currentDate]);
-
-  // Lazy-load image pour le trade courant dans le modal WIN/LOSS/BE
-  useEffect(() => {
-    if (!showWinsLossModal || !winsLossFilter || selectedChannel.id === 'calendrier') return;
-    const filteredTrades = getTradesForSelectedAccount.filter((t: PersonalTrade) => t.status === winsLossFilter);
-    const current = filteredTrades[winsLossTradeIndex];
-    if (!current) { setWinsLossCurrentFull(null); return; }
-    if (winsLossImageCache.current.has(current.id)) {
-      setWinsLossCurrentFull(winsLossImageCache.current.get(current.id)!);
-      return;
-    }
-    getPersonalTradeById(current.id).then(full => {
-      if (full) {
-        winsLossImageCache.current.set(full.id, full);
-        setWinsLossCurrentFull(full);
-      }
-    });
-  }, [showWinsLossModal, winsLossFilter, winsLossTradeIndex]);
 
   // Debug: Afficher les trades au chargement
   useEffect(() => {
@@ -1955,6 +1914,45 @@ export default function TradingPlatformShell() {
   const [isPasteActive, setIsPasteActive] = useState(false);
   const [error, setError] = useState('');
   const [currentDate, setCurrentDate] = useState(new Date());
+
+  // Chargement par mois à la demande (cache pour éviter les re-fetches)
+  useEffect(() => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
+    if (loadedMonthsRef.current.has(monthKey)) return;
+    loadedMonthsRef.current.add(monthKey);
+    const startDate = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+    const lastDay = new Date(year, month + 1, 0).getDate();
+    const endDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
+    getPersonalTradesRange({ startDate, endDate, limit: 200 }).then(monthTrades => {
+      setPersonalTrades(prev => {
+        const others = prev.filter(t => {
+          const d = new Date(t.date);
+          return !(d.getFullYear() === year && d.getMonth() === month);
+        });
+        return [...others, ...monthTrades];
+      });
+    });
+  }, [currentDate]);
+
+  // Lazy-load image pour le trade courant dans le modal WIN/LOSS/BE
+  useEffect(() => {
+    if (!showWinsLossModal || !winsLossFilter || selectedChannel.id === 'calendrier') return;
+    const filteredTrades = getTradesForSelectedAccount.filter((t: PersonalTrade) => t.status === winsLossFilter);
+    const current = filteredTrades[winsLossTradeIndex];
+    if (!current) { setWinsLossCurrentFull(null); return; }
+    if (winsLossImageCache.current.has(current.id)) {
+      setWinsLossCurrentFull(winsLossImageCache.current.get(current.id)!);
+      return;
+    }
+    getPersonalTradeById(current.id).then(full => {
+      if (full) {
+        winsLossImageCache.current.set(full.id, full);
+        setWinsLossCurrentFull(full);
+      }
+    });
+  }, [showWinsLossModal, winsLossFilter, winsLossTradeIndex]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
