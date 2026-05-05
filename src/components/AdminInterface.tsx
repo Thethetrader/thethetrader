@@ -685,11 +685,6 @@ export default function AdminInterface() {
       }));
       
       console.log(`✅ Messages chargés pour ${channelId}:`, formattedMessages.length);
-      
-      // Scroller vers le bas après le chargement des messages
-      setTimeout(() => {
-        scrollToBottom();
-      }, 5);
     } catch (error) {
       console.error('❌ Erreur chargement messages:', error);
     }
@@ -728,12 +723,7 @@ export default function AdminInterface() {
     loadMessages(selectedChannel.id);
     // Charger aussi les signaux
     loadSignals(selectedChannel.id);
-    // Scroller vers le bas quand on entre dans un salon (pas pour journal perso/signaux ni vue calendar)
-    if (selectedChannel.id !== 'trading-journal' && selectedChannel.id !== 'user-management' && view !== 'calendar') {
-      setTimeout(() => {
-        scrollToBottom();
-      }, 50);
-    }
+    // Pas de scroll automatique à l'entrée dans un salon — on reste en haut pour voir les stats
   }, [selectedChannel.id, view]);
 
 
