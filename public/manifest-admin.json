@@ -1,22 +1,30 @@
 {
-  "name": "TheTheTrader Admin",
-  "short_name": "Admin TT",
-  "description": "Interface d'administration TheTheTrader",
+  "name": "TPLN Admin",
+  "short_name": "TPLN Admin",
+  "description": "Interface d'administration TPLN",
   "start_url": "/admin?v=2",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/FAVICONcarre.jpg",
+      "src": "/pwa-icon-192.png",
       "sizes": "192x192",
-      "type": "image/jpeg"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "/FAVICONcarre.jpg",
+      "src": "/pwa-icon-512.png",
       "sizes": "512x512",
-      "type": "image/jpeg"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
