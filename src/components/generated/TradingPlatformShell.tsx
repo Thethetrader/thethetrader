@@ -7071,21 +7071,6 @@ export default function TradingPlatformShell() {
                                       return (
                                         <div>
                                           <div className="bg-gray-800 rounded-lg p-3 border border-gray-600">
-                                            {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
-                                              <div className="mb-2">
-                                                <div className="text-xs text-gray-500 uppercase tracking-wider mb-1.5">Signal fermé</div>
-                                                <div className="flex items-center gap-2">
-                                                  <span className={`text-sm font-bold ${signalData.status === 'WIN' ? 'text-green-100' : 'text-red-400'}`}>
-                                                    {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
-                                                  </span>
-                                                  {signalData.pnl && (
-                                                    <span className={`text-sm font-bold ${signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}`}>
-                                                      · {signalData.pnl}
-                                                    </span>
-                                                  )}
-                                                </div>
-                                              </div>
-                                            ) : (
                                               <div className="space-y-2">
                                                 <div className="flex items-center gap-2">
                                                   <span className="text-lg">🚀</span>
@@ -7118,7 +7103,6 @@ export default function TradingPlatformShell() {
                                                   </div>
                                                 )}
                                               </div>
-                                            )}
                                           </div>
                                         </div>
                                       );
@@ -7721,21 +7705,6 @@ export default function TradingPlatformShell() {
                                       return (
                                         <div>
                                           <div className="bg-gray-800 rounded-lg p-3 border border-gray-600">
-                                            {signalData.status === 'CLOSED' || signalData.status === 'WIN' || signalData.status === 'LOSS' ? (
-                                              <div className="mb-2">
-                                                <div className="text-xs text-gray-500 uppercase tracking-wider mb-1.5">Signal fermé</div>
-                                                <div className="flex items-center gap-2">
-                                                  <span className={`text-sm font-bold ${signalData.status === 'WIN' ? 'text-green-100' : 'text-red-400'}`}>
-                                                    {signalData.status === 'WIN' ? '🟢 GAGNANT' : '🔴 PERDANT'}
-                                                  </span>
-                                                  {signalData.pnl && (
-                                                    <span className={`text-sm font-bold ${signalData.pnl.includes('-') ? 'text-red-400' : 'text-green-100'}`}>
-                                                      · {signalData.pnl}
-                                                    </span>
-                                                  )}
-                                                </div>
-                                              </div>
-                                            ) : (
                                               <div className="space-y-2">
                                                 <div className="flex items-center gap-2">
                                                   <span className="text-lg">🚀</span>
@@ -7768,7 +7737,6 @@ export default function TradingPlatformShell() {
                                                   </div>
                                                 )}
                                               </div>
-                                            )}
                                           </div>
                                         </div>
                                       );

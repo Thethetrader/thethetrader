@@ -6575,7 +6575,7 @@ const dailyPnLChartData = useMemo(
                 <SupportAdminChat onUnreadChange={setSupportUnread} />
               </div>
             ) : (view === 'calendar' || selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model' || selectedChannel.id === 'user-management' || selectedChannel.id === 'check-trade') ? (
-              <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: 'calc(60px + env(safe-area-inset-top, 0px) + 16px)' }}>
+              <div className="bg-gray-900 text-white p-2 md:p-4 h-full overflow-y-auto" style={{ paddingTop: selectedChannel.id === 'trading-journal' ? '0px' : 'calc(60px + env(safe-area-inset-top, 0px) + 16px)' }}>
                 {/* Header avec bouton Ajouter Trade pour Trading Journal - Desktop seulement */}
                 {(selectedChannel.id === 'trading-journal' || selectedChannel.id === 'tpln-model') && (
                   <div className="hidden md:flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
