@@ -934,6 +934,7 @@ export default function AdminInterface() {
   });
   const [showWeekSignalsModal, setShowWeekSignalsModal] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState<number>(0);
+  const [weekTradesImages, setWeekTradesImages] = useState<Record<string, {image1?: string, image2?: string}>>({});
   const [statsPeriod, setStatsPeriod] = useState<'mois' | 'jour'>('mois');
 
   // Sauvegarder selectedDate dans localStorage
@@ -1648,6 +1649,40 @@ export default function AdminInterface() {
 
     load();
   }, [selectedChannel.id, currentDate, selectedAccount]);
+
+  // Lazy-load images pour le weekly breakdown modal (trades)
+  useEffect(() => {
+    if (!showWeekSignalsModal) { setWeekTradesImages({}); return; }
+    if (selectedChannel.id !== 'trading-journal' && selectedChannel.id !== 'tpln-model') return;
+
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+    const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+    const daysInMonth = lastDayOfMonth.getDate();
+    const firstDayWeekday = firstDayOfMonth.getDay();
+    const adjustedFirstDay = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
+    const weekStartIndex = (selectedWeek - 1) * 7;
+    const weekDays: number[] = [];
+    for (let i = weekStartIndex; i <= weekStartIndex + 6; i++) {
+      const dayNumber = i - adjustedFirstDay + 1;
+      if (dayNumber >= 1 && dayNumber <= daysInMonth) weekDays.push(dayNumber);
+    }
+    const weekDateStrs = new Set<string>();
+    weekDays.forEach(d => weekDateStrs.add(`${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`));
+    const weekTrades = getTradesForSelectedAccount.filter((t: PersonalTrade) => t && t.date && weekDateStrs.has(t.date));
+
+    const fetchImages = async () => {
+      const result: Record<string, {image1?: string, image2?: string}> = {};
+      await Promise.all(weekTrades.map(async (trade: PersonalTrade) => {
+        if (!trade.id) return;
+        const full = await getPersonalTradeById(trade.id);
+        if (full) result[trade.id] = { image1: full.image1, image2: full.image2 };
+      }));
+      setWeekTradesImages(result);
+    };
+    fetchImages();
+  }, [showWeekSignalsModal, selectedWeek, selectedChannel.id]);
 
   // Lazy-load image pour le trade courant dans le modal WIN/LOSS/BE
   useEffect(() => {
@@ -10230,40 +10265,33 @@ const dailyPnLChartData = useMemo(
                             </div>
                           )}
 
-                          {/* Affichage des images */}
-                          {(trade.image1 || trade.image2) && (
-                            <div className="mb-3">
-                              <span className="text-sm text-gray-400">Images:</span>
-                              <div className="mt-2 space-y-3 flex flex-col items-center">
-                                {trade.image1 && (
-                                  <div className="flex flex-col items-center">
-                                    <span className="text-xs text-gray-500">📸 Image 1:</span>
-                                    <div className="mt-1">
-                                      <img 
-                                        src={trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1}
-                                        alt="Trade image 1"
-                                        className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
-                                        onClick={() => setSelectedImage(trade.image1 instanceof File ? URL.createObjectURL(trade.image1) : trade.image1)}
-                                      />
-                                    </div>
-                                  </div>
+                          {/* Affichage des images (lazy-loaded) */}
+                          {(() => {
+                            const imgs = trade.id ? weekTradesImages[trade.id] : undefined;
+                            const img1 = imgs?.image1 || (trade.image1 instanceof File ? null : trade.image1);
+                            const img2 = imgs?.image2 || (trade.image2 instanceof File ? null : trade.image2);
+                            if (!img1 && !img2) return null;
+                            return (
+                              <div className="mb-3 flex flex-col items-center gap-3">
+                                {img1 && (
+                                  <img
+                                    src={img1}
+                                    alt="Trade image 1"
+                                    className="w-full max-w-sm object-contain rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                    onClick={() => setSelectedImage(img1)}
+                                  />
                                 )}
-                                {trade.image2 && (
-                                  <div className="flex flex-col items-center">
-                                    <span className="text-xs text-gray-500">📸 Image 2:</span>
-                                    <div className="mt-1">
-                                      <img 
-                                        src={trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2}
-                                        alt="Trade image 2"
-                                        className="w-96 h-96 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
-                                        onClick={() => setSelectedImage(trade.image2 instanceof File ? URL.createObjectURL(trade.image2) : trade.image2)}
-                                      />
-                                    </div>
-                                  </div>
+                                {img2 && (
+                                  <img
+                                    src={img2}
+                                    alt="Trade image 2"
+                                    className="w-full max-w-sm object-contain rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                    onClick={() => setSelectedImage(img2)}
+                                  />
                                 )}
                               </div>
-                            </div>
-                          )}
+                            );
+                          })()}
 
                           <div className="flex items-center justify-between text-sm text-gray-400">
                             <span>Créé le {trade.timestamp}</span>
@@ -10368,27 +10396,24 @@ const dailyPnLChartData = useMemo(
                             </div>
                           )}
 
-                          {(signal.attachment_data || signal.closure_image) && (
-                            <div className="mb-3">
-                              <span className="text-sm text-gray-400 block mb-2">Images:</span>
-                              <div className="flex flex-wrap gap-3">
-                                {signal.attachment_data && (
-                                  <img 
-                                    src={signal.attachment_data} 
-                                    alt="Signal"
-                                    className="w-32 h-32 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
-                                    onClick={() => setSelectedImage(signal.attachment_data)}
-                                  />
-                                )}
-                                {signal.closure_image && (
-                                  <img 
-                                    src={signal.closure_image}
-                                    alt="Closure"
-                                    className="w-32 h-32 object-cover rounded cursor-pointer hover:opacity-80 border border-gray-600"
-                                    onClick={() => setSelectedImage(signal.closure_image)}
-                                  />
-                                )}
-                              </div>
+                          {(signal.attachment_data || signal.image || signal.closure_image) && (
+                            <div className="mb-3 flex flex-col items-center gap-3">
+                              {(signal.attachment_data || signal.image) && (
+                                <img
+                                  src={signal.attachment_data || signal.image}
+                                  alt="Signal"
+                                  className="w-full max-w-sm object-contain rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                  onClick={() => setSelectedImage(signal.attachment_data || signal.image)}
+                                />
+                              )}
+                              {signal.closure_image && (
+                                <img
+                                  src={signal.closure_image}
+                                  alt="Closure"
+                                  className="w-full max-w-sm object-contain rounded cursor-pointer hover:opacity-80 border border-gray-600"
+                                  onClick={() => setSelectedImage(signal.closure_image)}
+                                />
+                              )}
                             </div>
                           )}
 
