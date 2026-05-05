@@ -116,11 +116,13 @@
   background: var(--bg-primary) !important;
 }
 
-/* Touch devices: disable hover states on channel list buttons to avoid grey-on-scroll */
+/* Touch devices: ne pas assombrir les boutons pendant le scroll */
 @media (hover: none) and (pointer: coarse) {
-  .hover\:bg-gray-600:hover,
+  .hover\:bg-gray-600:hover {
+    background-color: var(--bg-tertiary) !important;
+  }
   .hover\:bg-gray-700:hover {
-    background-color: revert !important;
+    background-color: var(--bg-secondary) !important;
   }
 }
 

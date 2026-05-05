@@ -6086,7 +6086,7 @@ export default function TradingPlatformShell() {
               mobileView === 'channels' ? 'translate-x-0 pointer-events-auto' : '-translate-x-full pointer-events-none'
             }`}
           >
-            <div className="p-4 space-y-3 h-full overflow-y-auto" style={{ paddingTop: '80px', paddingBottom: '80px', WebkitOverflowScrolling: 'touch' }}>
+            <div className="p-4 space-y-3 h-full overflow-y-auto" style={{ paddingTop: '80px', paddingBottom: '80px', WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}>
               {/* Statistiques en haut */}
               <div className="bg-gray-700 rounded-lg p-6">
                 <h3 className="font-medium text-white mb-3 text-center">📊 Statistiques signaux</h3>
