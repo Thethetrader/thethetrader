@@ -10422,7 +10422,7 @@ const dailyPnLChartData = useMemo(
       )}
 
       {/* Mobile Bottom Tab Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50" style={{
+      {!(showAddAccountModal || showNotificationModal || showLivestreamModal || showObsModal || showSignalModal || showTradesModal || showSignalsModal || showWinsLossModal || showPerformanceTableModal || showUserModal || showDeleteUserModal || showTradeModal || showFinSessionModal || showLossReasonsModal || showWeekSignalsModal) && <div className="md:hidden fixed bottom-0 left-0 right-0 z-50" style={{
         backgroundColor: 'var(--bg-secondary)',
         borderTop: '1px solid var(--border-color)',
         paddingBottom: 'env(safe-area-inset-bottom, 6px)',
@@ -10467,7 +10467,7 @@ const dailyPnLChartData = useMemo(
             <span style={{ fontSize: 10, fontWeight: 500 }}>Formation</span>
           </button>
         </div>
-      </div>
+      </div>}
 
     </div>
   );

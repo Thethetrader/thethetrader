@@ -8911,7 +8911,7 @@ export default function TradingPlatformShell() {
                       />
                     ) : (
                       <div className="w-full h-64 flex items-center justify-center bg-gray-700 rounded-lg text-gray-500">
-                        {!isSignalsMode && winsLossCurrentFull?.id !== (currentItem as any).id ? '⏳ Chargement...' : "Pas d'image"}
+                        {!isSignalsMode && winsLossCurrentFull?.id !== (currentItem as any).id ? '⏳ Chargement...' : ''}
                       </div>
                     )}
                     {isSignalsMode && (currentItem as any).closure_image && (currentItem as any).image && (
@@ -9753,7 +9753,7 @@ export default function TradingPlatformShell() {
       )}
 
       {/* Mobile Bottom Tab Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50" style={{
+      {!(showTradesModal || showSignalsModal || !!selectedImage || showWinsLossModal || showPerformanceTableModal || showWeekSignalsModal || showTradeModal || showFinSessionModal || showLossReasonsModal || showAddAccountModal) && <div className="md:hidden fixed bottom-0 left-0 right-0 z-50" style={{
         backgroundColor: 'var(--bg-secondary)',
         borderTop: '1px solid var(--border-color)',
         paddingBottom: 'env(safe-area-inset-bottom, 6px)',
@@ -9812,7 +9812,7 @@ export default function TradingPlatformShell() {
             <span style={{ fontSize: 10, fontWeight: 500 }}>Formation</span>
           </button>
         </div>
-      </div>
+      </div>}
 
     </div>
   );
