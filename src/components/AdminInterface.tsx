@@ -8125,38 +8125,39 @@ const dailyPnLChartData = useMemo(
       {/* Modal de création de signal */}
       {showSignalModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+          <div className="rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-white">Créer un signal</h2>
-                <button 
+                <h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Créer un signal</h2>
+                <button
                   onClick={() => setShowSignalModal(false)}
-                  className="text-gray-400 hover:text-white"
+                  style={{ color: 'var(--text-muted)' }}
                 >
                   ✕
                 </button>
               </div>
-              
+
               <div className="space-y-4">
                 {/* Zone de collage TradingView */}
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <label className="block text-sm font-medium text-gray-300">📋 Coller données TradingView</label>
+                    <label className="block text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>📋 Coller données TradingView</label>
                     <button
                       onClick={() => setDebugMode(!debugMode)}
-                      className={`text-xs px-2 py-1 rounded ${debugMode ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300'}`}
+                      className="text-xs px-2 py-1 rounded"
+                      style={debugMode ? { background: '#2563eb', color: '#fff' } : { background: 'var(--bg-tertiary)', color: 'var(--text-muted)', border: '1px solid var(--border-color)' }}
                     >
                       {debugMode ? '🔧 Debug ON' : '🔧 Debug OFF'}
                     </button>
                   </div>
                   <div
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 min-h-[80px] flex items-center justify-center cursor-pointer"
+                    className="w-full rounded px-3 py-2 min-h-[80px] flex items-center justify-center cursor-pointer"
+                    style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
                     onPaste={handleTradingViewPaste}
                     onDrop={(e) => {
                       e.preventDefault();
                       const text = e.dataTransfer.getData('text');
                       if (text) {
-                        // Simuler un événement de collage
                         const fakeEvent = {
                           preventDefault: () => {},
                           clipboardData: {
@@ -8176,36 +8177,36 @@ const dailyPnLChartData = useMemo(
                       <div className="text-blue-400">🔄 Traitement en cours...</div>
                     ) : (
                       <div className="text-center">
-                        <div className="text-gray-400 mb-1">📋 Cliquez ici et collez (Ctrl+V)</div>
-                        <div className="text-xs text-gray-500">ou glissez-déposez du texte</div>
+                        <div className="mb-1" style={{ color: 'var(--text-muted)' }}>📋 Cliquez ici et collez (Ctrl+V)</div>
+                        <div className="text-xs" style={{ color: 'var(--text-muted)' }}>ou glissez-déposez du texte</div>
                       </div>
                     )}
                   </div>
-                  {error && (
-                    <p className="text-xs text-red-100 mt-1">{error}</p>
-                  )}
+                  {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
                   {debugMode && pasteDebug && (
-                    <div className="text-xs text-gray-400 mt-1 bg-gray-900 p-2 rounded">
+                    <div className="text-xs mt-1 p-2 rounded" style={{ background: 'var(--bg-app)', color: 'var(--text-muted)' }}>
                       <div className="font-semibold">Debug:</div>
                       <pre className="whitespace-pre-wrap text-xs">{pasteDebug}</pre>
                     </div>
                   )}
-                  <p className="text-xs text-gray-400 mt-1">Collez directement depuis TradingView (Risk/Reward tool)</p>
+                  <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Collez directement depuis TradingView (Risk/Reward tool)</p>
                 </div>
 
                 {/* Type de signal */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Type</label>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Type</label>
                   <div className="flex gap-2">
                     <button
                       onClick={() => setSignalData({...signalData, type: 'BUY'})}
-                      className={`px-3 py-2 rounded text-sm ${signalData.type === 'BUY' ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-300'}`}
+                      className="px-3 py-2 rounded text-sm"
+                      style={signalData.type === 'BUY' ? { background: '#16a34a', color: '#fff' } : { background: 'var(--bg-tertiary)', color: 'var(--text-secondary)', border: '1px solid var(--border-color)' }}
                     >
                       📈 BUY
                     </button>
                     <button
                       onClick={() => setSignalData({...signalData, type: 'SELL'})}
-                      className={`px-3 py-2 rounded text-sm ${signalData.type === 'SELL' ? 'bg-red-600 text-white' : 'bg-gray-600 text-gray-300'}`}
+                      className="px-3 py-2 rounded text-sm"
+                      style={signalData.type === 'SELL' ? { background: '#dc2626', color: '#fff' } : { background: 'var(--bg-tertiary)', color: 'var(--text-secondary)', border: '1px solid var(--border-color)' }}
                     >
                       📉 SELL
                     </button>
@@ -8214,61 +8215,66 @@ const dailyPnLChartData = useMemo(
 
                 {/* Symbol */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Symbole</label>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Symbole</label>
                   <input
                     type="text"
                     value={signalData.symbol}
                     onChange={(e) => setSignalData({...signalData, symbol: e.target.value})}
                     placeholder="BTCUSD, EURUSD, etc."
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
+                    className="w-full rounded px-3 py-2"
+                    style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
                   />
                 </div>
 
                 {/* Timeframe */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Timeframe</label>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Timeframe</label>
                   <input
                     type="text"
                     value={signalData.timeframe}
                     onChange={(e) => setSignalData({...signalData, timeframe: e.target.value})}
                     placeholder="1 min, 5 min, 1H, etc."
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
+                    className="w-full rounded px-3 py-2"
+                    style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
                   />
                 </div>
 
                 {/* Entry */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Prix d'entrée</label>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Prix d'entrée</label>
                   <input
                     type="text"
                     value={signalData.entry}
                     onChange={(e) => setSignalData({...signalData, entry: e.target.value})}
                     placeholder="103474.00 USD"
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
+                    className="w-full rounded px-3 py-2"
+                    style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
                   />
                 </div>
 
                 {/* Take Profit */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Take Profit</label>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Take Profit</label>
                   <input
                     type="text"
                     value={signalData.takeProfit}
                     onChange={(e) => setSignalData({...signalData, takeProfit: e.target.value})}
                     placeholder="104626.00 USD"
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
+                    className="w-full rounded px-3 py-2"
+                    style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
                   />
                 </div>
 
                 {/* Stop Loss */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Stop Loss</label>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Stop Loss</label>
                   <input
                     type="text"
                     value={signalData.stopLoss}
                     onChange={(e) => setSignalData({...signalData, stopLoss: e.target.value})}
                     placeholder="102862.00 USD"
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
+                    className="w-full rounded px-3 py-2"
+                    style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
                   />
                 </div>
 
@@ -8294,19 +8300,20 @@ const dailyPnLChartData = useMemo(
 
                 {/* Description */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Description</label>
                   <textarea
                     value={signalData.description}
                     onChange={(e) => setSignalData({...signalData, description: e.target.value})}
                     placeholder="Notes supplémentaires..."
                     rows={3}
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400"
+                    className="w-full rounded px-3 py-2"
+                    style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
                   />
                 </div>
 
                 {/* Image */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Capture d'écran</label>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Capture d'écran</label>
                   <input
                     type="file"
                     accept="image/*"
@@ -8314,21 +8321,23 @@ const dailyPnLChartData = useMemo(
                       const file = e.target.files?.[0];
                       if (file) setSignalData({...signalData, image: file});
                     }}
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
+                    className="w-full rounded px-3 py-2"
+                    style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
                   />
                 </div>
-               
+
                 {/* Partager dans Accueil */}
                 <div
                   onClick={() => setShareSignalToFeed(v => !v)}
-                  className="flex items-center gap-3 p-3 rounded-lg bg-gray-700 cursor-pointer select-none"
+                  className="flex items-center gap-3 p-3 rounded-lg cursor-pointer select-none"
+                  style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)' }}
                 >
-                  <div className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 transition-colors ${shareSignalToFeed ? 'bg-green-500' : 'bg-gray-500'}`} style={{ border: shareSignalToFeed ? '2px solid #10b981' : '2px solid #6b7280' }}>
+                  <div className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 transition-colors ${shareSignalToFeed ? 'bg-green-500' : ''}`} style={{ border: shareSignalToFeed ? '2px solid #10b981' : '2px solid var(--border-color)', background: shareSignalToFeed ? '#22c55e' : 'var(--bg-secondary)' }}>
                     {shareSignalToFeed && <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><polyline points="2 6 5 9 10 3" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                   </div>
                   <div>
-                    <div className="text-sm font-medium text-white">Partager dans Accueil</div>
-                    <div className="text-xs text-gray-400">Publier aussi comme Signal dans le fil Accueil</div>
+                    <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Partager dans Accueil</div>
+                    <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Publier aussi comme Signal dans le fil Accueil</div>
                   </div>
                 </div>
 
@@ -8336,13 +8345,15 @@ const dailyPnLChartData = useMemo(
                 <div className="flex gap-3 pt-4">
                   <button
                     onClick={() => setShowSignalModal(false)}
-                    className="flex-1 bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white"
+                    className="flex-1 px-4 py-2 rounded"
+                    style={{ background: 'var(--bg-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }}
                   >
                     Annuler
                   </button>
                   <button
                     onClick={handleSignalSubmit}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white"
+                    className="flex-1 px-4 py-2 rounded text-white"
+                    style={{ background: '#c9a84c' }}
                   >
                     Créer le signal
                   </button>
