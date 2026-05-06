@@ -1375,6 +1375,23 @@ export default function TradingPlatformShell() {
     };
   }, [selectedChannel.id]);
 
+  // Auto-scroll to bottom when entering a signal channel (indices/crypto/forex)
+  const signalChannelScrolled = useRef<string | null>(null);
+  useEffect(() => {
+    const signalChannels = ['general-chat-2', 'general-chat-3', 'general-chat-4'];
+    if (!signalChannels.includes(selectedChannel.id)) return;
+    signalChannelScrolled.current = null; // reset on channel change
+    const timer = setTimeout(() => {
+      if (signalChannelScrolled.current === selectedChannel.id) return;
+      signalChannelScrolled.current = selectedChannel.id;
+      if (messagesContainerRef.current) {
+        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+      }
+      messagesEndRef.current?.scrollIntoView({ behavior: 'instant' });
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [selectedChannel.id]);
+
   // Recharger les messages/signaux quand l'app revient au premier plan (PWA)
   useEffect(() => {
     const handleVisibility = () => {
