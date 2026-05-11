@@ -3519,6 +3519,23 @@ const dailyPnLChartData = useMemo(
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [chatMessages, selectedChannel.id]);
 
+  // Auto-scroll to bottom when entering signal channels (indices/crypto/forex)
+  const signalChannelScrolledAdmin = useRef<string | null>(null);
+  useEffect(() => {
+    const signalChannels = ['general-chat-2', 'general-chat-3', 'general-chat-4'];
+    if (!signalChannels.includes(selectedChannel.id)) return;
+    signalChannelScrolledAdmin.current = null;
+    const timer = setTimeout(() => {
+      if (signalChannelScrolledAdmin.current === selectedChannel.id) return;
+      signalChannelScrolledAdmin.current = selectedChannel.id;
+      if (messagesContainerRef.current) {
+        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+      }
+      messagesEndRef.current?.scrollIntoView({ behavior: 'instant' });
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [selectedChannel.id]);
+
   const channels = [
     { id: 'general-chat-2', name: 'general-chat-2', emoji: '📊', fullName: 'Indices' },
     { id: 'general-chat-3', name: 'general-chat-3', emoji: '₿', fullName: 'Crypto' },
@@ -5950,7 +5967,7 @@ const dailyPnLChartData = useMemo(
               </button>
               <button
                 onClick={() => setShowPerformanceTableModal(true)}
-                className="w-full px-3 py-2.5 rounded-lg transition-colors text-sm font-semibold"
+                className="w-full px-3 py-2.5 rounded-lg transition-colors text-sm font-semibold mb-4"
                 style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}
                 onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-hover)')}
                 onMouseLeave={e => (e.currentTarget.style.background = 'var(--bg-tertiary)')}
@@ -7182,8 +7199,8 @@ const dailyPnLChartData = useMemo(
                                               )}
                                             </div>
 
-                                            {/* Résultat fermé (comme user) */}
-                                            {isClosed && signalId && (
+                                            {/* Résultat fermé — seulement sur le message ORIGINAL (pas sur le message de clôture) */}
+                                            {isClosed && signalId && signalData.status !== 'CLOSED' && signalData.status !== 'WIN' && signalData.status !== 'LOSS' && (
                                               <div className="mt-3 pt-2 px-3 py-2 rounded-lg flex flex-col gap-1" style={
                                                 currentSignal?.status === 'WIN'
                                                   ? { background: 'rgba(134,239,172,0.15)', border: '1px solid rgba(134,239,172,0.3)' }
@@ -9283,42 +9300,56 @@ const dailyPnLChartData = useMemo(
                     </h2>
                     <button onClick={() => setShowWinsLossModal(false)} className="text-gray-400 hover:text-white text-2xl">×</button>
                   </div>
-                  <div className="flex-1 flex items-center justify-between gap-4 p-4 overflow-hidden">
-                    <button
-                      onClick={() => setWinsLossTradeIndex(i => (i <= 0 ? filteredItems.length - 1 : i - 1))}
-                      className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-2xl text-white"
-                    >
-                      ←
-                    </button>
-                    <div className="flex-1 flex flex-col items-center min-w-0">
-                      <div className="space-y-4">
+                  {(() => {
+                    let wlSwipeStartX = 0;
+                    return (
+                      <div
+                        className="flex-1 flex flex-col items-center p-4 overflow-y-auto"
+                        onTouchStart={e => { wlSwipeStartX = e.touches[0].clientX; }}
+                        onTouchEnd={e => {
+                          const dx = e.changedTouches[0].clientX - wlSwipeStartX;
+                          if (Math.abs(dx) > 50) {
+                            if (dx < 0) setWinsLossTradeIndex(i => (i >= filteredItems.length - 1 ? 0 : i + 1));
+                            else setWinsLossTradeIndex(i => (i <= 0 ? filteredItems.length - 1 : i - 1));
+                          }
+                        }}
+                      >
                         {imgUrl ? (
-                          <img src={imgUrl} alt={isSignalsMode ? "Signal" : "Trade"} className="max-w-full max-h-[60vh] object-contain rounded-lg border border-gray-600" />
+                          <img
+                            src={imgUrl}
+                            alt={isSignalsMode ? "Signal" : "Trade"}
+                            className="w-full max-h-[75vh] object-contain rounded-lg border border-gray-600 cursor-zoom-in"
+                            onClick={() => setSelectedImage(imgUrl)}
+                          />
                         ) : (
-                          <div className="w-96 h-96 flex items-center justify-center bg-gray-700 rounded-lg text-gray-500">Pas d'image</div>
-                        )}
-                        {isSignalsMode && (currentItem as any).closure_image && (currentItem as any).image && (
-                          <div>
-                            <div className="text-xs text-gray-400 mb-1">📸 Photo de clôture:</div>
-                            <img src={URL.createObjectURL((currentItem as any).closure_image)} alt="Closure" className="max-w-full max-h-[60vh] object-contain rounded-lg border border-gray-600" />
+                          <div className="w-full h-64 flex items-center justify-center bg-gray-700 rounded-lg text-gray-500">
+                            {!isSignalsMode && winsLossCurrentFull?.id !== (currentItem as any).id ? '⏳ Chargement...' : ''}
                           </div>
                         )}
+                        {isSignalsMode && (currentItem as any).closure_image && (currentItem as any).image && (
+                          <img
+                            src={(currentItem as any).closure_image}
+                            alt="Closure"
+                            className="w-full max-h-[75vh] object-contain rounded-lg border border-gray-600 mt-3 cursor-zoom-in"
+                            onClick={() => setSelectedImage((currentItem as any).closure_image)}
+                          />
+                        )}
+                        <div className="mt-4 text-center">
+                          <span className="text-lg font-bold text-white">{currentItem.symbol}</span>
+                          {currentItem.pnl && (
+                            <span className={`ml-2 text-lg font-bold ${(currentItem.pnl as string).includes('-') ? 'text-red-100' : 'text-green-100'}`}>
+                              {isSignalsMode ? `R: ${currentItem.pnl}` : `${parseFloat(currentItem.pnl as string) >= 0 ? '+' : ''}${currentItem.pnl}$`}
+                            </span>
+                          )}
+                          <span className="ml-2 text-gray-400 text-sm">{isSignalsMode ? new Date((currentItem as any).timestamp).toLocaleDateString() : (currentItem as any).date}</span>
+                        </div>
+                        <div className="flex gap-6 mt-4">
+                          <button onClick={() => setWinsLossTradeIndex(i => (i <= 0 ? filteredItems.length - 1 : i - 1))} className="w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-2xl text-white">←</button>
+                          <button onClick={() => setWinsLossTradeIndex(i => (i >= filteredItems.length - 1 ? 0 : i + 1))} className="w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-2xl text-white">→</button>
+                        </div>
                       </div>
-                      <div className="mt-4 text-center">
-                        <span className="text-lg font-bold text-white">{currentItem.symbol}</span>
-                        <span className={`ml-2 text-lg font-bold ${currentItem.pnl && parseFloat(currentItem.pnl) >= 0 ? 'text-green-100' : 'text-red-100'}`}>
-                          {(currentItem.pnl && parseFloat(currentItem.pnl) >= 0 ? '+' : '')}{currentItem.pnl || '0'}$
-                        </span>
-                        <span className="ml-2 text-gray-400 text-sm">{isSignalsMode ? new Date((currentItem as any).timestamp).toLocaleDateString() : (currentItem as any).date}</span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => setWinsLossTradeIndex(i => (i >= filteredItems.length - 1 ? 0 : i + 1))}
-                      className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-2xl text-white"
-                    >
-                      →
-                    </button>
-                  </div>
+                    );
+                  })()}
                 </>
               );
             })()}
@@ -9399,7 +9430,7 @@ const dailyPnLChartData = useMemo(
                         }, null);
 
                       return (
-                        <tr className="border-t border-gray-600 bg-gray-900/60">
+                        <tr className="border-t border-gray-600">
                           <td className={`py-2 font-semibold text-white ${isPWA ? 'pr-1' : 'pr-4'}`}>Total</td>
                           <td className={`py-2 font-semibold text-white text-right ${isPWA ? 'pr-1 w-10' : 'pr-4'}`}>{totalTrades}</td>
                           <td className={`py-2 font-semibold text-right ${totalPnl >= 0 ? 'text-green-100' : 'text-red-100'} ${isPWA ? 'pr-1' : 'pr-4'}`}>
