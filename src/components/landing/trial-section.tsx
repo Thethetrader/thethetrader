@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { supabase } from "../../lib/supabase";
+import { trackSignUp } from "../../utils/analytics";
 
 type Step = "form" | "success" | "error";
 
@@ -65,6 +66,7 @@ export function TrialSection() {
       if (profileError) console.error("Profile creation error:", profileError);
     }
 
+    trackSignUp();
     setStep("success");
     setLoading(false);
   };

@@ -6,6 +6,7 @@ import { useNotifications } from './hooks/use-notifications';
 import { usePWA } from './hooks/use-pwa';
 import { redirectToCheckout } from './utils/stripe';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { trackPageView, trackBeginCheckout, trackPurchase, trackLogin, trackSignUp, trackOpenAuthModal, trackCTAClick } from './utils/analytics';
 
 // Lazy-load everything that's not needed on the landing page
 const TradingPlatformShell = lazy(() => import('./components/generated/TradingPlatformShell'));
@@ -195,6 +196,62 @@ const App = () => {
     (window as any).getCurrentPage = () => currentPage;
   }, [currentPage]);
 
+  // Mettre à jour le titre et la meta description selon la page courante
+  useEffect(() => {
+    const titleMap: Record<string, [string, string]> = {
+      home: [
+        'TPLN - Trading Pour Les Nuls | Méthode • Exécution • Journal',
+        'TPLN : une méthode structurée, une exécution en direct 5j/semaine, un journal pro et une app qui centralise tout. Sessions live, opportunités validées, transparence des performances.',
+      ],
+      'mentions-legales': ['Mentions légales — TPLN', 'Mentions légales de la plateforme TPLN - Trading Pour Les Nuls.'],
+      'politique-confidentialite': ['Politique de confidentialité — TPLN', 'Politique de confidentialité et protection des données personnelles de TPLN.'],
+      'conditions-utilisation': ["Conditions d'utilisation — TPLN", "Conditions générales d'utilisation de la plateforme TPLN."],
+      'avertissement-risques': ['Avertissement sur les risques — TPLN', 'Avertissement sur les risques liés au trading et aux produits financiers.'],
+      'conflits-interets': ["Conflits d'intérêts — TPLN", "Politique de gestion des conflits d'intérêts de TPLN."],
+      'cookies-traceurs': ['Cookies et traceurs — TPLN', 'Politique d\'utilisation des cookies et traceurs sur TPLN.'],
+      'support-client': ['Support client — TPLN', 'Contactez le support client TPLN. Réponse sous 24h en jours ouvrés.'],
+      'signalement-incident': ["Signalement d'incident — TPLN", 'Signalez un problème technique ou un incident sur la plateforme TPLN.'],
+      'nous-contacter': ['Nous contacter — TPLN', 'Contactez l\'équipe TPLN par email ou via le formulaire de contact.'],
+      admin: ['Administration — TPLN', ''],
+      livestream: ['Live Trading en direct — TPLN', 'Suivez les sessions de trading live 5 jours par semaine avec TheTheTrader.'],
+    };
+    const pathMap: Record<string, [string, string]> = {
+      '/faq': ['FAQ — TPLN Trading Pour Les Nuls', 'Toutes les réponses aux questions fréquentes sur la méthode TPLN, les abonnements, le journal de trading et les sessions live.'],
+      '/contact': ['Contact — TPLN', 'Contactez l\'équipe TPLN. Réponse sous 24h en jours ouvrés.'],
+      '/reserver': ['Réserver une session 1:1 — TPLN', 'Réservez une session de coaching individuelle d\'1h avec TheTheTrader. 250€ par session.'],
+      '/premium': ['TPLN Premium | Abonnements Trading', 'Découvrez les formules TPLN : Journal Pro à 29€/mois et l\'environnement complet à 49€/mois. Accès aux sessions live, signaux et journal pro.'],
+      '/mentions-legales': ['Mentions légales — TPLN', 'Mentions légales de la plateforme TPLN - Trading Pour Les Nuls.'],
+      '/confidentialite': ['Politique de confidentialité — TPLN', 'Politique de confidentialité et protection des données personnelles de TPLN.'],
+      '/CGV': ['Conditions générales de vente — TPLN', 'Conditions générales de vente des abonnements TPLN.'],
+      '/cgv': ['Conditions générales de vente — TPLN', 'Conditions générales de vente des abonnements TPLN.'],
+    };
+
+    const p = window.location.pathname.replace(/\/$/, '') || '/';
+    if (/^\/articles\//.test(p)) return; // ArticlePage gère son propre titre
+
+    const [title, desc] = pathMap[p] || titleMap[currentPage] || titleMap.home;
+    document.title = title;
+    trackPageView(p || '/', title);
+
+    if (desc) {
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', desc);
+      const ogDesc = document.querySelector('meta[property="og:description"]');
+      if (ogDesc) ogDesc.setAttribute('content', desc);
+    }
+
+    const canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) {
+      const base = 'https://tradingpourlesnuls.com';
+      canonical.setAttribute('href', p === '/' || p === '' ? base + '/' : base + p);
+    }
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) {
+      const base = 'https://tradingpourlesnuls.com';
+      ogUrl.setAttribute('content', p === '/' || p === '' ? base + '/' : base + p);
+    }
+  }, [currentPage]);
+
   // Gérer le scroll vers pricing au chargement de la page si hash présent
   useEffect(() => {
     if (window.location.hash === '#pricing') {
@@ -250,6 +307,7 @@ const App = () => {
     const reset = urlParams.get('reset');
 
     if (success === 'true' && sessionId) {
+      trackPurchase(sessionId);
       const setupPassword = urlParams.get('setup_password');
       if (setupPassword === 'true') {
         // Récupérer l'email depuis la session Stripe
@@ -946,6 +1004,7 @@ const App = () => {
         }
         if (data.user) {
           console.log('Connexion réussie:', data.user.email);
+          trackLogin();
           setUser({ id: data.user.id, email: data.user.email || email });
           setShowAuthModal(false);
         }
@@ -1478,7 +1537,7 @@ const App = () => {
               <span className="sm:hidden">App</span>
             </button>
             <button 
-              onClick={() => setShowAuthModal(true)}
+              onClick={() => { trackOpenAuthModal('nav_header'); setShowAuthModal(true); }}
               className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-[14px] font-medium transition-all duration-200 text-sm sm:text-base"
             >
               <span className="hidden sm:inline">Se connecter</span>
@@ -1554,9 +1613,10 @@ const App = () => {
                 </svg>
                 Télécharger l'app
               </button>
-              <button 
+              <button
                 onClick={() => {
                   setShowMobileMenu(false);
+                  trackOpenAuthModal('mobile_menu');
                   setShowAuthModal(true);
                 }}
                 className="bg-gradient-to-r from-[#2E6BFF] to-[#F2F4F8] hover:from-[#2558D6] hover:to-[#E5E9F0] text-white px-4 py-2 rounded-[14px] font-medium transition-all duration-200 text-center text-sm"
@@ -1674,7 +1734,7 @@ const App = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mb-6 sm:mb-8 px-4">
                   <button
-                    onClick={() => setShowAuthModal(true)}
+                    onClick={() => { trackOpenAuthModal('hero_cta'); setShowAuthModal(true); }}
                     className="text-white px-8 sm:px-10 py-4 sm:py-5 rounded-[14px] text-lg sm:text-xl font-medium transition-all duration-200 w-full sm:w-auto"
                     style={{ background: 'linear-gradient(135deg, #c9a84c, #a07830)', boxShadow: '0 4px 20px rgba(201,168,76,0.35)' }}
                   >
@@ -1845,6 +1905,7 @@ const App = () => {
                             onClick={async () => {
                               try {
                                 console.log('🖱️ Clic sur bouton Journal Pro');
+                                trackBeginCheckout('journal', paymentType === 'monthly' ? 29 : 26, paymentType);
                                 await redirectToCheckout('journal', paymentType);
                               } catch (error: any) {
                                 console.error('Erreur:', error);
@@ -1903,10 +1964,11 @@ const App = () => {
                           </li>
                         </ul>
                         <div className="mt-auto flex flex-col" style={{ minHeight: '100px' }}>
-                          <button 
+                          <button
                             onClick={async () => {
                               try {
                                 console.log('🖱️ Clic sur bouton Basic');
+                                trackBeginCheckout('basic', paymentType === 'monthly' ? 39 : 34, paymentType);
                                 await redirectToCheckout('basic', paymentType);
                               } catch (error: any) {
                                 console.error('Erreur Stripe:', error);
@@ -1972,6 +2034,7 @@ const App = () => {
                             onClick={async () => {
                               try {
                                 console.log('🖱️ Clic sur bouton Premium');
+                                trackBeginCheckout('premium', paymentType === 'monthly' ? 49 : 44, paymentType);
                                 await redirectToCheckout('premium', paymentType);
                               } catch (error: any) {
                                 console.error('Erreur Stripe:', error);
@@ -5250,6 +5313,7 @@ const App = () => {
                     onClick={async () => {
                       try {
                         console.log('🖱️ Clic sur bouton Premium (mobile)');
+                        trackBeginCheckout('premium', paymentType === 'monthly' ? 49 : 44, paymentType);
                         await redirectToCheckout('premium', paymentType);
                       } catch (error: any) {
                         console.error('Erreur Stripe:', error);
@@ -5316,6 +5380,7 @@ const App = () => {
                     onClick={async () => {
                       try {
                         console.log('🖱️ Clic sur bouton Basic (mobile)');
+                        trackBeginCheckout('basic', paymentType === 'monthly' ? 39 : 34, paymentType);
                         await redirectToCheckout('basic', paymentType);
                       } catch (error: any) {
                         console.error('Erreur Stripe:', error);
@@ -5386,6 +5451,7 @@ const App = () => {
                     onClick={async () => {
                       try {
                         console.log('🖱️ Clic sur bouton Journal Pro (mobile)');
+                        trackBeginCheckout('journal', paymentType === 'monthly' ? 29 : 26, paymentType);
                         await redirectToCheckout('journal', paymentType);
                       } catch (error: any) {
                         console.error('Erreur:', error);
