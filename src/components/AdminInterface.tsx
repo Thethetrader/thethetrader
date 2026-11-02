@@ -1885,11 +1885,11 @@ export default function AdminInterface() {
     
     // Fallback to plain-text parsing if we didn't find structured data
     if (!found) {
-      if (/long/i.test(pastedText)) {
+      if (/buy|long|longue/i.test(pastedText)) {
         extracted.tradeType = 'buy';
         extracted.outcome = 'WIN';
         found = true;
-      } else if (/short/i.test(pastedText)) {
+      } else if (/sell|short|courte|vente/i.test(pastedText)) {
         extracted.tradeType = 'sell';
         extracted.outcome = 'WIN';
         found = true;
@@ -4003,8 +4003,8 @@ const dailyPnLChartData = useMemo(
       }
       const extracted: Record<string, any> = {};
       let found = false;
-      if (/buy|long/i.test(text)) { extracted.tradeType = 'buy'; found = true; }
-      else if (/sell|short/i.test(text)) { extracted.tradeType = 'sell'; found = true; }
+      if (/buy|long|longue/i.test(text)) { extracted.tradeType = 'buy'; found = true; }
+      else if (/sell|short|courte|vente/i.test(text)) { extracted.tradeType = 'sell'; found = true; }
       const sym = text.match(/\b([A-Z]{2,6}\d*(?:USD|BTC|ETH|EUR)?)\b/);
       if (sym) { extracted.symbol = sym[1]; found = true; }
       const nums = text.match(/\b\d+(\.\d+)?\b/g) || [];

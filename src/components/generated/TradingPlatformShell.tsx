@@ -8175,18 +8175,57 @@ export default function TradingPlatformShell() {
                       rows={4}
                       onPaste={(e) => {
                         e.preventDefault();
-                        const text = e.clipboardData.getData('text');
+                        const html = e.clipboardData.getData('text/html') || '';
+                        const text = e.clipboardData.getData('text') || '';
                         const el = e.target as HTMLTextAreaElement;
                         el.value = text || '(vide)';
-                        if (!text) { setClipboardTradeStatus('err'); setTimeout(() => setClipboardTradeStatus('idle'), 3000); return; }
+                        if (!text && !html) { setClipboardTradeStatus('err'); setTimeout(() => setClipboardTradeStatus('idle'), 3000); return; }
+
                         const extracted: Record<string, any> = {};
                         let found = false;
-                        if (/buy|long/i.test(text)) { extracted.tradeType = 'BUY'; extracted.outcome = 'WIN'; found = true; }
-                        else if (/sell|short/i.test(text)) { extracted.tradeType = 'SELL'; extracted.outcome = 'WIN'; found = true; }
-                        const sym = text.match(/\b([A-Z]{1,6}\d*(?:USD|BTC|ETH|EUR)?)\b/);
-                        if (sym) { extracted.symbol = sym[1]; found = true; }
-                        const nums = text.match(/\b\d+(\.\d+)?\b/g) || [];
-                        if (nums.length >= 2) { extracted.entryPrice = nums[0]; extracted.exitPrice = nums[1]; if (nums.length >= 3) extracted.stopLoss = nums[2]; found = true; }
+
+                        // Essai parsing HTML TradingView (data-tradingview-clip)
+                        if (html.includes('data-tradingview-clip')) {
+                          try {
+                            const match = html.match(/data-tradingview-clip="([^"]+)"/);
+                            if (match?.[1]) {
+                              const data = JSON.parse(match[1].replace(/&(?:quot|#34);/g, '"'));
+                              const source = data.sources?.[0]?.source;
+                              const points = source?.points;
+                              const state = source?.state;
+                              if (points?.length >= 2) {
+                                found = true;
+                                let ticker = (state?.symbol || '').split(':')[1] || state?.symbol || '';
+                                if (ticker.startsWith('NQ1')) ticker = 'NQ';
+                                else if (ticker.startsWith('ES1')) ticker = 'ES';
+                                else if (ticker.startsWith('MNQ')) ticker = 'MNQ';
+                                extracted.symbol = ticker;
+                                const type = source?.type || '';
+                                extracted.tradeType = /long/i.test(type) ? 'BUY' : 'SELL';
+                                extracted.outcome = 'WIN';
+                                extracted.entryPrice = points[0]?.price?.toString();
+                                extracted.exitPrice = points[points.length - 1]?.price?.toString();
+                                const { stopLevel, profitLevel } = state || {};
+                                if (stopLevel && profitLevel && extracted.entryPrice) {
+                                  const entry = parseFloat(extracted.entryPrice);
+                                  extracted.stopLoss = (extracted.tradeType === 'BUY' ? entry - stopLevel / 4 : entry + stopLevel / 4).toString();
+                                  extracted.rr = (Math.round((profitLevel / stopLevel) * 100) / 100).toString();
+                                }
+                              }
+                            }
+                          } catch {}
+                        }
+
+                        // Fallback texte (supporte le français TradingView mobile)
+                        if (!found) {
+                          if (/buy|long|longue/i.test(text)) { extracted.tradeType = 'BUY'; extracted.outcome = 'WIN'; found = true; }
+                          else if (/sell|short|courte/i.test(text)) { extracted.tradeType = 'SELL'; extracted.outcome = 'WIN'; found = true; }
+                          const sym = text.match(/\b([A-Z]{1,6}\d*(?:USD|BTC|ETH|EUR)?)\b/);
+                          if (sym) { extracted.symbol = sym[1]; found = true; }
+                          const nums = text.match(/\b\d+(\.\d+)?\b/g) || [];
+                          if (nums.length >= 2) { extracted.entryPrice = nums[0]; extracted.exitPrice = nums[1]; if (nums.length >= 3) extracted.stopLoss = nums[2]; found = true; }
+                        }
+
                         if (found) {
                           if (extracted.symbol) setTradeData(prev => ({ ...prev, symbol: extracted.symbol }));
                           if (extracted.tradeType) setTradeData(prev => ({ ...prev, type: extracted.tradeType }));
@@ -8195,6 +8234,7 @@ export default function TradingPlatformShell() {
                           if (extracted.exitPrice) setTradeData(prev => ({ ...prev, exit: extracted.exitPrice }));
                           if (extracted.stopLoss) setTradeData(prev => ({ ...prev, stopLoss: extracted.stopLoss }));
                           setClipboardTradeStatus('ok');
+                          el.value = `✅ ${extracted.tradeType || ''} ${extracted.symbol || ''} — Entrée: ${extracted.entryPrice || '?'} TP: ${extracted.exitPrice || '?'} SL: ${extracted.stopLoss || '?'}`;
                         } else {
                           setClipboardTradeStatus('err');
                         }
