@@ -8172,13 +8172,13 @@ export default function TradingPlatformShell() {
                   <div style={{ display: 'flex', gap: 8 }}>
                     <textarea
                       placeholder="Appuyez ici → maintenez → Coller"
-                      rows={3}
-                      value={clipboardTradeStatus === 'ok' ? '✅ Importé ! Vérifiez les champs ci-dessous.' : clipboardTradeStatus === 'err' ? '❌ Format non reconnu.' : ''}
-                      onChange={() => {}}
+                      rows={4}
                       onPaste={(e) => {
                         e.preventDefault();
                         const text = e.clipboardData.getData('text');
-                        if (!text) return;
+                        const el = e.target as HTMLTextAreaElement;
+                        el.value = text || '(vide)';
+                        if (!text) { setClipboardTradeStatus('err'); setTimeout(() => setClipboardTradeStatus('idle'), 3000); return; }
                         const extracted: Record<string, any> = {};
                         let found = false;
                         if (/buy|long/i.test(text)) { extracted.tradeType = 'BUY'; extracted.outcome = 'WIN'; found = true; }
@@ -8196,14 +8196,13 @@ export default function TradingPlatformShell() {
                           if (extracted.stopLoss) setTradeData(prev => ({ ...prev, stopLoss: extracted.stopLoss }));
                           setClipboardTradeStatus('ok');
                         } else {
-                          setTradeData(prev => ({ ...prev, notes: `${text}\n\n${prev.notes || ''}` }));
                           setClipboardTradeStatus('err');
                         }
-                        setTimeout(() => setClipboardTradeStatus('idle'), 3000);
+                        setTimeout(() => setClipboardTradeStatus('idle'), 5000);
                       }}
-                      className="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm resize-none"
+                      className="flex-1 bg-gray-700 border rounded px-3 py-2 text-sm resize-none text-white"
                       style={{
-                        color: clipboardTradeStatus === 'ok' ? '#4ade80' : clipboardTradeStatus === 'err' ? '#f87171' : '#9ca3af',
+                        borderColor: clipboardTradeStatus === 'ok' ? '#16a34a' : clipboardTradeStatus === 'err' ? '#dc2626' : '#4b5563',
                         outline: 'none',
                       }}
                     />
