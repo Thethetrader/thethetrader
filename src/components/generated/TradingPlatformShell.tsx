@@ -4340,14 +4340,18 @@ export default function TradingPlatformShell() {
     }
   };
 
+  const [clipboardTradeStatus, setClipboardTradeStatus] = useState<'idle'|'loading'|'ok'|'err'>('idle');
+
   const handleClipboardButtonTrade = async () => {
+    if (!navigator.clipboard?.readText) { setClipboardTradeStatus('err'); setTimeout(() => setClipboardTradeStatus('idle'), 2000); return; }
+    setClipboardTradeStatus('loading');
     try {
       const text = await navigator.clipboard.readText();
-      if (!text) return;
+      if (!text) { setClipboardTradeStatus('err'); setTimeout(() => setClipboardTradeStatus('idle'), 2000); return; }
       const extracted: Record<string, any> = {};
       let found = false;
-      if (/long/i.test(text)) { extracted.tradeType = 'BUY'; extracted.outcome = 'WIN'; found = true; }
-      else if (/short/i.test(text)) { extracted.tradeType = 'SELL'; extracted.outcome = 'WIN'; found = true; }
+      if (/buy|long/i.test(text)) { extracted.tradeType = 'BUY'; extracted.outcome = 'WIN'; found = true; }
+      else if (/sell|short/i.test(text)) { extracted.tradeType = 'SELL'; extracted.outcome = 'WIN'; found = true; }
       const sym = text.match(/\b([A-Z]{1,6}\d*(?:USD|BTC|ETH|EUR)?)\b/);
       if (sym) { extracted.symbol = sym[1]; found = true; }
       const nums = text.match(/\b\d+(\.\d+)?\b/g) || [];
@@ -4363,12 +4367,15 @@ export default function TradingPlatformShell() {
         if (extracted.entryPrice) setTradeData(prev => ({ ...prev, entry: extracted.entryPrice }));
         if (extracted.exitPrice) setTradeData(prev => ({ ...prev, exit: extracted.exitPrice }));
         if (extracted.stopLoss) setTradeData(prev => ({ ...prev, stopLoss: extracted.stopLoss }));
+        setClipboardTradeStatus('ok');
       } else {
-        setTradeData(prev => ({ ...prev, notes: `Pasted text:\n${text}\n\n${prev.notes || ''}` }));
+        setTradeData(prev => ({ ...prev, notes: `${text}\n\n${prev.notes || ''}` }));
+        setClipboardTradeStatus('err');
       }
     } catch {
-      console.warn('Accès au presse-papier refusé.');
+      setClipboardTradeStatus('err');
     }
+    setTimeout(() => setClipboardTradeStatus('idle'), 2500);
   };
 
   const getTradesForDate = (date: Date) => {
@@ -8198,12 +8205,23 @@ export default function TradingPlatformShell() {
                     <button
                       type="button"
                       onClick={handleClipboardButtonTrade}
-                      className="bg-gray-700 border border-gray-600 rounded min-h-[80px] flex flex-col items-center justify-center gap-1 px-4"
-                      style={{ cursor: 'pointer', minWidth: 90 }}
+                      disabled={clipboardTradeStatus === 'loading'}
+                      className="border rounded min-h-[80px] flex flex-col items-center justify-center gap-1 px-4"
+                      style={{
+                        background: clipboardTradeStatus === 'ok' ? '#16a34a' : clipboardTradeStatus === 'err' ? '#dc2626' : '#374151',
+                        borderColor: '#4b5563',
+                        color: clipboardTradeStatus !== 'idle' ? '#fff' : '#9ca3af',
+                        cursor: clipboardTradeStatus === 'loading' ? 'wait' : 'pointer',
+                        minWidth: 90, transition: 'background 0.2s'
+                      }}
                     >
-                      <span style={{ fontSize: 22 }}>📲</span>
-                      <span className="text-xs text-gray-400" style={{ userSelect: 'none' }}>Coller</span>
-                      <span className="text-xs text-gray-500" style={{ userSelect: 'none' }}>Mobile</span>
+                      <span style={{ fontSize: 22 }}>
+                        {clipboardTradeStatus === 'loading' ? '⏳' : clipboardTradeStatus === 'ok' ? '✅' : clipboardTradeStatus === 'err' ? '❌' : '📲'}
+                      </span>
+                      <span className="text-xs" style={{ userSelect: 'none' }}>
+                        {clipboardTradeStatus === 'loading' ? 'Lecture...' : clipboardTradeStatus === 'ok' ? 'Importé !' : clipboardTradeStatus === 'err' ? 'Erreur' : 'Coller'}
+                      </span>
+                      {clipboardTradeStatus === 'idle' && <span className="text-xs" style={{ userSelect: 'none', color: '#6b7280' }}>Mobile</span>}
                     </button>
                   </div>
                   <p className="text-xs text-gray-400 mt-1">Collez directement depuis TradingView</p>

@@ -3984,26 +3984,27 @@ const dailyPnLChartData = useMemo(
     }
   };
 
+  const [clipboardSignalStatus, setClipboardSignalStatus] = useState<'idle'|'loading'|'ok'|'err'>('idle');
+
   const handleClipboardButtonSignal = async () => {
     if (!navigator.clipboard?.readText) {
       setError('Presse-papier non disponible. Utilisez Ctrl+V sur desktop.');
       return;
     }
-    setIsPasteActive(true);
+    setClipboardSignalStatus('loading');
     setError('');
     try {
       const text = await navigator.clipboard.readText();
-      // Toujours mettre le texte brut dans la description pour debug
-      const rawInfo = text ? `[Clipboard lu: "${text.slice(0, 100)}"]` : '[Clipboard vide ou illisible]';
       if (!text) {
-        setError(`Presse-papier vide ou illisible. ${rawInfo}`);
-        setIsPasteActive(false);
+        setError('Presse-papier vide.');
+        setClipboardSignalStatus('err');
+        setTimeout(() => setClipboardSignalStatus('idle'), 2000);
         return;
       }
       const extracted: Record<string, any> = {};
       let found = false;
-      if (/long/i.test(text)) { extracted.tradeType = 'buy'; found = true; }
-      else if (/short/i.test(text)) { extracted.tradeType = 'sell'; found = true; }
+      if (/buy|long/i.test(text)) { extracted.tradeType = 'buy'; found = true; }
+      else if (/sell|short/i.test(text)) { extracted.tradeType = 'sell'; found = true; }
       const sym = text.match(/\b([A-Z]{2,6}\d*(?:USD|BTC|ETH|EUR)?)\b/);
       if (sym) { extracted.symbol = sym[1]; found = true; }
       const nums = text.match(/\b\d+(\.\d+)?\b/g) || [];
@@ -4021,16 +4022,18 @@ const dailyPnLChartData = useMemo(
           takeProfit: extracted.takeProfit || signalData.takeProfit,
           stopLoss: extracted.stopLoss || signalData.stopLoss,
         });
-        setError('✅ Données importées !');
+        setClipboardSignalStatus('ok');
+        setError('');
       } else {
-        // Dumper le texte brut dans la description pour qu'on voie ce qui arrive
         updateFormData({ description: `${text}\n\n${signalData.description || ''}` });
-        setError(`⚠️ Format non reconnu — texte brut ajouté. Lu: "${text.slice(0, 80)}"`);
+        setError(`⚠️ Format non reconnu — texte ajouté à la description`);
+        setClipboardSignalStatus('err');
       }
     } catch (e) {
       setError(`❌ ${e instanceof Error ? e.message : String(e)}`);
+      setClipboardSignalStatus('err');
     }
-    setIsPasteActive(false);
+    setTimeout(() => setClipboardSignalStatus('idle'), 2500);
   };
 
   const handleClipboardButtonTrade = async () => {
@@ -8279,12 +8282,23 @@ const dailyPnLChartData = useMemo(
                     <button
                       type="button"
                       onClick={handleClipboardButtonSignal}
+                      disabled={clipboardSignalStatus === 'loading'}
                       className="rounded min-h-[80px] flex flex-col items-center justify-center gap-1 px-4"
-                      style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-muted)', cursor: 'pointer', minWidth: 90 }}
+                      style={{
+                        background: clipboardSignalStatus === 'ok' ? '#16a34a' : clipboardSignalStatus === 'err' ? '#dc2626' : 'var(--bg-tertiary)',
+                        border: '1px solid var(--border-color)',
+                        color: clipboardSignalStatus !== 'idle' ? '#fff' : 'var(--text-muted)',
+                        cursor: clipboardSignalStatus === 'loading' ? 'wait' : 'pointer',
+                        minWidth: 90, transition: 'background 0.2s'
+                      }}
                     >
-                      <span style={{ fontSize: 22 }}>📲</span>
-                      <span className="text-xs" style={{ userSelect: 'none' }}>Coller</span>
-                      <span className="text-xs" style={{ userSelect: 'none' }}>Mobile</span>
+                      <span style={{ fontSize: 22 }}>
+                        {clipboardSignalStatus === 'loading' ? '⏳' : clipboardSignalStatus === 'ok' ? '✅' : clipboardSignalStatus === 'err' ? '❌' : '📲'}
+                      </span>
+                      <span className="text-xs" style={{ userSelect: 'none' }}>
+                        {clipboardSignalStatus === 'loading' ? 'Lecture...' : clipboardSignalStatus === 'ok' ? 'Importé !' : clipboardSignalStatus === 'err' ? 'Erreur' : 'Coller'}
+                      </span>
+                      {clipboardSignalStatus === 'idle' && <span className="text-xs" style={{ userSelect: 'none' }}>Mobile</span>}
                     </button>
                   </div>
                   {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
