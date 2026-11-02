@@ -8240,75 +8240,37 @@ const dailyPnLChartData = useMemo(
                       {debugMode ? '🔧 Debug ON' : '🔧 Debug OFF'}
                     </button>
                   </div>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    {/* Zone Ctrl+V desktop */}
-                    <div
-                      className="rounded min-h-[80px] flex items-center justify-center"
-                      style={{ flex: 1, background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', position: 'relative' }}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        const text = e.dataTransfer.getData('text');
-                        if (text) {
-                          const fakeEvent = {
-                            preventDefault: () => {},
-                            clipboardData: { getData: (type: string) => type === 'text' ? text : '' }
-                          } as React.ClipboardEvent<HTMLDivElement>;
-                          handleTradingViewPaste(fakeEvent);
-                        }
-                      }}
-                      onDragOver={(e) => e.preventDefault()}
-                    >
-                      <div className="text-center" style={{ pointerEvents: 'none', userSelect: 'none' }}>
-                        {isPasteActive ? (
-                          <div className="text-blue-400">🔄 Traitement en cours...</div>
-                        ) : (
-                          <>
-                            <div className="mb-1" style={{ color: 'var(--text-muted)' }}>📋 Ctrl+V ici</div>
-                            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Desktop</div>
-                          </>
-                        )}
-                      </div>
-                      <textarea
-                        inputMode="none"
-                        onPaste={handleTradingViewPaste as unknown as React.ClipboardEventHandler<HTMLTextAreaElement>}
-                        style={{
-                          position: 'absolute', inset: 0, width: '100%', height: '100%',
-                          opacity: 0, cursor: 'pointer', resize: 'none',
-                          background: 'transparent', border: 'none', outline: 'none',
-                        }}
-                      />
-                    </div>
-                    {/* Bouton presse-papier mobile */}
-                    <button
-                      type="button"
-                      onClick={handleClipboardButtonSignal}
-                      disabled={clipboardSignalStatus === 'loading'}
-                      className="rounded min-h-[80px] flex flex-col items-center justify-center gap-1 px-4"
-                      style={{
-                        background: clipboardSignalStatus === 'ok' ? '#16a34a' : clipboardSignalStatus === 'err' ? '#dc2626' : 'var(--bg-tertiary)',
-                        border: '1px solid var(--border-color)',
-                        color: clipboardSignalStatus !== 'idle' ? '#fff' : 'var(--text-muted)',
-                        cursor: clipboardSignalStatus === 'loading' ? 'wait' : 'pointer',
-                        minWidth: 90, transition: 'background 0.2s'
-                      }}
-                    >
-                      <span style={{ fontSize: 22 }}>
-                        {clipboardSignalStatus === 'loading' ? '⏳' : clipboardSignalStatus === 'ok' ? '✅' : clipboardSignalStatus === 'err' ? '❌' : '📲'}
-                      </span>
-                      <span className="text-xs" style={{ userSelect: 'none' }}>
-                        {clipboardSignalStatus === 'loading' ? 'Lecture...' : clipboardSignalStatus === 'ok' ? 'Importé !' : clipboardSignalStatus === 'err' ? 'Erreur' : 'Coller'}
-                      </span>
-                      {clipboardSignalStatus === 'idle' && <span className="text-xs" style={{ userSelect: 'none' }}>Mobile</span>}
-                    </button>
-                  </div>
+                  <textarea
+                    placeholder="Tap → maintenir → Coller   (ou Ctrl+V sur desktop)"
+                    rows={3}
+                    value={clipboardSignalStatus === 'ok' ? '✅ Importé ! Vérifiez les champs ci-dessous.' : clipboardSignalStatus === 'err' ? '❌ Format non reconnu.' : ''}
+                    onChange={() => {}}
+                    onPaste={(e) => {
+                      e.preventDefault();
+                      const html = e.clipboardData.getData('text/html') || '';
+                      const text = e.clipboardData.getData('text') || '';
+                      if (debugMode) setPasteDebug(`HTML: ${html.slice(0,200)}\nText: ${text.slice(0,200)}`);
+                      const fakeEvent = {
+                        preventDefault: () => {},
+                        clipboardData: { getData: (type: string) => type === 'text/html' ? html : text }
+                      } as React.ClipboardEvent<HTMLDivElement>;
+                      handleTradingViewPaste(fakeEvent);
+                    }}
+                    className="w-full rounded px-3 py-2 text-sm resize-none"
+                    style={{
+                      background: 'var(--bg-tertiary)',
+                      border: `1px solid ${clipboardSignalStatus === 'ok' ? '#16a34a' : clipboardSignalStatus === 'err' ? '#dc2626' : 'var(--border-color)'}`,
+                      color: clipboardSignalStatus === 'ok' ? '#4ade80' : clipboardSignalStatus === 'err' ? '#f87171' : 'var(--text-muted)',
+                      outline: 'none',
+                    }}
+                  />
                   {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
                   {debugMode && pasteDebug && (
                     <div className="text-xs mt-1 p-2 rounded" style={{ background: 'var(--bg-app)', color: 'var(--text-muted)' }}>
-                      <div className="font-semibold">Debug:</div>
                       <pre className="whitespace-pre-wrap text-xs">{pasteDebug}</pre>
                     </div>
                   )}
-                  <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Collez directement depuis TradingView (Risk/Reward tool)</p>
+                  <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Fonctionne sur mobile et desktop</p>
                 </div>
 
                 {/* Type de signal */}
