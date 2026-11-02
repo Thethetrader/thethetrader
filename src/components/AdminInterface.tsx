@@ -3984,6 +3984,58 @@ const dailyPnLChartData = useMemo(
     }
   };
 
+  const handleClipboardButtonSignal = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (!text) return;
+      const extracted: Record<string, any> = {};
+      let found = false;
+      if (/long/i.test(text)) { extracted.tradeType = 'buy'; found = true; }
+      else if (/short/i.test(text)) { extracted.tradeType = 'sell'; found = true; }
+      const sym = text.match(/\b([A-Z]{2,6}\d*(?:USD|BTC|ETH|EUR)?)\b/);
+      if (sym) { extracted.symbol = sym[1]; found = true; }
+      const nums = text.match(/\b\d+(\.\d+)?\b/g) || [];
+      if (nums.length >= 2) {
+        extracted.entryPrice = nums[0];
+        extracted.exitPrice = nums[1];
+        if (nums.length >= 3) extracted.rr = nums[2];
+        found = true;
+      }
+      if (found) {
+        updateFormData({
+          type: extracted.tradeType === 'buy' ? 'BUY' : 'SELL',
+          symbol: extracted.symbol || signalData.symbol,
+          entry: extracted.entryPrice || signalData.entry,
+          takeProfit: extracted.takeProfit || signalData.takeProfit,
+          stopLoss: extracted.stopLoss || signalData.stopLoss,
+        });
+        setError('');
+      } else {
+        updateFormData({ description: `Pasted text:\n${text}\n\n${signalData.description || ''}` });
+        setError('Aucune donnée structurée détectée — texte brut ajouté à la description.');
+      }
+    } catch {
+      setError('Accès au presse-papier refusé. Autorisez-le dans les réglages du navigateur.');
+    }
+  };
+
+  const handleClipboardButtonTrade = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (!text) return;
+      const symbolMatch = text.match(/([A-Z]{3,6})/);
+      const typeMatch = text.match(/(BUY|SELL|LONG|SHORT)/i);
+      const numbers = text.match(/\d+(?:\.\d+)?/g);
+      if (symbolMatch) setTradeData(prev => ({ ...prev, symbol: symbolMatch[1] }));
+      if (typeMatch) setTradeData(prev => ({ ...prev, type: /buy|long/i.test(typeMatch[1]) ? 'BUY' : 'SELL' }));
+      if (numbers?.[0]) setTradeData(prev => ({ ...prev, entry: numbers[0] }));
+      if (numbers?.[1]) setTradeData(prev => ({ ...prev, exit: numbers[1] }));
+      if (numbers?.[2]) setTradeData(prev => ({ ...prev, stopLoss: numbers[2] }));
+    } catch {
+      console.warn('Accès au presse-papier refusé.');
+    }
+  };
+
   const getTradesForDate = (date: Date) => {
     try {
       const year = date.getFullYear();
@@ -8167,43 +8219,55 @@ const dailyPnLChartData = useMemo(
                       {debugMode ? '🔧 Debug ON' : '🔧 Debug OFF'}
                     </button>
                   </div>
-                  <div
-                    className="w-full rounded min-h-[80px] flex items-center justify-center"
-                    style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', position: 'relative' }}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      const text = e.dataTransfer.getData('text');
-                      if (text) {
-                        const fakeEvent = {
-                          preventDefault: () => {},
-                          clipboardData: { getData: (type: string) => type === 'text' ? text : '' }
-                        } as React.ClipboardEvent<HTMLDivElement>;
-                        handleTradingViewPaste(fakeEvent);
-                      }
-                    }}
-                    onDragOver={(e) => e.preventDefault()}
-                  >
-                    {/* Placeholder visuel non-sélectionnable */}
-                    <div className="text-center" style={{ pointerEvents: 'none', userSelect: 'none' }}>
-                      {isPasteActive ? (
-                        <div className="text-blue-400">🔄 Traitement en cours...</div>
-                      ) : (
-                        <>
-                          <div className="mb-1" style={{ color: 'var(--text-muted)' }}>📋 Appuyez ici et collez</div>
-                          <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Ctrl+V sur ordi · Maintenir appuyé sur mobile</div>
-                        </>
-                      )}
-                    </div>
-                    {/* Textarea invisible qui capte le paste sans ouvrir le clavier */}
-                    <textarea
-                      inputMode="none"
-                      onPaste={handleTradingViewPaste as unknown as React.ClipboardEventHandler<HTMLTextAreaElement>}
-                      style={{
-                        position: 'absolute', inset: 0, width: '100%', height: '100%',
-                        opacity: 0, cursor: 'pointer', resize: 'none',
-                        background: 'transparent', border: 'none', outline: 'none',
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    {/* Zone Ctrl+V desktop */}
+                    <div
+                      className="rounded min-h-[80px] flex items-center justify-center"
+                      style={{ flex: 1, background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', position: 'relative' }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const text = e.dataTransfer.getData('text');
+                        if (text) {
+                          const fakeEvent = {
+                            preventDefault: () => {},
+                            clipboardData: { getData: (type: string) => type === 'text' ? text : '' }
+                          } as React.ClipboardEvent<HTMLDivElement>;
+                          handleTradingViewPaste(fakeEvent);
+                        }
                       }}
-                    />
+                      onDragOver={(e) => e.preventDefault()}
+                    >
+                      <div className="text-center" style={{ pointerEvents: 'none', userSelect: 'none' }}>
+                        {isPasteActive ? (
+                          <div className="text-blue-400">🔄 Traitement en cours...</div>
+                        ) : (
+                          <>
+                            <div className="mb-1" style={{ color: 'var(--text-muted)' }}>📋 Ctrl+V ici</div>
+                            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Desktop</div>
+                          </>
+                        )}
+                      </div>
+                      <textarea
+                        inputMode="none"
+                        onPaste={handleTradingViewPaste as unknown as React.ClipboardEventHandler<HTMLTextAreaElement>}
+                        style={{
+                          position: 'absolute', inset: 0, width: '100%', height: '100%',
+                          opacity: 0, cursor: 'pointer', resize: 'none',
+                          background: 'transparent', border: 'none', outline: 'none',
+                        }}
+                      />
+                    </div>
+                    {/* Bouton presse-papier mobile */}
+                    <button
+                      type="button"
+                      onClick={handleClipboardButtonSignal}
+                      className="rounded min-h-[80px] flex flex-col items-center justify-center gap-1 px-4"
+                      style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-muted)', cursor: 'pointer', minWidth: 90 }}
+                    >
+                      <span style={{ fontSize: 22 }}>📲</span>
+                      <span className="text-xs" style={{ userSelect: 'none' }}>Coller</span>
+                      <span className="text-xs" style={{ userSelect: 'none' }}>Mobile</span>
+                    </button>
                   </div>
                   {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
                   {debugMode && pasteDebug && (
@@ -8482,37 +8546,49 @@ const dailyPnLChartData = useMemo(
                 {/* Zone de collage TradingView */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">📋 Coller données TradingView</label>
-                  <div
-                    className="w-full bg-gray-700 border border-gray-600 rounded min-h-[80px] flex items-center justify-center"
-                    style={{ position: 'relative' }}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      const text = e.dataTransfer.getData('text');
-                      if (text) {
-                        const fakeEvent = {
-                          preventDefault: () => {},
-                          clipboardData: { getData: (type: string) => type === 'text' ? text : '' }
-                        } as React.ClipboardEvent<HTMLDivElement>;
-                        handleTradingViewPasteTrade(fakeEvent);
-                      }
-                    }}
-                    onDragOver={(e) => e.preventDefault()}
-                  >
-                    {/* Placeholder visuel non-sélectionnable */}
-                    <div className="text-center" style={{ pointerEvents: 'none', userSelect: 'none' }}>
-                      <div className="text-gray-400 mb-1">📋 Appuyez ici et collez</div>
-                      <div className="text-xs text-gray-500">Ctrl+V sur ordi · Maintenir appuyé sur mobile</div>
-                    </div>
-                    {/* Textarea invisible qui capte le paste sans ouvrir le clavier */}
-                    <textarea
-                      inputMode="none"
-                      onPaste={handleTradingViewPasteTrade as unknown as React.ClipboardEventHandler<HTMLTextAreaElement>}
-                      style={{
-                        position: 'absolute', inset: 0, width: '100%', height: '100%',
-                        opacity: 0, cursor: 'pointer', resize: 'none',
-                        background: 'transparent', border: 'none', outline: 'none',
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    {/* Zone Ctrl+V desktop */}
+                    <div
+                      className="bg-gray-700 border border-gray-600 rounded min-h-[80px] flex items-center justify-center"
+                      style={{ flex: 1, position: 'relative' }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const text = e.dataTransfer.getData('text');
+                        if (text) {
+                          const fakeEvent = {
+                            preventDefault: () => {},
+                            clipboardData: { getData: (type: string) => type === 'text' ? text : '' }
+                          } as React.ClipboardEvent<HTMLDivElement>;
+                          handleTradingViewPasteTrade(fakeEvent);
+                        }
                       }}
-                    />
+                      onDragOver={(e) => e.preventDefault()}
+                    >
+                      <div className="text-center" style={{ pointerEvents: 'none', userSelect: 'none' }}>
+                        <div className="text-gray-400 mb-1">📋 Ctrl+V ici</div>
+                        <div className="text-xs text-gray-500">Desktop</div>
+                      </div>
+                      <textarea
+                        inputMode="none"
+                        onPaste={handleTradingViewPasteTrade as unknown as React.ClipboardEventHandler<HTMLTextAreaElement>}
+                        style={{
+                          position: 'absolute', inset: 0, width: '100%', height: '100%',
+                          opacity: 0, cursor: 'pointer', resize: 'none',
+                          background: 'transparent', border: 'none', outline: 'none',
+                        }}
+                      />
+                    </div>
+                    {/* Bouton presse-papier mobile */}
+                    <button
+                      type="button"
+                      onClick={handleClipboardButtonTrade}
+                      className="bg-gray-700 border border-gray-600 rounded min-h-[80px] flex flex-col items-center justify-center gap-1 px-4"
+                      style={{ cursor: 'pointer', minWidth: 90 }}
+                    >
+                      <span style={{ fontSize: 22 }}>📲</span>
+                      <span className="text-xs text-gray-400" style={{ userSelect: 'none' }}>Coller</span>
+                      <span className="text-xs text-gray-500" style={{ userSelect: 'none' }}>Mobile</span>
+                    </button>
                   </div>
                   <p className="text-xs text-gray-400 mt-1">Collez directement depuis TradingView</p>
                 </div>
