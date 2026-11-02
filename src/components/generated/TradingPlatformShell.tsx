@@ -4340,6 +4340,37 @@ export default function TradingPlatformShell() {
     }
   };
 
+  const handleClipboardButtonTrade = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (!text) return;
+      const extracted: Record<string, any> = {};
+      let found = false;
+      if (/long/i.test(text)) { extracted.tradeType = 'BUY'; extracted.outcome = 'WIN'; found = true; }
+      else if (/short/i.test(text)) { extracted.tradeType = 'SELL'; extracted.outcome = 'WIN'; found = true; }
+      const sym = text.match(/\b([A-Z]{1,6}\d*(?:USD|BTC|ETH|EUR)?)\b/);
+      if (sym) { extracted.symbol = sym[1]; found = true; }
+      const nums = text.match(/\b\d+(\.\d+)?\b/g) || [];
+      if (nums.length >= 2) {
+        extracted.entryPrice = nums[0]; extracted.exitPrice = nums[1];
+        if (nums.length >= 3) extracted.stopLoss = nums[2];
+        found = true;
+      }
+      if (found) {
+        if (extracted.symbol) setTradeData(prev => ({ ...prev, symbol: extracted.symbol }));
+        if (extracted.tradeType) setTradeData(prev => ({ ...prev, type: extracted.tradeType }));
+        if (extracted.outcome) setTradeData(prev => ({ ...prev, status: extracted.outcome }));
+        if (extracted.entryPrice) setTradeData(prev => ({ ...prev, entry: extracted.entryPrice }));
+        if (extracted.exitPrice) setTradeData(prev => ({ ...prev, exit: extracted.exitPrice }));
+        if (extracted.stopLoss) setTradeData(prev => ({ ...prev, stopLoss: extracted.stopLoss }));
+      } else {
+        setTradeData(prev => ({ ...prev, notes: `Pasted text:\n${text}\n\n${prev.notes || ''}` }));
+      }
+    } catch {
+      console.warn('Accès au presse-papier refusé.');
+    }
+  };
+
   const getTradesForDate = (date: Date) => {
     try {
       // Utiliser la date locale au lieu de UTC pour éviter le décalage
@@ -8131,32 +8162,49 @@ export default function TradingPlatformShell() {
                 {/* Zone de collage TradingView */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">📋 Coller données TradingView</label>
-                  <div
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 min-h-[80px] flex items-center justify-center cursor-pointer"
-                    onPaste={handleTradingViewPasteTrade}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      const text = e.dataTransfer.getData('text');
-                      if (text) {
-                        const fakeEvent = {
-                          preventDefault: () => {},
-                          clipboardData: {
-                            getData: (type: string) => {
-                              if (type === 'text/html') return '';
-                              if (type === 'text') return text;
-                              return '';
-                            }
-                          }
-                        } as React.ClipboardEvent<HTMLDivElement>;
-                        handleTradingViewPasteTrade(fakeEvent);
-                      }
-                    }}
-                    onDragOver={(e) => e.preventDefault()}
-                  >
-                    <div className="text-center">
-                      <div className="text-gray-400 mb-1">📋 Cliquez ici et collez (Ctrl+V)</div>
-                      <div className="text-xs text-gray-500">ou glissez-déposez du texte</div>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    {/* Zone Ctrl+V desktop */}
+                    <div
+                      className="bg-gray-700 border border-gray-600 rounded min-h-[80px] flex items-center justify-center"
+                      style={{ flex: 1, position: 'relative' }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const text = e.dataTransfer.getData('text');
+                        if (text) {
+                          const fakeEvent = {
+                            preventDefault: () => {},
+                            clipboardData: { getData: (type: string) => type === 'text' ? text : '' }
+                          } as React.ClipboardEvent<HTMLDivElement>;
+                          handleTradingViewPasteTrade(fakeEvent);
+                        }
+                      }}
+                      onDragOver={(e) => e.preventDefault()}
+                    >
+                      <div className="text-center" style={{ pointerEvents: 'none', userSelect: 'none' }}>
+                        <div className="text-gray-400 mb-1">📋 Ctrl+V ici</div>
+                        <div className="text-xs text-gray-500">Desktop</div>
+                      </div>
+                      <textarea
+                        inputMode="none"
+                        onPaste={handleTradingViewPasteTrade as unknown as React.ClipboardEventHandler<HTMLTextAreaElement>}
+                        style={{
+                          position: 'absolute', inset: 0, width: '100%', height: '100%',
+                          opacity: 0, cursor: 'pointer', resize: 'none',
+                          background: 'transparent', border: 'none', outline: 'none',
+                        }}
+                      />
                     </div>
+                    {/* Bouton presse-papier mobile */}
+                    <button
+                      type="button"
+                      onClick={handleClipboardButtonTrade}
+                      className="bg-gray-700 border border-gray-600 rounded min-h-[80px] flex flex-col items-center justify-center gap-1 px-4"
+                      style={{ cursor: 'pointer', minWidth: 90 }}
+                    >
+                      <span style={{ fontSize: 22 }}>📲</span>
+                      <span className="text-xs text-gray-400" style={{ userSelect: 'none' }}>Coller</span>
+                      <span className="text-xs text-gray-500" style={{ userSelect: 'none' }}>Mobile</span>
+                    </button>
                   </div>
                   <p className="text-xs text-gray-400 mt-1">Collez directement depuis TradingView</p>
                 </div>
