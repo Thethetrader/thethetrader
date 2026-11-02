@@ -3,15 +3,17 @@ const path = require('path');
 
 const BASE_URL = 'https://tradingpourlesnuls.com';
 
+const TODAY = new Date().toISOString().slice(0, 10);
+
 const STATIC_PAGES = [
-  { loc: '/',                 lastmod: '2026-05-14', changefreq: 'weekly',  priority: '1.0' },
-  { loc: '/premium',          lastmod: '2026-05-14', changefreq: 'monthly', priority: '0.9' },
-  { loc: '/faq',              lastmod: '2026-05-14', changefreq: 'monthly', priority: '0.8' },
-  { loc: '/contact',          lastmod: '2026-05-14', changefreq: 'monthly', priority: '0.7' },
-  { loc: '/reserver',         lastmod: '2026-05-14', changefreq: 'monthly', priority: '0.7' },
-  { loc: '/mentions-legales', lastmod: '2026-05-14', changefreq: 'yearly',  priority: '0.3' },
-  { loc: '/confidentialite',  lastmod: '2026-05-14', changefreq: 'yearly',  priority: '0.3' },
-  { loc: '/cgv',              lastmod: '2026-05-14', changefreq: 'yearly',  priority: '0.3' },
+  { loc: '/',                 lastmod: TODAY, changefreq: 'weekly',  priority: '1.0' },
+  { loc: '/premium',          lastmod: TODAY, changefreq: 'monthly', priority: '0.9' },
+  { loc: '/faq',              lastmod: TODAY, changefreq: 'monthly', priority: '0.8' },
+  { loc: '/contact',          lastmod: TODAY, changefreq: 'monthly', priority: '0.7' },
+  { loc: '/reserver',         lastmod: TODAY, changefreq: 'monthly', priority: '0.7' },
+  { loc: '/mentions-legales', lastmod: TODAY, changefreq: 'yearly',  priority: '0.3' },
+  { loc: '/confidentialite',  lastmod: TODAY, changefreq: 'yearly',  priority: '0.3' },
+  { loc: '/cgv',              lastmod: TODAY, changefreq: 'yearly',  priority: '0.3' },
 ];
 
 exports.handler = async () => {

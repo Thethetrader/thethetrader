@@ -259,15 +259,28 @@ export function ArticlePage({ slug }: { slug: string }) {
 
   useEffect(() => {
     if (!article) return;
+    const articleUrl = `https://tradingpourlesnuls.com/articles/${article.slug}`;
+    const ogImage = "https://tradingpourlesnuls.com/signal.png";
+
     document.title = article.metaTitle;
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) metaDesc.setAttribute("content", article.metaDescription);
-    const ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) ogTitle.setAttribute("content", article.metaTitle);
-    const ogDesc = document.querySelector('meta[property="og:description"]');
-    if (ogDesc) ogDesc.setAttribute("content", article.metaDescription);
-    const canonical = document.querySelector('link[rel="canonical"]');
-    if (canonical) canonical.setAttribute("href", `https://tradingpourlesnuls.com/articles/${article.slug}`);
+
+    const setMeta = (sel: string, attr: string, val: string) => {
+      const el = document.querySelector(sel);
+      if (el) el.setAttribute(attr, val);
+    };
+
+    setMeta('meta[name="description"]', "content", article.metaDescription);
+    setMeta('meta[name="robots"]', "content", "index, follow");
+    setMeta('meta[property="og:type"]', "content", "article");
+    setMeta('meta[property="og:title"]', "content", article.metaTitle);
+    setMeta('meta[property="og:description"]', "content", article.metaDescription);
+    setMeta('meta[property="og:url"]', "content", articleUrl);
+    setMeta('meta[property="og:image"]', "content", ogImage);
+    setMeta('meta[name="twitter:title"]', "content", article.metaTitle);
+    setMeta('meta[name="twitter:description"]', "content", article.metaDescription);
+    setMeta('meta[name="twitter:image"]', "content", ogImage);
+    setMeta('meta[name="twitter:url"]', "content", articleUrl);
+    setMeta('link[rel="canonical"]', "href", articleUrl);
 
     // Article schema
     const existing = document.getElementById("article-schema");
@@ -280,15 +293,29 @@ export function ArticlePage({ slug }: { slug: string }) {
       "@type": "Article",
       headline: article.title,
       description: article.metaDescription,
+      image: ogImage,
+      datePublished: "2026-04-01",
+      dateModified: "2026-04-01",
       author: { "@type": "Organization", name: "TPLN - Trading Pour Les Nuls", url: "https://tradingpourlesnuls.com" },
-      publisher: { "@type": "Organization", name: "TPLN - Trading Pour Les Nuls", url: "https://tradingpourlesnuls.com" },
-      url: `https://tradingpourlesnuls.com/articles/${article.slug}`,
+      publisher: {
+        "@type": "Organization",
+        name: "TPLN - Trading Pour Les Nuls",
+        url: "https://tradingpourlesnuls.com",
+        logo: { "@type": "ImageObject", url: "https://tradingpourlesnuls.com/FAVICONcarre.jpg" },
+      },
+      url: articleUrl,
+      mainEntityOfPage: { "@type": "WebPage", "@id": articleUrl },
       articleSection: article.category,
       inLanguage: "fr-FR",
     });
     document.head.appendChild(schema);
 
     return () => {
+      // Restore homepage defaults on unmount
+      document.title = "TPLN - Trading Pour Les Nuls | Méthode • Exécution • Journal";
+      setMeta('meta[property="og:type"]', "content", "website");
+      setMeta('meta[property="og:url"]', "content", "https://tradingpourlesnuls.com/");
+      setMeta('link[rel="canonical"]', "href", "https://tradingpourlesnuls.com/");
       const s = document.getElementById("article-schema");
       if (s) s.remove();
     };

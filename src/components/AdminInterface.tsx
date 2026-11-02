@@ -8170,6 +8170,9 @@ const dailyPnLChartData = useMemo(
                   <div
                     className="w-full rounded px-3 py-2 min-h-[80px] flex items-center justify-center cursor-pointer"
                     style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
+                    contentEditable="true"
+                    suppressContentEditableWarning
+                    tabIndex={0}
                     onPaste={handleTradingViewPaste}
                     onDrop={(e) => {
                       e.preventDefault();
@@ -8189,13 +8192,14 @@ const dailyPnLChartData = useMemo(
                       }
                     }}
                     onDragOver={(e) => e.preventDefault()}
+                    onKeyDown={(e) => { if (e.key !== 'v' || (!e.ctrlKey && !e.metaKey)) e.preventDefault(); }}
                   >
                     {isPasteActive ? (
                       <div className="text-blue-400">🔄 Traitement en cours...</div>
                     ) : (
-                      <div className="text-center">
-                        <div className="mb-1" style={{ color: 'var(--text-muted)' }}>📋 Cliquez ici et collez (Ctrl+V)</div>
-                        <div className="text-xs" style={{ color: 'var(--text-muted)' }}>ou glissez-déposez du texte</div>
+                      <div className="text-center" style={{ pointerEvents: 'none' }}>
+                        <div className="mb-1" style={{ color: 'var(--text-muted)' }}>📋 Appuyez ici et collez</div>
+                        <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Ctrl+V sur ordi · Maintenir appuyé sur mobile</div>
                       </div>
                     )}
                   </div>
@@ -8478,6 +8482,9 @@ const dailyPnLChartData = useMemo(
                   <label className="block text-sm font-medium text-gray-300 mb-2">📋 Coller données TradingView</label>
                   <div
                     className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 min-h-[80px] flex items-center justify-center cursor-pointer"
+                    contentEditable="true"
+                    suppressContentEditableWarning
+                    tabIndex={0}
                     onPaste={handleTradingViewPasteTrade}
                     onDrop={(e) => {
                       e.preventDefault();
@@ -8497,10 +8504,11 @@ const dailyPnLChartData = useMemo(
                       }
                     }}
                     onDragOver={(e) => e.preventDefault()}
+                    onKeyDown={(e) => { if (e.key !== 'v' || (!e.ctrlKey && !e.metaKey)) e.preventDefault(); }}
                   >
-                    <div className="text-center">
-                      <div className="text-gray-400 mb-1">📋 Cliquez ici et collez (Ctrl+V)</div>
-                      <div className="text-xs text-gray-500">ou glissez-déposez du texte</div>
+                    <div className="text-center" style={{ pointerEvents: 'none' }}>
+                      <div className="text-gray-400 mb-1">📋 Appuyez ici et collez</div>
+                      <div className="text-xs text-gray-500">Ctrl+V sur ordi · Maintenir appuyé sur mobile</div>
                     </div>
                   </div>
                   <p className="text-xs text-gray-400 mt-1">Collez directement depuis TradingView</p>
