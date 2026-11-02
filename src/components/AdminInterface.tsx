@@ -3985,9 +3985,15 @@ const dailyPnLChartData = useMemo(
   };
 
   const handleClipboardButtonSignal = async () => {
+    if (!navigator.clipboard?.readText) {
+      setError('Presse-papier non disponible. Utilisez Ctrl+V sur desktop.');
+      return;
+    }
+    setIsPasteActive(true);
+    setError('');
     try {
       const text = await navigator.clipboard.readText();
-      if (!text) return;
+      if (!text) { setError('Presse-papier vide.'); setIsPasteActive(false); return; }
       const extracted: Record<string, any> = {};
       let found = false;
       if (/long/i.test(text)) { extracted.tradeType = 'buy'; found = true; }
@@ -4009,17 +4015,22 @@ const dailyPnLChartData = useMemo(
           takeProfit: extracted.takeProfit || signalData.takeProfit,
           stopLoss: extracted.stopLoss || signalData.stopLoss,
         });
-        setError('');
+        setError('✅ Données importées !');
       } else {
-        updateFormData({ description: `Pasted text:\n${text}\n\n${signalData.description || ''}` });
-        setError('Aucune donnée structurée détectée — texte brut ajouté à la description.');
+        updateFormData({ description: `Texte collé:\n${text}\n\n${signalData.description || ''}` });
+        setError('⚠️ Pas de données structurées — texte brut ajouté à la description.');
       }
-    } catch {
-      setError('Accès au presse-papier refusé. Autorisez-le dans les réglages du navigateur.');
+    } catch (e) {
+      setError(`❌ Erreur : ${e instanceof Error ? e.message : 'permission refusée'}. Autorisez le presse-papier dans les réglages.`);
     }
+    setIsPasteActive(false);
   };
 
   const handleClipboardButtonTrade = async () => {
+    if (!navigator.clipboard?.readText) {
+      console.warn('Clipboard API non disponible.');
+      return;
+    }
     try {
       const text = await navigator.clipboard.readText();
       if (!text) return;
@@ -4031,8 +4042,8 @@ const dailyPnLChartData = useMemo(
       if (numbers?.[0]) setTradeData(prev => ({ ...prev, entry: numbers[0] }));
       if (numbers?.[1]) setTradeData(prev => ({ ...prev, exit: numbers[1] }));
       if (numbers?.[2]) setTradeData(prev => ({ ...prev, stopLoss: numbers[2] }));
-    } catch {
-      console.warn('Accès au presse-papier refusé.');
+    } catch (e) {
+      console.warn('Accès au presse-papier refusé.', e);
     }
   };
 
