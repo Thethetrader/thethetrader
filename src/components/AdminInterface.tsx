@@ -3993,7 +3993,13 @@ const dailyPnLChartData = useMemo(
     setError('');
     try {
       const text = await navigator.clipboard.readText();
-      if (!text) { setError('Presse-papier vide.'); setIsPasteActive(false); return; }
+      // Toujours mettre le texte brut dans la description pour debug
+      const rawInfo = text ? `[Clipboard lu: "${text.slice(0, 100)}"]` : '[Clipboard vide ou illisible]';
+      if (!text) {
+        setError(`Presse-papier vide ou illisible. ${rawInfo}`);
+        setIsPasteActive(false);
+        return;
+      }
       const extracted: Record<string, any> = {};
       let found = false;
       if (/long/i.test(text)) { extracted.tradeType = 'buy'; found = true; }
@@ -4017,11 +4023,12 @@ const dailyPnLChartData = useMemo(
         });
         setError('✅ Données importées !');
       } else {
-        updateFormData({ description: `Texte collé:\n${text}\n\n${signalData.description || ''}` });
-        setError('⚠️ Pas de données structurées — texte brut ajouté à la description.');
+        // Dumper le texte brut dans la description pour qu'on voie ce qui arrive
+        updateFormData({ description: `${text}\n\n${signalData.description || ''}` });
+        setError(`⚠️ Format non reconnu — texte brut ajouté. Lu: "${text.slice(0, 80)}"`);
       }
     } catch (e) {
-      setError(`❌ Erreur : ${e instanceof Error ? e.message : 'permission refusée'}. Autorisez le presse-papier dans les réglages.`);
+      setError(`❌ ${e instanceof Error ? e.message : String(e)}`);
     }
     setIsPasteActive(false);
   };
